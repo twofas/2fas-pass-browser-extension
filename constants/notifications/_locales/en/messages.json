@@ -1,0 +1,102 @@
+{
+  "notification_send_autofill_to_tab_lack_of_service_title": {
+    "message": "Error",
+    "description": "Title for the notification when the autofill service is not found"
+  },
+  "notification_send_autofill_to_tab_lack_of_service_message": {
+    "message": "Service not found",
+    "description": "Message for the notification when the autofill service is not found"
+  },
+  "notification_send_autofill_to_tab_autofill_error_title": {
+    "message": "Error",
+    "description": "Title for the notification when an autofill error occurs"
+  },
+  "notification_send_autofill_to_tab_autofill_error_message": {
+    "message": "Failed to autofill. Please try again.",
+    "description": "Message for the notification when an autofill error occurs"
+  },
+  "notification_shortcut_autofill_no_active_tab_title": {
+    "message": "No active tab",
+    "description": "Title for the notification when there is no active tab for autofill"
+  },
+  "notification_shortcut_autofill_no_active_tab_message": {
+    "message": "There is no active tab to autofill",
+    "description": "Message for the notification when there is no active tab for autofill"
+  },
+  "notification_shortcut_autofill_internal_page_title": {
+    "message": "Browser Internal page",
+    "description": "Title for the notification when autofill is attempted on a browser internal page"
+  },
+  "notification_shortcut_autofill_internal_page_message": {
+    "message": "Sorry, but we can't autofill on Browser Internal Pages",
+    "description": "Message shown when autofill isn't supported on browser internal pages"
+  },
+  "notification_save_password_prompt_success": {
+    "message": "\"Save Item\" prompt settings have been saved",
+    "description": "Notification shown when save password prompt settings are saved"
+  },
+  "notification_safe_browsing_reports_success": {
+    "message": "\"Safe browsing\" reports settings have been saved",
+    "description": "Notification shown when safe browsing reports settings are saved"
+  },
+  "notification_safe_browsing_success": {
+    "message": "\"Safe browsing\" settings have been saved",
+    "description": "Notification message when the safe browsing settings are successfully saved"
+  },
+  "notification_idle_lock_success": {
+    "message": "\"Idle lock\" settings have been saved",
+    "description": "Notification message when the idle lock settings are successfully saved"
+  },
+  "notification_idle_lock_premium_only": {
+    "message": "\"Only on restart\" is a premium feature. Upgrade to the unlimited plan in your mobile app.",
+    "description": "Notification message when the idle lock feature is unlimited plan only"
+  },
+  "notification_auto_clear_clipboard_success": {
+    "message": "\"Auto clear clipboard\" settings have been saved",
+    "description": "Notification message when the auto clear clipboard settings are successfully saved"
+  },
+  "notification_theme_setting_success": {
+    "message": "\"Theme\" settings have been saved",
+    "description": "Notification message when the theme settings are successfully saved"
+  },
+  "notification_test_title": {
+    "message": "2FAS Pass",
+    "description": "Title for a test notification"
+  },
+  "notification_test_message": {
+    "message": "This is a test notification",
+    "description": "Message for a test notification"
+  },
+  "notification_shortcut_autofill_no_username_and_password_title": {
+    "message": "Autofill not possible",
+    "description": "Title for the notification when no username and password are found"
+  },
+  "notification_shortcut_autofill_no_username_and_password_message": {
+    "message": "No username and password found",
+    "description": "Message for the notification when no username and password are found"
+  },
+  "notification_logging_settings_success": {
+    "message": "\"Crash logs\" settings saved",
+    "description": "Notification message when the crash logs settings are successfully saved"
+  },
+  "notification_extension_name_update_success": {
+    "message": "Extension name has been updated",
+    "description": "Notification message when the extension name is successfully updated"
+  },
+  "notification_context_menu_setting_success": {
+    "message": "\"Context menu\" settings have been saved",
+    "description": "Notification message when the context menu settings are successfully saved"
+  },
+  "notification_username_copied": {
+    "message": "Username copied to clipboard",
+    "description": "Notification message when the username is successfully copied to the clipboard"
+  },
+  "notification_uri_copied": {
+    "message": "URI copied to clipboard",
+    "description": "Notification message when the URI is successfully copied to the clipboard"
+  },
+  "notification_password_copied": {
+    "message": "Password copied to clipboard",
+    "description": "Notification message when the password is successfully copied to the clipboard"
+  }
+}

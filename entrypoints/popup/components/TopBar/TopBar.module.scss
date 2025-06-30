@@ -1,0 +1,229 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/global";
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.topbar {
+  align-items: flex-start;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  flex-shrink: 0;
+  height: 56px;
+  padding: 0 12px;
+  width: 100%;
+
+  :global(body:not(.theme-light):not(.theme-dark)) & {
+    opacity: 0;
+  }
+
+  @include m.lightMode {
+    background-color: v.$primary-box-bg-light;
+    border-bottom: 1px solid v.$divider-light;
+  }
+
+  @include m.darkMode {
+    background-color: v.$primary-box-bg-dark;
+    border-bottom: 1px solid v.$divider-dark;
+  }
+
+  &-logo {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+
+    &.disabled {
+      pointer-events: none;
+    }
+
+    button {
+      padding: 0;
+      user-select: none;
+    }
+
+    svg {
+      height: 32px;
+    }
+  }
+
+  &-add-new,
+  &-lock {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+  }
+
+  &-lock {
+    margin-left: auto;
+    margin-right: 6px;
+  }
+
+  &-add-new {
+    &.active {
+      .topbar-add-new-btn {
+        border-color: v.$primary-color-light;
+        color: v.$primary-color-light;
+        pointer-events: all;
+
+        @include m.darkMode {
+          border-color: v.$primary-color-dark;
+          color: v.$primary-color-dark;
+        }
+
+        &:hover,
+        &:focus {
+          border-color: v.$focus-light;
+          color: v.$focus-light;
+
+          svg {
+            stroke: v.$focus-light;
+          }
+
+          @include m.darkMode {
+            border-color: v.$focus-dark;
+            color: v.$focus-dark;
+
+            svg {
+              stroke: v.$focus-dark;
+            }
+          }
+        }
+
+        &:active {
+          border-color: v.$pressed-light;
+          color: v.$pressed-light;
+
+          svg {
+            stroke: v.$pressed-light;
+          }
+
+          @include m.darkMode {
+            border-color: v.$pressed-dark;
+            color: v.$pressed-dark;
+
+            svg {
+              stroke: v.$pressed-dark;
+            }
+          }
+        }
+
+        svg {
+          stroke: v.$primary-color-light;
+
+          @include m.darkMode {
+            stroke: v.$primary-color-dark;
+          }
+        }
+      }
+    }
+
+    &.highlighted {
+      .topbar-add-new-btn {
+        background-color: v.$primary-color-light;
+        border-color: v.$primary-color-light;
+        color: v.$tertiary-text-light;
+        pointer-events: all;
+
+        @include m.darkMode {
+          background-color: v.$primary-color-dark;
+          border-color: v.$primary-color-dark;
+          color: v.$tertiary-text-dark;
+        }
+
+        &:hover,
+        &:focus {
+          background-color: v.$focus-light;
+          border-color: v.$focus-light;
+          color: v.$tertiary-text-light;
+
+          svg {
+            stroke: v.$tertiary-text-light;
+          }
+
+          @include m.darkMode {
+            background-color: v.$focus-dark;
+            border-color: v.$focus-dark;
+            color: v.$tertiary-text-dark;
+
+            svg {
+              stroke: v.$tertiary-text-dark;
+            }
+          }
+        }
+
+        &:active {
+          background-color: v.$pressed-light;
+          border-color: v.$pressed-light;
+          color: v.$tertiary-text-light;
+
+          svg {
+            stroke: v.$tertiary-text-light;
+          }
+
+          @include m.darkMode {
+            background-color: v.$pressed-dark;
+            border-color: v.$pressed-dark;
+            color: v.$tertiary-text-dark;
+
+            svg {
+              stroke: v.$tertiary-text-dark;
+            }
+          }
+        }
+
+        svg {
+          stroke: v.$tertiary-text-light;
+
+          @include m.darkMode {
+            stroke: v.$tertiary-text-dark;
+          }
+        }
+      }
+    }
+
+    .topbar-add-new-btn {
+      align-items: center;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: row;
+      font-size: 12px;
+      font-weight: 500;
+      gap: 0 6px;
+      height: 32px;
+      justify-content: center;
+      line-height: 1;
+      padding: 0 9px 0 12px;
+      pointer-events: none;
+      transition: border-color .3s ease-in-out, color .3s ease-in-out, background-color .3s ease-in-out;
+      user-select: none;
+      width: 100%;
+
+      &.disabled {
+        background-color: v.$additional-light;
+        border-color: v.$object-stroke-light;
+        color: v.$secondary-text-light;
+        pointer-events: none;
+
+        svg {
+          stroke: v.$secondary-text-light;
+        }
+      }
+
+      svg {
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: stroke .3s ease-in-out;
+      }
+    }
+  }
+}

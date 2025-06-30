@@ -1,0 +1,138 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.details {
+  border: 1px solid v.$primary-box-stroke-light;
+  border-radius: 8px;
+  padding: 23px 19px 24px;
+  position: relative;
+  width: 100%;
+
+  @include m.darkMode {
+    border-color: v.$primary-box-stroke-dark;
+  }
+
+  &-button {
+    display: flex;
+    margin-bottom: 12px;
+    margin-top: -12px;
+    width: 100%;
+
+    button {
+      flex-grow: 1;
+    }
+  }
+
+  &-danger-zone {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+
+    &-button {
+      align-items: center;
+      color: v.$primary-color-light;
+      display: flex;
+      flex-direction: row;
+      font-size: 12px;
+      font-weight: 500;
+      gap: 0 4px;
+      line-height: 1;
+      padding: 0;
+
+      @include m.darkMode {
+        color: v.$primary-color-dark;
+      }
+
+      &.active {
+        svg {
+          transform: rotate(-180deg);
+        }
+      }
+
+      svg {
+        fill: v.$primary-color-light;
+
+        @include m.darkMode {
+          fill: v.$primary-color-dark;
+        }
+      }
+    }
+
+    &-body {
+      overflow: hidden;
+      text-align: center;
+      width: 100%;
+
+      p {
+        border-top: 1px solid v.$divider-light;
+        color: v.$secondary-text-light;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1;
+        margin-bottom: 4px;
+        margin-top: 24px;
+        padding-top: 16px;
+
+        @include m.darkMode {
+          border-top-color: v.$divider-dark;
+          color: v.$secondary-text-dark;
+        }
+      }
+
+      &-button {
+        color: v.$error-light;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1;
+
+        @include m.darkMode {
+          color: v.$error-dark;
+        }
+      }
+    }
+  }
+
+  &-security-tier-option {
+    h3 {
+      color: v.$primary-text-light;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.3;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    p {
+      color: v.$secondary-text-light;
+      font-size: 11px;
+      font-weight: 400;
+      line-height: 1.3;
+      white-space: pre-wrap;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+  }
+
+  h2 {
+    color: v.$primary-text-light;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 34px;
+    text-align: center;
+
+    @include m.darkMode {
+      color: v.$primary-text-dark;
+    }
+  }
+}

@@ -1,0 +1,18 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+/** 
+* Returns only unique elements from an array.
+* @param {any} value - The value to be checked.
+* @param {number} index - The index of the value.
+* @param {Array} self - The array to be checked.
+* @return {Array} An array with only unique elements.
+*/
+const uniqueElementOnly = (value, index, self) => {
+  return self.findIndex(el => el.isEqualNode(value)) === index;
+};
+
+export default uniqueElementOnly;

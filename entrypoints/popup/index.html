@@ -1,0 +1,27 @@
+<!-- 
+ SPDX-License-Identifier: BUSL-1.1
+
+ Copyright © 2025 Two Factor Authentication Service, Inc.
+ Licensed under the Business Source License 1.1
+ See LICENSE file for full terms 
+-->
+
+<!doctype html>
+<html lang="en" translate="no" class="notranslate">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>2FAS Pass Browser Extension</title>
+    <meta name="google" content="notranslate">
+    <meta name="manifest.type" content="browser_action" />
+    <style>
+      html, body { background-color: #161616; }
+      html:not(.theme-light) *, html:not(.theme-dark) *, body:not(.loaded) * { visibility: hidden; }
+      html.theme-light *, html.theme-dark *, body.loaded * { visibility: visible; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./main.jsx"></script>
+  </body>
+</html>

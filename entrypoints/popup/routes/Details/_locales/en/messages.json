@@ -1,0 +1,58 @@
+{
+  "details_header": {
+    "message": "Item details",
+    "description": "Header for the item details section"
+  },
+  "details_field": {
+    "message": "field",
+    "description": "Label for a single field in the item details"
+  },
+  "details_fields": {
+    "message": "fields",
+    "description": "Label for multiple fields in the item details"
+  },
+  "details_password_overlay": {
+    "message": "This password is only available in your Vault.",
+    "description": "Message indicating that the password is stored only in the user's Vault"
+  },
+  "details_password_decrypt_error": {
+    "message": "Decrypting password error. Please reconnect with your mobile app.",
+    "description": "Error message displayed when decrypting the password fails"
+  },
+  "details_password_description": {
+    "message": "This password is only available in your Vault. \nEnter a new one here to update it.",
+    "description": "Explains that the password is stored in the Vault and can be updated here"
+  },
+  "details_delete_header": {
+    "message": "No longer need this Item?",
+    "description": "Header for the delete login confirmation section"
+  },
+  "details_delete": {
+    "message": "Delete this Item from your Vault",
+    "description": "Button label to delete the item from the Vault"
+  },
+  "details_name_required": {
+    "message": "Name is required.",
+    "description": "Validation message indicating that the name field is required"
+  },
+  "details_name_max_length": {
+    "message": "Name must be less than 256 characters.",
+    "description": "Validation message indicating the maximum length for the name field"
+  },
+  "details_username_max_length": {
+    "message": "Username must be less than 256 characters.",
+    "description": "Validation message indicating the maximum length for the username field"
+  },
+  "details_uri_max_length": {
+    "message": "URL must be less than 2048 characters.",
+    "description": "Validation message indicating the maximum length for the URL field"
+  },
+  "details_service_not_found": {
+    "message": "Something went wrong. Service not found. Lock the Browser Extension and reconnect.",
+    "description": "Error shown when the requested service is not found, suggesting reconnection"
+  },
+  "details_security_type": {
+    "message": "Security Tier",
+    "description": "Label for the security type field in the item details"
+  }
+}

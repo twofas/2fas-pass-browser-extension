@@ -1,0 +1,86 @@
+{
+  "this_tab_matching_logins_header": {
+    "message": "Matching Items",
+    "description": "Header for the section displaying matching login items"
+  },
+  "this_tab_matching_logins_header_no_logins": {
+    "message": "None of your Items match",
+    "description": "Message displayed when no login items match the current tab"
+  },
+  "this_tab_all_logins_header": {
+    "message": "All Items",
+    "description": "Header for the section displaying all login items"
+  },
+  "this_tab_sort": {
+    "message": "Sort",
+    "description": "Label for the sort functionality"
+  },
+  "this_tab_search_placeholder": {
+    "message": "Search among %AMOUNT% Items",
+    "description": "Placeholder text for the search input showing the number of available items"
+  },
+  "this_tab_more_details": {
+    "message": "View details",
+    "description": "Button label to view more details about a login item"
+  },
+  "this_tab_more_forget_password": {
+    "message": "Forget this password",
+    "description": "Button label to forget the saved password for a login item"
+  },
+  "this_tab_more_uris": {
+    "message": "Website URL(s):",
+    "description": "Label for displaying associated website URLs of a login item"
+  },
+  "this_tab_copy_to_clipboard": {
+    "message": "Copy to clipboard",
+    "description": "Button label to copy data to the clipboard"
+  },
+  "this_tab_no_search_results": {
+    "message": "No search results. Please try again.",
+    "description": "Message displayed when no search results are found"
+  },
+  "this_tab_autofill_success": {
+    "message": "Autofill successful",
+    "description": "Message displayed when autofill operation is successful"
+  },
+  "this_tab_autofill_no_password": {
+    "message": "Username autofilled but no password found",
+    "description": "Message displayed when no password is found for autofill"
+  },
+  "this_tab_autofill_no_username_and_password": {
+    "message": "No username and password found. Autofill not possible.",
+    "description": "Message displayed when no username and password are found for autofill"
+  },
+  "this_tab_can_t_autofill": {
+    "message": "Browser Extension can't autofill. Copy the Item details and paste them manually.",
+    "description": "Message shown when autofill isn't possible, suggesting manual copy-paste"
+  },
+  "this_tab_can_t_autofill_t2": {
+    "message": "Browser Extension can't autofill. Fetch Item details and paste them manually.",
+    "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
+  },
+  "this_tab_can_t_autofill_t2_failed": {
+    "message": "Browser Extension can’t autofill the form.",
+    "description": "Message displayed when autofill operation fails completely"
+  },
+  "this_tab_can_t_find_inputs": {
+    "message": "Browser Extension can't find the appropriate Item details. Use the context menu or copy and paste them manually.",
+    "description": "Message shown when input fields for autofill can't be found"
+  },
+  "this_tab_copy_password": {
+    "message": "Copy password",
+    "description": "Button label to copy the password to the clipboard"
+  },
+  "this_tab_fetch_password": {
+    "message": "Fetch password",
+    "description": "Button label to fetch the password from the mobile app"
+  },
+  "this_tab_copy_username": {
+    "message": "Copy username",
+    "description": "Button label to copy the username to the clipboard"
+  },
+  "this_tab_more_actions": {
+    "message": "More actions",
+    "description": "Label for a dropdown or menu containing additional actions"
+  }
+}

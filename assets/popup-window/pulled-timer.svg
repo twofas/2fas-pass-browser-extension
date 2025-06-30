@@ -1,0 +1,4 @@
+<svg width="36" height="36" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" style="transform:rotate(-90deg)">
+  <circle r="17" cx="18" cy="18" fill="transparent" class="timer-bg"></circle>
+  <circle r="17" cx="18" cy="18" stroke="#214ce8" stroke-width="2" stroke-linecap="butt" stroke-dashoffset="138px" fill="transparent" stroke-dasharray="138.16px" class="js-timer" style="transition: stroke-dashoffset 1s linear;"></circle>
+</svg>

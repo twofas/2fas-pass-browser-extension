@@ -1,0 +1,118 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.fetch {
+  background-color: v.$primary-box-bg-light;
+  border: 1px solid v.$primary-box-stroke-light;
+  border-radius: 8px;
+  width: 100%;
+
+  @include m.darkMode {
+    background-color: v.$primary-box-bg-dark;
+    border-color: v.$primary-box-stroke-dark;
+  }
+
+  &-container {
+    padding: 24px 50px;
+    position: relative;
+  }
+
+  &-case {
+    display: none;
+    text-align: center;
+
+    &.active {
+      display: block;
+    }
+
+    &-animation {
+      margin-bottom: 24px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    &-text {
+      align-items: center;
+      display: inline-flex;
+      gap: 0 4px;
+
+      &-spinner {
+        height: 17px;
+        width: 17px;
+      }
+
+      p {
+        color: v.$primary-text-light;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1;
+        text-align: center;
+
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
+      }
+    }
+
+    &-description {
+      svg {
+        height: 16px;
+        margin-bottom: 8px;
+        stroke: v.$object-light;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        width: auto;
+  
+        @include m.darkMode {
+          stroke: v.$object-dark;
+        }
+      }
+
+      p {
+        color: v.$secondary-text-light;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.5;
+        white-space: pre-wrap;
+
+        @include m.darkMode {
+          color: v.$secondary-text-dark;
+        }
+      }
+    }
+
+    h2 {
+      color: v.$primary-text-light;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.5;
+      margin: 0 auto 24px;
+      max-width: 250px;
+      text-align: center;
+      white-space: pre-wrap;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+  }
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

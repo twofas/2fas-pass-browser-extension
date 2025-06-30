@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+export const WEBSOCKET_STATES = {
+  TOO_MANY_CONNECTED_CLIENTS: 3001,
+  CONNECTION_TIMEOUT: 3002,
+  CANT_CREATE_PROXY: 3003,
+  NORMAL_CLOSURE: 3004,
+  MOBILE_DISCONNECTED: 3005,
+  CONNECTION_ALREADY_ESTABLISHED: 3006,
+  BROWSER_EXTENSION_NOT_CONNECTED: 3007,
+  INTERNAL_ERROR: 3999
+};

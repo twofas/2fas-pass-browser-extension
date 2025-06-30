@@ -1,0 +1,78 @@
+{
+  "name": "2fas-pass-browser-extension",
+  "description": "This is the official 2FAS Pass Browser Extension project.",
+  "version": "1.0.2",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/twofas/2fas-pass-browser-extension"
+  },
+  "author": {
+    "name": "Grzegorz Zając",
+    "email": "grzegorz.zajac000@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/twofas/2fas-pass-browser-extension/issues"
+  },
+  "scripts": {
+    "dev": "yarn generate-enc-keys && wxt --mv3",
+    "dev:edge": "yarn generate-enc-keys && wxt -b edge --mv3",
+    "dev:safari": "yarn generate-enc-keys && wxt -b safari --mv3",
+    "build": "yarn generate-enc-keys && wxt build --mv3",
+    "build:dev": "yarn generate-enc-keys && wxt build --mode development --mv3",
+    "build:firefox": "yarn generate-enc-keys && wxt build -b firefox --mv3",
+    "build:firefox:dev": "yarn generate-enc-keys && wxt build -b firefox --mode development --mv3",
+    "build:edge": "yarn generate-enc-keys && wxt build -b edge --mv3",
+    "build:edge:dev": "yarn generate-enc-keys && wxt build -b edge --mode development --mv3",
+    "build:safari": "yarn generate-enc-keys && wxt build -b safari --mv3",
+    "build:safari:dev": "yarn generate-enc-keys && wxt build -b safari --mode development --mv3",
+    "zip": "yarn generate-enc-keys && wxt zip --mv3",
+    "zip:dev": "yarn generate-enc-keys && wxt zip --mode development --mv3",
+    "zip:firefox": "yarn generate-enc-keys && wxt zip -b firefox --mv3",
+    "zip:firefox:dev": "yarn generate-enc-keys && wxt zip -b firefox --mode development --mv3",
+    "zip:edge": "yarn generate-enc-keys && wxt zip -b edge --mv3",
+    "zip:edge:dev": "yarn generate-enc-keys && wxt zip -b edge --mode development --mv3",
+    "all-build": "yarn test && yarn generate-license-info && yarn zip && yarn zip:firefox && yarn zip:edge",
+    "all-build:dev": "yarn zip:dev && yarn zip:firefox:dev && yarn zip:edge:dev",
+    "compile": "tsc --noEmit",
+    "postinstall": "wxt prepare",
+    "prepare:debug": "wxt prepare --debug",
+    "generate-enc-keys": "node ./build_scripts/generateEncKeys.js",
+    "loco-import": "node ./build_scripts/locoImport.js",
+    "prepare": "wxt prepare",
+    "analyze": "wxt build --analyze --analyze-open",
+    "test": "vitest --run",
+    "test-watch": "vitest",
+    "generate-license-info-html": "npx -y license-report --output=html >> open-source-licenses.html",
+    "generate-license-info-json": "npx -y license-report --output=json >> open-source-licenses.json",
+    "generate-license-info": "yarn generate-license-info-html && yarn generate-license-info-json"
+  },
+  "dependencies": {
+    "@lottiefiles/react-lottie-player": "^3.6.0",
+    "final-form": "^5.0.0",
+    "motion": "^12.19.1",
+    "parse-domain": "^8.2.2",
+    "qrcode": "^1.5.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-final-form": "^7.0.0",
+    "react-router": "^7.6.2",
+    "react-select": "^5.10.1",
+    "react-toastify": "^11.0.5",
+    "react-viewport-list": "^7.1.2",
+    "universal-base64url": "^1.1.0",
+    "uuid": "^11.1.0",
+    "vite-plugin-svgr": "^4.3.0",
+    "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "@wxt-dev/module-react": "^1.1.3",
+    "dotenv": "^16.5.0",
+    "javascript-obfuscator": "^4.1.1",
+    "rollup-obfuscator": "^4.1.1",
+    "sass-embedded": "1.89.2",
+    "terser": "^5.43.1",
+    "vitest": "^3.2.4",
+    "wxt": "^0.20.7"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "top_bar_locked": {
+    "message": "Locked",
+    "description": "Indicates that the extension is locked"
+  },
+  "top_bar_lock": {
+    "message": "Lock",
+    "description": "Button to lock the extension"
+  },
+  "top_bar_add_new": {
+    "message": "Add new",
+    "description": "Button to add a new item"
+  }
+}

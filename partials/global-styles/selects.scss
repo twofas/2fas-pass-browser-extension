@@ -1,0 +1,442 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "variables" as v;
+@use "mixins" as m;
+
+.react-select-container,
+.react-select-idle-container {
+  &.react-select--is-disabled {
+    .react-select__control {
+      background-color: v.$additional-light !important;
+      border-color: v.$object-stroke-light !important;
+
+      body.theme-dark & {
+        background-color: v.$additional-dark !important;
+        border-color: v.$object-stroke-dark !important;
+      }
+
+      .react-select__value-container {
+        .react-select__single-value {
+          color: v.$secondary-text-light !important;
+
+          body.theme-dark & {
+            color: v.$secondary-text-dark !important;
+          }
+        }
+      }
+    }
+  }
+
+  .react-select__control {
+    background-color: v.$primary-box-bg-light;
+    border: 1px solid v.$object-stroke-light;
+    border-radius: 6px;
+    cursor: pointer;
+    height: 38px;
+    min-height: 0;
+    transition: background-color .3s ease-in-out, border-color .3s ease-in-out;
+
+    body.theme-dark & {
+      background-color: v.$primary-box-bg-dark;
+      border-color: v.$object-stroke-dark;
+    }
+
+    &:hover {
+      border-color: v.$object-light;
+
+      body.theme-dark & {
+        border-color: v.$object-dark;
+      }
+    }
+
+    &.react-select__control--is-focused {
+      border: 1px solid v.$object-light;
+      box-shadow: none;
+      outline: none;
+
+      body.theme-dark & {
+        border-color: v.$object-dark;
+      }
+    }
+
+    &.react-select__control--menu-is-open {
+      .react-select__indicators {
+        .react-select__indicator {
+          svg {
+            transform: rotate(-180deg);
+          }
+        }
+      }
+    }
+
+    .react-select__value-container {
+      padding: 5px 12px;
+
+      .react-select__single-value {
+        color: v.$primary-text-light;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1;
+        padding-bottom: 1px;
+        transform: translateY(1px);
+        transition: color .3s ease-in-out;
+  
+        body.theme-dark & {
+          color: v.$primary-text-dark;
+        }
+      }
+    }
+  }
+
+  .react-select__indicators {
+    .react-select__indicator-separator {
+      display: none;
+    }
+
+    .react-select__indicator {
+      padding: 0 10px;
+
+      svg {
+        fill: v.$object-light;
+        stroke: v.$object-light;
+
+        body.theme-dark & {
+          fill: v.$object-dark;
+          stroke: v.$object-dark;
+        }
+      }
+    }
+  }
+
+  .react-select__menu {
+    background-color: v.$primary-box-bg-light;
+    border-radius: 6px;
+    margin-bottom: 0;
+    margin-top: 0;
+    overflow: hidden;
+
+    body.theme-dark & {
+      background-color: v.$primary-box-bg-dark;
+    }
+
+    &-list {
+      border-radius: 6px;
+      overflow: hidden;
+      padding-bottom: 0;
+      padding-top: 0;
+
+      .react-select__option {
+        background-color: v.$primary-box-bg-light;
+        color: v.$primary-text-light;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1;
+        padding: 10px 12px;
+
+        body.theme-dark & {
+          background-color: v.$primary-box-bg-dark;
+          color: v.$primary-text-dark;
+        }
+
+        &:first-of-type {
+          border-top-left-radius: 6px;
+          border-top-right-radius: 6px;
+        }
+
+        &:last-of-type {
+          border-bottom-left-radius: 6px;
+          border-bottom-right-radius: 6px;
+        }
+
+        &.react-select__option--is-focused {
+          background-color: v.$hover-color-light;
+          box-shadow: none;
+          outline: none;
+    
+          body.theme-dark & {
+            background-color: v.$hover-color-dark;
+          }
+        }
+
+        &.react-select__option--is-selected {
+          background-color: v.$primary-color-light;
+          color: v.$primary-box-bg-light;
+
+          body.theme-dark & {
+            background-color: v.$primary-color-dark;
+            color: v.$primary-box-bg-dark;
+          }
+
+          h3 {
+            &.tier-name {
+              color: v.$tertiary-text-light;
+
+              body.theme-dark & {
+                color: v.$tertiary-text-dark;
+              }
+            }
+          }
+
+          p {
+            &.tier-description {
+              color: v.$tertiary-text-light;
+
+              body.theme-dark & {
+                color: v.$tertiary-text-dark;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.react-select-dropdown-container {
+  z-index: 9999;
+
+  .react-select-dropdown__control {
+    display: none;
+  }
+
+  .react-select-dropdown__menu {
+    background-color: v.$card-bg-light;
+    border: 1px solid v.$card-stroke-light;
+    border-radius: 8px;
+    box-shadow: none;
+    margin-bottom: 0;
+    margin-top: 0;
+    max-width: 240px;
+    right: 0;
+    transition: opacity .3s ease-in-out;
+    z-index: 9999;
+
+    body.theme-dark & {
+      background-color: v.$card-bg-dark;
+      border-color: v.$card-stroke-dark;
+    }
+  }
+
+  .react-select-dropdown__option {
+    background-color: rgba(v.$hover-color-light, 0);
+    overflow: hidden;
+    padding-left: 4px;
+    padding-right: 4px;
+    position: relative;
+
+    body.theme-dark & {
+      background-color: rgba(v.$hover-color-dark, 0);
+    }
+
+    &:hover {
+      a {
+        &:not(.uris) {
+          background-color: rgba(v.$hover-color-light, 1);
+          color: v.$primary-color-light;
+  
+          body.theme-dark & {
+            background-color: rgba(v.$hover-color-dark, 1);
+            color: v.$primary-color-dark;
+          }
+        }
+  
+        svg {
+          stroke: v.$primary-color-light;
+  
+          body.theme-dark & {
+            stroke: v.$primary-color-dark;
+          }
+        }
+      }
+    }
+
+    &.uri,
+    &.details,
+    &.forget {
+      color: v.$primary-text-light;
+
+      body.theme-dark & {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    &--uri {
+      align-items: center;
+      display: inline-flex;
+      flex-direction: row;
+      font-size: 12px;
+      font-weight: 500;
+      gap: 0 8px;
+      line-height: 1;
+      max-width: 100%;
+      padding: 12px 30px 12px 8px;
+      text-align: left;
+      transition: color .3s ease-in-out;
+      user-select: none;
+      width: 100%;
+
+      &.uris {
+        color: v.$secondary-text-light;
+        font-size: 10px;
+        font-weight: 400;
+        margin-top: 4px;
+        padding-top: 12px;
+        padding-bottom: 6px;
+        pointer-events: none;
+        position: relative;
+        max-width: 100%;
+
+        body.theme-dark & {
+          color: v.$secondary-text-dark;
+        }
+
+        &::before {
+          background-color: v.$card-stroke-light;
+          content: '';
+          display: block;
+          height: 1px;
+          left: -8px;
+          position: absolute;
+          top: 0px;
+          width: calc(100% + 16px);
+
+          body.theme-dark & {
+            background-color: v.$card-stroke-dark;
+          }
+        }
+      }
+
+      &.uri {
+        font-weight: 400;
+      }
+
+      svg {
+        flex-shrink: 0;
+        height: 14px;
+        stroke: v.$icon-tertiary-color-light;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5;
+        transition: stroke .3s ease-in-out;
+        width: 14px;
+
+        body.theme-dark & {
+          stroke: v.$icon-tertiary-color-dark;
+        }
+      }
+
+      span {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    &--copy {
+      background-color: rgba(v.$hover-on-hover-light, 0);
+      border-radius: 4px;
+      display: inline-flex;
+      padding: 4px;
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: background-color .3s ease-in-out;
+      z-index: 2;
+
+      body.theme-dark & {
+        background-color: rgba(v.$hover-on-hover-dark, 0);
+      }
+
+      &.hidden {
+        display: none;
+      }
+
+      &:hover {
+        background-color: rgba(v.$hover-on-hover-light, 1);
+
+        body.theme-dark & {
+          background-color: rgba(v.$hover-on-hover-dark, 1);
+        }
+
+        svg {
+          stroke: v.$primary-color-light;
+
+          body.theme-dark & {
+            stroke: v.$primary-color-dark;
+          }
+        }
+      }
+
+      svg {
+        height: 16px;
+        stroke: v.$primary-color-light;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: stroke .3s ease-in-out;
+        width: 16px;
+
+        body.theme-dark & {
+          stroke: v.$primary-color-dark;
+        }
+      }
+    }
+
+    a {
+      border-radius: 6px;
+      transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    }
+  }
+}
+
+.react-select-idle-container {
+  .react-select__control {
+    .react-select__single-value {
+      span {
+        align-items: center;
+        display: flex;
+        gap: 0 7px;
+
+        svg {
+          height: 16px;
+          width: auto;
+        }
+      }
+    }
+  }
+
+  .react-select__menu-list {
+    overflow: auto;
+
+    .react-select__option {
+      &.react-select__option--is-disabled {
+        background-color: v.$primary-bg-light;
+        color: v.$secondary-text-light;
+        pointer-events: auto;
+
+        body.theme-dark & {
+          background-color: v.$primary-bg-dark !important;
+          color: v.$secondary-text-dark !important;
+        }
+
+        span {
+          align-items: center;
+          display: inline-flex;
+          gap: 0 7px;
+
+          svg {
+            height: 16px;
+            width: auto;
+          }
+        }
+      }
+    }
+  }
+}

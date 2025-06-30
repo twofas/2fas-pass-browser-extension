@@ -1,0 +1,963 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.this-tab {
+  background-color: transparent !important;
+  width: 100%;
+
+  &-autofill-popup {
+    align-items: center;
+    background-color: rgba(v.$primary-box-bg-dark, .5);
+    display: flex;
+    left: 0;
+    height: 100%;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    top: 0;
+    transition: opacity .3s ease-in-out;
+    width: 100%;
+    z-index: 99999;
+
+    @include m.darkMode {
+      background-color: rgba(v.$primary-box-bg-dark, .5);
+    }
+
+    &.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    &-box {
+      background-color: v.$primary-bg-light;
+      border-radius: 10px;
+      padding: 23px 13px 20px;
+      text-align: center;
+      width: calc(100% - 24px);
+
+      @include m.darkMode {
+        background-color: v.$primary-bg-dark;
+      }
+
+      &-login-item {
+        margin-bottom: 28px;
+      }
+
+      &-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 13px 0;
+      }
+
+      h2 {
+        color: v.$primary-text-light;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.5;
+        margin-bottom: 26px;
+        white-space: pre-wrap;
+
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
+      }
+    }
+  }
+
+  &-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    height: 100%;
+    width: 100%;
+  }
+
+  &-top {
+    background-color: v.$primary-box-bg-light;
+    border: 1px solid v.$primary-box-stroke-light;
+    border-radius: 8px;
+    overflow: visible;
+
+    @include m.darkMode {
+      background-color: v.$primary-box-bg-dark;
+      border-color: v.$primary-box-stroke-dark;
+    }
+  }
+
+  &-header {
+    padding-top: 24px;
+    text-align: center;
+
+    h1 {
+      color: v.$primary-text-light;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 10px;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    h2 {
+      align-items: center;
+      background-color: v.$hover-color-light;
+      border-radius: 4px;
+      color: v.$primary-text-light;
+      display: inline-flex;
+      flex-direction: row;
+      font-size: 12px;
+      font-weight: 400;
+      gap: 0 4px;
+      margin-bottom: 8px;
+      padding: 5px;
+
+      @include m.darkMode {
+        background-color: v.$hover-color-dark;
+        color: v.$primary-text-dark;
+      }
+      
+      span {
+        display: inline-block;
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      svg {
+        height: 12px;
+        stroke: v.$object-light;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1;
+        width: 12px;
+
+        @include m.darkMode {
+          stroke: v.$object-dark;
+        }
+      }
+    }
+  }
+
+  &-matching-logins,
+  &-all-logins {
+    padding: 0 8px 14px 8px;
+    width: 100%;
+
+    svg {
+      &.service-url,
+      &.service-username,
+      &.service-more,
+      &.service-fetch {
+        stroke: v.$object-light;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: stroke .3s ease-in-out;
+
+        @include m.darkMode {
+          stroke: v.$object-dark;
+        }
+      }
+
+      &.service-password {
+        fill: v.$object-light;
+        transition: fill .3s ease-in-out;
+
+        @include m.darkMode {
+          fill: v.$object-dark;
+        }
+      }
+    }
+  }
+
+  &-matching-logins {
+    padding-bottom: 12px;
+
+    &-list,
+    &-empty {
+      display: none;
+
+      &.active {
+        display: block;
+      }
+    }
+
+    &-empty {
+      text-align: center;
+
+      img,
+      lottie-player {
+        display: none;
+        height: auto;
+        width: 120px;
+
+        body.theme-light & {
+          &.theme-light {
+            display: inline-block;
+          }
+        }
+
+        body.theme-dark & {
+          &.theme-dark {
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+
+  &-all-logins {
+    background-color: v.$primary-box-bg-light;
+    border: 1px solid v.$primary-box-stroke-light;
+    border-radius: 8px;
+    margin-top: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 24px;
+
+    @include m.darkMode {
+      background-color: v.$primary-box-bg-dark;
+      border-color: v.$primary-box-stroke-dark;
+    }
+
+    &.hidden {
+      display: none;
+    }
+
+    &-header {
+      background-color: v.$primary-box-bg-light;
+      padding: 24px 8px 16px;
+      position: sticky;
+      text-align: center;
+      top: -20px;
+      z-index: 2;
+
+      @include m.darkMode {
+        background-color: v.$primary-box-bg-dark;
+      }
+
+      &-sort {
+        align-items: center;
+        bottom: 16px;
+        display: flex;
+        gap: 0 6px;
+        position: absolute;
+        right: 12px;
+
+        span {
+          color: v.$secondary-text-light;
+          font-size: 12px;
+          font-weight: 400;
+          line-height: 1;
+
+          @include m.darkMode {
+            color: v.$secondary-text-dark;
+          }
+        }
+
+        button {
+          display: flex;
+          padding: 0;
+
+          &.asc {
+            svg {
+              &:first-of-type {
+                stroke: v.$primary-color-light;
+                z-index: 2;
+
+                @include m.darkMode {
+                  stroke: v.$primary-color-dark;
+                }
+              }
+            }
+          }
+
+          &.desc {
+            svg {
+              &:last-of-type {
+                stroke: v.$primary-color-light;
+                z-index: 2;
+
+                @include m.darkMode {
+                  stroke: v.$primary-color-dark;
+                }
+              }
+            }
+          }
+
+          svg {
+            background-color: rgba(v.$hover-color-light, 0);
+            overflow: hidden;
+            stroke: rgba(v.$object-stroke-light, .5);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            height: 20px;
+            position: relative;
+            transition: stroke .3s ease-in-out, background-color .3s ease-in-out;
+
+            @include m.darkMode {
+              background-color: rgba(v.$hover-color-dark, 0);
+              stroke: rgba(v.$object-stroke-dark, .5);
+            }
+
+            &:hover {
+              background-color: rgba(v.$hover-color-light, 1);
+  
+              @include m.darkMode {
+                background-color: rgba(v.$hover-color-dark, 1);
+              }
+            }
+
+            &:first-of-type {
+              border-bottom-left-radius: 4px;
+              border-top-left-radius: 4px;
+              transform: translateX(1px);
+            }
+
+            &:last-of-type {
+              border-bottom-right-radius: 4px;
+              border-top-right-radius: 4px;
+            }
+
+            :global(.arrow) {
+              stroke: v.$primary-color-light;
+              stroke-linecap: round;
+              stroke-linejoin: round;
+              stroke-width: 1.5;
+
+              @include m.darkMode {
+                stroke: v.$primary-color-dark;
+              }
+            }
+          }
+        }
+      }
+
+      h3 {
+        color: v.$primary-text-light;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1.5;
+
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
+      }
+    }
+
+    &-search-container {
+      background-color: v.$primary-box-bg-light;
+      padding: 0 12px 14px;
+      position: sticky;
+      width: 100%;
+      top: 44px;
+      z-index: 2;
+
+      @include m.darkMode {
+        background-color: v.$primary-box-bg-dark;
+      }
+    }
+
+    &-search {
+      align-items: center;
+      background-color: v.$additional-light;
+      border: 1.5px solid rgba(v.$primary-color-light, 0);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: row;
+      gap: 0 6px;
+      height: 38px;
+      padding: 0 12px;
+      position: relative;
+      transition: border .3s ease-in-out;
+      width: 100%;
+
+      @include m.darkMode {
+        background-color: v.$additional-dark;
+        border-color: rgba(v.$primary-color-dark, 0);
+      }
+
+      &:hover,
+      &.active {
+        border: 1.5px solid rgba(v.$primary-color-light, 1);
+
+        @include m.darkMode {
+          border-color: rgba(v.$primary-color-dark, 1);
+        }
+      }
+
+      &-clear {
+        font-size: 0;
+        opacity: 1;
+        padding: 0;
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: opacity .3s ease-in-out !important;
+        user-select: none;
+
+        &.hidden {
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        > svg {
+          fill: v.$primary-color-light;
+          height: 16px;
+          width: auto;
+
+          @include m.darkMode {
+            fill: v.$primary-color-dark;
+          }
+        }
+      }
+
+      input {
+        appearance: none;
+        background-color: transparent;
+        border: 0;
+        color: v.$primary-text-light;
+        font-size: 14px;
+        font-weight: 400;
+        height: 100%;
+        outline: none;
+        padding-right: 24px;
+        width: 100%;
+
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
+
+        &:-webkit-autofill,
+        &:-webkit-autofill:hover, 
+        &:-webkit-autofill:focus, 
+        &:-webkit-autofill:active{
+          -webkit-background-clip: text !important;
+          -webkit-box-shadow: 0 0 0 0 transparent inset !important;
+          -webkit-text-fill-color: v.$primary-text-light !important;
+          box-shadow: inset 0 0 0 0 transparent;
+          transition: background-color 5000s ease-in-out 0s !important;
+
+          @include m.darkMode {
+            -webkit-text-fill-color: v.$primary-text-dark !important;
+          }
+        }
+
+        &::-webkit-input-placeholder {
+          color: v.$secondary-text-light;
+
+          @include m.darkMode {
+            color: v.$secondary-text-dark;
+          }
+        }
+
+        &::-moz-placeholder {
+          color: v.$secondary-text-light;
+
+          @include m.darkMode {
+            color: v.$secondary-text-dark;
+          }
+        }
+
+        &:-ms-input-placeholder {
+          color: v.$secondary-text-light;
+
+          @include m.darkMode {
+            color: v.$secondary-text-dark;
+          }
+        }
+
+        &:-moz-placeholder {
+          color: v.$secondary-text-light;
+
+          @include m.darkMode {
+            color: v.$secondary-text-dark;
+          }
+        }
+
+        &::-webkit-search-cancel-button {
+          appearance: none;
+          display: none;
+          opacity: 0;
+          pointer-events: none;
+        }
+      }
+    }
+
+    &-list {
+      position: relative;
+
+      &.no-data {
+        border: 0 !important;
+        padding: 6px 0 0;
+
+        div {
+          align-items: center;
+          display: flex;
+          flex-direction: row;
+          gap: 0 4px;
+          justify-content: center;
+
+          svg {
+            height: 16px;
+            stroke: v.$object-light;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-width: 1.5;
+            width: auto;
+
+            @include m.darkMode {
+              stroke: v.$object-dark;
+            }
+          }
+
+          span {
+            color: v.$secondary-text-light;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1;
+            text-align: center;
+
+            @include m.darkMode {
+              color: v.$secondary-text-dark;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.services-list {
+  &-item {
+    margin: 4px 0 0;
+    padding-bottom: 4px;
+    position: relative;
+
+    &:hover,
+    &.hover {
+      .services-list-item-autofill {
+        > span {
+          &:nth-of-type(2) {
+            max-width: 195px;
+          }
+        }
+      }
+
+      .services-list-item-additional-buttons {
+        a,
+        button {
+          opacity: 1;
+        }
+      }
+    }
+
+    &::after {
+      background-color: v.$divider-light;
+      content: '';
+      height: 1px;
+      left: 12px;
+      position: absolute;
+      right: 12px;
+      top: 100%;
+
+      @include m.darkMode {
+        background-color: v.$divider-dark;
+      }
+    }
+
+    &:nth-last-child(2) {
+      &::after {
+        display: none;
+      }
+    }
+
+    &.loading {
+      pointer-events: none;
+    }
+
+    &.small {
+      margin: 0 auto;
+      padding-bottom: 0;
+      width: 267px;
+
+      &::after {
+        display: none;
+      }
+
+      &:hover,
+      &.hover {
+        .services-list-item-autofill {
+          background-color: rgba(v.$hover-color-light, 0);
+
+          @include m.darkMode {
+            background-color: rgba(v.$hover-color-dark, 0);
+          }
+        }
+      }
+
+      .services-list-item-autofill {
+        border: 1px solid v.$primary-box-stroke-light;
+
+        @include m.darkMode {
+          border-color: v.$primary-box-stroke-dark;
+        }
+      }
+
+      .services-list-item-additional-buttons {
+        a,
+        button {
+          opacity: 1;
+        }
+      }
+    }
+
+    &-autofill {
+      align-items: center;
+      background-color: rgba(v.$hover-color-light, 0);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      margin: 0;
+      padding: 12px 12px;
+      transition: background-color .3s ease-in-out;
+      width: 100%;
+
+      @include m.darkMode {
+        background-color: rgba(v.$hover-color-dark, 0);
+      }
+
+      &:hover,
+      &.hover {
+        background-color: rgba(v.$hover-color-light, 1);
+
+        @include m.darkMode {
+          background-color: rgba(v.$hover-color-dark, 1);
+        }
+
+        + .services-list-item-additional-buttons {
+          svg {
+            &.service-url,
+            &.service-username,
+            &.service-more,
+            &.service-fetch {
+              stroke: v.$primary-color-light;
+  
+              @include m.darkMode {
+                stroke: v.$primary-color-dark;
+              }
+            }
+  
+            &.service-password {
+              fill: v.$primary-color-light;
+  
+              @include m.darkMode {
+                fill: v.$primary-color-dark;
+              }
+            }
+          }
+        }
+      }
+
+      > span {
+        &:first-of-type { // Icon
+          align-items: center;
+          background-color: v.$primary-box-bg-light;
+          border-radius: 4px;
+          color: v.$tertiary-text-light;
+          display: inline-flex;
+          flex-shrink: 0;
+          height: 32px;
+          justify-content: center;
+          margin-right: 8px;
+          overflow: hidden;
+          width: 32px;
+
+          @include m.darkMode {
+            background-color: v.$primary-box-bg-dark;
+            color: v.$tertiary-text-dark;
+          }
+
+          &.icon-label {
+            background-color: v.$primary-color-light;
+            border: 1px solid v.$object-stroke-light;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1.2;
+            text-align: center;
+
+            @include m.darkMode {
+              background-color: v.$primary-color-dark;
+              border-color: v.$object-stroke-dark;
+            }
+          }
+
+          &.icon-image {
+            background-color: v.$primary-color-light;
+            border: 1px solid v.$object-stroke-light;
+
+            @include m.darkMode {
+              background-color: v.$primary-color-dark;
+              border-color: v.$object-stroke-dark;
+            }
+
+            img {
+              background-color: v.$primary-box-bg-light;
+              height: 30px;
+              object-fit: fill;
+              opacity: 0;
+              padding: 3px;
+              transition: opacity .3s ease-in-out;
+              width: 30px;
+
+              @include m.darkMode {
+                background-color: v.$primary-box-bg-dark;
+              }
+            }
+          }
+        }
+        
+        &:nth-of-type(2) { // Account data
+          align-items: flex-start;
+          display: flex;
+          flex-direction: column;
+          gap: 7px 0;
+          max-width: 255px;
+          overflow: hidden;
+          transition: max-width .3s ease-in-out;
+
+          > span {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &:first-of-type { // Credential Name
+              color: v.$primary-text-light;
+              font-size: 14px;
+              font-weight: 500;
+              line-height: .86;
+              padding-bottom: 2px;
+
+              @include m.darkMode {
+                color: v.$primary-text-dark;
+              }
+
+              &.skeleton {
+                width: 255px;
+              }
+            }
+
+            &:last-of-type { // Username
+              color: v.$secondary-text-light;
+              font-size: 12px;
+              font-weight: 400;
+              line-height: .83;
+              padding-bottom: 2px;
+
+              &.skeleton {
+                width: 195px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    &-additional-buttons {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      gap: 0 2px;
+      margin-left: auto;
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+
+      a,
+      button {
+        background-color: rgba(v.$hover-on-hover-light, 0);
+        align-items: center;
+        border-radius: 4px;
+        display: inline-flex;
+        height: 32px;
+        justify-content: center;
+        opacity: 0;
+        padding: 0;
+        transition: background-color .3s ease-in-out, opacity .3s ease-in-out;
+        width: 32px;
+
+        @include m.darkMode {
+          background-color: rgba(v.$hover-on-hover-dark, 0);
+        }
+
+        &:hover {
+          background-color: rgba(v.$hover-on-hover-light, 1);
+
+          @include m.darkMode {
+            background-color: rgba(v.$hover-on-hover-dark, 1);
+          }
+          
+          svg {
+            &.service-more,
+            &.service-username,
+            &.service-fetch {
+              stroke: v.$primary-color-light;
+              transition: stroke .3s ease-in-out;
+
+              @include m.darkMode {
+                stroke: v.$primary-color-dark;
+              }
+            }
+
+            &.service-password {
+              fill: v.$primary-color-light;
+              transition: fill .3s ease-in-out;
+
+              @include m.darkMode {
+                fill: v.$primary-color-dark;
+              }
+            }
+          }
+        }
+
+        &.service-more-btn {
+          opacity: 1 !important;
+
+          &.active {
+            background-color: v.$hover-on-hover-light;
+
+            @include m.darkMode {
+              background-color: v.$hover-on-hover-dark;
+            }
+
+            svg {
+              stroke: v.$primary-color-light;
+
+              @include m.darkMode {
+                stroke: v.$primary-color-dark;
+              }
+            }
+          }
+        }
+
+        &.service-password-loader {
+          border: 2px solid v.$hover-color-light;
+          border-radius: 50%;
+
+          @include m.darkMode {
+            border-color: v.$hover-color-dark;
+          }
+        }
+
+        svg {
+          height: auto;
+
+          &.service-loader {
+            color: v.$primary-color-light;
+            fill: none;
+            height: 36px;
+            position: absolute;
+            stroke: currentcolor;
+            stroke-dasharray: 264;
+            stroke-dashoffset: 264;
+            stroke-linecap: butt;
+            stroke-linejoin: miter;
+            stroke-width: 3.5;
+            transform: rotate(-90deg);
+            transition: stroke-dashoffset .3s ease-in-out;
+            vertical-align: top;
+            width: 36px;
+
+            @include m.darkMode {
+              color: v.$primary-color-dark;
+            }
+
+            .service-loader-bg {
+              stroke: v.$hover-on-hover-light;
+              stroke-width: 3.5;
+              stroke-dasharray: 0;
+              stroke-dashoffset: 0;
+
+              @include m.darkMode {
+                stroke: v.$hover-on-hover-dark;
+              }
+            }
+          }
+
+          &.service-more,
+          &.service-fetch,
+          &.service-username {
+            stroke: v.$object-light;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+
+            @include m.darkMode {
+              stroke: v.$object-dark;
+            }
+          }
+
+          &.service-more {
+            width: 16px;
+          }
+
+          &.service-username {
+            width: 20px;
+          }
+
+          &.service-password {
+            fill: v.$object-light;
+            width: 24px;
+
+            @include m.darkMode {
+              fill: v.$object-dark;
+            }
+          }
+
+          &.service-fetch {
+            width: 24px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.skeleton {
+  animation: skeleton 1s ease-in-out forwards infinite;
+  animation-direction: alternate;
+  background-color: v.$secondary-text-light;
+  border-radius: 4px;
+  display: inline-block;
+  width: 100%;
+
+  @include m.darkMode {
+    background-color: v.$secondary-text-dark;
+  }
+}
+
+@keyframes skeleton {
+  0% {
+    opacity: .4;
+  }
+
+  85%, 100% {
+    opacity: 1;
+  }
+}

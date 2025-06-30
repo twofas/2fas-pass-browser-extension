@@ -1,0 +1,178 @@
+{
+  "appDesc": {
+    "message": "2FAS Pass is a next-gen password manager with no compromises in security and full control over your data.",
+    "description": "Description of the 2FAS Pass Browser Extension highlighting its features"
+  },
+  "autofill": {
+    "message": "Autofill",
+    "description": "Label for the autofill functionality"
+  },
+  "autofillCommand": {
+    "message": "Autofill 2FAS Pass",
+    "description": "Label for the command used to trigger autofill"
+  },
+  "fetch": {
+    "message": "Fetch",
+    "description": "Label for the fetch functionality"
+  },
+  "continue": {
+    "message": "Continue",
+    "description": "Button label to proceed with an action"
+  },
+  "continue_without_pinning": {
+    "message": "Continue without pinning",
+    "description": "Button label to proceed without pinning the extension"
+  },
+  "open_in_new_window": {
+    "message": "Open in a new window",
+    "description": "Option to open a link or page in a new browser window"
+  },
+  "go_to_settings": {
+    "message": "Go to settings",
+    "description": "Button label to navigate to the settings page"
+  },
+  "fetch_from_mobile": {
+    "message": "Fetch from mobile",
+    "description": "Option to fetch data from the mobile app"
+  },
+  "go_to_home_page": {
+    "message": "Go to Home Page",
+    "description": "Button label to navigate to the home page"
+  },
+  "cancel": {
+    "message": "Cancel",
+    "description": "Button label to cancel an action"
+  },
+  "edit": {
+    "message": "Edit",
+    "description": "Button label to edit an item"
+  },
+  "info": {
+    "message": "Info",
+    "description": "Label for displaying information"
+  },
+  "domain_uri": {
+    "message": "Domain (URI)",
+    "description": "Label for the domain or URI field"
+  },
+  "domain_uri_index": {
+    "message": "Domain (URI %INDEX%)",
+    "description": "Label for a specific domain or URI with an index"
+  },
+  "name": {
+    "message": "Name",
+    "description": "Label for the name field"
+  },
+  "username": {
+    "message": "Username / Email",
+    "description": "Label for the username or email field"
+  },
+  "password": {
+    "message": "Password",
+    "description": "Label for the password field"
+  },
+  "enter_on_mobile": {
+    "message": "I will enter it in my mobile app",
+    "description": "Option to enter data manually in the mobile app"
+  },
+  "autogenerate_on_mobile": {
+    "message": "Autogenerate password in my mobile app",
+    "description": "Option to autogenerate a password in the mobile app"
+  },
+  "set_login_and_password_in_the_mobile_app": {
+    "message": "Set a username and password in the mobile app",
+    "description": "Instruction to set login and password in the mobile app"
+  },
+  "reload": {
+    "message": "Reload",
+    "description": "Button label to reload the page or data"
+  },
+  "update": {
+    "message": "Update",
+    "description": "Button label to update an item or data"
+  },
+  "danger_zone": {
+    "message": "Danger Zone",
+    "description": "Label for a section with potentially risky actions"
+  },
+  "try_again": {
+    "message": "Try again",
+    "description": "Button label to retry an action"
+  },
+  "version": {
+    "message": "Version",
+    "description": "Label for displaying the version of the extension"
+  },
+  "back": {
+    "message": "Back",
+    "description": "Button label to navigate to the previous page or step"
+  },
+  "advanced": {
+    "message": "Advanced",
+    "description": "Label for advanced settings or options"
+  },
+  "light_mode": {
+    "message": "Light mode",
+    "description": "Option to enable light mode for the interface"
+  },
+  "dark_mode": {
+    "message": "Dark mode",
+    "description": "Option to enable dark mode for the interface"
+  },
+  "save": {
+    "message": "Save",
+    "description": "Button label to save changes"
+  },
+  "or": {
+    "message": "or",
+    "description": "Text used to indicate an alternative option"
+  },
+  "unknown": {
+    "message": "Unknown",
+    "description": "Label for an unknown value or state"
+  },
+  "browser_internal_page": {
+    "message": "Browser Internal Page",
+    "description": "Label for a browser's internal page"
+  },
+  "close": {
+    "message": "Close",
+    "description": "Button label to close a window or dialog"
+  },
+  "notes": {
+    "message": "Notes",
+    "description": "Label for a section or field to add notes"
+  },
+  "learn_more": {
+    "message": "Learn more",
+    "description": "Button label to access additional information"
+  },
+  "tier_0_name": {
+    "message": "Top Secret",
+    "description": "Label for the highest security tier"
+  },
+  "tier_0_description": {
+    "message": "Do not share this password with the 2FAS Pass Browser Extension and type it manually.",
+    "description": "Description for the top-secret security tier"
+  },
+  "tier_1_name": {
+    "message": "Highly Secret",
+    "description": "Label for the second-highest security tier"
+  },
+  "tier_1_description": {
+    "message": "Share the password with the 2FAS Pass Browser Extension once after confirmation in the 2FAS Pass mobile app.",
+    "description": "Explains the ultra-secure tier where passwords are shared after mobile app confirmation"
+  },
+  "tier_2_name": {
+    "message": "Secret",
+    "description": "Label for the standard security tier"
+  },
+  "tier_2_description": {
+    "message": "Access this password directly from the 2FAS Pass Browser Extension.",
+    "description": "Explains the secure tier where passwords are accessed directly from the extension"
+  },
+  "no_item_name": {
+    "message": "No Item name",
+    "description": "Label for a state where no item name is available"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "add_new_validate_require": {
+    "message": "Please enter the Domain (URI)",
+    "description": "Validation message displayed when the Domain (URI) field is empty"
+  },
+  "add_new_validate_min_length": {
+    "message": "Please enter the Domain (URI) with at least 3 characters.",
+    "description": "Validation message displayed when the Domain (URI) field has fewer than 3 characters"
+  },
+  "add_new_validate_invalid_domain": {
+    "message": "Please enter a valid Domain (URI)",
+    "description": "Validation message displayed when the Domain (URI) entered is invalid"
+  },
+  "add_new_header": {
+    "message": "Adding a new service to \n2FAS Pass",
+    "description": "Header for the section to add a new service"
+  },
+  "add_new_subheader": {
+    "message": "Start the process here and continue in the mobile app.",
+    "description": "Subheader explaining that the process starts in the browser and continues in the mobile app"
+  },
+  "add_new_learn_more_tooltip_header": {
+    "message": "Security is our priority",
+    "description": "Header for the tooltip explaining security measures"
+  },
+  "add_new_learn_more_tooltip_content_1": {
+    "message": "By default, we do not ask you to enter your username and create a password using the Browser Extension. Instead, we encourage you to choose a username and generate a password directly in the mobile application.",
+    "description": "Explains the default security approach of creating login and password in the mobile app"
+  },
+  "add_new_learn_more_tooltip_content_2": {
+    "message": "You can enter your username and/or password in the form above and save it to your Vault in the mobile app.",
+    "description": "Explains the option to enter login and password in the browser extension and save it to the mobile app"
+  }
+}

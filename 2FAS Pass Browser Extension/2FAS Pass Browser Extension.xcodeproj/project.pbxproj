@@ -1,0 +1,649 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		37C446D82DCCE0FB0078764D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C446D72DCCE0FB0078764D /* AppDelegate.swift */; };
+		37C446DC2DCCE0FB0078764D /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 37C446DA2DCCE0FB0078764D /* Main.html */; };
+		37C446DE2DCCE0FB0078764D /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 37C446DD2DCCE0FB0078764D /* Icon.png */; };
+		37C446E02DCCE0FB0078764D /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 37C446DF2DCCE0FB0078764D /* Style.css */; };
+		37C446E22DCCE0FB0078764D /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 37C446E12DCCE0FB0078764D /* Script.js */; };
+		37C446E92DCCE0FE0078764D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37C446E82DCCE0FE0078764D /* Assets.xcassets */; };
+		37C447082DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 37C447072DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		37C4470D2DCCE0FF0078764D /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C4470C2DCCE0FF0078764D /* SafariWebExtensionHandler.swift */; };
+		37C4472B2DCCE0FF0078764D /* install.html in Resources */ = {isa = PBXBuildFile; fileRef = 37C447202DCCE0FF0078764D /* install.html */; };
+		37C4472C2DCCE0FF0078764D /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 37C447212DCCE0FF0078764D /* background.js */; };
+		37C4472D2DCCE0FF0078764D /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 37C447222DCCE0FF0078764D /* popup.html */; };
+		37C4472E2DCCE0FF0078764D /* chunks in Resources */ = {isa = PBXBuildFile; fileRef = 37C447232DCCE0FF0078764D /* chunks */; };
+		37C4472F2DCCE0FF0078764D /* content-scripts in Resources */ = {isa = PBXBuildFile; fileRef = 37C447242DCCE0FF0078764D /* content-scripts */; };
+		37C447302DCCE0FF0078764D /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 37C447252DCCE0FF0078764D /* icons */; };
+		37C447312DCCE0FF0078764D /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 37C447262DCCE0FF0078764D /* manifest.json */; };
+		37C447322DCCE0FF0078764D /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = 37C447272DCCE0FF0078764D /* _locales */; };
+		37C447332DCCE0FF0078764D /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 37C447282DCCE0FF0078764D /* fonts */; };
+		37C447342DCCE0FF0078764D /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 37C447292DCCE0FF0078764D /* assets */; };
+		37C447352DCCE0FF0078764D /* animations in Resources */ = {isa = PBXBuildFile; fileRef = 37C4472A2DCCE0FF0078764D /* animations */; };
+		C22FFCD02DDFB01000E84435 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C22FFCCD2DDFB01000E84435 /* Montserrat-Bold.ttf */; };
+		C22FFCD12DDFB01000E84435 /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C22FFCCE2DDFB01000E84435 /* Montserrat-Regular.ttf */; };
+		C22FFCD62DDFB03600E84435 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C22FFCD42DDFB03600E84435 /* Localizable.xcstrings */; };
+		C22FFCD72DDFB03600E84435 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22FFCD32DDFB03600E84435 /* ContentView.swift */; };
+		C22FFCD82DDFB03600E84435 /* Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22FFCD52DDFB03600E84435 /* Presenter.swift */; };
+		C22FFCD92DDFB03600E84435 /* BrowserExtensionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22FFCD22DDFB03600E84435 /* BrowserExtensionApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		37C447092DCCE0FF0078764D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37C446CC2DCCE0FB0078764D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 37C447062DCCE0FF0078764D;
+			remoteInfo = "2FAS Pass Browser Extension Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		37C447152DCCE0FF0078764D /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				37C447082DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		37C446D42DCCE0FB0078764D /* 2FAS Pass Browser Extension.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "2FAS Pass Browser Extension.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		37C446D72DCCE0FB0078764D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		37C446DB2DCCE0FB0078764D /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		37C446DD2DCCE0FB0078764D /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		37C446DF2DCCE0FB0078764D /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		37C446E12DCCE0FB0078764D /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		37C446E82DCCE0FE0078764D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		37C446EA2DCCE0FE0078764D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		37C446EC2DCCE0FE0078764D /* 2FAS Pass Browser Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "2FAS Pass Browser Extension.entitlements"; sourceTree = "<group>"; };
+		37C447072DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "2FAS Pass Browser Extension Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		37C4470C2DCCE0FF0078764D /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		37C4470E2DCCE0FF0078764D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		37C4470F2DCCE0FF0078764D /* _FAS_Pass_Browser_Extension_Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = _FAS_Pass_Browser_Extension_Extension.entitlements; sourceTree = "<group>"; };
+		37C447202DCCE0FF0078764D /* install.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = install.html; path = "../../.output/safari-mv3/install.html"; sourceTree = "<group>"; };
+		37C447212DCCE0FF0078764D /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = "../../.output/safari-mv3/background.js"; sourceTree = "<group>"; };
+		37C447222DCCE0FF0078764D /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = "../../.output/safari-mv3/popup.html"; sourceTree = "<group>"; };
+		37C447232DCCE0FF0078764D /* chunks */ = {isa = PBXFileReference; lastKnownFileType = folder; name = chunks; path = "../../.output/safari-mv3/chunks"; sourceTree = "<group>"; };
+		37C447242DCCE0FF0078764D /* content-scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "content-scripts"; path = "../../.output/safari-mv3/content-scripts"; sourceTree = "<group>"; };
+		37C447252DCCE0FF0078764D /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = "../../.output/safari-mv3/icons"; sourceTree = "<group>"; };
+		37C447262DCCE0FF0078764D /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = "../../.output/safari-mv3/manifest.json"; sourceTree = "<group>"; };
+		37C447272DCCE0FF0078764D /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; name = _locales; path = "../../.output/safari-mv3/_locales"; sourceTree = "<group>"; };
+		37C447282DCCE0FF0078764D /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = "../../.output/safari-mv3/fonts"; sourceTree = "<group>"; };
+		37C447292DCCE0FF0078764D /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = "../../.output/safari-mv3/assets"; sourceTree = "<group>"; };
+		37C4472A2DCCE0FF0078764D /* animations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = animations; path = "../../.output/safari-mv3/animations"; sourceTree = "<group>"; };
+		C22FFCCD2DDFB01000E84435 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Bold.ttf"; sourceTree = "<group>"; };
+		C22FFCCE2DDFB01000E84435 /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Regular.ttf"; sourceTree = "<group>"; };
+		C22FFCD22DDFB03600E84435 /* BrowserExtensionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserExtensionApp.swift; sourceTree = "<group>"; };
+		C22FFCD32DDFB03600E84435 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C22FFCD42DDFB03600E84435 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		C22FFCD52DDFB03600E84435 /* Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presenter.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		37C446D12DCCE0FB0078764D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		37C447042DCCE0FF0078764D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		37C446CB2DCCE0FB0078764D = {
+			isa = PBXGroup;
+			children = (
+				37C446D62DCCE0FB0078764D /* 2FAS Pass Browser Extension */,
+				37C4470B2DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension */,
+				37C446D52DCCE0FB0078764D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		37C446D52DCCE0FB0078764D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				37C446D42DCCE0FB0078764D /* 2FAS Pass Browser Extension.app */,
+				37C447072DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		37C446D62DCCE0FB0078764D /* 2FAS Pass Browser Extension */ = {
+			isa = PBXGroup;
+			children = (
+				C22FFCD22DDFB03600E84435 /* BrowserExtensionApp.swift */,
+				C22FFCD32DDFB03600E84435 /* ContentView.swift */,
+				C22FFCD52DDFB03600E84435 /* Presenter.swift */,
+				37C446D72DCCE0FB0078764D /* AppDelegate.swift */,
+				C22FFCD42DDFB03600E84435 /* Localizable.xcstrings */,
+				C22FFCCF2DDFB01000E84435 /* Fonts */,
+				37C446E82DCCE0FE0078764D /* Assets.xcassets */,
+				37C446EA2DCCE0FE0078764D /* Info.plist */,
+				37C446EC2DCCE0FE0078764D /* 2FAS Pass Browser Extension.entitlements */,
+				37C446D92DCCE0FB0078764D /* Resources */,
+			);
+			path = "2FAS Pass Browser Extension";
+			sourceTree = "<group>";
+		};
+		37C446D92DCCE0FB0078764D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				37C446DA2DCCE0FB0078764D /* Main.html */,
+				37C446DD2DCCE0FB0078764D /* Icon.png */,
+				37C446DF2DCCE0FB0078764D /* Style.css */,
+				37C446E12DCCE0FB0078764D /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		37C4470B2DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension */ = {
+			isa = PBXGroup;
+			children = (
+				37C4471F2DCCE0FF0078764D /* Resources */,
+				37C4470C2DCCE0FF0078764D /* SafariWebExtensionHandler.swift */,
+				37C4470E2DCCE0FF0078764D /* Info.plist */,
+				37C4470F2DCCE0FF0078764D /* _FAS_Pass_Browser_Extension_Extension.entitlements */,
+			);
+			path = "2FAS Pass Browser Extension Extension";
+			sourceTree = "<group>";
+		};
+		37C4471F2DCCE0FF0078764D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				37C447202DCCE0FF0078764D /* install.html */,
+				37C447212DCCE0FF0078764D /* background.js */,
+				37C447222DCCE0FF0078764D /* popup.html */,
+				37C447232DCCE0FF0078764D /* chunks */,
+				37C447242DCCE0FF0078764D /* content-scripts */,
+				37C447252DCCE0FF0078764D /* icons */,
+				37C447262DCCE0FF0078764D /* manifest.json */,
+				37C447272DCCE0FF0078764D /* _locales */,
+				37C447282DCCE0FF0078764D /* fonts */,
+				37C447292DCCE0FF0078764D /* assets */,
+				37C4472A2DCCE0FF0078764D /* animations */,
+			);
+			name = Resources;
+			path = "2FAS Pass Browser Extension Extension";
+			sourceTree = SOURCE_ROOT;
+		};
+		C22FFCCF2DDFB01000E84435 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				C22FFCCD2DDFB01000E84435 /* Montserrat-Bold.ttf */,
+				C22FFCCE2DDFB01000E84435 /* Montserrat-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		37C446D32DCCE0FB0078764D /* 2FAS Pass Browser Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 37C447162DCCE0FF0078764D /* Build configuration list for PBXNativeTarget "2FAS Pass Browser Extension" */;
+			buildPhases = (
+				37C446D02DCCE0FB0078764D /* Sources */,
+				37C446D12DCCE0FB0078764D /* Frameworks */,
+				37C446D22DCCE0FB0078764D /* Resources */,
+				37C447152DCCE0FF0078764D /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				37C4470A2DCCE0FF0078764D /* PBXTargetDependency */,
+			);
+			name = "2FAS Pass Browser Extension";
+			packageProductDependencies = (
+			);
+			productName = "2FAS Pass Browser Extension";
+			productReference = 37C446D42DCCE0FB0078764D /* 2FAS Pass Browser Extension.app */;
+			productType = "com.apple.product-type.application";
+		};
+		37C447062DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 37C447122DCCE0FF0078764D /* Build configuration list for PBXNativeTarget "2FAS Pass Browser Extension Extension" */;
+			buildPhases = (
+				37C447032DCCE0FF0078764D /* Sources */,
+				37C447042DCCE0FF0078764D /* Frameworks */,
+				37C447052DCCE0FF0078764D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "2FAS Pass Browser Extension Extension";
+			packageProductDependencies = (
+			);
+			productName = "2FAS Pass Browser Extension Extension";
+			productReference = 37C447072DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		37C446CC2DCCE0FB0078764D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					37C446D32DCCE0FB0078764D = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					37C447062DCCE0FF0078764D = {
+						CreatedOnToolsVersion = 16.3;
+					};
+				};
+			};
+			buildConfigurationList = 37C446CF2DCCE0FB0078764D /* Build configuration list for PBXProject "2FAS Pass Browser Extension" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 37C446CB2DCCE0FB0078764D;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 37C446D52DCCE0FB0078764D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				37C446D32DCCE0FB0078764D /* 2FAS Pass Browser Extension */,
+				37C447062DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		37C446D22DCCE0FB0078764D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37C446DE2DCCE0FB0078764D /* Icon.png in Resources */,
+				37C446E22DCCE0FB0078764D /* Script.js in Resources */,
+				C22FFCD62DDFB03600E84435 /* Localizable.xcstrings in Resources */,
+				C22FFCD02DDFB01000E84435 /* Montserrat-Bold.ttf in Resources */,
+				C22FFCD12DDFB01000E84435 /* Montserrat-Regular.ttf in Resources */,
+				37C446DC2DCCE0FB0078764D /* Main.html in Resources */,
+				37C446E92DCCE0FE0078764D /* Assets.xcassets in Resources */,
+				37C446E02DCCE0FB0078764D /* Style.css in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		37C447052DCCE0FF0078764D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37C447352DCCE0FF0078764D /* animations in Resources */,
+				37C4472C2DCCE0FF0078764D /* background.js in Resources */,
+				37C447312DCCE0FF0078764D /* manifest.json in Resources */,
+				37C447322DCCE0FF0078764D /* _locales in Resources */,
+				37C4472D2DCCE0FF0078764D /* popup.html in Resources */,
+				37C4472E2DCCE0FF0078764D /* chunks in Resources */,
+				37C447342DCCE0FF0078764D /* assets in Resources */,
+				37C447302DCCE0FF0078764D /* icons in Resources */,
+				37C447332DCCE0FF0078764D /* fonts in Resources */,
+				37C4472B2DCCE0FF0078764D /* install.html in Resources */,
+				37C4472F2DCCE0FF0078764D /* content-scripts in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		37C446D02DCCE0FB0078764D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C22FFCD72DDFB03600E84435 /* ContentView.swift in Sources */,
+				C22FFCD82DDFB03600E84435 /* Presenter.swift in Sources */,
+				C22FFCD92DDFB03600E84435 /* BrowserExtensionApp.swift in Sources */,
+				37C446D82DCCE0FB0078764D /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		37C447032DCCE0FF0078764D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37C4470D2DCCE0FF0078764D /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		37C4470A2DCCE0FF0078764D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 37C447062DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension */;
+			targetProxy = 37C447092DCCE0FF0078764D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		37C446DA2DCCE0FB0078764D /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				37C446DB2DCCE0FB0078764D /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		37C447102DCCE0FF0078764D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = YES;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		37C447112DCCE0FF0078764D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = YES;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		37C447132DCCE0FF0078764D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "2FAS Pass Browser Extension Extension/_FAS_Pass_Browser_Extension_Extension.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 12;
+				DEVELOPMENT_TEAM = ZY8UR5ADFW;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "2FAS Pass Browser Extension Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "2FAS Pass Browser Extension Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MARKETING_VERSION = 1.0.2;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.twofas.org.passbrowser.extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		37C447142DCCE0FF0078764D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "2FAS Pass Browser Extension Extension/_FAS_Pass_Browser_Extension_Extension.entitlements";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 12;
+				DEVELOPMENT_TEAM = ZY8UR5ADFW;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "2FAS Pass Browser Extension Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "2FAS Pass Browser Extension Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MARKETING_VERSION = 1.0.2;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.twofas.org.passbrowser.extension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		37C447172DCCE0FF0078764D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "2FAS Pass Browser Extension/2FAS Pass Browser Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 12;
+				DEVELOPMENT_TEAM = ZY8UR5ADFW;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "2FAS Pass Browser Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "2FAS Pass Browser Extension";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "2FAS 2025";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MARKETING_VERSION = 1.0.2;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.twofas.org.passbrowser;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		37C447182DCCE0FF0078764D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "2FAS Pass Browser Extension/2FAS Pass Browser Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 12;
+				DEVELOPMENT_TEAM = ZY8UR5ADFW;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "2FAS Pass Browser Extension/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "2FAS Pass Browser Extension";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "2FAS 2025";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MARKETING_VERSION = 1.0.2;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.twofas.org.passbrowser;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		37C446CF2DCCE0FB0078764D /* Build configuration list for PBXProject "2FAS Pass Browser Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37C447102DCCE0FF0078764D /* Debug */,
+				37C447112DCCE0FF0078764D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		37C447122DCCE0FF0078764D /* Build configuration list for PBXNativeTarget "2FAS Pass Browser Extension Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37C447132DCCE0FF0078764D /* Debug */,
+				37C447142DCCE0FF0078764D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		37C447162DCCE0FF0078764D /* Build configuration list for PBXNativeTarget "2FAS Pass Browser Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37C447172DCCE0FF0078764D /* Debug */,
+				37C447182DCCE0FF0078764D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 37C446CC2DCCE0FB0078764D /* Project object */;
+}

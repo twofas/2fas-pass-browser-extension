@@ -1,0 +1,970 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use '@/partials/global-styles/variables' as v;
+@use '@/partials/global-styles/mixins' as m;
+
+*::-webkit-scrollbar {
+  background-color: v.$primary-bg-light;
+  width: 8px;
+}
+ 
+*::-webkit-scrollbar-track {
+  box-shadow: none;
+}
+ 
+*::-webkit-scrollbar-thumb {
+  background-color: v.$hover-on-hover-light;
+  border-radius: 4px;
+}
+
+:global(body.theme-dark) {
+  &::-webkit-scrollbar,
+  *::-webkit-scrollbar {
+    background-color: v.$primary-bg-dark;
+  }
+   
+  &::-webkit-scrollbar-thumb,
+  *::-webkit-scrollbar-thumb {
+    background-color: v.$hover-on-hover-dark;
+  }
+}
+
+.install {
+  box-sizing: border-box;
+  color: v.$primary-text-light;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Montserrat', sans-serif;
+  height: 100%;
+  min-height: 100vh;
+  opacity: 0;
+  position: relative;
+  transition: opacity .2s ease-in-out;
+  width: 100%;
+
+  @include m.darkMode {
+    color: v.$primary-text-dark;
+  }
+
+  :global(body.theme-dark) &,
+  :global(body.theme-light) & {
+    opacity: 1;
+  }
+  
+  * {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  &-container {
+    align-items: center;
+    background-color: v.$primary-bg-light;
+    background-image: url("@/assets/install-page/install-page-bg.svg?url");
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    flex: 1;
+    padding: 43px 0;
+    position: relative;
+    z-index: 2;
+
+    @include m.darkMode {
+      background-color: v.$primary-bg-dark;
+      background-image: url("@/assets/install-page/install-page-bg-dark.svg?url");
+    }
+
+    &-content {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      gap: 0 24px;
+      height: 100%;
+      justify-content: space-between;
+      width: 100%;
+
+      @media all and (max-width: 1000px) {
+        flex-direction: column-reverse;
+        gap: 40px 0;
+        justify-content: flex-end;
+      }
+
+      &-left,
+      &-right {
+        @media all and (max-width: 1000px) {
+          width: 100%;
+        }
+      }
+
+      &-left {
+        &-box {
+          &-apps {
+            display: none;
+            flex-direction: row;
+            gap: 0 14px;
+            margin-top: 16px;
+
+            @media all and (max-width: 800px) {
+              &.visible {
+                display: flex;
+              }
+            }
+
+            @media all and (max-width: 400px) {
+              align-items: center;
+              flex-direction: column;
+              gap: 14px 0;
+            }
+          }
+        }
+
+        &-logs {
+          background-color: v.$primary-box-bg-light;
+          border-radius: 12px;
+          margin-top: 79px;
+          padding: 24px 23px 32px;
+
+          @include m.darkMode {
+            background-color: v.$primary-box-bg-dark;
+          }
+
+          @media all and (max-width: 1670px) {
+            margin-top: 64px;
+          }
+
+          @media all and (max-width: 1500px) {
+            margin-top: 56px;
+          }
+
+          @media all and (max-width: 800px) {
+            padding: 24px;
+          }
+
+          @media all and (max-width: 460px) {
+            margin-top: 32px;
+            padding: 18px;
+          }
+
+          &-form {
+            margin-top: 32px;
+
+            @media all and (max-width: 1200px) {
+              margin-top: 16px;
+            }
+
+            @media all and (max-width: 1000px) {
+              margin-top: 8px;
+            }
+
+            label {
+              gap: 0 13px !important;
+
+              @media all and (max-width: 640px) {
+                gap: 0 10px !important;
+              }
+            }
+
+            input[type="checkbox"] {
+              &:checked {
+                + label {
+                  .install-container-content-left-logs-form {
+                    &-toggle {
+                      background-color: v.$primary-color-light !important;
+
+                      @include m.darkMode {
+                        background-color: v.$primary-color-dark !important;
+                      }
+
+                      &-circle {
+                        transform: translateX(17px) !important;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            &-toggle {
+              background-color: v.$secondary-text-light !important;
+              border-radius: 12px !important;
+              height: 24px !important;
+              width: 41px !important;
+
+              @include m.darkMode {
+                background-color: v.$secondary-text-dark !important;
+              }
+
+              &-circle {
+                height: 18px !important;
+                left: 3px !important;
+                top: 3px !important;
+                width: 18px !important;
+              }
+            }
+
+            &-text {
+              span {
+                color: v.$primary-text-light !important;
+                font-size: 16px !important;
+                font-weight: 600 !important;
+                line-height: 1.75 !important;
+
+                @include m.darkMode {
+                  color: v.$primary-text-dark !important;
+                }
+
+                @media all and (max-width: 640px) {
+                  font-size: 12px !important;
+                  line-height: 1.4 !important;
+                }
+              }
+            }
+          }
+
+          h4 {
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+            gap: 0 10px;
+            margin-bottom: 16px;
+
+            @media all and (max-width: 1000px) {
+              margin-bottom: 8px;
+            }
+
+            @media all and (max-width: 460px) {
+              gap: 0 6px;
+            }
+
+            svg {
+              fill: v.$primary-text-light;
+              height: 32px;
+              width: 32px;
+
+              @include m.darkMode {
+                fill: v.$primary-text-dark;
+              }
+
+              @media all and (max-width: 460px) {
+                height: 24px;
+                width: 24px;
+              }
+            }
+
+            span {
+              color: v.$primary-text-light;
+              font-size: 24px;
+              font-weight: 600;
+              line-height: 1;
+
+              @include m.darkMode {
+                color: v.$primary-text-dark;
+              }
+
+              @media all and (max-width: 1000px) {
+                font-size: 22px;
+              }
+
+              @media all and (max-width: 800px) {
+                font-size: 20px;
+              }
+    
+              @media all and (max-width: 460px) {
+                font-size: 18px;
+              }
+    
+              @media all and (max-width: 380px) {
+                font-size: 16px;
+              }
+            }
+          }
+
+          p {
+            color: v.$secondary-text-light;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.5;
+            max-width: 563px;
+
+            @include m.darkMode {
+              color: v.$secondary-text-dark;
+            }
+
+            @media all and (max-width: 1000px) {
+              max-width: 90%;
+            }
+
+            @media all and (max-width: 800px) {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+
+      &-right {
+        align-items: center;
+        flex-shrink: 0;
+        display: flex;
+
+        @media all and (max-width: 1500px) {
+          max-width: 40%;
+        }
+
+        @media all and (max-width: 1000px) {
+          justify-content: center;
+          max-width: 100%;
+        }
+
+        &-box {
+          background-color: v.$primary-box-bg-light;
+          border-radius: 12px;
+          padding: 77px 44px;
+          overflow: hidden;
+          width: 100%;
+
+          &.external {
+            background-color: transparent;
+            padding: 0;
+          }
+
+          @include m.darkMode {
+            background-color: v.$primary-box-bg-dark;
+          }
+
+          @media all and (max-width: 1500px) {
+            padding: 64px 36px;
+          }
+
+          @media all and (max-width: 1000px) {
+            margin: 0 auto;
+            max-width: 100%;
+            width: 607px;
+          }
+
+          @media all and (max-width: 480px) {
+            padding: 48px 24px;
+          }
+
+          &.visible {
+            opacity: 1;
+          }
+
+          &.hidden {
+            display: none;
+          }
+
+          &-external-video {
+            display: block;
+            position: relative;
+
+            &:hover {
+              svg {
+                scale: 1.1;
+              }
+            }
+
+            img {
+              height: auto;
+              max-width: 100%;
+              width: 625px;
+            }
+
+            svg {
+              fill: v.$primary-color-light;
+              height: 120px;
+              left: 50%;
+              position: absolute;
+              scale: 1;
+              top: 50%;
+              transform: translate(-50%, -50%);
+              transform-origin: top left;
+              transition: scale .3s ease-in-out;
+              width: 120px;
+
+              @include m.darkMode {
+                fill: v.$primary-color-dark;
+              }
+
+              @media all and (max-width: 1200px) {
+                height: 100px;
+                width: 100px;
+              }
+            }
+          }
+
+          video {
+            height: auto;
+            max-width: 100%;
+            width: 535px;
+          }
+        }
+      }
+
+      h1 {
+        color: v.$primary-text-light;
+        font-size: 72px;
+        font-weight: 800;
+        line-height: 1.1111;
+        white-space: pre-wrap;
+
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
+
+        @media all and (max-width: 1500px) {
+          font-size: 60px;
+        }
+
+        @media all and (max-width: 1200px) {
+          font-size: 48px;
+        }
+
+        @media all and (max-width: 800px) {
+          font-size: 40px;
+        }
+
+        @media all and (max-width: 460px) {
+          font-size: 32px;
+        }
+
+        @media all and (max-width: 380px) {
+          font-size: 28px;
+        }
+      }
+
+      h2 {
+        align-items: center;
+        display: flex;
+        gap: 0 12px;
+        margin-bottom: 24px;
+
+        @media all and (max-width: 1500px) {
+          margin-bottom: 20px;
+        }
+
+        @media all and (max-width: 800px) {
+          margin-bottom: 16px;
+        }
+
+        svg {
+          height: 32px;
+          stroke: v.$primary-color-light;
+          stroke-linecap: square;
+          stroke-linejoin: round;
+          stroke-width: 3;
+          width: 32px;
+
+          @include m.darkMode {
+            stroke: v.$primary-color-dark;
+          }
+
+          @media all and (max-width: 1500px) {
+            height: 28px;
+            width: 28px;
+          }
+
+          @media all and (max-width: 800px) {
+            height: 24px;
+            width: 24px;
+          }
+
+          @media all and (max-width: 460px) {
+            height: 20px;
+            width: 20px;
+          }
+
+          @media all and (max-width: 380px) {
+            height: 18px;
+            width: 18px;
+          }
+        }
+
+        span {
+          color: v.$primary-color-light;
+          font-size: 28px;
+          font-weight: 600;
+          line-height: 1.4;
+
+          @include m.darkMode {
+            color: v.$primary-color-dark;
+          }
+
+          @media all and (max-width: 1500px) {
+            font-size: 24px;
+          }
+
+          @media all and (max-width: 800px) {
+            font-size: 20px;
+          }
+
+          @media all and (max-width: 460px) {
+            font-size: 18px;
+          }
+
+          @media all and (max-width: 380px) {
+            font-size: 16px;
+          }
+        }
+      }
+
+      h3 {
+        margin-top: 64px;
+        position: relative;
+
+        @media all and (max-width: 1670px) {
+          margin-top: 48px;
+        }
+
+        @media all and (max-width: 1500px) {
+          margin-top: 42px;
+        }
+
+        @media all and (max-width: 1000px) {
+          margin-top: 16px;
+        }
+
+        span {
+          color: v.$primary-text-light;
+          font-size: 28px;
+          font-style: normal;
+          font-weight: 600;
+          line-height: 1.2857;
+
+          @include m.darkMode {
+            color: v.$primary-text-dark;
+          }
+
+          @media all and (max-width: 1500px) {
+            font-size: 24px;
+          }
+
+          @media all and (max-width: 1200px) {
+            font-size: 22px;
+          }
+        }
+
+        svg {
+          bottom: 50%;
+          left: 102.5%;
+          position: absolute;
+          transform: rotate(15deg);
+          z-index: 2;
+
+          @media all and (max-width: 1670px) {
+            display: none !important;
+          }
+        }
+      }
+    }
+  }
+
+  &-footer,
+  &-header {
+    background: v.$primary-box-bg-light;
+    flex-shrink: 0;
+    height: 94px;
+    line-height: 94px;
+    position: relative;
+    width: 100%;
+    z-index: 2;
+
+    @include m.darkMode {
+      background: v.$primary-box-bg-dark;
+    }
+
+    @media all and (max-width: 1500px) {
+      height: 80px;
+      line-height: 80px;
+    }
+  }
+
+  &-header {
+    &-container {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      justify-content: space-between;
+    }
+
+    &-logo {
+      svg {
+        height: 56px;
+        vertical-align: middle;
+        width: auto;
+
+        @media all and (max-width: 1500px) {
+          height: 42px;
+        }
+      }
+    }
+
+    &-website {
+      align-items: center;
+      display: flex;
+
+      @media all and (max-width: 380px) {
+        display: none;
+      }
+
+      a {
+        align-items: center;
+        background-color: v.$hover-color-light;
+        border-radius: 18px;
+        color: v.$primary-color-light;
+        display: inline-flex;
+        gap: 0 10px;
+        padding: 8px 10px;
+        transition: background-color .3s ease-in-out;
+
+        @include m.darkMode {
+          background-color: v.$hover-color-dark;
+          color: v.$primary-color-dark;
+        }
+
+        @media all and (max-width: 600px) {
+          gap: 0 6px;
+        }
+
+        &:hover {
+          background-color: v.$hover-on-hover-light;
+
+          @include m.darkMode {
+            background-color: v.$hover-on-hover-dark;
+          }
+        }
+
+        svg {
+          height: 20px;
+          stroke: v.$primary-color-light;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          width: 20px;
+
+          @include m.darkMode {
+            stroke: v.$primary-color-dark;
+          }
+
+          @media all and (max-width: 1500px) {
+            height: 18px;
+            width: 18px;
+          }
+
+          @media all and (max-width: 600px) {
+            height: 16px;
+            width: 16px;
+          }
+        }
+
+        span {
+          font-size: 20px;
+          font-weight: 600;
+          line-height: 1;
+
+          @media all and (max-width: 1500px) {
+            font-size: 18px;
+          }
+
+          @media all and (max-width: 600px) {
+            font-size: 16px;
+          }
+        }
+      }
+    }
+  }
+
+  &-footer {
+    overflow: hidden;
+
+    &-container {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      justify-content: space-between;
+
+      @media all and (max-width: 800px) {
+        justify-content: center;
+      }
+    }
+
+    &-apps {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      gap: 0 14px;
+      height: 100%;
+      opacity: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transition: opacity .3s ease-in-out;
+      user-select: none;
+
+      @media all and (max-width: 800px) {
+        display: none;
+      }
+
+      &.visible {
+        pointer-events: all;
+        opacity: 1;
+      }
+
+      a {
+        font-size: 0;
+        height: 48px;
+
+        img {
+          height: 100%;
+          width: auto;
+        }
+      }
+    }
+
+    h6 {
+      color: v.$primary-text-light;
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 1;
+      margin-left: auto;
+      text-align: right;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+
+      @media all and (max-width: 1500px) {
+        font-size: 20px;
+      }
+
+      @media all and (max-width: 800px) {
+        font-size: 16px;
+      }
+    }
+  }
+
+  &-list {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 20px 0;
+    list-style: none;
+    margin: 48px 0 46px;
+    padding: 0;
+
+    @media all and (max-width: 1000px) {
+      gap: 16px 0;
+      margin: 40px 0 36px;
+    }
+
+    @media all and (max-width: 600px) {
+      gap: 12px 0;
+      margin: 24px 0;
+    }
+
+    &-item {
+      align-items: center;
+      display: inline-flex;
+      gap: 0 20px;
+
+      @media all and (max-width: 1500px) {
+        gap: 0 16px;
+      }
+
+      @media all and (max-width: 600px) {
+        gap: 0 12px;
+      }
+
+      &-number {
+        align-items: center;
+        background-color: v.$card-bg-light;
+        border-radius: 32px;
+        display: inline-flex;
+        flex-shrink: 0;
+        height: 64px;
+        width: 117px;
+
+        @include m.darkMode {
+          background-color: v.$card-bg-dark;
+        }
+
+        @media all and (max-width: 1500px) {
+          height: 56px;
+          width: 104px;
+        }
+
+        @media all and (max-width: 600px) {
+          border-radius: 50%;
+          height: 42px;
+          width: 42px;
+        }
+
+        &-number,
+        &-img {
+          flex: 1;
+          text-align: center;
+        }
+
+        &-number {
+          color: v.$primary-color-light;
+          font-size: 32px;
+          font-weight: 700;
+          line-height: 1;
+          padding-left: 5px;
+
+          @include m.darkMode {
+            color: v.$primary-color-dark;
+          }
+
+          @media all and (max-width: 1500px) {
+            font-size: 28px;
+          }
+
+          @media all and (max-width: 600px) {
+            font-size: 24px;
+            padding-left: 0;
+          }
+        }
+
+        &-separator {
+          background-color: v.$object-light;
+          height: 100%;
+          width: 1px;
+
+          @include m.darkMode {
+            background-color: v.$object-dark;
+          }
+
+          @media all and (max-width: 600px) {
+            display: none;
+          }
+        }
+
+        &-img {
+          @media all and (max-width: 600px) {
+            display: none;
+          }
+
+          &-puzzle {
+            height: auto;
+            stroke: v.$primary-color-light;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-width: 3;
+            width: 30px;
+
+            @include m.darkMode {
+              stroke: v.$primary-color-dark;
+            }
+
+            @media all and (max-width: 1500px) {
+              width: 26px;
+            }
+
+            @media all and (max-width: 1500px) {
+              width: 26px;
+            }
+          }
+    
+          &-pin {
+            height: auto;
+            stroke: v.$primary-color-light;
+            stroke-width: 3;
+            stroke-linejoin: round;
+            transform: translate(-3px, 1px);
+            width: 19px;
+
+            @include m.darkMode {
+              stroke: v.$primary-color-dark;
+            }
+
+            @media all and (max-width: 1500px) {
+              width: 16px;
+            }
+          }
+
+          &-shield,
+          &-qr {
+            height: 32px;
+            stroke: v.$primary-color-light;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            width: auto;
+
+            @include m.darkMode {
+              stroke: v.$primary-color-dark;
+            }
+
+            @media all and (max-width: 1500px) {
+              height: 28px;
+            }
+          }
+        }
+      }
+
+      &-text {
+        color: v.$primary-text-light;
+        font-size: 28px;
+        font-weight: 600;
+        line-height: 1.2857;
+
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
+
+        @media all and (max-width: 1500px) {
+          font-size: 24px;
+        }
+
+        @media all and (max-width: 800px) {
+          font-size: 20px;
+        }
+
+        @media all and (max-width: 600px) {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+
+  &-buttons {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 40px 0;
+
+    @media all and (max-width: 1500px) {
+      gap: 32px 0;
+    }
+
+    @media all and (max-width: 1000px) {
+      gap: 24px 0;
+    }
+
+    @media all and (max-width: 600px) {
+      gap: 20px 0;
+    }
+  }
+
+  :global(.container) {
+    flex: 1;
+    height: 100%;
+    margin: 0 auto;
+    max-width: 1536px;
+
+    @media all and (max-width: 1670px) {
+      max-width: 1400px;
+    }
+
+    @media all and (max-width: 1500px) {
+      max-width: 1280px;
+    }
+
+    @media all and (max-width: 1350px) {
+      max-width: 100%;
+      padding: 0 20px;
+    }
+  }
+}

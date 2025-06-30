@@ -1,0 +1,576 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "sass:color";
+@use "variables" as v;
+@use "mixins" as m;
+
+.btn {
+  appearance: none;
+  background-color: transparent;
+  border: 0;
+  color: transparent;
+  cursor: pointer;
+  display: inline-block;
+  outline: none !important;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color .3s ease-in-out, color .3s ease-in-out, border-color .3s ease-in-out;
+
+  &[disabled] {
+    cursor: default;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  &.btn-theme {
+    background-color: v.$primary-color-light;
+    border-radius: 6px;
+    color: v.$tertiary-text-light;
+    font-weight: 500;
+
+    @include m.darkMode {
+      background-color: v.$primary-color-dark;
+      color: v.$tertiary-text-dark;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: v.$focus-light;
+      color: v.$tertiary-text-light;
+
+      @include m.darkMode {
+        background-color: v.$focus-dark;
+        color: v.$tertiary-text-dark;
+      }
+    }
+
+    &:active {
+      background-color: v.$pressed-light;
+      color: v.$tertiary-text-light;
+
+      @include m.darkMode {
+        background-color: v.$pressed-dark;
+        color: v.$tertiary-text-dark;
+      }
+    }
+
+    &[disabled],
+    &.disabled {
+      background-color: v.$object-light;
+      color: v.$tertiary-text-light;
+
+      @include m.darkMode {
+        background-color: v.$object-dark;
+        color: v.$tertiary-text-dark;
+      }
+    }
+  }
+
+  &.btn-clear {
+    color: v.$primary-color-light;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: .8571;
+
+    @include m.darkMode {
+      color: v.$primary-color-dark;
+    }
+
+    &:hover,
+    &:focus {
+      color: v.$focus-light;
+
+      @include m.darkMode {
+        color: v.$focus-dark;
+      }
+    }
+
+    &:active {
+      color: v.$pressed-light;
+
+      @include m.darkMode {
+        color: v.$pressed-dark;
+      }
+    }
+
+    &[disabled],
+    &.disabled {
+      color: v.$object-light;
+
+      @include m.darkMode {
+        color: v.$object-dark;
+      }
+    }
+
+    &.normal-text {
+      color: v.$primary-text-light;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+  }
+
+  &.btn-hidden {
+    display: none;
+  }
+
+  &.btn-locked {
+    align-items: center;
+    border-radius: 6px;
+    display: inline-flex;
+    height: 32px;
+    transition: none;
+    padding: 0 8px 0 12px;
+    transition: background-color .3s ease-in-out;
+    user-select: none;
+    width: 100%;
+
+    @include m.loaded {
+      background-color: rgba(v.$hover-color-light, 0);
+
+      &:hover,
+      &:focus {
+        background-color: rgba(v.$hover-color-light, 1);
+      }
+
+      &:active {
+        background-color: v.$pressed-bg-light;
+      }
+
+      span {
+        transition: color .3s ease-in-out;
+      }
+
+      svg {
+        transition: stroke .3s ease-in-out;
+      }
+    }
+
+    @include m.loadedDarkMode {
+      background-color: rgba(v.$hover-color-dark, 0);
+
+      &:hover,
+      &:focus {
+        background-color: rgba(v.$hover-color-dark, 1);
+      }
+
+      &:active {
+        background-color: v.$pressed-bg-dark;
+      }
+    }
+
+    &[disabled] {
+      span {
+        &.btn-locked-disabled {
+          display: inline-flex;
+        }
+
+        &.btn-locked-active {
+          display: none;
+        }
+      }
+    }
+
+    span {
+      color: transparent;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1;
+
+      @include m.lightMode {
+        color: v.$primary-text-light;
+      }
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+
+      &.btn-locked-disabled,
+      &.btn-locked-active {
+        align-items: center;
+        gap: 0 4px;
+
+        span {
+          transform: translateY(1px);
+        }
+      }
+
+      &.btn-locked-disabled {
+        display: none;
+
+        span {
+          color: v.$error-light;
+
+          @include m.darkMode {
+            color: v.$error-dark;
+          }
+        }
+
+        svg {
+          stroke: v.$error-light;
+
+          @include m.darkMode {
+            stroke: v.$error-dark;
+          }
+        }
+      }
+
+      &.btn-locked-active {
+        display: inline-flex;
+
+        span {
+          color: v.$primary-color-light;
+
+          @include m.darkMode {
+            color: v.$primary-color-dark;
+          }
+        }
+
+        svg {
+          stroke: v.$primary-color-light;
+
+          @include m.darkMode {
+            stroke: v.$primary-color-dark;
+          }
+        }
+      }
+    }
+
+    svg {
+      height: 16px;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      width: auto;
+    }
+  }
+
+  &.btn-qr-reload {
+    border-radius: 6px;
+    height: 38px;
+    padding: 0 40px;
+  }
+
+  &.btn-simple-action {
+    border-radius: 6px;
+    height: 38px;
+    font-size: 14px;
+    font-weight: 500;
+
+    &.btn-push-retry {
+      max-width: 100%;
+      margin-top: 9px;
+      width: 288px;
+    }
+  }
+
+  &.btn-cancel {
+    align-items: center;
+    display: inline-flex;
+    line-height: 1.1;
+    padding: 0 16px;
+  }
+
+  &.btn-reset {
+    color: v.$error-light;
+    border: 1px solid v.$error-light;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 14px 0;
+    width: 100%;
+    transition: border-color .3s ease-in-out, color .3s ease-in-out;
+
+    @include m.darkMode {
+      border: 1px solid v.$error-dark;
+      color: v.$error-dark;
+    }
+
+    &:hover {
+      border: 1px solid v.$object-light;
+      color: v.$error-light;
+
+      @include m.darkMode {
+        border: 1px solid v.$object-dark;
+        color: v.$error-dark;
+      }
+    }
+  }
+
+  &.btn-shortcut-edit {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    text-align: right;
+  }
+
+  &.btn-push-test {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    margin-top: 12px;
+    padding: 0;
+  }
+
+  &.btn-this-tab-add-new {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    padding: 8px 0;
+    width: 100%;
+  }
+  
+  // INSTALL PAGE
+  &.btn-install-page {
+    border-radius: 32px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: .813px;
+    line-height: 1;
+    padding: 24px 0;
+    text-transform: uppercase;
+    width: 288px;
+
+    @media all and (max-width: 460px) {
+      padding: 20px 0;
+      width: 200px;
+    }
+  }
+
+  &.btn-install-page-wo-pinning {
+    align-items: center;
+    display: inline-flex;
+    flex-direction: row;
+    gap: 0 9px;
+
+    @media all and (max-width: 460px) {
+      gap: 0 6px;
+    }
+
+    &:hover,
+    &:focus {
+      svg {
+        stroke: v.$focus-light;
+
+        @include m.darkMode {
+          stroke: v.$focus-dark;
+        }
+      }
+    }
+
+    &:active {
+      svg {
+        stroke: v.$pressed-light;
+
+        @include m.darkMode {
+          stroke: v.$pressed-dark;
+        }
+      }
+    }
+
+    &[disabled],
+    &.disabled {
+      svg {
+        stroke: v.$object-light;
+  
+        @include m.darkMode {
+          stroke: v.$object-dark;
+        }
+      }
+    }
+
+    span {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: .813px;
+      line-height: 1;
+      text-transform: uppercase;
+
+      @media all and (max-width: 460px) {
+        font-size: 14px;
+      }
+    }
+
+    svg {
+      height: 10px;
+      stroke: v.$primary-color-light;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transform: translateY(-1px);
+      transition: stroke .3s ease-in-out;
+      width: auto;
+
+      @include m.darkMode {
+        stroke: v.$primary-color-dark;
+      }
+    }
+  }
+
+  &.btn-install-page-download {
+    font-size: 16px;
+    line-height: 48px;
+    padding: 0 16px;
+    pointer-events: auto;
+    user-select: all;
+  }
+}
+
+// TOGGLE
+.pass-toggle {
+  font-size: 0;
+
+  &:hover,
+  &:focus {
+    input[type="checkbox"] {
+      &:checked {
+        + label {
+          .pass-toggle-box {
+            background-color: v.$focus-light;
+
+            @include m.darkMode {
+              background-color: v.$focus-dark;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &:active {
+    input[type="checkbox"] {
+      &:checked {
+        + label {
+          .pass-toggle-box {
+            background-color: v.$pressed-light;
+
+            @include m.darkMode {
+              background-color: v.$pressed-dark;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  &.loaded {
+    label {
+      .pass-toggle-box {
+        transition: background-color .2s ease-in-out;
+
+        .pass-toggle-box-circle {
+          transition: transform .2s ease-in-out;
+        }
+      }
+    }
+  }
+
+  input[type="checkbox"] {
+    display: none;
+
+    &:checked {
+      + label {
+        .pass-toggle-box {
+          background-color: v.$primary-color-light;
+
+          @include m.darkMode {
+            background-color: v.$primary-color-dark;
+          }
+
+          .pass-toggle-box-circle {
+            transform: translateX(14px);
+          }
+        }
+      }
+    }
+
+    &:disabled {
+      + label {
+        cursor: not-allowed;
+
+        .pass-toggle-box {
+          background-color: v.$secondary-text-light !important;
+
+          @include m.darkMode {
+            background-color: v.$secondary-text-dark !important;
+          }
+        }
+
+        .pass-toggle-text {
+          > span {
+            color: v.$secondary-text-light !important;
+
+            @include m.darkMode {
+              color: v.$secondary-text-dark !important;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  label {
+    align-items: center;
+    cursor: pointer;
+    display: inline-flex;
+    flex-direction: row;
+    gap: 0 8px;
+    letter-spacing: 0;
+    text-transform: none;
+
+    .pass-toggle-box {
+      border-radius: 9px;
+      background: v.$secondary-text-light;
+      display: block;
+      flex-shrink: 0;
+      height: 18px;
+      position: relative;
+      transition: background-color .3s ease-in-out;
+      width: 32px;
+
+      @include m.darkMode {
+        background: v.$secondary-text-dark;
+      }
+
+      .pass-toggle-box-circle {
+        background-color: v.$primary-box-bg-light;
+        border-radius: 50%;
+        height: 14px;
+        left: 2px;
+        position: absolute;
+        top: 2px;
+        transform: translateX(0);
+        transition: transform .3s ease-in-out;
+        width: 14px;
+
+        @include m.darkMode {
+          background-color: v.$primary-box-bg-dark;
+        }
+      }
+    }
+
+    .pass-toggle-text {
+      user-select: none;
+
+      > span {
+        color: v.$primary-text-light;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1;
+        transition: color .3s ease-in-out;
+
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
+      }
+    }
+  }
+}

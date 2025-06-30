@@ -1,0 +1,242 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.connect,
+.progress {
+  left: 12px;
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  width: calc(100% - 24px);
+}
+
+.connect {
+  border: 1px solid v.$primary-box-stroke-light;
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 2;
+
+  @include m.darkMode {
+    border-color: v.$primary-box-stroke-dark;
+  }
+
+  &-container {
+    align-items: center;
+    background-color: v.$primary-box-bg-light;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    @include m.darkMode {
+      background-color: v.$primary-box-bg-dark;
+    }
+
+    &-qr {
+      margin-bottom: 20px;
+      position: relative;
+
+      &.error {
+        .connect-container-qr-error-content {
+          cursor: auto;
+          opacity: 1;
+
+          button {
+            pointer-events: all;
+          }
+        }
+
+        > img {
+          cursor: default;
+          filter: blur(3px);
+        }
+      }
+
+      &-error-content {
+        cursor: none;
+        display: flex;
+        flex-direction: column;
+        gap: 10px 0;
+        left: 50%;
+        position: absolute;
+        opacity: 0;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        transition: opacity .3s ease-in-out;
+        width: 126px;
+        z-index: 2;
+
+        button {
+          pointer-events: none;
+        }
+      }
+  
+      > img {
+        border: 0;
+        border-radius: 8px;
+        cursor: none;
+        display: block;
+        height: 250px;
+        image-rendering: pixelated;
+        opacity: 0;
+        transition: filter .3s ease-in-out, opacity .3s ease-in-out;
+        width: 250px;
+    
+        &.loading {
+          filter: blur(4px);
+          image-rendering: optimizespeed;
+        }
+
+        &[src] {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  &-description {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px 0;
+    margin-bottom: 24px;
+    text-align: center;
+
+    p {
+      color: v.$secondary-text-light;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.6;
+      max-width: 255px;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+
+    svg {
+      height: 16px;
+      stroke: v.$object-light;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      width: auto;
+
+      @include m.darkMode {
+        stroke: v.$object-dark;
+      }
+    }
+  }
+
+  h1 {
+    color: v.$primary-text-light;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 11px;
+    margin-top: 24px;
+    max-width: 220px;
+    text-align: center;
+    white-space: pre-wrap;
+
+    @include m.darkMode {
+      color: v.$primary-text-dark;
+    }
+  }
+}
+
+.progress {
+  border-radius: 4px;
+  overflow: hidden;
+
+  &-container {
+    align-items: center;
+    background-color: v.$primary-box-bg-light;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px;
+
+    @include m.darkMode {
+      background-color: v.$primary-box-bg-dark;
+    }
+  }
+
+  &-loader {
+    flex-shrink: 0;
+    height: 120px;
+    position: relative;
+    width: 120px;
+
+    &-circle {
+      color: v.$primary-color-light;
+      fill: none;
+      height: 120px;
+      stroke: currentcolor;
+      stroke-dasharray: 264;
+      stroke-dashoffset: 264;
+      stroke-linecap: butt;
+      stroke-linejoin: miter;
+      stroke-width: 3;
+      transform: rotate(-90deg);
+      transition: stroke-dashoffset .3s ease-in-out;
+      vertical-align: top;
+      width: 120px;
+
+      @include m.darkMode {
+        color: v.$primary-color-dark;
+      }
+
+      &-bg {
+        stroke: v.$primary-box-stroke-light;
+        stroke-width: 2.8;
+        stroke-dasharray: 0;
+        stroke-dashoffset: 0;
+
+        @include m.darkMode {
+          stroke: v.$primary-box-stroke-dark;
+        }
+      }
+    }
+
+    span {
+      color: v.$primary-text-light;
+      font-size: 12px;
+      font-weight: 400;
+      left: 50%;
+      line-height: 1;
+      position: absolute;
+      text-align: center;
+      top: 50%;
+      transform: translate(-50%, -50%);
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+  }
+
+  &-description {
+    margin-top: 8px;
+    max-width: 255px;
+    
+    p {
+      color: v.$secondary-text-light;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.6;
+      text-align: center;
+      white-space: pre-wrap;
+  
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+  }
+}

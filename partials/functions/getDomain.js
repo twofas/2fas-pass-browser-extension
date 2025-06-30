@@ -1,0 +1,33 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+import URIMatcher from '@/partials/URIMatcher';
+
+/** 
+* Gets the domain from a URL.
+* @param {string} url - The URL to extract the domain from.
+* @return {string} The domain of the URL or the original URL if it cannot be parsed.
+*/
+const getDomain = url => {
+  if (!url || typeof url !== 'string' || url.length <= 3) {
+    setFaviconError(true);
+    return url;
+  }
+
+  let urlObj;
+  let normalizedURL = '';
+
+  try {
+    normalizedURL = URIMatcher.normalizeUrl(url);
+    urlObj = new URL(normalizedURL);
+    return urlObj?.hostname || url;
+  } catch (e) {
+    setFaviconError(true);
+    return url;
+  }
+};
+
+export default getDomain;

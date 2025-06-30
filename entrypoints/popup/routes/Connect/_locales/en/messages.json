@@ -1,0 +1,30 @@
+{
+  "connect_qr_placeholder_1": {
+    "message": "2FAS Pass is the best! Check our website for more info!",
+    "description": "Placeholder text for the QR code section promoting the 2FAS Pass website"
+  },
+  "connect_qr_placeholder_2": {
+    "message": "If you are searching for a secure 2FA solution, check out our 2FAS Auth app!",
+    "description": "Placeholder text for the QR code section promoting the 2FAS Auth app"
+  },
+  "connect_qr_placeholder_3": {
+    "message": "2FAS Auth is the best 2FA app on the market! 2FAS Pass is the best password manager!",
+    "description": "Placeholder promoting both 2FAS Auth and 2FAS Pass as top solutions for 2FA and password management"
+  },
+  "connect_header": {
+    "message": "Scan this QR Code with your 2FAS Pass Mobile App",
+    "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
+  },
+  "connect_description": {
+    "message": "Required for every browser launch to ensure secure access to your Items.",
+    "description": "Explains the need to scan the QR code for secure access during each browser launch"
+  },
+  "connect_connecting": {
+    "message": "Connecting...",
+    "description": "Message displayed while the connection process is ongoing"
+  },
+  "connect_connection_opened": {
+    "message": "Connection is opened.\nDon't close this window",
+    "description": "Message displayed when the connection is successfully opened"
+  }
+}

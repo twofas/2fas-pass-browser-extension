@@ -1,0 +1,78 @@
+{
+  "fetch_push_header": {
+    "message": "Check the 2FAS Pass push notification on your mobile phone.",
+    "description": "Header prompting the user to check their mobile phone for a push notification"
+  },
+  "fetch_push_waiting_for_mobile": {
+    "message": "Waiting for mobile response...",
+    "description": "Message displayed while waiting for a response from the mobile app"
+  },
+  "fetch_connection_error_header": {
+    "message": "Connection error! \nTry again later.",
+    "description": "Error message displayed when there is a connection issue"
+  },
+  "fetch_token_unregistered_header": {
+    "message": "FCM token unregistered. Lock the Browser Extension and \nscan the QR code again.",
+    "description": "Error message displayed when the FCM token is unregistered"
+  },
+  "fetch_connection_timeout_header": {
+    "message": "Timed out due to inactivity.",
+    "description": "Error message displayed when the connection times out due to inactivity"
+  },
+  "fetch_continue_updating_header": {
+    "message": "Continue updating in the 2FAS Pass app",
+    "description": "Header prompting the user to continue updating in the mobile app"
+  },
+  "fetch_continue_updating_description": {
+    "message": "To finish adding this service, continue on your \nmobile phone. Don't close this window.",
+    "description": "Explains that the user should continue the process on their mobile phone"
+  },
+  "fetch_delete_login_accept_toast": {
+    "message": "Item deleted",
+    "description": "Toast message displayed when a login is successfully deleted"
+  },
+  "fetch_delete_login_cancel_toast": {
+    "message": "Item deletion canceled",
+    "description": "Toast message displayed when the user cancels the login deletion process"
+  },
+  "fetch_fetch_request_accept_toast": {
+    "message": "Fetch request accepted",
+    "description": "Toast message displayed when a fetch request is accepted"
+  },
+  "fetch_fetch_request_cancel_toast": {
+    "message": "Fetch request rejected",
+    "description": "Toast message displayed when a fetch request is rejected"
+  },
+  "fetch_new_login_added_toast": {
+    "message": "New Item added",
+    "description": "Toast message displayed when a new login item is successfully added"
+  },
+  "fetch_new_login_added_t1_toast": {
+    "message": "New Item added in Tier 1 (only in the mobile app)",
+    "description": "Toast shown when a new login is added in tier 1, available only in the mobile app"
+  },
+  "fetch_new_login_cancel_toast": {
+    "message": "User cancelled adding a new Item",
+    "description": "Toast message displayed when the user cancels adding a new login item"
+  },
+  "fetch_password_request_accept_toast": {
+    "message": "Password request accepted",
+    "description": "Toast message displayed when a password request is accepted"
+  },
+  "fetch_password_request_cancel_toast": {
+    "message": "Password request rejected",
+    "description": "Toast message displayed when a password request is rejected"
+  },
+  "fetch_update_login_updated_toast": {
+    "message": "Item updated",
+    "description": "Toast message displayed when a login item is successfully updated"
+  },
+  "fetch_update_login_cancel_toast": {
+    "message": "Item update canceled",
+    "description": "Toast message displayed when the user cancels updating a login item"
+  },
+  "fetch_update_login_added_in_t1_toast": {
+    "message": "Item updated in tier 1 (only in mobile app)",
+    "description": "Toast shown when a login is updated in tier 1, available only in the mobile app"
+  }
+}

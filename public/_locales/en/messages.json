@@ -1,0 +1,1034 @@
+{
+  "error_general": {
+    "message": "Something went wrong. Please try again.",
+    "description": "Generic error message displayed when an unspecified error occurs"
+  },
+  "error_ext_platform_undefined": {
+    "message": "EXT_PLATFORM is undefined",
+    "description": "Error message displayed when the EXT_PLATFORM variable is not defined"
+  },
+  "error_getting_theme_value": {
+    "message": "Error while getting theme value",
+    "description": "Error message displayed when retrieving the theme value fails"
+  },
+  "error_setting_theme_value": {
+    "message": "Error while setting theme value",
+    "description": "Error message displayed when setting the theme value fails"
+  },
+  "error_logging_settings_changed": {
+    "message": "Error while changing \"Crash logs\" settings",
+    "description": "Error message displayed when updating crash log settings fails"
+  },
+  "error_getting_services_key": {
+    "message": "Error while getting service key",
+    "description": "Error message displayed when retrieving the service key fails"
+  },
+  "error_save_password_prompt_saving": {
+    "message": "Error while saving \"Save Item\" prompt settings",
+    "description": "Error shown when saving the save password prompt settings"
+  },
+  "error_safe_browsing_reports_saving": {
+    "message": "Error while saving \"Safe browsing\" reports settings",
+    "description": "Error shown when saving safe browsing reports settings"
+  },
+  "error_safe_browsing_saving": {
+    "message": "Error while saving \"Safe browsing\" settings",
+    "description": "Error shown when saving safe browsing settings"
+  },
+  "error_idle_lock_saving": {
+    "message": "Error while saving \"Idle lock\" settings",
+    "description": "Error message displayed when saving idle lock settngs fails"
+  },
+  "error_auto_clear_clipboard_saving": {
+    "message": "Error while saving \"Auto clear clipboard\" settings",
+    "description": "Error message displayed when saving auto clear clipboard settings fails"
+  },
+  "error_saving_notification_settings": {
+    "message": "Error while saving \"Notifications\" settings",
+    "description": "Error message displayed when saving notification settings fails"
+  },
+  "error_saving_extension_name": {
+    "message": "Error! Failed to update extension name.",
+    "description": "Error message displayed when updating the extension name fails"
+  },
+  "error_saving_context_menu_setting": {
+    "message": "Error while saving \"Context menu\" settings",
+    "description": "Error message displayed when saving context menu settings fails"
+  },
+  "error_login_not_found": {
+    "message": "Something went wrong. Item not found.",
+    "description": "Error message displayed when the requested login item is not found"
+  },
+  "error_username_copy_failed": {
+    "message": "Failed to copy username to clipboard.",
+    "description": "Error message displayed when copying the username to the clipboard fails"
+  },
+  "error_password_copy_failed": {
+    "message": "Failed to copy password to clipboard.",
+    "description": "Error message displayed when copying the password to the clipboard fails"
+  },
+  "error_uri_copy_failed": {
+    "message": "Failed to copy URL to clipboard.",
+    "description": "Error message displayed when copying the URI to the clipboard fails"
+  },
+  "error_autofill_failed": {
+    "message": "Failed to autofill. Please try again.",
+    "description": "Error message displayed when the autofill operation fails"
+  },
+  "error_no_response_from_tab": {
+    "message": "No response from tab",
+    "description": "Error message displayed when there is no response from the browser tab"
+  },
+  "error_unknown_response_from_tab": {
+    "message": "Unknown response from tab",
+    "description": "Error message displayed when the browser tab returns an unknown response"
+  },
+  "error_storage_capacity_exceeded": {
+    "message": "Data size exceeded. \nUse less data or try a different browser.",
+    "description": "Error shown when storage capacity exceeds the limit"
+  },
+  "error_mobile_disconnected": {
+    "message": "Mobile device disconnected\nPlease try again.",
+    "description": "Error shown when the mobile device disconnects"
+  },
+  "error_timeout": {
+    "message": "Timed out due to inactivity.",
+    "description": "Error message displayed when an operation times out due to inactivity"
+  },
+  "error_feature_wrong_data": {
+    "message": "Something went wrong. Our developer team is already working on it.",
+    "description": "Error message displayed when there is an issue with the shortcut settings"
+  },
+  "appDesc": {
+    "message": "2FAS Pass is a next-gen password manager with no compromises in security and full control over your data.",
+    "description": "Description of the 2FAS Pass Browser Extension highlighting its features"
+  },
+  "autofill": {
+    "message": "Autofill",
+    "description": "Label for the autofill functionality"
+  },
+  "autofillCommand": {
+    "message": "Autofill 2FAS Pass",
+    "description": "Label for the command used to trigger autofill"
+  },
+  "fetch": {
+    "message": "Fetch",
+    "description": "Label for the fetch functionality"
+  },
+  "continue": {
+    "message": "Continue",
+    "description": "Button label to proceed with an action"
+  },
+  "continue_without_pinning": {
+    "message": "Continue without pinning",
+    "description": "Button label to proceed without pinning the extension"
+  },
+  "open_in_new_window": {
+    "message": "Open in a new window",
+    "description": "Option to open a link or page in a new browser window"
+  },
+  "go_to_settings": {
+    "message": "Go to settings",
+    "description": "Button label to navigate to the settings page"
+  },
+  "fetch_from_mobile": {
+    "message": "Fetch from mobile",
+    "description": "Option to fetch data from the mobile app"
+  },
+  "go_to_home_page": {
+    "message": "Go to Home Page",
+    "description": "Button label to navigate to the home page"
+  },
+  "cancel": {
+    "message": "Cancel",
+    "description": "Button label to cancel an action"
+  },
+  "edit": {
+    "message": "Edit",
+    "description": "Button label to edit an item"
+  },
+  "info": {
+    "message": "Info",
+    "description": "Label for displaying information"
+  },
+  "domain_uri": {
+    "message": "Domain (URI)",
+    "description": "Label for the domain or URI field"
+  },
+  "domain_uri_index": {
+    "message": "Domain (URI %INDEX%)",
+    "description": "Label for a specific domain or URI with an index"
+  },
+  "name": {
+    "message": "Name",
+    "description": "Label for the name field"
+  },
+  "username": {
+    "message": "Username / Email",
+    "description": "Label for the username or email field"
+  },
+  "password": {
+    "message": "Password",
+    "description": "Label for the password field"
+  },
+  "enter_on_mobile": {
+    "message": "I will enter it in my mobile app",
+    "description": "Option to enter data manually in the mobile app"
+  },
+  "autogenerate_on_mobile": {
+    "message": "Autogenerate password in my mobile app",
+    "description": "Option to autogenerate a password in the mobile app"
+  },
+  "set_login_and_password_in_the_mobile_app": {
+    "message": "Set a username and password in the mobile app",
+    "description": "Instruction to set login and password in the mobile app"
+  },
+  "reload": {
+    "message": "Reload",
+    "description": "Button label to reload the page or data"
+  },
+  "update": {
+    "message": "Update",
+    "description": "Button label to update an item or data"
+  },
+  "danger_zone": {
+    "message": "Danger Zone",
+    "description": "Label for a section with potentially risky actions"
+  },
+  "try_again": {
+    "message": "Try again",
+    "description": "Button label to retry an action"
+  },
+  "version": {
+    "message": "Version",
+    "description": "Label for displaying the version of the extension"
+  },
+  "back": {
+    "message": "Back",
+    "description": "Button label to navigate to the previous page or step"
+  },
+  "advanced": {
+    "message": "Advanced",
+    "description": "Label for advanced settings or options"
+  },
+  "light_mode": {
+    "message": "Light mode",
+    "description": "Option to enable light mode for the interface"
+  },
+  "dark_mode": {
+    "message": "Dark mode",
+    "description": "Option to enable dark mode for the interface"
+  },
+  "save": {
+    "message": "Save",
+    "description": "Button label to save changes"
+  },
+  "or": {
+    "message": "or",
+    "description": "Text used to indicate an alternative option"
+  },
+  "unknown": {
+    "message": "Unknown",
+    "description": "Label for an unknown value or state"
+  },
+  "browser_internal_page": {
+    "message": "Browser Internal Page",
+    "description": "Label for a browser's internal page"
+  },
+  "close": {
+    "message": "Close",
+    "description": "Button label to close a window or dialog"
+  },
+  "notes": {
+    "message": "Notes",
+    "description": "Label for a section or field to add notes"
+  },
+  "learn_more": {
+    "message": "Learn more",
+    "description": "Button label to access additional information"
+  },
+  "tier_0_name": {
+    "message": "Top Secret",
+    "description": "Label for the highest security tier"
+  },
+  "tier_0_description": {
+    "message": "Do not share this password with the 2FAS Pass Browser Extension and type it manually.",
+    "description": "Description for the top-secret security tier"
+  },
+  "tier_1_name": {
+    "message": "Highly Secret",
+    "description": "Label for the second-highest security tier"
+  },
+  "tier_1_description": {
+    "message": "Share the password with the 2FAS Pass Browser Extension once after confirmation in the 2FAS Pass mobile app.",
+    "description": "Explains the ultra-secure tier where passwords are shared after mobile app confirmation"
+  },
+  "tier_2_name": {
+    "message": "Secret",
+    "description": "Label for the standard security tier"
+  },
+  "tier_2_description": {
+    "message": "Access this password directly from the 2FAS Pass Browser Extension.",
+    "description": "Explains the secure tier where passwords are accessed directly from the extension"
+  },
+  "no_item_name": {
+    "message": "No Item name",
+    "description": "Label for a state where no item name is available"
+  },
+  "notification_send_autofill_to_tab_lack_of_service_title": {
+    "message": "Error",
+    "description": "Title for the notification when the autofill service is not found"
+  },
+  "notification_send_autofill_to_tab_lack_of_service_message": {
+    "message": "Service not found",
+    "description": "Message for the notification when the autofill service is not found"
+  },
+  "notification_send_autofill_to_tab_autofill_error_title": {
+    "message": "Error",
+    "description": "Title for the notification when an autofill error occurs"
+  },
+  "notification_send_autofill_to_tab_autofill_error_message": {
+    "message": "Failed to autofill. Please try again.",
+    "description": "Message for the notification when an autofill error occurs"
+  },
+  "notification_shortcut_autofill_no_active_tab_title": {
+    "message": "No active tab",
+    "description": "Title for the notification when there is no active tab for autofill"
+  },
+  "notification_shortcut_autofill_no_active_tab_message": {
+    "message": "There is no active tab to autofill",
+    "description": "Message for the notification when there is no active tab for autofill"
+  },
+  "notification_shortcut_autofill_internal_page_title": {
+    "message": "Browser Internal page",
+    "description": "Title for the notification when autofill is attempted on a browser internal page"
+  },
+  "notification_shortcut_autofill_internal_page_message": {
+    "message": "Sorry, but we can't autofill on Browser Internal Pages",
+    "description": "Message shown when autofill isn't supported on browser internal pages"
+  },
+  "notification_save_password_prompt_success": {
+    "message": "\"Save Item\" prompt settings have been saved",
+    "description": "Notification shown when save password prompt settings are saved"
+  },
+  "notification_safe_browsing_reports_success": {
+    "message": "\"Safe browsing\" reports settings have been saved",
+    "description": "Notification shown when safe browsing reports settings are saved"
+  },
+  "notification_safe_browsing_success": {
+    "message": "\"Safe browsing\" settings have been saved",
+    "description": "Notification message when the safe browsing settings are successfully saved"
+  },
+  "notification_idle_lock_success": {
+    "message": "\"Idle lock\" settings have been saved",
+    "description": "Notification message when the idle lock settings are successfully saved"
+  },
+  "notification_idle_lock_premium_only": {
+    "message": "\"Only on restart\" is a premium feature. Upgrade to the unlimited plan in your mobile app.",
+    "description": "Notification message when the idle lock feature is unlimited plan only"
+  },
+  "notification_auto_clear_clipboard_success": {
+    "message": "\"Auto clear clipboard\" settings have been saved",
+    "description": "Notification message when the auto clear clipboard settings are successfully saved"
+  },
+  "notification_theme_setting_success": {
+    "message": "\"Theme\" settings have been saved",
+    "description": "Notification message when the theme settings are successfully saved"
+  },
+  "notification_test_title": {
+    "message": "2FAS Pass",
+    "description": "Title for a test notification"
+  },
+  "notification_test_message": {
+    "message": "This is a test notification",
+    "description": "Message for a test notification"
+  },
+  "notification_shortcut_autofill_no_username_and_password_title": {
+    "message": "Autofill not possible",
+    "description": "Title for the notification when no username and password are found"
+  },
+  "notification_shortcut_autofill_no_username_and_password_message": {
+    "message": "No username and password found",
+    "description": "Message for the notification when no username and password are found"
+  },
+  "notification_logging_settings_success": {
+    "message": "\"Crash logs\" settings saved",
+    "description": "Notification message when the crash logs settings are successfully saved"
+  },
+  "notification_extension_name_update_success": {
+    "message": "Extension name has been updated",
+    "description": "Notification message when the extension name is successfully updated"
+  },
+  "notification_context_menu_setting_success": {
+    "message": "\"Context menu\" settings have been saved",
+    "description": "Notification message when the context menu settings are successfully saved"
+  },
+  "notification_username_copied": {
+    "message": "Username copied to clipboard",
+    "description": "Notification message when the username is successfully copied to the clipboard"
+  },
+  "notification_uri_copied": {
+    "message": "URI copied to clipboard",
+    "description": "Notification message when the URI is successfully copied to the clipboard"
+  },
+  "notification_password_copied": {
+    "message": "Password copied to clipboard",
+    "description": "Notification message when the password is successfully copied to the clipboard"
+  },
+  "background_contextMenuConfigured_no_accounts": {
+    "message": "There are no matching Items for this domain",
+    "description": "Message displayed when no login items match the current domain in the context menu"
+  },
+  "background_contextMenuConfigured_add_account": {
+    "message": "Add account...",
+    "description": "Option in the context menu to add a new account for the current domain"
+  },
+  "background_contextMenuNotConfigured_connect": {
+    "message": "Connect with the 2FAS Pass mobile app...",
+    "description": "Option to connect the extension with the 2FAS Pass mobile app"
+  },
+  "background_get_browser_info_on": {
+    "message": "on",
+    "description": "Used in generating the browser extension name, e.g., Chrome on Windows"
+  },
+  "content_matching_logins_title": {
+    "message": "Matching Items",
+    "description": "Title for the section displaying login items that match the current context"
+  },
+  "content_save_prompt_header": {
+    "message": "Do you want to add this Item to 2FAS Pass?",
+    "description": "Header asking if the user wants to save a new login item"
+  },
+  "content_save_prompt_don_t_ask": {
+    "message": "Don't ask again",
+    "description": "Option to prevent the save prompt from appearing in the future"
+  },
+  "content_save_prompt_add_login": {
+    "message": "Add Item",
+    "description": "Button label to add a new login item to 2FAS Pass"
+  },
+  "content_save_prompt_update_login": {
+    "message": "Update Item",
+    "description": "Button label to update an existing login item in 2FAS Pass"
+  },
+  "install_please_pin_extension": {
+    "message": "Please pin the extension to the toolbar.",
+    "description": "Prompt asking the user to pin the browser extension to the toolbar"
+  },
+  "install_logging_settings_changed": {
+    "message": "\"Crash logs\" settings changed successfully.",
+    "description": "Message displayed when crash log settings are successfully updated"
+  },
+  "install_privacy_text": {
+    "message": "Privacy meets security & convenience.",
+    "description": "Text emphasizing the balance of privacy, security, and convenience"
+  },
+  "install_1_info": {
+    "message": "Browser Extension installed successfully!",
+    "description": "Message displayed when the browser extension is installed successfully"
+  },
+  "install_1_header": {
+    "message": "Pin to access \nyour Items\nquickly!",
+    "description": "Header encouraging the user to pin the extension for quick access"
+  },
+  "install_1_open_extension_menu": {
+    "message": "Open the Extension menu.",
+    "description": "Instruction to open the browser's extension menu"
+  },
+  "install_1_pin_extension": {
+    "message": "Pin 2FAS Pass to the toolbar.",
+    "description": "Instruction to pin the 2FAS Pass extension to the toolbar"
+  },
+  "install_2_info": {
+    "message": "Browser Extension pinned!",
+    "description": "Message displayed when the browser extension is successfully pinned"
+  },
+  "install_2_header": {
+    "message": "Now start \nworking with your \nnew password \nmanager",
+    "description": "Header encouraging the user to start using the password manager"
+  },
+  "install_2_click_icon": {
+    "message": "Click the icon to open the 2FAS Pass Browser Extension.",
+    "description": "Instruction to click the extension icon to open it"
+  },
+  "install_2_use_mobile_app": {
+    "message": "Use 2FAS Pass mobile app to scan the QR Code.",
+    "description": "Instruction to use the mobile app to scan the QR code"
+  },
+  "install_3_info": {
+    "message": "Extension is unlocked for this browser's session!",
+    "description": "Message displayed when the extension is unlocked for the current browser session"
+  },
+  "install_3_header": {
+    "message": "This Browser \nExtension is ready \nto use.",
+    "description": "Header indicating that the browser extension is ready to use"
+  },
+  "install_3_get_started": {
+    "message": "Here's everything you need to know to get started.",
+    "description": "Message introducing the user to the getting started guide"
+  },
+  "install_3_crash_logs_header": {
+    "message": "Crash logs permission",
+    "description": "Header for the section explaining crash log permissions"
+  },
+  "install_3_crash_logs_description": {
+    "message": "If you want to support the development of this Source-available project, you can give permission to send anonymous Crash logs.",
+    "description": "Explains the purpose of sending anonymous crash logs to support the project"
+  },
+  "install_3_crash_logs_checkbox_description": {
+    "message": "I want to contribute and share anonymous Crash logs.",
+    "description": "Checkbox label for opting in to share anonymous crash logs"
+  },
+  "install_get_mobile_app": {
+    "message": "Get mobile app",
+    "description": "Button label for downloading the mobile app"
+  },
+  "bottom_bar_security_icon_tooltip_header": {
+    "message": "This is your Identicon that only you know.",
+    "description": "Header for the tooltip explaining the purpose of the Identicon"
+  },
+  "bottom_bar_security_icon_tooltip_text": {
+    "message": "Make sure you see it every time you use \nthe 2FAS Pass Browser Extension.",
+    "description": "Reminds the user to verify their Identicon for security purposes"
+  },
+  "top_bar_locked": {
+    "message": "Locked",
+    "description": "Indicates that the extension is locked"
+  },
+  "top_bar_lock": {
+    "message": "Lock",
+    "description": "Button to lock the extension"
+  },
+  "top_bar_add_new": {
+    "message": "Add new",
+    "description": "Button to add a new item"
+  },
+  "add_new_validate_require": {
+    "message": "Please enter the Domain (URI)",
+    "description": "Validation message displayed when the Domain (URI) field is empty"
+  },
+  "add_new_validate_min_length": {
+    "message": "Please enter the Domain (URI) with at least 3 characters.",
+    "description": "Validation message displayed when the Domain (URI) field has fewer than 3 characters"
+  },
+  "add_new_validate_invalid_domain": {
+    "message": "Please enter a valid Domain (URI)",
+    "description": "Validation message displayed when the Domain (URI) entered is invalid"
+  },
+  "add_new_header": {
+    "message": "Adding a new service to \n2FAS Pass",
+    "description": "Header for the section to add a new service"
+  },
+  "add_new_subheader": {
+    "message": "Start the process here and continue in the mobile app.",
+    "description": "Subheader explaining that the process starts in the browser and continues in the mobile app"
+  },
+  "add_new_learn_more_tooltip_header": {
+    "message": "Security is our priority",
+    "description": "Header for the tooltip explaining security measures"
+  },
+  "add_new_learn_more_tooltip_content_1": {
+    "message": "By default, we do not ask you to enter your username and create a password using the Browser Extension. Instead, we encourage you to choose a username and generate a password directly in the mobile application.",
+    "description": "Explains the default security approach of creating login and password in the mobile app"
+  },
+  "add_new_learn_more_tooltip_content_2": {
+    "message": "You can enter your username and/or password in the form above and save it to your Vault in the mobile app.",
+    "description": "Explains the option to enter login and password in the browser extension and save it to the mobile app"
+  },
+  "blocked_text": {
+    "message": "This view is blocked. \nPlease use the external popup.",
+    "description": "This view is blocked. Please use the external popup."
+  },
+  "blocked_button": {
+    "message": "Open popup",
+    "description": "Button label to open the external popup."
+  },
+  "connect_qr_placeholder_1": {
+    "message": "2FAS Pass is the best! Check our website for more info!",
+    "description": "Placeholder text for the QR code section promoting the 2FAS Pass website"
+  },
+  "connect_qr_placeholder_2": {
+    "message": "If you are searching for a secure 2FA solution, check out our 2FAS Auth app!",
+    "description": "Placeholder text for the QR code section promoting the 2FAS Auth app"
+  },
+  "connect_qr_placeholder_3": {
+    "message": "2FAS Auth is the best 2FA app on the market! 2FAS Pass is the best password manager!",
+    "description": "Placeholder promoting both 2FAS Auth and 2FAS Pass as top solutions for 2FA and password management"
+  },
+  "connect_header": {
+    "message": "Scan this QR Code with your 2FAS Pass Mobile App",
+    "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
+  },
+  "connect_description": {
+    "message": "Required for every browser launch to ensure secure access to your Items.",
+    "description": "Explains the need to scan the QR code for secure access during each browser launch"
+  },
+  "connect_connecting": {
+    "message": "Connecting...",
+    "description": "Message displayed while the connection process is ongoing"
+  },
+  "connect_connection_opened": {
+    "message": "Connection is opened.\nDon't close this window",
+    "description": "Message displayed when the connection is successfully opened"
+  },
+  "details_header": {
+    "message": "Item details",
+    "description": "Header for the item details section"
+  },
+  "details_field": {
+    "message": "field",
+    "description": "Label for a single field in the item details"
+  },
+  "details_fields": {
+    "message": "fields",
+    "description": "Label for multiple fields in the item details"
+  },
+  "details_password_overlay": {
+    "message": "This password is only available in your Vault.",
+    "description": "Message indicating that the password is stored only in the user's Vault"
+  },
+  "details_password_decrypt_error": {
+    "message": "Decrypting password error. Please reconnect with your mobile app.",
+    "description": "Error message displayed when decrypting the password fails"
+  },
+  "details_password_description": {
+    "message": "This password is only available in your Vault. \nEnter a new one here to update it.",
+    "description": "Explains that the password is stored in the Vault and can be updated here"
+  },
+  "details_delete_header": {
+    "message": "No longer need this Item?",
+    "description": "Header for the delete login confirmation section"
+  },
+  "details_delete": {
+    "message": "Delete this Item from your Vault",
+    "description": "Button label to delete the item from the Vault"
+  },
+  "details_name_required": {
+    "message": "Name is required.",
+    "description": "Validation message indicating that the name field is required"
+  },
+  "details_name_max_length": {
+    "message": "Name must be less than 256 characters.",
+    "description": "Validation message indicating the maximum length for the name field"
+  },
+  "details_username_max_length": {
+    "message": "Username must be less than 256 characters.",
+    "description": "Validation message indicating the maximum length for the username field"
+  },
+  "details_uri_max_length": {
+    "message": "URL must be less than 2048 characters.",
+    "description": "Validation message indicating the maximum length for the URL field"
+  },
+  "details_service_not_found": {
+    "message": "Something went wrong. Service not found. Lock the Browser Extension and reconnect.",
+    "description": "Error shown when the requested service is not found, suggesting reconnection"
+  },
+  "details_security_type": {
+    "message": "Security Tier",
+    "description": "Label for the security type field in the item details"
+  },
+  "fetch_push_header": {
+    "message": "Check the 2FAS Pass push notification on your mobile phone.",
+    "description": "Header prompting the user to check their mobile phone for a push notification"
+  },
+  "fetch_push_waiting_for_mobile": {
+    "message": "Waiting for mobile response...",
+    "description": "Message displayed while waiting for a response from the mobile app"
+  },
+  "fetch_connection_error_header": {
+    "message": "Connection error! \nTry again later.",
+    "description": "Error message displayed when there is a connection issue"
+  },
+  "fetch_token_unregistered_header": {
+    "message": "FCM token unregistered. Lock the Browser Extension and \nscan the QR code again.",
+    "description": "Error message displayed when the FCM token is unregistered"
+  },
+  "fetch_connection_timeout_header": {
+    "message": "Timed out due to inactivity.",
+    "description": "Error message displayed when the connection times out due to inactivity"
+  },
+  "fetch_continue_updating_header": {
+    "message": "Continue updating in the 2FAS Pass app",
+    "description": "Header prompting the user to continue updating in the mobile app"
+  },
+  "fetch_continue_updating_description": {
+    "message": "To finish adding this service, continue on your \nmobile phone. Don't close this window.",
+    "description": "Explains that the user should continue the process on their mobile phone"
+  },
+  "fetch_delete_login_accept_toast": {
+    "message": "Item deleted",
+    "description": "Toast message displayed when a login is successfully deleted"
+  },
+  "fetch_delete_login_cancel_toast": {
+    "message": "Item deletion canceled",
+    "description": "Toast message displayed when the user cancels the login deletion process"
+  },
+  "fetch_fetch_request_accept_toast": {
+    "message": "Fetch request accepted",
+    "description": "Toast message displayed when a fetch request is accepted"
+  },
+  "fetch_fetch_request_cancel_toast": {
+    "message": "Fetch request rejected",
+    "description": "Toast message displayed when a fetch request is rejected"
+  },
+  "fetch_new_login_added_toast": {
+    "message": "New Item added",
+    "description": "Toast message displayed when a new login item is successfully added"
+  },
+  "fetch_new_login_added_t1_toast": {
+    "message": "New Item added in Tier 1 (only in the mobile app)",
+    "description": "Toast shown when a new login is added in tier 1, available only in the mobile app"
+  },
+  "fetch_new_login_cancel_toast": {
+    "message": "User cancelled adding a new Item",
+    "description": "Toast message displayed when the user cancels adding a new login item"
+  },
+  "fetch_password_request_accept_toast": {
+    "message": "Password request accepted",
+    "description": "Toast message displayed when a password request is accepted"
+  },
+  "fetch_password_request_cancel_toast": {
+    "message": "Password request rejected",
+    "description": "Toast message displayed when a password request is rejected"
+  },
+  "fetch_update_login_updated_toast": {
+    "message": "Item updated",
+    "description": "Toast message displayed when a login item is successfully updated"
+  },
+  "fetch_update_login_cancel_toast": {
+    "message": "Item update canceled",
+    "description": "Toast message displayed when the user cancels updating a login item"
+  },
+  "fetch_update_login_added_in_t1_toast": {
+    "message": "Item updated in tier 1 (only in mobile app)",
+    "description": "Toast shown when a login is updated in tier 1, available only in the mobile app"
+  },
+  "not_found_text": {
+    "message": "Route not implemented yet ;)",
+    "description": "Message shown when a user navigates to an unimplemented route"
+  },
+  "settings_header": {
+    "message": "Settings",
+    "description": "Header for the settings page"
+  },
+  "settings_preferences": {
+    "message": "Preferences",
+    "description": "Label for the preferences section in settings"
+  },
+  "settings_security": {
+    "message": "Security",
+    "description": "Label for the security section in settings"
+  },
+  "settings_about": {
+    "message": "About 2FAS Pass",
+    "description": "Label for the about section in settings"
+  },
+  "settings_rate_us_chrome": {
+    "message": "Rate us in Chrome Web Store",
+    "description": "Prompt to rate the extension in the Chrome Web Store"
+  },
+  "settings_rate_us_firefox": {
+    "message": "Rate us in Firefox Browser Add-ons",
+    "description": "Prompt to rate the extension in Firefox Browser Add-ons"
+  },
+  "settings_rate_us_edge": {
+    "message": "Rate us in Microsoft Edge Addons",
+    "description": "Prompt to rate the extension in Microsoft Edge Add-ons"
+  },
+  "settings_rate_us_safari": {
+    "message": "Rate us in App Store",
+    "description": "Prompt to rate the extension in the App Store"
+  },
+  "settings_about_header": {
+    "message": "About 2FAS Pass",
+    "description": "Header for the about section in settings"
+  },
+  "settings_about_thank_you": {
+    "message": "Thank you for using 2FAS Pass, \na Source-available project with cybersecurity at its heart.",
+    "description": "Thank you message for users of the 2FAS Pass extension"
+  },
+  "settings_about_thank_you_subheader": {
+    "message": "We do not keep your data. \nWe have no servers.",
+    "description": "Subheader emphasizing the privacy and security of the extension"
+  },
+  "settings_about_thank_you_description": {
+    "message": "We do not store your Items as we have no servers. You keep all of your Items in your 2FAS Pass mobile app. The ones you choose may also be stored in this Browser Extension. You decide when and how you use them.",
+    "description": "Explains that user data is stored in the mobile app or optionally in the extension"
+  },
+  "settings_visit_our_website": {
+    "message": "Visit our website",
+    "description": "Prompt to visit the 2FAS Pass website"
+  },
+  "settings_lets_connect": {
+    "message": "Let's connect",
+    "description": "Prompt to connect with the 2FAS Pass team or community"
+  },
+  "settings_save_prompt_header": {
+    "message": "\"Save Item\" prompt",
+    "description": "Header for the save login prompt settings"
+  },
+  "settings_save_prompt_description": {
+    "message": "Choose how you want to be prompted to save your Item details.",
+    "description": "Description for configuring the save login prompt behavior"
+  },
+  "settings_save_prompt_pass": {
+    "message": "2FAS Pass prompt",
+    "description": "Option to use the 2FAS Pass-specific save login prompt"
+  },
+  "settings_save_prompt_browser": {
+    "message": "Browser default prompt",
+    "description": "Option to use the browser's default save login prompt"
+  },
+  "settings_save_prompt_none": {
+    "message": "None",
+    "description": "Option to disable save login prompts"
+  },
+  "settings_safe_browsing": {
+    "message": "Turn on \"Safe browsing\" in Chrome",
+    "description": "Option to enable safe browsing in Chrome"
+  },
+  "settings_safe_browsing_reports": {
+    "message": "Send \"Safe browsing\" reports to Chrome",
+    "description": "Option to send safe browsing reports to Chrome"
+  },
+  "settings_only_on_restart": {
+    "message": "Only on restart",
+    "description": "Option to clear data only on browser restart"
+  },
+  "settings_don_t_clear": {
+    "message": "Don't clear automatically",
+    "description": "Option to disable automatic data clearing"
+  },
+  "settings_after_1_minute": {
+    "message": "After 1 minute",
+    "description": "Option to clear data after 1 minute of inactivity"
+  },
+  "settings_after_5_minutes": {
+    "message": "After 5 minutes",
+    "description": "Option to clear data after 5 minutes of inactivity"
+  },
+  "settings_after_15_minutes": {
+    "message": "After 15 minutes",
+    "description": "Option to clear data after 15 minutes of inactivity"
+  },
+  "settings_after_30_minutes": {
+    "message": "After 30 minutes",
+    "description": "Option to clear data after 30 minutes of inactivity"
+  },
+  "settings_after_60_minutes": {
+    "message": "After 60 minutes",
+    "description": "Option to clear data after 60 minutes of inactivity"
+  },
+  "settings_idle_lock_header": {
+    "message": "Automatically lock the Browser Extension when idle",
+    "description": "Header for the idle lock settings"
+  },
+  "settings_idle_lock_description": {
+    "message": "Select the time after which the Browser Extension will automatically lock itself if you don't use it.",
+    "description": "Description for configuring idle lock behavior"
+  },
+  "settings_auto_clear_clipboard_header": {
+    "message": "Auto clear clipboard",
+    "description": "Header for the auto clear clipboard settings"
+  },
+  "settings_auto_clear_clipboard_description": {
+    "message": "Select a time to clear the clipboard of data copied from this Browser Extension.",
+    "description": "Description for configuring clipboard auto-clear behavior"
+  },
+  "settings_theme": {
+    "message": "Theme",
+    "description": "Label for the theme settings"
+  },
+  "settings_unknown": {
+    "message": "Unknown",
+    "description": "Label for unknown settings or values"
+  },
+  "settings_shortcut": {
+    "message": "Shortcut",
+    "description": "Label for the shortcut settings"
+  },
+  "settings_shortcut_description": {
+    "message": "Use this shortcut to open the 2FAS Pass Browser Extension on any page.",
+    "description": "Description for configuring the extension shortcut"
+  },
+  "settings_shortcut_firefox_tooltip": {
+    "message": "To set or change this shortcut, go to your browser settings, extensions, then click on the gear icon and select “Manage Extension Shortcuts.”",
+    "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
+  },
+  "settings_push_native": {
+    "message": "Native Browser's Notifications",
+    "description": "Option to use the browser's native notification system"
+  },
+  "settings_push_custom": {
+    "message": "Custom 2FAS Pass Notifications",
+    "description": "Option to use custom notifications from 2FAS Pass"
+  },
+  "settings_push_notifications_changing_success": {
+    "message": "Push notification settings have been saved",
+    "description": "Message displayed when push notification settings are successfully saved"
+  },
+  "settings_notifications_header": {
+    "message": "Notifications",
+    "description": "Header for the notifications settings"
+  },
+  "settings_notifications_description": {
+    "message": "Choose a notification mechanism that will prompt you about communication between the 2FAS Pass Bobile App and this Browser Extension.",
+    "description": "Explains how to configure notifications for communication between the mobile app and extension"
+  },
+  "settings_notifications_send_test": {
+    "message": "Send test notification now",
+    "description": "Button label to send a test notification"
+  },
+  "settings_allow_logs": {
+    "message": "Allow sending anonymous Crash logs",
+    "description": "Option to enable sending anonymous crash logs"
+  },
+  "settings_ext_name_label": {
+    "message": "This browser's nickname",
+    "description": "Label for the browser nickname input field"
+  },
+  "settings_ext_name_placeholder": {
+    "message": "Enter your extension name",
+    "description": "Placeholder text for the browser nickname input field"
+  },
+  "settings_ext_name_validate_required": {
+    "message": "Please enter the extension name.",
+    "description": "Validation message when the extension name is not provided"
+  },
+  "settings_ext_name_validate_min_length": {
+    "message": "Please enter the extension name with at least 3 characters.",
+    "description": "Validation message when the extension name is too short"
+  },
+  "settings_ext_name_validate_max_length": {
+    "message": "Please enter the extension name with no more than 32 characters.",
+    "description": "Validation message when the extension name is too long"
+  },
+  "settings_context_menu_text": {
+    "message": "Show this extension's options in the context menu",
+    "description": "Option to enable or disable the extension's context menu options"
+  },
+  "settings_excluded_domains": {
+    "message": "Excluded domains",
+    "description": "Label for the excluded domains settings"
+  },
+  "settings_excluded_domains_description": {
+    "message": "2FAS Pass will not suggest adding \nnew Items for the following domains.",
+    "description": "Explains that excluded domains won't prompt for adding new logins"
+  },
+  "settings_excluded_domains_empty": {
+    "message": "There are no excluded domains yet.",
+    "description": "Message displayed when no domains are excluded"
+  },
+  "settings_excluded_domains_remove": {
+    "message": "Remove selected domain from excluded list.",
+    "description": "Button label to remove a domain from the excluded list"
+  },
+  "settings_danger_zone": {
+    "message": "Danger Zone",
+    "description": "Label for the danger zone section in settings"
+  },
+  "settings_danger_zone_reset": {
+    "message": "Reset Browser Extension",
+    "description": "Button label to reset the browser extension"
+  },
+  "settings_reset_header": {
+    "message": "Reset Browser Extension",
+    "description": "Header for the reset browser extension confirmation dialog"
+  },
+  "settings_reset_description": {
+    "message": "Resetting the 2FAS Pass browser extension will delete all settings associated with the extension.",
+    "description": "Confirmation message for resetting the browser extension"
+  },
+  "settings_reset_action_confirm_button": {
+    "message": "Reset",
+    "description": "Button label to confirm the reset action"
+  },
+  "settings_reset_action_cancel_button": {
+    "message": "Cancel",
+    "description": "Button label to cancel the reset action"
+  },
+  "this_tab_matching_logins_header": {
+    "message": "Matching Items",
+    "description": "Header for the section displaying matching login items"
+  },
+  "this_tab_matching_logins_header_no_logins": {
+    "message": "None of your Items match",
+    "description": "Message displayed when no login items match the current tab"
+  },
+  "this_tab_all_logins_header": {
+    "message": "All Items",
+    "description": "Header for the section displaying all login items"
+  },
+  "this_tab_sort": {
+    "message": "Sort",
+    "description": "Label for the sort functionality"
+  },
+  "this_tab_search_placeholder": {
+    "message": "Search among %AMOUNT% Items",
+    "description": "Placeholder text for the search input showing the number of available items"
+  },
+  "this_tab_more_details": {
+    "message": "View details",
+    "description": "Button label to view more details about a login item"
+  },
+  "this_tab_more_forget_password": {
+    "message": "Forget this password",
+    "description": "Button label to forget the saved password for a login item"
+  },
+  "this_tab_more_uris": {
+    "message": "Website URL(s):",
+    "description": "Label for displaying associated website URLs of a login item"
+  },
+  "this_tab_copy_to_clipboard": {
+    "message": "Copy to clipboard",
+    "description": "Button label to copy data to the clipboard"
+  },
+  "this_tab_no_search_results": {
+    "message": "No search results. Please try again.",
+    "description": "Message displayed when no search results are found"
+  },
+  "this_tab_autofill_success": {
+    "message": "Autofill successful",
+    "description": "Message displayed when autofill operation is successful"
+  },
+  "this_tab_autofill_no_password": {
+    "message": "Username autofilled but no password found",
+    "description": "Message displayed when no password is found for autofill"
+  },
+  "this_tab_autofill_no_username_and_password": {
+    "message": "No username and password found. Autofill not possible.",
+    "description": "Message displayed when no username and password are found for autofill"
+  },
+  "this_tab_can_t_autofill": {
+    "message": "Browser Extension can't autofill. Copy the Item details and paste them manually.",
+    "description": "Message shown when autofill isn't possible, suggesting manual copy-paste"
+  },
+  "this_tab_can_t_autofill_t2": {
+    "message": "Browser Extension can't autofill. Fetch Item details and paste them manually.",
+    "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
+  },
+  "this_tab_can_t_autofill_t2_failed": {
+    "message": "Browser Extension can’t autofill the form.",
+    "description": "Message displayed when autofill operation fails completely"
+  },
+  "this_tab_can_t_find_inputs": {
+    "message": "Browser Extension can't find the appropriate Item details. Use the context menu or copy and paste them manually.",
+    "description": "Message shown when input fields for autofill can't be found"
+  },
+  "this_tab_copy_password": {
+    "message": "Copy password",
+    "description": "Button label to copy the password to the clipboard"
+  },
+  "this_tab_fetch_password": {
+    "message": "Fetch password",
+    "description": "Button label to fetch the password from the mobile app"
+  },
+  "this_tab_copy_username": {
+    "message": "Copy username",
+    "description": "Button label to copy the username to the clipboard"
+  },
+  "this_tab_more_actions": {
+    "message": "More actions",
+    "description": "Label for a dropdown or menu containing additional actions"
+  }
+}

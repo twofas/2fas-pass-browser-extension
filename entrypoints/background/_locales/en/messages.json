@@ -1,0 +1,18 @@
+{
+  "background_contextMenuConfigured_no_accounts": {
+    "message": "There are no matching Items for this domain",
+    "description": "Message displayed when no login items match the current domain in the context menu"
+  },
+  "background_contextMenuConfigured_add_account": {
+    "message": "Add account...",
+    "description": "Option in the context menu to add a new account for the current domain"
+  },
+  "background_contextMenuNotConfigured_connect": {
+    "message": "Connect with the 2FAS Pass mobile app...",
+    "description": "Option to connect the extension with the 2FAS Pass mobile app"
+  },
+  "background_get_browser_info_on": {
+    "message": "on",
+    "description": "Used in generating the browser extension name, e.g., Chrome on Windows"
+  }
+}

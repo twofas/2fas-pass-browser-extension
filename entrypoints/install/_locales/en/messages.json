@@ -1,0 +1,74 @@
+{
+  "install_please_pin_extension": {
+    "message": "Please pin the extension to the toolbar.",
+    "description": "Prompt asking the user to pin the browser extension to the toolbar"
+  },
+  "install_logging_settings_changed": {
+    "message": "\"Crash logs\" settings changed successfully.",
+    "description": "Message displayed when crash log settings are successfully updated"
+  },
+  "install_privacy_text": {
+    "message": "Privacy meets security & convenience.",
+    "description": "Text emphasizing the balance of privacy, security, and convenience"
+  },
+  "install_1_info": {
+    "message": "Browser Extension installed successfully!",
+    "description": "Message displayed when the browser extension is installed successfully"
+  },
+  "install_1_header": {
+    "message": "Pin to access \nyour Items\nquickly!",
+    "description": "Header encouraging the user to pin the extension for quick access"
+  },
+  "install_1_open_extension_menu": {
+    "message": "Open the Extension menu.",
+    "description": "Instruction to open the browser's extension menu"
+  },
+  "install_1_pin_extension": {
+    "message": "Pin 2FAS Pass to the toolbar.",
+    "description": "Instruction to pin the 2FAS Pass extension to the toolbar"
+  },
+  "install_2_info": {
+    "message": "Browser Extension pinned!",
+    "description": "Message displayed when the browser extension is successfully pinned"
+  },
+  "install_2_header": {
+    "message": "Now start \nworking with your \nnew password \nmanager",
+    "description": "Header encouraging the user to start using the password manager"
+  },
+  "install_2_click_icon": {
+    "message": "Click the icon to open the 2FAS Pass Browser Extension.",
+    "description": "Instruction to click the extension icon to open it"
+  },
+  "install_2_use_mobile_app": {
+    "message": "Use 2FAS Pass mobile app to scan the QR Code.",
+    "description": "Instruction to use the mobile app to scan the QR code"
+  },
+  "install_3_info": {
+    "message": "Extension is unlocked for this browser's session!",
+    "description": "Message displayed when the extension is unlocked for the current browser session"
+  },
+  "install_3_header": {
+    "message": "This Browser \nExtension is ready \nto use.",
+    "description": "Header indicating that the browser extension is ready to use"
+  },
+  "install_3_get_started": {
+    "message": "Here's everything you need to know to get started.",
+    "description": "Message introducing the user to the getting started guide"
+  },
+  "install_3_crash_logs_header": {
+    "message": "Crash logs permission",
+    "description": "Header for the section explaining crash log permissions"
+  },
+  "install_3_crash_logs_description": {
+    "message": "If you want to support the development of this Source-available project, you can give permission to send anonymous Crash logs.",
+    "description": "Explains the purpose of sending anonymous crash logs to support the project"
+  },
+  "install_3_crash_logs_checkbox_description": {
+    "message": "I want to contribute and share anonymous Crash logs.",
+    "description": "Checkbox label for opting in to share anonymous crash logs"
+  },
+  "install_get_mobile_app": {
+    "message": "Get mobile app",
+    "description": "Button label for downloading the mobile app"
+  }
+}

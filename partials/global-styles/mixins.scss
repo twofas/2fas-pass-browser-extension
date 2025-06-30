@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@mixin darkMode {
+  :global(body.theme-dark) & {
+    @content;
+  }
+}
+
+@mixin lightMode {
+  :global(body.theme-light) & {
+    @content;
+  }
+}
+
+@mixin loaded {
+  :global(body.loaded) & {
+    @content;
+  }
+}
+
+@mixin loadedDarkMode {
+  :global(body.loaded.theme-dark) & {
+    @content;
+  }
+}

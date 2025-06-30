@@ -1,0 +1,10 @@
+{
+  "bottom_bar_security_icon_tooltip_header": {
+    "message": "This is your Identicon that only you know.",
+    "description": "Header for the tooltip explaining the purpose of the Identicon"
+  },
+  "bottom_bar_security_icon_tooltip_text": {
+    "message": "Make sure you see it every time you use \nthe 2FAS Pass Browser Extension.",
+    "description": "Reminds the user to verify their Identicon for security purposes"
+  }
+}

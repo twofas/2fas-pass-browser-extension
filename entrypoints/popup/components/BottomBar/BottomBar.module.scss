@@ -1,0 +1,323 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.bottombar {
+  align-items: center;
+  background-color: v.$primary-box-bg-light;
+  border-top: 1px solid v.$divider-light;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  justify-content: space-between;
+  height: 40px;
+  padding: 0 4px 0 10px;
+  position: fixed;
+  width: 100%;
+  z-index: 3;
+
+  :global(body:not(.theme-light):not(.theme-dark)) & {
+    opacity: 0;
+  }
+
+  @include m.darkMode {
+    background-color: v.$primary-box-bg-dark;
+    border-top-color: v.$divider-dark;
+  }
+
+  &-sec-icon {
+    align-items: center;
+    background-color: v.$primary-box-bg-light;
+    border: 1px solid v.$object-stroke-light;
+    border-radius: 50%;
+    bottom: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    height: 64px;
+    justify-content: center;
+    left: 50%;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transform: translateX(-50%);
+    transition: opacity .3s ease-in-out, border-color .3s ease-in-out, border-width .3s ease-in-out;
+    width: 64px;
+    z-index: 3;
+
+    @include m.darkMode {
+      background-color: v.$primary-box-bg-dark;
+      border-color: v.$object-stroke-dark;
+    }
+
+    &.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    &.ws-active {
+      &::before,
+      &::after {
+        opacity: 1;
+      }
+    }
+
+    &:hover {
+      border-color: v.$primary-color-light;
+      border-width: 2px;
+
+      @include m.darkMode {
+        border-color: v.$primary-color-dark;
+      }
+
+      + .bottombar-sec-icon-tooltip {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    &::before,
+    &::after {
+      border-radius: 50%;
+      content: '';
+      display: block;
+      height: 64px;
+      opacity: 0;
+      position: absolute;
+      transition: opacity .3s ease-in-out;
+      width: 64px;
+    }
+
+    &::before {
+      animation: rotation 1s linear infinite;
+      background: linear-gradient(0deg, rgba(v.$primary-color-light, .2) 33%, v.$primary-color-light 100%);
+      z-index: 2;
+
+      @include m.darkMode {
+        background: linear-gradient(0deg, rgba(v.$primary-color-dark, .2) 33%, v.$primary-color-dark 100%);
+      }
+    }
+
+    &::after {
+      background: v.$primary-box-bg-light;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+
+      @include m.darkMode {
+        background: v.$primary-box-bg-dark;
+      }
+    }
+
+    &-tooltip {
+      background-color: v.$card-bg-light;
+      border: 1px solid v.$card-stroke-light;
+      border-radius: 8px;
+      bottom: 81px;
+      font-size: 12px;
+      left: 50%;
+      line-height: 1.3;
+      opacity: 0;
+      padding: 16px;
+      pointer-events: none;
+      position: absolute;
+      transform: translateX(-50%) translateY(20px);
+      transition: opacity .3s ease-in-out, transform .3s ease-in-out;
+      white-space: pre-wrap;
+      width: 275px;
+      z-index: 2;
+
+      @include m.darkMode {
+        background-color: v.$card-bg-dark;
+        border-color: v.$card-stroke-dark;
+      }
+
+      span {
+        display: block;
+
+        &:first-of-type {
+          color: v.$primary-text-light;
+          font-weight: 500;
+
+          @include m.darkMode {
+            color: v.$primary-text-dark;
+          }
+        }
+
+        &:last-of-type {
+          color: v.$secondary-text-light;
+          font-weight: 400;
+
+          @include m.darkMode {
+            color: v.$secondary-text-dark;
+          }
+        }
+      }
+    }
+
+    &-content {
+      align-items: center;
+      background-color: v.$primary-box-bg-light;
+      border-radius: 50%;
+      display: flex;
+      height: 60px;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+      width: 60px;
+
+      @include m.darkMode {
+        background-color: v.$primary-box-bg-dark;
+      }
+    }
+
+    svg {
+      height: 60px;
+      padding: 10px;
+      position: absolute;
+      width: 60px;
+      z-index: 3;
+    }
+  }
+
+  &-static {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0 4px;
+    height: 100%;
+
+    button,
+    a {
+      align-items: center;
+      background-color: rgba(v.$hover-color-light, 0);
+      border-radius: 6px;
+      display: flex;
+      height: 32px;
+      justify-content: center;
+      opacity: 1;
+      text-align: center;
+      transition: opacity .3s ease-in-out, background-color .3s ease-in-out;
+      user-select: none;
+      width: 32px;
+
+      @include m.darkMode {
+        background-color: rgba(v.$hover-color-dark, 0);
+      }
+  
+      &:hover {
+        background-color: rgba(v.$hover-color-light, 1);
+
+        @include m.darkMode {
+          background-color: rgba(v.$hover-color-dark, 1);
+        }
+      }
+  
+      &.hidden {
+        opacity: 0;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      &.hidden-permanent {
+        display: none !important;
+      }
+
+      &.disabled {
+        pointer-events: none;
+      }
+  
+      svg {
+        height: 20px;
+        stroke: v.$primary-color-light;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: stroke .3s ease-in-out;
+        width: 20px;
+
+        @include m.darkMode {
+          stroke: v.$primary-color-dark;
+        }
+      }
+    }
+  }
+
+  &-fetch {
+    padding: 4px 0;
+
+    a {
+      align-items: center;
+      background-color: rgba(v.$hover-color-light, 0);
+      border-radius: 6px;
+      display: inline-flex;
+      gap: 0 6px;
+      height: 100%;
+      justify-content: center;
+      opacity: 1;
+      padding: 4px 12px 4px 6px;
+      transition: opacity .3s ease-in-out, background-color .3s ease-in-out;
+      user-select: none;
+
+      @include m.darkMode {
+        background-color: rgba(v.$hover-color-dark, 0);
+      }
+  
+      &:hover {
+        background-color: rgba(v.$hover-color-light, 1);
+
+        @include m.darkMode {
+          background-color: rgba(v.$hover-color-dark, 1);
+        }
+      }
+  
+      &.hidden {
+        opacity: 0;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      &.disabled {
+        pointer-events: none;
+      }
+
+      span {
+        color: v.$primary-color-light;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1;
+        transform: translateY(1px);
+        transition: color .3s ease-in-out;
+
+        @include m.darkMode {
+          color: v.$primary-color-dark;
+        }
+      }
+  
+      svg {
+        height: auto;
+        stroke: v.$primary-color-light;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: stroke .3s ease-in-out;
+        width: 24px;
+
+        @include m.darkMode {
+          stroke: v.$primary-color-dark;
+        }
+      }
+    }
+  } 
+}
+
+@keyframes rotation {
+  0% { transform: rotate(0deg) }
+  100% { transform: rotate(360deg)}
+}

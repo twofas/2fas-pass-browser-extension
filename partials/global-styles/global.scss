@@ -1,0 +1,150 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "variables" as v;
+@use "fonts";
+
+* {
+  box-sizing: border-box;
+  outline: none;
+}
+
+input,
+textarea,
+button {
+  -webkit-appearance: none; /* stylelint-disable-line */
+  appearance: none;
+}
+
+button {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+html {
+  font-size: 16px;
+  height: auto;
+
+  @media (prefers-reduced-motion: no-preference) {
+    scroll-behavior: smooth;
+  }
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+body {
+  font-family: 'Twofas-Pass-Inter', sans-serif;
+  font-optical-sizing: auto;
+  height: 100%;
+  min-height: 137px;
+  text-rendering: optimizespeed;
+
+  * {
+    font-family: 'Twofas-Pass-Inter', sans-serif;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-bottom: 0;
+  margin-top: 0;
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+a {
+  color: inherit;
+  outline: none;
+  text-decoration: none;
+}
+
+::-webkit-input-placeholder { /* stylelint-disable-line */
+  color: inherit;
+}
+
+::-moz-placeholder { /* stylelint-disable-line */
+  color: inherit;
+}
+
+:-ms-input-placeholder { /* stylelint-disable-line */
+  color: inherit;
+}
+
+picture {
+  img {
+    display: block;
+  }
+}
+
+.theme-light {
+  body.theme-light &,
+  body:not(.theme-dark) & {
+    display: initial;
+  }
+
+  body.theme-dark & {
+    display: none;
+  }
+}
+
+.theme-dark {
+  body.theme-dark & {
+    display: initial;
+  }
+
+  body.theme-light &,
+  body:not(.theme-dark) & {
+    display: none;
+  }
+}
+
+.cancel,
+.back {
+  position: absolute;
+  z-index: 9;
+
+  svg {
+    height: 32px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+    width: 32px;
+
+    body.theme-light &,
+    body:not(.theme-dark) & {
+      fill: v.$additional-light;
+      stroke: v.$primary-color-light;
+    }
+
+    body.theme-dark & {
+      fill: v.$additional-dark;
+      stroke: v.$primary-color-dark;
+    }
+  }
+}
+
+.cancel {
+  right: 12px;
+  top: 14px;
+}
+
+.back {
+  left: 12px;
+  top: 14px;
+}

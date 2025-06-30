@@ -1,0 +1,144 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+:global(html) {
+  background-color: v.$primary-bg-dark;
+
+  &::-webkit-scrollbar,
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-thumb {
+    display: none;
+  }
+
+  &:global(.theme-light) {
+    background-color: v.$primary-bg-light;
+  }
+
+  &:global(.theme-dark) {
+    background-color: v.$primary-bg-dark;
+  }
+}
+
+:global(body) {
+  background-color: v.$primary-bg-dark;
+
+  @include m.lightMode {
+    background-color: v.$primary-bg-light;
+  }
+
+  &.loaded {
+    opacity: 1;
+  }
+}
+
+:global(#root) {
+  height: 100%;
+}
+
+.pass {
+  background: v.$primary-bg-light;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
+  min-height: 600px;
+  min-width: 400px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  
+  *::-webkit-scrollbar {
+    background-color: v.$primary-bg-light;
+    width: 8px;
+  }
+   
+  *::-webkit-scrollbar-track {
+    box-shadow: none;
+  }
+   
+  *::-webkit-scrollbar-thumb {
+    background-color: v.$hover-on-hover-light;
+    border-radius: 4px;
+  }
+
+  @include m.darkMode {
+    background-color: v.$primary-bg-dark;
+    
+    &::-webkit-scrollbar,
+    *::-webkit-scrollbar {
+      background-color: v.$primary-bg-dark;
+    }
+     
+    &::-webkit-scrollbar-thumb,
+    *::-webkit-scrollbar-thumb {
+      background-color: v.$hover-on-hover-dark;
+    }
+  }
+
+  &:global(.firefox) {
+    .pass-screen {
+      > div {
+        padding: 11px 12px 43px;
+      }
+    }
+  }
+
+  &.pass-blocked {
+    height: 137px;
+
+    .pass-screen {
+      overflow: hidden;
+      padding: 0;
+
+      > div {
+        overflow: hidden;
+        padding: 0;
+        scrollbar-gutter: unset;
+      }
+    }
+  }
+
+  &.pass-non-separate-window {
+    max-width: 400px !important;
+    width: 400px !important;
+  }
+
+  &-screen {
+    background-color: v.$primary-bg-light;
+    flex-grow: 1;
+    display: flex;
+    overflow: auto;
+    padding-bottom: 40px;
+    position: relative;
+    width: 100%;
+
+    @include m.darkMode {
+      background-color: v.$primary-bg-dark;
+    }
+
+    > div {
+      overflow: auto;
+      padding: 11px 4px 43px 12px; // 4px + 8px scrollbar width
+      scrollbar-gutter: stable;
+      width: 100%;
+
+      > section {
+        background-color: v.$primary-box-bg-light;
+
+        @include m.darkMode {
+          background-color: v.$primary-box-bg-dark;
+        }
+  
+        &.hidden {
+          max-height: 0 !important;
+          overflow: hidden !important;
+        }
+      }
+    }
+  }
+}

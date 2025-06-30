@@ -1,0 +1,242 @@
+{
+  "settings_header": {
+    "message": "Settings",
+    "description": "Header for the settings page"
+  },
+  "settings_preferences": {
+    "message": "Preferences",
+    "description": "Label for the preferences section in settings"
+  },
+  "settings_security": {
+    "message": "Security",
+    "description": "Label for the security section in settings"
+  },
+  "settings_about": {
+    "message": "About 2FAS Pass",
+    "description": "Label for the about section in settings"
+  },
+  "settings_rate_us_chrome": {
+    "message": "Rate us in Chrome Web Store",
+    "description": "Prompt to rate the extension in the Chrome Web Store"
+  },
+  "settings_rate_us_firefox": {
+    "message": "Rate us in Firefox Browser Add-ons",
+    "description": "Prompt to rate the extension in Firefox Browser Add-ons"
+  },
+  "settings_rate_us_edge": {
+    "message": "Rate us in Microsoft Edge Addons",
+    "description": "Prompt to rate the extension in Microsoft Edge Add-ons"
+  },
+  "settings_rate_us_safari": {
+    "message": "Rate us in App Store",
+    "description": "Prompt to rate the extension in the App Store"
+  },
+  "settings_about_header": {
+    "message": "About 2FAS Pass",
+    "description": "Header for the about section in settings"
+  },
+  "settings_about_thank_you": {
+    "message": "Thank you for using 2FAS Pass, \na Source-available project with cybersecurity at its heart.",
+    "description": "Thank you message for users of the 2FAS Pass extension"
+  },
+  "settings_about_thank_you_subheader": {
+    "message": "We do not keep your data. \nWe have no servers.",
+    "description": "Subheader emphasizing the privacy and security of the extension"
+  },
+  "settings_about_thank_you_description": {
+    "message": "We do not store your Items as we have no servers. You keep all of your Items in your 2FAS Pass mobile app. The ones you choose may also be stored in this Browser Extension. You decide when and how you use them.",
+    "description": "Explains that user data is stored in the mobile app or optionally in the extension"
+  },
+  "settings_visit_our_website": {
+    "message": "Visit our website",
+    "description": "Prompt to visit the 2FAS Pass website"
+  },
+  "settings_lets_connect": {
+    "message": "Let's connect",
+    "description": "Prompt to connect with the 2FAS Pass team or community"
+  },
+  "settings_save_prompt_header": {
+    "message": "\"Save Item\" prompt",
+    "description": "Header for the save login prompt settings"
+  },
+  "settings_save_prompt_description": {
+    "message": "Choose how you want to be prompted to save your Item details.",
+    "description": "Description for configuring the save login prompt behavior"
+  },
+  "settings_save_prompt_pass": {
+    "message": "2FAS Pass prompt",
+    "description": "Option to use the 2FAS Pass-specific save login prompt"
+  },
+  "settings_save_prompt_browser": {
+    "message": "Browser default prompt",
+    "description": "Option to use the browser's default save login prompt"
+  },
+  "settings_save_prompt_none": {
+    "message": "None",
+    "description": "Option to disable save login prompts"
+  },
+  "settings_safe_browsing": {
+    "message": "Turn on \"Safe browsing\" in Chrome",
+    "description": "Option to enable safe browsing in Chrome"
+  },
+  "settings_safe_browsing_reports": {
+    "message": "Send \"Safe browsing\" reports to Chrome",
+    "description": "Option to send safe browsing reports to Chrome"
+  },
+  "settings_only_on_restart": {
+    "message": "Only on restart",
+    "description": "Option to clear data only on browser restart"
+  },
+  "settings_don_t_clear": {
+    "message": "Don't clear automatically",
+    "description": "Option to disable automatic data clearing"
+  },
+  "settings_after_1_minute": {
+    "message": "After 1 minute",
+    "description": "Option to clear data after 1 minute of inactivity"
+  },
+  "settings_after_5_minutes": {
+    "message": "After 5 minutes",
+    "description": "Option to clear data after 5 minutes of inactivity"
+  },
+  "settings_after_15_minutes": {
+    "message": "After 15 minutes",
+    "description": "Option to clear data after 15 minutes of inactivity"
+  },
+  "settings_after_30_minutes": {
+    "message": "After 30 minutes",
+    "description": "Option to clear data after 30 minutes of inactivity"
+  },
+  "settings_after_60_minutes": {
+    "message": "After 60 minutes",
+    "description": "Option to clear data after 60 minutes of inactivity"
+  },
+  "settings_idle_lock_header": {
+    "message": "Automatically lock the Browser Extension when idle",
+    "description": "Header for the idle lock settings"
+  },
+  "settings_idle_lock_description": {
+    "message": "Select the time after which the Browser Extension will automatically lock itself if you don't use it.",
+    "description": "Description for configuring idle lock behavior"
+  },
+  "settings_auto_clear_clipboard_header": {
+    "message": "Auto clear clipboard",
+    "description": "Header for the auto clear clipboard settings"
+  },
+  "settings_auto_clear_clipboard_description": {
+    "message": "Select a time to clear the clipboard of data copied from this Browser Extension.",
+    "description": "Description for configuring clipboard auto-clear behavior"
+  },
+  "settings_theme": {
+    "message": "Theme",
+    "description": "Label for the theme settings"
+  },
+  "settings_unknown": {
+    "message": "Unknown",
+    "description": "Label for unknown settings or values"
+  },
+  "settings_shortcut": {
+    "message": "Shortcut",
+    "description": "Label for the shortcut settings"
+  },
+  "settings_shortcut_description": {
+    "message": "Use this shortcut to open the 2FAS Pass Browser Extension on any page.",
+    "description": "Description for configuring the extension shortcut"
+  },
+  "settings_shortcut_firefox_tooltip": {
+    "message": "To set or change this shortcut, go to your browser settings, extensions, then click on the gear icon and select “Manage Extension Shortcuts.”",
+    "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
+  },
+  "settings_push_native": {
+    "message": "Native Browser's Notifications",
+    "description": "Option to use the browser's native notification system"
+  },
+  "settings_push_custom": {
+    "message": "Custom 2FAS Pass Notifications",
+    "description": "Option to use custom notifications from 2FAS Pass"
+  },
+  "settings_push_notifications_changing_success": {
+    "message": "Push notification settings have been saved",
+    "description": "Message displayed when push notification settings are successfully saved"
+  },
+  "settings_notifications_header": {
+    "message": "Notifications",
+    "description": "Header for the notifications settings"
+  },
+  "settings_notifications_description": {
+    "message": "Choose a notification mechanism that will prompt you about communication between the 2FAS Pass Bobile App and this Browser Extension.",
+    "description": "Explains how to configure notifications for communication between the mobile app and extension"
+  },
+  "settings_notifications_send_test": {
+    "message": "Send test notification now",
+    "description": "Button label to send a test notification"
+  },
+  "settings_allow_logs": {
+    "message": "Allow sending anonymous Crash logs",
+    "description": "Option to enable sending anonymous crash logs"
+  },
+  "settings_ext_name_label": {
+    "message": "This browser's nickname",
+    "description": "Label for the browser nickname input field"
+  },
+  "settings_ext_name_placeholder": {
+    "message": "Enter your extension name",
+    "description": "Placeholder text for the browser nickname input field"
+  },
+  "settings_ext_name_validate_required": {
+    "message": "Please enter the extension name.",
+    "description": "Validation message when the extension name is not provided"
+  },
+  "settings_ext_name_validate_min_length": {
+    "message": "Please enter the extension name with at least 3 characters.",
+    "description": "Validation message when the extension name is too short"
+  },
+  "settings_ext_name_validate_max_length": {
+    "message": "Please enter the extension name with no more than 32 characters.",
+    "description": "Validation message when the extension name is too long"
+  },
+  "settings_context_menu_text": {
+    "message": "Show this extension's options in the context menu",
+    "description": "Option to enable or disable the extension's context menu options"
+  },
+  "settings_excluded_domains": {
+    "message": "Excluded domains",
+    "description": "Label for the excluded domains settings"
+  },
+  "settings_excluded_domains_description": {
+    "message": "2FAS Pass will not suggest adding \nnew Items for the following domains.",
+    "description": "Explains that excluded domains won't prompt for adding new logins"
+  },
+  "settings_excluded_domains_empty": {
+    "message": "There are no excluded domains yet.",
+    "description": "Message displayed when no domains are excluded"
+  },
+  "settings_excluded_domains_remove": {
+    "message": "Remove selected domain from excluded list.",
+    "description": "Button label to remove a domain from the excluded list"
+  },
+  "settings_danger_zone": {
+    "message": "Danger Zone",
+    "description": "Label for the danger zone section in settings"
+  },
+  "settings_danger_zone_reset": {
+    "message": "Reset Browser Extension",
+    "description": "Button label to reset the browser extension"
+  },
+  "settings_reset_header": {
+    "message": "Reset Browser Extension",
+    "description": "Header for the reset browser extension confirmation dialog"
+  },
+  "settings_reset_description": {
+    "message": "Resetting the 2FAS Pass browser extension will delete all settings associated with the extension.",
+    "description": "Confirmation message for resetting the browser extension"
+  },
+  "settings_reset_action_confirm_button": {
+    "message": "Reset",
+    "description": "Button label to confirm the reset action"
+  },
+  "settings_reset_action_cancel_button": {
+    "message": "Cancel",
+    "description": "Button label to cancel the reset action"
+  }
+}
