@@ -21,9 +21,9 @@ The seamless integration between mobile app and browser extension ensures you ha
 # Graphics
 All graphics, logos, and visual assets in this repository are protected by copyright and are proprietary to Two Factor Authentication Service, Inc. They may not be used, reproduced, or distributed without explicit written permission.
 # Bug Reporting
-We use GitHub for bug reports. Please visit the ~[2FAS Pass Browser Extension issues page](https://github.com/twofas/2fas-pass-browser-extension/issues)~ to search for and report any bugs you may have found. Before adding a new issue, please search for existing issues to avoid duplicates.
+We use GitHub for bug reports. Please visit the [2FAS Pass Browser Extension issues page](https://github.com/twofas/2fas-pass-browser-extension/issues) to search for and report any bugs you may have found. Before adding a new issue, please search for existing issues to avoid duplicates.
 
-For reporting security issues only, please send a detailed description of the vulnerability to ~[security@2fas.com](mailto:security@2fas.com)~. Do not use this address for general inquiries or bug reports unrelated to security concerns.
+For reporting security issues only, please send a detailed description of the vulnerability to [security@2fas.com](mailto:security@2fas.com). Do not use this address for general inquiries or bug reports unrelated to security concerns.
 # License
 2FAS Pass Browser Extension uses a **dual licensing approach**:
 
@@ -34,7 +34,7 @@ For reporting security issues only, please send a detailed description of the vu
 - **Restricted:** Production use, commercial use, business use, and any 
   use that provides services to others
 
-For the complete Source Code license terms, see the ~[LICENSE](LICENSE)~ file.
+For the complete Source Code license terms, see the [LICENSE](LICENSE) file.
 
 ### Official Applications (App Stores)
 - **License:** End User License Agreement (EULA)  
@@ -42,7 +42,7 @@ For the complete Source Code license terms, see the ~[LICENSE](LICENSE)~ file.
 - **No restrictions:** Use freely in your company, with employees, for business purposes
 - **Subscriptions:** Available in mobile applications
 
-For the complete Official Applications license terms, see the ~[EULA](EULA.md)~ file.
+For the complete Official Applications license terms, see the [EULA](EULA.md) file.
 
 **For developers:** Source code is available for learning, testing, and educational.
 **For end users:** Download our official apps and use them freely - including for business!
