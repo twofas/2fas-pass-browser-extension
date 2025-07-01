@@ -49,7 +49,15 @@
   },
   "settings_visit_our_website": {
     "message": "Visit our website",
-    "description": "Prompt to visit the 2FAS Pass website"
+    "description": "Link to the 2FAS Pass website"
+  },
+  "settings_privacy_policy": {
+    "message": "Privacy Policy",
+    "description": "Link to the privacy policy of 2FAS Pass"
+  },
+  "settings_eula": {
+    "message": "Terms of Service (EULA)",
+    "description": "Link to the End User License Agreement for 2FAS Pass"
   },
   "settings_lets_connect": {
     "message": "Let's connect",

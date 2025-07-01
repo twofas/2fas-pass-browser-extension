@@ -77,6 +77,18 @@ function SettingsAbout (props) {
                       <span>2fas.com/pass</span>
                     </a>
 
+                    <h5>{browser.i18n.getMessage('settings_privacy_policy')}</h5>
+                    <a href="https://2fas.com/pass/privacy-policy/" className={`${S.settingsAboutWebsiteLink} ${S.additionalLink}`} target="_blank" rel="noopener noreferrer">
+                      <Domain />
+                      <span>2fas.com/pass/privacy-policy/</span>
+                    </a>
+
+                    <h5>{browser.i18n.getMessage('settings_eula')}</h5>
+                    <a href="https://2fas.com/pass/eula/" className={`${S.settingsAboutWebsiteLink} ${S.additionalLink}`} target="_blank" rel="noopener noreferrer">
+                      <Domain />
+                      <span>2fas.com/pass/eula/</span>
+                    </a>
+
                     <h4>{browser.i18n.getMessage('settings_lets_connect')}</h4>
                     <div className={S.settingsAboutSocial}>
                       <ul>
