@@ -198,7 +198,7 @@ export default defineConfig({
 
     // Chrome, Opera, Edge
     if (browser !== 'firefox' && browser !== 'safari') {
-      manifestObj.minimum_chrome_version = '130';
+      manifestObj.minimum_chrome_version = '135';
     }
 
     if (browser === 'firefox') {
