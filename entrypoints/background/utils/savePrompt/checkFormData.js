@@ -14,6 +14,11 @@ import decryptValues from './decryptValues';
 * @return {Promise<boolean>} A promise that resolves to true if the form data is valid, false otherwise.
 */
 const checkFormData = async (details, values) => {
+  if (!details || !values) {
+    // FUTURE - throw error?
+    return false;
+  }
+
   const decryptedValues = await decryptValues(values);
 
   let formDataOk = false;

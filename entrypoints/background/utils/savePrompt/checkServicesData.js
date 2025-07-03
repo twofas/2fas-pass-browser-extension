@@ -17,6 +17,11 @@ import decryptValues from './decryptValues';
 * @return {Promise<string|boolean>} A promise that resolves to a string indicating the service status or false if the data is valid.
 */
 const checkServicesData = async (details, values) => {
+  if (!details || !values) {
+    // FUTURE - throw error?
+    return false;
+  }
+
   let services = [];
 
   try {

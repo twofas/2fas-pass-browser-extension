@@ -11,13 +11,17 @@
 * @return {Object} An object containing the cleaned up input data.
 */
 const cleanTabsInputData = (details, inputData) => {
-  let inputsObj = {};
+  if (!details || !inputData) {
+    // FUTURE - throw error?
+    return {};
+  }
 
   // Check if inputData is an object and has keys
   if (typeof inputData !== 'object' || !inputData) {
     return {};
   }
 
+  let inputsObj = {};
   let objKeys = Object.keys(inputData);
   
   if (objKeys.length <= 0) {
