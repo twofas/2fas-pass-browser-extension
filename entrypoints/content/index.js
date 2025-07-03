@@ -43,11 +43,14 @@ export default defineContentScript({
       window.addEventListener('error', emptyFunc);
       window.addEventListener('unhandledrejection', emptyFunc);
 
-      window.addEventListener('beforeunload', () => {
+      const removeListeners = () => {
         browser.runtime.onMessage.removeListener(handleMessage);
         window.removeEventListener('error', emptyFunc);
         window.removeEventListener('unhandledrejection', emptyFunc);
-      }, { once: true });
+      };
+
+      ctx.onInvalidated(removeListeners);
+      window.addEventListener('beforeunload', removeListeners, { once: true });
     } catch (e) {
       handleError(e);
     }

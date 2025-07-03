@@ -16,7 +16,7 @@ export default defineContentScript({
   all_frames: true,
   match_about_blank: true,
   registration: 'runtime',
-  async main () {
+  async main (ctx) {
     let localKey = { data: null };
     let timers = {};
     const emptyFunc = () => {};
@@ -40,13 +40,16 @@ export default defineContentScript({
       window.addEventListener('error', emptyFunc);
       window.addEventListener('unhandledrejection', emptyFunc);
 
-      window.addEventListener('beforeunload', () => {
+      const removeListeners = () => {
         browser.runtime.onMessage.removeListener(promptOnMessage);
         document.removeEventListener('input', handleInput);
 
         window.removeEventListener('error', emptyFunc);
         window.removeEventListener('unhandledrejection', emptyFunc);
-      }, { once: true });
+      };
+
+      ctx.onInvalidated(removeListeners);
+      window.addEventListener('beforeunload', removeListeners, { once: true });
     } catch (e) {
       handleError(e);
     }
