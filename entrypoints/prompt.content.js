@@ -19,6 +19,7 @@ export default defineContentScript({
   async main () {
     let localKey = { data: null };
     let timers = {};
+    const emptyFunc = () => {};
     
     try {
       browser.runtime.onMessage.addListener(promptOnMessage);
@@ -36,15 +37,15 @@ export default defineContentScript({
       const handleInput = async e => await handleInputEvent(e, allInputs, localKey, timers);
       document.addEventListener('input', handleInput);
 
-      window.addEventListener('error', handleError);
-      window.addEventListener('unhandledrejection', handleError);
+      window.addEventListener('error', emptyFunc);
+      window.addEventListener('unhandledrejection', emptyFunc);
 
       window.addEventListener('beforeunload', () => {
         browser.runtime.onMessage.removeListener(promptOnMessage);
         document.removeEventListener('input', handleInput);
 
-        window.removeEventListener('error', handleError);
-        window.removeEventListener('unhandledrejection', handleError);
+        window.removeEventListener('error', emptyFunc);
+        window.removeEventListener('unhandledrejection', emptyFunc);
       }, { once: true });
     } catch (e) {
       handleError(e);

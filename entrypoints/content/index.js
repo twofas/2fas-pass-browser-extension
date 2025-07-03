@@ -16,6 +16,7 @@ export default defineContentScript({
   async main (ctx) {
     try {
       let handleMessage;
+      const emptyFunc = () => {};
 
       if (ctx.isTopFrame) {
         const ui = await createShadowRootUi(ctx, {
@@ -35,12 +36,17 @@ export default defineContentScript({
 
         ui.mount();
       } else {
-        handleMessage = (request, sender, sendResponse) => contentOnMessage(request, sender, sendResponse, ctx.isTopFrame);
+        handleMessage = (request, sender, sendResponse) => contentOnMessage(request, sender, sendResponse, ctx.isTopFrame, null);
         browser.runtime.onMessage.addListener(handleMessage);
       }
 
+      window.addEventListener('error', emptyFunc);
+      window.addEventListener('unhandledrejection', emptyFunc);
+
       window.addEventListener('beforeunload', () => {
         browser.runtime.onMessage.removeListener(handleMessage);
+        window.removeEventListener('error', emptyFunc);
+        window.removeEventListener('unhandledrejection', emptyFunc);
       }, { once: true });
     } catch (e) {
       handleError(e);
