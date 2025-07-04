@@ -13,6 +13,7 @@ import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready'
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import closeWindowIfNotInSeparateWindow from '@/partials/functions/closeWindowIfNotInSeparateWindow';
 import generateNonce from '@/partials/functions/generateNonce';
+import PULL_REQUEST_TYPES from '../../../Fetch/constants/PULL_REQUEST_TYPES';
 
 /** 
 * Function to handle the autofill action.
@@ -171,6 +172,9 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     if (!passwordDecrypt) {
       showToast(browser.i18n.getMessage('this_tab_autofill_no_password'), 'info');
     } else {
+      // @TODO: Send to prompt ignore save prompt
+      // @TODO: Send to background ignore save prompt
+
       if (!separateWindow) {
         await closeWindowIfNotInSeparateWindow(separateWindow);  
       } else {
