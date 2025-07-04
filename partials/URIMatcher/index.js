@@ -461,9 +461,7 @@ class URIMatcher {
         if (parsedUrl?.type === ParseResultType.Ip) {
           return [
             `http://${parsedUrl.hostname}/`,
-            `http://${parsedUrl.hostname}:*/`,
             `http://${parsedUrl.hostname}/*`,
-            `http://${parsedUrl.hostname}:*/*`
           ];
         }
 
@@ -486,6 +484,10 @@ class URIMatcher {
 
       case this.M_HOST_TYPE: {
         if (parsedUrl?.type === ParseResultType.Ip || parsedUrl?.hostname === 'localhost') {
+          if (!urlObj?.port || urlObj?.port.length <= 0) {
+            return [`http://${parsedUrl.hostname}/`, `http://${parsedUrl.hostname}/*`];
+          }
+
           return [
             `http://${parsedUrl.hostname}${urlObj.port ? `:${urlObj.port}` : ''}/`,
             `http://${parsedUrl.hostname}${urlObj.port ? `:${urlObj.port}` : ''}/*`

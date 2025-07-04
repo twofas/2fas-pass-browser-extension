@@ -562,8 +562,8 @@ describe('URIMatcher', () => {
       assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: 'https://domain.com', matcher: URIMatcher.M_DOMAIN_TYPE }), ['*://domain.com/', '*://domain.com/*', '*://*.domain.com/', '*://*.domain.com/*']);
       assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: 'www.domain.com', matcher: URIMatcher.M_DOMAIN_TYPE }), ['*://domain.com/', '*://domain.com/*', '*://*.domain.com/', '*://*.domain.com/*']);
       assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: 'domain.com', matcher: URIMatcher.M_DOMAIN_TYPE }), ['*://domain.com/', '*://domain.com/*', '*://*.domain.com/', '*://*.domain.com/*']);
-      assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: '10.10.10.10', matcher: URIMatcher.M_DOMAIN_TYPE }), ['http://10.10.10.10/', 'http://10.10.10.10:*/', 'http://10.10.10.10/*', 'http://10.10.10.10:*/*']);
-      assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: '127.0.0.1', matcher: URIMatcher.M_DOMAIN_TYPE }), ['http://127.0.0.1/', 'http://127.0.0.1:*/', 'http://127.0.0.1/*', 'http://127.0.0.1:*/*']);
+      assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: '10.10.10.10', matcher: URIMatcher.M_DOMAIN_TYPE }), ['http://10.10.10.10/', 'http://10.10.10.10/*']);
+      assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: '127.0.0.1', matcher: URIMatcher.M_DOMAIN_TYPE }), ['http://127.0.0.1/', 'http://127.0.0.1/*']);
       assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: 'http://localhost', matcher: URIMatcher.M_DOMAIN_TYPE }), ['http://localhost/', 'http://localhost/*', 'http://*.localhost/', 'http://*.localhost/*']);
 
       // HOST
