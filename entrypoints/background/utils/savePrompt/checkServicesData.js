@@ -46,8 +46,8 @@ const checkServicesData = async (details, values) => {
 
   const decryptedValues = await decryptValues(values);
 
-  // Check username if exists && securityType === 2
-  const matchedServicesMatchedUsername = matchedServices.filter(service => service.username === decryptedValues.username && service.securityType === 2);
+  // Check username if exists
+  const matchedServicesMatchedUsername = matchedServices.filter(service => service.username === decryptedValues.username);
 
   if (!matchedServicesMatchedUsername || matchedServicesMatchedUsername.length <= 0) {
     return 'newService';
