@@ -19,10 +19,13 @@ export default defineContentScript({
   async main (ctx) {
     let localKey = { data: null };
     let timers = {};
+    let ignore = { value: false };
     const emptyFunc = () => {};
+
+    const handlePromptMessage = (request, sender, response) => promptOnMessage(request, sender, response, timers, ignore);
     
     try {
-      browser.runtime.onMessage.addListener(promptOnMessage);
+      browser.runtime.onMessage.addListener(handlePromptMessage);
 
       const passwordInputs = getPasswordInputs();
       const passwordForms = passwordInputs.map(input => input.closest('form'));
@@ -34,14 +37,14 @@ export default defineContentScript({
 
       setIDsToInputs(allInputs);
 
-      const handleInput = async e => await handleInputEvent(e, allInputs, localKey, timers);
+      const handleInput = async e => await handleInputEvent(e, allInputs, localKey, timers, ignore);
       document.addEventListener('input', handleInput);
 
       window.addEventListener('error', emptyFunc);
       window.addEventListener('unhandledrejection', emptyFunc);
 
       const removeListeners = () => {
-        browser.runtime.onMessage.removeListener(promptOnMessage);
+        browser.runtime.onMessage.removeListener(handlePromptMessage);
         document.removeEventListener('input', handleInput);
 
         window.removeEventListener('error', emptyFunc);

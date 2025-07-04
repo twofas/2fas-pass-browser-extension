@@ -49,7 +49,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       data = {
         type: PULL_REQUEST_TYPES.PASSWORD_REQUEST,
         data: {
-          loginId: state.data.loginId,
+          loginId: state.data.loginId
         }
       };
 
@@ -64,7 +64,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       data = {
         type: PULL_REQUEST_TYPES.DELETE_LOGIN,
         data: {
-          loginId: state.data.loginId,
+          loginId: state.data.loginId
         }
       };
 

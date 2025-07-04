@@ -27,7 +27,7 @@ const checkServicesData = async (details, values) => {
   try {
     services = await getServices();
   } catch (e) {
-    await CatchError(e);
+    await CatchError(e); // FUTURE - throw error
   }
 
   if (!services || !Array.isArray(services)) {
@@ -58,6 +58,10 @@ const checkServicesData = async (details, values) => {
 
   for (const service of matchedServicesMatchedUsername) {
     let decryptedPassword;
+
+    if (!service || !service.password) {
+      continue; // Skip if service or password is not defined
+    }
 
     try {
       decryptedPassword = await decryptPassword(service);

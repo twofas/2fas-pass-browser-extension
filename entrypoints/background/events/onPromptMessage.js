@@ -41,6 +41,17 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
           
         break;
       }
+
+      case REQUEST_ACTIONS.IGNORE_SAVE_PROMPT: {
+        if (!request?.tabId) {
+          sendResponse({ status: 'error', message: 'Tab ID not found' });
+          return true;
+        }
+
+        tabsInputData[request.tabId] = {};
+        sendResponse({ status: 'ok' });
+        break;
+      }
   
       default: {
         sendResponse({ status: 'error', message: 'Wrong action' });

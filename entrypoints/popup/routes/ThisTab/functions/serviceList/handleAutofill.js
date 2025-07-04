@@ -172,9 +172,6 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     if (!passwordDecrypt) {
       showToast(browser.i18n.getMessage('this_tab_autofill_no_password'), 'info');
     } else {
-      // @TODO: Send to prompt ignore save prompt
-      // @TODO: Send to background ignore save prompt
-
       if (!separateWindow) {
         await closeWindowIfNotInSeparateWindow(separateWindow);  
       } else {

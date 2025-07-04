@@ -57,7 +57,7 @@ const FetchOnMessage = async (json, data, actions) => {
       }
   
       case SOCKET_ACTIONS.CLOSE_WITH_SUCCESS: {
-        await handleCloseSignalPullRequestAction(data.newSessionId, data.device.uuid, data.closeData, actions.navigate);
+        await handleCloseSignalPullRequestAction(data.newSessionId, data.device.uuid, data.closeData, actions.navigate, data.state);
         break;
       }
   

@@ -19,9 +19,15 @@ import generateNonce from '@/partials/functions/generateNonce';
 * @param {Event} e - The input event.
 * @param {HTMLInputElement[]} allInputs - The array of all input elements.
 * @param {Object} localKey - The local key object.
+* @param {Object} timers - An object containing timers to be cleared.
+* @param {Object} ignore - A flag to indicate whether to ignore the prompt.
 * @return {Promise<void>} 
 */
-const handleInputEvent = async (e, allInputs, localKey, timers) => {
+const handleInputEvent = async (e, allInputs, localKey, timers, ignore) => {
+  if (ignore?.value) {
+    return; // Ignore the event if ignore flag is set
+  }
+
   // FUTURE - save crypto key?
   if (!localKey?.data || localKey?.data.length < 0) {
     let localKeyResponse = null;

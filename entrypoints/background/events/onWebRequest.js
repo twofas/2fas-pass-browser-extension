@@ -91,7 +91,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
 
   try {
     storageSavePrompt = await storage.getItem('local:savePrompt');
-    domainOnIgnoredList = await checkDomainOnIgnoredList(details?.initiator || details?.originUrl);
+    domainOnIgnoredList = await checkDomainOnIgnoredList(details?.initiator || details?.originUrl); // FUTURE - initiator or originUrl first?
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.onWebRequestDomainIgnoredListError, { event: e });
   }
