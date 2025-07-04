@@ -22,6 +22,7 @@ const PushNotification = lazy(() => import('./components/PushNotification'));
 const ConnectionError = lazy(() => import('./components/ConnectionError'));
 const ConnectionTimeout = lazy(() => import('./components/ConnectionTimeout'));
 const ContinueUpdate = lazy(() => import('./components/ContinueUpdate'));
+const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to handle the Fetch component.
@@ -154,18 +155,11 @@ function Fetch (props) {
       <div>
         <section className={S.fetch}> 
           <div className={S.fetchContainer}>
-            <Link
-              to='/'
-              className='cancel'
-              title={browser.i18n.getMessage('cancel')}
-              onClick={async e => {
-                e.preventDefault();
-                await closeConnection();
-                navigate(-1);
-              }}
-            >
-              <CancelIcon />
-            </Link>
+            <NavigationButton type='cancel' onClick={async e => {
+              e.preventDefault();
+              await closeConnection();
+              navigate(-1);
+            }} />
 
             {fetchState === 0 && <PushNotification fetchState={fetchState} /> }
             {fetchState === 1 && <ConnectionError fetchState={fetchState} errorText={errorText} /> }

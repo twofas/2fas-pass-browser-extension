@@ -7,7 +7,7 @@
 import S from './Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { LazyMotion } from 'motion/react';
-import { useParams, useNavigate, Link } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import { useState, useEffect, lazy, useCallback } from 'react';
 import generateURLs from './functions/generateURLs';
 import getEditableAmount from './functions/getEditableAmount';
@@ -17,13 +17,13 @@ import valueToNFKD from '@/partials/functions/valueToNFKD';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
 const Name = lazy(() => import('./components/Name'));
 const Username = lazy(() => import('./components/Username'));
 const Password = lazy(() => import('./components/Password'));
 const SecurityTier = lazy(() => import('./components/SecurityTier'));
 const Notes = lazy(() => import('./components/Notes'));
 const DangerZone = lazy(() => import('./components/DangerZone'));
+const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 const hiddenPassword = '******';
 
@@ -182,13 +182,7 @@ function Details (props) {
         <div>
           <section className={S.details}>
             <div className={S.detailsContainer}>
-              <Link
-                to='/'
-                className='cancel'
-                title={browser.i18n.getMessage('cancel')}
-              >
-                <CancelIcon />
-              </Link>
+              <NavigationButton type='cancel' />
 
               <h2>{browser.i18n.getMessage('details_header')}</h2>
 

@@ -6,7 +6,6 @@
 
 import S from '../Settings.module.scss';
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router';
 import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
 import { lazy } from 'react';
@@ -19,8 +18,7 @@ const DiscordIcon = lazy(() => import('@/assets/social/discord.svg?react'));
 const YoutubeIcon = lazy(() => import('@/assets/social/youtube.svg?react'));
 const TwitterIcon = lazy(() => import('@/assets/social/twitter.svg?react'));
 const GithubIcon = lazy(() => import('@/assets/social/github.svg?react'));
-const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
-const SettingsBack = lazy(() => import('../components/SettingsBack'));
+const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to render the Settings About component.
@@ -45,11 +43,8 @@ function SettingsAbout (props) {
     <div className={`${props.className ? props.className : ''}`}>
       <div>
         <section className={S.settings}>
-          <Link to='/' className='cancel' title={browser.i18n.getMessage('cancel')}>
-            <CancelIcon />
-          </Link>
-
-          <SettingsBack />
+          <NavigationButton type='back' />
+          <NavigationButton type='cancel' />
 
           <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
             <div className={S.settingsSubmenu}>

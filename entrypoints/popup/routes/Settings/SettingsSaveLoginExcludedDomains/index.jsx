@@ -6,11 +6,9 @@
 
 import S from '../Settings.module.scss';
 import { useState, useEffect, lazy } from 'react';
-import { Link } from 'react-router';
 
-const SettingsBack = lazy(() => import('../components/SettingsBack'));
-const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
+const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to render the Settings Save Login Excluded Domains component.
@@ -82,11 +80,8 @@ function SettingsSaveLoginExcludedDomains (props) {
     <div className={`${props.className ? props.className : ''}`}>
       <div>
         <section className={S.settings}>
-          <Link to='/' className='cancel' title={browser.i18n.getMessage('cancel')}>
-            <CancelIcon />
-          </Link>
-
-          <SettingsBack />
+          <NavigationButton type='back' />
+          <NavigationButton type='cancel' />
 
           <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
             <div className={S.settingsSubmenu}>
