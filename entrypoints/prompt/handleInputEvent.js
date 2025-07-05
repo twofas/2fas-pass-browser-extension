@@ -28,7 +28,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore) => {
     return; // Ignore the event if ignore flag is set
   }
 
-  const cryptoAvailable = crypto && crypto.subtle && typeof crypto.subtle.importKey === 'function' && typeof crypto.subtle.encrypt === 'function';
+  const cryptoAvailable = !!(crypto && crypto?.subtle && typeof crypto?.subtle?.importKey === 'function' && typeof crypto?.subtle?.encrypt === 'function');
 
   // FUTURE - save crypto key?
   if (cryptoAvailable && (!localKey?.data || localKey?.data.length < 0)) {
