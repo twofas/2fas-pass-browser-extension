@@ -745,7 +745,8 @@
             text-overflow: ellipsis;
             white-space: nowrap;
 
-            &:first-of-type { // Credential Name
+            &:first-of-type,
+            &:first-of-type:last-of-type { // Credential Name
               color: v.$primary-text-light;
               font-size: 14px;
               font-weight: 500;

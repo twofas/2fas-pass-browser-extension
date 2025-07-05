@@ -91,7 +91,7 @@ class URIMatcher {
     }
   }
 
-  static isIp (url) { // FUTURE - Add tests
+  static isIp (url) { // FUTURE - Add tests (+ check IPv6)
     if (!this.isText(url)) {
       throw new Error('Parameter is not a string');
     }
