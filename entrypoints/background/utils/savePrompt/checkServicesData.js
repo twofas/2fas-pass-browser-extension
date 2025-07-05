@@ -44,7 +44,16 @@ const checkServicesData = async (details, values) => {
     return 'newService'; 
   }
 
-  const decryptedValues = await decryptValues(values);
+  let decryptedValues;
+
+  if (values?.cryptoAvailable) {
+    decryptedValues = await decryptValues(values);
+  } else {
+    decryptedValues = {
+      username: values.username,
+      password: values.password
+    };
+  }
 
   // Check username if exists
   const matchedServicesMatchedUsername = matchedServices.filter(service => service.username === decryptedValues.username);
