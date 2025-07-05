@@ -28,16 +28,18 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore) => {
     return; // Ignore the event if ignore flag is set
   }
 
+  const cryptoAvailable = crypto && crypto.subtle && typeof crypto.subtle.importKey === 'function' && typeof crypto.subtle.encrypt === 'function';
+
   // FUTURE - save crypto key?
-  if (!localKey?.data || localKey?.data.length < 0) {
+  if (cryptoAvailable && (!localKey?.data || localKey?.data.length < 0)) {
     let localKeyResponse = null;
 
     try {
       localKeyResponse = await browser.runtime.sendMessage({
         action: REQUEST_ACTIONS.GET_LOCAL_KEY,
-        target: REQUEST_TARGETS.BACKGROUND_PROMPT
+        target: REQUEST_TARGETS.BACKGROUND
       });
-    } catch (e) {}
+    } catch {}
 
     if (localKeyResponse?.status === 'ok') {
       localKey.data = localKeyResponse?.data;
@@ -113,46 +115,51 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore) => {
       id: input.getAttribute('twofas-pass-id'),
       type: input.type === 'password' ? 'password' : 'username',
       url: window?.location?.origin,
-      timestamp: new Date().valueOf()
+      timestamp: new Date().valueOf(),
+      cryptoAvailable
     };
 
-    let nonce, localKeyCrypto, value;
+    if (cryptoAvailable) {
+      let nonce, localKeyCrypto, value;
 
-    try {
-      nonce = generateNonce();
-    } catch (e) {
-      await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventNonceError, { additional: { func: 'handleInputEvent', event: e } }));
-      return;
+      try {
+        nonce = generateNonce();
+      } catch (e) {
+        await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventNonceError, { additional: { func: 'handleInputEvent', event: e } }));
+        return;
+      }
+
+      try {
+        localKeyCrypto = await crypto.subtle.importKey(
+          'raw',
+          Base64ToArrayBuffer(localKey.data),
+          { name: 'AES-GCM' },
+          false,
+          ['encrypt']
+        );
+      } catch (e) {
+        await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventKeyImportError, { additional: { func: 'handleInputEvent', event: e } }));
+        return;
+      }
+
+      try {
+        value = await crypto.subtle.encrypt(
+          { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+          localKeyCrypto,
+          StringToArrayBuffer(input.value)
+        );
+      } catch (e) {
+        await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventEncryptError, { additional: { func: 'handleInputEvent', event: e } }));
+        return;
+      }
+
+      const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
+      const encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
+
+      data.value = encryptedValueB64;
+    } else {
+      data.value = input.value;
     }
-
-    try {
-      localKeyCrypto = await crypto.subtle.importKey(
-        'raw',
-        Base64ToArrayBuffer(localKey.data),
-        { name: 'AES-GCM' },
-        false,
-        ['encrypt']
-      );
-    } catch (e) {
-      await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventKeyImportError, { additional: { func: 'handleInputEvent', event: e } }));
-      return;
-    }
-
-    try {
-      value = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-        localKeyCrypto,
-        StringToArrayBuffer(input.value)
-      );
-    } catch (e) {
-      await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventEncryptError, { additional: { func: 'handleInputEvent', event: e } }));
-      return;
-    }
-
-    const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
-    const encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
-
-    data.value = encryptedValueB64;
 
     // Clean up timer reference after processing
     delete timers[inputIdentifier];
