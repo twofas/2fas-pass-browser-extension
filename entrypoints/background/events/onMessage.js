@@ -9,6 +9,7 @@ import openPopupWindowInNewWindow from '../utils/openPopupWindowInNewWindow';
 import isText from '@/partials/functions/isText';
 import openInstallPage from '../utils/openInstallPage';
 import runMigrations from '../migrations';
+import getLocalKey from '../utils/getLocalKey';
 
 /** 
 * Function to handle messages sent to the background script.
@@ -60,6 +61,14 @@ const onMessage = (request, sender, sendResponse) => {
           .then(async () => { await runMigrations(); })
           .then(async () => { await openInstallPage(); })
           .then(() => { sendResponse({ status: 'ok' }); })
+          .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.GET_LOCAL_KEY: {
+        getLocalKey()
+          .then(lKey => { sendResponse({ status: 'ok', data: lKey }); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
 
         break;

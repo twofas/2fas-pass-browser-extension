@@ -4,7 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getLocalKey from '../utils/getLocalKey';
 import promptInput from '../utils/promptInput';
 
 /** 
@@ -21,14 +20,6 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
     }
   
     switch (request.action) {
-      case REQUEST_ACTIONS.GET_LOCAL_KEY: {
-        getLocalKey()
-          .then(lKey => { sendResponse({ status: 'ok', data: lKey }); })
-          .catch(e => { sendResponse({ status: 'error', message: e.message }); });
-
-        break;
-      }
-
       case REQUEST_ACTIONS.PROMPT_INPUT: {
         if (!request?.data || !request?.data?.id || !sender?.tab?.id) {
           sendResponse({ status: 'error', message: 'Empty data' });
