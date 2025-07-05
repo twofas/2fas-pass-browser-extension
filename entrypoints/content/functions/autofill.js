@@ -43,7 +43,22 @@ const autofill = async request => {
     inputFound = true;
 
     if (request?.password && request?.password.length > 0) {
-      const localKey = await storage.getItem('local:lKey');
+      let localKeyResponse = null;
+      let localKey = null;
+
+      try {
+        localKeyResponse = await browser.runtime.sendMessage({
+          action: REQUEST_ACTIONS.GET_LOCAL_KEY,
+          target: REQUEST_TARGETS.BACKGROUND
+        });
+      } catch {}
+
+      if (localKeyResponse?.status === 'ok') {
+        localKey = localKeyResponse?.data;
+      } else {
+        return { status: 'error', message: 'Failed to get local key' };
+      }
+
       const localKeyAB = Base64ToArrayBuffer(localKey);
       let decryptedValueAB, localKeyCrypto;
 
