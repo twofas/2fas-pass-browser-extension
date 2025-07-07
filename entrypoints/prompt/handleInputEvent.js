@@ -122,22 +122,11 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, cryptoAv
       let nonce, localKeyCrypto, value;
 
       try {
-        nonce = generateNonce();
+        const promises = [generateNonce(), crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKey.data), { name: 'AES-GCM' }, false, ['encrypt'] )];
+        [nonce, localKeyCrypto] = await Promise.all(promises);
       } catch (e) {
-        await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventNonceError, { additional: { func: 'handleInputEvent', event: e } }));
-        return;
-      }
-
-      try {
-        localKeyCrypto = await crypto.subtle.importKey(
-          'raw',
-          Base64ToArrayBuffer(localKey.data),
-          { name: 'AES-GCM' },
-          false,
-          ['encrypt']
-        );
-      } catch (e) {
-        await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventKeyImportError, { additional: { func: 'handleInputEvent', event: e } }));
+        const errorType = e.message?.includes('generateNonce') ? TwoFasError.internalErrors.handleInputEventNonceError : TwoFasError.internalErrors.handleInputEventKeyImportError;
+        await CatchError(new TwoFasError(errorType, { additional: { func: 'handleInputEvent', event: e } }));
         return;
       }
 
@@ -168,7 +157,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, cryptoAv
       data,
       target: REQUEST_TARGETS.BACKGROUND_PROMPT
     });
-  }, 200);
+  }, config.handleInputEventDebounce || 300);
 };
 
 export default handleInputEvent;

@@ -11,5 +11,6 @@ export const config = {
   storageMargin: 0.95, // 95%
   devicesCleanupThreshold: 30,
   toastAutoClose: 5000,
-  defaultStorageIdleLock: 15 // minutes
+  defaultStorageIdleLock: 15, // minutes
+  handleInputEventDebounce: 300 // milliseconds
 };
