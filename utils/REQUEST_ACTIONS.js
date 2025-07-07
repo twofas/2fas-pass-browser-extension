@@ -19,5 +19,6 @@ export const REQUEST_ACTIONS = {
   OPEN_POPUP_WINDOW_IN_NEW_WINDOW: 'openPopupWindowInNewWindow', // background, popup
   GET_LOCAL_KEY: 'getLocalKey', // background, prompt, popup, content
   RESET_EXTENSION: 'resetExtension', // background, popup
-  IGNORE_SAVE_PROMPT: 'ignoreSavePrompt' // prompt, popup, background
+  IGNORE_SAVE_PROMPT: 'ignoreSavePrompt', // prompt, popup, background
+  GET_CRYPTO_AVAILABLE: 'getCryptoAvailable', // popup, content
 };
