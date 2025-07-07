@@ -225,5 +225,9 @@ export default defineConfig({
 
       delete manifest.content_scripts;
     }
+  },
+  zip: {
+    artifactTemplate: '{{name}}-{{version}}-{{browser}}-{{mode}}.zip',
+    sourcesTemplate: '{{name}}-{{version}}-{{browser}}-{{mode}}-sources.zip'
   }
 });
