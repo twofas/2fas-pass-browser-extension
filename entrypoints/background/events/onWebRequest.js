@@ -103,7 +103,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
 
   if (
     !configured || // Only when configured
-    storageSavePrompt !== 'default' || // Only when savePrompt is set to default
+    (storageSavePrompt !== 'default' && storageSavePrompt !== 'default_encrypted') || // Only when savePrompt is set to default or default_encrypted
     domainOnIgnoredList // Only when domain is not on the ignored list
   ) {
     return;

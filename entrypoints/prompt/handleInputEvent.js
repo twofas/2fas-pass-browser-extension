@@ -21,16 +21,16 @@ import generateNonce from '@/partials/functions/generateNonce';
 * @param {Object} localKey - The local key object.
 * @param {Object} timers - An object containing timers to be cleared.
 * @param {Object} ignore - A flag to indicate whether to ignore the prompt.
-* @param {boolean} cryptoAvailable - Flag indicating if the crypto API is available.
+* @param {boolean} encrypted - Flag indicating if the input should be encrypted.
 * @return {Promise<void>} 
 */
-const handleInputEvent = async (e, allInputs, localKey, timers, ignore, cryptoAvailable) => {
+const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypted) => {
   if (ignore?.value) {
     return; // Ignore the event if ignore flag is set
   }
 
   // FUTURE - save crypto key?
-  if (cryptoAvailable && (!localKey?.data || localKey?.data.length < 0)) {
+  if (encrypted && (!localKey?.data || localKey?.data.length < 0)) {
     let localKeyResponse = null;
 
     try {
@@ -115,10 +115,10 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, cryptoAv
       type: input.type === 'password' ? 'password' : 'username',
       url: window?.location?.origin,
       timestamp: new Date().valueOf(),
-      cryptoAvailable
+      encrypted
     };
 
-    if (cryptoAvailable) {
+    if (encrypted) {
       let nonce, localKeyCrypto, value;
 
       try {

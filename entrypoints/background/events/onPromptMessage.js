@@ -26,6 +26,8 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
           return true;
         }
 
+        console.log(request.data);
+
         promptInput(request, sender, tabsInputData)
           .then(() => { sendResponse({ status: 'ok' }); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
@@ -41,6 +43,14 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
 
         tabsInputData[request.tabId] = {};
         sendResponse({ status: 'ok' });
+        break;
+      }
+
+      case REQUEST_ACTIONS.GET_SAVE_PROMPT: {
+        storage.getItem('local:savePrompt')
+          .then(res => { sendResponse({ status: 'ok', data: res }) })
+          .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+
         break;
       }
   

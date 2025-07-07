@@ -21,10 +21,27 @@ export default defineContentScript({
     let localKey = { data: null };
     let timers = {};
     let ignore = { value: false };
+    let savePrompt = null;
     const emptyFunc = () => {};
+
+    try {
+      const savePromptResponse = await browser.runtime.sendMessage({
+        action: REQUEST_ACTIONS.GET_SAVE_PROMPT,
+        target: REQUEST_TARGETS.BACKGROUND_PROMPT,
+      });
+
+      if (savePromptResponse?.status === 'ok') {
+        savePrompt = savePromptResponse?.data;
+      } else {
+        savePrompt = 'default';
+      }
+    } catch {
+      savePrompt = 'default';
+    }
 
     const handlePromptMessage = (request, sender, response) => promptOnMessage(request, sender, response, timers, ignore);
     const cryptoAvailable = isCryptoAvailable();
+    const encrypted = cryptoAvailable && savePrompt === 'default_encrypted';
     
     try {
       browser.runtime.onMessage.addListener(handlePromptMessage);
@@ -39,7 +56,7 @@ export default defineContentScript({
 
       setIDsToInputs(allInputs);
 
-      const handleInput = async e => await handleInputEvent(e, allInputs, localKey, timers, ignore, cryptoAvailable);
+      const handleInput = async e => await handleInputEvent(e, allInputs, localKey, timers, ignore, encrypted);
       document.addEventListener('input', handleInput);
 
       window.addEventListener('error', emptyFunc);

@@ -12,5 +12,5 @@ export const config = {
   devicesCleanupThreshold: 30,
   toastAutoClose: 5000,
   defaultStorageIdleLock: 15, // minutes
-  handleInputEventDebounce: 300 // milliseconds
+  handleInputEventDebounce: 100 // milliseconds
 };
