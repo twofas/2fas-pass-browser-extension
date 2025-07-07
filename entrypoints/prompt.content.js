@@ -23,6 +23,7 @@ export default defineContentScript({
     const emptyFunc = () => {};
 
     const handlePromptMessage = (request, sender, response) => promptOnMessage(request, sender, response, timers, ignore);
+    const cryptoAvailable = !!(crypto && crypto?.subtle && typeof crypto?.subtle?.importKey === 'function' && typeof crypto?.subtle?.encrypt === 'function');
     
     try {
       browser.runtime.onMessage.addListener(handlePromptMessage);
@@ -37,7 +38,7 @@ export default defineContentScript({
 
       setIDsToInputs(allInputs);
 
-      const handleInput = async e => await handleInputEvent(e, allInputs, localKey, timers, ignore);
+      const handleInput = async e => await handleInputEvent(e, allInputs, localKey, timers, ignore, cryptoAvailable);
       document.addEventListener('input', handleInput);
 
       window.addEventListener('error', emptyFunc);
