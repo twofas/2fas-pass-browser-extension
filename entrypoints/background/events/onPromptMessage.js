@@ -26,8 +26,6 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
           return true;
         }
 
-        console.log(request.data);
-
         promptInput(request, sender, tabsInputData)
           .then(() => { sendResponse({ status: 'ok' }); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
