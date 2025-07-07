@@ -10,6 +10,7 @@ import getPasswordInputs from '@/partials/inputFunctions/getPasswordInputs';
 import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import setIDsToInputs from './prompt/setIDsToInputs';
+import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
 
 export default defineContentScript({
   matches: ['https://*/*', 'http://*/*'],
@@ -23,7 +24,7 @@ export default defineContentScript({
     const emptyFunc = () => {};
 
     const handlePromptMessage = (request, sender, response) => promptOnMessage(request, sender, response, timers, ignore);
-    const cryptoAvailable = !!(crypto && crypto?.subtle && typeof crypto?.subtle?.importKey === 'function' && typeof crypto?.subtle?.encrypt === 'function');
+    const cryptoAvailable = isCryptoAvailable();
     
     try {
       browser.runtime.onMessage.addListener(handlePromptMessage);

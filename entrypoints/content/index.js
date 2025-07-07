@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import contentOnMessage from './events/contentOnMessage';
+import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
 
 export default defineContentScript({
   matches: ['https://*/*', 'http://*/*'],
@@ -17,6 +18,7 @@ export default defineContentScript({
     try {
       let handleMessage;
       const emptyFunc = () => {};
+      const cryptoAvailable = isCryptoAvailable();
 
       if (ctx.isTopFrame) {
         const ui = await createShadowRootUi(ctx, {
@@ -29,14 +31,14 @@ export default defineContentScript({
             shadow.children[0].setAttribute('style', 'pointer-events: none !important;');
             shadow.children[0].getElementsByTagName('body')[0].style = 'margin: 0 !important; padding: 0 !important; overflow: hidden !important;';
 
-            handleMessage = (request, sender, sendResponse) => contentOnMessage(request, sender, sendResponse, ctx.isTopFrame, container);
+            handleMessage = (request, sender, sendResponse) => contentOnMessage(request, sender, sendResponse, ctx.isTopFrame, container, cryptoAvailable);
             browser.runtime.onMessage.addListener(handleMessage);
           }
         });
 
         ui.mount();
       } else {
-        handleMessage = (request, sender, sendResponse) => contentOnMessage(request, sender, sendResponse, ctx.isTopFrame, null);
+        handleMessage = (request, sender, sendResponse) => contentOnMessage(request, sender, sendResponse, ctx.isTopFrame, null, cryptoAvailable);
         browser.runtime.onMessage.addListener(handleMessage);
       }
 
