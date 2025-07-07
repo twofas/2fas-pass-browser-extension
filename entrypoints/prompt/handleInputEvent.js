@@ -157,7 +157,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
       data,
       target: REQUEST_TARGETS.BACKGROUND_PROMPT
     });
-  }, config.handleInputEventDebounce || 300);
+  }, config.handleInputEventDebounce || 100);
 };
 
 export default handleInputEvent;
