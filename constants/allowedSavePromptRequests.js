@@ -32,7 +32,8 @@ const allowedSavePromptRequests = [
   'api-token-auth',
   'loginBackend',
   'login_process.php',
-  '/UserSessionResource/create/'
+  '/UserSessionResource/create/',
+  '/api/tokens'
 ];
 
 export default allowedSavePromptRequests;
