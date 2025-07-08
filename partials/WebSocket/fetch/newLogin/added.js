@@ -26,11 +26,10 @@ const newLoginAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => 
   }
 
   try {
-    // Get services
-    const services = await getServices();
-
-    // Get servicesKeys
-    const servicesKeys = await getServicesKeys(data.login.deviceId);
+    const [services, servicesKeys] = await Promise.all([
+      getServices(),
+      getServicesKeys(data.login.deviceId)
+    ]);
 
     // Add new login to services
     const newService = { ...data.login, internalType: 'added' };

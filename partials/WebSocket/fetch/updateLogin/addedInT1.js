@@ -18,11 +18,10 @@ import saveServices from '@/partials/WebSocket/utils/saveServices';
 */
 const updateLoginAddedInT1 = async (state, messageId) => {
   try {
-    // Get services
-    const services = await getServices();
-
-    // Get servicesKeys
-    const servicesKeys = await getServicesKeys(state.data.deviceId);
+    const [services, servicesKeys] = await Promise.all([
+      getServices(),
+      getServicesKeys(state.data.deviceId)
+    ]);
 
     // Clear alarm if exists
     const service = services.find(service => service.id === state.data.loginId);

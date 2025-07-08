@@ -27,11 +27,10 @@ const updateLoginUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, me
   }
 
   try {
-    // Get services
-    const services = await getServices();
-
-    // Get servicesKeys
-    const servicesKeys = await getServicesKeys(state.data.deviceId);
+    const [services, servicesKeys] = await Promise.all([
+      getServices(),
+      getServicesKeys(state.data.deviceId)
+    ]);
 
     // Update login & clear alarm if exists
     const serviceIndex = services.findIndex(service => service.id === state.data.loginId);

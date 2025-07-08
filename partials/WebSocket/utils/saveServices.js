@@ -20,24 +20,21 @@ const saveServices = async (gzipData, deviceId) => {
   const chunksData = gzipData.match(new RegExp(`.{1,${chunkSize}}`, 'g'));
   const chunksArray = [];
 
+  const keyPromises = chunksData.map((_, i) => getKey('services', { deviceId, chunkIndex: i }).catch(() => null));
+  const keys = await Promise.all(keyPromises);
+
   for (const [i, chunk] of chunksData.entries()) {
-    let sKey;
-
-    try {
-      sKey = await getKey('services', { deviceId, chunkIndex: i });
-    } catch {} // FUTURE - Error handling?
-
-    chunksArray.push({
-      key: `session:${sKey}`,
-      value: chunk
-    });
-  };
+    const sKey = keys[i];
+    
+    if (sKey) {
+      chunksArray.push({ key: `session:${sKey}`, value: chunk });
+    }
+    // FUTURE - Handle case when sKey is null (failed key generation)
+  }
 
   shuffleArray(chunksArray);
 
-  const promises = chunksArray.map(chunk => storage.setItem(chunk.key, chunk.value));
-
-  await Promise.all(promises);
+  await storage.setItems(chunksArray);
 
   let storageVersion = await storage.getItem('session:storageVersion');
   storageVersion = storageVersion ? parseInt(storageVersion, 10) : 0;
