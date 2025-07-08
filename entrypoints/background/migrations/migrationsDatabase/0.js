@@ -16,26 +16,7 @@ import generateLocalKey from '../../utils/generateLocalKey';
 * @return {Promise<void>} A promise that resolves when the default storage is set.
 */
 const defaultStorage = async () => {
-  let storageData = await storage.getItems([ // FUTURE - Change maybe to browser.storage.local.get(null)
-    'local:theme',
-    'local:securityIcon',
-    'local:browserInfo',
-    'local:contextMenu',
-    'local:logging',
-    'local:nativePush',
-    'local:allLoginsSort',
-    'local:devices',
-    'local:autoClearClipboard',
-    'local:autoIdleLock',
-    'local:savePrompt',
-    'local:savePromptIgnoreDomains',
-    'local:persistentPrivateKey',
-    'local:persistentPublicKey',
-    'local:lKey'
-  ]);
-
-  // Convert array of {key, value} to object { key: value }
-  storageData = Object.fromEntries(storageData.map(item => [item.key.replace(/^local:/, ''), item.value]));
+  let storageData = await browser.storage.local.get(null);
 
   const itemsToSet = [];
   const themeEnum = ['unset', 'light', 'dark'];
