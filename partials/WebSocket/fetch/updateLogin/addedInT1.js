@@ -27,7 +27,7 @@ const updateLoginAddedInT1 = async (state, messageId) => {
     // Clear alarm if exists
     const service = services.find(service => service.id === state.data.loginId);
 
-    if (service && service.securityType === 1) {
+    if (service && service.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       await browser.alarms.clear(`passwordT2Reset-${state.data.loginId}`);
     }
 

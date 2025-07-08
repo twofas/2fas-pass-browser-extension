@@ -72,7 +72,7 @@ const getServices = async () => {
     login =>
       login?.deviceId && 
       login?.id && 
-      (login?.securityType && Number.isInteger(login?.securityType) && login?.securityType >= 0 && login?.securityType <= 2)
+      (login?.securityType && Number.isInteger(login?.securityType) && login?.securityType >= SECURITY_TIER.TOP_SECRET && login?.securityType <= SECURITY_TIER.SECRET)
   );
 
   return sanitizeObject(json);

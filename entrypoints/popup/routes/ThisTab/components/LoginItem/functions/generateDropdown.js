@@ -20,7 +20,7 @@ const generateDropdown = login => {
     { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), id: login.id, type: 'details' }
   ];
 
-  if (login?.securityType === 1 && login?.password && login?.password !== '') {
+  if (login?.securityType === SECURITY_TIER.HIGHLY_SECRET && login?.password && login?.password !== '') {
     dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_password'), id: login.id, type: 'forget' });
   }
 

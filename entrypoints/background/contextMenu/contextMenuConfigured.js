@@ -54,7 +54,7 @@ const contextMenuConfigured = async () => {
   }
 
   services.forEach(async service => {
-    if (service.securityType != 1 && service.securityType != 2) {
+    if (service.securityType !== SECURITY_TIER.HIGHLY_SECRET && service.securityType !== SECURITY_TIER.SECRET) {
       return;
     }
 
@@ -77,8 +77,8 @@ const contextMenuConfigured = async () => {
     }
 
     if (
-      service?.securityType === 2 ||
-      (service?.securityType === 1 && service?.password && service?.password?.length > 0)
+      service?.securityType === SECURITY_TIER.SECRET ||
+      (service?.securityType === SECURITY_TIER.HIGHLY_SECRET && service?.password && service?.password?.length > 0)
     ) {
       try {
         browser.contextMenus.create({
@@ -94,7 +94,7 @@ const contextMenuConfigured = async () => {
       } catch (e) {
         await CatchError(e);
       }
-    } else if (service?.securityType === 1 && !service?.password || service?.password?.length <= 0) {
+    } else if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET && !service?.password || service?.password?.length <= 0) {
       try {
         browser.contextMenus.create({
           id: `2fas-pass-fetch-${service.id}|${service.deviceId}`,

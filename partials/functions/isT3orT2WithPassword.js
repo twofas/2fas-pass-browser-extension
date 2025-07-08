@@ -13,13 +13,13 @@ const isT3orT2WithPassword = service => {
   if (
     !service?.securityType ||
     !Number.isInteger(service.securityType) ||
-    service.securityType < 0 ||
-    service.securityType > 2
+    service.securityType < SECURITY_TIER.TOP_SECRET ||
+    service.securityType > SECURITY_TIER.SECRET
   ) {
     throw new TwoFasError(TwoFasError.internalErrors.isT3orT2WithPasswordWrongSecurityTypeError);
   }
   
-  return service.securityType === 2 || (service.securityType === 1 && service?.password && service?.password?.length > 0);
+  return service.securityType === SECURITY_TIER.SECRET || (service.securityType === SECURITY_TIER.HIGHLY_SECRET && service?.password && service?.password?.length > 0);
 };
 
 export default isT3orT2WithPassword;

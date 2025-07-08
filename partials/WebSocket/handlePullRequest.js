@@ -126,9 +126,9 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         const nonceP = generateNonce();
         let encryptionPassTierKeyAES;
 
-        if (state.data.securityType === 1) { // Tier 2
+        if (state.data.securityType === SECURITY_TIER.HIGHLY_SECRET) {
           encryptionPassTierKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassT2'), sessionKeyForHKDF, true);
-        } else if (state.data.securityType === 2) { // Tier 3
+        } else if (state.data.securityType === SECURITY_TIER.SECRET) {
           encryptionPassTierKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassT3'), sessionKeyForHKDF, true);
         } else {
           throw new TwoFasError(TwoFasError.errors.updateLoginWrongSecurityType);

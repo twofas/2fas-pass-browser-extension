@@ -22,7 +22,7 @@ const decryptPassword = async login => {
     throw new TwoFasError(TwoFasError.internalErrors.decryptPasswordDeviceIdNotDefined, { additional: { func: 'decryptPassword' } });
   }
 
-  if (!login?.securityType || !Number.isInteger(login?.securityType)) {
+  if (!login?.securityType || !Number.isInteger(login?.securityType)) { // @TODO: check if is between 1-2
     throw new TwoFasError(TwoFasError.internalErrors.decryptPasswordSecurityTypeNotDefined, { additional: { func: 'decryptPassword' } });
   }
 
@@ -38,7 +38,7 @@ const decryptPassword = async login => {
   let passKey;
 
   try {
-    if (login.securityType === 2) {
+    if (login.securityType === SECURITY_TIER.SECRET) {
       if (login?.internalType && login?.internalType === 'added') {
         passKey = await getKey('pass_key_t3_new', { loginId: login.id, deviceId: login.deviceId });
       } else {

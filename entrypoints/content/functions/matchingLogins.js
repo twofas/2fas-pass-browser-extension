@@ -236,7 +236,7 @@ const matchingLogins = (request, sendResponse, container) => {
       itemAccountUsername = createTextElement('span', item.username);
     }
 
-    const itemSecondaryBtnText = (item.securityType === 2 || item.t2WithPassword === true) ? browser.i18n.getMessage('autofill') : browser.i18n.getMessage('fetch');
+    const itemSecondaryBtnText = (item.securityType === SECURITY_TIER.SECRET || item.t2WithPassword === true) ? browser.i18n.getMessage('autofill') : browser.i18n.getMessage('fetch');
     const itemSecondaryBtn = createTextElement('span', itemSecondaryBtnText, 'twofas-pass-notification-matching-logins-item-secondary-btn');
 
     itemAccount.appendChild(itemAccountName);
