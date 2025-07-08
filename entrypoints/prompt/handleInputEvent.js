@@ -25,8 +25,8 @@ import generateNonce from '@/partials/functions/generateNonce';
 * @return {Promise<void>} 
 */
 const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypted) => {
-  if (ignore?.value) {
-    return; // Ignore the event if ignore flag is set
+  if (ignore?.value || !window?.location?.origin || window?.location?.origin.length <= 0) {
+    return; // Ignore the event
   }
 
   // FUTURE - save crypto key?
@@ -40,8 +40,13 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
       });
     } catch {}
 
-    if (localKeyResponse?.status === 'ok') {
-      localKey.data = localKeyResponse?.data;
+    if (localKeyResponse?.status === 'ok' && localKeyResponse?.data && localKeyResponse.data.length > 0) {
+      try {
+        localKey.data = await crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKeyResponse.data), { name: 'AES-GCM' }, false, ['encrypt'] );
+      } catch {
+        await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventKeyImportError, { additional: { func: 'handleInputEvent', event: e } }));
+        return;
+      }
     } else {
       return;
     }
@@ -68,26 +73,14 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
 
   // Set new timer for this specific input
   timers[inputIdentifier] = setTimeout(async () => {
-    if (!window?.location?.origin || window?.location?.origin.length <= 0) {
-      return;
-    }
+    const skip = input?.getAttribute?.('twofas-pass-skip');
 
-    let skip = false;
-
-    if (input?.getAttribute && typeof input?.getAttribute === 'function') {
-      skip = input.getAttribute('twofas-pass-skip');
-    }
-
-    if (
-      !input ||
-      !isVisible(input) ||
-      (skip && skip === 'true')
-    ) {
+    if (!input || !isVisible(input) || skip === 'true') {
       delete timers[inputIdentifier]; // Clean up timer reference
       return;
     }
 
-    const inputId = input.getAttribute('twofas-pass-id');
+    const inputId = input?.getAttribute?.('twofas-pass-id');
 
     if (!inputId && !isElementInArray(input, allInputs)) {
       const passwordInputs = getPasswordInputs();
@@ -114,26 +107,24 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
       id: input.getAttribute('twofas-pass-id'),
       type: input.type === 'password' ? 'password' : 'username',
       url: window?.location?.origin,
-      timestamp: new Date().valueOf(),
+      timestamp: Date.now(),
       encrypted
     };
 
     if (encrypted) {
-      let nonce, localKeyCrypto, value;
+      let nonce, value;
 
       try {
-        const promises = [generateNonce(), crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKey.data), { name: 'AES-GCM' }, false, ['encrypt'] )];
-        [nonce, localKeyCrypto] = await Promise.all(promises);
+        nonce = await generateNonce();
       } catch (e) {
-        const errorType = e.message?.includes('generateNonce') ? TwoFasError.internalErrors.handleInputEventNonceError : TwoFasError.internalErrors.handleInputEventKeyImportError;
-        await CatchError(new TwoFasError(errorType, { additional: { func: 'handleInputEvent', event: e } }));
+        await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventNonceError, { additional: { func: 'handleInputEvent', event: e } }));
         return;
       }
 
       try {
         value = await crypto.subtle.encrypt(
           { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-          localKeyCrypto,
+          localKey.data,
           StringToArrayBuffer(input.value)
         );
       } catch (e) {

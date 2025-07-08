@@ -56,7 +56,7 @@ const PasswordBtn = ({ login, more, setMore }) => {
       return;
     }
 
-    const leftTime = maxTime - (scheduledTime - new Date().valueOf());
+    const leftTime = maxTime - (scheduledTime - Date.now());
     const percentTime = Math.round((leftTime / maxTime) * 100);
     setLoaderProgress(getLoaderProgress(100 - percentTime));
 

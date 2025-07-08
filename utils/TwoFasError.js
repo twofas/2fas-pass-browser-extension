@@ -20,7 +20,7 @@ class TwoFasError extends Error {
 
     this.name = 'TwoFasError';
     this.message = errorObject.message || TwoFasError.errors.unknownError.message;
-    this.timestamp = new Date().valueOf().toString();
+    this.timestamp = Date.now().toString();
     this.code = errorObject.code || TwoFasError.errors.unknownError.code;
     this.apiLog = params?.apiLog || true;
     this.consoleLog = params?.consoleLog || true;

@@ -21,7 +21,7 @@ const addExpirationDateToDevice = async (uuid, expirationDate) => {
   }
 
   device.expirationDate = expirationDate;
-  device.updatedAt = new Date().valueOf();
+  device.updatedAt = Date.now();
 
   await storage.setItem('local:devices', devices);
 

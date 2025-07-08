@@ -99,7 +99,7 @@ const CatchError = async (errObj, callback = () => {}) => {
     console.trace(errObj);
   }
 
-  logObj.streams[0].values.push([(new Date().valueOf() * 1000000).toString(), JSON.stringify(valueObj)]);
+  logObj.streams[0].values.push([(Date.now() * 1000000).toString(), JSON.stringify(valueObj)]);
 
   if ((errObj instanceof TwoFasError && errObj.apiLog && storageLogging) || storageLogging || import.meta.env.DEV) {
     try {

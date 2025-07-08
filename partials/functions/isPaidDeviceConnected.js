@@ -21,7 +21,7 @@ const isPaidDeviceConnected = async () => {
     return false;
   }
 
-  const currentDate = new Date().valueOf();
+  const currentDate = Date.now();
 
   const validExpirationDates = expirationDates.filter(date => date && parseInt(date, 10) || 0 > currentDate);
 
