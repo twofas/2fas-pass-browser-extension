@@ -14,6 +14,7 @@ import { HEX_REGEX } from '@/constants/regex';
 import getDomain from '@/partials/functions/getDomain';
 import getTextColor from '@/partials/functions/getTextColor';
 import URIMatcher from '@/partials/URIMatcher';
+import { parseDomain, ParseResultType } from 'parse-domain';
 
 /** 
 * Function to close the notification.
@@ -186,12 +187,24 @@ const matchingLogins = (request, sendResponse, container) => {
     } else if (item?.iconType === 0) {
       // Default favicon
       let iconDomain = '';
+      let parsedDomain = null;
       const iconUriIndex = item?.iconUriIndex || 0;
 
       try {
         iconDomain = getDomain(item?.uris[iconUriIndex]?.text);
+
+        try {
+          parsedDomain = parseDomain(iconDomain);
+        } catch {}
         
-        if (!iconDomain || URIMatcher.isIp(iconDomain) || iconDomain === 'localhost') {
+        if (
+          !iconDomain ||
+          URIMatcher.isIp(iconDomain) ||
+          iconDomain === 'localhost' ||
+          parsedDomain?.type === ParseResultType.Invalid ||
+          parsedDomain?.type === ParseResultType.Reserved ||
+          parsedDomain?.type === ParseResultType.NotListed
+        ) {
           throw new Error('Invalid domain for favicon');
         }
 
