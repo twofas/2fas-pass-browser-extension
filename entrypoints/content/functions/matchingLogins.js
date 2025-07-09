@@ -213,10 +213,9 @@ const matchingLogins = (request, sendResponse, container) => {
       }
     } else {
       // Custom
-      // FUTURE - Fix with proxy / fetch on background?
       itemIcon.classList.add('icon-image');
       const iconImage = createElement('img');
-      iconImage.src = item?.customImageUrl;
+      iconImage.src = `https://custom-icon.2fas.com/?url=${item?.customImageUrl}`;
       iconImage.alt = item.name;
       itemIcon.appendChild(iconImage);
 
