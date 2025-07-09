@@ -212,6 +212,20 @@
             display: inline-block;
           }
         }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            &.theme-light {
+              display: inline-block;
+            }
+          }
+
+          @media (prefers-color-scheme: dark) {
+            &.theme-dark {
+              display: inline-block;
+            }
+          }
+        }
       }
     }
   }

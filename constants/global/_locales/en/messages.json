@@ -119,6 +119,10 @@
     "message": "Dark mode",
     "description": "Option to enable dark mode for the interface"
   },
+  "unset_mode": {
+    "message": "System default",
+    "description": "Option to use the system's default mode for the interface"
+  },
   "save": {
     "message": "Save",
     "description": "Button label to save changes"

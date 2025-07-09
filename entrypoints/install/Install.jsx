@@ -203,16 +203,8 @@ function Install () {
         document.body.classList.remove(`theme-${oldValue}`);
       }
 
-      if (!newValue || newValue === 'unset') {
-        const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const themeValue = isDarkMode ? 'dark' : 'light';
-
-        try {
-          await storage.setItem('local:theme', themeValue);
-          newValue = themeValue;
-        } catch {
-          newValue = 'light';
-        }
+      if (!newValue || (newValue !== 'unset' && newValue !== 'light' && newValue !== 'dark')) {
+        newValue = 'unset';
       }
 
       document.body.classList.add(`theme-${newValue}`);
