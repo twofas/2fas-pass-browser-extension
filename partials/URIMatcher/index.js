@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { parseDomain, ParseResultType } from 'parse-domain';
-import { URL_REGEX, IP_REGEX, LOCAL_DOMAIN_WO_TLD_REGEX, ANDROID_BUNDLE_REGEX } from '@/constants/regex';
+import { URL_REGEX, IP_REGEX, LOCAL_DOMAIN_WO_TLD_REGEX, ANDROID_BUNDLE_REGEX, PROTOCOL_REGEX_WITHOUT_INTERNAL } from '@/constants/regex';
 import additionalProtocols from './additionalProtocols';
 import generateProtocolRegex from './generateProtocolRegex';
 
@@ -20,6 +20,7 @@ class URIMatcher {
   static IP_REGEX = IP_REGEX;
   static LOCAL_DOMAIN_WO_TLD_REGEX = LOCAL_DOMAIN_WO_TLD_REGEX;
   static ANDROID_BUNDLE_REGEX = ANDROID_BUNDLE_REGEX;
+  static PROTOCOL_REGEX_WITHOUT_INTERNAL = PROTOCOL_REGEX_WITHOUT_INTERNAL;
   static TRACKERS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'dclid', 'fbclid', 'msclkid', 'twclid', 'lmsid', 'mc_eid', 'mc_cid'];
 
   static ADDITIONAL_PROTOCOLS = additionalProtocols();
@@ -65,6 +66,8 @@ class URIMatcher {
     }
 
     if (
+      url.length > 2048 ||
+      url.length <= 0 ||
       (!this.URL_REGEX.test(url) &&
       !this.IP_REGEX.test(url) &&
       !this.LOCAL_DOMAIN_WO_TLD_REGEX.test(url)) ||
@@ -73,7 +76,9 @@ class URIMatcher {
       return false;
     }
 
-    if (!this.PROTOCOL_REGEX.test(url)) {
+    const regexTest = internalProtocols ? this.PROTOCOL_REGEX.test(url) : this.PROTOCOL_REGEX_WITHOUT_INTERNAL.test(url);
+
+    if (!regexTest) {
       const prependedURL = this.prependProtocol(url);
       let normalizedIDN, normalizedIDNObj;
       
