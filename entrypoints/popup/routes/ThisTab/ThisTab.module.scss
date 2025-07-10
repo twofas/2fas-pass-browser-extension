@@ -92,8 +92,16 @@
   }
 
   &-header {
+    background-color: v.$primary-box-bg-light;
     padding-top: 24px;
+    position: sticky;
     text-align: center;
+    top: -24px;
+    z-index: 2;
+
+    @include m.darkMode {
+      background-color: v.$primary-box-bg-dark;
+    }
 
     h1 {
       color: v.$primary-text-light;
