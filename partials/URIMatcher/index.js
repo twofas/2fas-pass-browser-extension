@@ -5,7 +5,9 @@
 // See LICENSE file for full terms
 
 import { parseDomain, ParseResultType } from 'parse-domain';
-import { PROTOCOL_REGEX, URL_REGEX, IP_REGEX, LOCAL_DOMAIN_WO_TLD_REGEX, ANDROID_BUNDLE_REGEX } from '@/constants/regex';
+import { URL_REGEX, IP_REGEX, LOCAL_DOMAIN_WO_TLD_REGEX, ANDROID_BUNDLE_REGEX } from '@/constants/regex';
+import additionalProtocols from './additionalProtocols';
+import generateProtocolRegex from './generateProtocolRegex';
 
 // FUTURE - Check if TwoFasError works here
 
@@ -14,12 +16,16 @@ import { PROTOCOL_REGEX, URL_REGEX, IP_REGEX, LOCAL_DOMAIN_WO_TLD_REGEX, ANDROID
 * @module URIMatcher
 */
 class URIMatcher {
-  static PROTOCOL_REGEX = PROTOCOL_REGEX;
   static URL_REGEX = URL_REGEX;
   static IP_REGEX = IP_REGEX;
   static LOCAL_DOMAIN_WO_TLD_REGEX = LOCAL_DOMAIN_WO_TLD_REGEX;
   static ANDROID_BUNDLE_REGEX = ANDROID_BUNDLE_REGEX;
   static TRACKERS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'dclid', 'fbclid', 'msclkid', 'twclid', 'lmsid', 'mc_eid', 'mc_cid'];
+
+  static ADDITIONAL_PROTOCOLS = additionalProtocols();
+  static PROTOCOL_REGEX = generateProtocolRegex();
+
+  static BAD_PARSE_DOMAIN_TYPES = [ParseResultType.Invalid, ParseResultType.Reserved, ParseResultType.NotListed];
 
   static M_DOMAIN_TYPE = 0;
   static M_HOST_TYPE = 1;
@@ -44,7 +50,20 @@ class URIMatcher {
     return url;
   }
 
-  static isUrl (url) {
+  static isUrl (url, internalProtocols = false) {
+    let internalProtocolExist = false;
+
+    try {
+      const internalUrl = new URL(url);
+      internalProtocolExist = internalUrl.protocol && this.ADDITIONAL_PROTOCOLS.includes(internalUrl.protocol);
+    } catch (e) {
+      internalProtocolExist = false;
+    }
+
+    if (internalProtocols && internalProtocolExist) {
+      return true;
+    }
+
     if (
       (!this.URL_REGEX.test(url) &&
       !this.IP_REGEX.test(url) &&
@@ -219,31 +238,33 @@ class URIMatcher {
   //   return `${protocol}//${hostname}${port ? `:${port}` : ''}${pathname}${search}${hash}`;
   // }
 
-  static normalizeIDN (url) {
+  static normalizeIDN (url, internalProtocols = false) {
     if (!this.isText(url)) {
       throw new Error('Parameter is not a string');
     }
 
-    if (!this.isUrl(url)) {
+    if (!this.isUrl(url, internalProtocols)) {
       throw new Error('Parameter is not a valid URL');
     }
 
     return new URL(url).href;
   }
 
-  static normalizeUrl (url) {
+  static normalizeUrl (url, internalProtocols = false) {
     if (!this.isText(url)) {
       throw new Error('Parameter is not a string');
     }
     
     const trimmed = this.trimText(url);
 
-    if (!this.isUrl(trimmed)) {
+    if (!this.isUrl(trimmed, internalProtocols)) {
       throw new Error('Parameter is not a valid URL');
     }
 
-    const prepended = this.prependProtocol(trimmed);
-    const normalizedIDN = this.normalizeIDN(prepended);
+    let prepended;
+
+    prepended = this.prependProtocol(trimmed);
+    const normalizedIDN = this.normalizeIDN(prepended, internalProtocols);
 
     const lowerCaseURLWithoutPort = this.getLowerCaseURLWithoutPort(normalizedIDN);
     const urlWithoutTrailingChars = this.removeTrailingChars(lowerCaseURLWithoutPort);
@@ -251,9 +272,9 @@ class URIMatcher {
     return urlWithoutTrailingChars;
   }
 
-  static baseDomainMatch (serviceUrl, browserUrl) {
-    serviceUrl = this.normalizeUrl(serviceUrl);
-    browserUrl = this.normalizeUrl(browserUrl);
+  static baseDomainMatch (serviceUrl, browserUrl, internalProtocols = false) {
+    serviceUrl = this.normalizeUrl(serviceUrl, internalProtocols);
+    browserUrl = this.normalizeUrl(browserUrl, internalProtocols);
 
     serviceUrl = this.ignoreWWW(serviceUrl);
     browserUrl = this.ignoreWWW(browserUrl);
@@ -268,12 +289,23 @@ class URIMatcher {
       return serviceUrlParsed.hostname === browserUrlParsed.hostname;
     }
 
-    return serviceUrlParsed.domain === browserUrlParsed.domain && serviceUrlParsed.topLevelDomains[0] === browserUrlParsed.topLevelDomains[0];
+    if (this.BAD_PARSE_DOMAIN_TYPES.includes(serviceUrlParsed?.type) || this.BAD_PARSE_DOMAIN_TYPES.includes(browserUrlParsed?.type)) {
+      if (
+        !this.ADDITIONAL_PROTOCOLS.includes(serviceUrlObj?.protocol) ||
+        !this.ADDITIONAL_PROTOCOLS.includes(browserUrlObj?.protocol)
+      ) {
+        return false;
+      } else {
+        return serviceUrlObj?.origin === browserUrlObj?.origin;
+      }
+    }
+
+    return serviceUrlParsed?.domain === browserUrlParsed?.domain && serviceUrlParsed?.topLevelDomains?.[0] === browserUrlParsed?.topLevelDomains?.[0];
   }
 
-  static hostMatch (serviceUrl, browserUrl) {
-    serviceUrl = this.normalizeUrl(serviceUrl);
-    browserUrl = this.normalizeUrl(browserUrl);
+  static hostMatch (serviceUrl, browserUrl, internalProtocols = false) {
+    serviceUrl = this.normalizeUrl(serviceUrl, internalProtocols);
+    browserUrl = this.normalizeUrl(browserUrl, internalProtocols);
 
     serviceUrl = this.ignoreWWW(serviceUrl);
     browserUrl = this.ignoreWWW(browserUrl);
@@ -284,9 +316,9 @@ class URIMatcher {
     return serviceUrlObj.host === browserUrlObj.host;
   }
 
-  static prefixMatch (serviceUrl, browserUrl) {
-    serviceUrl = this.normalizeUrl(serviceUrl);
-    browserUrl = this.normalizeUrl(browserUrl);
+  static prefixMatch (serviceUrl, browserUrl, internalProtocols = false) {
+    serviceUrl = this.normalizeUrl(serviceUrl, internalProtocols);
+    browserUrl = this.normalizeUrl(browserUrl, internalProtocols);
 
     serviceUrl = this.ignoreWWW(serviceUrl);
     browserUrl = this.ignoreWWW(browserUrl);
@@ -294,9 +326,9 @@ class URIMatcher {
     return browserUrl.startsWith(serviceUrl);
   }
 
-  static exactMatch (serviceUrl, browserUrl) {
-    serviceUrl = this.normalizeUrl(serviceUrl);
-    browserUrl = this.normalizeUrl(browserUrl);
+  static exactMatch (serviceUrl, browserUrl, internalProtocols = false) {
+    serviceUrl = this.normalizeUrl(serviceUrl, internalProtocols);
+    browserUrl = this.normalizeUrl(browserUrl, internalProtocols);
 
     return serviceUrl === browserUrl;
   }
@@ -305,39 +337,39 @@ class URIMatcher {
     if (!this.isText(tabUrl)) {
       throw new Error('Parameter tabUrl is not a string');
     }
-
+    
     if (!Array.isArray(services)) {
       throw new Error('Parameter services is not an array');
     }
-
-    if (!this.isUrl(tabUrl)) {
+    
+    if (!this.isUrl(tabUrl, true)) {
       throw new Error('Parameter tabUrl is not a valid URL');
     }
-
+    
     if (services.length <= 0) {
       return [];
     }
     
     try {
-      tabUrl = this.normalizeUrl(tabUrl);
+      tabUrl = this.normalizeUrl(tabUrl, true);
     } catch {
       return [];
     }
-
+    
     const domainCredentials = [];
 
-    services.forEach(account => {
-      if (!account?.uris || !Array.isArray(account?.uris) || account?.uris.length <= 0) {
-        return [];
-      }
+    try {
+      services.forEach(account => {
+        if (!account?.uris || !Array.isArray(account?.uris) || account?.uris.length <= 0) {
+          return;
+        }
 
-      const serviceUrls = this.recognizeURIs(account.uris)?.urls;
+        const serviceUrls = this.recognizeURIs(account.uris, true)?.urls;
 
-      if (!serviceUrls || serviceUrls.length <= 0) {
-        return [];
-      }
+        if (!serviceUrls || serviceUrls.length <= 0) {
+          return;
+        }
 
-      try {
         serviceUrls.forEach(uri => {
           const matcher = uri?.matcher;
           const text = uri?.text;
@@ -345,62 +377,62 @@ class URIMatcher {
           if (
             (!Number.isInteger(matcher) || matcher < URIMatcher.M_DOMAIN_TYPE || matcher > URIMatcher.M_EXACT_TYPE) ||
             (!this.isText(text) || text.length <= 0) ||
-            (!this.isUrl(text))
+            (!this.isUrl(text, true))
           ) {
-            throw this.BreakException;
+            return;
           }
 
-          const serviceUrl = this.normalizeUrl(text);
+          const serviceUrl = this.normalizeUrl(text, true);
 
           switch (matcher) {
             case this.M_DOMAIN_TYPE: {
-              if (this.baseDomainMatch(serviceUrl, tabUrl)) {
-                domainCredentials.push(account);
-              }
-  
-              break;
-            }
-  
-            case this.M_HOST_TYPE: {
-              if (this.hostMatch(serviceUrl, tabUrl)) {
-                domainCredentials.push(account);
-              }
-  
-              break;
-            }
-  
-            case this.M_START_WITH_TYPE: {
-              if (this.prefixMatch(serviceUrl, tabUrl)) {
+              if (this.baseDomainMatch(serviceUrl, tabUrl, true)) {
                 domainCredentials.push(account);
               }
 
               break;
             }
-  
+
+            case this.M_HOST_TYPE: {
+              if (this.hostMatch(serviceUrl, tabUrl, true)) {
+                domainCredentials.push(account);
+              }
+
+              break;
+            }
+
+            case this.M_START_WITH_TYPE: {
+              if (this.prefixMatch(serviceUrl, tabUrl, true)) {
+                domainCredentials.push(account);
+              }
+
+              break;
+            }
+
             case this.M_EXACT_TYPE: {
-              if (this.exactMatch(serviceUrl, tabUrl)) {
+              if (this.exactMatch(serviceUrl, tabUrl, true)) {
                 domainCredentials.push(account);
               }
               
               break;
             }
-  
+
             default: {
               break;
             }
           }
         });
-      } catch (e) {
-        if (e !== this.BreakException) {
-          throw e;
-        }
+      });
+    } catch (e) {
+      if (e !== this.BreakException) {
+        throw e;
       }
-    });
-  
+    }
+
     return domainCredentials;
   }
 
-  static recognizeURIs (uris) {
+  static recognizeURIs (uris, internalProtocols = false) {
     if (Array.isArray(uris) === false) {
       throw new Error('Parameter is not an array');
     }
@@ -419,8 +451,8 @@ class URIMatcher {
           throw this.BreakException;
         }
 
-        if (this.isUrl(text)) {
-          uri.text = this.normalizeUrl(text);
+        if (this.isUrl(text, internalProtocols)) {
+          uri.text = this.normalizeUrl(text, internalProtocols);
           response.urls.push(uri);
         } else {
           response.others.push(uri);

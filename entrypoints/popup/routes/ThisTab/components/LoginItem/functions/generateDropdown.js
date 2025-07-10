@@ -27,7 +27,7 @@ const generateDropdown = login => {
   let uris = [];
 
   if (login?.uris && login?.uris?.length > 0) {
-    uris = login.uris.filter(uri => uri && uri?.text && uri.text !== '' && URIMatcher.isText(uri.text) && URIMatcher.isUrl(uri.text));
+    uris = login.uris.filter(uri => uri && uri?.text && uri.text !== '' && URIMatcher.isText(uri.text) && URIMatcher.isUrl(uri.text, true));
   }
 
   if (uris && uris.length > 0) {
