@@ -33,62 +33,83 @@ class URIMatcher {
   static M_START_WITH_TYPE = 2;
   static M_EXACT_TYPE = 3;
 
+  static MATCHER_FUNCTIONS = {
+    [this.M_DOMAIN_TYPE]: this.baseDomainMatch.bind(this),
+    [this.M_HOST_TYPE]: this.hostMatch.bind(this),
+    [this.M_START_WITH_TYPE]: this.prefixMatch.bind(this),
+    [this.M_EXACT_TYPE]: this.exactMatch.bind(this)
+  };
+
   static BreakException = {};
   
   static isText (text) {
-    if (typeof text === 'string' || text instanceof String) {
-      return true;
-    }
-
-    return false;
+    return typeof text === 'string';
   }
 
   static prependProtocol (url) {
-    if (!this.PROTOCOL_REGEX.test(url)) {
-      url = 'https://' + url;
-    }
-    
-    return url;
+    return this.PROTOCOL_REGEX.test(url) ? url : 'https://' + url;
   }
 
   static isUrl (url, internalProtocols = false) {
-    let internalProtocolExist = false;
-
-    try {
-      const internalUrl = new URL(url);
-      internalProtocolExist = internalUrl.protocol && this.ADDITIONAL_PROTOCOLS.includes(internalUrl.protocol);
-    } catch (e) {
-      internalProtocolExist = false;
-    }
-
-    if (internalProtocols && internalProtocolExist) {
-      return true;
-    }
-
-    if (
-      url.length > 2048 ||
-      url.length <= 0 ||
-      (!this.URL_REGEX.test(url) &&
-      !this.IP_REGEX.test(url) &&
-      !this.LOCAL_DOMAIN_WO_TLD_REGEX.test(url)) ||
-      this.ANDROID_BUNDLE_REGEX.test(url)
-    ) {
+    if (url.length <= 0 || url.length > 2048) {
       return false;
     }
 
-    const regexTest = internalProtocols ? this.PROTOCOL_REGEX.test(url) : this.PROTOCOL_REGEX_WITHOUT_INTERNAL.test(url);
+    const hasHttpProtocol = url.startsWith('http://') || url.startsWith('https://');
 
-    if (!regexTest) {
-      const prependedURL = this.prependProtocol(url);
-      let normalizedIDN, normalizedIDNObj;
-      
-      try { // For bad TLD like .123
-        normalizedIDN = this.normalizeIDN(prependedURL);
-        normalizedIDNObj = new URL(normalizedIDN);
+    if (hasHttpProtocol) {
+      try {
+        new URL(url); // eslint-disable-line no-new
+        return true;
       } catch (e) {
         return false;
       }
+    }
 
+    if (this.ANDROID_BUNDLE_REGEX.test(url)) {
+      return false;
+    }
+
+    if (internalProtocols) {
+      const protocolMatch = url.match(/^([a-z][a-z0-9+.-]*):\/\//i);
+      let internalProtocolExist = false;
+
+      if (protocolMatch) {
+        try {
+          const urlObj = new URL(url);
+          internalProtocolExist = urlObj.protocol && this.ADDITIONAL_PROTOCOLS.includes(urlObj.protocol);
+        } catch (e) {
+          internalProtocolExist = false;
+        }
+
+        if (internalProtocolExist) {
+          return true;
+        }
+      }
+    }
+
+    const hasValidPattern = this.URL_REGEX.test(url) || this.IP_REGEX.test(url) || this.LOCAL_DOMAIN_WO_TLD_REGEX.test(url);
+
+    if (!hasValidPattern) {
+      return false;
+    }
+
+    const regexTest = internalProtocols ? this.PROTOCOL_REGEX : this.PROTOCOL_REGEX_WITHOUT_INTERNAL;
+    const hasProtocol = regexTest.test(url);
+
+    if (hasProtocol) {
+      try {
+        new URL(url); // eslint-disable-line no-new
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    try {
+      const prependedURL = this.prependProtocol(url);
+      const normalizedIDN = this.normalizeIDN(prependedURL);
+      const normalizedIDNObj = new URL(normalizedIDN);
       const parsedUrl = parseDomain(normalizedIDNObj.hostname);
 
       if (parsedUrl?.type === ParseResultType.Ip) {
@@ -102,16 +123,11 @@ class URIMatcher {
         } catch (e) {
           return false;
         }
-      } else {
-        return false;
       }
-    } else {
-      try {
-        new URL(url); // eslint-disable-line no-new
-        return true;
-      } catch (e) {
-        return false;
-      }
+
+      return false;
+    } catch (e) {
+      return false;
     }
   }
 
@@ -198,51 +214,6 @@ class URIMatcher {
     return `${protocol}//${lowerCaseHostname}${port ? `:${port}` : ''}${pathname}${search}${hash}`;
   }
 
-  // static urlencode (url) {
-  //   if (!this.isText(url)) {
-  //     throw new Error('Parameter is not a string');
-  //   }
-
-  //   let urlObj;
-
-  //   try {
-  //     urlObj = new URL(url);
-  //   } catch {
-  //     throw new Error('Parameter is not a valid URL');
-  //   }
-
-  //   const { protocol, hostname, port, searchParams } = urlObj;
-  //   let { pathname, search, hash } = urlObj;
-
-  //   if (pathname) {
-  //     pathname = '/' + encodeURIComponent(decodeURIComponent(pathname.substring(1)));
-  //   }
-
-  //   if (searchParams.size > 0) {
-  //     searchParams.forEach((value, key) => {
-  //       searchParams.set(key, encodeURIComponent(decodeURIComponent(value)));
-  //     });
-
-  //     search = '?' + searchParams.toString();
-
-  //     if (search.substring(search.length - 1, search.length) === '=') {
-  //       search = search.substring(0, search.length - 1);
-  //     }
-  //   }
-
-  //   if (hash) {
-  //     if (hash !== '#?') {
-  //       hash = '#' + encodeURIComponent(decodeURIComponent(hash.substring(1)));
-  //     }
-  //   }
-
-  //   if (pathname === '/' && !search && !hash) {
-  //     pathname = '';
-  //   }
-
-  //   return `${protocol}//${hostname}${port ? `:${port}` : ''}${pathname}${search}${hash}`;
-  // }
-
   static normalizeIDN (url, internalProtocols = false) {
     if (!this.isText(url)) {
       throw new Error('Parameter is not a string');
@@ -266,9 +237,7 @@ class URIMatcher {
       throw new Error('Parameter is not a valid URL');
     }
 
-    let prepended;
-
-    prepended = this.prependProtocol(trimmed);
+    const prepended = this.prependProtocol(trimmed);
     const normalizedIDN = this.normalizeIDN(prepended, internalProtocols);
 
     const lowerCaseURLWithoutPort = this.getLowerCaseURLWithoutPort(normalizedIDN);
@@ -278,14 +247,25 @@ class URIMatcher {
   }
 
   static baseDomainMatch (serviceUrl, browserUrl, internalProtocols = false) {
-    serviceUrl = this.normalizeUrl(serviceUrl, internalProtocols);
-    browserUrl = this.normalizeUrl(browserUrl, internalProtocols);
+    const normalizedServiceUrl = this.ignoreWWW(this.normalizeUrl(serviceUrl, internalProtocols));
+    const normalizedBrowserUrl = this.ignoreWWW(this.normalizeUrl(browserUrl, internalProtocols));
 
-    serviceUrl = this.ignoreWWW(serviceUrl);
-    browserUrl = this.ignoreWWW(browserUrl);
+    if (normalizedServiceUrl === normalizedBrowserUrl) {
+      return true;
+    }
 
-    const serviceUrlObj = new URL(serviceUrl);
-    const browserUrlObj = new URL(browserUrl);
+    let serviceUrlObj, browserUrlObj;
+
+    try {
+      serviceUrlObj = new URL(normalizedServiceUrl);
+      browserUrlObj = new URL(normalizedBrowserUrl);
+    } catch (e) {
+      return false;
+    }
+
+    if (serviceUrlObj.hostname === browserUrlObj.hostname) {
+      return true;
+    }
 
     const serviceUrlParsed = parseDomain(serviceUrlObj.hostname);
     const browserUrlParsed = parseDomain(browserUrlObj.hostname);
@@ -309,33 +289,34 @@ class URIMatcher {
   }
 
   static hostMatch (serviceUrl, browserUrl, internalProtocols = false) {
-    serviceUrl = this.normalizeUrl(serviceUrl, internalProtocols);
-    browserUrl = this.normalizeUrl(browserUrl, internalProtocols);
+    const normalizedServiceUrl = this.ignoreWWW(this.normalizeUrl(serviceUrl, internalProtocols));
+    const normalizedBrowserUrl = this.ignoreWWW(this.normalizeUrl(browserUrl, internalProtocols));
 
-    serviceUrl = this.ignoreWWW(serviceUrl);
-    browserUrl = this.ignoreWWW(browserUrl);
+    if (normalizedServiceUrl === normalizedBrowserUrl) {
+      return true;
+    }
 
-    const serviceUrlObj = new URL(serviceUrl);
-    const browserUrlObj = new URL(browserUrl);
+    let serviceUrlObj, browserUrlObj;
+
+    try {
+      serviceUrlObj = new URL(normalizedServiceUrl);
+      browserUrlObj = new URL(normalizedBrowserUrl);
+    } catch (e) {
+      return false;
+    }
 
     return serviceUrlObj.host === browserUrlObj.host;
   }
 
   static prefixMatch (serviceUrl, browserUrl, internalProtocols = false) {
-    serviceUrl = this.normalizeUrl(serviceUrl, internalProtocols);
-    browserUrl = this.normalizeUrl(browserUrl, internalProtocols);
+    const normalizedServiceUrl = this.ignoreWWW(this.normalizeUrl(serviceUrl, internalProtocols));
+    const normalizedBrowserUrl = this.ignoreWWW(this.normalizeUrl(browserUrl, internalProtocols));
 
-    serviceUrl = this.ignoreWWW(serviceUrl);
-    browserUrl = this.ignoreWWW(browserUrl);
-
-    return browserUrl.startsWith(serviceUrl);
+    return normalizedBrowserUrl.startsWith(normalizedServiceUrl);
   }
 
   static exactMatch (serviceUrl, browserUrl, internalProtocols = false) {
-    serviceUrl = this.normalizeUrl(serviceUrl, internalProtocols);
-    browserUrl = this.normalizeUrl(browserUrl, internalProtocols);
-
-    return serviceUrl === browserUrl;
+    return this.normalizeUrl(serviceUrl, internalProtocols) === this.normalizeUrl(browserUrl, internalProtocols);
   }
 
   static getMatchedAccounts (services, tabUrl) {
@@ -355,12 +336,6 @@ class URIMatcher {
       return [];
     }
     
-    try {
-      tabUrl = this.normalizeUrl(tabUrl, true);
-    } catch {
-      return [];
-    }
-    
     const domainCredentials = [];
 
     try {
@@ -376,8 +351,7 @@ class URIMatcher {
         }
 
         serviceUrls.forEach(uri => {
-          const matcher = uri?.matcher;
-          const text = uri?.text;
+          const { matcher, text } = uri;
 
           if (
             (!Number.isInteger(matcher) || matcher < URIMatcher.M_DOMAIN_TYPE || matcher > URIMatcher.M_EXACT_TYPE) ||
@@ -387,44 +361,9 @@ class URIMatcher {
             return;
           }
 
-          const serviceUrl = this.normalizeUrl(text, true);
-
-          switch (matcher) {
-            case this.M_DOMAIN_TYPE: {
-              if (this.baseDomainMatch(serviceUrl, tabUrl, true)) {
-                domainCredentials.push(account);
-              }
-
-              break;
-            }
-
-            case this.M_HOST_TYPE: {
-              if (this.hostMatch(serviceUrl, tabUrl, true)) {
-                domainCredentials.push(account);
-              }
-
-              break;
-            }
-
-            case this.M_START_WITH_TYPE: {
-              if (this.prefixMatch(serviceUrl, tabUrl, true)) {
-                domainCredentials.push(account);
-              }
-
-              break;
-            }
-
-            case this.M_EXACT_TYPE: {
-              if (this.exactMatch(serviceUrl, tabUrl, true)) {
-                domainCredentials.push(account);
-              }
-              
-              break;
-            }
-
-            default: {
-              break;
-            }
+          const matcherFunction = this.MATCHER_FUNCTIONS[matcher];
+          if (matcherFunction && matcherFunction(text, tabUrl, true)) {
+            domainCredentials.push(account);
           }
         });
       });
