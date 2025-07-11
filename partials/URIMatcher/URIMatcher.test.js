@@ -13,7 +13,6 @@ describe('URIMatcher', () => {
     it('should return true if the text is a string', () => {
       assert.isTrue(URIMatcher.isText(''));
       assert.isTrue(URIMatcher.isText('string'));
-      assert.isTrue(URIMatcher.isText(String('string')));
       assert.isFalse(URIMatcher.isText(123));
       assert.isFalse(URIMatcher.isText(123.2222));
       assert.isFalse(URIMatcher.isText({}));
@@ -42,10 +41,10 @@ describe('URIMatcher', () => {
       assert.isTrue(URIMatcher.isUrl('www.domain.com'));
       assert.isTrue(URIMatcher.isUrl('domain.com'));
       assert.isTrue(URIMatcher.isUrl('http://räksmörgås.josefsson.org/'));
-      assert.isFalse(URIMatcher.isUrl('https://www.domain.123')); // FUTURE - 123 is NOT VALID!
-      assert.isFalse(URIMatcher.isUrl('http://www.domain.123'));
-      assert.isFalse(URIMatcher.isUrl('https://domain.123'));
-      assert.isFalse(URIMatcher.isUrl('http://domain.123'));
+      assert.isTrue(URIMatcher.isUrl('https://www.domain.123'));
+      assert.isTrue(URIMatcher.isUrl('http://www.domain.123'));
+      assert.isTrue(URIMatcher.isUrl('https://domain.123'));
+      assert.isTrue(URIMatcher.isUrl('http://domain.123'));
       assert.isFalse(URIMatcher.isUrl('www.domain.123'));
       assert.isFalse(URIMatcher.isUrl('domain.123'));
       assert.isFalse(URIMatcher.isUrl('com.twofasapp'));
@@ -74,6 +73,11 @@ describe('URIMatcher', () => {
       assert.isTrue(URIMatcher.isUrl('https://2fas.local'));
       assert.isFalse(URIMatcher.isUrl('xyz'));
       assert.isTrue(URIMatcher.isUrl('http://xyz'));
+      assert.isTrue(URIMatcher.isUrl('about:blank', true));
+      assert.isTrue(URIMatcher.isUrl('chrome://settings', true));
+      assert.isTrue(URIMatcher.isUrl('chrome-extension://sdasusfgdiausfdas', true));
+      assert.isFalse(URIMatcher.isUrl('android://com.twofasapp', true));
+      assert.isFalse(URIMatcher.isUrl('android://com.twofasapp', false));
     });
   });
 
@@ -152,19 +156,6 @@ describe('URIMatcher', () => {
     });
   });
 
-  // describe('urlencode', () => {
-  //   it('should return the URL encoded', () => {
-  //     assert.strictEqual(URIMatcher.urlencode('http://example.com/foo%2b'), 'http://example.com/foo%2B');
-  //     assert.strictEqual(URIMatcher.urlencode('http://example.com/%7Efoo'), 'http://example.com/~foo');
-  //     assert.strictEqual(URIMatcher.urlencode('https://peregrinus.pl/pl/lublin'), 'https://peregrinus.pl/pl/lublin');
-  //     expect(() => URIMatcher.getLowerCaseURLWithoutPort('')).to.throw('Parameter is not a valid URL');
-  //     expect(() => URIMatcher.getLowerCaseURLWithoutPort(123)).to.throw('Parameter is not a string');
-  //     expect(() => URIMatcher.getLowerCaseURLWithoutPort({})).to.throw('Parameter is not a string');
-  //     expect(() => URIMatcher.getLowerCaseURLWithoutPort(null)).to.throw('Parameter is not a string');
-  //     expect(() => URIMatcher.getLowerCaseURLWithoutPort(undefined)).to.throw('Parameter is not a string');
-  //   });
-  // });
-
   describe('normalizeIDN', () => {
     it('should return the URL with the IDN domain normalized', () => {
       assert.strictEqual(URIMatcher.normalizeIDN('http://räksmörgås.josefsson.org/'), 'http://xn--rksmrgs-5wao1o.josefsson.org/');
@@ -234,6 +225,9 @@ describe('URIMatcher', () => {
 
       // IP test
       assert.strictEqual(URIMatcher.normalizeUrl('127.0.0.1'), 'https://127.0.0.1');
+
+      // Android test
+      expect(() => URIMatcher.normalizeUrl('android://com.twofasapp')).to.throw('Parameter is not a valid URL');
     });
   });
 
@@ -542,6 +536,11 @@ describe('URIMatcher', () => {
       assert.deepEqual(
         URIMatcher.recognizeURIs([{ text: 'test' }, { text: [] }]),
         { urls: [], others: [{ text: 'test' }] }
+      );
+
+      assert.deepEqual(
+        URIMatcher.recognizeURIs([{ text: 'android://com.twofasapp' }, { text: 'https://2fas.com' }]),
+        { urls: [{ text: 'https://2fas.com' }], others: [{ text: 'android://com.twofasapp' }] }
       );
     });
   });

@@ -5,9 +5,7 @@
 // See LICENSE file for full terms
 
 import { parseDomain, ParseResultType } from 'parse-domain';
-import { URL_REGEX, IP_REGEX, LOCAL_DOMAIN_WO_TLD_REGEX, ANDROID_BUNDLE_REGEX, PROTOCOL_REGEX_WITHOUT_INTERNAL } from '@/constants/regex';
-import additionalProtocols from './additionalProtocols';
-import generateProtocolRegex from './generateProtocolRegex';
+import { URL_REGEX, IP_REGEX } from '@/constants/regex';
 
 // FUTURE - Check if TwoFasError works here
 
@@ -18,13 +16,23 @@ import generateProtocolRegex from './generateProtocolRegex';
 class URIMatcher {
   static URL_REGEX = URL_REGEX;
   static IP_REGEX = IP_REGEX;
-  static LOCAL_DOMAIN_WO_TLD_REGEX = LOCAL_DOMAIN_WO_TLD_REGEX;
-  static ANDROID_BUNDLE_REGEX = ANDROID_BUNDLE_REGEX;
-  static PROTOCOL_REGEX_WITHOUT_INTERNAL = PROTOCOL_REGEX_WITHOUT_INTERNAL;
   static TRACKERS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'dclid', 'fbclid', 'msclkid', 'twclid', 'lmsid', 'mc_eid', 'mc_cid'];
 
-  static ADDITIONAL_PROTOCOLS = additionalProtocols();
-  static PROTOCOL_REGEX = generateProtocolRegex();
+  static ADDITIONAL_PROTOCOLS = {
+    chrome: ['about:', 'chrome-extension:', 'chrome:'],
+    firefox: ['about:', 'moz-extension:'],
+    opera: ['about:', 'chrome-extension:', 'chrome:', 'opera:'],
+    edge: ['about:', 'chrome-extension:', 'chrome:', 'edge:'],
+    safari: ['about:', 'safari-extension:']
+  };
+
+  static PROTOCOL_REGEX = {
+    chrome: /^(about|chrome-extension|chrome)?\:/i,
+    firefox: /^(about|moz-extension)?\:/i,
+    opera: /^(about|chrome-extension|chrome|opera)?\:/i,
+    edge: /^(about|chrome-extension|chrome|edge)?\:/i,
+    safari: /^(about|safari-extension)?\:/i
+  };
 
   static BAD_PARSE_DOMAIN_TYPES = [ParseResultType.Invalid, ParseResultType.Reserved, ParseResultType.NotListed];
 
@@ -46,8 +54,26 @@ class URIMatcher {
     return typeof text === 'string';
   }
 
+  static hasStandardProtocol (url) { // FUTURE - Add tests
+    if (!this.isText(url)) {
+      throw new Error('Parameter is not a string');
+    }
+
+    url = url.toLowerCase();
+
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
   static prependProtocol (url) {
-    return this.PROTOCOL_REGEX.test(url) ? url : 'https://' + url;
+    if (!this.isText(url)) {
+      throw new Error('Parameter is not a string');
+    }
+
+    if (this.hasStandardProtocol(url)) {
+      return url;
+    }
+
+    return this.PROTOCOL_REGEX[import.meta.env.BROWSER || 'chrome'].test(url) ? url : 'https://' + url;
   }
 
   static isUrl (url, internalProtocols = false) {
@@ -55,79 +81,41 @@ class URIMatcher {
       return false;
     }
 
-    const hasHttpProtocol = url.startsWith('http://') || url.startsWith('https://');
+    const hasHttpProtocol = this.hasStandardProtocol(url);
 
     if (hasHttpProtocol) {
-      try {
-        new URL(url); // eslint-disable-line no-new
-        return true;
-      } catch (e) {
-        return false;
+      return true;
+    }
+
+    if (this.URL_REGEX.test(url)) {
+      let prependedUrl = url;
+
+      if (!hasHttpProtocol) {
+        prependedUrl = this.prependProtocol(url);
       }
-    }
 
-    if (this.ANDROID_BUNDLE_REGEX.test(url)) {
-      return false;
-    }
+      try {
+        const urlObj = new URL(prependedUrl);
+        const parsedDomain = parseDomain(urlObj.hostname);
 
-    if (internalProtocols) {
-      const protocolMatch = url.match(/^([a-z][a-z0-9+.-]*):\/\//i);
-      let internalProtocolExist = false;
-
-      if (protocolMatch) {
-        try {
-          const urlObj = new URL(url);
-          internalProtocolExist = urlObj.protocol && this.ADDITIONAL_PROTOCOLS.includes(urlObj.protocol);
-        } catch (e) {
-          internalProtocolExist = false;
-        }
-
-        if (internalProtocolExist) {
+        if (parsedDomain?.type === ParseResultType.Ip || parsedDomain?.type === ParseResultType.Listed) {
           return true;
         }
-      }
-    }
 
-    const hasValidPattern = this.URL_REGEX.test(url) || this.IP_REGEX.test(url) || this.LOCAL_DOMAIN_WO_TLD_REGEX.test(url);
-
-    if (!hasValidPattern) {
-      return false;
-    }
-
-    const regexTest = internalProtocols ? this.PROTOCOL_REGEX : this.PROTOCOL_REGEX_WITHOUT_INTERNAL;
-    const hasProtocol = regexTest.test(url);
-
-    if (hasProtocol) {
-      try {
-        new URL(url); // eslint-disable-line no-new
-        return true;
-      } catch (e) {
         return false;
-      }
-    }
-
-    try {
-      const prependedURL = this.prependProtocol(url);
-      const normalizedIDN = this.normalizeIDN(prependedURL);
-      const normalizedIDNObj = new URL(normalizedIDN);
-      const parsedUrl = parseDomain(normalizedIDNObj.hostname);
-
-      if (parsedUrl?.type === ParseResultType.Ip) {
-        return true;
-      }
-
-      if (parsedUrl?.type === ParseResultType.Listed) {
-        try {
-          new URL(prependedURL); // eslint-disable-line no-new
+      } catch {
+        if (prependedUrl === url) {
           return true;
-        } catch (e) {
+        } else {
           return false;
         }
       }
-
-      return false;
-    } catch (e) {
-      return false;
+    } else {
+      if (internalProtocols) {
+        return this.PROTOCOL_REGEX[import.meta.env.BROWSER || 'chrome'].test(url);
+      } else {
+        return false;
+      }
     }
   }
 
@@ -276,8 +264,8 @@ class URIMatcher {
 
     if (this.BAD_PARSE_DOMAIN_TYPES.includes(serviceUrlParsed?.type) || this.BAD_PARSE_DOMAIN_TYPES.includes(browserUrlParsed?.type)) {
       if (
-        !this.ADDITIONAL_PROTOCOLS.includes(serviceUrlObj?.protocol) ||
-        !this.ADDITIONAL_PROTOCOLS.includes(browserUrlObj?.protocol)
+        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].includes(serviceUrlObj?.protocol) ||
+        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].includes(browserUrlObj?.protocol)
       ) {
         return false;
       } else {
@@ -382,6 +370,8 @@ class URIMatcher {
     }
 
     const response = { urls: [], others: [] };
+    const seenUrls = new Set();
+    const seenOthers = new Set();
 
     if (uris.length <= 0) {
       return response;
@@ -397,9 +387,15 @@ class URIMatcher {
 
         if (this.isUrl(text, internalProtocols)) {
           uri.text = this.normalizeUrl(text, internalProtocols);
-          response.urls.push(uri);
+          if (!seenUrls.has(uri.text)) {
+            seenUrls.add(uri.text);
+            response.urls.push(uri);
+          }
         } else {
-          response.others.push(uri);
+          if (!seenOthers.has(uri.text)) {
+            seenOthers.add(uri.text);
+            response.others.push(uri);
+          }
         }
       });
     } catch (e) {
@@ -407,10 +403,6 @@ class URIMatcher {
         throw e;
       }
     }
-
-    // Remove duplicates
-    response.urls = response.urls.filter((value, index, self) => self.findIndex(t => t.text === value.text) === index);
-    response.others = response.others.filter((value, index, self) => self.findIndex(t => t.text === value.text) === index);
 
     return response;
   }
