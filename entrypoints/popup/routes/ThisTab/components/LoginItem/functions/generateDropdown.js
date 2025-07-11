@@ -33,15 +33,13 @@ const generateDropdown = login => {
   if (uris && uris.length > 0) {
     dO.push({ value: 'uris:', label: `${browser.i18n.getMessage('this_tab_more_uris')}`, type: 'urisHeader' });
 
-    login.uris.map(async uri => {
-      let uriText = uri?.text;
-
-      try {
+    try {
+      login.uris.forEach(uri => {
+        let uriText = uri?.text;
         uriText = URIMatcher.normalizeUrl(uriText);
-      } catch {}
-
-      dO.push({ value: uriText, label: uriText });
-    });
+        dO.push({ value: uriText, label: uriText });
+      });
+    } catch {}
   }
 
   return dO;
