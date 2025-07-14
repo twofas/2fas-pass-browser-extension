@@ -43,15 +43,16 @@ function Notes (props) {
         <div className={`${pI.passInput} ${notesEditable ? '' : pI.disabled}`}>
           <div className={pI.passInputTop}>
             <div className={pI.passInputTopLabelLike}>
-              <div className={`${bS.passToggle} ${bS.loaded}`}>
+              <div className={`${bS.passToggle} ${bS.loaded} ${bS.disabledSameColor}`}>
                 <input
                   type="checkbox"
                   name="notes"
-                  id="notes"
+                  id="notes-checkbox"
                   onChange={() => setNotesVisible(!notesVisible)}
                   checked={notesVisible}
+                  disabled={notesEditable ? 'disabled': ''}
                 />
-                <label htmlFor="notes">
+                <label htmlFor="notes-checkbox">
                   <span className={bS.passToggleBox}>
                     <span className={bS.passToggleBoxCircle}></span>
                   </span>
