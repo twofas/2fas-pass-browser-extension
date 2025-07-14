@@ -121,8 +121,8 @@ function Details (props) {
 
     e.uris = e.uris.map(uri => {
       return {
-        text: valueToNFKD(uri.text),
-        matcher: uri.matcher
+        text: uri?.text ? valueToNFKD(uri.text) : '',
+        matcher: uri?.matcher
       }
     });
 
