@@ -40,6 +40,13 @@
     margin-bottom: 32px;
   }
 
+  &.resizable {
+    .pass-input-bottom {
+      resize: vertical;
+      overflow: auto;
+    }
+  }
+
   &-top {
     align-items: center;
     display: flex;
@@ -266,12 +273,8 @@
     }
 
     textarea {
-      height: 102px;
-      resize: vertical;
-
-      &[disabled] {
-        resize: none;
-      }
+      height: 100%;
+      resize: none;
     }
   }
 
