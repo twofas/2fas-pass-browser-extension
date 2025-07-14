@@ -10,7 +10,7 @@
 * @return {string} The hexadecimal encoded string.
 */
 export const ArrayBufferToHex = ab => {
-  if (!(ab instanceof ArrayBuffer)) {
+  if (!(ab instanceof ArrayBuffer) && ab[Symbol?.toStringTag] !== 'ArrayBuffer') {
     throw new TypeError('ArrayBufferToHex: Expected input to be an ArrayBuffer');
   }
 
