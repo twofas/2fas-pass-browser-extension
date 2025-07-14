@@ -21,5 +21,6 @@ export const REQUEST_ACTIONS = {
   RESET_EXTENSION: 'resetExtension', // background, popup
   IGNORE_SAVE_PROMPT: 'ignoreSavePrompt', // prompt, popup, background
   GET_CRYPTO_AVAILABLE: 'getCryptoAvailable', // popup, content
-  GET_SAVE_PROMPT: 'getSavePrompt' // prompt, background
+  GET_SAVE_PROMPT: 'getSavePrompt', // prompt, background
+  TAB_FOCUS: 'tabFocus', // focus, background
 };
