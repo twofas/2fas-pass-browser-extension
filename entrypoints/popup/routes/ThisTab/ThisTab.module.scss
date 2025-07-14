@@ -693,7 +693,7 @@
 
           &.icon-label {
             background-color: v.$primary-color-light;
-            border: 1px solid v.$object-stroke-light;
+            border: 1px solid v.$primary-color-light;
             font-size: 10px;
             font-weight: 700;
             line-height: 1.2;
@@ -701,16 +701,16 @@
 
             @include m.darkMode {
               background-color: v.$primary-color-dark;
-              border-color: v.$object-stroke-dark;
+              border-color: v.$primary-color-dark;
             }
           }
 
           &.icon-image {
-            background-color: v.$primary-color-light;
+            background-color: v.$primary-box-bg-light;
             border: 1px solid v.$object-stroke-light;
 
             @include m.darkMode {
-              background-color: v.$primary-color-dark;
+              background-color: v.$primary-box-bg-dark;
               border-color: v.$object-stroke-dark;
             }
 
