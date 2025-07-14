@@ -361,7 +361,14 @@ class URIMatcher {
       }
     }
 
-    return domainCredentials;
+    const map = new Map();
+    domainCredentials.forEach(obj => {
+      if (!map.has(obj.id)) {
+        map.set(obj.id, obj);
+      }
+    });
+
+    return Array.from(map.values());
   }
 
   static recognizeURIs (uris, internalProtocols = false) {
