@@ -193,8 +193,6 @@
       &[disabled] {
         color: v.$secondary-text-light;
         cursor: default;
-        pointer-events: none;
-        user-select: none;
 
         @include m.darkMode {
           color: v.$secondary-text-dark;
