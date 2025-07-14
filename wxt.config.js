@@ -222,8 +222,6 @@ export default defineConfig({
       } : {
         service_worker: 'background.js'
       };
-
-      delete manifest.content_scripts;
     }
   },
   zip: {
