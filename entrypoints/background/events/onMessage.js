@@ -10,6 +10,7 @@ import isText from '@/partials/functions/isText';
 import openInstallPage from '../utils/openInstallPage';
 import runMigrations from '../migrations';
 import getLocalKey from '../utils/getLocalKey';
+import onTabFocused from '../tabs/onTabFocused';
 
 /** 
 * Function to handle messages sent to the background script.
@@ -70,6 +71,13 @@ const onMessage = (request, sender, sendResponse) => {
         getLocalKey()
           .then(lKey => { sendResponse({ status: 'ok', data: lKey }); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.TAB_FOCUS: {
+        onTabFocused(sender.tab)
+          .finally(() => { sendResponse({ status: 'ok' }); });
 
         break;
       }
