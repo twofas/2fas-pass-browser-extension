@@ -83,9 +83,15 @@ function ThisTab (props) {
   }, [sort]);
 
   const handleSearchChange = useCallback(e => {
-    const value = e.target.value;
-    setSearchActive(value.length > 0);
-    setSearchValue(value);
+    const value = e?.target?.value;
+
+    if (value.trim().length > 0) {
+      setSearchActive(true);
+      setSearchValue(value);
+    } else {
+      setSearchActive(false);
+      setSearchValue('');
+    }
   }, []);
 
   const handleSearchClear = useCallback(() => {
