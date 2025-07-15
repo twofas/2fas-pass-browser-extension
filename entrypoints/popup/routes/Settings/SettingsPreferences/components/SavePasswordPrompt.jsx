@@ -96,10 +96,12 @@ function SavePasswordPrompt () {
         />
       </form>
 
-      <Link to='/settings-save-login-excluded-domains' className={S.settingsSavePasswordPromptExcludedDomainsLink}>
-        <span>{browser.i18n.getMessage('settings_excluded_domains')}</span>
-        <MenuArrowIcon />
-      </Link>
+      {sP === 'default' || sP === 'default_encrypted' ? (
+        <Link to='/settings-save-login-excluded-domains' className={S.settingsSavePasswordPromptExcludedDomainsLink}>
+          <span>{browser.i18n.getMessage('settings_excluded_domains')}</span>
+          <MenuArrowIcon />
+        </Link>
+      ) : null}
     </div>
   );
 }
