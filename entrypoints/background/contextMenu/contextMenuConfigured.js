@@ -12,9 +12,10 @@ let isContextMenuConfiguring = false;
 /** 
 * Function to configure the context menu for the 2FAS Pass Browser Extension.
 * @async
+* @param {Array} services - An array of services to configure the context menu for.
 * @return {void}
 */
-const contextMenuConfigured = async () => {
+const contextMenuConfigured = async (services = null) => {
   if (isContextMenuConfiguring) {
     return;
   }
@@ -28,7 +29,7 @@ const contextMenuConfigured = async () => {
       contexts.push('page_action');
     }
 
-    let contextMenuSetting, services;
+    let contextMenuSetting;
 
     try {
       contextMenuSetting = await storage.getItem('local:contextMenu');
@@ -41,7 +42,9 @@ const contextMenuConfigured = async () => {
     }
 
     try {
-      services = await getServices();
+      if (!services) {
+        services = await getServices();
+      }
     } catch (e) {
       await CatchError(e);
     }

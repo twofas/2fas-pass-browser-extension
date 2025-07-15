@@ -8,6 +8,7 @@ import sendDomainToPopupWindow from '../utils/sendDomainToPopupWindow';
 import isTabIsPopupWindow from './isTabIsPopupWindow';
 import setBadge from '../utils/setBadge';
 import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
+import getServices from '@/partials/sessionStorage/getServices';
 
 /** 
 * Function to handle tab focus in the browser.
@@ -16,11 +17,15 @@ import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
 * @return {Promise<void>} A promise that resolves when the tab focus is handled.
 */
 const onTabFocused = async tab => {
-  let pw;
+  let pw, services;
+
+  try {
+    services = await getServices();
+  } catch {}
 
   if (tab?.url) {
     try {
-      await setBadge(tab.url, tab.id);
+      await setBadge(tab.url, tab.id, services);
     } catch (e) {
       await CatchError(e);
     }
@@ -35,7 +40,7 @@ const onTabFocused = async tab => {
   if (!pw) {
     try {
       await sendDomainToPopupWindow(tab.id);
-      await updateNoAccountItem(tab.id);
+      await updateNoAccountItem(tab.id, services);
     } catch (e) {
       await CatchError(e);
     }

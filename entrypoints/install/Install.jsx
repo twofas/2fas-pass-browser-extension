@@ -45,6 +45,8 @@ const stepVariants = {
   visible: { opacity: 1, display: 'block', transition: { duration: 0.3, ease: 'easeInOut' } }
 };
 
+const emptyFunc = () => {};
+
 /** 
 * Function component for the Install page.
 * @return {JSX.Element} The rendered component.
@@ -114,6 +116,10 @@ function Install () {
   };
 
   const onStorageChange = async (change, areaName) => {
+    if (areaName !== 'session') {
+      return;
+    }
+
     let configuredKey, configured;
 
     try {
@@ -127,10 +133,6 @@ function Install () {
     try {
       configured = await getConfiguredBoolean();
     } catch {}
-
-    if (areaName !== 'session' && configured) {
-      return;
-    }
 
     if (configured) {
       goToStep(3);
@@ -224,8 +226,8 @@ function Install () {
 
     browser.storage.onChanged.addListener(onStorageChange);
 
-    window.addEventListener('error', handleError);
-    window.addEventListener('unhandledrejection', handleError);
+    window.addEventListener('error', emptyFunc);
+    window.addEventListener('unhandledrejection', emptyFunc);
 
     return () => {
       unwatchTheme();
@@ -240,8 +242,8 @@ function Install () {
         document.removeEventListener('click', safariBlankLinks);
       }
 
-      window.removeEventListener('error', handleError);
-      window.removeEventListener('unhandledrejection', handleError);
+      window.removeEventListener('error', emptyFunc);
+      window.removeEventListener('unhandledrejection', emptyFunc);
     };
   }, []);
 

@@ -13,9 +13,10 @@ import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfig
 * @async
 * @param {string} url - The URL of the current tab.
 * @param {number|null} tabId - The ID of the current tab.
+* @param {Array|null} services - The list of services to match against the URL.
 * @return {Promise<void>} A promise that resolves when the badge and icon are set.
 */
-const setBadge = async (url, tabId = null) => {
+const setBadge = async (url, tabId = null, services = null) => {
   let configured = false;
 
   try {
@@ -42,12 +43,14 @@ const setBadge = async (url, tabId = null) => {
     };
   }
 
-  let services = [];
   let matchingLogins = [];
 
   if (url) {
     try {
-      services = await getServices();
+      if (!services) {
+        services = await getServices();
+      }
+      
       matchingLogins = URIMatcher.getMatchedAccounts(services, url);
     } catch {}
   }

@@ -14,6 +14,7 @@ import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready'
 import removeSavePromptAction from '../utils/savePrompt/removeSavePromptAction';
 import handleSavePromptResponse from '../utils/savePrompt/handleSavePromptResponse';
 import { parseDomain } from 'parse-domain';
+import getServices from '@/partials/sessionStorage/getServices';
 
 /** 
 * Function to handle tab updates in the browser.
@@ -33,7 +34,7 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
     return false;
   }
   
-  let pw, tab;
+  let pw, tab, services;
   
   try {
     tab = await browser.tabs.get(tabID);
@@ -60,7 +61,11 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
         }
 
         try {
-          await setBadge(tab.url, tabID);
+          services = await getServices();
+        } catch {}
+
+        try {
+          await setBadge(tab.url, tabID, services);
         } catch (e) {
           await CatchError(e);
         }
@@ -69,7 +74,7 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
       await sendDomainToPopupWindow(tabID);
       
       if (changeInfo?.status === 'complete') {
-        await updateNoAccountItem(tabID);
+        await updateNoAccountItem(tabID, services);
         await checkPromptCS(tabID);
 
         const action = savePromptActions.filter(a => a.tabId === tabID)[0];
