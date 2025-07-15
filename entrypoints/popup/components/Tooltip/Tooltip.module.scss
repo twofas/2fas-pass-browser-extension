@@ -1,0 +1,91 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.tooltip {
+  margin-top: -5px;
+  overflow: visible;
+
+  button {
+    position: relative;
+
+    &:hover {
+      .tooltip-content {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+  }
+
+  &-content {
+    background-color: v.$card-bg-light;
+    border: 1px solid v.$card-stroke-light;
+    border-radius: 8px;
+    bottom: calc(100% + 3px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px 0;
+    left: 44px;
+    opacity: 0;
+    padding: 12px 16px 16px;
+    pointer-events: none;
+    position: absolute;
+    text-align: left;
+    transition: opacity .3s ease-in-out;
+    width: 287px;
+    z-index: 2;
+
+    &::before {
+      bottom: -4px;
+      content: '';
+      display: block;
+      height: 4px;
+      left: -44px;
+      position: absolute;
+      width: calc(100% + 44px);
+    }
+
+    @include m.darkMode {
+      background-color: v.$card-bg-dark;
+      border-color: v.$card-stroke-dark;
+    }
+
+    h4 {
+      color: v.$primary-text-light;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    h5 {
+      color: v.$primary-text-light;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.2;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    p {
+      color: v.$secondary-text-light;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.2;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+  }
+}
