@@ -231,7 +231,8 @@
 
     &-list {
       border-radius: 6px;
-      overflow: hidden;
+      max-height: 102px;
+      overflow: auto;
       padding-bottom: 0;
       padding-top: 0;
 
