@@ -16,7 +16,7 @@ const LearnMoreIcon = lazy(() => import('@/assets/popup-window/learn-more.svg?re
 function Tooltip (props) {
   return (
     <>
-      <div className={`${S.tooltip} ${props.className || ''}`}>
+      <div className={`${S.tooltip} ${props.type === 'bottom' ? S.bottom : ''} ${props.className || ''}`}>
         <button type='button'>
           <LearnMoreIcon />
           <span>{browser.i18n.getMessage('learn_more')}</span>

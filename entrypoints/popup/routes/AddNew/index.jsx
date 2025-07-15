@@ -202,7 +202,7 @@ function AddNew (props) {
                             <div className={pI.passInputBottom}>
                               <input type="password" {...input} id="password" disabled={!setOnMobile ? 'disabled' : ''} />
                             </div>
-                            <Tooltip className={pI.passInputAdditional}>
+                            <Tooltip className={`${pI.passInputAdditional} tooltip`}>
                               <h4>{browser.i18n.getMessage('add_new_learn_more_tooltip_header')}</h4>
                               <h5>{browser.i18n.getMessage('add_new_learn_more_tooltip_content_1')}</h5>
                               <p>{browser.i18n.getMessage('add_new_learn_more_tooltip_content_2')}</p>

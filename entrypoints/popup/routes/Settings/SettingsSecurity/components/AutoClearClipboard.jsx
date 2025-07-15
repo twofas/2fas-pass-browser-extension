@@ -6,7 +6,9 @@
 
 import S from '../../Settings.module.scss';
 import Select from 'react-select';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy } from 'react';
+
+const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
 
 /**
 * Function to render the Auto Clear Clipboard component.
@@ -82,6 +84,11 @@ function AutoClearClipboard () {
           disabled={disabled ? 'disabled' : ''}
         />
       </form>
+      <Tooltip type='bottom'>
+        <h4>{browser.i18n.getMessage('settings_idle_lock_tooltip_1')}</h4>
+        <h5>{browser.i18n.getMessage('settings_idle_lock_tooltip_2')}</h5>
+        <p>{browser.i18n.getMessage('settings_idle_lock_tooltip_3')}</p>
+      </Tooltip>
     </div>
   );
 }

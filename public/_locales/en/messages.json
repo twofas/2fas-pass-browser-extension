@@ -843,6 +843,18 @@
     "message": "Select the time after which the Browser Extension will automatically lock itself if you don't use it.",
     "description": "Description for configuring idle lock behavior"
   },
+  "settings_idle_lock_tooltip_1": {
+    "message": "Automatically lock browser extensions when idle",
+    "description": "Tooltip explaining that the idle lock setting applies only to the extension"
+  },
+  "settings_idle_lock_tooltip_2": {
+    "message": "This feature automatically locks the extension and clears all Items that have been transferred from your mobile app after the period of inactivity you set above.",
+    "description": "Tooltip clarifying that the idle lock setting does not affect the mobile app"
+  },
+  "settings_idle_lock_tooltip_3": {
+    "message": "You can choose to lock it manually, automatically after a set amount of time, or when you restart the browser. Idle time refers to the inactivity of the whole computer, not only the browser.",
+    "description": "Tooltip explaining that the idle lock function only applies to the extension"
+  },
   "settings_auto_clear_clipboard_header": {
     "message": "Auto clear clipboard",
     "description": "Header for the auto clear clipboard settings"
@@ -850,6 +862,18 @@
   "settings_auto_clear_clipboard_description": {
     "message": "Select a time to clear the clipboard of data copied from this Browser Extension.",
     "description": "Description for configuring clipboard auto-clear behavior"
+  },
+  "settings_auto_clear_clipboard_tooltip_1": {
+    "message": "Auto Clear Clipboard",
+    "description": "Tooltip explaining that the auto-clear setting applies only to data copied from the extension"
+  },
+  "settings_auto_clear_clipboard_tooltip_2": {
+    "message": "The “Auto Clear Clipboard” function automatically clears the clipboard contents after a specified period (can be changed above). This prevents the password from being permanently stored there.",
+    "description": "Tooltip clarifying that the auto-clear setting does not affect data copied from outside the extension"
+  },
+  "settings_auto_clear_clipboard_tooltip_3": {
+    "message": "NOTE: This function has built-in browser limitations. For the clipboard to be cleared, the browser must be open and active; otherwise, it won't work.",
+    "description": "Tooltip explaining that the auto-clear function only applies to data copied from the extension"
   },
   "settings_theme": {
     "message": "Theme",
