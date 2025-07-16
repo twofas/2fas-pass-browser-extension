@@ -63,6 +63,12 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     }
   }
 
+  const skip = input?.getAttribute?.('twofas-pass-skip');
+  
+  if (!input || !isVisible(input) || skip === 'true') {
+    return;
+  }
+
   // Create unique identifier for this input element
   const inputIdentifier = input?.getAttribute('twofas-pass-id') || `${input?.name || 'unnamed'}_${input?.type || 'text'}_${Date.now()}`;
 
@@ -73,13 +79,6 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
 
   // Set new timer for this specific input
   timers[inputIdentifier] = setTimeout(async () => {
-    const skip = input?.getAttribute?.('twofas-pass-skip');
-
-    if (!input || !isVisible(input) || skip === 'true') {
-      delete timers[inputIdentifier]; // Clean up timer reference
-      return;
-    }
-
     const inputId = input?.getAttribute?.('twofas-pass-id');
 
     if (!inputId && !isElementInArray(input, allInputs)) {
@@ -91,7 +90,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
 
       const allInputsNew = passwordInputs.concat(usernameInputs);
 
-      if (isElementInElementInArray(input, allInputsNew)) {
+      if (isElementInArray(input, allInputsNew)) {
         allInputs = allInputsNew;
         const inputId = generateInputId();
         // FUTURE - Check if the ID is unique
@@ -115,7 +114,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
       let nonce, value;
 
       try {
-        nonce = await generateNonce();
+        nonce = await generateNonce('arraybuffer');
       } catch (e) {
         await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventNonceError, { additional: { func: 'handleInputEvent', event: e } }));
         return;
