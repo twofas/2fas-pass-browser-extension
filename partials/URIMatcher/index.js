@@ -125,7 +125,6 @@ class URIMatcher {
     }
 
     if (!IP_REGEX.test(url)) {
-      console.log(url, 'is not a valid IP address');
       return false;
     }
 
@@ -136,8 +135,6 @@ class URIMatcher {
     } catch {
       return false;
     }
-
-    console.log('Normalized URL:', normalizedUrl);
 
     try {
       urlObj = new URL(normalizedUrl);
