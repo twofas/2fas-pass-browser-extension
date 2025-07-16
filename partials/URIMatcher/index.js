@@ -54,7 +54,7 @@ class URIMatcher {
     return typeof text === 'string';
   }
 
-  static hasStandardProtocol (url) { // FUTURE - Add tests
+  static hasStandardProtocol (url) {
     if (!this.isText(url)) {
       throw new Error('Parameter is not a string');
     }
@@ -87,7 +87,7 @@ class URIMatcher {
       return true;
     }
 
-    if (this.URL_REGEX.test(url)) {
+    if (this.URL_REGEX.test(url) || this.IP_REGEX.test(url)) {
       let prependedUrl = url;
 
       if (!hasHttpProtocol) {
@@ -119,12 +119,43 @@ class URIMatcher {
     }
   }
 
-  static isIp (url) { // FUTURE - Add tests (+ check IPv6)
+  static isIp (url) { // FUTURE - Check IPv6 when supported
     if (!this.isText(url)) {
       throw new Error('Parameter is not a string');
     }
 
-    return this.IP_REGEX.test(url);
+    if (!IP_REGEX.test(url)) {
+      console.log(url, 'is not a valid IP address');
+      return false;
+    }
+
+    let normalizedUrl, urlObj;
+
+    try {
+      normalizedUrl = this.normalizeUrl(url);
+    } catch {
+      return false;
+    }
+
+    console.log('Normalized URL:', normalizedUrl);
+
+    try {
+      urlObj = new URL(normalizedUrl);
+    } catch (e) {
+      return false;
+    }
+
+    if (!urlObj || !urlObj.hostname) {
+      return false;
+    }
+
+    const parsedDomain = parseDomain(urlObj.hostname);
+
+    if (parsedDomain?.type === ParseResultType.Ip) {
+      return true;
+    }
+
+    return false;
   }
 
   static trimText (text) {

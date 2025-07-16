@@ -687,6 +687,11 @@ class TwoFasError extends Error {
     handleInputEventEncryptError: {
       message: 'handleInputEvent: error encrypting data',
       code: 9382
+    },
+    // CONTEXT MENU
+    contextMenuConfiguredError: {
+      message: 'Error configuring context menu',
+      code: 9390
     }
   }
 }

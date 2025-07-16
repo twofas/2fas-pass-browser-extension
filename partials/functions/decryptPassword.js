@@ -6,6 +6,7 @@
 
 import getKey from '@/partials/sessionStorage/getKey';
 import isText from './isText';
+import { SECURITY_TIER } from '@/utils/SECURITY_TIER';
 
 /** 
 * Decrypts the password using the encryption key from the session storage.
@@ -22,7 +23,7 @@ const decryptPassword = async login => {
     throw new TwoFasError(TwoFasError.internalErrors.decryptPasswordDeviceIdNotDefined, { additional: { func: 'decryptPassword' } });
   }
 
-  if (!login?.securityType || !Number.isInteger(login?.securityType)) { // @TODO: check if is between 1-2
+  if (!login?.securityType || !Number.isInteger(login?.securityType) || login?.securityType < SECURITY_TIER.HIGHLY_SECRET || login?.securityType > SECURITY_TIER.SECRET) {
     throw new TwoFasError(TwoFasError.internalErrors.decryptPasswordSecurityTypeNotDefined, { additional: { func: 'decryptPassword' } });
   }
 

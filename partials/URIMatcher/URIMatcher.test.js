@@ -22,6 +22,19 @@ describe('URIMatcher', () => {
     });
   });
 
+  describe('hasStandardProtocol', () => {
+    it('should return true if the URL has a standard protocol', () => {
+      assert.isTrue(URIMatcher.hasStandardProtocol('https://www.domain.com'));
+      assert.isTrue(URIMatcher.hasStandardProtocol('http://www.domain.com'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('httpdomain.com'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('ftp://www.domain.com'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('file:///path/to/file'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('chrome-extension://extension-id'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('about:blank'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('data:text/plain;base64,SGVsbG8sIFdvcmxkIQ=='));
+    });
+  });
+
   describe('prependProtocol', () => {
     it('should return the URL with the protocol prepended if not present', () => {
       assert.equal(URIMatcher.prependProtocol('www.domain.com'), 'https://www.domain.com');
@@ -78,6 +91,21 @@ describe('URIMatcher', () => {
       assert.isTrue(URIMatcher.isUrl('chrome-extension://sdasusfgdiausfdas', true));
       assert.isFalse(URIMatcher.isUrl('android://com.twofasapp', true));
       assert.isFalse(URIMatcher.isUrl('android://com.twofasapp', false));
+    });
+  });
+
+  describe('isIp', () => {
+    it('should return true if the text is an IP address', () => {
+      // IP v4
+      assert.isTrue(URIMatcher.isIp('192.168.1.1'));
+      assert.isTrue(URIMatcher.isIp('255.255.255.255'));
+      assert.isFalse(URIMatcher.isIp('256.256.256.256'));
+      assert.isFalse(URIMatcher.isIp('192.168.1'));
+      assert.isFalse(URIMatcher.isIp('192.168.1.1.1'));
+      assert.isFalse(URIMatcher.isIp('localhost'));
+      assert.isFalse(URIMatcher.isIp('http://192.168.1.1'));
+      // IP v6
+      // assert.isTrue(URIMatcher.isIp('2001:0db8:85a3:0000:0000:8a2e:0370:7334'));
     });
   });
 
@@ -225,6 +253,7 @@ describe('URIMatcher', () => {
 
       // IP test
       assert.strictEqual(URIMatcher.normalizeUrl('127.0.0.1'), 'https://127.0.0.1');
+      // assert.strictEqual(URIMatcher.normalizeUrl('2001:0db8:85a3:0000:0000:8a2e:0370:7334'), 'https://2001:0db8:85a3:0000:0000:8a2e:0370:7334');
 
       // Chrome extension test
       assert.strictEqual(URIMatcher.normalizeUrl('chrome-extension://fadcbojfagcijnjlcgikmecohgdildma/install.html', true), 'chrome-extension://fadcbojfagcijnjlcgikmecohgdildma/install.html');

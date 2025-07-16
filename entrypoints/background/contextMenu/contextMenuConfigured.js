@@ -169,7 +169,12 @@ const contextMenuConfigured = async (services = null) => {
       await CatchError(e);
     }
   } catch (e) {
-    console.error('Error configuring context menu:', e); // @TODO: FIX
+    throw new TwoFasError(TwoFasError.internalErrors.contextMenuConfiguredError, {
+      additional: {
+        securityType: service.securityType,
+        func: 'contextMenuConfigured'
+      }
+    });
   } finally {
     isContextMenuConfiguring = false;
   }
