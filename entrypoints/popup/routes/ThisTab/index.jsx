@@ -233,7 +233,7 @@ function ThisTab (props) {
         unwatchStorageVersion.current();
       }
     };
-  }, [storageVersion, logins.length]);
+  }, [storageVersion]);
 
   useEffect(() => {
     if (state?.action === 'autofillT2Failed') {
