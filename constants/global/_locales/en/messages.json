@@ -178,5 +178,9 @@
   "no_item_name": {
     "message": "No Item name",
     "description": "Label for a state where no item name is available"
+  },
+  "no_valid_domain": {
+    "message": "No valid domain detected. If it is a non-standard domain, add the appropriate protocol (e.g. https) at the beginning.",
+    "description": "Label for a state where no valid domain is provided"
   }
 }

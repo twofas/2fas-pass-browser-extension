@@ -7,13 +7,14 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
+import domainValidation from '@/partials/functions/domainValidation.jsx';
 
 /** 
 * Function to render the URL input field.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function URL (props) {
+function URLComponent (props) {
   const { data, actions, index } = props;
   const { service, domainsEditable, inputError, form } = data;
   const { setDomainsEditable } = actions;
@@ -50,10 +51,13 @@ function URL (props) {
               autoCapitalize="off"
             />
           </div>
+          <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
+            {domainValidation(input.value)}
+          </div>
         </div>
       )}
     </Field>
   );
 }
 
-export default URL;
+export default URLComponent;

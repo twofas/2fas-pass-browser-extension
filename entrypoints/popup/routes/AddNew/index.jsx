@@ -16,6 +16,7 @@ import { Form, Field } from 'react-final-form';
 import onMessage from './events/onMessage';
 import valueToNFKD from '@/partials/functions/valueToNFKD';
 import { filterXSS } from 'xss';
+import domainValidation from '@/partials/functions/domainValidation.jsx';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -148,6 +149,9 @@ function AddNew (props) {
                               autoComplete="off"
                               autoCapitalize="off"
                             />
+                          </div>
+                          <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
+                            {domainValidation(input.value)}
                           </div>
                           <div className={pI.passInputAdditional}>
                             <div className={`${bS.passToggle} ${bS.loaded}`}>

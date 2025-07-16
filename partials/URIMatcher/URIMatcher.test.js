@@ -226,6 +226,9 @@ describe('URIMatcher', () => {
       // IP test
       assert.strictEqual(URIMatcher.normalizeUrl('127.0.0.1'), 'https://127.0.0.1');
 
+      // Chrome extension test
+      assert.strictEqual(URIMatcher.normalizeUrl('chrome-extension://fadcbojfagcijnjlcgikmecohgdildma/install.html', true), 'chrome-extension://fadcbojfagcijnjlcgikmecohgdildma/install.html');
+
       // Android test
       expect(() => URIMatcher.normalizeUrl('android://com.twofasapp')).to.throw('Parameter is not a valid URL');
     });
