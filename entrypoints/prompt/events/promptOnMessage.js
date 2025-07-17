@@ -11,9 +11,11 @@ import clearClipboard from '@/partials/functions/clearClipboard';
 * @param {Object} request - The request object.
 * @param {Object} sender - The sender object.
 * @param {Function} sendResponse - The function to send the response.
+* @param {Object} timers - An object containing timers to be cleared.
+* @param {Object} ignore - A flag to indicate whether to ignore the prompt.
 * @return {Promise<void>} 
 */
-const promptOnMessage = (request, sender, sendResponse) => {
+const promptOnMessage = (request, sender, sendResponse, timers, ignore) => {
   try {
     if (!request || !request?.action || request?.target !== REQUEST_TARGETS.PROMPT) {
       return false;
@@ -28,6 +30,17 @@ const promptOnMessage = (request, sender, sendResponse) => {
       case REQUEST_ACTIONS.AUTO_CLEAR_CLIPBOARD: {
         const clearClipboardStatus = clearClipboard();
         sendResponse(clearClipboardStatus);
+        break;
+      }
+
+      case REQUEST_ACTIONS.IGNORE_SAVE_PROMPT: {
+        Object.values(timers).forEach(timer => clearTimeout(timer));
+
+        timers = {};
+        ignore.value = true;
+
+        setTimeout(() => { ignore.value = false; }, 300);
+        sendResponse({ status: 'ok' });
         break;
       }
   

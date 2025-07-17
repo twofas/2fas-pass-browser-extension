@@ -10,7 +10,7 @@
 * @return {string} The resulting string from the ArrayBuffer.
 */
 export const ArrayBufferToString = ab => {
-  if (!(ab instanceof ArrayBuffer)) {
+  if (!(ab instanceof ArrayBuffer) && ab[Symbol?.toStringTag] !== 'ArrayBuffer') {
     throw new TypeError('ArrayBufferToString: Expected input to be an ArrayBuffer');
   }
 

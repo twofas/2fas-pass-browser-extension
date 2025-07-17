@@ -12,9 +12,8 @@ import URIMatcher from '@/partials/URIMatcher';
 * @return {string} The domain of the URL or the original URL if it cannot be parsed.
 */
 const getDomain = url => {
-  if (!url || typeof url !== 'string' || url.length <= 3) {
-    setFaviconError(true);
-    return url;
+  if (!url || !URIMatcher.isText(url) || url.length <= 3 || !URIMatcher.isUrl(url)) {
+    throw new Error('Invalid URL provided');
   }
 
   let urlObj;
@@ -25,8 +24,7 @@ const getDomain = url => {
     urlObj = new URL(normalizedURL);
     return urlObj?.hostname || url;
   } catch (e) {
-    setFaviconError(true);
-    return url;
+    throw new Error('Invalid URL provided');
   }
 };
 

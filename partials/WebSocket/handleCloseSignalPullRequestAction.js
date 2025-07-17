@@ -8,6 +8,7 @@ import addNewSessionIdToDevice from './utils/addNewSessionIdToDevice';
 import TwoFasWebSocket from '@/partials/WebSocket';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import closeWindowIfNotInSeparateWindow from '../functions/closeWindowIfNotInSeparateWindow';
+import sendMessageToAllFrames from '../functions/sendMessageToAllFrames';
 
 /** 
 * Handles the close signal for the pull request action.
@@ -15,9 +16,10 @@ import closeWindowIfNotInSeparateWindow from '../functions/closeWindowIfNotInSep
 * @param {string} uuid - The unique identifier for the user.
 * @param {Object} closeData - The data related to the close action.
 * @param {Function} navigate - The navigation function.
+* @param {Object} state - The current state of fetch action.
 * @return {Promise<void>} 
 */
-const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData, navigate) => {
+const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData, navigate, state) => {
   await addNewSessionIdToDevice(uuid, newSessionId); // FUTURE - Change to deviceId instead of uuid?
 
   try {
@@ -34,6 +36,21 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     const isOk = autofillRes.filter(frameResponse => frameResponse.status === 'ok').length > 0;
 
     if (isOk) {
+      try {
+        await sendMessageToAllFrames(state.data.tabId, {
+          action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,
+          target: REQUEST_TARGETS.PROMPT
+        });
+      } catch {}
+
+      try {
+        await browser.runtime.sendMessage({
+          action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,
+          target: REQUEST_TARGETS.BACKGROUND_PROMPT,
+          tabId: state.data.tabId
+        });
+      } catch {}
+
       const separateWindow = await popupIsInSeparateWindow();
       await closeWindowIfNotInSeparateWindow(separateWindow);
 

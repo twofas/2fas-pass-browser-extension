@@ -15,7 +15,7 @@ import injectCSIfNotAlready from './injectCSIfNotAlready';
 const checkPromptCS = async tabId => {
   const storagePrompt = await storage.getItem('local:savePrompt');
 
-  if (!storagePrompt || storagePrompt === 'default') {
+  if (!storagePrompt || storagePrompt === 'default' || storagePrompt === 'default_encrypted') {
     await injectCSIfNotAlready(tabId, REQUEST_TARGETS.PROMPT);
   }
 };

@@ -9,6 +9,7 @@ import { lazy } from 'react';
 import getDomain from '@/partials/functions/getDomain';
 import getTextColor from '@/partials/functions/getTextColor';
 import { HEX_REGEX } from '@/constants/regex';
+import URIMatcher from '@/partials/URIMatcher';
 
 const Skeleton = lazy(() => import('../../components/Skeleton'));
 
@@ -21,9 +22,7 @@ const Skeleton = lazy(() => import('../../components/Skeleton'));
 * @return {JSX.Element} The generated icon element.
 */
 const generateIcon = (login, faviconError, setFaviconError, loading) => {
-  const handleFaviconError = () => {
-    setFaviconError(true);
-  };
+  const handleFaviconError = () => { setFaviconError(true); };
 
   if (loading) {
     return <Skeleton />;
@@ -48,6 +47,10 @@ const generateIcon = (login, faviconError, setFaviconError, loading) => {
     try {
       iconDomain = getDomain(login?.uris[iconUriIndex]?.text);
     } catch (e) {
+      handleFaviconError();
+    }
+
+    if (!iconDomain || URIMatcher.isIp(iconDomain) || iconDomain === 'localhost') {
       handleFaviconError();
     }
 

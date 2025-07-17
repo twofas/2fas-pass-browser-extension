@@ -20,9 +20,10 @@ import savePrompt from '../functions/savePrompt';
 * @param {Function} sendResponse - The function to send a response.
 * @param {boolean} isTopFrame - Indicates if the request is from the top frame.
 * @param {HTMLElement} container - The container element.
+* @param {boolean} cryptoAvailable - Indicates if the WebCrypto API is available.
 * @return {boolean} Indicates if the message was handled.
 */
-const contentOnMessage = (request, sender, sendResponse, isTopFrame, container) => {
+const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, cryptoAvailable) => {
   try {
     if (!request || !request?.action || request?.target !== REQUEST_TARGETS.CONTENT) {
       return false;
@@ -34,7 +35,8 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container) 
       request?.action === REQUEST_ACTIONS.AUTO_CLEAR_CLIPBOARD || 
       request?.action === REQUEST_ACTIONS.MATCHING_LOGINS || 
       request?.action === REQUEST_ACTIONS.NOTIFICATION || 
-      request?.action === REQUEST_ACTIONS.SAVE_PROMPT 
+      request?.action === REQUEST_ACTIONS.SAVE_PROMPT ||
+      request?.action === REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE
     ) {
       if (!isTopFrame) {
         return false;
@@ -87,6 +89,11 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container) 
   
       case REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK: {
         sendResponse({ status: 'ok' });
+        break;
+      }
+
+      case REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE: {
+        sendResponse({ status: 'ok', cryptoAvailable });
         break;
       }
   

@@ -10,13 +10,10 @@
 * @return {Object} An object containing the extracted username and password.
 */
 const getValuesFromTabsInputData = tabsInputData => {
-  let username, password;
+  let username, password, encrypted;
   
   if (!tabsInputData || tabsInputData.length <= 0) {
-    return {
-      username,
-      password
-    };
+    return { username, password, encrypted };
   }
   
   const tabInputsIds = Object.keys(tabsInputData);
@@ -30,12 +27,14 @@ const getValuesFromTabsInputData = tabsInputData => {
 
     if (input?.type && input?.value && input?.type === 'password') {
       password = input?.value;
+      encrypted = input?.encrypted || false;
     }
   });
 
   return {
     username,
-    password
+    password,
+    encrypted
   };
 };
 
