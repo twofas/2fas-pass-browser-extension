@@ -9,7 +9,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import getDomainInfo from './functions/getDomainInfo';
 import { useEffect, lazy } from 'react';
 import { Form, Field } from 'react-final-form';
@@ -18,8 +18,8 @@ import valueToNFKD from '@/partials/functions/valueToNFKD';
 import { filterXSS } from 'xss';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
 const LearnMoreIcon = lazy(() => import('@/assets/popup-window/learn-more.svg?react'));
+const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 const additionalVariants = {
   hidden: { maxHeight: '0px' },
@@ -115,9 +115,7 @@ function AddNew (props) {
         <div>
           <section className={S.addNew}>
             <div className={S.addNewContainer}>
-              <Link to='/' className='cancel' title={browser.i18n.getMessage('cancel')}>
-                <CancelIcon />
-              </Link>
+              <NavigationButton type='cancel' />
           
               <h2>{browser.i18n.getMessage('add_new_header')}</h2>
               <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>

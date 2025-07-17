@@ -8,7 +8,6 @@ import S from '../Settings.module.scss';
 import { Link } from 'react-router';
 import { lazy } from 'react';
 
-const SettingsBack = lazy(() => import('../components/SettingsBack'));
 const ExtensionName = lazy(() => import('./components/ExtensionName'));
 const Shortcut = lazy(() => import('./components/Shortcut'));
 const Push = lazy(() => import('./components/Push'));
@@ -16,8 +15,8 @@ const Theme = lazy(() => import('./components/Theme'));
 const SavePasswordPrompt = lazy(() => import('./components/SavePasswordPrompt'));
 const ContextMenu = lazy(() => import('./components/ContextMenu'));
 const Logs = lazy(() => import('./components/Logs'));
-const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
+const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to render the Settings Preferences component.
@@ -29,11 +28,8 @@ function SettingsPreferences (props) {
     <div className={`${props.className ? props.className : ''}`}>
       <div>
         <section className={S.settings}>
-          <Link to='/' className='cancel' title={browser.i18n.getMessage('cancel')}>
-            <CancelIcon />
-          </Link>
-
-          <SettingsBack />
+          <NavigationButton type='back' />
+          <NavigationButton type='cancel' />
 
           <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
             <div className={S.settingsSubmenu}>

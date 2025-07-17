@@ -232,6 +232,9 @@ function Install () {
 
     browser.storage.onChanged.addListener(onStorageChange);
 
+    window.addEventListener('error', handleError);
+    window.addEventListener('unhandledrejection', handleError);
+
     return () => {
       unwatchTheme();
 
@@ -244,6 +247,9 @@ function Install () {
       if (import.meta.env.BROWSER === 'safari') {
         document.removeEventListener('click', safariBlankLinks);
       }
+
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleError);
     };
   }, []);
 

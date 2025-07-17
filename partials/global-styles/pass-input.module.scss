@@ -40,6 +40,13 @@
     margin-bottom: 32px;
   }
 
+  &.resizable {
+    .pass-input-bottom {
+      resize: vertical;
+      overflow: auto;
+    }
+  }
+
   &-top {
     align-items: center;
     display: flex;
@@ -193,8 +200,6 @@
       &[disabled] {
         color: v.$secondary-text-light;
         cursor: default;
-        pointer-events: none;
-        user-select: none;
 
         @include m.darkMode {
           color: v.$secondary-text-dark;
@@ -268,12 +273,8 @@
     }
 
     textarea {
-      height: 102px;
-      resize: vertical;
-
-      &[disabled] {
-        resize: none;
-      }
+      height: 100%;
+      resize: none;
     }
   }
 

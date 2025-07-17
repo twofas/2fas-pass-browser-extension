@@ -19,19 +19,26 @@ import generateNonce from '@/partials/functions/generateNonce';
 * @param {Event} e - The input event.
 * @param {HTMLInputElement[]} allInputs - The array of all input elements.
 * @param {Object} localKey - The local key object.
+* @param {Object} timers - An object containing timers to be cleared.
+* @param {Object} ignore - A flag to indicate whether to ignore the prompt.
+* @param {boolean} encrypted - Flag indicating if the input should be encrypted.
 * @return {Promise<void>} 
 */
-const handleInputEvent = async (e, allInputs, localKey, timers) => {
+const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypted) => {
+  if (ignore?.value) {
+    return; // Ignore the event if ignore flag is set
+  }
+
   // FUTURE - save crypto key?
-  if (!localKey?.data || localKey?.data.length < 0) {
+  if (encrypted && (!localKey?.data || localKey?.data.length < 0)) {
     let localKeyResponse = null;
 
     try {
       localKeyResponse = await browser.runtime.sendMessage({
         action: REQUEST_ACTIONS.GET_LOCAL_KEY,
-        target: REQUEST_TARGETS.BACKGROUND_PROMPT
+        target: REQUEST_TARGETS.BACKGROUND
       });
-    } catch (e) {}
+    } catch {}
 
     if (localKeyResponse?.status === 'ok') {
       localKey.data = localKeyResponse?.data;
@@ -107,46 +114,40 @@ const handleInputEvent = async (e, allInputs, localKey, timers) => {
       id: input.getAttribute('twofas-pass-id'),
       type: input.type === 'password' ? 'password' : 'username',
       url: window?.location?.origin,
-      timestamp: new Date().valueOf()
+      timestamp: new Date().valueOf(),
+      encrypted
     };
 
-    let nonce, localKeyCrypto, value;
+    if (encrypted) {
+      let nonce, localKeyCrypto, value;
 
-    try {
-      nonce = generateNonce();
-    } catch (e) {
-      await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventNonceError, { additional: { func: 'handleInputEvent', event: e } }));
-      return;
+      try {
+        const promises = [generateNonce(), crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKey.data), { name: 'AES-GCM' }, false, ['encrypt'] )];
+        [nonce, localKeyCrypto] = await Promise.all(promises);
+      } catch (e) {
+        const errorType = e.message?.includes('generateNonce') ? TwoFasError.internalErrors.handleInputEventNonceError : TwoFasError.internalErrors.handleInputEventKeyImportError;
+        await CatchError(new TwoFasError(errorType, { additional: { func: 'handleInputEvent', event: e } }));
+        return;
+      }
+
+      try {
+        value = await crypto.subtle.encrypt(
+          { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+          localKeyCrypto,
+          StringToArrayBuffer(input.value)
+        );
+      } catch (e) {
+        await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventEncryptError, { additional: { func: 'handleInputEvent', event: e } }));
+        return;
+      }
+
+      const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
+      const encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
+
+      data.value = encryptedValueB64;
+    } else {
+      data.value = input.value;
     }
-
-    try {
-      localKeyCrypto = await crypto.subtle.importKey(
-        'raw',
-        Base64ToArrayBuffer(localKey.data),
-        { name: 'AES-GCM' },
-        false,
-        ['encrypt']
-      );
-    } catch (e) {
-      await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventKeyImportError, { additional: { func: 'handleInputEvent', event: e } }));
-      return;
-    }
-
-    try {
-      value = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-        localKeyCrypto,
-        StringToArrayBuffer(input.value)
-      );
-    } catch (e) {
-      await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventEncryptError, { additional: { func: 'handleInputEvent', event: e } }));
-      return;
-    }
-
-    const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
-    const encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
-
-    data.value = encryptedValueB64;
 
     // Clean up timer reference after processing
     delete timers[inputIdentifier];
@@ -156,7 +157,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers) => {
       data,
       target: REQUEST_TARGETS.BACKGROUND_PROMPT
     });
-  }, 200);
+  }, config.handleInputEventDebounce || 100);
 };
 
 export default handleInputEvent;

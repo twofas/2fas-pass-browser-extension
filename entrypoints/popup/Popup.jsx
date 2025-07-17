@@ -162,6 +162,9 @@ function Popup () {
       document.addEventListener('keydown', lockShortcuts);
       document.addEventListener('contextmenu', lockRMB);
 
+      window.addEventListener('error', handleError);
+      window.addEventListener('unhandledrejection', handleError);
+
       if (import.meta.env.BROWSER === 'safari') {
         document.addEventListener('click', safariBlankLinks);
       }
@@ -174,6 +177,9 @@ function Popup () {
 
       document.removeEventListener('keydown', lockShortcuts);
       document.removeEventListener('contextmenu', lockRMB);
+
+      window.removeEventListener('error', handleError);
+      window.removeEventListener('unhandledrejection', handleError);
 
       if (import.meta.env.BROWSER === 'safari') {
         document.removeEventListener('click', safariBlankLinks);

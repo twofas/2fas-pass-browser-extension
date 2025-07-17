@@ -17,12 +17,17 @@ import decryptValues from './decryptValues';
 * @return {Promise<string|boolean>} A promise that resolves to a string indicating the service status or false if the data is valid.
 */
 const checkServicesData = async (details, values) => {
+  if (!details || !values) {
+    // FUTURE - throw error?
+    return false;
+  }
+
   let services = [];
 
   try {
     services = await getServices();
   } catch (e) {
-    await CatchError(e);
+    await CatchError(e); // FUTURE - throw error
   }
 
   if (!services || !Array.isArray(services)) {
@@ -39,10 +44,19 @@ const checkServicesData = async (details, values) => {
     return 'newService'; 
   }
 
-  const decryptedValues = await decryptValues(values);
+  let decryptedValues;
 
-  // Check username if exists && securityType === 2
-  const matchedServicesMatchedUsername = matchedServices.filter(service => service.username === decryptedValues.username && service.securityType === 2);
+  if (values?.encrypted) {
+    decryptedValues = await decryptValues(values);
+  } else {
+    decryptedValues = {
+      username: values.username,
+      password: values.password
+    };
+  }
+
+  // Check username if exists
+  const matchedServicesMatchedUsername = matchedServices.filter(service => service.username === decryptedValues.username);
 
   if (!matchedServicesMatchedUsername || matchedServicesMatchedUsername.length <= 0) {
     return 'newService';
@@ -53,6 +67,10 @@ const checkServicesData = async (details, values) => {
 
   for (const service of matchedServicesMatchedUsername) {
     let decryptedPassword;
+
+    if (!service || !service.password) {
+      continue; // Skip if service or password is not defined
+    }
 
     try {
       decryptedPassword = await decryptPassword(service);

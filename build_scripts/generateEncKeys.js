@@ -10,13 +10,21 @@ import crypto from 'node:crypto';
 
 let envPath, envExamplePath;
 
+const envFiles = {
+  DEVELOPMENT: '.env.development',
+  PRODUCTION: '.env'
+};
+
 /** 
 * Function to generate unique encryption keys for environment variables.
 * @return {void}
 */
 const generateEncKeys = () => {
+  const mode = process.argv[2].split('=')[1] || 'DEVELOPMENT';
+  console.log(`Generating new encryption keys for ${mode} mode...\n`);
+
   try {
-    envPath = path.resolve(process.cwd(), '.env');
+    envPath = path.resolve(process.cwd(), envFiles[mode]);
     envExamplePath = path.resolve(process.cwd(), '.env.example');
   } catch (err) {
     console.error('Error resolving env paths:', err);
@@ -29,20 +37,20 @@ const generateEncKeys = () => {
         try {
           fs.copyFileSync(envExamplePath, envPath);
         } catch (err) {
-          console.error('Error copying .env.example to .env:', err);
+          console.error(`Error copying .env.example to ${envFiles[mode]}:`, err);
           return;
         }
       } else {
         try {
           fs.writeFileSync(envPath, '');
         } catch (err) {
-          console.error('Error creating empty .env file:', err);
+          console.error(`Error creating empty ${envFiles[mode]} file:`, err);
           return;
         }
       }
     }
   } catch (err) {
-    console.error('Error checking/creating .env files:', err);
+    console.error(`Error checking/creating ${envFiles[mode]} files:`, err);
     return;
   }
 
@@ -51,7 +59,7 @@ const generateEncKeys = () => {
   try {
     ENV = fs.readFileSync(envPath, 'utf8');
   } catch (err) {
-    console.error('Error reading .env file:', err);
+    console.error(`Error reading ${envFiles[mode]} file:`, err);
     return;
   }
   try {
@@ -71,7 +79,7 @@ const generateEncKeys = () => {
       });
     ENV = Object.fromEntries(ENV);
   } catch (err) {
-    console.error('Error parsing .env file:', err);
+    console.error(`Error parsing ${envFiles[mode]} file:`, err);
     return;
   }
 
@@ -108,9 +116,9 @@ const generateEncKeys = () => {
       .map(([k, v]) => `${k}=${v}`)
       .join('\n');
     fs.writeFileSync(envPath, envString, 'utf8');
-    console.log('New encryption keys generated and saved to .env file.\n\r');
+    console.log(`New encryption keys generated and saved to ${envFiles[mode]} file.\n`);
   } catch (err) {
-    console.error('Error writing updated .env file:', err);
+    console.error(`Error writing updated ${envFiles[mode]} file:`, err);
   }
 };
 

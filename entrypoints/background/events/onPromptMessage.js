@@ -4,7 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getLocalKey from '../utils/getLocalKey';
 import promptInput from '../utils/promptInput';
 
 /** 
@@ -21,14 +20,6 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
     }
   
     switch (request.action) {
-      case REQUEST_ACTIONS.GET_LOCAL_KEY: {
-        getLocalKey()
-          .then(lKey => { sendResponse({ status: 'ok', data: lKey }); })
-          .catch(e => { sendResponse({ status: 'error', message: e.message }); });
-
-        break;
-      }
-
       case REQUEST_ACTIONS.PROMPT_INPUT: {
         if (!request?.data || !request?.data?.id || !sender?.tab?.id) {
           sendResponse({ status: 'error', message: 'Empty data' });
@@ -39,6 +30,25 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
           .then(() => { sendResponse({ status: 'ok' }); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
           
+        break;
+      }
+
+      case REQUEST_ACTIONS.IGNORE_SAVE_PROMPT: {
+        if (!request?.tabId) {
+          sendResponse({ status: 'error', message: 'Tab ID not found' });
+          return true;
+        }
+
+        tabsInputData[request.tabId] = {};
+        sendResponse({ status: 'ok' });
+        break;
+      }
+
+      case REQUEST_ACTIONS.GET_SAVE_PROMPT: {
+        storage.getItem('local:savePrompt')
+          .then(res => { sendResponse({ status: 'ok', data: res }) })
+          .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+
         break;
       }
   

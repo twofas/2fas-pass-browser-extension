@@ -91,7 +91,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
 
   try {
     storageSavePrompt = await storage.getItem('local:savePrompt');
-    domainOnIgnoredList = await checkDomainOnIgnoredList(details?.initiator || details?.originUrl);
+    domainOnIgnoredList = await checkDomainOnIgnoredList(details?.initiator || details?.originUrl); // FUTURE - initiator or originUrl first?
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.onWebRequestDomainIgnoredListError, { event: e });
   }
@@ -103,7 +103,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
 
   if (
     !configured || // Only when configured
-    storageSavePrompt !== 'default' || // Only when savePrompt is set to default
+    (storageSavePrompt !== 'default' && storageSavePrompt !== 'default_encrypted') || // Only when savePrompt is set to default or default_encrypted
     domainOnIgnoredList // Only when domain is not on the ignored list
   ) {
     return;

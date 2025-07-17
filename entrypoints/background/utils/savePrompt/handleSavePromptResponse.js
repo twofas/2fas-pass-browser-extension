@@ -55,7 +55,7 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
         storageIgnoreList = [];
       }
       
-      storageIgnoreList.push(new URL(details.url).hostname);
+      storageIgnoreList.push(new URL(url).hostname);
       await storage.setItem('local:savePromptIgnoreDomains', storageIgnoreList);
 
       removeSavePromptAction(tabId, url, savePromptActions);

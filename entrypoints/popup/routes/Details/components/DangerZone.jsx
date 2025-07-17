@@ -13,7 +13,7 @@ const ChevronIcon = lazy(() => import('@/assets/popup-window/chevron.svg?react')
 
 const dangerZoneVariants = {
   hidden: { maxHeight: '0px' },
-  visible: { maxHeight: '72px' }
+  visible: { maxHeight: '73px' }
 };
 
  /**
