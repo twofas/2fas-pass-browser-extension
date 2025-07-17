@@ -8,11 +8,12 @@ import { AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants/regex';
 
 const deleteExistingClearClipboardAlarms = async () => {
   const existingAlarms = await browser.alarms.getAll();
-  existingAlarms.forEach(async alarm => {
+
+  for (const alarm of existingAlarms) {
     if (AUTO_CLEAR_CLIPBOARD_REGEX.test(alarm.name)) {
       await browser.alarms.clear(alarm.name);
     }
-  });
+  }
 };
 
 /** 

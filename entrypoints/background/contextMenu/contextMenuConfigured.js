@@ -65,7 +65,7 @@ const contextMenuConfigured = async (services = null) => {
       await CatchError(e);
     }
 
-    services.forEach(async service => {
+    for (const service of services) {
       if (service.securityType !== SECURITY_TIER.HIGHLY_SECRET && service.securityType !== SECURITY_TIER.SECRET) {
         return;
       }
@@ -125,7 +125,7 @@ const contextMenuConfigured = async (services = null) => {
           }
         });
       }
-    });
+    }
 
     // No accounts item
     try {
