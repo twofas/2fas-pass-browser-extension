@@ -210,6 +210,7 @@
     margin-bottom: 0;
     margin-top: 0;
     overflow: hidden;
+    z-index: 9999;
 
     body.theme-light & {
       background-color: v.$primary-box-bg-light;
