@@ -93,6 +93,8 @@
 
   &-header {
     background-color: v.$primary-box-bg-light;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
     padding-top: 24px;
     position: sticky;
     text-align: center;
