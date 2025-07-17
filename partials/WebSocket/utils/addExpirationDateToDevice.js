@@ -28,10 +28,14 @@ const addExpirationDateToDevice = async (uuid, expirationDate) => {
   const paidDeviceConnected = await isPaidDeviceConnected();
 
   if (!paidDeviceConnected) {
-    await storage.setItem('local:autoIdleLock', config.defaultStorageIdleLock);
+    const autoIdleLockStorage = await storage.getItem('local:autoIdleLock');
+    
+    if (autoIdleLockStorage === 'default' || autoIdleLockStorage === null) {
+      await storage.setItem('local:autoIdleLock', config.defaultStorageIdleLock);
 
-    if (import.meta.env.BROWSER !== 'safari') {
-      browser.idle.setDetectionInterval(config.defaultStorageIdleLock * 60);
+      if (import.meta.env.BROWSER !== 'safari') {
+        browser.idle.setDetectionInterval(config.defaultStorageIdleLock * 60);
+      }
     }
   }
 };

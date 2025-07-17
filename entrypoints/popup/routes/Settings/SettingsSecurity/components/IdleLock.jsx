@@ -27,7 +27,7 @@ function IdleLock () {
   const [premium, setPremium] = useState(false);
 
   useEffect(() => {
-    const getExpirationDates = async () => {
+    const getPremium = async () => {
       const paidDeviceConnected = await isPaidDeviceConnected();
       setPremium(paidDeviceConnected);
     };
@@ -46,7 +46,7 @@ function IdleLock () {
     };
 
     try {
-      getExpirationDates().then(getDefaultIdleLock);
+      getPremium().then(getDefaultIdleLock);
     } catch (e) {
       CatchError(e);
     }
@@ -73,7 +73,7 @@ function IdleLock () {
       await storage.setItem('local:autoIdleLock', value);
 
       if (value === 'default') {
-        browser.idle.setDetectionInterval(15 * 60);
+        browser.idle.setDetectionInterval(config.defaultStorageIdleLock * 60);
       } else {
         browser.idle.setDetectionInterval(value * 60);
       }
