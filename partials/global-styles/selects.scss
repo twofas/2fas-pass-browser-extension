@@ -8,7 +8,8 @@
 @use "mixins" as m;
 
 .react-select-container,
-.react-select-idle-container {
+.react-select-idle-container,
+.react-select-security-tier-container {
   &.react-select--is-disabled {
     .react-select__control {
       body.theme-light & {
@@ -783,6 +784,14 @@
           }
         }
       }
+    }
+  }
+}
+
+.react-select-security-tier-container {
+  .react-select__menu {
+    &-list {
+      max-height: 100% !important;
     }
   }
 }

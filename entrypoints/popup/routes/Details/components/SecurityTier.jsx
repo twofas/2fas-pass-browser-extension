@@ -51,7 +51,7 @@ function SecurityTier (props) {
           <div className={`${pI.passInputBottom} ${pI.switch}`}>
             <Select
               {...input}
-              className='react-select-container'
+              className='react-select-container react-select-security-tier-container'
               classNamePrefix='react-select'
               isSearchable={false}
               options={securityTiersOptions}
