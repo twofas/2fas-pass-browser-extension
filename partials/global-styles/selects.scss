@@ -274,7 +274,7 @@
       gap: 0 8px;
       line-height: 1;
       max-width: 100%;
-      padding: 12px 30px 12px 8px;
+      padding: 12px 30px 9px 8px;
       text-align: left;
       transition: color .3s ease-in-out;
       user-select: none;
@@ -317,7 +317,8 @@
 
       svg {
         flex-shrink: 0;
-        height: 14px;
+        height: 17px;
+        padding-bottom: 3px;
         stroke: v.$icon-tertiary-color-light;
         stroke-linecap: round;
         stroke-linejoin: round;
@@ -333,6 +334,7 @@
       span {
         max-width: 100%;
         overflow: hidden;
+        padding-bottom: 3px;
         text-overflow: ellipsis;
         white-space: nowrap;
       }

@@ -13,6 +13,7 @@ import closeSrc from '@/assets/popup-window/cancel.svg?raw';
 import { HEX_REGEX } from '@/constants/regex';
 import getDomain from '@/partials/functions/getDomain';
 import getTextColor from '@/partials/functions/getTextColor';
+import URIMatcher from '@/partials/URIMatcher';
 
 /** 
 * Function to close the notification.
@@ -189,6 +190,11 @@ const matchingLogins = (request, sendResponse, container) => {
 
       try {
         iconDomain = getDomain(item?.uris[iconUriIndex]?.text);
+        
+        if (!iconDomain || URIMatcher.isIp(iconDomain) || iconDomain === 'localhost') {
+          throw new Error('Invalid domain for favicon');
+        }
+
         const imageUrl = `https://icon.2fas.com/${iconDomain}/favicon.png`;
 
         itemIcon.classList.add('icon-image');

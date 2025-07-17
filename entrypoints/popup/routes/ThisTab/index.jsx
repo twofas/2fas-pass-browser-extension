@@ -112,7 +112,7 @@ function ThisTab (props) {
     }
   }, [state]);
 
-  const sendUrl = useCallback(async (request) => {
+  const sendUrl = useCallback(async request => {
     const d = getDomainFromMessage(request);
     setDomain(d.domain);
     setUrl(d.url);
@@ -227,7 +227,7 @@ function ThisTab (props) {
         unwatchStorageVersion.current();
       }
     };
-  }, [storageVersion, messageListener, getDomain, getLogins, getSort, getMatchingLogins, watchStorageVersion, logins.length]);
+  }, [storageVersion, logins.length]);
 
   useEffect(() => {
     if (state?.action === 'autofillT2Failed') {

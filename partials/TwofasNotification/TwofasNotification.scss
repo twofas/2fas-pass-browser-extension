@@ -680,7 +680,8 @@
               padding-bottom: 2px !important;
               text-overflow: ellipsis !important;
   
-              &:first-of-type { // Credential Name
+              &:first-of-type,
+              &:first-of-type:last-of-type { // Credential Name
                 font-size: 14px !important;
                 font-weight: 500 !important;
                 line-height: .86 !important;

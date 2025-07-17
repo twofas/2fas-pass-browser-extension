@@ -17,6 +17,14 @@ const handleUriClick = (e, props) => {
   }
 
   props.toggleMenu(!props.more);
+
+  if (import.meta.env.BROWSER === 'firefox') {
+    setTimeout(() => {
+      if (window && typeof window?.close === 'function') {
+        window.close();
+      }
+    }, 10);
+  }
 };
 
 export default handleUriClick;

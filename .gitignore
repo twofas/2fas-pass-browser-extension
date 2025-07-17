@@ -27,6 +27,7 @@ web-ext.config.ts
 
 # My
 .env
+.env.development
 testFiles
 mobile-mock
 notes.md

@@ -5,13 +5,11 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { Link } from 'react-router';
 import { lazy } from 'react';
 
-const SettingsBack = lazy(() => import('../components/SettingsBack'));
 const AutoClearClipboard = lazy(() => import('./components/AutoClearClipboard'));
 const IdleLock = lazy(() => import('./components/IdleLock'));
-const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
+const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 // const SafeBrowsing = lazy(() => import('./components/SafeBrowsing'));
 // const SafeBrowsingReports = lazy(() => import('./components/SafeBrowsingReports'));
 
@@ -25,11 +23,8 @@ function SettingsSecurity (props) {
     <div className={`${props.className ? props.className : ''}`}>
       <div>
         <section className={S.settings}>
-          <Link to='/' className='cancel' title={browser.i18n.getMessage('cancel')}>
-            <CancelIcon />
-          </Link>
-
-          <SettingsBack />
+          <NavigationButton type='back' />
+          <NavigationButton type='cancel' />
 
           <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
             <div className={S.settingsSubmenu}>

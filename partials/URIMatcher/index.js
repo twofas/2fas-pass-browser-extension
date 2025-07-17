@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { parseDomain, ParseResultType } from 'parse-domain';
-import { PROTOCOL_REGEX, URL_REGEX, IP_REGEX, LOCAL_DOMAIN_WO_TLD_REGEX } from '@/constants/regex';
+import { PROTOCOL_REGEX, URL_REGEX, IP_REGEX, LOCAL_DOMAIN_WO_TLD_REGEX, ANDROID_BUNDLE_REGEX } from '@/constants/regex';
 
 // FUTURE - Check if TwoFasError works here
 
@@ -18,6 +18,7 @@ class URIMatcher {
   static URL_REGEX = URL_REGEX;
   static IP_REGEX = IP_REGEX;
   static LOCAL_DOMAIN_WO_TLD_REGEX = LOCAL_DOMAIN_WO_TLD_REGEX;
+  static ANDROID_BUNDLE_REGEX = ANDROID_BUNDLE_REGEX;
   static TRACKERS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'dclid', 'fbclid', 'msclkid', 'twclid', 'lmsid', 'mc_eid', 'mc_cid'];
 
   static M_DOMAIN_TYPE = 0;
@@ -45,9 +46,10 @@ class URIMatcher {
 
   static isUrl (url) {
     if (
-      !this.URL_REGEX.test(url) &&
+      (!this.URL_REGEX.test(url) &&
       !this.IP_REGEX.test(url) &&
-      !this.LOCAL_DOMAIN_WO_TLD_REGEX.test(url)
+      !this.LOCAL_DOMAIN_WO_TLD_REGEX.test(url)) ||
+      this.ANDROID_BUNDLE_REGEX.test(url)
     ) {
       return false;
     }
@@ -87,6 +89,14 @@ class URIMatcher {
         return false;
       }
     }
+  }
+
+  static isIp (url) { // FUTURE - Add tests (+ check IPv6)
+    if (!this.isText(url)) {
+      throw new Error('Parameter is not a string');
+    }
+
+    return this.IP_REGEX.test(url);
   }
 
   static trimText (text) {
@@ -386,8 +396,15 @@ class URIMatcher {
         }
       }
     });
-  
-    return domainCredentials;
+
+    const map = new Map();
+    domainCredentials.forEach(obj => {
+      if (!map.has(obj.id)) {
+        map.set(obj.id, obj);
+      }
+    });
+
+    return Array.from(map.values());
   }
 
   static recognizeURIs (uris) {
@@ -461,9 +478,7 @@ class URIMatcher {
         if (parsedUrl?.type === ParseResultType.Ip) {
           return [
             `http://${parsedUrl.hostname}/`,
-            `http://${parsedUrl.hostname}:*/`,
             `http://${parsedUrl.hostname}/*`,
-            `http://${parsedUrl.hostname}:*/*`
           ];
         }
 
@@ -486,6 +501,10 @@ class URIMatcher {
 
       case this.M_HOST_TYPE: {
         if (parsedUrl?.type === ParseResultType.Ip || parsedUrl?.hostname === 'localhost') {
+          if (!urlObj?.port || urlObj?.port.length <= 0) {
+            return [`http://${parsedUrl.hostname}/`, `http://${parsedUrl.hostname}/*`];
+          }
+
           return [
             `http://${parsedUrl.hostname}${urlObj.port ? `:${urlObj.port}` : ''}/`,
             `http://${parsedUrl.hostname}${urlObj.port ? `:${urlObj.port}` : ''}/*`

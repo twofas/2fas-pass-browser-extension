@@ -13,8 +13,8 @@ import * as m from 'motion/react-m';
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const notesVariants = {
-  hidden: { maxHeight: '0px' },
-  visible: { maxHeight: '121px' }
+  hidden: { height: '0' },
+  visible: { height: '121px', maxHeight: '600px' }
 };
 
  /**
@@ -40,18 +40,19 @@ function Notes (props) {
   return (
     <Field name="notes">
       {({ input }) => (
-        <div className={`${pI.passInput} ${notesEditable ? '' : pI.disabled}`}>
+        <div className={`${pI.passInput} ${pI.resizable} ${notesEditable ? '' : pI.disabled}`}>
           <div className={pI.passInputTop}>
             <div className={pI.passInputTopLabelLike}>
-              <div className={`${bS.passToggle} ${bS.loaded}`}>
+              <div className={`${bS.passToggle} ${bS.loaded} ${bS.disabledSameColor}`}>
                 <input
                   type="checkbox"
                   name="notes"
-                  id="notes"
+                  id="notes-checkbox"
                   onChange={() => setNotesVisible(!notesVisible)}
                   checked={notesVisible}
+                  disabled={notesEditable ? 'disabled': ''}
                 />
-                <label htmlFor="notes">
+                <label htmlFor="notes-checkbox">
                   <span className={bS.passToggleBox}>
                     <span className={bS.passToggleBoxCircle}></span>
                   </span>
