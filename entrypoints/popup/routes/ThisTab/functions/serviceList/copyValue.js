@@ -4,23 +4,43 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants/regex';
+
+const deleteExistingClearClipboardAlarms = async () => {
+  const existingAlarms = await browser.alarms.getAll();
+  existingAlarms.forEach(async alarm => {
+    if (AUTO_CLEAR_CLIPBOARD_REGEX.test(alarm.name)) {
+      await browser.alarms.clear(alarm.name);
+    }
+  });
+};
+
 /** 
 * Function to copy a value to the clipboard.
 * @async
 * @param {string} value - The value to copy.
+* @param {string} itemId - The ID of the item being copied.
+* @param {string} itemType - The type of the item being copied ('password', 'username', 'uri).
 * @return {Promise<void>} 
 */
-const copyValue = async value => {
+const copyValue = async (value, itemId, itemType) => {
+  if (!navigator?.clipboard) {
+    // @TODO: handle error (toast?)
+    return false;
+  }
+
   try {
     navigator.clipboard.writeText(value);
-  } catch {}
+  } catch {
+    return false; // @TODO: handle error (toast?)
+  }
 
   const autoClearStorage = await storage.getItem('local:autoClearClipboard');
 
   if (autoClearStorage) {
     if (autoClearStorage === 'default' || autoClearStorage === null) {
       try {
-        await browser.alarms.clear('autoClearClipboard');
+        await deleteExistingClearClipboardAlarms();
       } catch {}
 
       return false;
@@ -29,8 +49,8 @@ const copyValue = async value => {
     const autoClearMinutes = parseInt(autoClearStorage, 10);
 
     try {
-      await browser.alarms.clear('autoClearClipboard');
-      await browser.alarms.create('autoClearClipboard', { delayInMinutes: autoClearMinutes });
+      await deleteExistingClearClipboardAlarms();
+      await browser.alarms.create(`autoClearClipboard.${itemId}.${itemType}`, { delayInMinutes: autoClearMinutes });
     } catch {}
 
     return true;

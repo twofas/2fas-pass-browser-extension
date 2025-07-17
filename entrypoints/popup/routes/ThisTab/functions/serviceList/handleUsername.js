@@ -39,7 +39,7 @@ const handleUsername = async (id, more, setMore) => {
 
   try {
     const { username } = service;
-    await copyValue(username);
+    await copyValue(username, service.id, 'username');
     showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
   } catch (e) {
     showToast(browser.i18n.getMessage('error_username_copy_failed'), 'error');

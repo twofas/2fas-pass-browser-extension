@@ -439,19 +439,6 @@ class TwoFasError extends Error {
       message: 'No valid device UUID found for push notification',
       code: 9141
     },
-    // SEND MESSAGE TO TAB
-    sendMessageToTab: {
-      message: 'Error sending message to tab',
-      code: 9160
-    },
-    sendMessageToTabNoResponse: {
-      message: 'No response from tab',
-      code: 9161
-    },
-    sendMessageToTabUnknownResponse: {
-      message: 'Unknown response from tab',
-      code: 9162
-    },
     // VALUE TO NFKD
     valueToNFKDNotText: {
       message: 'The value is not a text.',
