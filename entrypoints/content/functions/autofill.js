@@ -43,38 +43,58 @@ const autofill = async request => {
     inputFound = true;
 
     if (request?.password && request?.password.length > 0) {
-      const localKey = await storage.getItem('local:lKey');
-      const localKeyAB = Base64ToArrayBuffer(localKey);
-      let decryptedValueAB, localKeyCrypto;
+      let localKeyResponse = null;
+      let localKey = null;
+      let decryptedValueString = null;
 
-      try {
-        localKeyCrypto = await crypto.subtle.importKey(
-          'raw',
-          localKeyAB,
-          { name: 'AES-GCM' },
-          false,
-          ['decrypt']
-        );
-      } catch (e) {
-        await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillImportKeyError, { event: e }));
-        return { status: 'error', message: 'ImportKey error' };
+      if (request?.cryptoAvailable) {
+        try {
+          localKeyResponse = await browser.runtime.sendMessage({
+            action: REQUEST_ACTIONS.GET_LOCAL_KEY,
+            target: REQUEST_TARGETS.BACKGROUND
+          });
+        } catch {}
+
+        if (localKeyResponse?.status === 'ok') {
+          localKey = localKeyResponse?.data;
+        } else {
+          return { status: 'error', message: 'Failed to get local key' };
+        }
+
+        const localKeyAB = Base64ToArrayBuffer(localKey);
+        let decryptedValueAB, localKeyCrypto;
+
+        try {
+          localKeyCrypto = await crypto.subtle.importKey(
+            'raw',
+            localKeyAB,
+            { name: 'AES-GCM' },
+            false,
+            ['decrypt']
+          );
+        } catch (e) {
+          await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillImportKeyError, { event: e }));
+          return { status: 'error', message: 'ImportKey error' };
+        }
+
+        const valueAB = Base64ToArrayBuffer(request.password);
+        const decryptedBytes = DecryptBytes(valueAB);
+
+        try {
+          decryptedValueAB = await crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv: decryptedBytes.iv },
+            localKeyCrypto,
+            decryptedBytes.data
+          );
+        } catch (e) {
+          await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillDecryptError, { event: e }));
+          return { status: 'error', message: 'Decrypt error' };
+        }
+
+        decryptedValueString = ArrayBufferToString(decryptedValueAB);
+      } else {
+        decryptedValueString = request.password;
       }
-
-      const valueAB = Base64ToArrayBuffer(request.password);
-      const decryptedBytes = DecryptBytes(valueAB);
-
-      try {
-        decryptedValueAB = await crypto.subtle.decrypt(
-          { name: 'AES-GCM', iv: decryptedBytes.iv },
-          localKeyCrypto,
-          decryptedBytes.data
-        );
-      } catch (e) {
-        await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillDecryptError, { event: e }));
-        return { status: 'error', message: 'Decrypt error' };
-      }
-
-      const decryptedValueString = ArrayBufferToString(decryptedValueAB);
 
       passwordInputs.map(input => { inputSetValue(input, decryptedValueString); });
     }

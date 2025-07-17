@@ -473,6 +473,36 @@
     }
   }
 
+  &.disabled-same-color {
+    input[type="checkbox"] {
+      &:disabled {
+        &:checked {
+          + label {
+            cursor: not-allowed !important;
+
+            .pass-toggle-box {
+              background-color: v.$primary-color-light !important;
+
+              @include m.darkMode {
+                background-color: v.$primary-color-dark !important;
+              }
+            }
+
+            .pass-toggle-text {
+              > span {
+                color: v.$secondary-text-light !important;
+
+                @include m.darkMode {
+                  color: v.$secondary-text-dark !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   input[type="checkbox"] {
     display: none;
 

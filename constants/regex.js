@@ -12,3 +12,4 @@ export const PROTOCOL_REGEX = /^(?:f|ht)tps?\:\/\//i;
 export const URL_REGEX = /^(https:\/\/www\.|http:\/\/www\.|https:\/\/|http:\/\/)?\S{1,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?/;
 export const IP_REGEX = /\b(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)(?::\d{0,4})?\b/;
 export const LOCAL_DOMAIN_WO_TLD_REGEX = /^(https:\/\/|http:\/\/)[a-zA-Z]*(\:\d{0,5})?/;
+export const ANDROID_BUNDLE_REGEX = /^(https:\/\/)?android:?\/\//;

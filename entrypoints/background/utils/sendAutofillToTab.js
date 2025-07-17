@@ -6,6 +6,7 @@
 
 import getServices from '@/partials/sessionStorage/getServices';
 import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
+import sendMessageToTab from '@/partials/functions/sendMessageToTab';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import decryptPassword from '@/partials/functions/decryptPassword';
@@ -59,6 +60,11 @@ const sendAutofillToTab = async (tabId, serviceID) => {
     noUsername = true;
   }
 
+  const cryptoAvailableRes = await sendMessageToTab(tabId, {
+    action: REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE,
+    target: REQUEST_TARGETS.CONTENT
+  });
+
   if (!noPassword) {
     try {
       decryptedPassword = await decryptPassword(service);
@@ -69,49 +75,53 @@ const sendAutofillToTab = async (tabId, serviceID) => {
       });
     }
 
-    let nonce, localKey, localKeyCrypto, value, encryptedValue;
+    if (cryptoAvailableRes.status !== 'ok' || !cryptoAvailableRes.cryptoAvailable) {
+      encryptedValueB64 = decryptedPassword;
+    } else {
+      let nonce, localKey, localKeyCrypto, value, encryptedValue;
 
-    try {
-      nonce = await generateNonce();
-    } catch (e) {
-      throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabNonceError, {
-        event: e,
-        additional: { func: 'sendAutofillToTab - generateNonce' }
-      });
+      try {
+        nonce = await generateNonce();
+      } catch (e) {
+        throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabNonceError, {
+          event: e,
+          additional: { func: 'sendAutofillToTab - generateNonce' }
+        });
+      }
+
+      localKey = await storage.getItem('local:lKey');
+
+      try {
+        localKeyCrypto = await crypto.subtle.importKey(
+          'raw',
+          Base64ToArrayBuffer(localKey),
+          { name: 'AES-GCM' },
+          false,
+          ['encrypt']
+        );
+      } catch (e) {
+        throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabImportKeyError, {
+          event: e,
+          additional: { func: 'sendAutofillToTab - importKey' }
+        });
+      }
+
+      try {
+        value = await crypto.subtle.encrypt(
+          { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+          localKeyCrypto,
+          StringToArrayBuffer(decryptedPassword)
+        );
+      } catch (e) {
+        throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
+          event: e,
+          additional: { func: 'sendAutofillToTab - encrypt' }
+        });
+      }
+
+      encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
+      encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
     }
-
-    localKey = await storage.getItem('local:lKey');
-
-    try {
-      localKeyCrypto = await crypto.subtle.importKey(
-        'raw',
-        Base64ToArrayBuffer(localKey),
-        { name: 'AES-GCM' },
-        false,
-        ['encrypt']
-      );
-    } catch (e) {
-      throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabImportKeyError, {
-        event: e,
-        additional: { func: 'sendAutofillToTab - importKey' }
-      });
-    }
-
-    try {
-      value = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-        localKeyCrypto,
-        StringToArrayBuffer(decryptedPassword)
-      );
-    } catch (e) {
-      throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
-        event: e,
-        additional: { func: 'sendAutofillToTab - encrypt' }
-      });
-    }
-
-    encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
-    encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
   }
 
   try {
@@ -123,7 +133,8 @@ const sendAutofillToTab = async (tabId, serviceID) => {
         password: encryptedValueB64,
         target: REQUEST_TARGETS.CONTENT,
         noPassword,
-        noUsername
+        noUsername,
+        cryptoAvailable: cryptoAvailableRes?.cryptoAvailable
       }
     );
 

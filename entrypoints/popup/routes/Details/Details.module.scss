@@ -65,6 +65,10 @@
     }
 
     &-body {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      gap: 5px 0;
       overflow: hidden;
       text-align: center;
       width: 100%;
@@ -75,7 +79,7 @@
         font-size: 12px;
         font-weight: 400;
         line-height: 1;
-        margin-bottom: 4px;
+        margin-bottom: 0;
         margin-top: 24px;
         padding-top: 16px;
 
@@ -87,9 +91,11 @@
 
       &-button {
         color: v.$error-light;
+        display: block;
         font-size: 12px;
         font-weight: 500;
         line-height: 1;
+        padding-bottom: 3px;
 
         @include m.darkMode {
           color: v.$error-dark;

@@ -18,6 +18,10 @@ import runMigrations from '../migrations';
 const onInstalled = async details => {
   await initContextMenu();
 
+  if (!details) {
+    return;
+  }
+
   if (details?.reason === 'install' || details?.reason === 'update') {
     await runMigrations();
   }

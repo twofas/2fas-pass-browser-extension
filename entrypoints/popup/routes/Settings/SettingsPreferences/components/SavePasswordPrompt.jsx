@@ -25,7 +25,7 @@ function SavePasswordPrompt () {
 
   useEffect(() => {
     const getDefaultSavePasswordPrompt = async () => {
-      // default - pass, browser, none
+      // default, default_encrypted, browser, none
       let storageSavePasswordPrompt = await storage.getItem('local:savePrompt');
 
       if (!storageSavePasswordPrompt) {
@@ -33,7 +33,7 @@ function SavePasswordPrompt () {
         await storage.setItem('local:savePrompt', storageSavePasswordPrompt);
       }
 
-      if (storageSavePasswordPrompt === 'default' || storageSavePasswordPrompt === 'pass') {
+      if (storageSavePasswordPrompt === 'default' || storageSavePasswordPrompt === 'default_encrypted') {
         await browser.privacy.services.passwordSavingEnabled.set({ value: false });
       } else {
         await browser.privacy.services.passwordSavingEnabled.set({ value: true });
@@ -52,6 +52,7 @@ function SavePasswordPrompt () {
 
   const promptOptions = [
     { value: 'default', label: browser.i18n.getMessage('settings_save_prompt_pass') },
+    { value: 'default_encrypted', label: browser.i18n.getMessage('settings_save_prompt_pass_encrypted') },
     { value: 'browser', label: browser.i18n.getMessage('settings_save_prompt_browser') },
     { value: 'none', label: browser.i18n.getMessage('settings_save_prompt_none') },
   ];

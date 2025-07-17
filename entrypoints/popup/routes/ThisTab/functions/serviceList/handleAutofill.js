@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
+import sendMessageToTab from '@/partials/functions/sendMessageToTab';
 import tabIsInternal from '@/partials/functions/tabIsInternal';
 import getServices from '@/partials/sessionStorage/getServices';
 import getLastActiveTab from '@/partials/functions/getLastActiveTab';
@@ -13,6 +14,7 @@ import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready'
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import closeWindowIfNotInSeparateWindow from '@/partials/functions/closeWindowIfNotInSeparateWindow';
 import generateNonce from '@/partials/functions/generateNonce';
+import PULL_REQUEST_TYPES from '../../../Fetch/constants/PULL_REQUEST_TYPES';
 
 /** 
 * Function to handle the autofill action.
@@ -72,6 +74,11 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     return;
   }
 
+  const cryptoAvailableRes = await sendMessageToTab(tab.id, {
+    action: REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE,
+    target: REQUEST_TARGETS.CONTENT
+  });
+
   if (service?.securityType === 1) {
     if (!service?.password || service?.password?.length <= 0) {
       const inputTests = await sendMessageToAllFrames(tab.id, {
@@ -93,7 +100,8 @@ const handleAutofill = async (id, navigate, more, setMore) => {
             data: {
               loginId: service.id,
               deviceId: service.deviceId,
-              tabId: tab.id
+              tabId: tab.id,
+              cryptoAvailable: cryptoAvailableRes.cryptoAvailable
             }
           }
         }
@@ -123,29 +131,33 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     }
   }
 
-  try {
-    const nonce = generateNonce();
-    const localKey = await storage.getItem('local:lKey');
-    const localKeyCrypto = await crypto.subtle.importKey(
-      'raw',
-      Base64ToArrayBuffer(localKey),
-      { name: 'AES-GCM' },
-      false,
-      ['encrypt']
-    );
-  
-    const value = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-      localKeyCrypto,
-      StringToArrayBuffer(decryptedPassword)
-    );
-  
-    const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
-    encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
-  } catch (e) {
-    showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
-    await CatchError(e);
-    return;
+  if (cryptoAvailableRes.status !== 'ok' || !cryptoAvailableRes.cryptoAvailable) {
+    encryptedValueB64 = decryptedPassword;
+  } else {
+    try {
+      const nonce = generateNonce();
+      const localKey = await storage.getItem('local:lKey');
+      const localKeyCrypto = await crypto.subtle.importKey(
+        'raw',
+        Base64ToArrayBuffer(localKey),
+        { name: 'AES-GCM' },
+        false,
+        ['encrypt']
+      );
+    
+      const value = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+        localKeyCrypto,
+        StringToArrayBuffer(decryptedPassword)
+      );
+    
+      const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
+      encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
+    } catch (e) {
+      showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
+      await CatchError(e);
+      return;
+    }
   }
 
   try {
@@ -153,7 +165,8 @@ const handleAutofill = async (id, navigate, more, setMore) => {
       action: REQUEST_ACTIONS.AUTOFILL,
       username: service.username,
       password: encryptedValueB64,
-      target: REQUEST_TARGETS.CONTENT
+      target: REQUEST_TARGETS.CONTENT,
+      cryptoAvailable: cryptoAvailableRes.cryptoAvailable
     });
   } catch {}
 

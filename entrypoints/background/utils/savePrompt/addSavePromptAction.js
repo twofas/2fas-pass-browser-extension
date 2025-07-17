@@ -14,6 +14,11 @@
 * @return {Promise<void>} A promise that resolves when the action is added.
 */
 const addSavePromptAction = async (details, serviceType, values, savePromptActions) => {
+  if (!details || !serviceType || !values || !savePromptActions) {
+    // FUTURE - throw error?
+    return;
+  }
+
   const { tabId, url } = details;
   const { username, password } = values;
 

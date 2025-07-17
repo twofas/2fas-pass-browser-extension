@@ -50,25 +50,32 @@ const passwordRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF,
         passwordDecryptedBytes.data
       );
       const decryptedPassword = ArrayBufferToString(decryptedPasswordAB);
-      const nonce = generateNonce();
-      const localKey = await storage.getItem('local:lKey');
 
-      const localKeyCrypto = await crypto.subtle.importKey(
-        'raw',
-        Base64ToArrayBuffer(localKey),
-        { name: 'AES-GCM' },
-        false,
-        ['encrypt']
-      );
+      let encryptedValueB64 = null;
 
-      const value = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-        localKeyCrypto,
-        StringToArrayBuffer(decryptedPassword)
-      );
+      if (state?.data?.cryptoAvailable) {
+        const nonce = generateNonce();
+        const localKey = await storage.getItem('local:lKey');
 
-      const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
-      const encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
+        const localKeyCrypto = await crypto.subtle.importKey(
+          'raw',
+          Base64ToArrayBuffer(localKey),
+          { name: 'AES-GCM' },
+          false,
+          ['encrypt']
+        );
+
+        const value = await crypto.subtle.encrypt(
+          { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+          localKeyCrypto,
+          StringToArrayBuffer(decryptedPassword)
+        );
+
+        const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
+        encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
+      } else {
+        encryptedValueB64 = decryptedPassword;
+      }
 
       // Send autofill to tab
       const autofillRes = await sendMessageToAllFrames(
@@ -77,7 +84,8 @@ const passwordRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF,
           action: REQUEST_ACTIONS.AUTOFILL,
           username: service.username,
           password: encryptedValueB64,
-          target: REQUEST_TARGETS.CONTENT
+          target: REQUEST_TARGETS.CONTENT,
+          cryptoAvailable: state?.data?.cryptoAvailable
         }
       );
       

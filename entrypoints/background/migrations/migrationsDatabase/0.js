@@ -41,7 +41,7 @@ const defaultStorage = async () => {
   const themeEnum = ['unset', 'light', 'dark'];
   const autoClearClipboardEnum = ['default', 1, 5, 15, 30];
   const autoIdleLockEnum = ['default', 1, 5, 15, 30, 60];
-  const savePromptEnum = ['default', 'browser', 'none'];
+  const savePromptEnum = ['default', 'default_encrypted', 'browser', 'none'];
 
   // PERSISTENT KEYS || SECURITY ICON
   if (
@@ -165,7 +165,7 @@ const defaultStorage = async () => {
     storageData?.savePrompt === undefined ||
     savePromptEnum.indexOf(storageData?.savePrompt) === -1
   ) {
-    itemsToSet.push({ key: 'local:savePrompt', value: 'default' }); // default - pass, browser, none
+    itemsToSet.push({ key: 'local:savePrompt', value: 'default' }); // default, default_encrypted, browser, none
   }
 
   // SAVE PROMPT IGNORE DOMAINS

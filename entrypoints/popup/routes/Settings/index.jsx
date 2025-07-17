@@ -12,7 +12,7 @@ import getRatingText from './functions/getRatingText';
 
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
-const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
+const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to render the Settings component.
@@ -37,9 +37,7 @@ function Settings (props) {
     <div className={`${props.className ? props.className : ''}`}>
       <div>
         <section className={S.settings}>
-          <Link to='/' className='cancel' title={browser.i18n.getMessage('cancel')}>
-            <CancelIcon />
-          </Link>
+          <NavigationButton type='cancel' />
 
           <div className={S.settingsContainer}>
             <h2>{browser.i18n.getMessage('settings_header')}</h2>

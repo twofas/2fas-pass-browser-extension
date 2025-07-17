@@ -10,13 +10,13 @@ import { obfuscator } from 'rollup-obfuscator';
 
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
-  vite: ({ command }) => ({
+  vite: configEnv => ({
     css: {
       modules: {
         localsConvention: 'camelCase'
       }
     },
-    build: command === 'serve' ? {} : {
+    build: configEnv.command === 'serve' ? {} : {
       cssMinify: true,
       sourcemap: false,
       minify: 'terser',
@@ -64,9 +64,7 @@ export default defineConfig({
       }
     },
     plugins: [
-      command === 'serve' ? [
-        svgr()
-      ] : [
+      (configEnv.command !== 'serve' && (configEnv.browser === 'safari' || configEnv.browser === 'firefox')) ? [
         svgr(),
         obfuscator({
           exclude: ['node_modules/**'],
@@ -115,6 +113,8 @@ export default defineConfig({
           transformObjectKeys: true,
           unicodeEscapeSequence: false
         })
+      ] : [
+        svgr()
       ]
     ]
   }),
@@ -198,7 +198,7 @@ export default defineConfig({
 
     // Chrome, Opera, Edge
     if (browser !== 'firefox' && browser !== 'safari') {
-      manifestObj.minimum_chrome_version = '130';
+      manifestObj.minimum_chrome_version = '135';
     }
 
     if (browser === 'firefox') {
@@ -222,8 +222,10 @@ export default defineConfig({
       } : {
         service_worker: 'background.js'
       };
-
-      delete manifest.content_scripts;
     }
+  },
+  zip: {
+    artifactTemplate: '{{name}}-{{version}}-{{browser}}-{{mode}}.zip',
+    sourcesTemplate: '{{name}}-{{version}}-{{browser}}-{{mode}}-sources.zip'
   }
 });
