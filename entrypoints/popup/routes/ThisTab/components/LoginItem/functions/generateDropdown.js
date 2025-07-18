@@ -36,7 +36,7 @@ const generateDropdown = login => {
     try {
       login.uris.forEach(uri => {
         let uriText = uri?.text;
-        uriText = URIMatcher.normalizeUrl(uriText);
+        uriText = URIMatcher.normalizeUrl(uriText, true);
         dO.push({ value: uriText, label: uriText, loginId: login.id });
       });
     } catch {}
