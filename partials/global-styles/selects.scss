@@ -215,10 +215,12 @@
 
     body.theme-light & {
       background-color: v.$primary-box-bg-light;
+      box-shadow: 0 6px 15px v.$primary-bg-light;
     }
 
     body.theme-dark & {
       background-color: v.$primary-box-bg-dark;
+      box-shadow: 0 6px 15px v.$primary-bg-dark;
     }
 
     body.theme-unset & {
@@ -392,11 +394,13 @@
     body.theme-light & {
       background-color: v.$card-bg-light;
       border: 1px solid v.$card-stroke-light;
+      box-shadow: 0 4px 10px v.$primary-bg-light;
     }
 
     body.theme-dark & {
       background-color: v.$card-bg-dark;
       border: 1px solid v.$card-stroke-dark;
+      box-shadow: 0 4px 10px v.$primary-bg-dark, 1;
     }
 
     body.theme-unset & {
