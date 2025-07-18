@@ -1,7 +1,7 @@
 {
   "name": "2fas-pass-browser-extension",
   "description": "This is the official 2FAS Pass Browser Extension project.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "module",
   "repository": {
     "type": "git",
