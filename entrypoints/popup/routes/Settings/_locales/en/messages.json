@@ -72,7 +72,7 @@
     "description": "Description for configuring the save login prompt behavior"
   },
   "settings_save_prompt_pass": {
-    "message": "2FAS Pass prompt (the most popular)",
+    "message": "2FAS Pass prompt (default)",
     "description": "Option to use the 2FAS Pass-specific save login prompt"
   },
   "settings_save_prompt_pass_encrypted": {
