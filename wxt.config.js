@@ -63,60 +63,7 @@ export default defineConfig({
         keep_fnames: false
       }
     },
-    plugins: [
-      (configEnv.command !== 'serve' && (configEnv.browser === 'safari' || configEnv.browser === 'firefox')) ? [
-        svgr(),
-        obfuscator({
-          exclude: ['node_modules/**'],
-          compact: true,
-          controlFlowFlattening: false,
-          deadCodeInjection: false,
-          debugProtection: false,
-          disableConsoleOutput: false,
-          domainLock: [],
-          exclude: [/node_modules/],
-          forceTransformStrings: [],
-          identifierNamesCache: null,
-          identifierNamesGenerator: 'hexadecimal',
-          identifiersDictionary: [],
-          identifiersPrefix: '',
-          ignoreImports: false,
-          inputFileName: '',
-          log: false,
-          numbersToExpressions: true,
-          optionsPreset: 'default',
-          renameGlobals: true,
-          renameProperties: false,
-          renamePropertiesMode: 'safe',
-          reservedNames: [],
-          reservedStrings: [],
-          seed: 0,
-          selfDefending: false,
-          simplify: true,
-          sourceMap: false,
-          splitStrings: true,
-          splitStringsChunkLength: 3,
-          stringArray: true,
-          stringArrayCallsTransform: true,
-          stringArrayCallsTransformThreshold: 1,
-          stringArrayEncoding: ['base64'],
-          stringArrayIndexesType: ['hexadecimal-number'],
-          stringArrayIndexShift: true,
-          stringArrayRotate: true,
-          stringArrayShuffle: true,
-          stringArrayWrappersCount: 3,
-          stringArrayWrappersChainedCalls: true,
-          stringArrayWrappersParametersMaxCount: 5,
-          stringArrayWrappersType: 'variable',
-          stringArrayThreshold: 1,
-          target: 'service-worker',
-          transformObjectKeys: true,
-          unicodeEscapeSequence: false
-        })
-      ] : [
-        svgr()
-      ]
-    ]
+    plugins: [svgr()]
   }),
   manifest: ({ browser, manifestVersion, mode, command }) => {
     const manifestObj = {
