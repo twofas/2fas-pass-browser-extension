@@ -3,12 +3,16 @@
     "message": "Matching Items",
     "description": "Title for the section displaying login items that match the current context"
   },
-  "content_save_prompt_header": {
+  "content_save_prompt_add_header": {
     "message": "Do you want to add this Item to 2FAS Pass?",
     "description": "Header asking if the user wants to save a new login item"
   },
+  "content_save_prompt_update_header": {
+    "message": "Do you want to save the changes done to this Item?",
+    "description": "Header asking if the user wants to update an existing login item"
+  },
   "content_save_prompt_don_t_ask": {
-    "message": "Don't ask again",
+    "message": "Ignore this domain",
     "description": "Option to prevent the save prompt from appearing in the future"
   },
   "content_save_prompt_add_login": {
@@ -16,7 +20,7 @@
     "description": "Button label to add a new login item to 2FAS Pass"
   },
   "content_save_prompt_update_login": {
-    "message": "Update Item",
+    "message": "Save Item",
     "description": "Button label to update an existing login item in 2FAS Pass"
   }
 }

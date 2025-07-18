@@ -403,12 +403,16 @@
     "message": "Matching Items",
     "description": "Title for the section displaying login items that match the current context"
   },
-  "content_save_prompt_header": {
+  "content_save_prompt_add_header": {
     "message": "Do you want to add this Item to 2FAS Pass?",
     "description": "Header asking if the user wants to save a new login item"
   },
+  "content_save_prompt_update_header": {
+    "message": "Do you want to save the changes done to this Item?",
+    "description": "Header asking if the user wants to update an existing login item"
+  },
   "content_save_prompt_don_t_ask": {
-    "message": "Don't ask again",
+    "message": "Ignore this domain",
     "description": "Option to prevent the save prompt from appearing in the future"
   },
   "content_save_prompt_add_login": {
@@ -416,7 +420,7 @@
     "description": "Button label to add a new login item to 2FAS Pass"
   },
   "content_save_prompt_update_login": {
-    "message": "Update Item",
+    "message": "Save Item",
     "description": "Button label to update an existing login item in 2FAS Pass"
   },
   "install_please_pin_extension": {
@@ -952,7 +956,7 @@
     "description": "Option to enable or disable the extension's context menu options"
   },
   "settings_excluded_domains": {
-    "message": "Excluded domains",
+    "message": "Ignored domains",
     "description": "Label for the excluded domains settings"
   },
   "settings_excluded_domains_description": {
@@ -960,11 +964,11 @@
     "description": "Explains that excluded domains won't prompt for adding new logins"
   },
   "settings_excluded_domains_empty": {
-    "message": "There are no excluded domains yet.",
+    "message": "There are no ignored domains yet.",
     "description": "Message displayed when no domains are excluded"
   },
   "settings_excluded_domains_remove": {
-    "message": "Remove selected domain from excluded list.",
+    "message": "Remove selected domain from the ignored list.",
     "description": "Button label to remove a domain from the excluded list"
   },
   "settings_danger_zone": {

@@ -236,7 +236,7 @@
     "description": "Option to enable or disable the extension's context menu options"
   },
   "settings_excluded_domains": {
-    "message": "Excluded domains",
+    "message": "Ignored domains",
     "description": "Label for the excluded domains settings"
   },
   "settings_excluded_domains_description": {
@@ -244,11 +244,11 @@
     "description": "Explains that excluded domains won't prompt for adding new logins"
   },
   "settings_excluded_domains_empty": {
-    "message": "There are no excluded domains yet.",
+    "message": "There are no ignored domains yet.",
     "description": "Message displayed when no domains are excluded"
   },
   "settings_excluded_domains_remove": {
-    "message": "Remove selected domain from excluded list.",
+    "message": "Remove selected domain from the ignored list.",
     "description": "Button label to remove a domain from the excluded list"
   },
   "settings_danger_zone": {
