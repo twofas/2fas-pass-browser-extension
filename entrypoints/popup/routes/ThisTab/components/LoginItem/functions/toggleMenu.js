@@ -24,7 +24,7 @@ const toggleMenu = (value, data, actions) => {
     return;
   }
 
-  return setMore(true)
+  return new Promise(resolve => resolve(setMore(true)))
     .then(() => {
       let rect, selectRect;
 
