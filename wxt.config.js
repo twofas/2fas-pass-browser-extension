@@ -6,10 +6,14 @@
 
 import { defineConfig } from 'wxt';
 import svgr from 'vite-plugin-svgr';
-import { obfuscator } from 'rollup-obfuscator';
 
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
+  imports: {
+    eslintrc: {
+      enabled: 9
+    }
+  },
   vite: configEnv => ({
     css: {
       modules: {
@@ -65,7 +69,7 @@ export default defineConfig({
     },
     plugins: [svgr()]
   }),
-  manifest: ({ browser, manifestVersion, mode, command }) => {
+  manifest: ({ browser, manifestVersion }) => {
     const manifestObj = {
       manifest_version: manifestVersion,
       name: '2FAS Pass Browser Extension',

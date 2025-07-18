@@ -47,7 +47,9 @@
     "test-watch": "vitest",
     "generate-license-info-html": "npx -y license-report --output=html >> open-source-licenses.html",
     "generate-license-info-json": "npx -y license-report --output=json >> open-source-licenses.json",
-    "generate-license-info": "yarn generate-license-info-html && yarn generate-license-info-json"
+    "generate-license-info": "yarn generate-license-info-html && yarn generate-license-info-json",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
   },
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.6.0",
@@ -70,6 +72,8 @@
   "devDependencies": {
     "@wxt-dev/module-react": "^1.1.3",
     "dotenv": "^17.2.0",
+    "eslint": "^9.31.0",
+    "eslint-config-react-app": "^7.0.1",
     "sass-embedded": "1.89.2",
     "terser": "^5.43.1",
     "vitest": "^3.2.4",
