@@ -33,6 +33,24 @@ const setBadge = async (url, tabId = null, services = null) => {
       19: browser.runtime.getURL('icons/accounts-badge/icon19.png'),
       38: browser.runtime.getURL('icons/accounts-badge/icon38.png')
     };
+
+    if (tabId) {
+      try {
+        await Promise.all([
+          browser.action.setBadgeText({ text: '', tabId }),
+          browser.action.setIcon({ path, tabId })
+        ]);
+      } catch {}
+    } else {
+      try {
+        await Promise.all([
+          browser.action.setBadgeText({ text: '' }),
+          browser.action.setIcon({ path })
+        ]);
+      } catch {}
+    }
+
+    return;
   } else {
     path = {
       16: browser.runtime.getURL('icons/icon16.png'),

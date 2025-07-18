@@ -9,6 +9,8 @@ import isTabIsPopupWindow from './isTabIsPopupWindow';
 import setBadge from '../utils/setBadge';
 import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
 import getServices from '@/partials/sessionStorage/getServices';
+import setBadgeLocked from '../utils/setBadgeLocked';
+import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
 /** 
 * Function to handle tab focus in the browser.
@@ -17,33 +19,44 @@ import getServices from '@/partials/sessionStorage/getServices';
 * @return {Promise<void>} A promise that resolves when the tab focus is handled.
 */
 const onTabFocused = async tab => {
-  let pw, services;
-
-  try {
-    services = await getServices();
-  } catch {}
-
-  if (tab?.url) {
-    try {
-      await setBadge(tab.url, tab.id, services);
-    } catch (e) {
-      await CatchError(e);
-    }
+  if (!tab || !tab?.active || !tab?.url || tab?.url === 'about:blank') {
+    return false;
   }
 
+  let configured;
+
   try {
-    pw = await isTabIsPopupWindow(tab.id);
+    configured = await getConfiguredBoolean('configured');
+    
+    if (!configured) {
+      throw new Error();
+    }
   } catch {
-    pw = false;
+    await setBadgeLocked(tab.id).catch(() => {});
+    return false;
   }
 
-  if (!pw) {
-    try {
-      await sendDomainToPopupWindow(tab.id);
-      await updateNoAccountItem(tab.id, services);
-    } catch (e) {
-      await CatchError(e);
+  try {
+    const [services, isPopupWindow] = await Promise.all([
+      getServices().catch(() => []),
+      isTabIsPopupWindow(tab.id).catch(() => false)
+    ]);
+
+    if (tab?.url) {
+      setBadge(tab.url, tab.id, services).catch(e => CatchError(e));
     }
+
+    if (!isPopupWindow) {
+      await Promise.all([
+        sendDomainToPopupWindow(tab.id),
+        updateNoAccountItem(tab.id, services)
+      ]).catch(e => CatchError(e));
+    }
+
+    return true;
+  } catch (e) {
+    await CatchError(e);
+    return false;
   }
 };
 

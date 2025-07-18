@@ -13,7 +13,6 @@ import URIMatcher from '../URIMatcher';
 * @return {Promise<void>} A promise that resolves when the clipboard is cleared.
 */
 const storageAutoClearActions = async () => {
-  console.log('storageAutoClearActions');
   const storageClearActions = await storage.getItem('session:autoClearActions');
 
   if (!storageClearActions || storageClearActions.length === 0) {
