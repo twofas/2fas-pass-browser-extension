@@ -32,7 +32,7 @@ const getDomainInfo = async () => {
 
   try {
     await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
-  } catch (e) {
+  } catch {
     return data;
   }
 

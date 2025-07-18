@@ -22,9 +22,7 @@ import TwoFasWebSocket from '@/partials/WebSocket';
 */
 const handleChallengeAction = async (json, uuid) => {
   const { pkEpheMa, hkdfSalt } = json.payload;
-  let SK_EPHE_ECDH, PK_EPHE_MA_ECDH, hkdfSaltAB;
-
-  [SK_EPHE_ECDH, PK_EPHE_MA_ECDH, hkdfSaltAB] = await Promise.all([
+  const [SK_EPHE_ECDH, PK_EPHE_MA_ECDH, hkdfSaltAB] = await Promise.all([
     importExtensionEphemeralKey(uuid),
     importMobileEphemeralKey(pkEpheMa),
     Base64ToArrayBuffer(hkdfSalt)

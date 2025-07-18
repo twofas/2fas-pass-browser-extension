@@ -13,30 +13,25 @@ import getKey from '../getKey';
 * @return {Promise<boolean>} True if the value was set successfully, false otherwise.
 */
 const setConfigured = async value => {
-  let configuredKey, configuredNonceB64, configuredNonceAB, persistentPrivateKey, persistentPrivateKeyB64, persistentPrivateKeyAB, persistentPublicKey, persistentPublicKeyB64, persistentPublicKeyAB;
   const valueStr = value.toString();
 
-  try {
-    [configuredKey, configuredNonceB64, persistentPrivateKeyB64, persistentPublicKeyB64] = await Promise.all([
-      getKey('configured'),
-      getKey('configured_nonce'),
-      storage.getItem('local:persistentPrivateKey'),
-      storage.getItem('local:persistentPublicKey')
-    ]);
-    
-    [configuredNonceAB, persistentPrivateKeyAB, persistentPublicKeyAB] = await Promise.all([
-      Promise.resolve(Base64ToArrayBuffer(configuredNonceB64)),
-      Promise.resolve(Base64ToArrayBuffer(persistentPrivateKeyB64)),
-      Promise.resolve(Base64ToArrayBuffer(persistentPublicKeyB64))
-    ]);
-    
-    [persistentPrivateKey, persistentPublicKey] = await Promise.all([
-      crypto.subtle.importKey('pkcs8', persistentPrivateKeyAB, { name: 'ECDH', namedCurve: 'P-256' }, false, ['deriveBits'] ),
-      crypto.subtle.importKey('spki', persistentPublicKeyAB, { name: 'ECDH', namedCurve: 'P-256' }, false, [] )
-    ]);
-  } catch (e) {
-    throw e;
-  }
+  const [configuredKey, configuredNonceB64, persistentPrivateKeyB64, persistentPublicKeyB64] = await Promise.all([
+    getKey('configured'),
+    getKey('configured_nonce'),
+    storage.getItem('local:persistentPrivateKey'),
+    storage.getItem('local:persistentPublicKey')
+  ]);
+  
+  const [configuredNonceAB, persistentPrivateKeyAB, persistentPublicKeyAB] = await Promise.all([
+    Promise.resolve(Base64ToArrayBuffer(configuredNonceB64)),
+    Promise.resolve(Base64ToArrayBuffer(persistentPrivateKeyB64)),
+    Promise.resolve(Base64ToArrayBuffer(persistentPublicKeyB64))
+  ]);
+  
+  const [persistentPrivateKey, persistentPublicKey] = await Promise.all([
+    crypto.subtle.importKey('pkcs8', persistentPrivateKeyAB, { name: 'ECDH', namedCurve: 'P-256' }, false, ['deriveBits'] ),
+    crypto.subtle.importKey('spki', persistentPublicKeyAB, { name: 'ECDH', namedCurve: 'P-256' }, false, [] )
+  ]);
 
   const sharedSecret = await crypto.subtle.deriveBits(
     { name: 'ECDH', namedCurve: 'P-256', public: persistentPublicKey },

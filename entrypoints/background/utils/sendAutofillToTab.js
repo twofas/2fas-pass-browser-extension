@@ -78,7 +78,7 @@ const sendAutofillToTab = async (tabId, serviceID) => {
     if (cryptoAvailableRes.status !== 'ok' || !cryptoAvailableRes.cryptoAvailable) {
       encryptedValueB64 = decryptedPassword;
     } else {
-      let nonce, localKey, localKeyCrypto, value, encryptedValue;
+      let nonce, localKeyCrypto, value;
 
       try {
         nonce = await generateNonce();
@@ -89,7 +89,7 @@ const sendAutofillToTab = async (tabId, serviceID) => {
         });
       }
 
-      localKey = await storage.getItem('local:lKey');
+      const localKey = await storage.getItem('local:lKey');
 
       try {
         localKeyCrypto = await crypto.subtle.importKey(
@@ -119,7 +119,7 @@ const sendAutofillToTab = async (tabId, serviceID) => {
         });
       }
 
-      encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
+      const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
       encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
     }
   }

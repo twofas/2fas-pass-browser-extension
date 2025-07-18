@@ -84,7 +84,7 @@ const newLoginAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => 
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedError);
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedError, { event: e });
   }
 };
 

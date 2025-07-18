@@ -10,7 +10,7 @@
 * @return {ArrayBuffer} The resulting ArrayBuffer from the hexadecimal string.
 */
 export const HexToArrayBuffer = hex => {
-  if (typeof hex !== 'string' || !hex instanceof String) {
+  if (typeof hex !== 'string') {
     throw new TypeError('HexToArrayBuffer: Expected input to be a string');
   }
 

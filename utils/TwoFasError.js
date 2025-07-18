@@ -296,7 +296,7 @@ class TwoFasError extends Error {
       message: 'Close with error action received',
       code: 2999
     }
-  }
+  };
 
   static internalErrors = {
     // GENERAL
@@ -680,7 +680,7 @@ class TwoFasError extends Error {
       message: 'Error configuring context menu',
       code: 9390
     }
-  }
+  };
 }
 
 export default TwoFasError;

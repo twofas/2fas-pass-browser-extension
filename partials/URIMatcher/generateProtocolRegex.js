@@ -13,7 +13,7 @@ import additionalProtocols from './additionalProtocols';
 const generateProtocolRegex = () => {
   const internalProtocolsArray = additionalProtocols();
   const internalProtocols = internalProtocolsArray.map(protocol => protocol.replaceAll(':', '')).join('|');
-  return new RegExp(`^(ftp|http|https|${internalProtocols})?\://`, 'i');
+  return new RegExp(`^(ftp|http|https|${internalProtocols})?://`, 'i');
 };
 
 export default generateProtocolRegex;

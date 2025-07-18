@@ -17,7 +17,7 @@ const sendMessageToTab = async (tabID, message) => {
 
   try {
     res = await browser.tabs.sendMessage(tabID, message);
-  } catch (e) {
+  } catch {
     return undefined;
   }
   

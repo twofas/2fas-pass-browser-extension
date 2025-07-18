@@ -23,7 +23,7 @@ const CatchError = async (errObj, callback = () => {}) => {
           app: '2fas-pass-browser-extension',
           platform: 'browser',
           scheme: config?.scheme || 'UnknownScheme',
-          origin: `browserExt-${browserInfo?.browserName?.toLowerCase()}` || 'UnknownOrigin',
+          origin: `browserExt-${browserInfo?.browserName?.toLowerCase() || 'UnknownOrigin'}`,
           originVersion: manifest?.version || 'UnknownVersion',
           browserName: browserInfo?.browserName || 'UnknownBrowserName',
           browserVersion: browserInfo?.browserVersion || 'UnknownBrowserVersion'

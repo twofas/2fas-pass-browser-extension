@@ -18,9 +18,9 @@ export default defineContentScript({
   match_about_blank: true,
   registration: 'runtime',
   async main (ctx) {
-    let localKey = { data: null };
-    let timers = {};
-    let ignore = { value: false };
+    const localKey = { data: null };
+    const timers = {};
+    const ignore = { value: false };
     let savePrompt = null;
     const emptyFunc = () => {};
 

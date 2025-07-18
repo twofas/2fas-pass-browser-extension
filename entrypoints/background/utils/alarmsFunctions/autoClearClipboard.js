@@ -31,7 +31,7 @@ const autoClearClipboard = async (itemId, itemType) => {
 
   const filteredTabs = allTabs.filter(tab => tab && tab.id);
 
-  let response = [];
+  const response = [];
 
   for (const tab of filteredTabs) {
     await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT); // FUTURE - separate content script for auto clear clipboard?

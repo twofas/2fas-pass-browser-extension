@@ -10,7 +10,7 @@
 * @return {string} The hexadecimal representation of the Base64 string.
 */
 export const Base64ToHex = b64 => {
-  if (typeof b64 !== 'string' || !b64 instanceof String) {
+  if (typeof b64 !== 'string') {
     throw new TypeError('Base64ToArrayBuffer: Expected input to be a string');
   }
 

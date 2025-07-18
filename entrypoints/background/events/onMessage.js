@@ -34,7 +34,7 @@ const onMessage = (request, sender, sendResponse, migrations) => {
         ) {
           openBrowserPage(request.url)
             .then(() => { sendResponse({ status: 'ok' }); })
-            .catch(e => { sendResponse({ status: 'error', message: e.message }); })
+            .catch(e => { sendResponse({ status: 'error', message: e.message }); });
         } else {
           sendResponse({ status: 'error', message: 'Empty or wrong URL' });
         }
@@ -49,7 +49,7 @@ const onMessage = (request, sender, sendResponse, migrations) => {
         ) {
           openPopupWindowInNewWindow({ pathname: request.pathname })
             .then(() => { sendResponse({ status: 'ok' }); })
-            .catch(e => { sendResponse({ status: 'error', message: e.message }); })
+            .catch(e => { sendResponse({ status: 'error', message: e.message }); });
         } else {
           sendResponse({ status: 'error', message: 'Empty or wrong data' });
         }

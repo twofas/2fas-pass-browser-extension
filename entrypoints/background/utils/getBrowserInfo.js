@@ -4,7 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/* global navigator */
 import getOSName from './getOSName';
 import isBrave from './isBrave';
 import getBrowserVersion from './getBrowserVersion';
@@ -36,15 +35,15 @@ const getBrowserInfo = () => {
   };
 
   const versionRegex = {
-    UCBrowser: /(ucbrowser)\/([\d\.]+)/i,
-    Edge: /(edge|edga|edgios|edg)\/([\d\.]+)/i,
-    Chromium: /(chromium)\/([\d\.]+)/i,
-    Firefox: /(firefox|fxios)\/([\d\.]+)/i,
-    Chrome: /(chrome|crios)\/([\d\.]+)/i,
-    Brave: /(chrome|crios)\/([\d\.]+)/i,
-    Safari: /(safari)\/([\d\.]+)/i,
-    Opera: /(opera|opr)\/([\d\.]+)/i,
-    Vivaldi: /(vivaldi)\/([\d\.]+)/i
+    UCBrowser: /(ucbrowser)\/([\d.]+)/i,
+    Edge: /(edge|edga|edgios|edg)\/([\d.]+)/i,
+    Chromium: /(chromium)\/([\d.]+)/i,
+    Firefox: /(firefox|fxios)\/([\d.]+)/i,
+    Chrome: /(chrome|crios)\/([\d.]+)/i,
+    Brave: /(chrome|crios)\/([\d.]+)/i,
+    Safari: /(safari)\/([\d.]+)/i,
+    Opera: /(opera|opr)\/([\d.]+)/i,
+    Vivaldi: /(vivaldi)\/([\d.]+)/i
   };
 
   // Detect browser name

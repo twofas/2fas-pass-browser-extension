@@ -61,7 +61,7 @@ const storageAutoClearActions = async () => {
 
   try {
     clipboardValue = await navigator.clipboard.readText();
-  } catch (error) {
+  } catch {
     await storage.setItem('session:autoClearActions', []);
     return;
   }

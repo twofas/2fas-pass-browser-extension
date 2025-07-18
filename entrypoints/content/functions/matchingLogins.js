@@ -114,7 +114,7 @@ const matchingLogins = (request, sendResponse, container) => {
     return sendResponse({ status: 'omitted' });
   }
 
-  let n = {
+  const n = {
     container: container.querySelector(S.notification.container),
     item: null,
     top: null,
@@ -183,7 +183,7 @@ const matchingLogins = (request, sendResponse, container) => {
 
     if ((!item?.iconType && item?.iconType !== 0) || item?.iconType === 1) {
       // Label
-      generateLabel(item, itemIcon)
+      generateLabel(item, itemIcon);
     } else if (item?.iconType === 0) {
       // Default favicon
       let iconDomain = '';
@@ -221,7 +221,7 @@ const matchingLogins = (request, sendResponse, container) => {
           itemIcon.classList.remove('icon-image');
           generateLabel(item, itemIcon);
         };
-      } catch (e) {
+      } catch {
         generateLabel(item, itemIcon);
       }
     } else {

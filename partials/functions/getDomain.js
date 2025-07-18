@@ -23,7 +23,7 @@ const getDomain = url => {
     normalizedURL = URIMatcher.normalizeUrl(url);
     urlObj = new URL(normalizedURL);
     return urlObj?.hostname || url;
-  } catch (e) {
+  } catch {
     throw new Error('Invalid URL provided');
   }
 };

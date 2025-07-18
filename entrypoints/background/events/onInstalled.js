@@ -36,7 +36,7 @@ const onInstalled = async (details, migrations) => {
 
     try {
       await openInstallPage();
-    } catch (err) {
+    } catch (e) {
       await CatchError(e);
     }
   } else {

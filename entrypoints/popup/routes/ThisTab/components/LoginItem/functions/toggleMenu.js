@@ -24,34 +24,32 @@ const toggleMenu = (value, data, actions) => {
     return;
   }
 
-  return new Promise(async resolve => {
-    await setMore(true);
-    return resolve();
-  }).then(() => {
-    let rect, selectRect;
+  return setMore(true)
+    .then(() => {
+      let rect, selectRect;
 
-    if (ref?.current === null) {
-      return;
-    } else {
-      rect = ref.current.getBoundingClientRect();
-    }
+      if (ref?.current === null) {
+        return;
+      } else {
+        rect = ref.current.getBoundingClientRect();
+      }
 
-    if (selectRef?.current?.menuListRef?.parentElement === null) {
-      return;
-    } else {
-      selectRect = selectRef.current.menuListRef.parentElement.getBoundingClientRect();
-    }
-    
-    const selectBottom = rect.top + rect.height / 2 + selectRect.height + 40 + 40 + 16;
+      if (selectRef?.current?.menuListRef?.parentElement === null) {
+        return;
+      } else {
+        selectRect = selectRef.current.menuListRef.parentElement.getBoundingClientRect();
+      }
+      
+      const selectBottom = rect.top + rect.height / 2 + selectRect.height + 40 + 40 + 16;
 
-    if (selectBottom > window.innerHeight) { // 40 footer, 40 padding bottom, 16 padding bottom of list
-      // TOP
-      selectRef.current.menuListRef.parentElement.style = `width: 240px; left: ${rect.left + rect.width - 251}px; top: ${rect.top - selectRect.height + 14 + 17}px`;
-    } else {
-      // BOTTOM
-      selectRef.current.menuListRef.parentElement.style = `width: 240px; left: ${rect.left + rect.width - 251}px; top: ${rect.top + rect.height - 17}px`;
-    }
-  });
+      if (selectBottom > window.innerHeight) { // 40 footer, 40 padding bottom, 16 padding bottom of list
+        // TOP
+        selectRef.current.menuListRef.parentElement.style = `width: 240px; left: ${rect.left + rect.width - 251}px; top: ${rect.top - selectRect.height + 14 + 17}px`;
+      } else {
+        // BOTTOM
+        selectRef.current.menuListRef.parentElement.style = `width: 240px; left: ${rect.left + rect.width - 251}px; top: ${rect.top + rect.height - 17}px`;
+      }
+    });
 };
 
 export default toggleMenu;

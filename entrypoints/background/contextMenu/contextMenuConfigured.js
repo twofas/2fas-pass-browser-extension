@@ -172,10 +172,8 @@ const contextMenuConfigured = async (services = null) => {
     }
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.contextMenuConfiguredError, {
-      additional: {
-        securityType: service.securityType,
-        func: 'contextMenuConfigured'
-      }
+      event: e,
+      additional: { func: 'contextMenuConfigured' }
     });
   } finally {
     isContextMenuConfiguring = false;

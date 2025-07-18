@@ -23,7 +23,7 @@ const passwordRequestCancel = async messageId => {
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionPasswordRequestCancelError);
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionPasswordRequestCancelError, { event: e });
   }
 };
 

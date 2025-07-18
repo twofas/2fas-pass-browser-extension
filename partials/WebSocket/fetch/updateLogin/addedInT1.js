@@ -55,7 +55,7 @@ const updateLoginAddedInT1 = async (state, messageId) => {
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginAddedInT1Error);
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginAddedInT1Error, { event: e });
   }
 };
 

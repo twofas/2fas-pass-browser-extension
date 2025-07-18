@@ -154,7 +154,7 @@ const passwordRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF,
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionPasswordRequestAcceptError);
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionPasswordRequestAcceptError, { event: e });
   }
 };
 

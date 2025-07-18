@@ -55,7 +55,7 @@ const deleteLoginAccept = async (state, messageId) => {
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionDeleteAcceptError);
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionDeleteAcceptError, { event: e });
   }
 };
 

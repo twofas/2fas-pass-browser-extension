@@ -27,11 +27,11 @@ class URIMatcher {
   };
 
   static PROTOCOL_REGEX = {
-    chrome: /^(about|chrome-extension|chrome)?\:/i,
-    firefox: /^(about|moz-extension)?\:/i,
-    opera: /^(about|chrome-extension|chrome|opera)?\:/i,
-    edge: /^(about|chrome-extension|chrome|edge)?\:/i,
-    safari: /^(about|safari-extension)?\:/i
+    chrome: /^(about|chrome-extension|chrome)?:/i,
+    firefox: /^(about|moz-extension)?:/i,
+    opera: /^(about|chrome-extension|chrome|opera)?:/i,
+    edge: /^(about|chrome-extension|chrome|edge)?:/i,
+    safari: /^(about|safari-extension)?:/i
   };
 
   static BAD_PARSE_DOMAIN_TYPES = [ParseResultType.Invalid, ParseResultType.Reserved, ParseResultType.NotListed];
@@ -138,7 +138,7 @@ class URIMatcher {
 
     try {
       urlObj = new URL(normalizedUrl);
-    } catch (e) {
+    } catch {
       return false;
     }
 
@@ -208,7 +208,7 @@ class URIMatcher {
       throw new Error('Parameter is not a string');
     }
 
-    return url.replace(/\/(\?|\#)*$/, '');
+    return url.replace(/\/(\?|#)*$/, '');
   }
 
   static getLowerCaseURLWithoutPort (url) {
@@ -275,7 +275,7 @@ class URIMatcher {
     try {
       serviceUrlObj = new URL(normalizedServiceUrl);
       browserUrlObj = new URL(normalizedBrowserUrl);
-    } catch (e) {
+    } catch {
       return false;
     }
 
@@ -317,7 +317,7 @@ class URIMatcher {
     try {
       serviceUrlObj = new URL(normalizedServiceUrl);
       browserUrlObj = new URL(normalizedBrowserUrl);
-    } catch (e) {
+    } catch {
       return false;
     }
 

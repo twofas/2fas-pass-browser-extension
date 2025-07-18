@@ -93,7 +93,7 @@ const decryptValues = async values => {
     }
   }
 
-  let returnObj = {};
+  const returnObj = {};
 
   if (usernameOk) {
     returnObj.username = ArrayBufferToString(decryptedUsernameAB);

@@ -26,7 +26,7 @@ class TwoFasWebSocket {
     TwoFasWebSocket.instance = this;
 
     return this;
-  }
+  };
 
   static getInstance () {
     if (!TwoFasWebSocket.exists) {
@@ -34,19 +34,19 @@ class TwoFasWebSocket {
     }
 
     return TwoFasWebSocket.instance;
-  }
+  };
 
   #clearTimeout () {
     if (this.timeoutID) {
       clearTimeout(this.timeoutID);
       this.timeoutID = null;
     }
-  }
+  };
 
   #clearInstance () {
     TwoFasWebSocket.exists = false;
     TwoFasWebSocket.instance = null;
-  }
+  };
 
   #onOpen (callbackOnOpen = null) {
     this.timeoutID = setTimeout(() => this.close(true), 1000 * 60 * config.webSocketInternalTimeout);
@@ -54,14 +54,14 @@ class TwoFasWebSocket {
     if (callbackOnOpen && typeof callbackOnOpen === 'function') {
       callbackOnOpen();
     }
-  }
+  };
 
   #onError (event) {
     this.#clearTimeout();
     this.#clearInstance();
 
     throw new TwoFasError(TwoFasError.internalErrors.websocketError, { event, additional: { func: 'TwoFasWebSocket - onError' } });
-  }
+  };
 
   #isEventTrusted (event) {
     if (!event.isTrusted || event.type !== 'message' || event.origin !== `wss://${import.meta.env.VITE_WSS_URL_ORIGIN}`) {
@@ -69,7 +69,7 @@ class TwoFasWebSocket {
     }
   
     return true;
-  }
+  };
 
   open (callbackOnOpen = null) {
     this.#openListener = () => this.#onOpen(callbackOnOpen);
@@ -78,7 +78,7 @@ class TwoFasWebSocket {
     this.socket = new WebSocket(this.socketURL, '2FAS-Pass');
     this.socket.addEventListener('open', this.#openListener);
     this.socket.addEventListener('error', this.#errorListener);
-  }
+  };
 
   addEventListener (event, callback, data = {}, actions = {}) {
     if (event === 'message') {
@@ -111,7 +111,7 @@ class TwoFasWebSocket {
         return callback(e, data, actions);
       });  
     }
-  }
+  };
 
   close (timeout = false) {
     this.socket.removeEventListener('open', this.#openListener);
@@ -129,7 +129,7 @@ class TwoFasWebSocket {
     
     this.#clearTimeout();
     this.#clearInstance();
-  }
+  };
 
   sendMessage = async data => {
     if (this.socket.readyState === WebSocket.OPEN) {
@@ -144,7 +144,7 @@ class TwoFasWebSocket {
     } else {
       throw new TwoFasError(TwoFasError.internalErrors.websocketNotOpened, { additional: { func: 'TwoFasWebSocket - sendMessage' } });
     }
-  }
+  };
 
   sendError = async data => {
     if (this.socket.readyState !== WebSocket.OPEN) {
@@ -174,7 +174,7 @@ class TwoFasWebSocket {
 
     this.#clearTimeout();
     this.#clearInstance();
-  }
+  };
 }
 
 export default TwoFasWebSocket;

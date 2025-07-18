@@ -99,7 +99,7 @@ const savePrompt = (request, sendResponse, container) => {
     return sendResponse({ status: 'omitted' });
   }
 
-  let n = {
+  const n = {
     container: container.querySelector(S.notification.container),
     item: null,
     top: null,

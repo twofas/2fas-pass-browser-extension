@@ -23,7 +23,7 @@ const deleteLoginCancel = async messageId => {
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionDeleteCancelError);
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionDeleteCancelError, { event: e });
   }
 };
 
