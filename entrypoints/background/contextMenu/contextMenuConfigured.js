@@ -81,7 +81,7 @@ const contextMenuConfigured = async (services = null) => {
       } catch {}
 
       if (!documentUrlPatterns || documentUrlPatterns.length <= 0) {
-        return;
+        continue;
       }
 
       if (
@@ -101,6 +101,7 @@ const contextMenuConfigured = async (services = null) => {
           });
         } catch (e) {
           await CatchError(e);
+          continue;
         }
       } else if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET && !service?.password || service?.password?.length <= 0) {
         try {
@@ -116,6 +117,7 @@ const contextMenuConfigured = async (services = null) => {
           });
         } catch (e) {
           await CatchError(e);
+          continue;
         }
       } else {
         throw new TwoFasError(TwoFasError.internalErrors.wrongSecurityType, {
