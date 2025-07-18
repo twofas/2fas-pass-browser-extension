@@ -137,6 +137,9 @@ export default defineConfig({
       host_permissions: [
         "*://*.2fas.com/*"
       ],
+      optional_permissions: [
+        "clipboardRead"
+      ],
       web_accessible_resources: [
         {
           "resources": ["/fonts/*"],

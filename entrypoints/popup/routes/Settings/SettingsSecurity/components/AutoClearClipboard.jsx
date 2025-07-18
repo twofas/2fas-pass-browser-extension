@@ -50,6 +50,16 @@ function AutoClearClipboard () {
   const handleAutoClearClipboardChange = async change => {
     setDisabled(true);
 
+    if (change.value !== 'default') {
+      const clipboardReadPermission = await browser.permissions.request({ permissions: ['clipboardRead'] });
+      
+      if (!clipboardReadPermission) {
+        showToast(browser.i18n.getMessage('error_auto_clear_clipboard_permission_denied'), 'error');
+        setDisabled(false);
+        return;
+      }
+    }
+
     try {
       const value = change?.value;
       await storage.setItem('local:autoClearClipboard', value);
@@ -79,7 +89,7 @@ function AutoClearClipboard () {
           classNamePrefix='react-select'
           isSearchable={false}
           options={autoClearClipboardOptions}
-          defaultValue={autoClearClipboardOptions.find(el => el.value === cC)}
+          value={autoClearClipboardOptions.find(el => el.value === cC)}
           onChange={handleAutoClearClipboardChange}
           disabled={disabled ? 'disabled' : ''}
         />
