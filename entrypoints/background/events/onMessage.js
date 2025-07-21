@@ -11,6 +11,8 @@ import openInstallPage from '../utils/openInstallPage';
 import runMigrations from '../migrations';
 import getLocalKey from '../utils/getLocalKey';
 import onTabFocused from '../tabs/onTabFocused';
+import checkStorageAutoClearActions from '@/partials/functions/checkStorageAutoClearActions';
+import sendAutoClearAction from '../utils/sendAutoClearAction';
 
 /** 
 * Function to handle messages sent to the background script.
@@ -81,7 +83,14 @@ const onMessage = (request, sender, sendResponse, migrations) => {
 
       case REQUEST_ACTIONS.TAB_FOCUS: {
         onTabFocused(sender.tab)
-          .finally(() => { sendResponse({ status: 'ok' }); });
+          .finally(async () => {
+            sendResponse({ status: 'ok' });
+            const autoClearValue = await checkStorageAutoClearActions();
+
+            if (autoClearValue) {
+              await sendAutoClearAction(autoClearValue, request.cryptoAvailable, sender);
+            }
+          });
 
         break;
       }

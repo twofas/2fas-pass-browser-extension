@@ -6,6 +6,7 @@
 
 import getLocalKey from '../getLocalKey';
 
+// @TODO: Refactor this (Promise.all, etc.)
 const decryptValues = async values => {
   let localKey, localKeyCrypto;
 

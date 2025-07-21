@@ -40,6 +40,7 @@ const autoClearClipboard = async (itemId, itemType) => {
     try {
       response.push(await sendMessageToAllFrames(tab.id, { ...clearClipboardMessage, target: REQUEST_TARGETS.CONTENT }));
       response.push(await sendMessageToTab(tab.id, { ...clearClipboardMessage, target: REQUEST_TARGETS.POPUP }));
+      response.push(await sendMessageToTab(tab.id, { ...clearClipboardMessage, target: REQUEST_TARGETS.FOCUS_CONTENT }));
       response.push(await sendMessageToAllFrames(tab.id, { ...clearClipboardMessage, target: REQUEST_TARGETS.PROMPT }));
     } catch {}
   }

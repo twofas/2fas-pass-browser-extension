@@ -27,7 +27,7 @@ export default defineContentScript({
     try {
       const savePromptResponse = await browser.runtime.sendMessage({
         action: REQUEST_ACTIONS.GET_SAVE_PROMPT,
-        target: REQUEST_TARGETS.BACKGROUND_PROMPT,
+        target: REQUEST_TARGETS.BACKGROUND_PROMPT
       });
 
       if (savePromptResponse?.status === 'ok') {
