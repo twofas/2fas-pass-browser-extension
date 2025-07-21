@@ -93,13 +93,22 @@ picture {
 }
 
 .theme-light {
-  body.theme-light &,
-  body:not(.theme-dark) & {
+  body.theme-light & {
     display: initial;
   }
 
   body.theme-dark & {
     display: none;
+  }
+
+  body.theme-unset & {
+    @media (prefers-color-scheme: light) {
+      display: initial;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      display: none;
+    }
   }
 }
 
@@ -108,9 +117,18 @@ picture {
     display: initial;
   }
 
-  body.theme-light &,
-  body:not(.theme-dark) & {
+  body.theme-light & {
     display: none;
+  }
+
+  body.theme-unset & {
+    @media (prefers-color-scheme: dark) {
+      display: initial;
+    }
+
+    @media (prefers-color-scheme: light) {
+      display: none;
+    }
   }
 }
 
@@ -126,8 +144,7 @@ picture {
     stroke-width: 1.5;
     width: 32px;
 
-    body.theme-light &,
-    body:not(.theme-dark) & {
+    body.theme-light & {
       fill: v.$additional-light;
       stroke: v.$primary-color-light;
     }
@@ -135,6 +152,18 @@ picture {
     body.theme-dark & {
       fill: v.$additional-dark;
       stroke: v.$primary-color-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        fill: v.$additional-light;
+        stroke: v.$primary-color-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        fill: v.$additional-dark;
+        stroke: v.$primary-color-dark;
+      }
     }
   }
 }

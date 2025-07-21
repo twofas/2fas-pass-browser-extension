@@ -12,10 +12,20 @@
 * @return {Object} - The last active tab.
 */
 const getLastActiveTab = async (onCatch, filter = null) => {
-  let tabs;
+  let tabs, lastFocusedWindow;
+
+  if (import.meta.env.BROWSER !== 'firefox') {
+    try {
+      lastFocusedWindow = await browser.windows.getLastFocused({ windowTypes: ['normal'] });
+    } catch {}
+  }
 
   try {
-    tabs = await browser.tabs.query({ active: true, lastFocusedWindow: true, windowType: 'normal' });
+    if (import.meta.env.BROWSER !== 'firefox' && lastFocusedWindow && lastFocusedWindow?.id) {
+      tabs = await browser.tabs.query({ active: true, windowId: lastFocusedWindow.id });
+    } else {
+      tabs = await browser.tabs.query({ active: true, lastFocusedWindow: true, windowType: 'normal' });
+    }
   } catch {}
 
   if (filter) {

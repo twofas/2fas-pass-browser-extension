@@ -15,9 +15,14 @@ import initContextMenu from '../contextMenu/initContextMenu';
 * @async
 * @param {Object} change - The change object containing the new and old values.
 * @param {string} areaName - The name of the storage area (e.g., "session" or "local").
+* @param {Object} migrations - The state object to track migrations.
 * @return {Promise<void>} A promise that resolves when the storage change is handled.
 */
-const onStorageChange = async (change, areaName) => {
+const onStorageChange = async (change, areaName, migrations) => {
+  if (!migrations?.state) {
+    return;
+  }
+
   switch (areaName) {
     case 'session': {
       if (change?.storageVersion) {

@@ -10,7 +10,7 @@
 * @return {Object} An object containing the initialization vector and the decrypted data.
 */
 const DecryptBytes = bytesData => {
-  if (!(bytesData instanceof ArrayBuffer)) {
+  if (!(bytesData instanceof ArrayBuffer) && bytesData[Symbol?.toStringTag] !== 'ArrayBuffer') {
     throw new TypeError('DecryptBytes: Expected input to be an ArrayBuffer');
   }
 

@@ -33,6 +33,7 @@ function Theme () {
   }, []);
 
   const themeOptions = [
+    { value: 'unset', label: browser.i18n.getMessage('unset_mode') },
     { value: 'light', label: browser.i18n.getMessage('light_mode') },
     { value: 'dark', label: browser.i18n.getMessage('dark_mode') }
   ];
@@ -45,10 +46,10 @@ function Theme () {
       await storage.setItem('local:theme', value);
       setT(value);
 
-      document.body.classList.remove('theme-light', 'theme-dark');
+      document.body.classList.remove('theme-light', 'theme-dark', 'theme-unset');
       document.body.classList.add(`theme-${value}`);
 
-      document.documentElement.classList.remove('theme-light', 'theme-dark');
+      document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-unset');
       document.documentElement.classList.add(`theme-${value}`);
 
       showToast(browser.i18n.getMessage('notification_theme_setting_success'), 'success');

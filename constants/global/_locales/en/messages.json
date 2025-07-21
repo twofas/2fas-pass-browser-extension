@@ -119,6 +119,10 @@
     "message": "Dark mode",
     "description": "Option to enable dark mode for the interface"
   },
+  "unset_mode": {
+    "message": "System default",
+    "description": "Option to use the system's default mode for the interface"
+  },
   "save": {
     "message": "Save",
     "description": "Button label to save changes"
@@ -174,5 +178,9 @@
   "no_item_name": {
     "message": "No Item name",
     "description": "Label for a state where no item name is available"
+  },
+  "no_valid_domain": {
+    "message": "No valid domain detected. If it is a non-standard domain, add the appropriate protocol (e.g. https) at the beginning.",
+    "description": "Label for a state where no valid domain is provided"
   }
 }

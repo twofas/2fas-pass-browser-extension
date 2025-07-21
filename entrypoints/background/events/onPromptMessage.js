@@ -46,7 +46,7 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
 
       case REQUEST_ACTIONS.GET_SAVE_PROMPT: {
         storage.getItem('local:savePrompt')
-          .then(res => { sendResponse({ status: 'ok', data: res }) })
+          .then(res => { sendResponse({ status: 'ok', data: res }); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
 
         break;

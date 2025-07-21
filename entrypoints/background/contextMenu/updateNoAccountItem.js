@@ -10,11 +10,11 @@ import URIMatcher from '@/partials/URIMatcher';
 /** 
 * Function to configure the context menu when there is no account item for tabId.
 * @param {number} tabId - The ID of the tab to update the context menu for.
+* @param {Array|null} services - The list of services to match against the URL.
 * @return {Promise<boolean>} A promise that resolves to true if the context menu is updated successfully, otherwise false.
 */
-const updateNoAccountItem = async tabId => {
+const updateNoAccountItem = async (tabId, services = null) => {
   let tab;
-  let services = [];
 
   if (!tabId) {
     return false;
@@ -29,7 +29,9 @@ const updateNoAccountItem = async tabId => {
   }
 
   try {
-    services = await getServices();
+    if (!services) {
+      services = await getServices();
+    }
   } catch (e) {
     await CatchError(e);
     return false;

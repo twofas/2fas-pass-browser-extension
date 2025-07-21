@@ -10,6 +10,7 @@ import getDomain from '@/partials/functions/getDomain';
 import getTextColor from '@/partials/functions/getTextColor';
 import { HEX_REGEX } from '@/constants/regex';
 import URIMatcher from '@/partials/URIMatcher';
+import { parseDomain, ParseResultType } from 'parse-domain';
 
 const Skeleton = lazy(() => import('../../components/Skeleton'));
 
@@ -50,7 +51,20 @@ const generateIcon = (login, faviconError, setFaviconError, loading) => {
       handleFaviconError();
     }
 
-    if (!iconDomain || URIMatcher.isIp(iconDomain) || iconDomain === 'localhost') {
+    let parsedDomain = null;
+
+    try {
+      parsedDomain = parseDomain(iconDomain);
+    } catch {}
+
+    if (
+      !iconDomain ||
+      URIMatcher.isIp(iconDomain) ||
+      iconDomain === 'localhost' ||
+      parsedDomain?.type === ParseResultType.Invalid ||
+      parsedDomain?.type === ParseResultType.Reserved ||
+      parsedDomain?.type === ParseResultType.NotListed
+    ) {
       handleFaviconError();
     }
 

@@ -82,8 +82,10 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           data: state.data
         };
       } else {
-        const nonceP = generateNonce();
-        const encryptionPassNewKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassNew'), sessionKeyForHKDF, true);
+        const [nonceP, encryptionPassNewKeyAES] = await Promise.all([
+          generateNonce(),
+          generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassNew'), sessionKeyForHKDF, true)
+        ]);
         const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassNewKeyAES, StringToArrayBuffer(state.data.password));
         const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
         const passwordEncBytesB64 = ArrayBufferToBase64(passwordEncBytes);
@@ -123,16 +125,16 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           }
         };
       } else {
-        const nonceP = generateNonce();
-        let encryptionPassTierKeyAES;
+        const keyName = state.data.securityType === SECURITY_TIER.HIGHLY_SECRET ? 'PassT2' : state.data.securityType === SECURITY_TIER.SECRET ? 'PassT3' : null;
 
-        if (state.data.securityType === 1) { // Tier 2
-          encryptionPassTierKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassT2'), sessionKeyForHKDF, true);
-        } else if (state.data.securityType === 2) { // Tier 3
-          encryptionPassTierKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassT3'), sessionKeyForHKDF, true);
-        } else {
+        if (!keyName) {
           throw new TwoFasError(TwoFasError.errors.updateLoginWrongSecurityType);
         }
+
+        const [nonceP, encryptionPassTierKeyAES] = await Promise.all([
+          generateNonce(),
+          generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(keyName), sessionKeyForHKDF, true)
+        ]);
 
         const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassTierKeyAES, StringToArrayBuffer(state.data.password));
         const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);

@@ -10,7 +10,7 @@
 * @return {Promise<string>} A promise that resolves to the Base64 encoded local key.
 */
 const generateLocalKey = async () => {
-  let localKey, exportedKey, exportedKeyB64;
+  let localKey, exportedKey;
 
   try {
     localKey = await crypto.subtle.generateKey(
@@ -28,9 +28,7 @@ const generateLocalKey = async () => {
     throw new TwoFasError(TwoFasError.internalErrors.generateLocalKeyExportKeyError, { additional: { event: e } });
   }
 
-  exportedKeyB64 = ArrayBufferToBase64(exportedKey);
-
-  return exportedKeyB64;
+  return ArrayBufferToBase64(exportedKey);
 };
 
 export default generateLocalKey;

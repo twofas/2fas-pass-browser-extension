@@ -33,11 +33,7 @@ function SavePasswordPrompt () {
         await storage.setItem('local:savePrompt', storageSavePasswordPrompt);
       }
 
-      if (storageSavePasswordPrompt === 'default' || storageSavePasswordPrompt === 'default_encrypted') {
-        await browser.privacy.services.passwordSavingEnabled.set({ value: false });
-      } else {
-        await browser.privacy.services.passwordSavingEnabled.set({ value: true });
-      }
+      await browser.privacy.services.passwordSavingEnabled.set({ value: storageSavePasswordPrompt === 'browser' });
 
       setSP(storageSavePasswordPrompt);
       setLoading(false);
@@ -62,11 +58,7 @@ function SavePasswordPrompt () {
       const value = change?.value;
       await storage.setItem('local:savePrompt', value);
 
-      if (value === 'default' || value === 'pass') {
-        await browser.privacy.services.passwordSavingEnabled.set({ value: false });
-      } else {
-        await browser.privacy.services.passwordSavingEnabled.set({ value: true });
-      }
+      await browser.privacy.services.passwordSavingEnabled.set({ value: value === 'browser' });
 
       setSP(value);
       showToast(browser.i18n.getMessage('notification_save_password_prompt_success'), 'success');
@@ -96,10 +88,12 @@ function SavePasswordPrompt () {
         />
       </form>
 
-      <Link to='/settings-save-login-excluded-domains' className={S.settingsSavePasswordPromptExcludedDomainsLink}>
-        <span>{browser.i18n.getMessage('settings_excluded_domains')}</span>
-        <MenuArrowIcon />
-      </Link>
+      {sP === 'default' || sP === 'default_encrypted' ? (
+        <Link to='/settings-save-login-excluded-domains' className={S.settingsSavePasswordPromptExcludedDomainsLink}>
+          <span>{browser.i18n.getMessage('settings_excluded_domains')}</span>
+          <MenuArrowIcon />
+        </Link>
+      ) : null}
     </div>
   );
 }

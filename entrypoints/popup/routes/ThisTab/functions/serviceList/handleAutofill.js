@@ -79,7 +79,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     target: REQUEST_TARGETS.CONTENT
   });
 
-  if (service?.securityType === 1) {
+  if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
     if (!service?.password || service?.password?.length <= 0) {
       const inputTests = await sendMessageToAllFrames(tab.id, {
         action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
@@ -109,7 +109,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
 
       return;
     }
-  } else if (service?.securityType === 2) {
+  } else if (service?.securityType === SECURITY_TIER.SECRET) {
     if ((!service?.password || service?.password?.length <= 0) && (service?.username && service?.username?.length > 0)) {
       passwordDecrypt = false;
     } else if ((!service?.password || service?.password?.length <= 0) && (!service?.username || service?.username?.length <= 0)) {

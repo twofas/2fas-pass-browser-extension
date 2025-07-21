@@ -22,9 +22,11 @@ const getSecIcon = async () => {
   let t = await storage.getItem('local:theme');
 
   if (t === 'unset') {
-    t = 'light';
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    t = isDarkMode ? 'dark' : 'light';
   }
 
+  // FUTURE - theme change proofing
   return secIcon.icon
     .replaceAll('fill="SEC_COLOR_1"', `fill="${secIcon.colors[0][t]}"`)
     .replaceAll('fill="SEC_COLOR_2"', `fill="${secIcon.colors[1][t]}"`)

@@ -19,14 +19,18 @@ const generatePersistentKeys = async () => {
     ['sign', 'verify']
   );
 
-  const publicKeyArrayBuffer = await crypto.subtle.exportKey('spki', keys.publicKey);
-  const privateKeyArrayBuffer = await crypto.subtle.exportKey('pkcs8', keys.privateKey);
+  const [publicKeyArrayBuffer, privateKeyArrayBuffer] = await Promise.all([
+    crypto.subtle.exportKey('spki', keys.publicKey),
+    crypto.subtle.exportKey('pkcs8', keys.privateKey)
+  ]);
 
   const publicKey = ArrayBufferToBase64(publicKeyArrayBuffer);
   const privateKey = ArrayBufferToBase64(privateKeyArrayBuffer);
 
-  await storage.setItem('local:persistentPublicKey', publicKey);
-  await storage.setItem('local:persistentPrivateKey', privateKey);
+  await storage.setItems([
+    { key: 'local:persistentPublicKey', value: publicKey },
+    { key: 'local:persistentPrivateKey', value: privateKey }  
+  ]);
 
   return publicKey;
 };

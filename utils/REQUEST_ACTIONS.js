@@ -5,7 +5,8 @@
 // See LICENSE file for full terms
 
 export const REQUEST_ACTIONS = {
-  AUTO_CLEAR_CLIPBOARD: 'autoClearClipboard', // content, popup
+  AUTO_CLEAR_CLIPBOARD: 'autoClearClipboard', // content, popup, focus
+  AUTO_CLEAR_ACTION: 'autoClearAction', // background, focus
   AUTOFILL: 'autofill', // content
   CHECK_AUTOFILL_INPUTS: 'checkAutofillInputs', // content
   SEND_URL: 'sendUrl', // popup

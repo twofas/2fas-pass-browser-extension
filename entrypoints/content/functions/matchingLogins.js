@@ -14,6 +14,7 @@ import { HEX_REGEX } from '@/constants/regex';
 import getDomain from '@/partials/functions/getDomain';
 import getTextColor from '@/partials/functions/getTextColor';
 import URIMatcher from '@/partials/URIMatcher';
+import { parseDomain, ParseResultType } from 'parse-domain';
 
 /** 
 * Function to close the notification.
@@ -113,7 +114,7 @@ const matchingLogins = (request, sendResponse, container) => {
     return sendResponse({ status: 'omitted' });
   }
 
-  let n = {
+  const n = {
     container: container.querySelector(S.notification.container),
     item: null,
     top: null,
@@ -182,16 +183,28 @@ const matchingLogins = (request, sendResponse, container) => {
 
     if ((!item?.iconType && item?.iconType !== 0) || item?.iconType === 1) {
       // Label
-      generateLabel(item, itemIcon)
+      generateLabel(item, itemIcon);
     } else if (item?.iconType === 0) {
       // Default favicon
       let iconDomain = '';
+      let parsedDomain = null;
       const iconUriIndex = item?.iconUriIndex || 0;
 
       try {
         iconDomain = getDomain(item?.uris[iconUriIndex]?.text);
+
+        try {
+          parsedDomain = parseDomain(iconDomain);
+        } catch {}
         
-        if (!iconDomain || URIMatcher.isIp(iconDomain) || iconDomain === 'localhost') {
+        if (
+          !iconDomain ||
+          URIMatcher.isIp(iconDomain) ||
+          iconDomain === 'localhost' ||
+          parsedDomain?.type === ParseResultType.Invalid ||
+          parsedDomain?.type === ParseResultType.Reserved ||
+          parsedDomain?.type === ParseResultType.NotListed
+        ) {
           throw new Error('Invalid domain for favicon');
         }
 
@@ -208,15 +221,14 @@ const matchingLogins = (request, sendResponse, container) => {
           itemIcon.classList.remove('icon-image');
           generateLabel(item, itemIcon);
         };
-      } catch (e) {
+      } catch {
         generateLabel(item, itemIcon);
       }
     } else {
       // Custom
-      // FUTURE - Fix with proxy / fetch on background?
       itemIcon.classList.add('icon-image');
       const iconImage = createElement('img');
-      iconImage.src = item?.customImageUrl;
+      iconImage.src = `https://custom-icon.2fas.com/?url=${item?.customImageUrl}`;
       iconImage.alt = item.name;
       itemIcon.appendChild(iconImage);
 
@@ -236,7 +248,7 @@ const matchingLogins = (request, sendResponse, container) => {
       itemAccountUsername = createTextElement('span', item.username);
     }
 
-    const itemSecondaryBtnText = (item.securityType === 2 || item.t2WithPassword === true) ? browser.i18n.getMessage('autofill') : browser.i18n.getMessage('fetch');
+    const itemSecondaryBtnText = (item.securityType === SECURITY_TIER.SECRET || item.t2WithPassword === true) ? browser.i18n.getMessage('autofill') : browser.i18n.getMessage('fetch');
     const itemSecondaryBtn = createTextElement('span', itemSecondaryBtnText, 'twofas-pass-notification-matching-logins-item-secondary-btn');
 
     itemAccount.appendChild(itemAccountName);

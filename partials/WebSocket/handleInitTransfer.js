@@ -17,10 +17,9 @@ import TwoFasWebSocket from '@/partials/WebSocket';
 * @param {ArrayBuffer} hkdfSaltAB - The salt for HKDF.
 * @param {CryptoKey} sessionKeyForHKDF - The session key for HKDF.
 * @param {string} uuid - The unique identifier for the user.
-* @param {string} deviceId - The unique identifier for the device.
 * @return {Promise<Object>} The response object containing the result of the action.
 */
-const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid, deviceId) => {
+const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid) => {
   const { totalChunks, totalSize, sha256GzipVaultDataEnc, newSessionIdEnc } = json.payload;
   let newSessionIdDec_B64;
 

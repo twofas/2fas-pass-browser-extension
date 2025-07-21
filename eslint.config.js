@@ -1,0 +1,63 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+import globals from 'globals';
+import { defineConfig, globalIgnores } from 'eslint/config';
+import pluginJs  from '@eslint/js';
+import autoImports from './.wxt/eslint-auto-imports.mjs';
+// import react from 'eslint-config-react-app';
+
+export default defineConfig([
+  globalIgnores([
+    'node_modules/**',
+    'build/**',
+    'dist/**',
+    '.output/**/*',
+    '.wxt/**/*',
+    'mobile-mock/**/*',
+    '2FAS Pass Browser Extension/**/*',
+    'testFiles/**/*'
+  ]),
+  autoImports,
+  {
+    ...pluginJs.configs.recommended,
+    languageOptions: {
+       ...pluginJs.configs.recommended.languageOptions,
+       globals: { ...globals.browser },
+    }
+  },
+	{
+    files: ['**/*.js', '**/*.mjs'],
+    languageOptions: {
+      globals: { ...globals.browser },
+    },
+		rules: {
+			semi: "error",
+			"prefer-const": "error",
+      "no-unused-vars": "warn",
+      "no-empty": [
+        "error",
+        {
+          "allowEmptyCatch": true
+        }
+      ]
+    }
+	},
+  // {
+  //   files: ['**/*.jsx'],
+  //   languageOptions: {
+  //     globals: { ...globals.browser },
+  //   },
+  //   plugins: {
+  //     react
+  //   },
+  //   rules: {
+	// 		semi: "error",
+	// 		"prefer-const": "error",
+  //     "no-unused-vars": "warn"
+	// 	},
+  // }
+]);

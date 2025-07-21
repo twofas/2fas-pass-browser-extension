@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import URL from '../components/URL';
+import URLComponent from '../components/URLComponent';
 
 /** 
 * Function to generate URLs.
@@ -21,7 +21,7 @@ const generateURLs = props => {
 
   return uris.map((uri, index) => {
     return (
-      <URL
+      <URLComponent
         key={index}
         index={index}
         data={data}

@@ -10,7 +10,7 @@
 * @return {string} The resulting base64 string from the hexadecimal input.
 */
 export const HexToBase64 = hex => {
-  if (typeof hex !== 'string' || !hex instanceof String) {
+  if (typeof hex !== 'string') {
     throw new TypeError('HexToBase64: Expected input to be a string');
   }
 

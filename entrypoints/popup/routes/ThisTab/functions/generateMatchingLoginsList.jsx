@@ -32,8 +32,8 @@ const generateMatchingLoginsList = (logins, loading) => {
 
   let loginsData;
 
-  let fetchedLogins = logins.filter(login => login.securityType === 1 && login.password && login.password.length > 0);
-  let restLogins = logins.filter(login => login.securityType !== 1 || (login.securityType === 1 && !login.password));
+  let fetchedLogins = logins.filter(login => login.securityType === SECURITY_TIER.HIGHLY_SECRET && login.password && login.password.length > 0);
+  let restLogins = logins.filter(login => login.securityType !== SECURITY_TIER.HIGHLY_SECRET || (login.securityType === SECURITY_TIER.HIGHLY_SECRET && !login.password));
 
   fetchedLogins = sortByName(fetchedLogins);
   restLogins = sortByName(restLogins);

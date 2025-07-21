@@ -15,11 +15,11 @@ const getNTPTime = async () => {
   try {
     response = await fetch(`https://${import.meta.env.VITE_API_URL_ORIGIN}/time`, { method: 'GET' });
   } catch {
-    return new Date().valueOf();
+    return Date.now();
   }
   
   if (!response || !response?.ok) {
-    return new Date().valueOf();
+    return Date.now();
   }
 
   const data = await response.text();

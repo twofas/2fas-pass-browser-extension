@@ -32,7 +32,7 @@ const handlePassword = async (id, more, setMore) => {
 
   try {
     const decryptedPassword = await decryptPassword(service);
-    await copyValue(decryptedPassword);
+    await copyValue(decryptedPassword, service.id, 'password');
     showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
   } catch (e) {
     showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');

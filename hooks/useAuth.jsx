@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async () => {
-    await setConfigured(new Date().valueOf());
+    await setConfigured(Date.now());
     await setStateConfigured(true);
     navigate('/', { replace: true });
   };

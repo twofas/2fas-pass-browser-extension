@@ -8,7 +8,6 @@
 @use '@/partials/global-styles/mixins' as m;
 
 *::-webkit-scrollbar {
-  background-color: v.$primary-bg-light;
   width: 8px;
 }
  
@@ -17,8 +16,19 @@
 }
  
 *::-webkit-scrollbar-thumb {
-  background-color: v.$hover-on-hover-light;
   border-radius: 4px;
+}
+
+:global(body.theme-light) {
+  &::-webkit-scrollbar,
+  *::-webkit-scrollbar {
+    background-color: v.$primary-bg-light;
+  }
+  
+  &::-webkit-scrollbar-thumb,
+  *::-webkit-scrollbar-thumb {
+    background-color: v.$hover-on-hover-light;
+  }
 }
 
 :global(body.theme-dark) {
@@ -30,6 +40,32 @@
   &::-webkit-scrollbar-thumb,
   *::-webkit-scrollbar-thumb {
     background-color: v.$hover-on-hover-dark;
+  }
+}
+
+:global(body.theme-unset) {
+  @media (prefers-color-scheme: light) {
+    &::-webkit-scrollbar,
+    *::-webkit-scrollbar {
+      background-color: v.$primary-bg-light;
+    }
+     
+    &::-webkit-scrollbar-thumb,
+    *::-webkit-scrollbar-thumb {
+      background-color: v.$hover-on-hover-light;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    &::-webkit-scrollbar,
+    *::-webkit-scrollbar {
+      background-color: v.$primary-bg-dark;
+    }
+     
+    &::-webkit-scrollbar-thumb,
+    *::-webkit-scrollbar-thumb {
+      background-color: v.$hover-on-hover-dark;
+    }
   }
 }
 
@@ -51,7 +87,8 @@
   }
 
   :global(body.theme-dark) &,
-  :global(body.theme-light) & {
+  :global(body.theme-light) &,
+  :global(body.theme-unset) & {
     opacity: 1;
   }
   
