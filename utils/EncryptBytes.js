@@ -11,11 +11,11 @@
  * @return {ArrayBuffer} The encrypted bytes as an ArrayBuffer.
  */
 const EncryptBytes = (iv, data) => {
-  if (!(iv instanceof ArrayBuffer)) {
+  if (!(iv instanceof ArrayBuffer) && iv[Symbol?.toStringTag] !== 'ArrayBuffer') {
     throw new TypeError('EncryptBytes: Expected IV to be an ArrayBuffer');
   }
 
-  if (!(data instanceof ArrayBuffer)) {
+  if (!(data instanceof ArrayBuffer) && data[Symbol?.toStringTag] !== 'ArrayBuffer') {
     throw new TypeError('EncryptBytes: Expected data to be an ArrayBuffer');
   }
 

@@ -17,12 +17,12 @@ const sendMessageToTab = async (tabID, message) => {
 
   try {
     res = await browser.tabs.sendMessage(tabID, message);
-  } catch (e) {
-    throw new TwoFasError(TwoFasError.internalErrors.sendMessageToTab, { event: e, additional: { func: 'sendMessageToTab' } });
+  } catch {
+    return undefined;
   }
   
   if (!res) {
-    throw new TwoFasError(TwoFasError.internalErrors.sendMessageToTabNoResponse, { additional: { func: 'sendMessage' } });
+    return undefined;
   }
 
   switch (res?.status) {
@@ -34,13 +34,8 @@ const sendMessageToTab = async (tabID, message) => {
       // }, tabID);
     }
 
-    case 'ok':
-    case 'error': {
-      return res;
-    }
-
     default: {
-      throw new TwoFasError(TwoFasError.internalErrors.sendMessageToTabUnknownResponse, { additional: { func: 'sendMessage' } });
+      return res;
     }
   }
 };

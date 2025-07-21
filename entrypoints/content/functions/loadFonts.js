@@ -4,8 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/* global FontFace */
-
 /** 
 * Function to load custom fonts.
 * @return {boolean} True if fonts are already loaded, false otherwise.

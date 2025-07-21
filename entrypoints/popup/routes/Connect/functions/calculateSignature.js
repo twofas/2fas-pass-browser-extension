@@ -14,29 +14,38 @@ import compressPublicKey from '@/partials/functions/compressPublicKey';
 * @return {Promise<string>} A promise that resolves to the calculated signature.
 */
 const calculateSignature = async (ephemeralPublicKey, sessionID) => {
-  let storagePersistentPublicKeyHex, persistentPrivateKey;
+  let storagePersistentPublicKeyHex, persistentPrivateKey, storageCompressedPublicKeyAB;
 
   try {
-    const storagePersistentPublicKeyB64 = await storage.getItem('local:persistentPublicKey');
-    const storagePersistentPublicKeyAB = Base64ToArrayBuffer(storagePersistentPublicKeyB64);
-    const storageCompressedPublicKeyAB = await compressPublicKey(storagePersistentPublicKeyAB);
+    const [storagePersistentPublicKeyB64, storagePersistentPrivateKey] = await Promise.all([
+      storage.getItem('local:persistentPublicKey'),
+      storage.getItem('local:persistentPrivateKey')
+    ]);
+
+    const [storagePersistentPublicKeyAB, persistentPrivateKeyArrayBuffer] = await Promise.all([
+      Promise.resolve(Base64ToArrayBuffer(storagePersistentPublicKeyB64)),
+      Promise.resolve(Base64ToArrayBuffer(storagePersistentPrivateKey))
+    ]);
+
+    [storageCompressedPublicKeyAB, persistentPrivateKey] = await Promise.all([
+      compressPublicKey(storagePersistentPublicKeyAB),
+      crypto.subtle.importKey(
+        'pkcs8',
+        persistentPrivateKeyArrayBuffer,
+        { name: 'ECDSA', namedCurve: 'P-256' },
+        true,
+        ['sign']
+      )
+    ]);
+
     storagePersistentPublicKeyHex = ArrayBufferToHex(storageCompressedPublicKeyAB);
   } catch (e) {
-    throw new TwoFasError(TwoFasError.internalErrors.calculateSignaturePublicKeyError, { event: e });
-  }
-
-  try {
-    const storagePersistentPrivateKey = await storage.getItem('local:persistentPrivateKey');
-    const persistentPrivateKeyArrayBuffer = Base64ToArrayBuffer(storagePersistentPrivateKey);
-    persistentPrivateKey = await crypto.subtle.importKey(
-      'pkcs8',
-      persistentPrivateKeyArrayBuffer,
-      { name: 'ECDSA', namedCurve: 'P-256' },
-      true,
-      ['sign']
-    );
-  } catch (e) {
-    throw new TwoFasError(TwoFasError.internalErrors.calculateSignaturePrivateKeyError, { event: e });
+    const isPrivateKeyError = e.message?.includes('pkcs8') || e.message?.includes('sign');
+    const errorType = isPrivateKeyError 
+      ? TwoFasError.internalErrors.calculateSignaturePrivateKeyError
+      : TwoFasError.internalErrors.calculateSignaturePublicKeyError;
+    
+    throw new TwoFasError(errorType, { event: e });
   }
 
   const ephemeralPublicKeyHex = Base64ToHex(ephemeralPublicKey);

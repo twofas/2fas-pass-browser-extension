@@ -13,7 +13,7 @@
 * @return {Promise<void>} A promise that resolves when the installation page is opened.
 */
 const openInstallPage = async () => {
-  let extURL, tabQuery, installPageExists;
+  let extURL, tabQuery;
 
   try {
     extURL = browser.runtime.getURL('/install.html');
@@ -27,7 +27,7 @@ const openInstallPage = async () => {
     tabQuery = await browser.tabs.query({ url: extURL });
   } catch {}
 
-  installPageExists = tabQuery && tabQuery.length > 0;
+  const installPageExists = tabQuery && tabQuery.length > 0;
 
   if (!installPageExists) {
     await browser.tabs.create({ url: 'install.html' });

@@ -24,7 +24,7 @@ const updateLoginCancel = async (loginId, messageId) => {
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginCancelError);
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginCancelError, { event: e });
   }
 };
 

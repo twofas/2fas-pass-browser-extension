@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { parseDomain, ParseResultType } from 'parse-domain';
-import { PROTOCOL_REGEX, URL_REGEX, IP_REGEX, LOCAL_DOMAIN_WO_TLD_REGEX, ANDROID_BUNDLE_REGEX } from '@/constants/regex';
+import { URL_REGEX, IP_REGEX } from '@/constants/regex';
 
 // FUTURE - Check if TwoFasError works here
 
@@ -14,89 +14,145 @@ import { PROTOCOL_REGEX, URL_REGEX, IP_REGEX, LOCAL_DOMAIN_WO_TLD_REGEX, ANDROID
 * @module URIMatcher
 */
 class URIMatcher {
-  static PROTOCOL_REGEX = PROTOCOL_REGEX;
   static URL_REGEX = URL_REGEX;
   static IP_REGEX = IP_REGEX;
-  static LOCAL_DOMAIN_WO_TLD_REGEX = LOCAL_DOMAIN_WO_TLD_REGEX;
-  static ANDROID_BUNDLE_REGEX = ANDROID_BUNDLE_REGEX;
   static TRACKERS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'dclid', 'fbclid', 'msclkid', 'twclid', 'lmsid', 'mc_eid', 'mc_cid'];
+
+  static ADDITIONAL_PROTOCOLS = {
+    chrome: ['about:', 'chrome-extension:', 'chrome:'],
+    firefox: ['about:', 'moz-extension:'],
+    opera: ['about:', 'chrome-extension:', 'chrome:', 'opera:'],
+    edge: ['about:', 'chrome-extension:', 'chrome:', 'edge:'],
+    safari: ['about:', 'safari-extension:']
+  };
+
+  static PROTOCOL_REGEX = {
+    chrome: /^(about|chrome-extension|chrome)?:/i,
+    firefox: /^(about|moz-extension)?:/i,
+    opera: /^(about|chrome-extension|chrome|opera)?:/i,
+    edge: /^(about|chrome-extension|chrome|edge)?:/i,
+    safari: /^(about|safari-extension)?:/i
+  };
+
+  static BAD_PARSE_DOMAIN_TYPES = [ParseResultType.Invalid, ParseResultType.Reserved, ParseResultType.NotListed];
 
   static M_DOMAIN_TYPE = 0;
   static M_HOST_TYPE = 1;
   static M_START_WITH_TYPE = 2;
   static M_EXACT_TYPE = 3;
 
+  static MATCHER_FUNCTIONS = {
+    [this.M_DOMAIN_TYPE]: this.baseDomainMatch.bind(this),
+    [this.M_HOST_TYPE]: this.hostMatch.bind(this),
+    [this.M_START_WITH_TYPE]: this.prefixMatch.bind(this),
+    [this.M_EXACT_TYPE]: this.exactMatch.bind(this)
+  };
+
   static BreakException = {};
   
   static isText (text) {
-    if (typeof text === 'string' || text instanceof String) {
-      return true;
-    }
-
-    return false;
+    return typeof text === 'string';
   }
 
-  static prependProtocol (url) {
-    if (!this.PROTOCOL_REGEX.test(url)) {
-      url = 'https://' + url;
-    }
-    
-    return url;
-  }
-
-  static isUrl (url) {
-    if (
-      (!this.URL_REGEX.test(url) &&
-      !this.IP_REGEX.test(url) &&
-      !this.LOCAL_DOMAIN_WO_TLD_REGEX.test(url)) ||
-      this.ANDROID_BUNDLE_REGEX.test(url)
-    ) {
-      return false;
-    }
-
-    if (!this.PROTOCOL_REGEX.test(url)) {
-      const prependedURL = this.prependProtocol(url);
-      let normalizedIDN, normalizedIDNObj;
-      
-      try { // For bad TLD like .123
-        normalizedIDN = this.normalizeIDN(prependedURL);
-        normalizedIDNObj = new URL(normalizedIDN);
-      } catch (e) {
-        return false;
-      }
-
-      const parsedUrl = parseDomain(normalizedIDNObj.hostname);
-
-      if (parsedUrl?.type === ParseResultType.Ip) {
-        return true;
-      }
-
-      if (parsedUrl?.type === ParseResultType.Listed) {
-        try {
-          new URL(prependedURL); // eslint-disable-line no-new
-          return true;
-        } catch (e) {
-          return false;
-        }
-      } else {
-        return false;
-      }
-    } else {
-      try {
-        new URL(url); // eslint-disable-line no-new
-        return true;
-      } catch (e) {
-        return false;
-      }
-    }
-  }
-
-  static isIp (url) { // FUTURE - Add tests (+ check IPv6)
+  static hasStandardProtocol (url) {
     if (!this.isText(url)) {
       throw new Error('Parameter is not a string');
     }
 
-    return this.IP_REGEX.test(url);
+    url = url.toLowerCase();
+
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
+  static prependProtocol (url) {
+    if (!this.isText(url)) {
+      throw new Error('Parameter is not a string');
+    }
+
+    if (this.hasStandardProtocol(url)) {
+      return url;
+    }
+
+    return this.PROTOCOL_REGEX[import.meta.env.BROWSER || 'chrome'].test(url) ? url : 'https://' + url;
+  }
+
+  static isUrl (url, internalProtocols = false) {
+    if (url.length <= 0 || url.length > 2048) {
+      return false;
+    }
+
+    const hasHttpProtocol = this.hasStandardProtocol(url);
+
+    if (hasHttpProtocol) {
+      return true;
+    }
+
+    if (this.URL_REGEX.test(url) || this.IP_REGEX.test(url)) {
+      let prependedUrl = url;
+
+      if (!hasHttpProtocol) {
+        prependedUrl = this.prependProtocol(url);
+      }
+
+      try {
+        const urlObj = new URL(prependedUrl);
+        const parsedDomain = parseDomain(urlObj.hostname);
+
+        if (parsedDomain?.type === ParseResultType.Ip || parsedDomain?.type === ParseResultType.Listed) {
+          return true;
+        }
+
+        return false;
+      } catch {
+        if (prependedUrl === url) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    } else {
+      if (internalProtocols) {
+        return this.PROTOCOL_REGEX[import.meta.env.BROWSER || 'chrome'].test(url);
+      } else {
+        return false;
+      }
+    }
+  }
+
+  static isIp (url) { // FUTURE - Check IPv6 when supported
+    if (!this.isText(url)) {
+      throw new Error('Parameter is not a string');
+    }
+
+    if (!IP_REGEX.test(url)) {
+      return false;
+    }
+
+    let normalizedUrl, urlObj;
+
+    try {
+      normalizedUrl = this.normalizeUrl(url);
+    } catch {
+      return false;
+    }
+
+    try {
+      urlObj = new URL(normalizedUrl);
+    } catch {
+      return false;
+    }
+
+    if (!urlObj || !urlObj.hostname) {
+      return false;
+    }
+
+    const parsedDomain = parseDomain(urlObj.hostname);
+
+    if (parsedDomain?.type === ParseResultType.Ip) {
+      return true;
+    }
+
+    return false;
   }
 
   static trimText (text) {
@@ -152,7 +208,7 @@ class URIMatcher {
       throw new Error('Parameter is not a string');
     }
 
-    return url.replace(/\/(\?|\#)*$/, '');
+    return url.replace(/\/(\?|#)*$/, '');
   }
 
   static getLowerCaseURLWithoutPort (url) {
@@ -174,76 +230,31 @@ class URIMatcher {
     return `${protocol}//${lowerCaseHostname}${port ? `:${port}` : ''}${pathname}${search}${hash}`;
   }
 
-  // static urlencode (url) {
-  //   if (!this.isText(url)) {
-  //     throw new Error('Parameter is not a string');
-  //   }
-
-  //   let urlObj;
-
-  //   try {
-  //     urlObj = new URL(url);
-  //   } catch {
-  //     throw new Error('Parameter is not a valid URL');
-  //   }
-
-  //   const { protocol, hostname, port, searchParams } = urlObj;
-  //   let { pathname, search, hash } = urlObj;
-
-  //   if (pathname) {
-  //     pathname = '/' + encodeURIComponent(decodeURIComponent(pathname.substring(1)));
-  //   }
-
-  //   if (searchParams.size > 0) {
-  //     searchParams.forEach((value, key) => {
-  //       searchParams.set(key, encodeURIComponent(decodeURIComponent(value)));
-  //     });
-
-  //     search = '?' + searchParams.toString();
-
-  //     if (search.substring(search.length - 1, search.length) === '=') {
-  //       search = search.substring(0, search.length - 1);
-  //     }
-  //   }
-
-  //   if (hash) {
-  //     if (hash !== '#?') {
-  //       hash = '#' + encodeURIComponent(decodeURIComponent(hash.substring(1)));
-  //     }
-  //   }
-
-  //   if (pathname === '/' && !search && !hash) {
-  //     pathname = '';
-  //   }
-
-  //   return `${protocol}//${hostname}${port ? `:${port}` : ''}${pathname}${search}${hash}`;
-  // }
-
-  static normalizeIDN (url) {
+  static normalizeIDN (url, internalProtocols = false) {
     if (!this.isText(url)) {
       throw new Error('Parameter is not a string');
     }
 
-    if (!this.isUrl(url)) {
+    if (!this.isUrl(url, internalProtocols)) {
       throw new Error('Parameter is not a valid URL');
     }
 
     return new URL(url).href;
   }
 
-  static normalizeUrl (url) {
+  static normalizeUrl (url, internalProtocols = false) {
     if (!this.isText(url)) {
       throw new Error('Parameter is not a string');
     }
     
     const trimmed = this.trimText(url);
 
-    if (!this.isUrl(trimmed)) {
+    if (!this.isUrl(trimmed, internalProtocols)) {
       throw new Error('Parameter is not a valid URL');
     }
 
     const prepended = this.prependProtocol(trimmed);
-    const normalizedIDN = this.normalizeIDN(prepended);
+    const normalizedIDN = this.normalizeIDN(prepended, internalProtocols);
 
     const lowerCaseURLWithoutPort = this.getLowerCaseURLWithoutPort(normalizedIDN);
     const urlWithoutTrailingChars = this.removeTrailingChars(lowerCaseURLWithoutPort);
@@ -251,15 +262,26 @@ class URIMatcher {
     return urlWithoutTrailingChars;
   }
 
-  static baseDomainMatch (serviceUrl, browserUrl) {
-    serviceUrl = this.normalizeUrl(serviceUrl);
-    browserUrl = this.normalizeUrl(browserUrl);
+  static baseDomainMatch (serviceUrl, browserUrl, internalProtocols = false) {
+    const normalizedServiceUrl = this.ignoreWWW(this.normalizeUrl(serviceUrl, internalProtocols));
+    const normalizedBrowserUrl = this.ignoreWWW(this.normalizeUrl(browserUrl, internalProtocols));
 
-    serviceUrl = this.ignoreWWW(serviceUrl);
-    browserUrl = this.ignoreWWW(browserUrl);
+    if (normalizedServiceUrl === normalizedBrowserUrl) {
+      return true;
+    }
 
-    const serviceUrlObj = new URL(serviceUrl);
-    const browserUrlObj = new URL(browserUrl);
+    let serviceUrlObj, browserUrlObj;
+
+    try {
+      serviceUrlObj = new URL(normalizedServiceUrl);
+      browserUrlObj = new URL(normalizedBrowserUrl);
+    } catch {
+      return false;
+    }
+
+    if (serviceUrlObj.hostname === browserUrlObj.hostname) {
+      return true;
+    }
 
     const serviceUrlParsed = parseDomain(serviceUrlObj.hostname);
     const browserUrlParsed = parseDomain(browserUrlObj.hostname);
@@ -268,134 +290,104 @@ class URIMatcher {
       return serviceUrlParsed.hostname === browserUrlParsed.hostname;
     }
 
-    return serviceUrlParsed.domain === browserUrlParsed.domain && serviceUrlParsed.topLevelDomains[0] === browserUrlParsed.topLevelDomains[0];
+    if (this.BAD_PARSE_DOMAIN_TYPES.includes(serviceUrlParsed?.type) || this.BAD_PARSE_DOMAIN_TYPES.includes(browserUrlParsed?.type)) {
+      if (
+        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].includes(serviceUrlObj?.protocol) ||
+        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].includes(browserUrlObj?.protocol)
+      ) {
+        return false;
+      } else {
+        return serviceUrlObj?.origin === browserUrlObj?.origin;
+      }
+    }
+
+    return serviceUrlParsed?.domain === browserUrlParsed?.domain && serviceUrlParsed?.topLevelDomains?.[0] === browserUrlParsed?.topLevelDomains?.[0];
   }
 
-  static hostMatch (serviceUrl, browserUrl) {
-    serviceUrl = this.normalizeUrl(serviceUrl);
-    browserUrl = this.normalizeUrl(browserUrl);
+  static hostMatch (serviceUrl, browserUrl, internalProtocols = false) {
+    const normalizedServiceUrl = this.ignoreWWW(this.normalizeUrl(serviceUrl, internalProtocols));
+    const normalizedBrowserUrl = this.ignoreWWW(this.normalizeUrl(browserUrl, internalProtocols));
 
-    serviceUrl = this.ignoreWWW(serviceUrl);
-    browserUrl = this.ignoreWWW(browserUrl);
+    if (normalizedServiceUrl === normalizedBrowserUrl) {
+      return true;
+    }
 
-    const serviceUrlObj = new URL(serviceUrl);
-    const browserUrlObj = new URL(browserUrl);
+    let serviceUrlObj, browserUrlObj;
+
+    try {
+      serviceUrlObj = new URL(normalizedServiceUrl);
+      browserUrlObj = new URL(normalizedBrowserUrl);
+    } catch {
+      return false;
+    }
 
     return serviceUrlObj.host === browserUrlObj.host;
   }
 
-  static prefixMatch (serviceUrl, browserUrl) {
-    serviceUrl = this.normalizeUrl(serviceUrl);
-    browserUrl = this.normalizeUrl(browserUrl);
+  static prefixMatch (serviceUrl, browserUrl, internalProtocols = false) {
+    const normalizedServiceUrl = this.ignoreWWW(this.normalizeUrl(serviceUrl, internalProtocols));
+    const normalizedBrowserUrl = this.ignoreWWW(this.normalizeUrl(browserUrl, internalProtocols));
 
-    serviceUrl = this.ignoreWWW(serviceUrl);
-    browserUrl = this.ignoreWWW(browserUrl);
-
-    return browserUrl.startsWith(serviceUrl);
+    return normalizedBrowserUrl.startsWith(normalizedServiceUrl);
   }
 
-  static exactMatch (serviceUrl, browserUrl) {
-    serviceUrl = this.normalizeUrl(serviceUrl);
-    browserUrl = this.normalizeUrl(browserUrl);
-
-    return serviceUrl === browserUrl;
+  static exactMatch (serviceUrl, browserUrl, internalProtocols = false) {
+    return this.normalizeUrl(serviceUrl, internalProtocols) === this.normalizeUrl(browserUrl, internalProtocols);
   }
 
   static getMatchedAccounts (services, tabUrl) {
     if (!this.isText(tabUrl)) {
       throw new Error('Parameter tabUrl is not a string');
     }
-
+    
     if (!Array.isArray(services)) {
       throw new Error('Parameter services is not an array');
     }
-
-    if (!this.isUrl(tabUrl)) {
+    
+    if (!this.isUrl(tabUrl, true)) {
       throw new Error('Parameter tabUrl is not a valid URL');
     }
-
+    
     if (services.length <= 0) {
       return [];
     }
     
-    try {
-      tabUrl = this.normalizeUrl(tabUrl);
-    } catch {
-      return [];
-    }
-
     const domainCredentials = [];
 
-    services.forEach(account => {
-      if (!account?.uris || !Array.isArray(account?.uris) || account?.uris.length <= 0) {
-        return [];
-      }
+    try {
+      services.forEach(account => {
+        if (!account?.uris || !Array.isArray(account?.uris) || account?.uris.length <= 0) {
+          return;
+        }
 
-      const serviceUrls = this.recognizeURIs(account.uris)?.urls;
+        const serviceUrls = this.recognizeURIs(account.uris, true)?.urls;
 
-      if (!serviceUrls || serviceUrls.length <= 0) {
-        return [];
-      }
+        if (!serviceUrls || serviceUrls.length <= 0) {
+          return;
+        }
 
-      try {
         serviceUrls.forEach(uri => {
-          const matcher = uri?.matcher;
-          const text = uri?.text;
+          const { matcher, text } = uri;
 
           if (
             (!Number.isInteger(matcher) || matcher < URIMatcher.M_DOMAIN_TYPE || matcher > URIMatcher.M_EXACT_TYPE) ||
             (!this.isText(text) || text.length <= 0) ||
-            (!this.isUrl(text))
+            (!this.isUrl(text, true))
           ) {
-            throw this.BreakException;
+            return;
           }
 
-          const serviceUrl = this.normalizeUrl(text);
-
-          switch (matcher) {
-            case this.M_DOMAIN_TYPE: {
-              if (this.baseDomainMatch(serviceUrl, tabUrl)) {
-                domainCredentials.push(account);
-              }
-  
-              break;
-            }
-  
-            case this.M_HOST_TYPE: {
-              if (this.hostMatch(serviceUrl, tabUrl)) {
-                domainCredentials.push(account);
-              }
-  
-              break;
-            }
-  
-            case this.M_START_WITH_TYPE: {
-              if (this.prefixMatch(serviceUrl, tabUrl)) {
-                domainCredentials.push(account);
-              }
-
-              break;
-            }
-  
-            case this.M_EXACT_TYPE: {
-              if (this.exactMatch(serviceUrl, tabUrl)) {
-                domainCredentials.push(account);
-              }
-              
-              break;
-            }
-  
-            default: {
-              break;
-            }
+          const matcherFunction = this.MATCHER_FUNCTIONS[matcher];
+          if (matcherFunction && matcherFunction(text, tabUrl, true)) {
+            domainCredentials.push(account);
           }
         });
-      } catch (e) {
-        if (e !== this.BreakException) {
-          throw e;
-        }
+      });
+    } catch (e) {
+      if (e !== this.BreakException) {
+        throw e;
       }
-    });
+    }
 
     const map = new Map();
     domainCredentials.forEach(obj => {
@@ -407,12 +399,14 @@ class URIMatcher {
     return Array.from(map.values());
   }
 
-  static recognizeURIs (uris) {
+  static recognizeURIs (uris, internalProtocols = false) {
     if (Array.isArray(uris) === false) {
       throw new Error('Parameter is not an array');
     }
 
     const response = { urls: [], others: [] };
+    const seenUrls = new Set();
+    const seenOthers = new Set();
 
     if (uris.length <= 0) {
       return response;
@@ -426,11 +420,17 @@ class URIMatcher {
           throw this.BreakException;
         }
 
-        if (this.isUrl(text)) {
-          uri.text = this.normalizeUrl(text);
-          response.urls.push(uri);
+        if (this.isUrl(text, internalProtocols)) {
+          uri.text = this.normalizeUrl(text, internalProtocols);
+          if (!seenUrls.has(uri.text)) {
+            seenUrls.add(uri.text);
+            response.urls.push(uri);
+          }
         } else {
-          response.others.push(uri);
+          if (!seenOthers.has(uri.text)) {
+            seenOthers.add(uri.text);
+            response.others.push(uri);
+          }
         }
       });
     } catch (e) {
@@ -438,10 +438,6 @@ class URIMatcher {
         throw e;
       }
     }
-
-    // Remove duplicates
-    response.urls = response.urls.filter((value, index, self) => self.findIndex(t => t.text === value.text) === index);
-    response.others = response.others.filter((value, index, self) => self.findIndex(t => t.text === value.text) === index);
 
     return response;
   }

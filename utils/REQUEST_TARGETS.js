@@ -12,4 +12,5 @@ export const REQUEST_TARGETS = {
   POPUP_ADD_NEW: 'popup_add_new',
   POPUP_THIS_TAB: 'popup_this_tab',
   PROMPT: 'prompt',
+  FOCUS_CONTENT: 'focus_content'
 };

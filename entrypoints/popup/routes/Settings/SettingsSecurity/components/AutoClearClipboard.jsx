@@ -6,7 +6,9 @@
 
 import S from '../../Settings.module.scss';
 import Select from 'react-select';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy } from 'react';
+
+const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
 
 /**
 * Function to render the Auto Clear Clipboard component.
@@ -48,6 +50,16 @@ function AutoClearClipboard () {
   const handleAutoClearClipboardChange = async change => {
     setDisabled(true);
 
+    if (change.value !== 'default' && import.meta.env.BROWSER !== 'safari') {
+      const clipboardReadPermission = await browser.permissions.request({ permissions: ['clipboardRead'] });
+      
+      if (!clipboardReadPermission) {
+        showToast(browser.i18n.getMessage('error_auto_clear_clipboard_permission_denied'), 'error');
+        setDisabled(false);
+        return;
+      }
+    }
+
     try {
       const value = change?.value;
       await storage.setItem('local:autoClearClipboard', value);
@@ -77,11 +89,16 @@ function AutoClearClipboard () {
           classNamePrefix='react-select'
           isSearchable={false}
           options={autoClearClipboardOptions}
-          defaultValue={autoClearClipboardOptions.find(el => el.value === cC)}
+          value={autoClearClipboardOptions.find(el => el.value === cC)}
           onChange={handleAutoClearClipboardChange}
           disabled={disabled ? 'disabled' : ''}
         />
       </form>
+      <Tooltip type='bottom'>
+        <h4>{browser.i18n.getMessage('settings_idle_lock_tooltip_1')}</h4>
+        <h5>{browser.i18n.getMessage('settings_idle_lock_tooltip_2')}</h5>
+        <p>{browser.i18n.getMessage('settings_idle_lock_tooltip_3')}</p>
+      </Tooltip>
     </div>
   );
 }

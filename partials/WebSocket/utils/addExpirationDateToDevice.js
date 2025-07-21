@@ -21,17 +21,21 @@ const addExpirationDateToDevice = async (uuid, expirationDate) => {
   }
 
   device.expirationDate = expirationDate;
-  device.updatedAt = new Date().valueOf();
+  device.updatedAt = Date.now();
 
   await storage.setItem('local:devices', devices);
 
   const paidDeviceConnected = await isPaidDeviceConnected();
 
   if (!paidDeviceConnected) {
-    await storage.setItem('local:autoIdleLock', config.defaultStorageIdleLock);
+    const autoIdleLockStorage = await storage.getItem('local:autoIdleLock');
+    
+    if (autoIdleLockStorage === 'default' || autoIdleLockStorage === null) {
+      await storage.setItem('local:autoIdleLock', config.defaultStorageIdleLock);
 
-    if (import.meta.env.BROWSER !== 'safari') {
-      browser.idle.setDetectionInterval(config.defaultStorageIdleLock * 60);
+      if (import.meta.env.BROWSER !== 'safari') {
+        browser.idle.setDetectionInterval(config.defaultStorageIdleLock * 60);
+      }
     }
   }
 };

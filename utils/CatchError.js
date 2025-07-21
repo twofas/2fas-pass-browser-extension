@@ -23,7 +23,7 @@ const CatchError = async (errObj, callback = () => {}) => {
           app: '2fas-pass-browser-extension',
           platform: 'browser',
           scheme: config?.scheme || 'UnknownScheme',
-          origin: `browserExt-${browserInfo?.browserName?.toLowerCase()}` || 'UnknownOrigin',
+          origin: `browserExt-${browserInfo?.browserName?.toLowerCase() || 'UnknownOrigin'}`,
           originVersion: manifest?.version || 'UnknownVersion',
           browserName: browserInfo?.browserName || 'UnknownBrowserName',
           browserVersion: browserInfo?.browserVersion || 'UnknownBrowserVersion'
@@ -38,6 +38,8 @@ const CatchError = async (errObj, callback = () => {}) => {
   switch (true) {
     case errObj instanceof Event: {
       valueObj.name = 'EventError';
+      valueObj.error = errObj?.error || '';
+      valueObj.filename = errObj?.filename || '';
       valueObj.currentTargetURL = errObj?.currentTarget?.url || '';
       valueObj.path = errObj?.path || [];
       valueObj.type = errObj?.type || '';
@@ -99,7 +101,7 @@ const CatchError = async (errObj, callback = () => {}) => {
     console.trace(errObj);
   }
 
-  logObj.streams[0].values.push([(new Date().valueOf() * 1000000).toString(), JSON.stringify(valueObj)]);
+  logObj.streams[0].values.push([(Date.now() * 1000000).toString(), JSON.stringify(valueObj)]);
 
   if ((errObj instanceof TwoFasError && errObj.apiLog && storageLogging) || storageLogging || import.meta.env.DEV) {
     try {

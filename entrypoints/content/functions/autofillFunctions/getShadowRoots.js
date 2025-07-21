@@ -10,7 +10,7 @@
 * @return {Array} An array of shadow root elements.
 */
 const getShadowRoots = el => {
-  let shadowElements = [];
+  const shadowElements = [];
 
   const getShadowChildren = (element) => {
     if (element.shadowRoot) {

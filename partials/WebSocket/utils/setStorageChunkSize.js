@@ -11,7 +11,7 @@
 */
 const setStorageChunkSize = chunkLength => {
   const thresholds = [10000, 50000, 100000, 500000, 1000000, 2500000, 5000000];
-  const sizes = [256, 1024, 4096, 8192, 16384, 32768, 65536];
+  const sizes = [512, 4096, 8192, 16384, 32768, 65536, 131072];
 
   for (let i = 0; i < thresholds.length; i++) {
     if (chunkLength < thresholds[i]) {

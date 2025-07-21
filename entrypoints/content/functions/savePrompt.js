@@ -99,7 +99,7 @@ const savePrompt = (request, sendResponse, container) => {
     return sendResponse({ status: 'omitted' });
   }
 
-  let n = {
+  const n = {
     container: container.querySelector(S.notification.container),
     item: null,
     top: null,
@@ -148,7 +148,7 @@ const savePrompt = (request, sendResponse, container) => {
   n.top.appendChild(n.close);
 
   n.header = createElement('div', 'twofas-pass-notification-save-prompt-header');
-  n.headerText = createTextElement('p', browser.i18n.getMessage('content_save_prompt_header'));
+  n.headerText = createTextElement('p', request.serviceType === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_header') : browser.i18n.getMessage('content_save_prompt_update_header'));
   n.header.appendChild(n.headerText);
 
   n.item.appendChild(n.top);

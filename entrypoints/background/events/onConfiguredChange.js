@@ -8,6 +8,7 @@ import contextMenuConfigured from '../contextMenu/contextMenuConfigured';
 import contextMenuNotConfigured from '../contextMenu/contextMenuNotConfigured';
 import updateBadge from '../utils/updateBadge';
 import updateContextMenu from '../utils/updateContextMenu';
+import getServices from '@/partials/sessionStorage/getServices';
 
 /** 
 * Function to handle changes in configuration.
@@ -17,8 +18,14 @@ import updateContextMenu from '../utils/updateContextMenu';
 * @return {Promise<boolean>} A promise that resolves to true if the configuration change is handled successfully, otherwise false.
 */
 const onConfiguredChange = async (oldValue, newValue) => {
+  let services;
+
   try {
-    await updateBadge();
+    services = await getServices();
+  } catch {}
+
+  try {
+    await updateBadge(services);
     const contextMenuSetting = await storage.getItem('local:contextMenu');
   
     if (contextMenuSetting === false) {
@@ -27,8 +34,8 @@ const onConfiguredChange = async (oldValue, newValue) => {
     }
   
     if (newValue === true) {
-      await contextMenuConfigured();
-      await updateContextMenu();
+      await contextMenuConfigured(services);
+      await updateContextMenu(services);
     } else {
       await contextMenuNotConfigured();
     }

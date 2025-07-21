@@ -18,9 +18,10 @@ export default defineBackground({
     const tabsInputData = {};
     const tabUpdateData = {};
     const savePromptActions = [];
+    const migrations = { state: false };
 
-    browser.runtime.onInstalled.addListener(onInstalled);
-    browser.runtime.onMessage.addListener(onMessage);
+    browser.runtime.onInstalled.addListener(async details => await onInstalled(details, migrations));
+    browser.runtime.onMessage.addListener((request, sender, sendResponse) => onMessage(request, sender, sendResponse, migrations));
     browser.runtime.onMessage.addListener((r, s, sR) => onPromptMessage(r, s, sR, tabsInputData));
     browser.runtime.onStartup.addListener(onStartup);
 
@@ -35,7 +36,7 @@ export default defineBackground({
 
     browser.alarms.onAlarm.addListener(onAlarm);
 
-    browser.storage.onChanged.addListener(onStorageChange);
+    browser.storage.onChanged.addListener((change, areaName) => onStorageChange(change, areaName, migrations));
 
     if (import.meta.env.BROWSER !== 'safari') {
       nonSafariBackground(tabsInputData, savePromptActions, tabUpdateData);

@@ -15,7 +15,11 @@ const setTheme = async () => {
   try {
     themeValueStorage = await storage.getItem('local:theme');
   } catch {
-    themeValueStorage = 'light';
+    themeValueStorage = 'unset';
+  }
+
+  if (!themeValueStorage || (themeValueStorage !== 'unset' && themeValueStorage !== 'light' && themeValueStorage !== 'dark')) {
+    themeValueStorage = 'unset';
   }
 
   document.documentElement.classList.add(`theme-${themeValueStorage}`);

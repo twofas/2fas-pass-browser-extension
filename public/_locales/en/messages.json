@@ -37,7 +37,11 @@
   },
   "error_idle_lock_saving": {
     "message": "Error while saving \"Idle lock\" settings",
-    "description": "Error message displayed when saving idle lock settngs fails"
+    "description": "Error message displayed when saving idle lock settings fails"
+  },
+  "error_auto_clear_clipboard_permission_denied": {
+    "message": "Permission to read clipboard denied. Auto clear clipboard feature disabled.",
+    "description": "Error message displayed when clipboard read permission is denied"
   },
   "error_auto_clear_clipboard_saving": {
     "message": "Error while saving \"Auto clear clipboard\" settings",
@@ -219,6 +223,10 @@
     "message": "Dark mode",
     "description": "Option to enable dark mode for the interface"
   },
+  "unset_mode": {
+    "message": "System default",
+    "description": "Option to use the system's default mode for the interface"
+  },
   "save": {
     "message": "Save",
     "description": "Button label to save changes"
@@ -274,6 +282,10 @@
   "no_item_name": {
     "message": "No Item name",
     "description": "Label for a state where no item name is available"
+  },
+  "no_valid_domain": {
+    "message": "No valid domain detected. If it is a non-standard domain, add the appropriate protocol (e.g. https) at the beginning.",
+    "description": "Label for a state where no valid domain is provided"
   },
   "notification_send_autofill_to_tab_lack_of_service_title": {
     "message": "Error",
@@ -395,12 +407,16 @@
     "message": "Matching Items",
     "description": "Title for the section displaying login items that match the current context"
   },
-  "content_save_prompt_header": {
+  "content_save_prompt_add_header": {
     "message": "Do you want to add this Item to 2FAS Pass?",
     "description": "Header asking if the user wants to save a new login item"
   },
+  "content_save_prompt_update_header": {
+    "message": "Do you want to save the changes done to this Item?",
+    "description": "Header asking if the user wants to update an existing login item"
+  },
   "content_save_prompt_don_t_ask": {
-    "message": "Don't ask again",
+    "message": "Ignore this domain",
     "description": "Option to prevent the save prompt from appearing in the future"
   },
   "content_save_prompt_add_login": {
@@ -408,7 +424,7 @@
     "description": "Button label to add a new login item to 2FAS Pass"
   },
   "content_save_prompt_update_login": {
-    "message": "Update Item",
+    "message": "Save Item",
     "description": "Button label to update an existing login item in 2FAS Pass"
   },
   "install_please_pin_extension": {
@@ -780,11 +796,11 @@
     "description": "Description for configuring the save login prompt behavior"
   },
   "settings_save_prompt_pass": {
-    "message": "2FAS Pass prompt",
+    "message": "2FAS Pass prompt (default)",
     "description": "Option to use the 2FAS Pass-specific save login prompt"
   },
   "settings_save_prompt_pass_encrypted": {
-    "message": "Encrypted 2FAS Pass prompt (may be slower)",
+    "message": "Advanced 2FAS Pass prompt (additional encryption)",
     "description": "Option to use the 2FAS Pass encrypted save login prompt"
   },
   "settings_save_prompt_browser": {
@@ -839,6 +855,18 @@
     "message": "Select the time after which the Browser Extension will automatically lock itself if you don't use it.",
     "description": "Description for configuring idle lock behavior"
   },
+  "settings_idle_lock_tooltip_1": {
+    "message": "Automatically lock browser extensions when idle",
+    "description": "Tooltip explaining that the idle lock setting applies only to the extension"
+  },
+  "settings_idle_lock_tooltip_2": {
+    "message": "This feature automatically locks the extension and clears all Items that have been transferred from your mobile app after the period of inactivity you set above.",
+    "description": "Tooltip clarifying that the idle lock setting does not affect the mobile app"
+  },
+  "settings_idle_lock_tooltip_3": {
+    "message": "You can choose to lock it manually, automatically after a set amount of time, or when you restart the browser. Idle time refers to the inactivity of the whole computer, not only the browser.",
+    "description": "Tooltip explaining that the idle lock function only applies to the extension"
+  },
   "settings_auto_clear_clipboard_header": {
     "message": "Auto clear clipboard",
     "description": "Header for the auto clear clipboard settings"
@@ -846,6 +874,18 @@
   "settings_auto_clear_clipboard_description": {
     "message": "Select a time to clear the clipboard of data copied from this Browser Extension.",
     "description": "Description for configuring clipboard auto-clear behavior"
+  },
+  "settings_auto_clear_clipboard_tooltip_1": {
+    "message": "Auto Clear Clipboard",
+    "description": "Tooltip explaining that the auto-clear setting applies only to data copied from the extension"
+  },
+  "settings_auto_clear_clipboard_tooltip_2": {
+    "message": "The “Auto Clear Clipboard” function automatically clears the clipboard contents after a specified period (can be changed above). This prevents the password from being permanently stored there.",
+    "description": "Tooltip clarifying that the auto-clear setting does not affect data copied from outside the extension"
+  },
+  "settings_auto_clear_clipboard_tooltip_3": {
+    "message": "NOTE: This function has built-in browser limitations. For the clipboard to be cleared, the browser must be open and active; otherwise, it won't work.",
+    "description": "Tooltip explaining that the auto-clear function only applies to data copied from the extension"
   },
   "settings_theme": {
     "message": "Theme",
@@ -920,7 +960,7 @@
     "description": "Option to enable or disable the extension's context menu options"
   },
   "settings_excluded_domains": {
-    "message": "Excluded domains",
+    "message": "Ignored domains",
     "description": "Label for the excluded domains settings"
   },
   "settings_excluded_domains_description": {
@@ -928,11 +968,11 @@
     "description": "Explains that excluded domains won't prompt for adding new logins"
   },
   "settings_excluded_domains_empty": {
-    "message": "There are no excluded domains yet.",
+    "message": "There are no ignored domains yet.",
     "description": "Message displayed when no domains are excluded"
   },
   "settings_excluded_domains_remove": {
-    "message": "Remove selected domain from excluded list.",
+    "message": "Remove selected domain from the ignored list.",
     "description": "Button label to remove a domain from the excluded list"
   },
   "settings_danger_zone": {
@@ -948,7 +988,7 @@
     "description": "Header for the reset browser extension confirmation dialog"
   },
   "settings_reset_description": {
-    "message": "Resetting the 2FAS Pass browser extension will delete all settings associated with the extension.",
+    "message": "Resetting the 2FAS Pass Browser Extension will delete all settings associated with the extension.",
     "description": "Confirmation message for resetting the browser extension"
   },
   "settings_reset_action_confirm_button": {
