@@ -33,7 +33,7 @@ const isTabIsPopupWindow = async tabID => {
     return false;
   }
 
-  return popupAsTab.filter(context => context.id === tabID).length > 0
+  return popupAsTab.filter(context => context.id === tabID).length > 0;
 };
 
 export default isTabIsPopupWindow;

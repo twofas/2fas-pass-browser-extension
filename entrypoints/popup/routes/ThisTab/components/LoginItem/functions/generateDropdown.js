@@ -20,28 +20,26 @@ const generateDropdown = login => {
     { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), id: login.id, type: 'details' }
   ];
 
-  if (login?.securityType === 1 && login?.password && login?.password !== '') {
+  if (login?.securityType === SECURITY_TIER.HIGHLY_SECRET && login?.password && login?.password !== '') {
     dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_password'), id: login.id, type: 'forget' });
   }
 
   let uris = [];
 
   if (login?.uris && login?.uris?.length > 0) {
-    uris = login.uris.filter(uri => uri && uri?.text && uri.text !== '' && URIMatcher.isText(uri.text) && URIMatcher.isUrl(uri.text));
+    uris = login.uris.filter(uri => uri && uri?.text && uri.text !== '' && URIMatcher.isText(uri.text) && URIMatcher.isUrl(uri.text, true));
   }
 
   if (uris && uris.length > 0) {
     dO.push({ value: 'uris:', label: `${browser.i18n.getMessage('this_tab_more_uris')}`, type: 'urisHeader' });
 
-    login.uris.map(async uri => {
-      let uriText = uri?.text;
-
-      try {
-        uriText = URIMatcher.normalizeUrl(uriText);
-      } catch {}
-
-      dO.push({ value: uriText, label: uriText });
-    });
+    try {
+      login.uris.forEach(uri => {
+        let uriText = uri?.text;
+        uriText = URIMatcher.normalizeUrl(uriText, true);
+        dO.push({ value: uriText, label: uriText, loginId: login.id });
+      });
+    } catch {}
   }
 
   return dO;

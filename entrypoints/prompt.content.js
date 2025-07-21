@@ -18,16 +18,16 @@ export default defineContentScript({
   match_about_blank: true,
   registration: 'runtime',
   async main (ctx) {
-    let localKey = { data: null };
-    let timers = {};
-    let ignore = { value: false };
+    const localKey = { data: null };
+    const timers = {};
+    const ignore = { value: false };
     let savePrompt = null;
     const emptyFunc = () => {};
 
     try {
       const savePromptResponse = await browser.runtime.sendMessage({
         action: REQUEST_ACTIONS.GET_SAVE_PROMPT,
-        target: REQUEST_TARGETS.BACKGROUND_PROMPT,
+        target: REQUEST_TARGETS.BACKGROUND_PROMPT
       });
 
       if (savePromptResponse?.status === 'ok') {

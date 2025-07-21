@@ -21,8 +21,8 @@ const popupOnMessage = (request, sender, sendResponse) => {
 
     switch (request.action) {
       case REQUEST_ACTIONS.AUTO_CLEAR_CLIPBOARD: {
-        clearClipboard();
-        sendResponse({ status: 'ok' });
+        const clearClipboardStatus = clearClipboard();
+        sendResponse(clearClipboardStatus);
         break;
       }
 

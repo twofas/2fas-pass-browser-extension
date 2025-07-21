@@ -17,6 +17,7 @@ import lockShortcuts from './utils/lockShortcuts';
 import lockRMB from './utils/lockRMB';
 import setTheme from './utils/setTheme';
 import isPopupInSeparateWindowExists from './utils/isPopupInSeparateWindowExists';
+import storageAutoClearActions from '@/partials/functions/storageAutoClearActions';
 
 const TopBar = lazy(() => import('./components/TopBar'));
 const BottomBar = lazy(() => import('./components/BottomBar'));
@@ -186,6 +187,14 @@ function Popup () {
       }
     };
   }, [checkBlockedRoute]);
+
+  useEffect(() => {
+    window.addEventListener('focus', storageAutoClearActions);
+
+    return () => {
+      window.removeEventListener('focus', storageAutoClearActions);
+    };
+  }, []);
 
   if (!loaded) {
     return null;

@@ -16,10 +16,11 @@ import { Form, Field } from 'react-final-form';
 import onMessage from './events/onMessage';
 import valueToNFKD from '@/partials/functions/valueToNFKD';
 import { filterXSS } from 'xss';
+import domainValidation from '@/partials/functions/domainValidation.jsx';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const LearnMoreIcon = lazy(() => import('@/assets/popup-window/learn-more.svg?react'));
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
+const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
 
 const additionalVariants = {
   hidden: { maxHeight: '0px' },
@@ -149,6 +150,9 @@ function AddNew (props) {
                               autoCapitalize="off"
                             />
                           </div>
+                          <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
+                            {domainValidation(input.value)}
+                          </div>
                           <div className={pI.passInputAdditional}>
                             <div className={`${bS.passToggle} ${bS.loaded}`}>
                               <input type="checkbox" name="set-in-mobile" id="set-in-mobile" defaultChecked onChange={() => setOnMobile(!onMobile)} />
@@ -202,18 +206,11 @@ function AddNew (props) {
                             <div className={pI.passInputBottom}>
                               <input type="password" {...input} id="password" disabled={!setOnMobile ? 'disabled' : ''} />
                             </div>
-                            <div className={`${pI.passInputAdditional} ${pI.learnMore}`}>
-                              <button type="button">
-                                <LearnMoreIcon />
-                                <span>{browser.i18n.getMessage('learn_more')}</span>
-
-                                <span className={pI.learnMoreTooltip}>
-                                  <h4>{browser.i18n.getMessage('add_new_learn_more_tooltip_header')}</h4>
-                                  <h5>{browser.i18n.getMessage('add_new_learn_more_tooltip_content_1')}</h5>
-                                  <p>{browser.i18n.getMessage('add_new_learn_more_tooltip_content_2')}</p>
-                                </span>
-                              </button>
-                            </div>
+                            <Tooltip className={`${pI.passInputAdditional} tooltip`}>
+                              <h4>{browser.i18n.getMessage('add_new_learn_more_tooltip_header')}</h4>
+                              <h5>{browser.i18n.getMessage('add_new_learn_more_tooltip_content_1')}</h5>
+                              <p>{browser.i18n.getMessage('add_new_learn_more_tooltip_content_2')}</p>
+                            </Tooltip>
                           </div>
                         )}
                       </Field>

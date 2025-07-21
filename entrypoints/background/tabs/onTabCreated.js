@@ -8,6 +8,9 @@ import sendDomainToPopupWindow from '../utils/sendDomainToPopupWindow';
 import isTabIsPopupWindow from './isTabIsPopupWindow';
 import setBadge from '../utils/setBadge';
 import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
+import getServices from '@/partials/sessionStorage/getServices';
+import setBadgeLocked from '../utils/setBadgeLocked';
+import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
 /** 
 * Function to handle tab creation in the browser.
@@ -16,29 +19,44 @@ import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
 * @return {Promise<void>} A promise that resolves when the tab creation is complete.
 */
 const onTabCreated = async tab => {
-  let pw;
+  if (!tab || !tab.active || !tab.url || tab.url === 'about:blank') {
+    return false;
+  }
 
-  if (tab?.url && tab?.id) {
-    try {
-      await setBadge(tab.url, tab.id);
-    } catch (e) {
-      await CatchError(e);
+  let configured;
+
+  try {
+    configured = await getConfiguredBoolean('configured');
+
+    if (!configured) {
+      throw new Error();
     }
+  } catch {
+    await setBadgeLocked(tab.id).catch(() => {});
+    return false;
   }
 
   try {
-    pw = await isTabIsPopupWindow(tab.id);
-  } catch {
-    pw = false
-  }
+    const [services, isPopupWindow] = await Promise.all([
+      getServices().catch(() => []),
+      isTabIsPopupWindow(tab.id).catch(() => false)
+    ]);
 
-  if (!pw) {
-    try {
-      await sendDomainToPopupWindow(tab.id);
-      await updateNoAccountItem(tab.id);
-    } catch (e) {
-      await CatchError(e);
+    if (tab.url && tab.id) {
+      setBadge(tab.url, tab.id, services).catch(e => CatchError(e));
     }
+
+    if (!isPopupWindow) {
+      await Promise.all([
+        sendDomainToPopupWindow(tab.id),
+        updateNoAccountItem(tab.id, services)
+      ]).catch(e => CatchError(e));
+    }
+
+    return true;
+  } catch (e) {
+    await CatchError(e);
+    return false;
   }
 };
 

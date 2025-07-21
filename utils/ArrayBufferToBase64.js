@@ -4,8 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/* global btoa, Uint8Array */
-
 /** 
 * Converts an ArrayBuffer to a Base64 string.
 * @param {ArrayBuffer} ab - The ArrayBuffer to convert to Base64.

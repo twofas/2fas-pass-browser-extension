@@ -36,7 +36,7 @@ const getKey = async (key, data) => {
         keyGenerated += `_${data.deviceId}`;
       }
 
-      if (typeof data?.chunkIndex !== undefined) {
+      if (typeof data?.chunkIndex !== 'undefined') {
         keyGenerated += `_${data.chunkIndex}`;
       }
 

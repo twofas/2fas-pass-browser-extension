@@ -6,9 +6,11 @@
 
 import S from '../../Settings.module.scss';
 import Select from 'react-select';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy } from 'react';
 import isPaidDeviceConnected from '@/partials/functions/isPaidDeviceConnected';
 import PremiumLockIcon from '@/assets/popup-window/premium-lock.svg?react';
+
+const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
 
 /**
 * Function to render the Idle Lock component.
@@ -25,7 +27,7 @@ function IdleLock () {
   const [premium, setPremium] = useState(false);
 
   useEffect(() => {
-    const getExpirationDates = async () => {
+    const getPremium = async () => {
       const paidDeviceConnected = await isPaidDeviceConnected();
       setPremium(paidDeviceConnected);
     };
@@ -44,7 +46,7 @@ function IdleLock () {
     };
 
     try {
-      getExpirationDates().then(getDefaultIdleLock);
+      getPremium().then(getDefaultIdleLock);
     } catch (e) {
       CatchError(e);
     }
@@ -71,7 +73,7 @@ function IdleLock () {
       await storage.setItem('local:autoIdleLock', value);
 
       if (value === 'default') {
-        browser.idle.setDetectionInterval(15 * 60);
+        browser.idle.setDetectionInterval(config.defaultStorageIdleLock * 60);
       } else {
         browser.idle.setDetectionInterval(value * 60);
       }
@@ -107,6 +109,11 @@ function IdleLock () {
           disabled={disabled ? 'disabled' : ''}
         />
       </form>
+      <Tooltip>
+        <h4>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_1')}</h4>
+        <h5>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_2')}</h5>
+        <p>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_3')}</p>
+      </Tooltip>
     </div>
   );
 }

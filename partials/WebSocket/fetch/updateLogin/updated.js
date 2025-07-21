@@ -27,23 +27,22 @@ const updateLoginUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, me
   }
 
   try {
-    // Get services
-    const services = await getServices();
-
-    // Get servicesKeys
-    const servicesKeys = await getServicesKeys(state.data.deviceId);
+    const [services, servicesKeys] = await Promise.all([
+      getServices(),
+      getServicesKeys(state.data.deviceId)
+    ]);
 
     // Update login & clear alarm if exists
     const serviceIndex = services.findIndex(service => service.id === state.data.loginId);
     let service = services.find(service => service.id === state.data.loginId);
 
-    if (service && service.securityType === 1) {
+    if (service && service.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       await browser.alarms.clear(`passwordT2Reset-${state.data.loginId}`);
     }
 
     service = data.login;
 
-    if (data.login.securityType === 2) {
+    if (data.login.securityType === SECURITY_TIER.SECRET) {
       service.internalType = 'added';
     }
 
@@ -54,7 +53,7 @@ const updateLoginUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, me
     const servicesGZIP_AB = await compress(servicesStringify);
     const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
-    if (data.login.securityType === 2) {
+    if (data.login.securityType === SECURITY_TIER.SECRET) {
       // generate encryptionPassT3Key
       const encryptionPassT3Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassT3'), sessionKeyForHKDF, true);
       const encryptionPassT3KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionPassT3Key);
@@ -63,7 +62,7 @@ const updateLoginUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, me
       // save encryptionPassT3Key in session storage
       const passT3Key = await getKey('pass_key_t3_new', { deviceId: data.login.deviceId, loginId: data.login.id });
       await storage.setItem(`session:${passT3Key}`, encryptionPassT3KeyAES_B64);
-    } else if (data.login.securityType === 1) {
+    } else if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       // generate encryptionPassT2Key
       const encryptionPassT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassT2'), sessionKeyForHKDF, true);
       const encryptionPassT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionPassT2Key);
@@ -83,7 +82,7 @@ const updateLoginUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, me
     await saveServices(servicesGZIP, data.login.deviceId);
 
     // Set alarm for 3 minutes if T2
-    if (data.login.securityType === 1) {
+    if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       await browser.alarms.create(`passwordT2Reset-${data.login.id}`, { delayInMinutes: config.passwordResetDelay });
     }
 

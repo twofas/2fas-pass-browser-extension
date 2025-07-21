@@ -1,0 +1,157 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.tooltip {
+  margin-top: 7px;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+
+  &:hover {
+    z-index: 10;
+  }
+
+  &.bottom {
+    .tooltip-content {
+      bottom: auto;
+      top: calc(100% + 3px);
+      transform: translateY(-10px);
+    }
+  }
+
+  button {
+    align-items: center;
+    background-color: rgba(v.$hover-color-light, 0);
+    border-radius: 6px;
+    display: inline-flex;
+    flex-direction: row;
+    gap: 0 6px;
+    padding: 5px;
+    transform: translateX(-5px);
+    transition: background-color .3s ease-in-out;
+    position: relative;
+    z-index: 10;
+
+    @include m.darkMode {
+      background-color: rgba(v.$hover-color-dark, 0);
+    }
+
+    &:hover {
+      background-color: rgba(v.$hover-color-light, 1);
+
+      @include m.darkMode {
+        background-color: rgba(v.$hover-color-dark, 1);
+      }
+
+      .tooltip-content {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 10;
+      }
+    }
+
+    svg {
+      height: 11px;
+      stroke: v.$primary-color-light;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.5;
+      width: auto;
+
+      @include m.darkMode {
+        stroke: v.$primary-color-dark;
+      }
+    }
+
+    span {
+      color: v.$primary-color-light;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1;
+
+      @include m.darkMode {
+        color: v.$primary-color-dark;
+      }
+    }
+  }
+
+  &-content {
+    background-color: v.$card-bg-light;
+    border: 1px solid v.$card-stroke-light;
+    border-radius: 8px;
+    bottom: calc(100% + 3px);
+    display: flex;
+    flex-direction: column;
+    gap: 12px 0;
+    left: 20px;
+    opacity: 0;
+    padding: 12px 16px 16px;
+    pointer-events: none;
+    position: absolute;
+    text-align: left;
+    transform: translateY(10px);
+    transition: opacity .3s ease-in-out, transform .3s ease-in-out;
+    width: 326px;
+
+    &::before {
+      bottom: -4px;
+      content: '';
+      display: block;
+      height: 4px;
+      left: -44px;
+      position: absolute;
+      width: calc(100% + 44px);
+    }
+
+    @include m.darkMode {
+      background-color: v.$card-bg-dark;
+      border-color: v.$card-stroke-dark;
+    }
+
+    h4 {
+      color: v.$primary-text-light;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1;
+      margin: 0;
+      width: 100%;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    h5 {
+      color: v.$primary-text-light;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.2;
+      margin: 0;
+      width: 100%;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    p {
+      color: v.$secondary-text-light;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.2;
+      margin: 0;
+      width: 100%;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+  }
+}

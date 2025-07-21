@@ -22,7 +22,7 @@
   width: 100%;
   z-index: 3;
 
-  :global(body:not(.theme-light):not(.theme-dark)) & {
+  :global(body:not(.theme-light):not(.theme-dark):not(.theme-unset)) & {
     opacity: 0;
   }
 

@@ -11,7 +11,7 @@
 * @throws {TypeError} - If the input is not a string.
 */
 export const Base64ToString = b64 => {
-  if (typeof b64 !== 'string' || !b64 instanceof String) {
+  if (typeof b64 !== 'string') {
     throw new TypeError('Base64ToString: Expected input to be a string');
   }
 

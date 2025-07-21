@@ -8,11 +8,23 @@
   :global(body.theme-dark) & {
     @content;
   }
+
+  :global(body.theme-unset) & {
+    @media (prefers-color-scheme: dark) {
+      @content;
+    }
+  }
 }
 
 @mixin lightMode {
   :global(body.theme-light) & {
     @content;
+  }
+
+  :global(body.theme-unset) & {
+    @media (prefers-color-scheme: light) {
+      @content;
+    }
   }
 }
 
@@ -25,5 +37,11 @@
 @mixin loadedDarkMode {
   :global(body.loaded.theme-dark) & {
     @content;
+  }
+
+  :global(body.loaded.theme-unset) & {
+    @media (prefers-color-scheme: dark) {
+      @content;
+    }
   }
 }

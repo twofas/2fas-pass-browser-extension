@@ -30,7 +30,7 @@ const generateEphemeralKeys = async () => {
       existingDevice = devices.find(device => device.uuid === uuid);
     }
     
-    devices.push({ uuid, updatedAt: new Date().valueOf() });
+    devices.push({ uuid, updatedAt: Date.now() });
     await storage.setItem('local:devices', devices);
   
     const keys = await crypto.subtle.generateKey(

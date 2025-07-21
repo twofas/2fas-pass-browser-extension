@@ -20,7 +20,7 @@ const addFcmTokenToDevice = async (uuid, fcmToken) => {
   }
 
   device.fcmToken = fcmToken;
-  device.updatedAt = new Date().valueOf();
+  device.updatedAt = Date.now();
 
   await storage.setItem('local:devices', devices);
 };

@@ -25,7 +25,7 @@ const getServicesKeys = async deviceId => {
     throw new TwoFasError(TwoFasError.internalErrors.getServicesKeysNotDefined, { additional: { func: 'getServicesKeys' } });
   }
 
-  let keyGenerated = keyEnv + `_${deviceId}`;
+  const keyGenerated = keyEnv + `_${deviceId}`;
   let i = 0;
   const servicesKeys = [];
   let storageKeys;
@@ -75,7 +75,7 @@ const getServicesKeys = async deviceId => {
       ['sign']
     );
   } catch (e) {
-    throw new TwoFasError(TwoFasError.internalErrors.getServicesKeysCryptoKeyError, { additional: { func: 'getServicesKeys' } });
+    throw new TwoFasError(TwoFasError.internalErrors.getServicesKeysCryptoKeyError, { event: e, additional: { func: 'getServicesKeys' } });
   }
 
   while (true) {

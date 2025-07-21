@@ -23,7 +23,7 @@ const newLoginAddedInT1 = async messageId => {
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedInT1Error);
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedInT1Error, { event: e });
   }
 };
 

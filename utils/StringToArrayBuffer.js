@@ -10,7 +10,7 @@
 * @return {ArrayBuffer} The resulting ArrayBuffer from the string input.
 */
 export const StringToArrayBuffer = value => {
-  if (typeof value !== 'string' || !value instanceof String) {
+  if (typeof value !== 'string') {
     throw new TypeError('StringToArrayBuffer: Expected input to be a string');
   }
 

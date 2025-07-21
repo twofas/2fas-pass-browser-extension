@@ -4,8 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/* global TextDecoder, DecompressionStream, Response */
-
 /** 
 * Decompresses a GZIP compressed byte array.
 * @async
@@ -22,6 +20,6 @@ const decompress = async byteArray => {
   const arrayBuffer = await new Response(cs.readable).arrayBuffer();
   
   return new TextDecoder().decode(arrayBuffer);
-}
+};
 
 export default decompress;

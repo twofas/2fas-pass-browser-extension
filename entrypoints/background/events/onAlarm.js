@@ -6,7 +6,7 @@
 
 import autoClearClipboard from '../utils/alarmsFunctions/autoClearClipboard';
 import passwordT2Reset from '../utils/alarmsFunctions/passwordT2Reset';
-import { PASSWORD_T2_RESET_REGEX } from '@/constants/regex';
+import { PASSWORD_T2_RESET_REGEX, AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants/regex';
 
 /** 
 * Function to handle alarm events.
@@ -18,23 +18,18 @@ import { PASSWORD_T2_RESET_REGEX } from '@/constants/regex';
 const onAlarm = async alarm => {
   const { name } = alarm;
   const passwordT2ResetRegexTest = PASSWORD_T2_RESET_REGEX.exec(name);
+  const autoClearClipboardRegexTest = AUTO_CLEAR_CLIPBOARD_REGEX.exec(name);
 
   try {
     if (passwordT2ResetRegexTest) {
       const loginId = passwordT2ResetRegexTest[1];
       await passwordT2Reset(loginId);
       return true;
-    }
-
-    switch (name) {
-      case 'autoClearClipboard': {
-        await autoClearClipboard();
-        return true;
-      }
-  
-      default: {
-        return false;
-      }
+    } else if (autoClearClipboardRegexTest) {
+      const [, itemId, itemType] = autoClearClipboardRegexTest;
+      await autoClearClipboard(itemId, itemType);
+    } else {
+      return false;
     }
   } catch (e) {
     await CatchError(e);
