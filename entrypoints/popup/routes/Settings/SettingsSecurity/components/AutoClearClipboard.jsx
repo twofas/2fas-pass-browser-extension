@@ -50,7 +50,7 @@ function AutoClearClipboard () {
   const handleAutoClearClipboardChange = async change => {
     setDisabled(true);
 
-    if (change.value !== 'default') {
+    if (change.value !== 'default' && import.meta.env.BROWSER !== 'safari') {
       const clipboardReadPermission = await browser.permissions.request({ permissions: ['clipboardRead'] });
       
       if (!clipboardReadPermission) {

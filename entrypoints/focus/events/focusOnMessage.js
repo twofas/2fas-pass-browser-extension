@@ -28,7 +28,12 @@ const focusOnMessage = (request, sender, sendResponse) => {
       }
 
       case REQUEST_ACTIONS.AUTO_CLEAR_ACTION: {
-        autoClearAction(request).finally(sendResponse({ status: 'ok' }));
+        if (import.meta.env.BROWSER !== 'safari') {
+          autoClearAction(request).finally(sendResponse({ status: 'ok' }));
+        } else {
+          sendResponse({ status: 'ok' });
+        }
+
         break;
       }
 

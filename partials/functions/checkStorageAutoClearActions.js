@@ -13,6 +13,10 @@ import decryptPassword from './decryptPassword';
 * @return {Promise<boolean>} A promise that resolves to true if an action is found, otherwise false.
 */
 const checkStorageAutoClearActions = async () => {
+  if (import.meta.env.BROWSER === 'safari') {
+    return false;
+  }
+
   const storageClearActions = await storage.getItem('session:autoClearActions');
 
   if (!storageClearActions || storageClearActions.length === 0) {

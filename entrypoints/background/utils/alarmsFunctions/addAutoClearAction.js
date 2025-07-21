@@ -11,6 +11,10 @@
 * @return {Promise<void>} A promise that resolves when the action is added.
 */
 const addAutoClearAction = async (itemId, itemType) => {
+  if (import.meta.env.BROWSER === 'safari') {
+    return;
+  }
+  
   const storageClearActions = await storage.getItem('session:autoClearActions') || [];
   storageClearActions.push({ itemId, itemType, timestamp: Date.now() });
   await storage.setItem('session:autoClearActions', storageClearActions);

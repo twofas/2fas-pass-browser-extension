@@ -85,10 +85,13 @@ const onMessage = (request, sender, sendResponse, migrations) => {
         onTabFocused(sender.tab)
           .finally(async () => {
             sendResponse({ status: 'ok' });
-            const autoClearValue = await checkStorageAutoClearActions();
 
-            if (autoClearValue) {
-              await sendAutoClearAction(autoClearValue, request.cryptoAvailable, sender);
+            if (import.meta.env.BROWSER !== 'safari') {
+              const autoClearValue = await checkStorageAutoClearActions();
+
+              if (autoClearValue) {
+                await sendAutoClearAction(autoClearValue, request.cryptoAvailable, sender);
+              }
             }
           });
 
