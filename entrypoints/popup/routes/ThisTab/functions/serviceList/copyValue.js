@@ -25,6 +25,10 @@ const deleteExistingClearClipboardAlarms = async () => {
 * @return {Promise<void>} 
 */
 const copyValue = async (value, itemId, itemType) => {
+  if (!value || typeof value !== 'string') {
+    value = '';
+  }
+
   if (!navigator?.clipboard) {
     // @TODO: handle error (toast?)
     return false;
