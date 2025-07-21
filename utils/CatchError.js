@@ -38,6 +38,8 @@ const CatchError = async (errObj, callback = () => {}) => {
   switch (true) {
     case errObj instanceof Event: {
       valueObj.name = 'EventError';
+      valueObj.error = errObj?.error || '';
+      valueObj.filename = errObj?.filename || '';
       valueObj.currentTargetURL = errObj?.currentTarget?.url || '';
       valueObj.path = errObj?.path || [];
       valueObj.type = errObj?.type || '';
