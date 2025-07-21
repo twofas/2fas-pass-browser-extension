@@ -43,7 +43,8 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     details?.requestBody?.error ||
     details?.type === 'ping' ||
     !details?.url ||
-    details.url.substring(0, 8) !== 'https://' ||
+    (details?.url.substring(0, 7) !== 'http://' && details.url.substring(0, 8) !== 'https://') ||
+    details?.documentLifecycle === 'prerender' ||
     ignoredSavePromptUrls.some(ignoredUrl => details.url.toLowerCase().includes(ignoredUrl.toLowerCase()))
   ) {
     return;

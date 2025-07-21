@@ -8,6 +8,9 @@ import sendDomainToPopupWindow from '../utils/sendDomainToPopupWindow';
 import isTabIsPopupWindow from './isTabIsPopupWindow';
 import setBadge from '../utils/setBadge';
 import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
+import getServices from '@/partials/sessionStorage/getServices';
+import setBadgeLocked from '../utils/setBadgeLocked';
+import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
 /** 
 * Function to handle tab activation in the browser.
@@ -16,7 +19,24 @@ import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
 * @return {Promise<boolean>} A promise that resolves to true if the tab activation was handled successfully, false otherwise.
 */
 const onTabActivated = async ({ tabId }) => {
-  let pw, tab;
+  if (!tabId) {
+    return false;
+  }
+
+  let configured;
+
+  try {
+    configured = await getConfiguredBoolean('configured');
+
+    if (!configured) {
+      throw new Error();
+    }
+  } catch {
+    await setBadgeLocked(tabId).catch(() => {});
+    return false;
+  }
+
+  let tab;
 
   try {
     tab = await browser.tabs.get(tabId);
@@ -24,27 +44,31 @@ const onTabActivated = async ({ tabId }) => {
     return false;
   }
 
-  if (tab?.url) {
-    try {
-      await setBadge(tab.url, tabId);
-    } catch (e) {
-      await CatchError(e);
-    }
+  if (!tab || !tab.active || !tab.url || tab.url === 'about:blank') {
+    return false;
   }
 
   try {
-    pw = await isTabIsPopupWindow(tabId);
-  } catch {
-    pw = false;
-  }
+    const [services, isPopupWindow] = await Promise.all([
+      getServices().catch(() => []),
+      isTabIsPopupWindow(tabId).catch(() => false)
+    ]);
 
-  if (!pw) {
-    try {
-      await sendDomainToPopupWindow(tabId);
-      await updateNoAccountItem(tabId);
-    } catch (e) {
-      await CatchError(e);
+    if (tab.url) {
+      setBadge(tab.url, tabId, services).catch(e => CatchError(e));
     }
+
+    if (!isPopupWindow) {
+      await Promise.all([
+        sendDomainToPopupWindow(tabId),
+        updateNoAccountItem(tabId, services)
+      ]).catch(e => CatchError(e));
+    }
+
+    return true;
+  } catch (e) {
+    await CatchError(e);
+    return false;
   }
 };
 

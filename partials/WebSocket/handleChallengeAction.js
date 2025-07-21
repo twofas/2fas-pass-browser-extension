@@ -22,10 +22,11 @@ import TwoFasWebSocket from '@/partials/WebSocket';
 */
 const handleChallengeAction = async (json, uuid) => {
   const { pkEpheMa, hkdfSalt } = json.payload;
-  const SK_EPHE_ECDH = await importExtensionEphemeralKey(uuid);
-  const PK_EPHE_MA_ECDH = await importMobileEphemeralKey(pkEpheMa);
-
-  const hkdfSaltAB = Base64ToArrayBuffer(hkdfSalt);
+  const [SK_EPHE_ECDH, PK_EPHE_MA_ECDH, hkdfSaltAB] = await Promise.all([
+    importExtensionEphemeralKey(uuid),
+    importMobileEphemeralKey(pkEpheMa),
+    Base64ToArrayBuffer(hkdfSalt)
+  ]);
 
   const sharedSecretAB = await generateSharedSecret(PK_EPHE_MA_ECDH, SK_EPHE_ECDH);
   const sharedSecretKey = await importSharedSecretKey(sharedSecretAB);

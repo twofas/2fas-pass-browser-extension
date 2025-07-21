@@ -20,10 +20,24 @@ const sendMessageToAllFrames = async (tabId, message) => {
     return false;
   }
 
-  frames = frames.filter(frame => frame.url && frame.url !== 'about:blank');
+  if (!frames || frames.length <= 0) {
+    return false;
+  }
+
+  frames = frames.filter(frame => frame.url && frame.url !== 'about:blank'); // FUTURE - ignore recaptcha frames etc. (list from savePrompt?)
+
+  if (!frames || frames.length <= 0) {
+    return false;
+  }
 
   return Promise.all(
-    frames.map(frame => browser.tabs.sendMessage(tabId, message, { frameId: frame.frameId }).catch(() => false))
+    frames.map(frame => {
+      try {
+        return browser.tabs.sendMessage(tabId, message, { frameId: frame.frameId });
+      } catch {
+        return false;
+      }
+    })
   );
 };
 

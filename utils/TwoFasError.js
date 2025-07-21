@@ -20,7 +20,7 @@ class TwoFasError extends Error {
 
     this.name = 'TwoFasError';
     this.message = errorObject.message || TwoFasError.errors.unknownError.message;
-    this.timestamp = new Date().valueOf().toString();
+    this.timestamp = Date.now().toString();
     this.code = errorObject.code || TwoFasError.errors.unknownError.code;
     this.apiLog = params?.apiLog || true;
     this.consoleLog = params?.consoleLog || true;
@@ -296,7 +296,7 @@ class TwoFasError extends Error {
       message: 'Close with error action received',
       code: 2999
     }
-  }
+  };
 
   static internalErrors = {
     // GENERAL
@@ -438,19 +438,6 @@ class TwoFasError extends Error {
     getCurrentDeviceLackOfUUID: {
       message: 'No valid device UUID found for push notification',
       code: 9141
-    },
-    // SEND MESSAGE TO TAB
-    sendMessageToTab: {
-      message: 'Error sending message to tab',
-      code: 9160
-    },
-    sendMessageToTabNoResponse: {
-      message: 'No response from tab',
-      code: 9161
-    },
-    sendMessageToTabUnknownResponse: {
-      message: 'Unknown response from tab',
-      code: 9162
     },
     // VALUE TO NFKD
     valueToNFKDNotText: {
@@ -687,8 +674,13 @@ class TwoFasError extends Error {
     handleInputEventEncryptError: {
       message: 'handleInputEvent: error encrypting data',
       code: 9382
+    },
+    // CONTEXT MENU
+    contextMenuConfiguredError: {
+      message: 'Error configuring context menu',
+      code: 9390
     }
-  }
+  };
 }
 
 export default TwoFasError;

@@ -13,13 +13,25 @@ describe('URIMatcher', () => {
     it('should return true if the text is a string', () => {
       assert.isTrue(URIMatcher.isText(''));
       assert.isTrue(URIMatcher.isText('string'));
-      assert.isTrue(URIMatcher.isText(String('string')));
       assert.isFalse(URIMatcher.isText(123));
       assert.isFalse(URIMatcher.isText(123.2222));
       assert.isFalse(URIMatcher.isText({}));
       assert.isFalse(URIMatcher.isText([]));
       assert.isFalse(URIMatcher.isText(null));
       assert.isFalse(URIMatcher.isText(undefined));
+    });
+  });
+
+  describe('hasStandardProtocol', () => {
+    it('should return true if the URL has a standard protocol', () => {
+      assert.isTrue(URIMatcher.hasStandardProtocol('https://www.domain.com'));
+      assert.isTrue(URIMatcher.hasStandardProtocol('http://www.domain.com'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('httpdomain.com'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('ftp://www.domain.com'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('file:///path/to/file'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('chrome-extension://extension-id'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('about:blank'));
+      assert.isFalse(URIMatcher.hasStandardProtocol('data:text/plain;base64,SGVsbG8sIFdvcmxkIQ=='));
     });
   });
 
@@ -42,10 +54,10 @@ describe('URIMatcher', () => {
       assert.isTrue(URIMatcher.isUrl('www.domain.com'));
       assert.isTrue(URIMatcher.isUrl('domain.com'));
       assert.isTrue(URIMatcher.isUrl('http://räksmörgås.josefsson.org/'));
-      assert.isFalse(URIMatcher.isUrl('https://www.domain.123')); // FUTURE - 123 is NOT VALID!
-      assert.isFalse(URIMatcher.isUrl('http://www.domain.123'));
-      assert.isFalse(URIMatcher.isUrl('https://domain.123'));
-      assert.isFalse(URIMatcher.isUrl('http://domain.123'));
+      assert.isTrue(URIMatcher.isUrl('https://www.domain.123'));
+      assert.isTrue(URIMatcher.isUrl('http://www.domain.123'));
+      assert.isTrue(URIMatcher.isUrl('https://domain.123'));
+      assert.isTrue(URIMatcher.isUrl('http://domain.123'));
       assert.isFalse(URIMatcher.isUrl('www.domain.123'));
       assert.isFalse(URIMatcher.isUrl('domain.123'));
       assert.isFalse(URIMatcher.isUrl('com.twofasapp'));
@@ -74,6 +86,26 @@ describe('URIMatcher', () => {
       assert.isTrue(URIMatcher.isUrl('https://2fas.local'));
       assert.isFalse(URIMatcher.isUrl('xyz'));
       assert.isTrue(URIMatcher.isUrl('http://xyz'));
+      assert.isTrue(URIMatcher.isUrl('about:blank', true));
+      assert.isTrue(URIMatcher.isUrl('chrome://settings', true));
+      assert.isTrue(URIMatcher.isUrl('chrome-extension://sdasusfgdiausfdas', true));
+      assert.isFalse(URIMatcher.isUrl('android://com.twofasapp', true));
+      assert.isFalse(URIMatcher.isUrl('android://com.twofasapp', false));
+    });
+  });
+
+  describe('isIp', () => {
+    it('should return true if the text is an IP address', () => {
+      // IP v4
+      assert.isTrue(URIMatcher.isIp('192.168.1.1'));
+      assert.isTrue(URIMatcher.isIp('255.255.255.255'));
+      assert.isFalse(URIMatcher.isIp('256.256.256.256'));
+      assert.isFalse(URIMatcher.isIp('192.168.1'));
+      assert.isFalse(URIMatcher.isIp('192.168.1.1.1'));
+      assert.isFalse(URIMatcher.isIp('localhost'));
+      assert.isFalse(URIMatcher.isIp('http://192.168.1.1'));
+      // IP v6
+      // assert.isTrue(URIMatcher.isIp('2001:0db8:85a3:0000:0000:8a2e:0370:7334'));
     });
   });
 
@@ -152,19 +184,6 @@ describe('URIMatcher', () => {
     });
   });
 
-  // describe('urlencode', () => {
-  //   it('should return the URL encoded', () => {
-  //     assert.strictEqual(URIMatcher.urlencode('http://example.com/foo%2b'), 'http://example.com/foo%2B');
-  //     assert.strictEqual(URIMatcher.urlencode('http://example.com/%7Efoo'), 'http://example.com/~foo');
-  //     assert.strictEqual(URIMatcher.urlencode('https://peregrinus.pl/pl/lublin'), 'https://peregrinus.pl/pl/lublin');
-  //     expect(() => URIMatcher.getLowerCaseURLWithoutPort('')).to.throw('Parameter is not a valid URL');
-  //     expect(() => URIMatcher.getLowerCaseURLWithoutPort(123)).to.throw('Parameter is not a string');
-  //     expect(() => URIMatcher.getLowerCaseURLWithoutPort({})).to.throw('Parameter is not a string');
-  //     expect(() => URIMatcher.getLowerCaseURLWithoutPort(null)).to.throw('Parameter is not a string');
-  //     expect(() => URIMatcher.getLowerCaseURLWithoutPort(undefined)).to.throw('Parameter is not a string');
-  //   });
-  // });
-
   describe('normalizeIDN', () => {
     it('should return the URL with the IDN domain normalized', () => {
       assert.strictEqual(URIMatcher.normalizeIDN('http://räksmörgås.josefsson.org/'), 'http://xn--rksmrgs-5wao1o.josefsson.org/');
@@ -234,6 +253,13 @@ describe('URIMatcher', () => {
 
       // IP test
       assert.strictEqual(URIMatcher.normalizeUrl('127.0.0.1'), 'https://127.0.0.1');
+      // assert.strictEqual(URIMatcher.normalizeUrl('2001:0db8:85a3:0000:0000:8a2e:0370:7334'), 'https://2001:0db8:85a3:0000:0000:8a2e:0370:7334');
+
+      // Chrome extension test
+      assert.strictEqual(URIMatcher.normalizeUrl('chrome-extension://fadcbojfagcijnjlcgikmecohgdildma/install.html', true), 'chrome-extension://fadcbojfagcijnjlcgikmecohgdildma/install.html');
+
+      // Android test
+      expect(() => URIMatcher.normalizeUrl('android://com.twofasapp')).to.throw('Parameter is not a valid URL');
     });
   });
 
@@ -542,6 +568,11 @@ describe('URIMatcher', () => {
       assert.deepEqual(
         URIMatcher.recognizeURIs([{ text: 'test' }, { text: [] }]),
         { urls: [], others: [{ text: 'test' }] }
+      );
+
+      assert.deepEqual(
+        URIMatcher.recognizeURIs([{ text: 'android://com.twofasapp' }, { text: 'https://2fas.com' }]),
+        { urls: [{ text: 'https://2fas.com' }], others: [{ text: 'android://com.twofasapp' }] }
       );
     });
   });

@@ -15,7 +15,7 @@ import getConfigured from './getConfigured';
 const getConfiguredBoolean = async () => {
   try {
     const configuredValue = await getConfigured();
-    return configuredValue < new Date().valueOf();
+    return configuredValue < Date.now();
   } catch {
     return false;
   }

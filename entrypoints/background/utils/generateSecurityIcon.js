@@ -14,7 +14,7 @@ import secIconSVGs from '@/constants/secIconSVGs';
 * @return {Promise<void>} A promise that resolves when the icon is generated.
 */
 const generateSecurityIcon = async keyB64 => {
-  let svgColors = structuredClone(secIconColors);
+  const svgColors = structuredClone(secIconColors);
 
   const keyAB = Base64ToArrayBuffer(keyB64);
   const digestSHA256AB = await crypto.subtle.digest('SHA-256', keyAB);

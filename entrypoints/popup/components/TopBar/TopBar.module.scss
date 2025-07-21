@@ -19,7 +19,7 @@
   padding: 0 12px;
   width: 100%;
 
-  :global(body:not(.theme-light):not(.theme-dark)) & {
+  :global(body:not(.theme-light):not(.theme-dark):not(.theme-unset)) & {
     opacity: 0;
   }
 

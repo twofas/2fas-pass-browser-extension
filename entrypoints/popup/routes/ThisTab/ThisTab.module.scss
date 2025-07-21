@@ -92,8 +92,18 @@
   }
 
   &-header {
+    background-color: v.$primary-box-bg-light;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
     padding-top: 24px;
+    position: sticky;
     text-align: center;
+    top: -24px;
+    z-index: 2;
+
+    @include m.darkMode {
+      background-color: v.$primary-box-bg-dark;
+    }
 
     h1 {
       color: v.$primary-text-light;
@@ -210,6 +220,20 @@
         body.theme-dark & {
           &.theme-dark {
             display: inline-block;
+          }
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            &.theme-light {
+              display: inline-block;
+            }
+          }
+
+          @media (prefers-color-scheme: dark) {
+            &.theme-dark {
+              display: inline-block;
+            }
           }
         }
       }

@@ -11,15 +11,18 @@ import openInstallPage from '../utils/openInstallPage';
 import runMigrations from '../migrations';
 import getLocalKey from '../utils/getLocalKey';
 import onTabFocused from '../tabs/onTabFocused';
+import checkStorageAutoClearActions from '@/partials/functions/checkStorageAutoClearActions';
+import sendAutoClearAction from '../utils/sendAutoClearAction';
 
 /** 
 * Function to handle messages sent to the background script.
 * @param {Object} request - The request object containing the action and data.
 * @param {Object} sender - The sender object containing information about the message sender.
 * @param {Function} sendResponse - The function to send a response back to the sender.
+* @param {Object} migrations - The state object to track migrations.
 * @return {Promise<boolean>} A promise that resolves to true if the message is handled successfully, otherwise false.
 */
-const onMessage = (request, sender, sendResponse) => {
+const onMessage = (request, sender, sendResponse, migrations) => {
   try {
     if (!request || !request.action || request.target !== REQUEST_TARGETS.BACKGROUND) {
       return false;
@@ -33,7 +36,7 @@ const onMessage = (request, sender, sendResponse) => {
         ) {
           openBrowserPage(request.url)
             .then(() => { sendResponse({ status: 'ok' }); })
-            .catch(e => { sendResponse({ status: 'error', message: e.message }); })
+            .catch(e => { sendResponse({ status: 'error', message: e.message }); });
         } else {
           sendResponse({ status: 'error', message: 'Empty or wrong URL' });
         }
@@ -48,7 +51,7 @@ const onMessage = (request, sender, sendResponse) => {
         ) {
           openPopupWindowInNewWindow({ pathname: request.pathname })
             .then(() => { sendResponse({ status: 'ok' }); })
-            .catch(e => { sendResponse({ status: 'error', message: e.message }); })
+            .catch(e => { sendResponse({ status: 'error', message: e.message }); });
         } else {
           sendResponse({ status: 'error', message: 'Empty or wrong data' });
         }
@@ -57,9 +60,12 @@ const onMessage = (request, sender, sendResponse) => {
       }
 
       case REQUEST_ACTIONS.RESET_EXTENSION: {
+        migrations.state = false;
+
         browser.storage.local.clear()
           .then(async () => { await browser.storage.session.clear(); })
           .then(async () => { await runMigrations(); })
+          .then(() => { migrations.state = true; })
           .then(async () => { await openInstallPage(); })
           .then(() => { sendResponse({ status: 'ok' }); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
@@ -77,7 +83,17 @@ const onMessage = (request, sender, sendResponse) => {
 
       case REQUEST_ACTIONS.TAB_FOCUS: {
         onTabFocused(sender.tab)
-          .finally(() => { sendResponse({ status: 'ok' }); });
+          .finally(async () => {
+            sendResponse({ status: 'ok' });
+
+            if (import.meta.env.BROWSER !== 'safari') {
+              const autoClearValue = await checkStorageAutoClearActions();
+
+              if (autoClearValue) {
+                await sendAutoClearAction(autoClearValue, request.cryptoAvailable, sender);
+              }
+            }
+          });
 
         break;
       }

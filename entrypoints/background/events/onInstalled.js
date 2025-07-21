@@ -13,9 +13,10 @@ import runMigrations from '../migrations';
 * Function to handle the installation and update of the extension.
 * @async
 * @param {Object} details - The details of the installation or update event.
+* @param {Object} migrations - The state object to track migrations.
 * @return {Promise<void>} A promise that resolves when the installation or update is complete.
 */
-const onInstalled = async details => {
+const onInstalled = async (details, migrations) => {
   await initContextMenu();
 
   if (!details) {
@@ -23,7 +24,9 @@ const onInstalled = async details => {
   }
 
   if (details?.reason === 'install' || details?.reason === 'update') {
-    await runMigrations();
+    await runMigrations().then(() => { migrations.state = true; });
+  } else {
+    migrations.state = true;
   }
 
   if (details?.reason === 'install') {
@@ -33,7 +36,7 @@ const onInstalled = async details => {
 
     try {
       await openInstallPage();
-    } catch (err) {
+    } catch (e) {
       await CatchError(e);
     }
   } else {

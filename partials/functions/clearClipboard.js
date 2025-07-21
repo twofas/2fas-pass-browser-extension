@@ -12,7 +12,18 @@ const clearClipboard = () => {
   if (document.hasFocus()) {
     try {
       navigator.clipboard.writeText('');
-    } catch {}
+      return { status: 'ok' };
+    } catch {
+      return {
+        status: 'error',
+        message: 'Failed to clear clipboard'
+      };
+    }
+  } else {
+    return {
+      status: 'error',
+      message: 'Document does not have focus, clipboard not cleared'
+    };
   }
 };
 

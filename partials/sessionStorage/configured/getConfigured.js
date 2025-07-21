@@ -13,50 +13,48 @@ import getKey from '../getKey';
 * @return {Promise<number>} The configured value.
 */
 const getConfigured = async () => {
-  // FUTURE - Refactor?
   // FUTURE - Maybe class with checking method?
   const defaultValue = new Date('2099-12-31').valueOf();
-  let configuredKey, configuredNonceAB, persistentPrivateKey, persistentPublicKey, configuredValue, sharedSecret, aesKey, decryptedValueAB;
+  let configuredKey, configuredNonceB64, configuredNonceAB, persistentPrivateKey, persistentPublicKey, configuredValue, sharedSecret, aesKey, decryptedValueAB;
 
   try {
-    configuredKey = await getKey('configured');
-  } catch (e) {
-    return defaultValue;
-  }
-
-  try {
-    const configuredNonceB64 = await getKey('configured_nonce');
+    [configuredKey, configuredNonceB64] = await Promise.all([
+      getKey('configured'),
+      getKey('configured_nonce')
+    ]);
+    
     configuredNonceAB = Base64ToArrayBuffer(configuredNonceB64);
   } catch (e) {
+    if (e.message?.includes('configured') && !e.message?.includes('nonce')) {
+      return defaultValue;
+    }
+    
     throw new TwoFasError(TwoFasError.internalErrors.getConfiguredNonceError, { event: e });
   }
 
   try {
-    const persistentPrivateKeyB64 = await storage.getItem('local:persistentPrivateKey');
-    const persistentPrivateKeyAB = Base64ToArrayBuffer(persistentPrivateKeyB64);
-    persistentPrivateKey = await crypto.subtle.importKey(
-      'pkcs8',
-      persistentPrivateKeyAB,
-      { name: 'ECDH', namedCurve: 'P-256' },
-      false,
-      ['deriveBits']
-    );
-  } catch (e) {
-    throw new TwoFasError(TwoFasError.internalErrors.getConfiguredPersistentPrivateKeyError, { event: e });
-  }
+    const [persistentPrivateKeyB64, persistentPublicKeyB64] = await Promise.all([
+      storage.getItem('local:persistentPrivateKey'),
+      storage.getItem('local:persistentPublicKey')
+    ]);
 
-  try {
-    const persistentPublicKeyB64 = await storage.getItem('local:persistentPublicKey');
-    const persistentPublicKeyAB = Base64ToArrayBuffer(persistentPublicKeyB64);
-    persistentPublicKey = await crypto.subtle.importKey(
-      'spki',
-      persistentPublicKeyAB,
-      { name: 'ECDH', namedCurve: 'P-256' },
-      false,
-      []
-    );
+    const [persistentPrivateKeyAB, persistentPublicKeyAB] = await Promise.all([
+      Promise.resolve(Base64ToArrayBuffer(persistentPrivateKeyB64)),
+      Promise.resolve(Base64ToArrayBuffer(persistentPublicKeyB64))
+    ]);
+
+    [persistentPrivateKey, persistentPublicKey] = await Promise.all([
+      crypto.subtle.importKey('pkcs8', persistentPrivateKeyAB, { name: 'ECDH', namedCurve: 'P-256' }, false, ['deriveBits'] ),
+      crypto.subtle.importKey('spki', persistentPublicKeyAB, { name: 'ECDH', namedCurve: 'P-256' }, false, [] )
+    ]);
+
   } catch (e) {
-    throw new TwoFasError(TwoFasError.internalErrors.getConfiguredPersistentPublicKeyError, { event: e });
+    const isPrivateKeyError = e.message?.includes('pkcs8') || e.message?.includes('deriveBits');
+    const errorType = isPrivateKeyError 
+      ? TwoFasError.internalErrors.getConfiguredPersistentPrivateKeyError
+      : TwoFasError.internalErrors.getConfiguredPersistentPublicKeyError;
+    
+    throw new TwoFasError(errorType, { event: e });
   }
 
   try {

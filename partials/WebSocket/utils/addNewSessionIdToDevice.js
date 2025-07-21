@@ -20,7 +20,7 @@ const addNewSessionIdToDevice = async (uuid, newSessionId) => {
   }
 
   device.sessionId = newSessionId;
-  device.updatedAt = new Date().valueOf();
+  device.updatedAt = Date.now();
 
   await storage.setItem('local:devices', devices);
 };

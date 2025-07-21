@@ -80,7 +80,7 @@ const shortcutAutofill = async () => {
   }
 
   matchingLogins = matchingLogins.map(item => {
-    if (item?.securityType === 1 && item?.password && item?.password?.length > 0) {
+    if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.password && item?.password?.length > 0) {
       item.t2WithPassword = true;
     }
 
@@ -94,7 +94,7 @@ const shortcutAutofill = async () => {
   } else if (matchingLoginsAction && matchingLoginsAction?.status === 'action') {
     const service = services.filter(service => service.id === matchingLoginsAction.id)[0];
 
-    if (service.securityType === 1) {
+    if (service.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       const data = encodeURIComponent(JSON.stringify({ action: 'passwordRequest', from: 'shortcut', data: { loginId: matchingLoginsAction.id, deviceId: matchingLoginsAction.deviceId, tabId: tab.id }}));
       return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
     }

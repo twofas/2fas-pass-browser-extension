@@ -9,8 +9,6 @@ import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import inputSetValue from './autofillFunctions/inputSetValue';
 
-/* global Event */
-
 /** 
 * Function to autofill input fields.
 * @async

@@ -37,7 +37,11 @@
   },
   "error_idle_lock_saving": {
     "message": "Error while saving \"Idle lock\" settings",
-    "description": "Error message displayed when saving idle lock settngs fails"
+    "description": "Error message displayed when saving idle lock settings fails"
+  },
+  "error_auto_clear_clipboard_permission_denied": {
+    "message": "Permission to read clipboard denied. Auto clear clipboard feature disabled.",
+    "description": "Error message displayed when clipboard read permission is denied"
   },
   "error_auto_clear_clipboard_saving": {
     "message": "Error while saving \"Auto clear clipboard\" settings",

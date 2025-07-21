@@ -54,8 +54,10 @@ const passwordRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF,
       let encryptedValueB64 = null;
 
       if (state?.data?.cryptoAvailable) {
-        const nonce = generateNonce();
-        const localKey = await storage.getItem('local:lKey');
+        const [nonce, localKey] = await Promise.all([
+          generateNonce(),
+          storage.getItem('local:lKey')
+        ]);
 
         const localKeyCrypto = await crypto.subtle.importKey(
           'raw',
@@ -109,11 +111,10 @@ const passwordRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF,
       }
     }
 
-    // Get services
-    const services = await getServices();
-
-    // Get servicesKeys
-    const servicesKeys = await getServicesKeys(state.data.deviceId);
+    const [services, servicesKeys] = await Promise.all([
+      getServices(),
+      getServicesKeys(state.data.deviceId)
+    ]);
 
     // Update password
     const service = services.find(service => service.id === state.data.loginId);
@@ -153,7 +154,7 @@ const passwordRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF,
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionPasswordRequestAcceptError);
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionPasswordRequestAcceptError, { event: e });
   }
 };
 

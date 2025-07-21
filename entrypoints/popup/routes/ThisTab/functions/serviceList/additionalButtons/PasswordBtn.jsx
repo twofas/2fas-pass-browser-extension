@@ -30,7 +30,7 @@ const PasswordBtn = ({ login, more, setMore }) => {
   let intervalId = 0;
 
   const getLoginAlarm = async () => {
-    if (login?.securityType === 1 && login?.password && login?.password?.length > 0) {
+    if (login?.securityType === SECURITY_TIER.HIGHLY_SECRET && login?.password && login?.password?.length > 0) {
       let alarmTime;
 
       try {
@@ -56,7 +56,7 @@ const PasswordBtn = ({ login, more, setMore }) => {
       return;
     }
 
-    const leftTime = maxTime - (scheduledTime - new Date().valueOf());
+    const leftTime = maxTime - (scheduledTime - Date.now());
     const percentTime = Math.round((leftTime / maxTime) * 100);
     setLoaderProgress(getLoaderProgress(100 - percentTime));
 
@@ -82,7 +82,7 @@ const PasswordBtn = ({ login, more, setMore }) => {
     };
   }, [login, scheduledTime]);
 
-  if (login?.securityType === 2) {
+  if (login?.securityType === SECURITY_TIER.SECRET) {
     return (
       <button
         onClick={async () => await handlePassword(login.id, more, setMore)}
@@ -91,7 +91,7 @@ const PasswordBtn = ({ login, more, setMore }) => {
         <ServicePasswordIcon className={S.servicePassword} />
       </button>
     );
-  } else if (login?.securityType === 1 && login?.password && login?.password?.length > 0) {
+  } else if (login?.securityType === SECURITY_TIER.HIGHLY_SECRET && login?.password && login?.password?.length > 0) {
     return (
       <button
         onClick={async () => await handlePassword(login.id, more, setMore)}

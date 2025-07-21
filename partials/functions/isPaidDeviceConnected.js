@@ -11,21 +11,33 @@ import isText from './isText';
 * @async
 * @return {boolean} True if the device is connected and paid, false otherwise.
 */
-const isPaidDeviceConnected = async () => {
+const isPaidDeviceConnected = async () => { // FUTURE - Change for multiple devices
   const devices = await storage.getItem('local:devices');
-  const expirationDatesB64 = devices.map(device => device?.expirationDate);
 
-  const expirationDates = expirationDatesB64.map(date => (date && isText(date)) ? atob(date) : null).filter(Boolean);
-
-  if (!expirationDates || expirationDates.length === 0) {
+  if (!devices || !Array.isArray(devices) || devices.length === 0) {
     return false;
   }
 
-  const currentDate = new Date().valueOf();
+  // Get latest device by updatedAt
+  const latestDevice = devices.reduce((latest, device) => {
+    return (!latest || (device?.updatedAt && device.updatedAt > latest.updatedAt)) ? device : latest;
+  }, null);
 
-  const validExpirationDates = expirationDates.filter(date => date && parseInt(date, 10) || 0 > currentDate);
+  if (!latestDevice) {
+    return false;
+  }
 
-  return !!(validExpirationDates && validExpirationDates.length > 0);
+  const expirationDate = latestDevice?.expirationDate;
+
+  if (!expirationDate || !isText(expirationDate)) {
+    return false;
+  }
+
+  const expirationDateParsed = atob(expirationDate);
+  const expirationDateInt = parseInt(expirationDateParsed, 10);
+  const currentDate = Date.now();
+
+  return !isNaN(expirationDateInt) && expirationDateInt > currentDate;
 };
 
 export default isPaidDeviceConnected;

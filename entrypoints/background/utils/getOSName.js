@@ -4,8 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/* global navigator */
-
 /** 
 * Function to get the name of the operating system based on the user agent.
 * @return {string} The name of the operating system.

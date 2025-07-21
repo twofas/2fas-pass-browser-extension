@@ -32,7 +32,7 @@ const getUsernameInputs = (passwordForms = null) => {
         if (input.getAttribute(attribute) && input?.getAttribute(attribute)?.toLowerCase().includes(word.toLowerCase())) {
           userNameInputs.push(input);
         }
-      })
+      });
     });
 
     if (input.id) {

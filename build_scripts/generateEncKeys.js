@@ -4,6 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+/* global process */
+
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';

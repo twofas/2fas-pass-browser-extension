@@ -24,7 +24,7 @@ const deviceUpdate = async (uuid, payload) => {
   device.name = payload.deviceName || '2FAS Pass Mobile App';
   device.id = payload.deviceId;
   device.platform = payload.deviceOs || '';
-  device.updatedAt = new Date().valueOf();
+  device.updatedAt = Date.now();
 
   await storage.setItem('local:devices', devices);
 

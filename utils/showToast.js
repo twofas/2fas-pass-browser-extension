@@ -15,8 +15,6 @@ import isText from '@/partials/functions/isText';
 * @return {string} The ID of the toast notification.
 */
 const showToast = (message, type = 'info', autoClose) => {
-  let toastTimeoutId;
-
   if (!isText(message)) {
     throw new TwoFasError(TwoFasError.errors.toastMessageNotString, { additional: { func: 'showToast', message } });
   }
@@ -26,10 +24,7 @@ const showToast = (message, type = 'info', autoClose) => {
     {
       type,
       autoClose,
-      closeButton: autoClose === false ? false : true,
-      onClose: () => {
-        clearTimeout(toastTimeoutId);
-      }
+      closeButton: autoClose === false ? false : true
     }
   );
 
@@ -41,7 +36,7 @@ const showToast = (message, type = 'info', autoClose) => {
     autoClose = config.toastAutoClose;
   }
 
-  toastTimeoutId = setTimeout(() => {
+  setTimeout(() => {
     toast.dismiss(toastId);
   }, autoClose);
 

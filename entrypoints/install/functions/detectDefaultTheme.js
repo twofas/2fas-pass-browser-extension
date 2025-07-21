@@ -18,16 +18,8 @@ const detectDefaultTheme = async () => {
     themeValueStorage = 'unset';
   }
 
-  if (!themeValueStorage || themeValueStorage === 'unset') {
-    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const themeValue = isDarkMode ? 'dark' : 'light';
-
-    try {
-      await storage.setItem('local:theme', themeValue);
-      themeValueStorage = themeValue;
-    } catch {
-      themeValueStorage = 'light';
-    }
+  if (!themeValueStorage || (themeValueStorage !== 'unset' && themeValueStorage !== 'light' && themeValueStorage !== 'dark')) {
+    themeValueStorage = 'unset';
   }
 
   document.body.classList.add(`theme-${themeValueStorage}`);

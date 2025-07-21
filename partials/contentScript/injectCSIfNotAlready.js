@@ -17,7 +17,7 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
 
   try {
     res = await sendMessageToAllFrames(tabID, { action: REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK, target: type });
-  } catch (e) {}
+  } catch {}
 
   if (res) {
     const okResponses = res.filter(frameResponse => frameResponse?.status === 'ok');
@@ -34,7 +34,7 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
   while (beforeAttempts < 5) {
     try {
       res = await sendMessageToAllFrames(tabID, { action: REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK, target: type });
-    } catch (e) {}
+    } catch {}
 
     if (res) {
       const okResponses = res.filter(frameResponse => frameResponse?.status === 'ok');
@@ -81,7 +81,7 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
       }
 
       default: {
-        throw new TwoFasError(TwoFasError.internalErrors.injectCSIfNotAlreadyUnknownTypeError, { event: e });
+        throw new TwoFasError(TwoFasError.internalErrors.injectCSIfNotAlreadyUnknownTypeError);
       }
     }
   } catch {
@@ -91,7 +91,7 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
   while (attempts < 10) {
     try {
       res = await sendMessageToAllFrames(tabID, { action: REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK, target: type });
-    } catch (e) {}
+    } catch {}
 
     if (res) {
       const okResponses = res.filter(frameResponse => frameResponse?.status === 'ok');

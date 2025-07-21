@@ -4,8 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/* global TextEncoder, CompressionStream, Response */
-
 /** 
 * Compresses a string using GZIP algorithm.
 * @param {string} string - The string to compress.

@@ -9,10 +9,9 @@ const migrationModules = import.meta.glob('./migrationsDatabase/*.js', { eager: 
 /** 
 * Function to run migrations for the browser.
 * @async
-* @param {Object} browserInfo - Information about the browser.
 * @return {Promise<void>} A promise that resolves when the migrations are complete.
 */
-const runMigrations = async browserInfo => {
+const runMigrations = async () => {
   // Sort migration files by number
   const sortedMigrations = Object.entries(migrationModules)
     .sort(([a], [b]) => {
@@ -23,7 +22,7 @@ const runMigrations = async browserInfo => {
 
   for (const [, migration] of sortedMigrations) {
     if (typeof migration.default === 'function') {
-      await migration.default(browserInfo);
+      await migration.default();
     }
   }
 };
