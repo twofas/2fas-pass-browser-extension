@@ -170,6 +170,10 @@
       margin-top: 33px;
       padding: 0 8px;
 
+      &.small-margin {
+        margin-top: 12px;
+      }
+
       h4 {
         color: v.$primary-text-light;
         font-size: 14px;
@@ -662,6 +666,98 @@
   &-excluded-domains {
     width: 100%;
 
+    &-add {
+      max-height: 20px;
+      overflow: hidden;
+      text-align: center;
+      transition: max-height .3s ease-in-out;
+      width: 100%;
+
+      &.hidden {
+        max-height: 0;
+      }
+
+      &.settings-excluded-domains-add-another {
+        margin-top: 8px;
+        text-align: left;
+      }
+
+      &-button {
+        align-items: center;
+        display: inline-flex;
+        gap: 0 6px;
+        padding: 0;
+
+        svg {
+          height: 16px;
+          stroke: v.$primary-color-light;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 1.5px;
+          width: auto;
+
+          @include m.darkMode {
+            stroke: v.$primary-color-dark;
+          }
+        }
+
+        span {
+          color: v.$primary-color-light;
+          font-size: 12px;
+          font-weight: 500;
+          line-height: 1;
+
+          @include m.darkMode {
+            color: v.$primary-color-dark;
+          }
+        }
+      }
+    }
+
+    &-new {
+      max-height: 40px;
+      overflow: hidden;
+      transition: max-height .3s ease-in-out;
+
+      &.hidden {
+        max-height: 0;
+      }
+
+      &-form {
+        input {
+          color: v.$primary-text-light;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1;
+
+          @include m.darkMode {
+            color: v.$primary-text-dark;
+          }
+        }
+
+        svg {
+          height: 16px;
+          stroke: v.$primary-color-light;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 1.5px;
+          width: auto;
+
+          @include m.darkMode {
+            stroke: v.$primary-color-dark;
+          }
+
+          &.icon-new {
+            height: 16px;
+          }
+
+          &.icon-cancel {
+            height: 14px;
+          }
+        }
+      }
+    }
+
     &-empty {
       text-align: center;
 
@@ -670,6 +766,7 @@
         font-size: 12px;
         font-weight: 400;
         line-height: 1;
+        margin-bottom: 10px;
 
         @include m.darkMode {
           color: v.$secondary-text-dark;

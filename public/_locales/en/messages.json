@@ -975,6 +975,46 @@
     "message": "Remove selected domain from the ignored list.",
     "description": "Button label to remove a domain from the excluded list"
   },
+  "settings_excluded_domains_remove_toast": {
+    "message": "Domain removed from the ignored list",
+    "description": "Message displayed when a domain is successfully removed from the ignored list"
+  },
+  "settings_excluded_domains_add_required": {
+    "message": "Domain is required",
+    "description": "Validation message when trying to add an empty domain"
+  },
+  "settings_excluded_domains_add_invalid": {
+    "message": "Domain is invalid. Please enter a valid domain.",
+    "description": "Validation message when the provided domain is invalid"
+  },
+  "settings_excluded_domains_add_already_ignored": {
+    "message": "This domain is already ignored.",
+    "description": "Validation message when trying to add a domain that is already in the ignored list"
+  },
+  "settings_excluded_domains_add_success": {
+    "message": "Successfully added domain to ignored list",
+    "description": "Message displayed when a domain is successfully added to the ignored list"
+  },
+  "settings_excluded_domains_add_domain_text": {
+    "message": "Add domain",
+    "description": "Label for the input field to add a new domain to the ignored list"
+  },
+  "settings_excluded_domains_add_another_domain_text": {
+    "message": "Add another domain",
+    "description": "Label for the button to add another domain to the ignored list"
+  },
+  "settings_excluded_domains_add_input_placeholder": {
+    "message": "Enter domain to ignore",
+    "description": "Placeholder text for the input field to add a new domain to the ignored list"
+  },
+  "settings_excluded_domains_add_submit_title": {
+    "message": "Ignore this domain",
+    "description": "Title for the button to submit a new domain to the ignored list"
+  },
+  "settings_excluded_domains_add_cancel_title": {
+    "message": "Cancel ignoring this domain",
+    "description": "Title for the button to cancel ignoring a new domain to the ignored list"
+  },
   "settings_danger_zone": {
     "message": "Danger Zone",
     "description": "Label for the danger zone section in settings"
