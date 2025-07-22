@@ -27,7 +27,7 @@ const generateAllLoginsList = (logins, sort, search, loading) => {
   }
 
   if (!isLoginsCorrect(logins) && loading) {
-    let logins = [];
+    const logins = [];
 
     for (let i = 0; i < 3; i++) {
       logins.push({

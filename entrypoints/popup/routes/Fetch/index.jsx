@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './Fetch.module.scss';
-import { useLocation, Link, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useState, useEffect, lazy } from 'react';
 import getCurrentDevice from '@/partials/functions/getCurrentDevice';
 import sendPush from '@/partials/functions/sendPush';
@@ -17,7 +17,6 @@ import calculateSignature from './functions/calculateSignature';
 import getNTPTime from '@/partials/functions/getNTPTime';
 import deletePush from '@/partials/functions/deletePush';
 
-const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
 const PushNotification = lazy(() => import('./components/PushNotification'));
 const ConnectionError = lazy(() => import('./components/ConnectionError'));
 const ConnectionTimeout = lazy(() => import('./components/ConnectionTimeout'));

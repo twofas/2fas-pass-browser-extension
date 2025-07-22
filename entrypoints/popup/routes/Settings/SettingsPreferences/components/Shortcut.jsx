@@ -91,8 +91,8 @@ function Shortcut () {
       return <EmptyShortcutBox />;
     }
 
-    let data = shortcut.split('+');
-    let elements = [];
+    const data = shortcut.split('+');
+    const elements = [];
     const shortcutLength = data.length;
 
     data.forEach((btn, i) => {
@@ -110,14 +110,14 @@ function Shortcut () {
 
     return (
       <>
-        {...elements}
+        {elements}
       </>
     );
   };
 
   const openShortcutSettingsAvailable = () => {
     return browser?.commands?.openShortcutSettings && typeof browser?.commands?.openShortcutSettings === 'function';
-  }
+  };
 
   const onEditShortcut = async () => {
     if (shortcutLink === 'firefox') {

@@ -87,7 +87,7 @@ function LoginItem (props) {
       onMouseEnter={() => setAdditionalButtonsHover(true)}
       onMouseLeave={() => {
         if (!more) {
-          setAdditionalButtonsHover(false)
+          setAdditionalButtonsHover(false);
         }
       }}
     >

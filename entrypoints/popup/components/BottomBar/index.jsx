@@ -90,7 +90,7 @@ function BottomBar () {
       if (window && typeof window?.close === 'function' && import.meta.env.BROWSER !== 'safari') {
         window.close();
       } else {
-        navigate('/blocked', { replace: true })
+        navigate('/blocked', { replace: true });
       }
     } catch (e) {
       CatchError(e);

@@ -74,6 +74,7 @@
     "dotenv": "^17.2.0",
     "eslint": "^9.31.0",
     "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-react": "^7.37.5",
     "sass-embedded": "1.89.2",
     "terser": "^5.43.1",
     "vitest": "^3.2.4",

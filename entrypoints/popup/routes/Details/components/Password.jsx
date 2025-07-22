@@ -63,7 +63,7 @@ function Password (props) {
         <span>{browser.i18n.getMessage('details_password_decrypt_error')}</span>
       </div>
     );
-  }
+  };
 
   const generateSecurityTypeDescription = service => {
     if (isT3orT2WithPassword(service)) {
