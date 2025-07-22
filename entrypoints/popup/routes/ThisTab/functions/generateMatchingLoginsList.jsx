@@ -21,7 +21,7 @@ const generateMatchingLoginsList = (logins, loading) => {
   }
 
   if (!isLoginsCorrect(logins) && loading) {
-    let logins = [{ id: 0, login: [] }];
+    const logins = [{ id: 0, login: [] }];
 
     return (
       <ViewportList items={logins}>
@@ -30,15 +30,13 @@ const generateMatchingLoginsList = (logins, loading) => {
     );
   }
 
-  let loginsData;
-
   let fetchedLogins = logins.filter(login => login.securityType === SECURITY_TIER.HIGHLY_SECRET && login.password && login.password.length > 0);
   let restLogins = logins.filter(login => login.securityType !== SECURITY_TIER.HIGHLY_SECRET || (login.securityType === SECURITY_TIER.HIGHLY_SECRET && !login.password));
 
   fetchedLogins = sortByName(fetchedLogins);
   restLogins = sortByName(restLogins);
 
-  loginsData = fetchedLogins.concat(restLogins);
+  const loginsData = fetchedLogins.concat(restLogins);
 
   return (
     <ViewportList items={loginsData} overscan={2}>

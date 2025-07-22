@@ -158,7 +158,7 @@ function Install () {
       await storage.setItem('local:logging', !logs);
       setLogs(!logs);
       showToast(browser.i18n.getMessage('install_logging_settings_changed'), 'success');
-    } catch (e) {
+    } catch {
       showToast(browser.i18n.getMessage('error_logging_settings_changed'), 'error');
     }
   };

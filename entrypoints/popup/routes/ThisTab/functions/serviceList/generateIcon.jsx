@@ -47,7 +47,7 @@ const generateIcon = (login, faviconError, setFaviconError, loading) => {
 
     try {
       iconDomain = getDomain(login?.uris[iconUriIndex]?.text);
-    } catch (e) {
+    } catch {
       handleFaviconError();
     }
 
