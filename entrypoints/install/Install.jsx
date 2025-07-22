@@ -53,10 +53,10 @@ const emptyFunc = () => {};
 */
 function Install () {
   const [stepVisible, setStepVisible] = useState(0);
-  const stepVisibleRef = useRef(stepVisible);
-
   const [appsVisible, setAppsVisible] = useState(false);
   const [logs, setLogs] = useState(false);
+
+  const stepVisibleRef = useRef(stepVisible);
 
   const handleContinueWoPinning = async () => {
     goToStep(2);

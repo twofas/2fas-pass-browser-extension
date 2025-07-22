@@ -499,6 +499,22 @@
     "message": "Get mobile app",
     "description": "Button label for downloading the mobile app"
   },
+  "install_scan": {
+    "message": "Scan",
+    "description": "Button label for scanning the QR code with the mobile app"
+  },
+  "install_point_camera": {
+    "message": "Point camera at the QR Code",
+    "description": "Tooltip text instructing the user to point their camera at the QR code"
+  },
+  "install_download_ios_app": {
+    "message": "Download app for iOS",
+    "description": "Button label for downloading the iOS app"
+  },
+  "install_download_android_app": {
+    "message": "Download app for Android",
+    "description": "Button label for downloading the Android app"
+  },
   "bottom_bar_security_icon_tooltip_header": {
     "message": "This is your Identicon that only you know.",
     "description": "Header for the tooltip explaining the purpose of the Identicon"
