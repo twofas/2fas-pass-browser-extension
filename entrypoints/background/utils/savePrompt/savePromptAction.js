@@ -56,8 +56,8 @@ const savePromptAction = async (details, serviceType, tabsInputData, values, sav
     return;
   }
   
-  while (tabData?.status === 'loading') {
-    await new Promise(resolve => setTimeout(resolve, 50));
+  while (tabData?.status !== 'complete') {
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     try {
       tabData = await browser.tabs.get(details?.tabId);

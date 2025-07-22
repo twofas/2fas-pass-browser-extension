@@ -87,6 +87,10 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     throw new TwoFasError(TwoFasError.internalErrors.onWebRequestConfiguredError, { event: e });
   }
 
+  if (!configured) {
+    return;
+  }
+
   let storageSavePrompt = null;
   let domainOnIgnoredList;
 
@@ -103,7 +107,6 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   }
 
   if (
-    !configured || // Only when configured
     (storageSavePrompt !== 'default' && storageSavePrompt !== 'default_encrypted') || // Only when savePrompt is set to default or default_encrypted
     domainOnIgnoredList // Only when domain is not on the ignored list
   ) {
