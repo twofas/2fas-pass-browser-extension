@@ -11,8 +11,8 @@ export default defineContentScript({
   matches: ['https://*/*', 'http://*/*'],
   all_frames: true,
   match_about_blank: true,
-  cssInjectionMode: 'manual',
   registration: 'runtime',
+  cssInjectionMode: 'ui',
   async main (ctx) {
     try {
       let handleMessage;
