@@ -32,11 +32,7 @@ const sendMessageToAllFrames = async (tabId, message) => {
 
   return Promise.all(
     frames.map(frame => {
-      try {
-        return browser.tabs.sendMessage(tabId, message, { frameId: frame.frameId }).catch(() => false);
-      } catch {
-        return false;
-      }
+      return browser.tabs.sendMessage(tabId, message, { frameId: frame.frameId }).catch(() => false);
     })
   );
 };
