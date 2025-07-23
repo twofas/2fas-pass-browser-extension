@@ -81,11 +81,17 @@ const handleAutofill = async (id, navigate, more, setMore) => {
 
   if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
     if (!service?.password || service?.password?.length <= 0) {
-      const inputTests = await sendMessageToAllFrames(tab.id, {
-        action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
-        target: REQUEST_TARGETS.CONTENT
-      });
-      const canAutofill = inputTests.some(inputTest => inputTest === true);
+      let canAutofill = false;
+
+      try {
+        const inputTests = await sendMessageToAllFrames(tab.id, {
+          action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
+          target: REQUEST_TARGETS.CONTENT
+        });
+        canAutofill = inputTests.some(inputTest => inputTest === true);
+      } catch {
+        canAutofill = false;
+      }
 
       if (!canAutofill) {
         showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
