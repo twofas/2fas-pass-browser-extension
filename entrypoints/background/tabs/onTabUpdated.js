@@ -6,7 +6,6 @@
 
 import sendDomainToPopupWindow from '../utils/sendDomainToPopupWindow';
 import isTabIsPopupWindow from './isTabIsPopupWindow';
-import setBadge from '../utils/setBadge';
 import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
 import checkPromptCS from '@/partials/contentScript/checkPromptCS';
 import sendSavePromptToTab from '../utils/sendSavePromptToTab';
@@ -15,8 +14,10 @@ import removeSavePromptAction from '../utils/savePrompt/removeSavePromptAction';
 import handleSavePromptResponse from '../utils/savePrompt/handleSavePromptResponse';
 import { parseDomain } from 'parse-domain';
 import getServices from '@/partials/sessionStorage/getServices';
-import setBadgeLocked from '../utils/setBadgeLocked';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
+import setBadgeLocked from '../utils/badge/setBadgeLocked';
+import setBadgeIcon from '../utils/badge/setBadgeIcon';
+import setBadgeText from '../utils/badge/setBadgeText';
 
 /** 
 * Function to handle tab updates in the browser.
@@ -28,7 +29,7 @@ import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfig
 * @return {Promise<boolean>} A promise that resolves to true if the tab update was handled successfully, false otherwise.
 */
 const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData) => {
-  if (!tabID || !changeInfo || changeInfo?.status !== 'complete') {
+  if (!tabID || !changeInfo || !changeInfo?.status) {
     return false;
   }
 
@@ -41,9 +42,15 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
 
     if (!configured) {
       throw new Error();
+    } else {
+      await setBadgeIcon(true, tabID).catch(() => {});
     }
   } catch {
     await setBadgeLocked(tabID).catch(() => {});
+    return false;
+  }
+
+  if (changeInfo?.status !== 'complete') {
     return false;
   }
 
@@ -82,7 +89,7 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
     } catch {}
 
     await Promise.all([
-      setBadge(tab.url, tabID, services).catch(e => CatchError(e)),
+      setBadgeText(configured, services, tab.url, tabID).catch(e => CatchError(e)),
       sendDomainToPopupWindow(tabID),
       updateNoAccountItem(tabID, services),
       checkPromptCS(tabID)
