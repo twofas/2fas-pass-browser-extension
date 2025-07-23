@@ -6,11 +6,12 @@
 
 import sendDomainToPopupWindow from '../utils/sendDomainToPopupWindow';
 import isTabIsPopupWindow from './isTabIsPopupWindow';
-import setBadge from '../utils/setBadge';
 import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
 import getServices from '@/partials/sessionStorage/getServices';
-import setBadgeLocked from '../utils/setBadgeLocked';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
+import setBadgeLocked from '../utils/badge/setBadgeLocked';
+import setBadgeIcon from '../utils/badge/setBadgeIcon';
+import setBadgeText from '../utils/badge/setBadgeText';
 
 /** 
 * Function to handle tab creation in the browser.
@@ -30,6 +31,8 @@ const onTabCreated = async tab => {
 
     if (!configured) {
       throw new Error();
+    } else {
+      await setBadgeIcon(true, tab.id).catch(() => {});
     }
   } catch {
     await setBadgeLocked(tab.id).catch(() => {});
@@ -42,8 +45,8 @@ const onTabCreated = async tab => {
       isTabIsPopupWindow(tab.id).catch(() => false)
     ]);
 
-    if (tab.url && tab.id) {
-      setBadge(tab.url, tab.id, services).catch(e => CatchError(e));
+    if (tab?.url && tab?.id) {
+      await setBadgeText(configured, services, tab.url, tab.id).catch(e => CatchError(e));
     }
 
     if (!isPopupWindow) {

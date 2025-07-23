@@ -33,10 +33,9 @@ const onStorageChange = async (change, areaName, migrations) => {
         const configuredKey = await getKey('configured');
     
         if (configuredKey && change[configuredKey]) {
-          const oldValue = change[configuredKey]?.oldValue;
           const newValueBoolean = await getConfiguredBoolean();
       
-          return onConfiguredChange(oldValue, newValueBoolean);
+          return onConfiguredChange(newValueBoolean);
         }
       } catch (e) {
         await CatchError(e);
