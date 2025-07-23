@@ -7,7 +7,7 @@
 import S from '../../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 
 /**
 * Function to render the Shortcut component.
@@ -99,12 +99,12 @@ function Shortcut () {
       const filteredBtn = btn?.replace('MacCtrl', 'Ctrl');
 
       elements.push(
-        <>
+        <Fragment key={i}>
           <div className={pI.passInputShortcutBoxKey} key={i}>
             {filteredBtn}
           </div>
-          { i !== shortcutLength - 1 ? <div className={pI.passInputShortcutBoxPlus}>+</div> : null }
-        </>
+          {i !== shortcutLength - 1 ? <div className={pI.passInputShortcutBoxPlus}>+</div> : null }
+        </Fragment>
       );
     });
 
