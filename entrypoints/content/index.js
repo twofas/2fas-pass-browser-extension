@@ -4,6 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import '@/partials/TwofasNotification/TwofasNotification.scss';
 import contentOnMessage from './events/contentOnMessage';
 import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
 
