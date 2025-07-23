@@ -4,7 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import '@/partials/TwofasNotification/TwofasNotification.scss';
 import { createElement, createSVGElement, createTextElement } from '@/partials/DOMElements';
 import S from '@/constants/selectors';
 import logoSrc from '@/assets/logo.svg?raw';
