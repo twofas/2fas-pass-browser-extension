@@ -118,7 +118,7 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
         return;
       }
 
-      const res = await sendSavePromptToTab(tabID, action.serviceType);
+      const res = await sendSavePromptToTab(tabID, action.serviceTypeData);
       await handleSavePromptResponse(
         res,
         tabID,

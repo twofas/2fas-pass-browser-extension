@@ -57,6 +57,37 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
       return;
     }
 
+    case 'updateLogin': {
+      let decryptedValues;
+
+      if (values?.encrypted) {
+        decryptedValues = await decryptValues(values);
+      } else {
+        decryptedValues = {
+          username: values.username,
+          password: values.password
+        };
+      }
+
+      const data = JSON.stringify({
+        action: 'updateLogin',
+        from: 'savePrompt',
+        data: {
+          url,
+          loginId: res.loginId,
+          securityType: res.securityType,
+          username: decryptedValues.username,
+          password: decryptedValues.password
+        }
+      });
+
+      await openPopupWindowInNewWindow({ pathname: `/fetch/${encodeURIComponent(data)}` });
+
+      removeSavePromptAction(tabId, url, savePromptActions);
+      tabUpdateData[tabId].savePromptVisible = false;
+      return;
+    }
+
     case 'doNotAsk': {
       let storageIgnoreList = await storage.getItem('local:savePromptIgnoreDomains');
 

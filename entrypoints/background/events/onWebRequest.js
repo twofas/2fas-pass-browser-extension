@@ -140,22 +140,22 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   }
 
   // Only when combination of username && password doesn't exist in the storage
-  let serviceType;
+  let serviceTypeData;
 
   try {
-    serviceType = await checkServicesData(details, values);
+    serviceTypeData = await checkServicesData(details, values);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.onWebRequestCheckServicesDataError, { event: e });
   }
 
-  if (!serviceType) {
+  if (!serviceTypeData) {
     return;
   }
 
   // Action
   try {
-    await addSavePromptAction(details, serviceType, values, savePromptActions);
-    await savePromptAction(details, serviceType, tabsInputData, values, savePromptActions, tabUpdateData);
+    await addSavePromptAction(details, serviceTypeData, values, savePromptActions);
+    await savePromptAction(details, serviceTypeData, tabsInputData, values, savePromptActions, tabUpdateData);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.onWebRequestSavePromptActionError, { event: e });
   }
