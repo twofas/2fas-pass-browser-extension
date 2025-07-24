@@ -53,7 +53,11 @@ const handleAutofill = async (id, navigate, more, setMore) => {
 
   try {
     tab = await getLastActiveTab(() => {
-      showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
+      if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+        showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
+      } else {
+        showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
+      }
     }, tab => !tabIsInternal(tab));
   } catch (e) {
     await CatchError(e);
@@ -66,7 +70,11 @@ const handleAutofill = async (id, navigate, more, setMore) => {
   try {
     await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
   } catch (e) {
-    showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
+    if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+      showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
+    } else {
+      showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
+    }
 
     if (!e.message.includes('showing error page')) {
       await CatchError(e);
@@ -129,6 +137,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     if ((!service?.password || service?.password?.length <= 0) && (service?.username && service?.username?.length > 0)) {
       passwordDecrypt = false;
     } else if ((!service?.password || service?.password?.length <= 0) && (!service?.username || service?.username?.length <= 0)) {
+      console.log('test');
       showToast(browser.i18n.getMessage('this_tab_autofill_no_username_and_password'), 'error');
       return;
     }
