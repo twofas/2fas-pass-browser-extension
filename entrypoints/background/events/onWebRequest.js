@@ -28,7 +28,7 @@ import checkFormData from '../utils/savePrompt/checkFormData';
 */
 const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdateData) => {
   // COMMENT THIS WHEN DEBUGGING SAVE PROMPT
-  if (!tabsInputData || Object.keys(tabsInputData).length === 0 || !tabsInputData[details?.tabId]) {
+  if (!tabsInputData || Object.keys(tabsInputData).length === 0 || !tabsInputData[details?.tabId] || tabsInputData[details?.tabId]?.length <= 0) {
     return;
   }
   // [END] COMMENT THIS WHEN DEBUGGING
