@@ -28,6 +28,7 @@ import PULL_REQUEST_TYPES from '../../../Fetch/constants/PULL_REQUEST_TYPES';
 const handleAutofill = async (id, navigate, more, setMore) => {
   let servicesStorage, service, res;
   let passwordDecrypt = true;
+  let passwordAvailable = true;
 
   if (more) {
     setMore(false);
@@ -82,13 +83,18 @@ const handleAutofill = async (id, navigate, more, setMore) => {
   if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
     if (!service?.password || service?.password?.length <= 0) {
       let canAutofill = false;
+      let canAutofillPassword, canAutofillUsername;
 
       try {
         const inputTests = await sendMessageToAllFrames(tab.id, {
           action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
           target: REQUEST_TARGETS.CONTENT
         });
-        canAutofill = inputTests.some(inputTest => inputTest === true);
+
+        canAutofillPassword = inputTests.some(input => input.canAutofillPassword);
+        canAutofillUsername = inputTests.some(input => input.canAutofillUsername);
+
+        canAutofill = canAutofillPassword || canAutofillUsername;
       } catch {
         canAutofill = false;
       }
@@ -98,22 +104,26 @@ const handleAutofill = async (id, navigate, more, setMore) => {
         return;
       }
 
-      navigate(
-        '/fetch', {
-          state: {
-            action: PULL_REQUEST_TYPES.PASSWORD_REQUEST,
-            from: 'autofill',
-            data: {
-              loginId: service.id,
-              deviceId: service.deviceId,
-              tabId: tab.id,
-              cryptoAvailable: cryptoAvailableRes.cryptoAvailable
+      if (canAutofillPassword) {
+        navigate(
+          '/fetch', {
+            state: {
+              action: PULL_REQUEST_TYPES.PASSWORD_REQUEST,
+              from: 'autofill',
+              data: {
+                loginId: service.id,
+                deviceId: service.deviceId,
+                tabId: tab.id,
+                cryptoAvailable: cryptoAvailableRes.cryptoAvailable
+              }
             }
           }
-        }
-      );
+        );
 
-      return;
+        return;
+      } else {
+        passwordAvailable = false;
+      }
     }
   } else if (service?.securityType === SECURITY_TIER.SECRET) {
     if ((!service?.password || service?.password?.length <= 0) && (service?.username && service?.username?.length > 0)) {
@@ -127,7 +137,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
   let decryptedPassword = '';
   let encryptedValueB64;
 
-  if (passwordDecrypt) {
+  if (passwordAvailable && passwordDecrypt) {
     try {
       decryptedPassword = await decryptPassword(service);
     } catch (e) {
@@ -137,43 +147,50 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     }
   }
 
-  if (cryptoAvailableRes.status !== 'ok' || !cryptoAvailableRes.cryptoAvailable) {
-    encryptedValueB64 = decryptedPassword;
-  } else {
-    try {
-      const nonce = generateNonce();
-      const localKey = await storage.getItem('local:lKey');
-      const localKeyCrypto = await crypto.subtle.importKey(
-        'raw',
-        Base64ToArrayBuffer(localKey),
-        { name: 'AES-GCM' },
-        false,
-        ['encrypt']
-      );
-    
-      const value = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-        localKeyCrypto,
-        StringToArrayBuffer(decryptedPassword)
-      );
-    
-      const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
-      encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
-    } catch (e) {
-      showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
-      await CatchError(e);
-      return;
+  if (passwordAvailable) {
+    if (cryptoAvailableRes.status !== 'ok' || !cryptoAvailableRes.cryptoAvailable) {
+      encryptedValueB64 = decryptedPassword;
+    } else {
+      try {
+        const nonce = generateNonce();
+        const localKey = await storage.getItem('local:lKey');
+        const localKeyCrypto = await crypto.subtle.importKey(
+          'raw',
+          Base64ToArrayBuffer(localKey),
+          { name: 'AES-GCM' },
+          false,
+          ['encrypt']
+        );
+      
+        const value = await crypto.subtle.encrypt(
+          { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+          localKeyCrypto,
+          StringToArrayBuffer(decryptedPassword)
+        );
+      
+        const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
+        encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
+      } catch (e) {
+        showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
+        await CatchError(e);
+        return;
+      }
     }
   }
 
+  const actionData = {
+    action: REQUEST_ACTIONS.AUTOFILL,
+    username: service.username,
+    target: REQUEST_TARGETS.CONTENT,
+    cryptoAvailable: cryptoAvailableRes.cryptoAvailable
+  };
+
+  if (passwordAvailable) {
+    actionData.password = encryptedValueB64;
+  }
+
   try {
-    res = await sendMessageToAllFrames(tab.id, {
-      action: REQUEST_ACTIONS.AUTOFILL,
-      username: service.username,
-      password: encryptedValueB64,
-      target: REQUEST_TARGETS.CONTENT,
-      cryptoAvailable: cryptoAvailableRes.cryptoAvailable
-    });
+    res = await sendMessageToAllFrames(tab.id, actionData);
   } catch {}
 
   if (!res) {
