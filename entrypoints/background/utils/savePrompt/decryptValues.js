@@ -5,8 +5,8 @@
 // See LICENSE file for full terms
 
 import getLocalKey from '../getLocalKey';
+import decryptValuesProcess from './decryptValuesProcess';
 
-// @TODO: Refactor this (Promise.all, etc.)
 const decryptValues = async values => {
   let localKey, localKeyCrypto;
 
@@ -34,74 +34,21 @@ const decryptValues = async values => {
     });
   }
 
-  let usernameAB, passwordAB;
-  let usernameOk = true;
-  let passwordOk = true;
+  // Process both username and password in parallel
+  const [usernameResult, passwordResult] = await Promise.all([
+    decryptValuesProcess(values.username, localKeyCrypto),
+    decryptValuesProcess(values.password, localKeyCrypto)
+  ]);
 
-  try {
-    usernameAB = Base64ToArrayBuffer(values.username);
-  } catch {
-    usernameOk = false;
-  }
-
-  try {
-    passwordAB = Base64ToArrayBuffer(values.password);
-  } catch {
-    passwordOk = false;
-  }
-
-  let usernameDecryptedBytes, passwordDecryptedBytes;
-
-  if (usernameOk) {
-    try {
-      usernameDecryptedBytes = DecryptBytes(usernameAB);
-    } catch {
-      usernameOk = false;
-    }
-  }
-
-  if (passwordOk) {
-    try {
-      passwordDecryptedBytes = DecryptBytes(passwordAB);
-    } catch {
-      passwordOk = false;
-    }
-  }
-
-  let decryptedUsernameAB, decryptedPasswordAB;
-
-  if (usernameOk) {
-    try {
-      decryptedUsernameAB = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv: usernameDecryptedBytes.iv },
-        localKeyCrypto,
-        usernameDecryptedBytes.data
-      );
-    } catch {
-      usernameOk = false;
-    }
-  }
-
-  if (passwordOk) {
-    try {
-      decryptedPasswordAB = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv: passwordDecryptedBytes.iv },
-        localKeyCrypto,
-        passwordDecryptedBytes.data
-      );
-    } catch {
-      passwordOk = false;
-    }
-  }
-
+  // Build return object with successful decryptions only
   const returnObj = {};
-
-  if (usernameOk) {
-    returnObj.username = ArrayBufferToString(decryptedUsernameAB);
+  
+  if (usernameResult !== null) {
+    returnObj.username = usernameResult;
   }
-
-  if (passwordOk) {
-    returnObj.password = ArrayBufferToString(decryptedPasswordAB);
+  
+  if (passwordResult !== null) {
+    returnObj.password = passwordResult;
   }
 
   return returnObj;
