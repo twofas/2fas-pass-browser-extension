@@ -28,7 +28,16 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
   // FUTURE - separate functions for each action
   switch (res.status) {
     case 'addLogin': { // FUTURE - consts for actions
-      const decryptedValues = await decryptValues(values);
+      let decryptedValues;
+
+      if (values?.encrypted) {
+        decryptedValues = await decryptValues(values);
+      } else {
+        decryptedValues = {
+          username: values.username,
+          password: values.password
+        };
+      }
 
       const data = JSON.stringify({
         action: 'newLogin',

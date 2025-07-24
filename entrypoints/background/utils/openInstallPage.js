@@ -7,9 +7,6 @@
 /** 
 * Function to open the installation page.
 * @async
-* @param {Object} request - The request object containing the input data.
-* @param {Object} sender - The sender object containing information about the tab.
-* @param {Object} tabsInputData - The object storing input data for each tab.
 * @return {Promise<void>} A promise that resolves when the installation page is opened.
 */
 const openInstallPage = async () => {
