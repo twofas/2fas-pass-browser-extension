@@ -60,6 +60,19 @@ const addLogin = (n, sendResponse) => {
 };
 
 /** 
+* Function to update a login.
+* @param {Object} n - The notification object.
+* @param {string} loginId - The ID of the login to update.
+* @param {string} securityType - The security type of the login.
+* @param {Function} sendResponse - The function to send the response back.
+* @return {void}
+*/
+const updateLogin = (n, loginId, securityType, sendResponse) => {
+  closeNotification(n);
+  return sendResponse({ status: 'updateLogin', loginId, securityType });
+};
+
+/** 
 * Function to check if the save prompt is visible.
 * @param {HTMLElement} container - The container element to search within.
 * @return {boolean} True if the save prompt is visible, false otherwise.
@@ -148,7 +161,7 @@ const savePrompt = (request, sendResponse, container) => {
   n.top.appendChild(n.close);
 
   n.header = createElement('div', 'twofas-pass-notification-save-prompt-header');
-  n.headerText = createTextElement('p', request.serviceType === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_header') : browser.i18n.getMessage('content_save_prompt_update_header'));
+  n.headerText = createTextElement('p', request?.serviceTypeData?.type === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_header') : browser.i18n.getMessage('content_save_prompt_update_header'));
   n.header.appendChild(n.headerText);
 
   n.item.appendChild(n.top);
@@ -161,10 +174,16 @@ const savePrompt = (request, sendResponse, container) => {
   doNotAskButton.addEventListener('click', () => doNotAsk(n, sendResponse));
   n.buttons.appendChild(doNotAskButton);
 
-  const addLoginButtonText = request.serviceType === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_login') : browser.i18n.getMessage('content_save_prompt_update_login');
+  const addLoginButtonText = request?.serviceTypeData?.type === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_login') : browser.i18n.getMessage('content_save_prompt_update_login');
   const addLoginButton = createTextElement('button', addLoginButtonText);
   addLoginButton.classList.add('twofas-pass-notification-save-prompt-buttons-add-login');
-  addLoginButton.addEventListener('click', () => addLogin(n, sendResponse));
+  addLoginButton.addEventListener('click', () => {
+    if (request?.serviceTypeData?.type === 'newService') {
+      return addLogin(n, sendResponse);
+    } else {
+      return updateLogin(n, request?.serviceTypeData?.loginId, request?.serviceTypeData?.securityType, sendResponse);
+    }
+  });
   n.buttons.appendChild(addLoginButton);
 
   n.item.appendChild(n.buttons);

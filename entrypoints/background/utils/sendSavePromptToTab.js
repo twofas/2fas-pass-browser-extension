@@ -10,10 +10,10 @@ import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames'
 * Function to send a save prompt to a specific tab.
 * @async
 * @param {number} tabID - The ID of the tab to send the prompt to.
-* @param {string} serviceType - The type of service to use for the prompt.
+* @param {string} serviceTypeData - The type of service to use for the prompt.
 * @return {Promise<void>} A promise that resolves when the prompt is sent.
 */
-const sendSavePromptToTab = async (tabID, serviceType) => {
+const sendSavePromptToTab = async (tabID, serviceTypeData) => {
   let res = [];
 
   try {
@@ -22,11 +22,11 @@ const sendSavePromptToTab = async (tabID, serviceType) => {
     res = await sendMessageToAllFrames(tabID, {
       action: REQUEST_ACTIONS.SAVE_PROMPT,
       theme,
-      serviceType,
+      serviceTypeData,
       target: REQUEST_TARGETS.CONTENT
     });
 
-    res = res.filter(r => r?.status === 'cancel' || r?.status === 'doNotAsk' || r?.status === 'addLogin');
+    res = res.filter(r => r?.status === 'cancel' || r?.status === 'doNotAsk' || r?.status === 'addLogin' || r?.status === 'updateLogin');
     res = res[0];
   } catch (e) {
     await CatchError(e);

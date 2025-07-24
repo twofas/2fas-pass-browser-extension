@@ -8,13 +8,13 @@
 * Function to add a save prompt action.
 * @async
 * @param {Object} details - The details of the tab.
-* @param {string} serviceType - The type of service.
+* @param {string} serviceTypeData - The type of service.
 * @param {Object} values - The values to save.
 * @param {Array} savePromptActions - The array of save prompt actions.
 * @return {Promise<void>} A promise that resolves when the action is added.
 */
-const addSavePromptAction = async (details, serviceType, values, savePromptActions) => {
-  if (!details || !serviceType || !values || !savePromptActions) {
+const addSavePromptAction = async (details, serviceTypeData, values, savePromptActions) => {
+  if (!details || !serviceTypeData || !values || !savePromptActions) {
     // FUTURE - throw error?
     return;
   }
@@ -28,7 +28,7 @@ const addSavePromptAction = async (details, serviceType, values, savePromptActio
     savePromptActions.splice(existingActionIndex, 1);
   }
 
-  const action = { tabId, url, username, password, serviceType };
+  const action = { tabId, url, username, password, serviceTypeData };
   savePromptActions.push(action);
 };
 
