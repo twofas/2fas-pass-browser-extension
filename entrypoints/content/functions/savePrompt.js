@@ -9,6 +9,7 @@ import S from '@/constants/selectors';
 import logoSrc from '@/assets/logo.svg?raw';
 import logoSrcDark from '@/assets/logo-dark.svg?raw';
 import closeSrc from '@/assets/popup-window/cancel.svg?raw';
+import { SAVE_PROMPT_ACTIONS } from '@/constants/savePromptActions';
 
 /** 
 * Function to close the notification.
@@ -34,7 +35,7 @@ const closeNotification = n => {
 */
 const cancel = (n, sendResponse) => {
   closeNotification(n);
-  return sendResponse({ status: 'cancel' });
+  return sendResponse({ status: SAVE_PROMPT_ACTIONS.CANCEL });
 };
 
 /** 
@@ -45,7 +46,7 @@ const cancel = (n, sendResponse) => {
 */
 const doNotAsk = (n, sendResponse) => {
   closeNotification(n);
-  return sendResponse({ status: 'doNotAsk' });
+  return sendResponse({ status: SAVE_PROMPT_ACTIONS.DO_NOT_ASK });
 };
 
 /** 
@@ -54,9 +55,9 @@ const doNotAsk = (n, sendResponse) => {
 * @param {Function} sendResponse - The function to send the response back.
 * @return {void}
 */
-const addLogin = (n, sendResponse) => {
+const newLogin = (n, sendResponse) => {
   closeNotification(n);
-  return sendResponse({ status: 'addLogin' });
+  return sendResponse({ status: SAVE_PROMPT_ACTIONS.NEW_LOGIN });
 };
 
 /** 
@@ -69,7 +70,7 @@ const addLogin = (n, sendResponse) => {
 */
 const updateLogin = (n, loginId, securityType, sendResponse) => {
   closeNotification(n);
-  return sendResponse({ status: 'updateLogin', loginId, securityType });
+  return sendResponse({ status: SAVE_PROMPT_ACTIONS.UPDATE_LOGIN, loginId, securityType });
 };
 
 /** 
@@ -179,7 +180,7 @@ const savePrompt = (request, sendResponse, container) => {
   addLoginButton.classList.add('twofas-pass-notification-save-prompt-buttons-add-login');
   addLoginButton.addEventListener('click', () => {
     if (request?.serviceTypeData?.type === 'newService') {
-      return addLogin(n, sendResponse);
+      return newLogin(n, sendResponse);
     } else {
       return updateLogin(n, request?.serviceTypeData?.loginId, request?.serviceTypeData?.securityType, sendResponse);
     }
