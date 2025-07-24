@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
+import { SAVE_PROMPT_ACTIONS } from '@/constants/savePromptActions';
 
 /** 
 * Function to send a save prompt to a specific tab.
@@ -26,7 +27,7 @@ const sendSavePromptToTab = async (tabID, serviceTypeData) => {
       target: REQUEST_TARGETS.CONTENT
     });
 
-    res = res.filter(r => r?.status === 'cancel' || r?.status === 'doNotAsk' || r?.status === 'addLogin' || r?.status === 'updateLogin');
+    res = res.filter(r => r?.status === SAVE_PROMPT_ACTIONS.CANCEL || r?.status === SAVE_PROMPT_ACTIONS.DO_NOT_ASK || r?.status === SAVE_PROMPT_ACTIONS.NEW_LOGIN || r?.status === SAVE_PROMPT_ACTIONS.UPDATE_LOGIN);
     res = res[0];
   } catch (e) {
     await CatchError(e);
