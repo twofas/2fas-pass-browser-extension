@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export const WEBSOCKET_STATES = {
+export const WEBSOCKET_STATES = Object.freeze({
   TOO_MANY_CONNECTED_CLIENTS: 3001,
   CONNECTION_TIMEOUT: 3002,
   CANT_CREATE_PROXY: 3003,
@@ -13,4 +13,4 @@ export const WEBSOCKET_STATES = {
   CONNECTION_ALREADY_ESTABLISHED: 3006,
   BROWSER_EXTENSION_NOT_CONNECTED: 3007,
   INTERNAL_ERROR: 3999
-};
+});

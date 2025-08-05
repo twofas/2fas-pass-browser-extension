@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export const config = {
+export const config = Object.freeze({
   scheme: 1,
   webSocketInternalTimeout: 2,
   passwordResetDelay: 3,
@@ -13,4 +13,4 @@ export const config = {
   toastAutoClose: 5000,
   defaultStorageIdleLock: 15, // minutes
   handleInputEventDebounce: 100 // milliseconds
-};
+});

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export const SOCKET_ACTIONS = {
+export const SOCKET_ACTIONS = Object.freeze({
   CHALLENGE: 'challenge',
   HELLO: 'hello',
   INIT_TRANSFER: 'initTransfer',
@@ -17,4 +17,4 @@ export const SOCKET_ACTIONS = {
   PULL_REQUEST_COMPLETED: 'pullRequestCompleted',
   CLOSE_WITH_ERROR: 'closeWithError',
   CLOSE_WITH_SUCCESS: 'closeWithSuccess'
-};
+});

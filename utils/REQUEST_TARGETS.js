@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export const REQUEST_TARGETS = {
+export const REQUEST_TARGETS = Object.freeze({
   BACKGROUND: 'background',
   BACKGROUND_PROMPT: 'background_prompt',
   CONTENT: 'content',
@@ -13,4 +13,4 @@ export const REQUEST_TARGETS = {
   POPUP_THIS_TAB: 'popup_this_tab',
   PROMPT: 'prompt',
   FOCUS_CONTENT: 'focus_content'
-};
+});

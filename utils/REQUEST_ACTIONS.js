@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export const REQUEST_ACTIONS = {
+export const REQUEST_ACTIONS = Object.freeze({
   AUTO_CLEAR_CLIPBOARD: 'autoClearClipboard', // content, popup, focus
   AUTO_CLEAR_ACTION: 'autoClearAction', // background, focus
   AUTOFILL: 'autofill', // content
@@ -24,4 +24,4 @@ export const REQUEST_ACTIONS = {
   GET_CRYPTO_AVAILABLE: 'getCryptoAvailable', // popup, content
   GET_SAVE_PROMPT: 'getSavePrompt', // prompt, background
   TAB_FOCUS: 'tabFocus', // focus, background
-};
+});
