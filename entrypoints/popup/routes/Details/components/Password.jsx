@@ -195,7 +195,7 @@ function Password (props) {
               <button
                 type="button"
                 onClick={handlePasswordVisibleClick}
-                className={`${service.securityType < SECURITY_TIER.SECRET ? (passwordEditable ? '' : pI.hidden) : ''}`}
+                className={`${isT3orT2WithPassword(service) || passwordEditable ? '' : pI.hidden}`}
               >
                 <VisibleIcon />
               </button>
