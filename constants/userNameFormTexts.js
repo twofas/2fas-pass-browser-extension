@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const userNameText = [
+const userNameText = Object.freeze([
   'login-form',
   'login_form',
   'login-form-username',
@@ -17,6 +17,6 @@ const userNameText = [
   'form_login',
   'user-form',
   'user_form',
-];
+]);
 
 export default userNameText;

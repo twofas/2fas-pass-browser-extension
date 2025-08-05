@@ -4,8 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export const SECURITY_TIER = {
+export const SECURITY_TIER = Object.freeze({
   TOP_SECRET: 0,
   HIGHLY_SECRET: 1,
   SECRET: 2
-};
+});

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const userNameWords = [
+const userNameWords = Object.freeze([
   // user / username
   'user', // English
   'username', // English
@@ -111,6 +111,6 @@ const userNameWords = [
   // email
   'email',
   'e-mail'
-];
+]);
 
 export default userNameWords;

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const selectors = {
+const selectors = Object.freeze({
   notification: {
     container: 'div.twofas-pass-notification-container',
     notification: 'div.twofas-pass-notification-item'
@@ -15,6 +15,6 @@ const selectors = {
   savePrompt: {
     el: '.twofas-pass-notification-item.twofas-pass-save-prompt'
   }
-};
+});
 
 export default selectors;
