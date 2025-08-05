@@ -8,7 +8,7 @@ import S from './Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { LazyMotion } from 'motion/react';
 import { useParams, useNavigate } from 'react-router';
-import { useState, useEffect, lazy, useCallback } from 'react';
+import { useState, useEffect, lazy, useCallback, useRef } from 'react';
 import generateURLs from './functions/generateURLs';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
@@ -48,6 +48,9 @@ function Details (props) {
   const [notesVisible, setNotesVisible] = useState(false);
   const [notesEditable, setNotesEditable] = useState(false);
   const [inputError, setInputError] = useState(undefined);
+  const [storageVersion, setStorageVersion] = useState(null);
+
+  const unwatchStorageVersion = useRef(null);
 
   const navigate = useNavigate();
   const params = useParams();
@@ -76,13 +79,26 @@ function Details (props) {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    try {
-      getData();
-    } catch (e) {
-      CatchError(e);
-    }
+  const watchStorageVersion = useCallback(() => {
+    const uSV = storage.watch('session:storageVersion', async newValue => {
+      setStorageVersion(newValue);
+    });
+
+    return uSV;
   }, []);
+
+  useEffect(() => {
+    getData()
+      .then(() => watchStorageVersion())
+      .then(unwatch => { unwatchStorageVersion.current = unwatch; })
+      .catch(async e => await CatchError(e));
+
+    return () => {
+      if (unwatchStorageVersion.current) {
+        unwatchStorageVersion.current();
+      }
+    };
+  }, [storageVersion]);
 
   const validate = values => {
     const errors = {};
