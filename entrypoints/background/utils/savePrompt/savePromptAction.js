@@ -40,14 +40,14 @@ const removePreviousAndCurrentTabInputData = async (tabId, tabsInputData) => {
 * Function to save the prompt action.
 * @async
 * @param {Object} details - The details of the web request.
-* @param {string} serviceType - The type of service for the save prompt.
+* @param {string} serviceTypeData - The type of service for the save prompt.
 * @param {Object} tabsInputData - The input data for all tabs.
 * @param {Object} values - The values to save in the prompt.
 * @param {Array} savePromptActions - The actions to save the prompt.
 * @param {Object} tabUpdateData - Data for updating the tab.
 * @return {Promise<void>} A promise that resolves when the save prompt action is complete.
 */
-const savePromptAction = async (details, serviceType, tabsInputData, values, savePromptActions, tabUpdateData) => {
+const savePromptAction = async (details, serviceTypeData, tabsInputData, values, savePromptActions, tabUpdateData) => {
   let tabData;
   
   try {
@@ -56,8 +56,8 @@ const savePromptAction = async (details, serviceType, tabsInputData, values, sav
     return;
   }
   
-  while (tabData?.status === 'loading') {
-    await new Promise(resolve => setTimeout(resolve, 50));
+  while (tabData?.status !== 'complete') {
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     try {
       tabData = await browser.tabs.get(details?.tabId);
@@ -69,7 +69,7 @@ const savePromptAction = async (details, serviceType, tabsInputData, values, sav
   await injectCSIfNotAlready(details?.tabId, REQUEST_TARGETS.CONTENT);
   await removePreviousAndCurrentTabInputData(details.tabId, tabsInputData);
 
-  const res = await sendSavePromptToTab(details.tabId, serviceType);
+  const res = await sendSavePromptToTab(details.tabId, serviceTypeData);
   await handleSavePromptResponse(res, details.tabId, details.url, values, savePromptActions, tabUpdateData);
 
   return;

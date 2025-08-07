@@ -19,7 +19,11 @@ const checkFormData = async (details, values) => {
     return false;
   }
 
-  const decryptedValues = await decryptValues(values);
+  let decryptedValues = values;
+
+  if (values.encrypted) {
+    decryptedValues = await decryptValues(values);
+  }
 
   let formDataOk = false;
 

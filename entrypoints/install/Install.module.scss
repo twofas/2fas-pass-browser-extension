@@ -4,6 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+// FUTURE: Refactor QR classes
+
 @use '@/partials/global-styles/variables' as v;
 @use '@/partials/global-styles/mixins' as m;
 
@@ -150,10 +152,185 @@
               }
             }
 
-            @media all and (max-width: 400px) {
+            @media all and (max-width: 560px) {
               align-items: center;
               flex-direction: column;
               gap: 14px 0;
+            }
+
+            .apps-download {
+              align-items: center;
+              display: flex;
+              gap: 0 16px;
+
+              @media all and (max-width: 1000px) {
+                gap: 0 12px;
+              }
+
+              @media all and (max-width: 560px) {
+                flex-direction: row-reverse;
+              }
+
+              &-button {
+                padding: 0;
+                position: relative;
+
+                &:hover {
+                  .apps-download-button-tooltip {
+                    opacity: 1;
+                  }
+
+                  .apps-download-button-content {
+                    span {
+                      color: v.$primary-color-light !important;
+
+                      @include m.darkMode {
+                        color: v.$primary-color-dark;
+                      }
+                    }
+
+                    svg {
+                      stroke: v.$primary-color-light !important;
+
+                      @include m.darkMode {
+                        stroke: v.$primary-color-dark;
+                      }
+                    }
+                  }
+                }
+
+                &-tooltip {
+                  // NO DARK MODE HERE FOR BG / COLOR!
+                  background-color: v.$primary-box-bg-light;
+                  border-radius: 8px;
+                  bottom: 60px;
+                  filter: drop-shadow(0px 40px 80px v.$primary-bg-light);
+                  left: 50%;
+                  opacity: 0;
+                  padding: 10px 11px;
+                  transition: opacity .3s ease-in-out;
+                  transform: translateX(-50%);
+                  pointer-events: none;
+                  position: absolute;
+                  z-index: 3;
+
+                  @include m.darkMode {
+                    filter: drop-shadow(0px 40px 80px v.$primary-bg-dark);
+                  }
+
+                  &::after {
+                    content: '';
+                    display: block;
+                    width: 0;
+                    height: 0;
+                    border-style: solid;
+                    border-width: 12px 11px 0;
+                    border-color: v.$primary-box-bg-light transparent transparent;
+                    position: absolute;
+                    left: 50%;
+                    bottom: -8px;
+                    transform: translateX(-50%);
+                  }
+
+                  span {
+                    color: v.$primary-text-light;
+                    font-size: 8px;
+                    font-weight: 700;
+                    line-height: 1.5;
+                    letter-spacing: .5px;
+                    text-align: center;
+                    text-transform: uppercase;
+                  }
+
+                  svg {
+                    @media all and (max-width: 600px) {
+                      height: auto;
+                      width: 140px;
+                    }
+                  }
+                }
+
+                &-content {
+                  display: flex;
+                  flex-direction: column;
+                  position: relative;
+                  z-index: 2;
+
+                  svg {
+                    height: 32px;
+                    stroke: v.$primary-text-light;
+                    stroke-width: 2px;
+                    stroke-linecap: square;
+                    stroke-linejoin: round;
+                    transition: stroke .3s ease-in-out;
+                    width: auto;
+
+                    @include m.darkMode {
+                      stroke: v.$primary-text-dark;
+                    }
+
+                    @media all and (max-width: 1000px) {
+                      height: 28px;
+                    }
+                  }
+
+                  span {
+                    color: v.$primary-text-light;
+                    font-size: 10px;
+                    font-weight: 700;
+                    letter-spacing: .5px;
+                    line-height: 1.4;
+                    text-align: center;
+                    text-transform: uppercase;
+                    transition: color .3s ease-in-out;
+
+                    @include m.darkMode {
+                      color: v.$primary-text-dark;
+                    }
+
+                    @media all and (max-width: 1000px) {
+                      font-size: 8px;
+                    }
+                  }
+                }
+              }
+
+              a {
+                font-size: 0;
+                height: 48px;
+                overflow: hidden;
+
+                &.safari {
+                  font-size: 16px;
+
+                  @media all and (max-width: 1000px) {
+                    font-size: 14px;
+                  }
+                }
+
+                @media all and (max-width: 1000px) {
+                  height: 42px;
+                  line-height: 42px;
+                }
+
+                @media all and (max-width: 600px) {
+                  height: 36px;
+                  line-height: 36px;
+                }
+
+                img {
+                  height: 100%;
+                  width: auto;
+
+                  &.app-store {
+                    aspect-ratio: 162 / 48;
+                  }
+
+                  &.google-play {
+                    aspect-ratio: 161 / 48;
+                  }
+                }
+              }
             }
           }
         }
@@ -714,8 +891,6 @@
   }
 
   &-footer {
-    overflow: hidden;
-
     &-container {
       align-items: center;
       display: flex;
@@ -732,10 +907,9 @@
       align-items: center;
       display: flex;
       flex-direction: row;
-      gap: 0 14px;
+      gap: 0 32px;
       height: 100%;
       opacity: 0;
-      overflow: hidden;
       pointer-events: none;
       transition: opacity .3s ease-in-out;
       user-select: none;
@@ -749,13 +923,173 @@
         opacity: 1;
       }
 
-      a {
-        font-size: 0;
-        height: 48px;
+      .apps-download {
+        align-items: center;
+        display: flex;
+        gap: 0 16px;
 
-        img {
-          height: 100%;
-          width: auto;
+        @media all and (max-width: 1000px) {
+          gap: 0 12px;
+        }
+
+        &-button {
+          padding: 0;
+          position: relative;
+
+          &:hover {
+            .apps-download-button-tooltip {
+              opacity: 1;
+            }
+
+            .apps-download-button-content {
+              span {
+                color: v.$primary-color-light !important;
+
+                @include m.darkMode {
+                  color: v.$primary-color-dark;
+                }
+              }
+
+              svg {
+                stroke: v.$primary-color-light !important;
+
+                @include m.darkMode {
+                  stroke: v.$primary-color-dark;
+                }
+              }
+            }
+          }
+
+          &-tooltip {
+            // NO DARK MODE HERE FOR BG / COLOR!
+            background-color: v.$primary-box-bg-light;
+            border-radius: 8px;
+            bottom: 60px;
+            filter: drop-shadow(0px 40px 80px v.$primary-bg-light);
+            left: 50%;
+            opacity: 0;
+            padding: 10px 11px;
+            pointer-events: none;
+            transition: opacity .3s ease-in-out;
+            transform: translateX(-50%);
+            position: absolute;
+
+            @include m.darkMode {
+              filter: drop-shadow(0px 40px 80px v.$primary-bg-dark);
+            }
+
+            &::after {
+              content: '';
+              display: block;
+              width: 0;
+              height: 0;
+              border-style: solid;
+              border-width: 12px 11px 0;
+              border-color: v.$primary-box-bg-light transparent transparent;
+              position: absolute;
+              left: 50%;
+              bottom: -8px;
+              transform: translateX(-50%);
+            }
+
+            span {
+              color: v.$primary-text-light;
+              font-size: 8px;
+              font-weight: 700;
+              line-height: 1.5;
+              letter-spacing: .5px;
+              text-align: center;
+              text-transform: uppercase;
+            }
+
+            svg {
+              @media all and (max-width: 600px) {
+                height: auto;
+                width: 140px;
+              }
+            }
+          }
+
+          &-content {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+
+            svg {
+              height: 32px;
+              stroke: v.$primary-text-light;
+              stroke-width: 2px;
+              stroke-linecap: square;
+              stroke-linejoin: round;
+              transition: stroke .3s ease-in-out;
+              width: auto;
+
+              @include m.darkMode {
+                stroke: v.$primary-text-dark;
+              }
+
+              @media all and (max-width: 1000px) {
+                height: 28px;
+              }
+            }
+
+            span {
+              color: v.$primary-text-light;
+              font-size: 10px;
+              font-weight: 700;
+              letter-spacing: .5px;
+              line-height: 1.4;
+              text-align: center;
+              text-transform: uppercase;
+              transition: color .3s ease-in-out;
+
+              @include m.darkMode {
+                color: v.$primary-text-dark;
+              }
+
+              @media all and (max-width: 1000px) {
+                font-size: 8px;
+              }
+            }
+          }
+        }
+
+        a {
+          font-size: 0;
+          height: 48px;
+          overflow: hidden;
+
+          &.safari {
+            font-size: 16px;
+
+            @media all and (max-width: 1000px) {
+              font-size: 14px;
+            }
+          }
+
+          @media all and (max-width: 1000px) {
+            height: 42px;
+            line-height: 42px;
+          }
+
+          @media all and (max-width: 600px) {
+            height: 36px;
+            line-height: 36px;
+          }
+
+          img {
+            height: 100%;
+            width: auto;
+
+            &.app-store {
+              aspect-ratio: 162 / 48;
+            }
+
+            &.google-play {
+              aspect-ratio: 161 / 48;
+            }
+          }
         }
       }
     }
@@ -776,8 +1110,12 @@
         font-size: 20px;
       }
 
-      @media all and (max-width: 800px) {
+      @media all and (max-width: 1000px) {
         font-size: 16px;
+      }
+
+      @media all and (max-width: 800px) {
+        text-align: center;
       }
     }
   }

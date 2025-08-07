@@ -4,12 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import '@/partials/TwofasNotification/TwofasNotification.scss';
 import { createElement, createSVGElement, createTextElement } from '@/partials/DOMElements';
 import S from '@/constants/selectors';
 import logoSrc from '@/assets/logo.svg?raw';
 import logoSrcDark from '@/assets/logo-dark.svg?raw';
 import closeSrc from '@/assets/popup-window/cancel.svg?raw';
+import { SAVE_PROMPT_ACTIONS } from '@/constants/savePromptActions';
 
 /** 
 * Function to close the notification.
@@ -35,7 +35,7 @@ const closeNotification = n => {
 */
 const cancel = (n, sendResponse) => {
   closeNotification(n);
-  return sendResponse({ status: 'cancel' });
+  return sendResponse({ status: SAVE_PROMPT_ACTIONS.CANCEL });
 };
 
 /** 
@@ -46,7 +46,7 @@ const cancel = (n, sendResponse) => {
 */
 const doNotAsk = (n, sendResponse) => {
   closeNotification(n);
-  return sendResponse({ status: 'doNotAsk' });
+  return sendResponse({ status: SAVE_PROMPT_ACTIONS.DO_NOT_ASK });
 };
 
 /** 
@@ -55,9 +55,22 @@ const doNotAsk = (n, sendResponse) => {
 * @param {Function} sendResponse - The function to send the response back.
 * @return {void}
 */
-const addLogin = (n, sendResponse) => {
+const newLogin = (n, sendResponse) => {
   closeNotification(n);
-  return sendResponse({ status: 'addLogin' });
+  return sendResponse({ status: SAVE_PROMPT_ACTIONS.NEW_LOGIN });
+};
+
+/** 
+* Function to update a login.
+* @param {Object} n - The notification object.
+* @param {string} loginId - The ID of the login to update.
+* @param {string} securityType - The security type of the login.
+* @param {Function} sendResponse - The function to send the response back.
+* @return {void}
+*/
+const updateLogin = (n, loginId, securityType, sendResponse) => {
+  closeNotification(n);
+  return sendResponse({ status: SAVE_PROMPT_ACTIONS.UPDATE_LOGIN, loginId, securityType });
 };
 
 /** 
@@ -124,7 +137,7 @@ const savePrompt = (request, sendResponse, container) => {
   if (request?.theme && (request?.theme === 'light' || request?.theme === 'dark')) {
     n.item.classList.add(request.theme);
   } else {
-    n.item.classList.add('light');
+    n.item.classList.add('unset');
   }
 
   n.item.classList.add('twofas-pass-save-prompt');
@@ -135,7 +148,8 @@ const savePrompt = (request, sendResponse, container) => {
   if (request?.theme && (request?.theme === 'light' || request?.theme === 'dark')) {
     n.logoSvg = createSVGElement(request.theme === 'dark' ? logoSrcDark : logoSrc);
   } else {
-    n.logoSvg = createSVGElement(logoSrc);
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    n.logoSvg = createSVGElement(isDarkMode ? logoSrcDark : logoSrc);
   }
 
   n.close = createElement('button', 'twofas-pass-notification-save-prompt-top-close');
@@ -148,7 +162,7 @@ const savePrompt = (request, sendResponse, container) => {
   n.top.appendChild(n.close);
 
   n.header = createElement('div', 'twofas-pass-notification-save-prompt-header');
-  n.headerText = createTextElement('p', request.serviceType === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_header') : browser.i18n.getMessage('content_save_prompt_update_header'));
+  n.headerText = createTextElement('p', request?.serviceTypeData?.type === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_header') : browser.i18n.getMessage('content_save_prompt_update_header'));
   n.header.appendChild(n.headerText);
 
   n.item.appendChild(n.top);
@@ -161,10 +175,16 @@ const savePrompt = (request, sendResponse, container) => {
   doNotAskButton.addEventListener('click', () => doNotAsk(n, sendResponse));
   n.buttons.appendChild(doNotAskButton);
 
-  const addLoginButtonText = request.serviceType === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_login') : browser.i18n.getMessage('content_save_prompt_update_login');
+  const addLoginButtonText = request?.serviceTypeData?.type === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_login') : browser.i18n.getMessage('content_save_prompt_update_login');
   const addLoginButton = createTextElement('button', addLoginButtonText);
   addLoginButton.classList.add('twofas-pass-notification-save-prompt-buttons-add-login');
-  addLoginButton.addEventListener('click', () => addLogin(n, sendResponse));
+  addLoginButton.addEventListener('click', () => {
+    if (request?.serviceTypeData?.type === 'newService') {
+      return newLogin(n, sendResponse);
+    } else {
+      return updateLogin(n, request?.serviceTypeData?.loginId, request?.serviceTypeData?.securityType, sendResponse);
+    }
+  });
   n.buttons.appendChild(addLoginButton);
 
   n.item.appendChild(n.buttons);

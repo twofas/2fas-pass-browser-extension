@@ -1,7 +1,7 @@
 {
   "name": "2fas-pass-browser-extension",
   "description": "This is the official 2FAS Pass Browser Extension project.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -32,7 +32,7 @@
     "zip:firefox:dev": "yarn generate-enc-keys-dev && wxt zip -b firefox --mode development --mv3",
     "zip:edge": "yarn generate-enc-keys-prod && wxt zip -b edge --mv3",
     "zip:edge:dev": "yarn generate-enc-keys-dev && wxt zip -b edge --mode development --mv3",
-    "all-build": "yarn all-build:prod && yarn all-build:dev",
+    "all-build": "yarn lint && yarn all-build:prod && yarn all-build:dev",
     "all-build:prod": "yarn test && yarn generate-license-info && yarn zip && yarn zip:firefox && yarn zip:edge",
     "all-build:dev": "yarn test && yarn zip:dev && yarn zip:firefox:dev && yarn zip:edge:dev",
     "compile": "tsc --noEmit",
@@ -73,7 +73,7 @@
     "@wxt-dev/module-react": "^1.1.3",
     "dotenv": "^17.2.0",
     "eslint": "^9.31.0",
-    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-react": "^7.37.5",
     "sass-embedded": "1.89.2",
     "terser": "^5.43.1",
     "vitest": "^3.2.4",
