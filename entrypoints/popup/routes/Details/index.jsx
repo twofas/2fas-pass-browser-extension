@@ -123,7 +123,7 @@ function Details (props) {
       return {
         text: uri?.text ? valueToNFKD(uri.text) : '',
         matcher: uri?.matcher
-      }
+      };
     });
 
     const stateData = {
@@ -189,7 +189,7 @@ function Details (props) {
               <Form
                 onSubmit={onSubmit}
                 initialValues={service}
-                render={({ handleSubmit, form, submitting, pristine, values }) => (
+                render={({ handleSubmit, form, submitting, values }) => ( // pristine
                   <form onSubmit={handleSubmit}>
                     <Name
                       data={{ service, form, nameEditable, inputError }}

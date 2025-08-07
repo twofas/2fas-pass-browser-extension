@@ -62,12 +62,6 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
           files: ['content-scripts/content.js'],
           injectImmediately: true
         });
-      
-        await browser.scripting.insertCSS({
-          target: { tabId: tabID },
-          files: ['styles/content.css']
-        });
-
         break;
       }
 

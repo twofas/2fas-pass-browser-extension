@@ -31,7 +31,7 @@ const checkServicesData = async (details, values) => {
   }
 
   if (!services || !Array.isArray(services)) {
-    return 'newService';
+    return { type: 'newService' };
   }
 
   let matchedServices = [];
@@ -41,7 +41,7 @@ const checkServicesData = async (details, values) => {
   } catch {}
 
   if (!matchedServices || matchedServices.length <= 0) {
-    return 'newService'; 
+    return { type: 'newService' };
   }
 
   let decryptedValues;
@@ -59,7 +59,7 @@ const checkServicesData = async (details, values) => {
   const matchedServicesMatchedUsername = matchedServices.filter(service => service.username === decryptedValues.username);
 
   if (!matchedServicesMatchedUsername || matchedServicesMatchedUsername.length <= 0) {
-    return 'newService';
+    return { type: 'newService' };
   }
 
   // Decrypt passwords
@@ -88,7 +88,12 @@ const checkServicesData = async (details, values) => {
   const matchedServicesMatchedPassword = matchedServicesDecryptedPasswords.filter(p => p === decryptedValues.password);
 
   if (!matchedServicesMatchedPassword || matchedServicesMatchedPassword.length <= 0) {
-    return 'updateService';
+    // FUTURE - ask user which service to update if there is more than one
+    return {
+      type: 'updateService',
+      loginId: matchedServicesMatchedUsername[0].id,
+      securityType: matchedServicesMatchedUsername[0].securityType
+    };
   } else {
     return false;
   }

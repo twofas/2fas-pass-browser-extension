@@ -76,7 +76,7 @@ function ExtensionName () {
   }
 
   return (
-    <Form onSubmit={onSubmit} initialValues={{ 'ext-name': extName }} render={({ handleSubmit, form, submitting, pristine, values }) => (
+    <Form onSubmit={onSubmit} initialValues={{ 'ext-name': extName }} render={({ handleSubmit, submitting }) => ( // form, pristine, values
       <form className={S.settingsExtName} onSubmit={handleSubmit}>
         <Field name="ext-name">
           {({ input }) => (

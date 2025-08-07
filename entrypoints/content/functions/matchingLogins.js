@@ -4,7 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import '@/partials/TwofasNotification/TwofasNotification.scss';
 import { createElement, createSVGElement, createTextElement } from '@/partials/DOMElements';
 import S from '@/constants/selectors';
 import logoSrc from '@/assets/logo.svg?raw';
@@ -139,7 +138,7 @@ const matchingLogins = (request, sendResponse, container) => {
   if (request?.theme && (request?.theme === 'light' || request?.theme === 'dark')) {
     n.item.classList.add(request.theme);
   } else {
-    n.item.classList.add('light');
+    n.item.classList.add('unset');
   }
 
   n.item.classList.add('twofas-pass-matching-logins');
@@ -150,7 +149,8 @@ const matchingLogins = (request, sendResponse, container) => {
   if (request?.theme && (request?.theme === 'light' || request?.theme === 'dark')) {
     n.logoSvg = createSVGElement(request.theme === 'dark' ? logoSrcDark : logoSrc);
   } else {
-    n.logoSvg = createSVGElement(logoSrc);
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    n.logoSvg = createSVGElement(isDarkMode ? logoSrcDark : logoSrc);
   }
 
   n.close = createElement('button', 'twofas-pass-notification-matching-logins-top-close');

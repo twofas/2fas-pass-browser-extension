@@ -44,7 +44,7 @@ const thisTabTopVariants = {
 */
 function ThisTab (props) {
   const location = useLocation();
-  let { state } = location;
+  const { state } = location;
 
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('Unknown');
@@ -162,7 +162,7 @@ function ThisTab (props) {
   }, []);
 
   const getLogins = useCallback(async () => {
-    let l = await getServices();
+    const l = await getServices();
     setLogins(l);
     
     return l;

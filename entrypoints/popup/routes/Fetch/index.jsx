@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './Fetch.module.scss';
-import { useLocation, Link, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useState, useEffect, lazy } from 'react';
 import getCurrentDevice from '@/partials/functions/getCurrentDevice';
 import sendPush from '@/partials/functions/sendPush';
@@ -17,7 +17,6 @@ import calculateSignature from './functions/calculateSignature';
 import getNTPTime from '@/partials/functions/getNTPTime';
 import deletePush from '@/partials/functions/deletePush';
 
-const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
 const PushNotification = lazy(() => import('./components/PushNotification'));
 const ConnectionError = lazy(() => import('./components/ConnectionError'));
 const ConnectionTimeout = lazy(() => import('./components/ConnectionTimeout'));
@@ -142,6 +141,30 @@ function Fetch (props) {
     await initConnection();
   };
 
+  // FUTURE - Refactor (useCallback?)
+  const cancelHandle = async e => {
+    e.preventDefault();
+    await closeConnection();
+
+    if (state?.from === 'contextMenu' || state?.from === 'shortcut' || state?.from === 'savePrompt') {
+      if (
+        window &&
+        typeof window?.close === 'function' &&
+        import.meta.env.BROWSER !== 'safari'
+      ) {
+        window.close();
+      } else {
+        navigate('/');
+      }
+    } else {
+      if (fetchState === 1) {
+        navigate('/');
+      } else {
+        navigate(-1);
+      }
+    }
+  };
+
   useEffect(() => {
     initConnection();
 
@@ -155,11 +178,7 @@ function Fetch (props) {
       <div>
         <section className={S.fetch}> 
           <div className={S.fetchContainer}>
-            <NavigationButton type='cancel' onClick={async e => {
-              e.preventDefault();
-              await closeConnection();
-              navigate(-1);
-            }} />
+            <NavigationButton type='cancel' onClick={cancelHandle} />
 
             {fetchState === 0 && <PushNotification fetchState={fetchState} /> }
             {fetchState === 1 && <ConnectionError fetchState={fetchState} errorText={errorText} /> }

@@ -20,11 +20,10 @@ const checkAutofillInputs = () => {
   
   setUsernameSkips(passwordInputs, usernameInputs);
 
-  if (passwordInputs.length > 0) {
-    return true;
-  }
-
-  return false;
+  return {
+    canAutofillPassword: passwordInputs.length > 0,
+    canAutofillUsername: usernameInputs.length > 0
+  };
 };
 
 export default checkAutofillInputs;
