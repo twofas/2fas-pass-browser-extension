@@ -44,7 +44,7 @@ function Logs () {
       await storage.setItem('local:logging', !l);
       setL(!l);
       showToast(browser.i18n.getMessage('notification_logging_settings_success'), 'success');
-    } catch (e) {
+    } catch {
       showToast(browser.i18n.getMessage('error_logging_settings_changed'), 'error');
     } finally {
       setDisabled(false);

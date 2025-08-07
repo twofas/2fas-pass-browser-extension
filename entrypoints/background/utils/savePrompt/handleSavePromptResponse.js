@@ -7,6 +7,7 @@
 import removeSavePromptAction from './removeSavePromptAction';
 import decryptValues from './decryptValues';
 import openPopupWindowInNewWindow from '../openPopupWindowInNewWindow';
+import { SAVE_PROMPT_ACTIONS } from '@/constants/savePromptActions';
 
 // FUTURE - actions should be moved to a separate files
 /** 
@@ -27,8 +28,17 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
 
   // FUTURE - separate functions for each action
   switch (res.status) {
-    case 'addLogin': { // FUTURE - consts for actions
-      const decryptedValues = await decryptValues(values);
+    case SAVE_PROMPT_ACTIONS.NEW_LOGIN: {
+      let decryptedValues;
+
+      if (values?.encrypted) {
+        decryptedValues = await decryptValues(values);
+      } else {
+        decryptedValues = {
+          username: values.username,
+          password: values.password
+        };
+      }
 
       const data = JSON.stringify({
         action: 'newLogin',
@@ -37,7 +47,6 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
           url,
           username: decryptedValues.username,
           password: decryptedValues.password
-          // FUTURE - add minLength, maxLength etc.
         }
       });
   
@@ -48,7 +57,38 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
       return;
     }
 
-    case 'doNotAsk': {
+    case SAVE_PROMPT_ACTIONS.UPDATE_LOGIN: {
+      let decryptedValues;
+
+      if (values?.encrypted) {
+        decryptedValues = await decryptValues(values);
+      } else {
+        decryptedValues = {
+          username: values.username,
+          password: values.password
+        };
+      }
+
+      const data = JSON.stringify({
+        action: 'updateLogin',
+        from: 'savePrompt',
+        data: {
+          url,
+          loginId: res.loginId,
+          securityType: res.securityType,
+          username: decryptedValues.username,
+          password: decryptedValues.password
+        }
+      });
+
+      await openPopupWindowInNewWindow({ pathname: `/fetch/${encodeURIComponent(data)}` });
+
+      removeSavePromptAction(tabId, url, savePromptActions);
+      tabUpdateData[tabId].savePromptVisible = false;
+      return;
+    }
+
+    case SAVE_PROMPT_ACTIONS.DO_NOT_ASK: {
       let storageIgnoreList = await storage.getItem('local:savePromptIgnoreDomains');
 
       if (!storageIgnoreList || !Array.isArray(storageIgnoreList)) {
@@ -63,7 +103,7 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
       return;
     }
 
-    case 'cancel': {
+    case SAVE_PROMPT_ACTIONS.CANCEL: {
       removeSavePromptAction(tabId, url, savePromptActions);
       tabUpdateData[tabId].savePromptVisible = false;
       return;

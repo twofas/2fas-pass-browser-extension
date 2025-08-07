@@ -4,10 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import contextMenuConfigured from '../contextMenu/contextMenuConfigured';
+import initContextMenu from '../contextMenu/initContextMenu';
 import updateContextMenu from '../utils/updateContextMenu';
-import updateBadge from '../utils/updateBadge';
+import updateBadge from '../utils/badge/updateBadge';
 import getServices from '@/partials/sessionStorage/getServices';
+import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
 /** 
 * Function to handle changes in storage version.
@@ -16,21 +17,24 @@ import getServices from '@/partials/sessionStorage/getServices';
 */
 const onStorageVersionChange = async () => {
   const contextMenuSetting = await storage.getItem('local:contextMenu');
-  let services;
-
+  
   if (contextMenuSetting === false) {
     await browser.contextMenus.removeAll();
     return;
   }
 
+  let services, configured;
+
   try {
-    services = await getServices();
+    [services, configured] = await Promise.all([
+      getServices().catch(() => []),
+      getConfiguredBoolean().catch(() => false)
+    ]);
   } catch {}
 
-  // Configured always true here
-  await contextMenuConfigured(services);
+  await initContextMenu();
   await updateContextMenu(services);
-  await updateBadge(services);
+  await updateBadge(configured, services);
 };
 
 export default onStorageVersionChange;

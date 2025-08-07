@@ -69,7 +69,7 @@ function Connect (props) {
         socket = new TwoFasWebSocket(sessionID);
         socketCreated = true;
         break;
-      } catch (err) {
+      } catch {
         if (i < 4) {
           await new Promise(res => setTimeout(res, 250));
         }
