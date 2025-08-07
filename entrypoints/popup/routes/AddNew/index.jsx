@@ -120,8 +120,8 @@ function AddNew (props) {
           
               <h2>{browser.i18n.getMessage('add_new_header')}</h2>
               <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
-          
-              <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url}} render={({ handleSubmit, form, submitting, pristine, values }) => (
+
+              <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url}} render={({ handleSubmit, submitting }) => ( // form, pristine, values
                   <form onSubmit={handleSubmit}>
                     <Field name="password-minlength" value={minLength}>
                       {({ input }) => <input type="hidden" {...input} id="password-minlength" />}

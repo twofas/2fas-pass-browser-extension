@@ -243,6 +243,30 @@
       }
     }
 
+    &.unset {
+      @media all and (prefers-color-scheme: light) {
+        background-color: v.$primary-bg-light !important;
+        box-shadow: 0 0 10px 2px rgba(v.$primary-box-stroke-light, .2) !important;
+
+        .twofas-pass-notification-item-content {
+          p {
+            color: v.$primary-text-light !important;
+          }
+        }
+      }
+
+      @media all and (prefers-color-scheme: dark) {
+        background-color: v.$primary-bg-dark !important;
+        box-shadow: 0 0 10px 2px rgba(v.$primary-box-stroke-dark, .2) !important;
+
+        .twofas-pass-notification-item-content {
+          p {
+            color: v.$primary-text-dark !important;
+          }
+        }
+      }
+    }
+
     &.twofas-pass-matching-logins {
       align-items: flex-start !important;
       display: flex !important;
@@ -369,6 +393,129 @@
           }
         }
       }
+
+      &.unset {
+        @media all and (prefers-color-scheme: light) {
+          .twofas-pass-notification-matching-logins {
+            &-top {
+              &-close {
+                svg {
+                  fill: v.$additional-light !important;
+                  stroke: v.$primary-color-light !important;
+                }
+              }
+            }
+
+            &-header {
+              color: v.$primary-text-light !important;
+            }
+
+            &-item {
+              &-btn {
+                background-color: v.$primary-bg-light !important;
+                border-bottom: 1px solid v.$object-stroke-light !important;
+
+                &:hover {
+                  > span {
+                    &.twofas-pass-notification-matching-logins-item-secondary-btn {
+                      background-color: rgba(v.$hover-on-hover-light, 1) !important;
+                    }
+                  }
+                }
+
+                > span {
+                  &.twofas-pass-notification-matching-logins-item-icon {
+                    &.icon-label {
+                      background-color: v.$primary-color-light !important;
+                    }
+
+                    &.icon-image {
+                      border: 1px solid v.$object-stroke-light !important;
+                    }
+                  }
+
+                  &.twofas-pass-notification-matching-logins-item-secondary-btn {
+                    background-color: rgba(v.$hover-on-hover-light, 0) !important;
+                  }
+
+                  &:nth-of-type(2) {
+                    > span {
+                      &:first-of-type {
+                        color: v.$primary-text-light !important;
+                      }
+
+                      &:last-of-type {
+                        color: v.$secondary-text-light !important;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        @media all and (prefers-color-scheme: dark) {
+          .twofas-pass-notification-matching-logins {
+            &-top {
+              &-close {
+                svg {
+                  fill: v.$additional-dark !important;
+                  stroke: v.$primary-color-dark !important;
+                }
+              }
+            }
+
+            &-header {
+              color: v.$primary-text-dark !important;
+            }
+
+            &-item {
+              &-btn {
+                background-color: v.$primary-bg-dark !important;
+                border-bottom: 1px solid v.$object-stroke-dark !important;
+
+                &:hover {
+                  > span {
+                    &.twofas-pass-notification-matching-logins-item-secondary-btn {
+                      background-color: rgba(v.$hover-on-hover-dark, 1) !important;
+                    }
+                  }
+                }
+
+                > span {
+                  &.twofas-pass-notification-matching-logins-item-icon {
+                    &.icon-label {
+                      background-color: v.$primary-color-dark !important;
+                    }
+
+                    &.icon-image {
+                      border: 1px solid v.$object-stroke-dark !important;
+                    }
+                  }
+
+                  &.twofas-pass-notification-matching-logins-item-secondary-btn {
+                    background-color: rgba(v.$hover-on-hover-dark, 0) !important;
+                    color: v.$primary-color-dark !important;
+                  }
+
+                  &:nth-of-type(2) {
+                    > span {
+                      &:first-of-type {
+                        color: v.$primary-text-dark !important;
+                      }
+
+                      &:last-of-type:nth-of-type(2) {
+                        color: v.$secondary-text-dark !important;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     &.twofas-pass-save-prompt {
@@ -434,6 +581,68 @@
           &-add-login {
             background-color: v.$primary-color-dark !important;
             color: v.$tertiary-text-dark !important;
+          }
+        }
+      }
+
+      &.unset {
+        @media all and (prefers-color-scheme: light) {
+          .twofas-pass-notification-save-prompt-top {
+            border-bottom: 1px solid v.$divider-light !important;
+
+            &-close {
+              svg {
+                fill: v.$additional-light !important;
+                stroke: v.$primary-color-light !important;
+              }
+            }
+          }
+
+          .twofas-pass-notification-save-prompt-header {
+            p {
+              color: v.$primary-text-light !important;
+            }
+          }
+
+          .twofas-pass-notification-save-prompt-buttons {
+            &-do-not-ask {
+              color: v.$primary-color-light !important;
+            }
+
+            &-add-login {
+              background-color: v.$primary-color-light !important;
+              color: v.$tertiary-text-light !important;
+            }
+          }
+        }
+
+        @media all and (prefers-color-scheme: dark) {
+          .twofas-pass-notification-save-prompt-top {
+            border-bottom: 1px solid v.$divider-dark !important;
+
+            &-close {
+              svg {
+                fill: v.$additional-dark !important;
+                stroke: v.$primary-color-dark !important;
+              }
+            }
+          }
+
+          .twofas-pass-notification-save-prompt-header {
+            p {
+              color: v.$primary-text-dark !important;
+            }
+          }
+
+          .twofas-pass-notification-save-prompt-buttons {
+            &-do-not-ask {
+              color: v.$primary-color-dark !important;
+            }
+
+            &-add-login {
+              background-color: v.$primary-color-dark !important;
+              color: v.$tertiary-text-dark !important;
+            }
           }
         }
       }
@@ -677,7 +886,7 @@
               margin-bottom: -2px !important;
               max-width: 100% !important;
               overflow: hidden !important;
-              padding-bottom: 2px !important;
+              padding-bottom: 3px !important;
               text-overflow: ellipsis !important;
   
               &:first-of-type,

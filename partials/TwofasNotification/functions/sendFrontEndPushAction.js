@@ -17,7 +17,6 @@ import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready'
 * @return {Promise<void>}
 */
 const sendFrontEndPushAction = async (notificationObject, tabID, timeout) => {
-  // FUTURE - Send to all tabs?
   await injectCSIfNotAlready(tabID, REQUEST_TARGETS.CONTENT);
   
   return browser.tabs.sendMessage(tabID, {

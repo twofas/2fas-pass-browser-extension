@@ -11,6 +11,7 @@ import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import setIDsToInputs from './prompt/setIDsToInputs';
 import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
+import ifCtxIsInvalid from '@/partials/contentScript/ifCtxIsInvalid';
 
 export default defineContentScript({
   matches: ['https://*/*', 'http://*/*'],
@@ -25,6 +26,10 @@ export default defineContentScript({
     const emptyFunc = () => {};
 
     try {
+      if (ctx?.isInvalid) {
+        return;
+      }
+
       const savePromptResponse = await browser.runtime.sendMessage({
         action: REQUEST_ACTIONS.GET_SAVE_PROMPT,
         target: REQUEST_TARGETS.BACKGROUND_PROMPT
@@ -39,41 +44,46 @@ export default defineContentScript({
       savePrompt = 'default';
     }
 
-    const handlePromptMessage = (request, sender, response) => promptOnMessage(request, sender, response, timers, ignore);
     const cryptoAvailable = isCryptoAvailable();
     const encrypted = cryptoAvailable && savePrompt === 'default_encrypted';
     
-    try {
-      browser.runtime.onMessage.addListener(handlePromptMessage);
+    const passwordInputs = getPasswordInputs();
+    const passwordForms = passwordInputs.map(input => input.closest('form'));
+    
+    const usernameInputs = getUsernameInputs(passwordForms);
+    setUsernameSkips(passwordInputs, usernameInputs);
+    
+    const allInputs = passwordInputs.concat(usernameInputs);
+    setIDsToInputs(allInputs);
 
-      const passwordInputs = getPasswordInputs();
-      const passwordForms = passwordInputs.map(input => input.closest('form'));
-      
-      const usernameInputs = getUsernameInputs(passwordForms);
-      setUsernameSkips(passwordInputs, usernameInputs);
+    const removeListeners = () => {
+      browser.runtime.onMessage.removeListener(handlePromptMessage);
+      document.removeEventListener('input', handleInput);
 
-      const allInputs = passwordInputs.concat(usernameInputs);
+      window.removeEventListener('error', emptyFunc);
+      window.removeEventListener('unhandledrejection', emptyFunc);
+    };
+    
+    const handlePromptMessage = (request, sender, response) => {
+      if (ifCtxIsInvalid(ctx, removeListeners)) {
+        return;
+      }
 
-      setIDsToInputs(allInputs);
+      return promptOnMessage(request, sender, response, timers, ignore);
+    };
 
-      const handleInput = async e => await handleInputEvent(e, allInputs, localKey, timers, ignore, encrypted);
-      document.addEventListener('input', handleInput);
+    const handleInput = async e => {
+      if (ifCtxIsInvalid(ctx, removeListeners)) {
+        return;
+      }
 
-      window.addEventListener('error', emptyFunc);
-      window.addEventListener('unhandledrejection', emptyFunc);
+      await handleInputEvent(e, allInputs, localKey, timers, ignore, encrypted);
+    };
 
-      const removeListeners = () => {
-        browser.runtime.onMessage.removeListener(handlePromptMessage);
-        document.removeEventListener('input', handleInput);
-
-        window.removeEventListener('error', emptyFunc);
-        window.removeEventListener('unhandledrejection', emptyFunc);
-      };
-
-      ctx.onInvalidated(removeListeners);
-      window.addEventListener('beforeunload', removeListeners, { once: true });
-    } catch (e) {
-      handleError(e);
-    }
+    browser.runtime.onMessage.addListener(handlePromptMessage);
+    document.addEventListener('input', handleInput);
+    window.addEventListener('error', emptyFunc);
+    window.addEventListener('unhandledrejection', emptyFunc);
+    window.addEventListener('beforeunload', removeListeners, { once: true });
   },
 });

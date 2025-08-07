@@ -44,7 +44,7 @@ const notification = (request, container) => {
   if (request?.theme && (request?.theme === 'light' || request?.theme === 'dark')) {
     n.item.classList.add(request.theme);
   } else {
-    n.item.classList.add('light');
+    n.item.classList.add('unset');
   }
 
   n.logo = createElement('div', 'twofas-pass-notification-item-logo');

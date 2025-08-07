@@ -53,10 +53,10 @@ const emptyFunc = () => {};
 */
 function Install () {
   const [stepVisible, setStepVisible] = useState(0);
-  const stepVisibleRef = useRef(stepVisible);
-
   const [appsVisible, setAppsVisible] = useState(false);
   const [logs, setLogs] = useState(false);
+
+  const stepVisibleRef = useRef(stepVisible);
 
   const handleContinueWoPinning = async () => {
     goToStep(2);
@@ -158,7 +158,7 @@ function Install () {
       await storage.setItem('local:logging', !logs);
       setLogs(!logs);
       showToast(browser.i18n.getMessage('install_logging_settings_changed'), 'success');
-    } catch (e) {
+    } catch {
       showToast(browser.i18n.getMessage('error_logging_settings_changed'), 'error');
     }
   };

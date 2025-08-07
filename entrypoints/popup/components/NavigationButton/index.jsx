@@ -21,7 +21,7 @@ function NavigationButton (props) {
 
   return (
     <Link
-      className={`${props.type} ${props.className}`}
+      className={`${props.type} ${props.className || ''}`}
       to={props.type === 'cancel' ? '/' : '..'}
       onClick={e => {
         if (props.type === 'back') {

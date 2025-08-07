@@ -6,7 +6,7 @@
 
 import openInstallPage from '../utils/openInstallPage';
 import initContextMenu from '../contextMenu/initContextMenu';
-import updateBadge from '../utils/updateBadge';
+import updateBadge from '../utils/badge/updateBadge';
 import runMigrations from '../migrations';
 
 /** 
@@ -40,7 +40,7 @@ const onInstalled = async (details, migrations) => {
       await CatchError(e);
     }
   } else {
-    await updateBadge();
+    await updateBadge(false).catch(() => {});
   }
 };
 

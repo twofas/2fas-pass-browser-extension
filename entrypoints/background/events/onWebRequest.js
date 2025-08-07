@@ -28,7 +28,7 @@ import checkFormData from '../utils/savePrompt/checkFormData';
 */
 const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdateData) => {
   // COMMENT THIS WHEN DEBUGGING SAVE PROMPT
-  if (!tabsInputData || Object.keys(tabsInputData).length === 0 || !tabsInputData[details?.tabId]) {
+  if (!tabsInputData || Object.keys(tabsInputData).length === 0 || !tabsInputData[details?.tabId] || tabsInputData[details?.tabId]?.length <= 0) {
     return;
   }
   // [END] COMMENT THIS WHEN DEBUGGING
@@ -87,6 +87,10 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     throw new TwoFasError(TwoFasError.internalErrors.onWebRequestConfiguredError, { event: e });
   }
 
+  if (!configured) {
+    return;
+  }
+
   let storageSavePrompt = null;
   let domainOnIgnoredList;
 
@@ -103,7 +107,6 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   }
 
   if (
-    !configured || // Only when configured
     (storageSavePrompt !== 'default' && storageSavePrompt !== 'default_encrypted') || // Only when savePrompt is set to default or default_encrypted
     domainOnIgnoredList // Only when domain is not on the ignored list
   ) {
@@ -137,22 +140,22 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   }
 
   // Only when combination of username && password doesn't exist in the storage
-  let serviceType;
+  let serviceTypeData;
 
   try {
-    serviceType = await checkServicesData(details, values);
+    serviceTypeData = await checkServicesData(details, values);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.onWebRequestCheckServicesDataError, { event: e });
   }
 
-  if (!serviceType) {
+  if (!serviceTypeData) {
     return;
   }
 
   // Action
   try {
-    await addSavePromptAction(details, serviceType, values, savePromptActions);
-    await savePromptAction(details, serviceType, tabsInputData, values, savePromptActions, tabUpdateData);
+    await addSavePromptAction(details, serviceTypeData, values, savePromptActions);
+    await savePromptAction(details, serviceTypeData, tabsInputData, values, savePromptActions, tabUpdateData);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.onWebRequestSavePromptActionError, { event: e });
   }

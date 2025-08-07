@@ -40,6 +40,10 @@
     margin-bottom: 32px;
   }
 
+  &.without-margin {
+    margin-bottom: 0;
+  }
+
   &.resizable {
     .pass-input-bottom {
       resize: vertical;
@@ -109,6 +113,7 @@
   }
 
   &-bottom {
+    align-items: center;
     background-color: v.$primary-box-bg-light;
     border: 1px solid v.$object-stroke-light;
     border-radius: 6px;
@@ -177,6 +182,19 @@
   
         @include m.darkMode {
           stroke: v.$object-dark;
+        }
+      }
+    }
+
+    &-buttons {
+      align-items: center;
+      display: flex;
+      gap: 0 6px;
+      height: 100%;
+
+      button {
+        &.icon-button {
+          font-size: 0;
         }
       }
     }
@@ -275,6 +293,10 @@
     textarea {
       height: 100%;
       resize: none;
+    }
+
+    button {
+      padding: 0;
     }
   }
 
