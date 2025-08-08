@@ -15,6 +15,7 @@ import { Form } from 'react-final-form';
 import getServices from '@/partials/sessionStorage/getServices';
 import valueToNFKD from '@/partials/functions/valueToNFKD';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
+import URIMatcher from '@/partials/URIMatcher';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const Name = lazy(() => import('./components/Name'));
@@ -54,6 +55,30 @@ function Details (props) {
 
   const navigate = useNavigate();
   const params = useParams();
+
+  const handleRemoveUri = useCallback((index, form) => {
+    const currentUris = form.getState().values.uris;
+    
+    const newUris = currentUris.filter((_, i) => i !== index);
+    form.change('uris', newUris);
+    
+    const newDomainsEditable = domainsEditable.filter((_, i) => i !== index);
+    setDomainsEditable(newDomainsEditable);
+  }, [domainsEditable]);
+
+  const handleAddUri = useCallback(form => {
+    const currentUris = form.getState().values.uris || [];
+    const newUri = { 
+      text: '', 
+      matcher: URIMatcher.M_DOMAIN_TYPE,
+      _tempId: `new-${Date.now()}-${Math.random()}` // Temporary ID for animation
+    };
+    
+    form.change('uris', [...currentUris, newUri]);
+    
+    const newDomainsEditable = [...domainsEditable, true];
+    setDomainsEditable(newDomainsEditable);
+  }, [domainsEditable]);
 
   const getData = useCallback(async () => {
     const data = await getServices();
@@ -221,7 +246,7 @@ function Details (props) {
                     />
                     {generateURLs({
                       data: { service, uris: values.uris, domainsEditable, inputError, form },
-                      actions: { setDomainsEditable }
+                      actions: { setDomainsEditable, handleRemoveUri, handleAddUri }
                     })}
                     <SecurityTier
                       data={{ service, tierEditable, form }}

@@ -179,6 +179,7 @@
         stroke-linecap: round;
         stroke-linejoin: round;
         width: auto;
+        transition: stroke .3s ease-in-out;
   
         @include m.darkMode {
           stroke: v.$object-dark;
@@ -193,8 +194,51 @@
       height: 100%;
 
       button {
+        padding: 0;
+
         &.icon-button {
           font-size: 0;
+          
+          svg {
+            width: 16px;
+            height: auto;
+            stroke: v.$primary-color-light;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            transition: stroke .3s ease-in-out;
+
+            @include m.darkMode {
+              stroke: v.$primary-color-dark;
+            }
+          }
+        }
+
+        &.icon-button.trash-button {
+          transition: opacity .3s ease-in-out, max-width .3s ease-in-out, margin-left .3s ease-in-out, margin-right .3s ease-in-out;
+          overflow: hidden;
+          max-width: 16px;
+          opacity: 1;
+          margin-left: 6px;
+          
+          svg {
+            width: 16px;
+            height: auto;
+            stroke: v.$error-light !important;
+
+            @include m.darkMode {
+              stroke: v.$error-dark !important;
+            }
+          }
+
+          &.hidden-trash {
+            max-width: 0;
+            opacity: 0;
+            margin-left: -6px;
+            margin-right: 0;
+            pointer-events: none;
+          }
         }
       }
     }
@@ -297,6 +341,61 @@
 
     button {
       padding: 0;
+
+      svg {
+        width: 16px;
+        height: auto;
+        stroke: v.$primary-color-light;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+        transition: stroke .3s ease-in-out;
+
+        @include m.darkMode {
+          stroke: v.$primary-color-dark;
+        }
+      }
+
+      &.trash-button {
+        transition: opacity .3s ease-in-out, max-width .3s ease-in-out, margin-left .3s ease-in-out, margin-right .3s ease-in-out;
+        overflow: hidden;
+        max-width: 16px;
+        opacity: 1;
+        
+        svg {
+          width: 16px;
+          height: auto;
+          stroke: v.$error-light !important;
+
+          @include m.darkMode {
+            stroke: v.$error-dark !important;
+          }
+        }
+
+        &.hidden-trash {
+          max-width: 0;
+          opacity: 0;
+          margin-left: -6px;
+          margin-right: 0;
+          pointer-events: none;
+        }
+      }
+
+      &.visible-button svg {
+        width: 18px;
+        height: auto;
+        stroke: v.$primary-color-light;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+        transition: stroke .3s ease-in-out;
+
+        @include m.darkMode {
+          stroke: v.$primary-color-dark;
+        }
+      }
 
       &.hidden {
         opacity: 0;

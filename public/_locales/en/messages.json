@@ -659,6 +659,30 @@
     "message": "Security Tier",
     "description": "Label for the security type field in the item details"
   },
+  "details_add_domain": {
+    "message": "Add domain",
+    "description": "Button label to add a new domain to the login item"
+  },
+  "details_add_another_domain": {
+    "message": "Add another domain",
+    "description": "Button label to add another domain when at least one exists"
+  },
+  "details_domain": {
+    "message": "Domain",
+    "description": "Label for domain field"
+  },
+  "details_uri": {
+    "message": "URI",
+    "description": "Label for URI field"
+  },
+  "details_domain_uri": {
+    "message": "Domain (URI URI_NUMBER)",
+    "description": "Header label for domain section with URI number"
+  },
+  "details_no_domain_available": {
+    "message": "No domain available",
+    "description": "Text shown when no domain is assigned to the item"
+  },
   "fetch_push_header": {
     "message": "Check the 2FAS Pass push notification on your mobile phone.",
     "description": "Header prompting the user to check their mobile phone for a push notification"
