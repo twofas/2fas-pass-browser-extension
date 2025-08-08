@@ -671,10 +671,6 @@
     "message": "Domain",
     "description": "Label for domain field"
   },
-  "details_uri": {
-    "message": "URI",
-    "description": "Label for URI field"
-  },
   "details_domain_uri": {
     "message": "Domain (URI URI_NUMBER)",
     "description": "Header label for domain section with URI number"
