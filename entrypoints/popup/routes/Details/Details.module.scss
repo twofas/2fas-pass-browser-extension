@@ -57,6 +57,7 @@
 
       svg {
         fill: v.$primary-color-light;
+        transition: fill .3s ease-in-out, transform .3s ease-in-out;
 
         @include m.darkMode {
           fill: v.$primary-color-dark;
@@ -73,6 +74,19 @@
       text-align: center;
       width: 100%;
 
+      &-button {
+        color: v.$error-light;
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1;
+        padding-bottom: 3px;
+
+        @include m.darkMode {
+          color: v.$error-dark;
+        }
+      }
+
       p {
         border-top: 1px solid v.$divider-light;
         color: v.$secondary-text-light;
@@ -86,19 +100,6 @@
         @include m.darkMode {
           border-top-color: v.$divider-dark;
           color: v.$secondary-text-dark;
-        }
-      }
-
-      &-button {
-        color: v.$error-light;
-        display: block;
-        font-size: 12px;
-        font-weight: 500;
-        line-height: 1;
-        padding-bottom: 3px;
-
-        @include m.darkMode {
-          color: v.$error-dark;
         }
       }
     }
@@ -125,6 +126,43 @@
 
       @include m.darkMode {
         color: v.$secondary-text-dark;
+      }
+    }
+  }
+
+  &-add-domain {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 24px;
+    margin-top: -14px;
+
+    button {
+      align-items: center;
+      color: v.$primary-color-light;
+      display: flex;
+      font-size: 12px;
+      font-weight: 400;
+      gap: 0 6px;
+      line-height: 1;
+      padding: 0;
+
+      @include m.darkMode {
+        color: v.$primary-color-dark;
+      }
+
+      svg {
+        width: 16px;
+        height: auto;
+        stroke: v.$primary-color-light;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+        transition: stroke .3s ease-in-out;
+
+        @include m.darkMode {
+          stroke: v.$primary-color-dark;
+        }
       }
     }
   }

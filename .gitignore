@@ -28,6 +28,9 @@ web-ext.config.ts
 # My
 .env
 .env.development
+.env.mcp
 testFiles
 mobile-mock
 notes.md
+CLAUDE.md
+.claude

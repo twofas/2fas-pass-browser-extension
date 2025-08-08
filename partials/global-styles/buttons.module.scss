@@ -115,6 +115,21 @@
         color: v.$primary-text-dark;
       }
     }
+
+    &.domain-add {
+      font-weight: 500;
+
+      &:hover,
+      &:focus {
+        svg {
+          stroke: v.$focus-light;
+
+          @include m.darkMode {
+            stroke: v.$focus-dark;
+          }
+        }
+      }
+    }
   }
 
   &.btn-hidden {
