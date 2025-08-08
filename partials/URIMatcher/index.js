@@ -396,7 +396,9 @@ class URIMatcher {
       }
     });
 
-    return Array.from(map.values());
+    const result = Array.from(map.values());
+    map.clear();
+    return result;
   }
 
   static recognizeURIs (uris, internalProtocols = false) {
@@ -405,12 +407,13 @@ class URIMatcher {
     }
 
     const response = { urls: [], others: [] };
-    const seenUrls = new Set();
-    const seenOthers = new Set();
 
     if (uris.length <= 0) {
       return response;
     }
+
+    const seenUrls = new Set();
+    const seenOthers = new Set();
 
     try {
       uris.forEach(uri => {
@@ -437,6 +440,9 @@ class URIMatcher {
       if (e !== this.BreakException) {
         throw e;
       }
+    } finally {
+      seenUrls.clear();
+      seenOthers.clear();
     }
 
     return response;
