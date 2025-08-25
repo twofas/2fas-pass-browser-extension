@@ -14,11 +14,14 @@ import isT3orT2WithPassword from '@/partials/functions/isT3orT2WithPassword';
 import decryptPassword from '@/partials/functions/decryptPassword';
 import copyValue from '../../ThisTab/functions/serviceList/copyValue';
 import { SECURITY_TIER } from '@/utils/SECURITY_TIER';
+import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
+import { useState, useEffect } from 'react';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
 const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+const ExternalLinkIcon = lazy(() => import('@/assets/popup-window/new-tab.svg?react'));
 
 const passwordDescriptionVariants = {
   hidden: { maxHeight: '0px' },
@@ -30,6 +33,11 @@ const passwordMobileVariants = {
   visible: { maxHeight: '18px' }
 };
 
+const changePasswordVariants = {
+  hidden: { maxHeight: '0px', opacity: 0 },
+  visible: { maxHeight: '16px', opacity: 1 }
+};
+
  /**
 * Function to render the password input field.
 * @param {Object} props - The component props.
@@ -39,6 +47,30 @@ function Password (props) {
   const { data, actions } = props;
   const { service, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError, form } = data;
   const { setPasswordEditable, setPasswordVisible, setPasswordMobile, setPasswordDecryptError} = actions;
+  const [changePasswordUrl, setChangePasswordUrl] = useState(null);
+  const [checkingUrl, setCheckingUrl] = useState(false);
+  
+  useEffect(() => {
+    const checkChangePasswordSupport = async () => {
+      if (!service?.uris || service.uris.length === 0) {
+        setChangePasswordUrl(null);
+        return;
+      }
+      
+      setCheckingUrl(true);
+      try {
+        const url = await findPasswordChangeUrl(service.uris);
+        setChangePasswordUrl(url);
+      } catch (e) {
+        setChangePasswordUrl(null);
+        CatchError(e);
+      } finally {
+        setCheckingUrl(false);
+      }
+    };
+    
+    checkChangePasswordSupport();
+  }, [service?.uris]);
 
   const handleCopyPassword = useCallback(async () => {
     try {
@@ -188,6 +220,15 @@ function Password (props) {
 
     setPasswordVisible(!passwordVisible);
   };
+  
+  const handleChangePasswordClick = async e => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!changePasswordUrl) return;
+    
+    await browser.tabs.create({ url: changePasswordUrl });
+  };
 
   return (
     <LazyMotion features={loadDomAnimation}>
@@ -261,6 +302,25 @@ function Password (props) {
                 </label>
               </div>
             </m.div>
+            {!checkingUrl && changePasswordUrl && (
+              <m.div
+                className={pI.passInputLink}
+                variants={changePasswordVariants}
+                initial="hidden"
+                transition={{ duration: .3 }}
+                animate={changePasswordUrl ? 'visible' : 'hidden'}
+              >
+                <button
+                  type="button"
+                  onClick={handleChangePasswordClick}
+                  className={`${bS.btn} ${bS.btnClear} ${pI.passInputLinkButton}`}
+                  title={browser.i18n.getMessage('details_change_password_in_service_title')}
+                >
+                  <span>{browser.i18n.getMessage('details_change_password_in_service')}</span>
+                  <ExternalLinkIcon />
+                </button>
+              </m.div>
+            )}
           </div>
         )}
       </Field>

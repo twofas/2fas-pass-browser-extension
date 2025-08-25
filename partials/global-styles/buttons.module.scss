@@ -117,7 +117,10 @@
     }
 
     &.domain-add {
-      font-weight: 500;
+      span {
+        font-size: 12px;
+        font-weight: 500;
+      }
 
       &:hover,
       &:focus {
