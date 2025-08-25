@@ -74,5 +74,9 @@
   "details_no_domain_available": {
     "message": "No domain available",
     "description": "Text shown when no domain is assigned to the item"
+  },
+  "details_name_copied": {
+    "message": "Name copied to clipboard",
+    "description": "Success message shown when the name is copied to clipboard"
   }
 }

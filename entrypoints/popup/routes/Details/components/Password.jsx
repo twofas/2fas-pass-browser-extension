@@ -7,15 +7,18 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { lazy } from 'react';
+import { lazy, useCallback } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import isT3orT2WithPassword from '@/partials/functions/isT3orT2WithPassword';
 import decryptPassword from '@/partials/functions/decryptPassword';
+import copyValue from '../../ThisTab/functions/serviceList/copyValue';
+import { SECURITY_TIER } from '@/utils/SECURITY_TIER';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
 const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
+const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 
 const passwordDescriptionVariants = {
   hidden: { maxHeight: '0px' },
@@ -36,6 +39,29 @@ function Password (props) {
   const { data, actions } = props;
   const { service, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError, form } = data;
   const { setPasswordEditable, setPasswordVisible, setPasswordMobile, setPasswordDecryptError} = actions;
+
+  const handleCopyPassword = useCallback(async () => {
+    try {
+      let passwordToCopy;
+      
+      const currentPassword = form.getFieldState('password').value;
+      
+      if (currentPassword && currentPassword !== '******') {
+        passwordToCopy = currentPassword;
+      } else if (service?.passwordEncrypted && service?.passwordEncrypted?.length > 0) {
+        const tempService = { ...service, password: service.passwordEncrypted };
+        passwordToCopy = await decryptPassword(tempService);
+      } else {
+        passwordToCopy = '';
+      }
+      
+      await copyValue(passwordToCopy, service.id, 'password');
+      showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
+    } catch (e) {
+      showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
+      await CatchError(e);
+    }
+  }, [service, form]);
 
   const generateSecurityTypeOverlay = service => {
     if (isT3orT2WithPassword(service)) {
@@ -192,13 +218,25 @@ function Password (props) {
                 autoComplete="off"
                 autoCapitalize="off"
               />
-              <button
-                type="button"
-                onClick={handlePasswordVisibleClick}
-                className={`${pI.visibleButton} ${isT3orT2WithPassword(service) || passwordEditable ? '' : pI.hidden}`}
-              >
-                <VisibleIcon />
-              </button>
+              <div className={pI.passInputBottomButtons}>
+                <button
+                  type="button"
+                  onClick={handlePasswordVisibleClick}
+                  className={`${pI.visibleButton} ${isT3orT2WithPassword(service) || passwordEditable ? '' : pI.hidden}`}
+                >
+                  <VisibleIcon />
+                </button>
+                {(service.securityType === SECURITY_TIER.SECRET || (service.passwordEncrypted && service.passwordEncrypted.length > 0)) && (
+                  <button
+                    type='button'
+                    className={`${bS.btn} ${pI.iconButton}`}
+                    onClick={handleCopyPassword}
+                    title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                  >
+                    <CopyIcon />
+                  </button>
+                )}
+              </div>
 
               {generateSecurityTypeOverlay(service)}
               {generateErrorOverlay()}

@@ -102,6 +102,8 @@ function Details (props) {
     setService(s);
     setDomainsEditable(new Array(urisLength).fill(false));
     setLoading(false);
+    
+    setPasswordEditable(false);
   }, []);
 
   const watchStorageVersion = useCallback(() => {
@@ -233,14 +235,17 @@ function Details (props) {
                 render={({ handleSubmit, form, submitting, values }) => ( // pristine
                   <form onSubmit={handleSubmit}>
                     <Name
+                      key={`name-${service.id}-${storageVersion}`}
                       data={{ service, form, nameEditable, inputError }}
                       actions={{ setNameEditable }}
                     />
                     <Username
+                      key={`username-${service.id}-${storageVersion}`}
                       data={{ service, usernameEditable, usernameMobile, inputError, form }}
                       actions={{ setUsernameEditable, setUsernameMobile }}
                     />
                     <Password
+                      key={`password-${service.id}-${storageVersion}`}
                       data={{ service, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError, form }}
                       actions={{ setPasswordEditable, setPasswordVisible, setPasswordMobile, setPasswordDecryptError }}
                     />
