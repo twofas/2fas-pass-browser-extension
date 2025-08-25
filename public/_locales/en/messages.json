@@ -679,6 +679,10 @@
     "message": "No domain available",
     "description": "Text shown when no domain is assigned to the item"
   },
+  "details_name_copied": {
+    "message": "Name copied to clipboard",
+    "description": "Success message shown when the name is copied to clipboard"
+  },
   "fetch_push_header": {
     "message": "Check the 2FAS Pass push notification on your mobile phone.",
     "description": "Header prompting the user to check their mobile phone for a push notification"

@@ -9,8 +9,11 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
+import { lazy, useCallback } from 'react';
+import copyValue from '../../ThisTab/functions/serviceList/copyValue';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
+const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 
 const usernameMobileVariants = {
   hidden: { maxHeight: '0px' },
@@ -26,6 +29,12 @@ function Username (props) {
   const { data, actions } = props;
   const { service, usernameEditable, usernameMobile, inputError, form } = data;
   const { setUsernameEditable, setUsernameMobile } = actions;
+
+  const handleCopyUsername = useCallback(async username => {
+    if (!username) return;
+    await copyValue(username, service.id, 'username');
+    showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
+  }, [service.id]);
 
   const handleUsernameEditable = form => {
     if (usernameEditable) {
@@ -63,6 +72,14 @@ function Username (props) {
               autoComplete="on"
               autoCapitalize="off"
             />
+            <button
+              type='button'
+              className={`${bS.btn} ${pI.iconButton}`}
+              onClick={() => handleCopyUsername(input.value)}
+              title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+            >
+              <CopyIcon />
+            </button>
           </div>
           <LazyMotion features={loadDomAnimation}>
             <m.div

@@ -7,6 +7,10 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
+import { lazy, useCallback } from 'react';
+import copyValue from '../../ThisTab/functions/serviceList/copyValue';
+
+const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 
 /** 
 * Function to render the name input field.
@@ -17,6 +21,12 @@ function Name (props) {
   const { data, actions } = props;
   const { service, form, nameEditable, inputError } = data;
   const { setNameEditable } = actions;
+
+  const handleCopyName = useCallback(async name => {
+    if (!name) return;
+    await copyValue(name, service.id, 'name');
+    showToast(browser.i18n.getMessage('details_name_copied'), 'success');
+  }, [service.id]);
 
   const handleNameEditable = form => {
     if (nameEditable) {
@@ -52,6 +62,14 @@ function Name (props) {
               autoComplete="off"
               autoCapitalize="off"
             />
+            <button
+              type='button'
+              className={`${bS.btn} ${pI.iconButton}`}
+              onClick={() => handleCopyName(input.value)}
+              title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+            >
+              <CopyIcon />
+            </button>
           </div>
         </div>
       )}
