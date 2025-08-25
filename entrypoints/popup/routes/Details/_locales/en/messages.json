@@ -78,5 +78,13 @@
   "details_name_copied": {
     "message": "Name copied to clipboard",
     "description": "Success message shown when the name is copied to clipboard"
+  },
+  "details_change_password_in_service": {
+    "message": "Change password in the service",
+    "description": "Button label to open the service's password change page"
+  },
+  "details_change_password_in_service_title": {
+    "message": "Open service website in new tab to change password",
+    "description": "Title for the change password section in the service"
   }
 }

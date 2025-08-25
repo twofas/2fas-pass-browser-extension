@@ -506,4 +506,55 @@
       }
     }
   }
+  
+  &-link {
+    display: flex;
+    overflow: hidden;
+    
+    &-button {
+      align-items: center;
+      color: v.$primary-color-light;
+      display: flex;
+      gap: 6px;
+      line-height: 1;
+      padding: 0;
+      transition: .3s ease-in-out;
+      
+      @include m.darkMode {
+        color: v.$primary-color-dark;
+      }
+      
+      &:hover,
+      &:focus {
+        color: v.$focus-light;
+
+        @include m.darkMode {
+          color: v.$focus-dark;
+        }
+
+        svg {
+          stroke: v.$focus-light;
+
+          @include m.darkMode {
+            stroke: v.$focus-dark;
+          }
+        }
+      }
+
+      span {
+        font-size: 12px;
+        font-weight: 500;
+      }
+      
+      svg {
+        height: auto;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5;
+        transition: stroke .3s ease-in-out;
+        width: 16px;
+      }
+    }
+  }
 }
