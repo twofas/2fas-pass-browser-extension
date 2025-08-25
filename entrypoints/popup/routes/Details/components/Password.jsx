@@ -13,7 +13,6 @@ import * as m from 'motion/react-m';
 import isT3orT2WithPassword from '@/partials/functions/isT3orT2WithPassword';
 import decryptPassword from '@/partials/functions/decryptPassword';
 import copyValue from '../../ThisTab/functions/serviceList/copyValue';
-import { SECURITY_TIER } from '@/utils/SECURITY_TIER';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect } from 'react';
 
@@ -22,6 +21,7 @@ const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react')
 const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 const ExternalLinkIcon = lazy(() => import('@/assets/popup-window/new-tab.svg?react'));
+const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
 
 const passwordDescriptionVariants = {
   hidden: { maxHeight: '0px' },
@@ -247,12 +247,14 @@ function Password (props) {
             </div>
             {generateSecurityTypeDescription(service)}
             <div className={pI.passInputBottom}>
-              <input
-                type={passwordVisible ? 'text' : 'password'}
+              <PasswordInput
                 {...input}
+                type={passwordVisible ? 'text' : 'password'}
                 id="password"
+                showPassword={passwordVisible}
+                isDecrypted={service.password !== '******'}
                 className={!passwordEditable && !isT3orT2WithPassword(service) ? pI.hiddenValue : ''}
-                disabled={!passwordEditable || passwordMobile ? 'disabled' : ''}
+                disabled={!passwordEditable || passwordMobile}
                 dir="ltr"
                 spellCheck="false"
                 autoCorrect="off"
