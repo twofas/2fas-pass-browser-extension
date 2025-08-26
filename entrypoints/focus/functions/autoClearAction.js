@@ -11,55 +11,63 @@
 * @return {Promise<void>} A promise that resolves when the action is complete.
 */
 const autoClearAction = async request => {
-  let actionValue;
-
-  if (!request?.cryptoAvailable) {
-    actionValue = request?.value;
-  } else {
-    let localKeyResponse;
-
+  if (request?.value === 'addNew') {
     try {
-      localKeyResponse = await browser.runtime.sendMessage({
-        action: REQUEST_ACTIONS.GET_LOCAL_KEY,
-        target: REQUEST_TARGETS.BACKGROUND
-      });
-    } catch {
-      return false;
-    }
+      await navigator.clipboard.writeText('');
+    } catch {}
+  } else {
+    let actionValue;
 
-    let localKeyCrypto;
+    if (!request?.cryptoAvailable) {
+      actionValue = request?.value;
+    } else {
+      let localKeyResponse;
 
-    if (localKeyResponse?.status === 'ok' && localKeyResponse?.data && localKeyResponse.data.length > 0) {
       try {
-        localKeyCrypto = await crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKeyResponse.data), { name: 'AES-GCM' }, false, ['decrypt'] );
+        localKeyResponse = await browser.runtime.sendMessage({
+          action: REQUEST_ACTIONS.GET_LOCAL_KEY,
+          target: REQUEST_TARGETS.BACKGROUND
+        });
       } catch {
         return false;
       }
-    } else {
-      return false;
+
+      let localKeyCrypto;
+
+      if (localKeyResponse?.status === 'ok' && localKeyResponse?.data && localKeyResponse.data.length > 0) {
+        try {
+          localKeyCrypto = await crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKeyResponse.data), { name: 'AES-GCM' }, false, ['decrypt'] );
+        } catch {
+          return false;
+        }
+      } else {
+        return false;
+      }
+
+      const valueAB = Base64ToArrayBuffer(request.value);
+      const valueDecryptedBytes = DecryptBytes(valueAB);
+      let decryptedValueAB;
+
+      try {
+        decryptedValueAB = await crypto.subtle.decrypt(
+          { name: 'AES-GCM', iv: valueDecryptedBytes.iv },
+          localKeyCrypto,
+          valueDecryptedBytes.data
+        );
+      } catch {
+        return false;
+      }
+
+      actionValue = ArrayBufferToString(decryptedValueAB);
     }
 
-    const valueAB = Base64ToArrayBuffer(request.value);
-    const valueDecryptedBytes = DecryptBytes(valueAB);
-    let decryptedValueAB;
+    const clipboardValue = await navigator.clipboard.readText().catch(() => '');
 
-    try {
-      decryptedValueAB = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv: valueDecryptedBytes.iv },
-        localKeyCrypto,
-        valueDecryptedBytes.data
-      );
-    } catch {
-      return false;
+    if (clipboardValue === actionValue) {
+      try {
+        await navigator.clipboard.writeText('');
+      } catch {}
     }
-
-    actionValue = ArrayBufferToString(decryptedValueAB);
-  }
-
-  const clipboardValue = await navigator.clipboard.readText().catch(() => '');
-
-  if (clipboardValue === actionValue) {
-    await navigator.clipboard.writeText('');
   }
 };
 

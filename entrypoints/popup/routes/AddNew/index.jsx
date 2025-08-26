@@ -94,7 +94,7 @@ function AddNew (props) {
   const handleCopyPassword = async form => {
     try {
       const currentPassword = form.getFieldState('password').value;
-      await copyValue(currentPassword, 'newItem', 'password');
+      await copyValue(currentPassword, '00000000-0000-0000-0000-000000000000', 'password');
       showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');

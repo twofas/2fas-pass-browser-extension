@@ -22,6 +22,22 @@ const checkStorageAutoClearActions = async () => {
   if (!storageClearActions || storageClearActions.length === 0) {
     return false;
   }
+  
+  // Get service with latest timestamp
+  const action = storageClearActions.reduce((latest, action) => {
+    return action.timestamp > latest.timestamp ? action : latest;
+  }, storageClearActions[0]);
+
+  if (!action || !action?.itemId || !action?.itemType) {
+    await storage.setItem('session:autoClearActions', []);
+    return false;
+  }
+
+  let serviceValue;
+
+  if (action?.itemId === '00000000-0000-0000-0000-000000000000') {
+    return 'addNew';
+  }
 
   let services;
 
@@ -36,24 +52,12 @@ const checkStorageAutoClearActions = async () => {
     return false;
   }
 
-  // Get service with latest timestamp
-  const action = storageClearActions.reduce((latest, action) => {
-    return action.timestamp > latest.timestamp ? action : latest;
-  }, storageClearActions[0]);
-
-  if (!action) {
-    await storage.setItem('session:autoClearActions', []);
-    return false;
-  }
-
   const service = services.find(s => s?.id === action?.itemId);
 
   if (!service) {
     await storage.setItem('session:autoClearActions', []);
     return false;
   }
-
-  let serviceValue;
 
   if (action.itemType === 'password') {
     try {
