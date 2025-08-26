@@ -9,7 +9,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import getDomainInfo from './functions/getDomainInfo';
 import { useEffect, lazy } from 'react';
 import { Form, Field } from 'react-final-form';
@@ -17,10 +17,15 @@ import onMessage from './events/onMessage';
 import valueToNFKD from '@/partials/functions/valueToNFKD';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
+import copyValue from '../ThisTab/functions/serviceList/copyValue';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
+const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
+const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
+const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
 
 const additionalVariants = {
   hidden: { maxHeight: '0px' },
@@ -42,6 +47,7 @@ function AddNew (props) {
   const [pattern, setPattern] = useState('');
   const [onMobile, setOnMobile] = useState(true);
   const [additionalOverflow, setAdditionalOverflow] = useState(true);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   useEffect(() => {
     const messageListener = async (request, sender, sendResponse) => await onMessage(request, sender, sendResponse, setUrl);
@@ -80,6 +86,21 @@ function AddNew (props) {
       browser.runtime.onMessage.removeListener(messageListener);
     };
   }, []);
+
+  const handlePasswordVisibleClick = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const handleCopyPassword = async form => {
+    try {
+      const currentPassword = form.getFieldState('password').value;
+      await copyValue(currentPassword, 'newItem', 'password');
+      showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
+    } catch (e) {
+      showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
+      await CatchError(e);
+    }
+  };
 
   const onSubmit = async e => {
     const data = {
@@ -121,7 +142,7 @@ function AddNew (props) {
               <h2>{browser.i18n.getMessage('add_new_header')}</h2>
               <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
 
-              <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url}} render={({ handleSubmit, submitting }) => ( // form, pristine, values
+              <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url }} render={({ handleSubmit, form, submitting }) => ( // pristine, values
                   <form onSubmit={handleSubmit}>
                     <Field name="password-minlength" value={minLength}>
                       {({ input }) => <input type="hidden" {...input} id="password-minlength" />}
@@ -204,7 +225,45 @@ function AddNew (props) {
                               <label htmlFor="password">{browser.i18n.getMessage('password')}</label>
                             </div>
                             <div className={pI.passInputBottom}>
-                              <input type="password" {...input} id="password" disabled={!setOnMobile ? 'disabled' : ''} />
+                              <PasswordInput
+                                {...input}
+                                type={passwordVisible ? 'text' : 'password'}
+                                id="password"
+                                showPassword={passwordVisible}
+                                isDecrypted={true}
+                                disabled={!setOnMobile ? 'disabled' : ''}
+                                dir="ltr"
+                                spellCheck="false"
+                                autoCorrect="off"
+                                autoComplete="off"
+                                autoCapitalize="off"
+                              />
+                              <div className={pI.passInputBottomButtons}>
+                                <Link
+                                  to='/password-generator'
+                                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
+                                  title={browser.i18n.getMessage('add_new_generate_password')}
+                                  state={{ from: 'addNew' }}
+                                >
+                                  <RefreshIcon />
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={handlePasswordVisibleClick}
+                                  className={`${pI.iconButton} ${pI.visibleButton}`}
+                                  title={browser.i18n.getMessage('add_new_toggle_password_visibility')}
+                                >
+                                  <VisibleIcon />
+                                </button>
+                                <button
+                                  type='button'
+                                  className={`${bS.btn} ${pI.iconButton}`}
+                                  onClick={() => handleCopyPassword(form)}
+                                  title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                                >
+                                  <CopyIcon />
+                                </button>
+                              </div>
                             </div>
                             <Tooltip className={`${pI.passInputAdditional} tooltip`}>
                               <h4>{browser.i18n.getMessage('add_new_learn_more_tooltip_header')}</h4>
