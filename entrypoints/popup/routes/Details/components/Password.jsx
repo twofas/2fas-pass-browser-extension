@@ -10,6 +10,7 @@ import { Field } from 'react-final-form';
 import { lazy, useCallback } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
+import { Link } from 'react-router';
 import isT3orT2WithPassword from '@/partials/functions/isT3orT2WithPassword';
 import decryptPassword from '@/partials/functions/decryptPassword';
 import copyValue from '../../ThisTab/functions/serviceList/copyValue';
@@ -20,6 +21,7 @@ const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => 
 const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
 const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
 const ExternalLinkIcon = lazy(() => import('@/assets/popup-window/new-tab.svg?react'));
 const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
 
@@ -262,10 +264,19 @@ function Password (props) {
                 autoCapitalize="off"
               />
               <div className={pI.passInputBottomButtons}>
+                <Link
+                  to='/password-generator'
+                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${passwordEditable ? '' : pI.hiddenButton}`}
+                  title={browser.i18n.getMessage('details_generate_password')}
+                  state={{ from: 'details', serviceId: service?.id }}
+                >
+                  <RefreshIcon />
+                </Link>
                 <button
                   type="button"
                   onClick={handlePasswordVisibleClick}
-                  className={`${pI.visibleButton} ${isT3orT2WithPassword(service) || passwordEditable ? '' : pI.hidden}`}
+                  className={`${pI.iconButton} ${pI.visibleButton} ${isT3orT2WithPassword(service) || passwordEditable ? '' : pI.hidden}`}
+                  title={browser.i18n.getMessage('details_toggle_password_visibility')}
                 >
                   <VisibleIcon />
                 </button>

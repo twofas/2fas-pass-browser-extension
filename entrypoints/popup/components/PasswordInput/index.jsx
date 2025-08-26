@@ -29,6 +29,7 @@ function PasswordInput(props) {
   const [selection, setSelection] = useState({ start: 0, end: 0 });
   const inputRef = useRef(null);
   const displayRef = useRef(null);
+  const textWrapperRef = useRef(null);
   
   const getCharacterType = useCallback((char) => {
     if (/[0-9]/.test(char)) {
@@ -127,6 +128,33 @@ function PasswordInput(props) {
     return width;
   }, [selection.end, value, showPassword]);
   
+  const getCharWidth = useCallback(() => {
+    const tempSpan = document.createElement('span');
+    tempSpan.style.cssText = 'visibility:hidden;position:absolute;font-size:14px;font-weight:400;font-family:inherit';
+    tempSpan.textContent = showPassword ? 'a' : '•';
+    document.body.appendChild(tempSpan);
+    const width = tempSpan.offsetWidth;
+    document.body.removeChild(tempSpan);
+    return width;
+  }, [showPassword]);
+
+  useEffect(() => {
+    if (!isFocused || !displayRef.current || !textWrapperRef.current) return;
+    
+    const cursorPosition = getCursorPixelPosition();
+    const displayWidth = displayRef.current.clientWidth;
+    const scrollLeft = displayRef.current.scrollLeft;
+    const charWidth = getCharWidth();
+    
+    const visibleCursorPosition = cursorPosition - scrollLeft;
+    
+    if (visibleCursorPosition < 0 && selection.end > 0) {
+      displayRef.current.scrollLeft = Math.max(0, scrollLeft - charWidth);
+    } else if (visibleCursorPosition > displayWidth - 20) {
+      displayRef.current.scrollLeft = cursorPosition - displayWidth + 20;
+    }
+  }, [selection, getCursorPixelPosition, isFocused, getCharWidth]);
+  
   const renderColoredText = () => {
     if (!value) return null;
     
@@ -176,7 +204,7 @@ function PasswordInput(props) {
           className={S.passwordInputHiddenInput}
         />
         
-        <div className={S.passwordInputTextWrapper}>
+        <div ref={textWrapperRef} className={S.passwordInputTextWrapper}>
           {renderColoredText()}
           {isFocused && selection.start === selection.end ? (
             <span 
