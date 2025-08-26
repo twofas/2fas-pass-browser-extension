@@ -110,7 +110,7 @@ function URLComponent (props) {
               </button>
               <button
                 type='button'
-                className={`${bS.btn} ${pI.iconButton} ${pI.trashButton} ${domainsEditable[index] ? '' : pI.hiddenTrash}`}
+                className={`${bS.btn} ${pI.iconButton} ${pI.trashButton} ${domainsEditable[index] ? '' : pI.hiddenButton}`}
                 onClick={() => handleRemoveUri(index, form)}
                 title={browser.i18n.getMessage('remove')}
                 disabled={!domainsEditable[index]}

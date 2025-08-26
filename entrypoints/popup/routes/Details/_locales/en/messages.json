@@ -86,5 +86,13 @@
   "details_change_password_in_service_title": {
     "message": "Open service website in new tab to change password",
     "description": "Title for the change password section in the service"
+  },
+  "details_toggle_password_visibility": {
+    "message": "Toggle password visibility",
+    "description": "Title for the button that toggles password visibility"
+  },
+  "details_generate_password": {
+    "message": "Generate password",
+    "description": "Title for the button that opens password generator"
   }
 }

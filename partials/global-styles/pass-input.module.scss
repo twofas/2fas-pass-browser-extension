@@ -120,7 +120,7 @@
     display: flex;
     flex-direction: row;
     gap: 0 6px;
-    justify-content: space-between;
+    justify-content: stretch;
     padding: 8.5px 12px;
     position: relative;
     transition: border-color .3s ease-in-out, background-color .3s ease-in-out;
@@ -190,54 +190,137 @@
     &-buttons {
       align-items: center;
       display: flex;
-      gap: 0 6px;
+      flex-grow: 0;
+      flex-shrink: 0;
       height: 100%;
 
+      a,
       button {
+        align-items: center;
+        display: inline-flex;
+        margin-right: 12px;
         padding: 0;
+
+        &:last-child {
+          margin-right: 0;
+        }
 
         &.icon-button {
           font-size: 0;
           
           svg {
-            width: 16px;
+            fill: none;
             height: auto;
             stroke: v.$primary-color-light;
-            stroke-width: 1.5;
             stroke-linecap: round;
             stroke-linejoin: round;
-            fill: none;
+            stroke-width: 1.5;
             transition: stroke .3s ease-in-out;
+            width: 16px;
 
             @include m.darkMode {
               stroke: v.$primary-color-dark;
             }
           }
-        }
-
-        &.icon-button.trash-button {
-          transition: opacity .3s ease-in-out, max-width .3s ease-in-out, margin-left .3s ease-in-out, margin-right .3s ease-in-out;
-          overflow: hidden;
-          max-width: 16px;
-          opacity: 1;
-          margin-left: 6px;
           
-          svg {
-            width: 16px;
-            height: auto;
-            stroke: v.$error-light !important;
-
-            @include m.darkMode {
-              stroke: v.$error-dark !important;
+          &:hover,
+          &:focus {
+            svg {
+              stroke: v.$focus-light;
+              
+              @include m.darkMode {
+                stroke: v.$focus-dark;
+              }
+            }
+          }
+          
+          &:active {
+            svg {
+              stroke: v.$pressed-light;
+              
+              @include m.darkMode {
+                stroke: v.$pressed-dark;
+              }
             }
           }
 
-          &.hidden-trash {
-            max-width: 0;
-            opacity: 0;
-            margin-left: -6px;
-            margin-right: 0;
-            pointer-events: none;
+          &.trash-button,
+          &.refresh-button {
+            max-width: 16px;
+            opacity: 1;
+            overflow: hidden;
+            transition: opacity .3s ease-in-out, max-width .3s ease-in-out, margin-left .3s ease-in-out, margin-right .3s ease-in-out;
+
+            &.hidden-button {
+              margin-right: 0;
+              max-width: 0;
+              opacity: 0;
+              pointer-events: none;
+            }
+          }
+
+          &.trash-button {
+            max-width: 16px;
+            opacity: 1;
+            overflow: hidden;
+            transition: opacity .3s ease-in-out, max-width .3s ease-in-out, margin-left .3s ease-in-out, margin-right .3s ease-in-out;
+
+            &:hover,
+            &:focus {
+              svg {
+                stroke: v.$error-toast-light !important;
+                
+                @include m.darkMode {
+                  stroke: v.$error-toast-dark !important;
+                }
+              }
+            }
+
+            &.hidden-button {
+              margin-left: -12px;
+            }
+
+            svg {
+              height: auto;
+              stroke: v.$error-light !important;
+              width: 16px;
+
+              @include m.darkMode {
+                stroke: v.$error-dark !important;
+              }
+            }
+          }
+
+          &.visible-button {
+            &:hover,
+            &:focus {
+              svg {
+                stroke: v.$focus-light !important;
+                 
+                @include m.darkMode {
+                  stroke: v.$focus-dark !important;
+                }
+              }
+            }
+            
+            &:active {
+              svg {
+                stroke: v.$pressed-light !important;
+                
+                @include m.darkMode {
+                  stroke: v.$pressed-dark !important;
+                }
+              }
+            }
+
+            svg {
+              transition: stroke .3s ease-in-out;
+              width: 16px;
+
+              @include m.darkMode {
+                stroke: v.$primary-color-dark;
+              }
+            }
           }
         }
       }
@@ -343,57 +426,40 @@
       padding: 0;
 
       svg {
-        width: 16px;
+        fill: none;
         height: auto;
         stroke: v.$primary-color-light;
-        stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        fill: none;
+        stroke-width: 1.5;
         transition: stroke .3s ease-in-out;
+        width: 16px;
 
         @include m.darkMode {
           stroke: v.$primary-color-dark;
         }
       }
-
-      &.trash-button {
-        transition: opacity .3s ease-in-out, max-width .3s ease-in-out, margin-left .3s ease-in-out, margin-right .3s ease-in-out;
-        overflow: hidden;
-        max-width: 16px;
-        opacity: 1;
-        
-        svg {
-          width: 16px;
-          height: auto;
-          stroke: v.$error-light !important;
-
-          @include m.darkMode {
-            stroke: v.$error-dark !important;
+      
+      &.icon-button {
+        &:hover,
+        &:focus {
+          svg {
+            stroke: v.$focus-light;
+            
+            @include m.darkMode {
+              stroke: v.$focus-dark;
+            }
           }
         }
-
-        &.hidden-trash {
-          max-width: 0;
-          opacity: 0;
-          margin-left: -6px;
-          margin-right: 0;
-          pointer-events: none;
-        }
-      }
-
-      &.visible-button svg {
-        width: 18px;
-        height: auto;
-        stroke: v.$primary-color-light;
-        stroke-width: 1.5;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        fill: none;
-        transition: stroke .3s ease-in-out;
-
-        @include m.darkMode {
-          stroke: v.$primary-color-dark;
+        
+        &:active {
+          svg {
+            stroke: v.$pressed-light;
+            
+            @include m.darkMode {
+              stroke: v.$pressed-dark;
+            }
+          }
         }
       }
 
