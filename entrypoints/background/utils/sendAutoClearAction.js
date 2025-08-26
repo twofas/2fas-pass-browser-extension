@@ -25,43 +25,47 @@ const sendAutoClearAction = async (value, cryptoAvailable, sender) => {
     cryptoAvailable: cryptoAvailable
   };
 
-  if (!cryptoAvailable) {
-    data.value = value;
+  if (value === 'addNew') {
+    data.value = 'addNew';
   } else {
-    const [localKey, nonce] = await Promise.all([
-      getLocalKey(),
-      generateNonce('arraybuffer')
-    ]).catch(() => {
-      return false;
-    });
+    if (!cryptoAvailable) {
+      data.value = value;
+    } else {
+      const [localKey, nonce] = await Promise.all([
+        getLocalKey(),
+        generateNonce('arraybuffer')
+      ]).catch(() => {
+        return false;
+      });
 
-    if (!localKey || !nonce) {
-      return false;
+      if (!localKey || !nonce) {
+        return false;
+      }
+
+      let localKeyCrypto;
+
+      try {
+        localKeyCrypto = await crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKey), { name: 'AES-GCM' }, false, ['encrypt'] );
+      } catch {
+        return false;
+      }
+
+      let encryptedValue;
+
+      try {
+        encryptedValue = await crypto.subtle.encrypt(
+          { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+          localKeyCrypto,
+          StringToArrayBuffer(value)
+        );
+      } catch {
+        return false;
+      }
+
+      const encryptedValueEB = EncryptBytes(nonce.ArrayBuffer, encryptedValue);
+      const encryptedValueB64 = ArrayBufferToBase64(encryptedValueEB);
+      data.value = encryptedValueB64;
     }
-
-    let localKeyCrypto;
-
-    try {
-      localKeyCrypto = await crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKey), { name: 'AES-GCM' }, false, ['encrypt'] );
-    } catch {
-      return false;
-    }
-
-    let encryptedValue;
-
-    try {
-      encryptedValue = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-        localKeyCrypto,
-        StringToArrayBuffer(value)
-      );
-    } catch {
-      return false;
-    }
-
-    const encryptedValueEB = EncryptBytes(nonce.ArrayBuffer, encryptedValue);
-    const encryptedValueB64 = ArrayBufferToBase64(encryptedValueEB);
-    data.value = encryptedValueB64;
   }
 
   await sendMessageToTab(sender.tab.id, data);

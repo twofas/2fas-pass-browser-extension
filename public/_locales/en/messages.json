@@ -783,10 +783,6 @@
     "message": "Password generator",
     "description": "Title for the password generator page"
   },
-  "password_generator_password": {
-    "message": "Password",
-    "description": "Label for the password field"
-  },
   "password_generator_characters": {
     "message": "Characters: COUNT",
     "description": "Label showing the number of characters in password"
@@ -795,21 +791,9 @@
     "message": "Include",
     "description": "Label for the include options section"
   },
-  "password_generator_use": {
-    "message": "Use this Password",
-    "description": "Button text to use the generated password"
-  },
   "password_generator_regenerate": {
     "message": "Regenerate password",
     "description": "Title for the regenerate password button"
-  },
-  "password_generator_copy": {
-    "message": "Copy password",
-    "description": "Title for the copy password button"
-  },
-  "password_generator_copied": {
-    "message": "Password copied to clipboard",
-    "description": "Toast message when password is copied"
   },
   "password_generator_uppercase": {
     "message": "A-Z",
@@ -830,10 +814,6 @@
   "password_generator_password_too_short": {
     "message": "Password must be at least 6 characters long",
     "description": "Error message when password is too short"
-  },
-  "password_generator_select_at_least_one": {
-    "message": "Select at least one character type",
-    "description": "Error message when no character types are selected"
   },
   "settings_header": {
     "message": "Settings",
