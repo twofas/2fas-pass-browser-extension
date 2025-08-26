@@ -691,6 +691,14 @@
     "message": "Open service website in new tab to change password",
     "description": "Title for the change password section in the service"
   },
+  "details_toggle_password_visibility": {
+    "message": "Toggle password visibility",
+    "description": "Title for the button that toggles password visibility"
+  },
+  "details_generate_password": {
+    "message": "Generate password",
+    "description": "Title for the button that opens password generator"
+  },
   "fetch_push_header": {
     "message": "Check the 2FAS Pass push notification on your mobile phone.",
     "description": "Header prompting the user to check their mobile phone for a push notification"
@@ -770,6 +778,62 @@
   "not_found_text": {
     "message": "Route not implemented yet ;)",
     "description": "Message shown when a user navigates to an unimplemented route"
+  },
+  "password_generator_title": {
+    "message": "Password generator",
+    "description": "Title for the password generator page"
+  },
+  "password_generator_password": {
+    "message": "Password",
+    "description": "Label for the password field"
+  },
+  "password_generator_characters": {
+    "message": "Characters: COUNT",
+    "description": "Label showing the number of characters in password"
+  },
+  "password_generator_include": {
+    "message": "Include",
+    "description": "Label for the include options section"
+  },
+  "password_generator_use": {
+    "message": "Use this Password",
+    "description": "Button text to use the generated password"
+  },
+  "password_generator_regenerate": {
+    "message": "Regenerate password",
+    "description": "Title for the regenerate password button"
+  },
+  "password_generator_copy": {
+    "message": "Copy password",
+    "description": "Title for the copy password button"
+  },
+  "password_generator_copied": {
+    "message": "Password copied to clipboard",
+    "description": "Toast message when password is copied"
+  },
+  "password_generator_uppercase": {
+    "message": "A-Z",
+    "description": "Checkbox label for including uppercase letters"
+  },
+  "password_generator_numbers": {
+    "message": "0-9",
+    "description": "Checkbox label for including numbers"
+  },
+  "password_generator_special_chars": {
+    "message": "!@#$%&^",
+    "description": "Checkbox label for including special characters"
+  },
+  "password_generator_use_password": {
+    "message": "Use this Password",
+    "description": "Button text to use the generated password"
+  },
+  "password_generator_password_too_short": {
+    "message": "Password must be at least 6 characters long",
+    "description": "Error message when password is too short"
+  },
+  "password_generator_select_at_least_one": {
+    "message": "Select at least one character type",
+    "description": "Error message when no character types are selected"
   },
   "settings_header": {
     "message": "Settings",
