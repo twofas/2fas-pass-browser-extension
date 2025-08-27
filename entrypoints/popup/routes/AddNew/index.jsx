@@ -163,6 +163,7 @@ function AddNew (props) {
                             <input
                               type="text"
                               {...input}
+                              placeholder={browser.i18n.getMessage('placeholder_domain_uri')}
                               id="add-new-url"
                               dir="ltr"
                               spellCheck="false"
@@ -213,7 +214,13 @@ function AddNew (props) {
                               <label htmlFor="username">{browser.i18n.getMessage('username')}</label>
                             </div>
                             <div className={pI.passInputBottom}>
-                              <input type="text" {...input} id="username" disabled={!setOnMobile ? 'disabled' : ''} />
+                              <input
+                                type="text"
+                                {...input}
+                                id="username"
+                                disabled={!setOnMobile ? 'disabled' : ''}
+                                placeholder={browser.i18n.getMessage('placeholder_username')}
+                              />
                             </div>
                           </div>
                         )}
@@ -228,6 +235,7 @@ function AddNew (props) {
                               <PasswordInput
                                 {...input}
                                 type={passwordVisible ? 'text' : 'password'}
+                                placeholder={browser.i18n.getMessage('placeholder_password')}
                                 id="password"
                                 showPassword={passwordVisible}
                                 isDecrypted={true}
