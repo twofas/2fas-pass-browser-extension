@@ -236,7 +236,7 @@ function Password (props) {
     <LazyMotion features={loadDomAnimation}>
       <Field name="password">
         {({ input }) => (
-          <div className={`${pI.passInput} ${passwordEditable ? '' : pI.disabled}`}>
+          <div className={`${pI.passInput} ${!passwordEditable || passwordMobile ? pI.disabled : ''}`}>
             <div className={pI.passInputTop}>
               <label htmlFor="password">{browser.i18n.getMessage('password')}</label>
               <button
@@ -267,7 +267,7 @@ function Password (props) {
               <div className={pI.passInputBottomButtons}>
                 <Link
                   to='/password-generator'
-                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${passwordEditable ? '' : pI.hiddenButton}`}
+                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${!passwordEditable || passwordMobile ? pI.hiddenButton : ''}`}
                   title={browser.i18n.getMessage('details_generate_password')}
                   state={{ from: 'details', serviceId: service?.id }}
                 >
