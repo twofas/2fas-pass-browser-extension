@@ -26,7 +26,8 @@ function PasswordGenerator (props) {
       !location?.state ||
       !location?.state?.from ||
       !location?.state?.data ||
-      (location?.state?.from !== 'addNew' && location?.state?.from !== 'details')) {
+      (location?.state?.from !== 'addNew' && location?.state?.from !== 'details')
+    ) {
       const doesAnyHistoryEntryExist = location.key !== 'default';
 
       if (doesAnyHistoryEntryExist) {
@@ -88,7 +89,8 @@ function PasswordGenerator (props) {
         }
       });
     } else {
-      // @TODO: Error toast
+      showToast(browser.i18n.getMessage('password_generator_data_error'));
+      return;
     }
   };
 

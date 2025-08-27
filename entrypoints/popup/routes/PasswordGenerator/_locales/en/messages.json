@@ -34,5 +34,9 @@
   "password_generator_password_too_short": {
     "message": "Password must be at least 6 characters long",
     "description": "Error message when password is too short"
+  },
+  "password_generator_data_error": {
+    "message": "Something went wrong. Go back and try again.",
+    "description": "Error message displayed when there is a problem with the password generator data"
   }
 }
