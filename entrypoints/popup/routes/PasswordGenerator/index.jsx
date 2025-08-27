@@ -21,8 +21,14 @@ function PasswordGenerator (props) {
   const location = useLocation();
   const navigate = useNavigate();
 
+  console.log(location.state);
+
   useEffect(() => {
-    if (!location.state) { // @TODO: Improve this (check details / add new)
+    if (
+      !location?.state ||
+      !location?.state?.from ||
+      !location?.state?.data ||
+      (location?.state?.from !== 'addNew' && location?.state?.from !== 'details')) {
       const doesAnyHistoryEntryExist = location.key !== 'default';
 
       if (doesAnyHistoryEntryExist) {
@@ -65,25 +71,16 @@ function PasswordGenerator (props) {
     includeSpecialChars: true
   };
 
-  const onSubmit = (values) => {
-    if (location.state?.onPasswordGenerated) {
-      location.state.onPasswordGenerated(values.password);
-    }
+  const onSubmit = values => {
+    const from = location.state.from;
+    const data = { ...location.state.data, password: values.password };
 
-    // navigate(-1);
-  };
-
-  const validate = (values) => {
-    const errors = {};
-    if (!values.password || values.password.length < 6) {
-      errors.password = browser.i18n.getMessage('password_generator_password_too_short');
-    }
-
-    // if (!values.includeUppercase && !values.includeNumbers && !values.includeSpecialChars) {
-    //   errors.general = browser.i18n.getMessage('password_generator_select_at_least_one');
-    // }
-
-    return errors;
+    navigate(`/${from === 'addNew' ? 'add-new' : 'details'}`, {
+      state: {
+        from: 'passwordGenerator',
+        data
+      }
+    });
   };
 
   return (
@@ -97,7 +94,6 @@ function PasswordGenerator (props) {
 
             <Form
               onSubmit={onSubmit}
-              validate={validate}
               initialValues={initialValues}
               render={({ handleSubmit, form, values }) => {
                 const regeneratePassword = (overrides = {}) => {
