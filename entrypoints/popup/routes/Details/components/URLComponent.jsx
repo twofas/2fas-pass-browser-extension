@@ -90,6 +90,7 @@ function URLComponent (props) {
           <div className={pI.passInputBottom}>
             <input
               type="text"
+              placeholder={browser.i18n.getMessage('placeholder_domain_uri')}
               {...input}
               id={`uri-${index}`}
               disabled={!domainsEditable[index] ? 'disabled' : ''}

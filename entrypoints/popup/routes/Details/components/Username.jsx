@@ -63,6 +63,7 @@ function Username (props) {
           <div className={pI.passInputBottom}>
             <input
               type="text"
+              placeholder={browser.i18n.getMessage('placeholder_username')}
               {...input}
               id="username"
               disabled={!usernameEditable || usernameMobile ? 'disabled' : ''}

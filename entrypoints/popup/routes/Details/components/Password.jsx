@@ -252,6 +252,7 @@ function Password (props) {
               <PasswordInput
                 {...input}
                 type={passwordVisible ? 'text' : 'password'}
+                placeholder={!passwordMobile && !passwordDecryptError && isT3orT2WithPassword(service) || passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
                 id="password"
                 showPassword={passwordVisible}
                 isDecrypted={service.password !== '******'}

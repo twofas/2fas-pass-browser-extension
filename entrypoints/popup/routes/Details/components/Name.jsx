@@ -54,6 +54,7 @@ function Name (props) {
             <input
               type="text"
               {...input}
+              placeholder={browser.i18n.getMessage('placeholder_name')}
               id="name"
               disabled={!nameEditable ? 'disabled' : ''}
               dir="ltr"
