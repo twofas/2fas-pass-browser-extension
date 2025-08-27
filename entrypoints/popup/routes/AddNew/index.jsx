@@ -102,6 +102,28 @@ function AddNew (props) {
     }
   };
 
+  const handleCopyUrl = async form => {
+    try {
+      const currentUrl = form.getFieldState('url').value;
+      await copyValue(currentUrl, '00000000-0000-0000-0000-000000000000', 'uri');
+      showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
+    } catch (e) {
+      showToast(browser.i18n.getMessage('error_uri_copy_failed'), 'error');
+      await CatchError(e);
+    }
+  };
+
+  const handleCopyUsername = async form => {
+    try {
+      const currentUsername = form.getFieldState('username').value;
+      await copyValue(currentUsername, '00000000-0000-0000-0000-000000000000', 'username');
+      showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
+    } catch (e) {
+      showToast(browser.i18n.getMessage('error_username_copy_failed'), 'error');
+      await CatchError(e);
+    }
+  };
+
   const onSubmit = async e => {
     const data = {
       url: e.url ? valueToNFKD(e.url) : '',
@@ -171,6 +193,16 @@ function AddNew (props) {
                               autoComplete="off"
                               autoCapitalize="off"
                             />
+                            <div className={pI.passInputBottomButtons}>
+                              <button
+                                type='button'
+                                className={`${bS.btn} ${pI.iconButton}`}
+                                onClick={() => handleCopyUrl(form)}
+                                title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                              >
+                                <CopyIcon />
+                              </button>
+                            </div>
                           </div>
                           <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
                             {domainValidation(input.value)}
@@ -221,6 +253,17 @@ function AddNew (props) {
                                 disabled={!setOnMobile ? 'disabled' : ''}
                                 placeholder={browser.i18n.getMessage('placeholder_username')}
                               />
+                              <div className={pI.passInputBottomButtons}>
+                                <button
+                                  type='button'
+                                  className={`${bS.btn} ${pI.iconButton}`}
+                                  onClick={() => handleCopyUsername(form)}
+                                  title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                                  disabled={!setOnMobile ? 'disabled' : ''}
+                                >
+                                  <CopyIcon />
+                                </button>
+                              </div>
                             </div>
                           </div>
                         )}
