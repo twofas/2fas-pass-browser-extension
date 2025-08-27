@@ -9,7 +9,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import { useNavigate, Link } from 'react-router';
+import { useNavigate, Link, useLocation } from 'react-router';
 import getDomainInfo from './functions/getDomainInfo';
 import { useEffect, lazy } from 'react';
 import { Form, Field } from 'react-final-form';
@@ -39,15 +39,18 @@ const additionalVariants = {
 */
 function AddNew (props) {
   const navigate = useNavigate();
-  
+  const location = useLocation();
+
   const [loading, setLoading] = useState(true);
-  const [url, setUrl] = useState('');
-  const [minLength, setMinLength] = useState('');
-  const [maxLength, setMaxLength] = useState('');
-  const [pattern, setPattern] = useState('');
-  const [onMobile, setOnMobile] = useState(true);
-  const [additionalOverflow, setAdditionalOverflow] = useState(true);
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [url, setUrl] = useState(location?.state?.data?.url !== undefined ? filterXSS(location.state.data.url) : '');
+  const [minLength, setMinLength] = useState(location?.state?.data?.minLength ? filterXSS(location.state.data.minLength) : '');
+  const [maxLength, setMaxLength] = useState(location?.state?.data?.maxLength ? filterXSS(location.state.data.maxLength) : '');
+  const [pattern, setPattern] = useState(location?.state?.data?.pattern ? filterXSS(location.state.data.pattern) : '');
+  const [password, ] = useState(location?.state?.data?.password ? filterXSS(location.state.data.password) : '');
+  const [username, ] = useState(location?.state?.data?.username ? filterXSS(location.state.data.username) : '');
+  const [onMobile, setOnMobile] = useState(location?.state?.data?.onMobile !== undefined ? location.state.data.onMobile : true);
+  const [additionalOverflow, setAdditionalOverflow] = useState(location?.state?.data?.additionalOverflow !== undefined ? filterXSS(location.state.data.additionalOverflow) : true);
+  const [passwordVisible, setPasswordVisible] = useState(location?.state?.data?.passwordVisible !== undefined ? location.state.data.passwordVisible : false);
 
   useEffect(() => {
     const messageListener = async (request, sender, sendResponse) => await onMessage(request, sender, sendResponse, setUrl);
@@ -71,15 +74,16 @@ function AddNew (props) {
       if (data.pattern) {
         setPattern(data.pattern); // Do not sanitize
       }
-
-      setLoading(false);
     };
 
     try {
-      getDomainData();
+      if (!location?.state?.data) {
+        getDomainData();
+      }
     } catch (e) {
-      setLoading(false);
       CatchError(e);
+    } finally {
+      setLoading(false);
     }
 
     return () => {
@@ -164,7 +168,7 @@ function AddNew (props) {
               <h2>{browser.i18n.getMessage('add_new_header')}</h2>
               <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
 
-              <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url }} render={({ handleSubmit, form, submitting }) => ( // pristine, values
+              <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url, username, password }} render={({ handleSubmit, form, submitting }) => ( // pristine, values
                   <form onSubmit={handleSubmit}>
                     <Field name="password-minlength" value={minLength}>
                       {({ input }) => <input type="hidden" {...input} id="password-minlength" />}
@@ -209,7 +213,13 @@ function AddNew (props) {
                           </div>
                           <div className={pI.passInputAdditional}>
                             <div className={`${bS.passToggle} ${bS.loaded}`}>
-                              <input type="checkbox" name="set-in-mobile" id="set-in-mobile" defaultChecked onChange={() => setOnMobile(!onMobile)} />
+                              <input
+                                type="checkbox"
+                                name="set-in-mobile"
+                                id="set-in-mobile"
+                                checked={onMobile}
+                                onChange={() => setOnMobile(!onMobile)}
+                              />
                               <label htmlFor="set-in-mobile">
                                 <span className={bS.passToggleBox}>
                                   <span className={bS.passToggleBoxCircle}></span>
@@ -227,7 +237,7 @@ function AddNew (props) {
                     <m.div
                       className={`${S.addNewAdditional} ${additionalOverflow ? S.overflowH : ''}`}
                       variants={additionalVariants}
-                      initial="hidden"
+                      initial={onMobile ? 'hidden' : 'visible'}
                       transition={{ duration: 0.3, type: 'tween' }}
                       animate={!onMobile ? 'visible' : 'hidden'}
                       onAnimationStart={() => { setAdditionalOverflow(true); }}
@@ -294,7 +304,7 @@ function AddNew (props) {
                                   to='/password-generator'
                                   className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
                                   title={browser.i18n.getMessage('add_new_generate_password')}
-                                  state={{ from: 'addNew' }}
+                                  state={{ from: 'addNew', data: { ...form.getState().values, onMobile, passwordVisible, additionalOverflow } }}
                                 >
                                   <RefreshIcon />
                                 </Link>
