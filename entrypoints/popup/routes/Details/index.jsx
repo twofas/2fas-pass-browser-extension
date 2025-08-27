@@ -50,7 +50,6 @@ function Details (props) {
   const [passwordMobile, setPasswordMobile] = useState(location?.state?.data?.generatorData?.passwordMobile !== undefined ? location.state.data.generatorData.passwordMobile : false);
   const [usernameMobile, setUsernameMobile] = useState(location?.state?.data?.generatorData?.usernameMobile !== undefined ? location.state.data.generatorData.usernameMobile : false);
   const [tierEditable, setTierEditable] = useState(location?.state?.data?.generatorData?.tierEditable !== undefined ? location.state.data.generatorData.tierEditable : false);
-  const [notesVisible, setNotesVisible] = useState(location?.state?.data?.generatorData?.notesVisible !== undefined ? location.state.data.generatorData.notesVisible : false);
   const [notesEditable, setNotesEditable] = useState(location?.state?.data?.generatorData?.notesEditable !== undefined ? location.state.data.generatorData.notesEditable : false);
   const [inputError, setInputError] = useState(undefined);
   const [storageVersion, setStorageVersion] = useState(null);
@@ -252,7 +251,7 @@ function Details (props) {
                       key={`password-${service.id}-${storageVersion}`}
                       data={{ service, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError, form }}
                       actions={{ setPasswordEditable, setPasswordVisible, setPasswordMobile, setPasswordDecryptError }}
-                      generatorData={{ dangerZoneOpened, nameEditable, usernameEditable, domainsEditable, usernameMobile, tierEditable, notesVisible, notesEditable }}
+                      generatorData={{ dangerZoneOpened, nameEditable, usernameEditable, domainsEditable, usernameMobile, tierEditable, notesEditable }}
                     />
                     {generateURLs({
                       data: { service, uris: values.uris, domainsEditable, inputError, form },
@@ -263,8 +262,8 @@ function Details (props) {
                       actions={{ setTierEditable }}
                     />
                     <Notes
-                      data={{ service, notesEditable, notesVisible, form }}
-                      actions={{ setNotesEditable, setNotesVisible }}
+                      data={{ service, notesEditable, form }}
+                      actions={{ setNotesEditable }}
                     />
                     <div className={S.detailsButton}>
                       <button

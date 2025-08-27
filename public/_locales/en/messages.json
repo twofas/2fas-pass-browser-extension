@@ -484,7 +484,7 @@
     "description": "Instruction to click the extension icon to open it"
   },
   "install_2_use_mobile_app": {
-    "message": "Use 2FAS Pass mobile app to scan the QR Code.",
+    "message": "Tap “Connect” in the 2FAS Pass mobile app to scan the QR Code.",
     "description": "Instruction to use the mobile app to scan the QR code"
   },
   "install_3_info": {
@@ -830,6 +830,10 @@
   "password_generator_password_too_short": {
     "message": "Password must be at least 6 characters long",
     "description": "Error message when password is too short"
+  },
+  "password_generator_data_error": {
+    "message": "Something went wrong. Go back and try again.",
+    "description": "Error message displayed when there is a problem with the password generator data"
   },
   "settings_header": {
     "message": "Settings",
