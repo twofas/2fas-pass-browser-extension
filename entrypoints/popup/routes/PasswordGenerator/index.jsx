@@ -6,12 +6,16 @@
 
 import S from './PasswordGenerator.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
+import pI from '@/partials/global-styles/pass-input.module.scss';
 import { lazy, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { Form, Field } from 'react-final-form';
+import copyValue from '../ThisTab/functions/serviceList/copyValue';
 
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
+const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
 
 function PasswordGenerator (props) {
   const location = useLocation();
@@ -110,27 +114,41 @@ function PasswordGenerator (props) {
 
                 return (
                   <form onSubmit={handleSubmit} className={S.passwordGeneratorForm}>
-                    <div className={S.passwordGeneratorFormInput}>
-                      <Field name='password'>
-                        {({ input }) => (
-                          <PasswordInput
-                            {...input}
-                            showPassword={true}
-                            isDecrypted={true}
-                          />
-                        )}
-                      </Field>
-                      <button
-                        type='button'
-                        onClick={regeneratePassword}
-                        className={bS.btnIcon}
-                        title={browser.i18n.getMessage('password_generator_regenerate')}
-                      >
-                        <svg viewBox='0 0 24 24'>
-                          <path d='M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z'/>
-                        </svg>
-                      </button>
-                    </div>
+                    <Field name='password'>
+                      {({ input }) => (
+                        <div className={`${pI.passInput} ${pI.disabled} ${pI.withoutMargin}`}>
+                          <div className={pI.passInputTop}>
+                            <label htmlFor="password">{browser.i18n.getMessage('password')}</label>
+                          </div>
+                          <div className={pI.passInputBottom}>
+                            <PasswordInput
+                              {...input}
+                              showPassword={true}
+                              isDecrypted={true}
+                              disabled={true}
+                            />
+                            <div className={pI.passInputBottomButtons}>
+                              <button
+                                type='button'
+                                onClick={regeneratePassword}
+                                className={bS.btnIcon}
+                                title={browser.i18n.getMessage('password_generator_regenerate')}
+                              >
+                                <RefreshIcon />
+                              </button>
+                              <button
+                                type='button'
+                                onClick={() => copyValue(input.value, '00000000-0000-0000-0000-000000000000', 'password')}
+                                className={bS.btnIcon}
+                                title={browser.i18n.getMessage('copy_to_clipboard')}
+                              >
+                                <CopyIcon />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </Field>
 
                     <div className={S.passwordGeneratorFormCharacters}>
                       <Field name='characters'>
