@@ -31,8 +31,12 @@ function Username (props) {
   const { setUsernameEditable, setUsernameMobile } = actions;
 
   const handleCopyUsername = useCallback(async username => {
-    if (!username) return;
-    await copyValue(username, service.id, 'username');
+    if (!username) {
+      await copyValue('', service.id, 'username');
+    } else {
+      await copyValue(username, service.id, 'username');
+    }
+
     showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
   }, [service.id]);
 
@@ -91,7 +95,7 @@ function Username (props) {
               animate={usernameEditable ? 'visible' : 'hidden'}
             >
               <div className={`${bS.passToggle} ${bS.loaded}`}>
-                <input type="checkbox" name="username-mobile" id="username-mobile" onChange={() => handleUsernameMobile(form)} />
+                <input type="checkbox" name="username-mobile" id="username-mobile" checked={usernameMobile} onChange={() => handleUsernameMobile(form)} />
                 <label htmlFor="username-mobile">
                   <span className={bS.passToggleText}>
                     <span>{browser.i18n.getMessage('enter_on_mobile')}</span>

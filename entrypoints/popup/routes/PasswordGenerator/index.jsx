@@ -21,8 +21,6 @@ function PasswordGenerator (props) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log(location.state);
-
   useEffect(() => {
     if (
       !location?.state ||
@@ -75,12 +73,23 @@ function PasswordGenerator (props) {
     const from = location.state.from;
     const data = { ...location.state.data, password: values.password };
 
-    navigate(`/${from === 'addNew' ? 'add-new' : 'details'}`, {
-      state: {
-        from: 'passwordGenerator',
-        data
-      }
-    });
+    if (from === 'addNew') {
+      return navigate(`/add-new`, {
+        state: {
+          from: 'passwordGenerator',
+          data
+        }
+      });
+    } else if (from === 'details' && location.state.data?.service?.id) {
+      return navigate(`/details/${location.state.data.service.id}`, {
+        state: {
+          from: 'passwordGenerator',
+          data: { ...data, formValues: { ...data.formValues, password: values.password } }
+        }
+      });
+    } else {
+      // @TODO: Error toast
+    }
   };
 
   return (

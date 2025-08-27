@@ -7,7 +7,7 @@
 import S from './Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { LazyMotion } from 'motion/react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, useLocation } from 'react-router';
 import { useState, useEffect, lazy, useCallback, useRef } from 'react';
 import generateURLs from './functions/generateURLs';
 import getEditableAmount from './functions/getEditableAmount';
@@ -34,27 +34,28 @@ const hiddenPassword = '******';
 * @return {JSX.Element} The rendered component.
 */
 function Details (props) {
-  const [service, setService] = useState({});
+  const location = useLocation();
+  const navigate = useNavigate();
+  const params = useParams();
+
+  const [service, setService] = useState(location?.state?.data?.service || {});
   const [loading, setLoading] = useState(true);
-  const [dangerZoneOpened, setDangerZoneOpened] = useState(false);
-  const [nameEditable, setNameEditable] = useState(false);
-  const [usernameEditable, setUsernameEditable] = useState(false);
-  const [passwordEditable, setPasswordEditable] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [passwordDecryptError, setPasswordDecryptError] = useState(false);
-  const [domainsEditable, setDomainsEditable] = useState([]);
-  const [passwordMobile, setPasswordMobile] = useState(false);
-  const [usernameMobile, setUsernameMobile] = useState(false);
-  const [tierEditable, setTierEditable] = useState(false);
-  const [notesVisible, setNotesVisible] = useState(false);
-  const [notesEditable, setNotesEditable] = useState(false);
+  const [dangerZoneOpened, setDangerZoneOpened] = useState(location?.state?.data?.generatorData?.dangerZoneOpened !== undefined ? location.state.data.generatorData.dangerZoneOpened : false);
+  const [nameEditable, setNameEditable] = useState(location?.state?.data?.generatorData?.nameEditable !== undefined ? location.state.data.generatorData.nameEditable : false);
+  const [usernameEditable, setUsernameEditable] = useState(location?.state?.data?.generatorData?.usernameEditable !== undefined ? location.state.data.generatorData.usernameEditable : false);
+  const [passwordEditable, setPasswordEditable] = useState(location?.state?.data?.generatorData?.passwordEditable !== undefined ? location.state.data.generatorData.passwordEditable : false);
+  const [passwordVisible, setPasswordVisible] = useState(location?.state?.data?.generatorData?.passwordVisible !== undefined ? location.state.data.generatorData.passwordVisible : false);
+  const [passwordDecryptError, setPasswordDecryptError] = useState(location?.state?.data?.generatorData?.passwordDecryptError !== undefined ? location.state.data.generatorData.passwordDecryptError : false);
+  const [domainsEditable, setDomainsEditable] = useState(Array.isArray(location?.state?.data?.generatorData?.domainsEditable) ? location.state.data.generatorData.domainsEditable : []);
+  const [passwordMobile, setPasswordMobile] = useState(location?.state?.data?.generatorData?.passwordMobile !== undefined ? location.state.data.generatorData.passwordMobile : false);
+  const [usernameMobile, setUsernameMobile] = useState(location?.state?.data?.generatorData?.usernameMobile !== undefined ? location.state.data.generatorData.usernameMobile : false);
+  const [tierEditable, setTierEditable] = useState(location?.state?.data?.generatorData?.tierEditable !== undefined ? location.state.data.generatorData.tierEditable : false);
+  const [notesVisible, setNotesVisible] = useState(location?.state?.data?.generatorData?.notesVisible !== undefined ? location.state.data.generatorData.notesVisible : false);
+  const [notesEditable, setNotesEditable] = useState(location?.state?.data?.generatorData?.notesEditable !== undefined ? location.state.data.generatorData.notesEditable : false);
   const [inputError, setInputError] = useState(undefined);
   const [storageVersion, setStorageVersion] = useState(null);
 
   const unwatchStorageVersion = useRef(null);
-
-  const navigate = useNavigate();
-  const params = useParams();
 
   const handleRemoveUri = useCallback((index, form) => {
     const currentUris = form.getState().values.uris;
@@ -81,29 +82,32 @@ function Details (props) {
   }, [domainsEditable]);
 
   const getData = useCallback(async () => {
-    const data = await getServices();
-    let s = data.find(s => s.id === params.id);
+    if (location?.state?.data) {
+      setLoading(false);
+    } else {
+      const data = await getServices();
+      let s = data.find(s => s.id === params.id);
 
-    if (!s || s.length <= 0) {
-      showToast(browser.i18n.getMessage('details_service_not_found'), 'error');
-      navigate('/');
-      return;
+      if (!s || s.length <= 0) {
+        showToast(browser.i18n.getMessage('details_service_not_found'), 'error');
+        navigate('/');
+        return;
+      }
+      
+      if (s.password) {
+        s.passwordEncrypted = s.password;
+        s.password = hiddenPassword;
+      }
+
+      s = sanitizeObject(s);
+      
+      const urisLength = s.uris?.length || 0;
+
+      setService(s);
+      setDomainsEditable(new Array(urisLength).fill(false));
+      setLoading(false);
+      setPasswordEditable(false);
     }
-    
-    if (s.password) {
-      s.passwordEncrypted = s.password;
-      s.password = hiddenPassword;
-    }
-
-    s = sanitizeObject(s);
-    
-    const urisLength = s.uris?.length || 0;
-
-    setService(s);
-    setDomainsEditable(new Array(urisLength).fill(false));
-    setLoading(false);
-    
-    setPasswordEditable(false);
   }, []);
 
   const watchStorageVersion = useCallback(() => {
@@ -231,7 +235,7 @@ function Details (props) {
 
               <Form
                 onSubmit={onSubmit}
-                initialValues={service}
+                initialValues={location?.state?.data?.formValues ? location.state.data.formValues : service}
                 render={({ handleSubmit, form, submitting, values }) => ( // pristine
                   <form onSubmit={handleSubmit}>
                     <Name
@@ -248,6 +252,7 @@ function Details (props) {
                       key={`password-${service.id}-${storageVersion}`}
                       data={{ service, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError, form }}
                       actions={{ setPasswordEditable, setPasswordVisible, setPasswordMobile, setPasswordDecryptError }}
+                      generatorData={{ dangerZoneOpened, nameEditable, usernameEditable, domainsEditable, usernameMobile, tierEditable, notesVisible, notesEditable }}
                     />
                     {generateURLs({
                       data: { service, uris: values.uris, domainsEditable, inputError, form },

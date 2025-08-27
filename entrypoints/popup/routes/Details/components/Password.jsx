@@ -46,12 +46,12 @@ const changePasswordVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Password (props) {
-  const { data, actions } = props;
+  const { data, actions, generatorData } = props;
   const { service, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError, form } = data;
   const { setPasswordEditable, setPasswordVisible, setPasswordMobile, setPasswordDecryptError} = actions;
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
-  
+
   useEffect(() => {
     const checkChangePasswordSupport = async () => {
       if (!service?.uris || service.uris.length === 0) {
@@ -269,7 +269,14 @@ function Password (props) {
                   to='/password-generator'
                   className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${!passwordEditable || passwordMobile ? pI.hiddenButton : ''}`}
                   title={browser.i18n.getMessage('details_generate_password')}
-                  state={{ from: 'details', serviceId: service?.id }}
+                  state={{
+                    from: 'details',
+                    data: {
+                      formValues: { ...form.getState().values, securityType: form.getFieldState('securityType')?.value?.value || service.securityType },
+                      generatorData: { ...generatorData, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError },
+                      service
+                    }
+                  }}
                 >
                   <RefreshIcon />
                 </Link>
