@@ -28,7 +28,7 @@ const generateURLs = props => {
       <AnimatePresence mode="popLayout">
         {uris.length > 0 ? (
           uris.map((uri, index) => {
-            const key = uri._tempId || `uri-${uri.text}-${index}`;
+            const key = uri._tempId || `uri-${index}`;
             return (
               <URLComponent
                 key={key}
