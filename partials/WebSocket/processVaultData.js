@@ -6,6 +6,7 @@
 
 import generateEncryptionAESKey from './utils/generateEncryptionAESKey';
 import saveServices from './utils/saveServices';
+import saveTags from './utils/saveTags';
 import getKey from '@/partials/sessionStorage/getKey';
 import checkChecksum from './utils/checkChecksum';
 import TwoFasWebSocket from '@/partials/WebSocket';
@@ -61,6 +62,8 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
     }
 
     await saveServices(vaultDataDecJSON.logins, deviceId);
+    await saveTags(vaultDataDecJSON.tags, deviceId);
+    console.log(vaultDataDecJSON.tags);
   } catch (e) {
     throw new TwoFasError(TwoFasError.errors.decryptVaultData, { event: e });
   }
