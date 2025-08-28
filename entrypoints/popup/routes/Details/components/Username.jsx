@@ -10,7 +10,7 @@ import { Field } from 'react-final-form';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { lazy, useCallback } from 'react';
-import copyValue from '../../ThisTab/functions/serviceList/copyValue';
+import copyValue from '@/partials/functions/copyValue';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
