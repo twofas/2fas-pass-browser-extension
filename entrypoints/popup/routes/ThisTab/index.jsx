@@ -323,7 +323,7 @@ function ThisTab (props) {
                 className={S.thisTabTop}
                 variants={thisTabTopVariants}
                 initial="visible"
-                animate={searchActive ? 'hidden' : 'visible'}
+                animate={searchActive || selectedTag ? 'hidden' : 'visible'}
                 onAnimationComplete={e => {
                   if (e === 'visible') {
                     thisTabTopRef.current.style.overflow = 'visible';
@@ -332,7 +332,7 @@ function ThisTab (props) {
                   }
                 }}
                 onUpdate={() => {
-                  if (searchActive) {
+                  if (searchActive || selectedTag) {
                     scrollableRef.current.scrollTo(0, 0);
                   }
                 }}
