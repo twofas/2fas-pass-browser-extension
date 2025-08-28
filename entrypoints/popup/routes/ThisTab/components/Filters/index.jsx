@@ -11,6 +11,31 @@ import Select from 'react-select';
 
 const FiltersIcon = lazy(() => import('@/assets/popup-window/filters.svg?react'));
 
+const CustomOption = option => {
+  const handleClick = e => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    option.selectOption(option.data);
+  };
+
+  return (
+    <div className='react-select-tags__option' onClick={handleClick}>
+      <span
+        className={option.data.value === null ? 'react-select-tags__option_clear' : ''}
+        title={option.data.label}
+      >
+        {option.data.label}
+      </span>
+      {option.data.value === null ? null : (
+        <span className={`react-select-tags__option-circle ${option.isSelected ? 'selected' : ''}`}>
+          <span></span>
+        </span>
+      )}
+    </div>
+  );
+};
+
 /** 
 * Function to render the Filters component.
 * @param {Object} props - The component props.
@@ -61,29 +86,6 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
     return options.find(opt => opt.value === selectedTag.id) || null;
   }, [selectedTag, options]);
 
-  const customStyles = {
-    control: () => ({
-      display: 'none'
-    }),
-    menu: (provided) => ({
-      ...provided,
-      position: 'absolute',
-      top: '100%',
-      right: 0,
-      marginTop: 4,
-      minWidth: 200,
-      zIndex: 10
-    }),
-    menuList: (provided) => ({
-      ...provided,
-      maxHeight: 300
-    }),
-    option: (provided, state) => ({
-      ...provided,
-      cursor: 'pointer'
-    })
-  };
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -122,11 +124,13 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
           menuIsOpen={isMenuOpen}
           onMenuClose={() => setIsMenuOpen(false)}
           onMenuOpen={() => setIsMenuOpen(true)}
-          styles={customStyles}
-          className='react-select-container'
-          classNamePrefix='react-select'
+          className='react-select-tags-container'
+          classNamePrefix='react-select-tags'
           isClearable={false}
           isSearchable={false}
+          components={{
+            Option: props => <CustomOption {...props} />
+          }}
         />
       </div>
     </>
