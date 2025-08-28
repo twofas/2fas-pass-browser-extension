@@ -17,7 +17,7 @@ import onMessage from './events/onMessage';
 import valueToNFKD from '@/partials/functions/valueToNFKD';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
-import copyValue from '../ThisTab/functions/serviceList/copyValue';
+import copyValue from '@/partials/functions/copyValue';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));

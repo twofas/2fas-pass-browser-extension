@@ -8,7 +8,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { lazy, useCallback } from 'react';
-import copyValue from '../../ThisTab/functions/serviceList/copyValue';
+import copyValue from '@/partials/functions/copyValue';
 
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 

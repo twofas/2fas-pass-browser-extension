@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../../ThisTab.module.scss';
-import copyValue from '../copyValue';
+import copyValue from '@/partials/functions/copyValue';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import { toast } from 'react-toastify';
 import { lazy } from 'react';

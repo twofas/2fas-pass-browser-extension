@@ -13,7 +13,7 @@ import * as m from 'motion/react-m';
 import { Link } from 'react-router';
 import isT3orT2WithPassword from '@/partials/functions/isT3orT2WithPassword';
 import decryptPassword from '@/partials/functions/decryptPassword';
-import copyValue from '../../ThisTab/functions/serviceList/copyValue';
+import copyValue from '@/partials/functions/copyValue';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect } from 'react';
 

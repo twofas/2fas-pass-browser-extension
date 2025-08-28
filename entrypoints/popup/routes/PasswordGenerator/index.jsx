@@ -10,7 +10,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import { lazy, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { Form, Field } from 'react-final-form';
-import copyValue from '../ThisTab/functions/serviceList/copyValue';
+import copyValue from '@/partials/functions/copyValue';
 
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
