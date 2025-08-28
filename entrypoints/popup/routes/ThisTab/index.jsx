@@ -15,6 +15,7 @@ import generateAllLoginsList from './functions/generateAllLoginsList';
 import generateMatchingLoginsList from './functions/generateMatchingLoginsList';
 import URIMatcher from '@/partials/URIMatcher';
 import getServices from '@/partials/sessionStorage/getServices';
+import getTags from '@/partials/sessionStorage/getTags';
 import { filterXSS } from 'xss';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
 import getDomainFromMessage from './functions/getDomainFromMessage';
@@ -31,6 +32,7 @@ const ClearIcon = lazy(() => import('@/assets/popup-window/clear.svg?react'));
 const SortUpIcon = lazy(() => import('@/assets/popup-window/sort-up.svg?react'));
 const SortDownIcon = lazy(() => import('@/assets/popup-window/sort-down.svg?react'));
 const NoMatch = lazy(() => import('./components/NoMatch'));
+const Filters = lazy(() => import('./components/Filters'));
 
 const thisTabTopVariants = {
   visible: { height: 'auto', transition: { duration: 0.3 } },
@@ -50,6 +52,7 @@ function ThisTab (props) {
   const [domain, setDomain] = useState('Unknown');
   const [url, setUrl] = useState('Unknown');
   const [logins, setLogins] = useState([]);
+  const [tags, setTags] = useState([]);
   const [matchingLogins, setMatchingLogins] = useState([]);
   const [sort, setSort] = useState(false); // false - asc, true - desc
   const [sortDisabled, setSortDisabled] = useState(true);
@@ -59,6 +62,7 @@ function ThisTab (props) {
   // Search
   const [searchActive, setSearchActive] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [selectedTag, setSelectedTag] = useState(null);
 
   const boxAnimationRef = useRef(null);
   const boxAnimationDarkRef = useRef(null);
@@ -97,6 +101,10 @@ function ThisTab (props) {
   const handleSearchClear = useCallback(() => {
     setSearchValue('');
     setSearchActive(false);
+  }, []);
+
+  const handleTagChange = useCallback((tagId) => {
+    setSelectedTag(tagId);
   }, []);
 
   const handleKeepPassword = useCallback(async () => {
@@ -168,11 +176,37 @@ function ThisTab (props) {
     return l;
   }, []);
 
-  const getMatchingLogins = useCallback(async data => {
+  const getStorageTags = useCallback(async () => {
+    const t = await getTags();
+    return t;
+  }, []);
+
+  const getTagsAmount = useCallback(async (tags, services) => {
+    const servicesWithTags = services.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
+
+    for (const service of servicesWithTags) {
+      for (const tag of service.tags) {
+        const tagIndex = tags.findIndex(t => t.id === tag);
+        
+        if (!tags[tagIndex]?.amount || !Number.isInteger(tags[tagIndex]?.amount)) {
+          tags[tagIndex].amount = 0;
+        }
+
+        tags[tagIndex].amount += 1;
+      }
+    }
+
+    tags.sort((a, b) => a.name.localeCompare(b.name));
+
+    setTags(sanitizeObject(tags));
+    return true;
+  }, []);
+
+  const getMatchingLogins = useCallback(async (logins, domain) => {
     let matchingLogins = [];
 
     try {
-      matchingLogins = URIMatcher.getMatchedAccounts(data[1], data[0]);
+      matchingLogins = URIMatcher.getMatchedAccounts(logins, domain);
     } catch {}
 
     setMatchingLogins(sanitizeObject(matchingLogins));
@@ -199,13 +233,16 @@ function ThisTab (props) {
   const clearButtonClass = useMemo(() => `${S.thisTabAllLoginsSearchClear} ${searchValue?.length <= 0 ? S.hidden : ''}`, [searchValue?.length]);
 
   const memoizedMatchingLoginsList = useMemo(() => generateMatchingLoginsList(matchingLogins, loading), [matchingLogins, loading]);
-  const memoizedAllLoginsList = useMemo(() => generateAllLoginsList(logins, sort, searchValue, loading), [logins, sort, searchValue, loading]);
+  const memoizedAllLoginsList = useMemo(() => generateAllLoginsList(logins, sort, searchValue, loading, selectedTag), [logins, sort, searchValue, loading, selectedTag]);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
 
-    Promise.all([ getDomain(), getLogins(), getSort() ])
-      .then(getMatchingLogins)
+    Promise.all([ getDomain(), getLogins(), getSort(), getStorageTags() ])
+      .then(([domain, logins, , tags]) => Promise.all([
+        getMatchingLogins(logins, domain),
+        getTagsAmount(tags, logins)
+      ]))
       .then(() => {
         setSortDisabled(false);
 
@@ -337,6 +374,8 @@ function ThisTab (props) {
                   <div className={searchClass}>
                     <SearchIcon />
                     <input
+                      id="search"
+                      name="search"
                       type="search"
                       placeholder={searchPlaceholder}
                       dir="ltr"
@@ -356,6 +395,7 @@ function ThisTab (props) {
                       <ClearIcon />
                     </button>
                   </div>
+                  {tags.length > 0 ? <Filters tags={tags} selectedTag={selectedTag} onTagChange={handleTagChange} /> : null}
                 </div>
 
                 {memoizedAllLoginsList}

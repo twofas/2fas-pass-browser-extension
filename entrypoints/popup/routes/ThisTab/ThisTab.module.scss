@@ -382,6 +382,9 @@
 
     &-search-container {
       background-color: v.$primary-box-bg-light;
+      display: flex;
+      flex-direction: row;
+      gap: 0 8px;
       padding: 0 12px 14px;
       position: sticky;
       width: 100%;
