@@ -1,0 +1,10 @@
+{
+  "filters_button_title": {
+    "message": "Filter by tag",
+    "description": "Tooltip text for the filter button that opens tag selection dropdown"
+  },
+  "filters_clear_choice": {
+    "message": "Clear choice",
+    "description": "Option text to clear the selected tag filter"
+  }
+}

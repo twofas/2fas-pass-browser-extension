@@ -344,6 +344,41 @@
     padding: 8px 0;
     width: 100%;
   }
+
+  &.btn-filter {
+    border: 1px solid v.$object-stroke-light;
+    border-radius: 6px;
+    height: 38px;
+    width: 38px;
+
+    @include m.darkMode {
+      border-color: v.$object-stroke-dark;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: v.$hover-color-light;
+      border-color: v.$hover-color-light;
+
+      @include m.darkMode {
+        background-color: v.$hover-color-dark;
+        border-color: v.$hover-color-dark;
+      }
+    }
+
+    svg {
+      height: 16px;
+      stroke: v.$primary-color-light;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.5;
+      width: auto;
+
+      @include m.darkMode {
+        stroke: v.$primary-color-dark;
+      }
+    }
+  }
   
   // INSTALL PAGE
   &.btn-install-page {
