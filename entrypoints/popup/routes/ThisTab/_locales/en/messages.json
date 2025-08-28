@@ -82,5 +82,13 @@
   "this_tab_more_actions": {
     "message": "More actions",
     "description": "Label for a dropdown or menu containing additional actions"
+  },
+  "this_tab_tag_info_text": {
+    "message": "Showing AMOUNT Items tagged: TAG_NAME",
+    "description": "Information text displaying the number of items with a specific tag"
+  },
+  "this_tab_clear_tag_filter": {
+    "message": "Clear tag filter",
+    "description": "Button label to clear the selected tag filter"
   }
 }
