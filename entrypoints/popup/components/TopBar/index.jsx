@@ -90,7 +90,11 @@ function TopBar () {
     <>
       <header className={S.topbar}>
         <div className={logoClass}>
-          <Link to='/' title={homePageTitle}>
+          <Link
+            to='/'
+            title={homePageTitle}
+            prefetch='render'
+          >
             <Logo className="theme-light" />
             <LogoDark className="theme-dark" />
           </Link>
@@ -115,7 +119,11 @@ function TopBar () {
         </div>
 
         <div className={`${S.topbarAddNew} ${addNewClass}`}>
-          <Link to='/add-new' className={addNewBtnClass}>
+          <Link
+            to='/add-new'
+            className={addNewBtnClass}
+            prefetch='intent'
+          >
             <span>{addNewText}</span>
             <AddNewIcon />
           </Link>

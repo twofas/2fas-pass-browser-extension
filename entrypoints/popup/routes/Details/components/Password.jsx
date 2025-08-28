@@ -277,6 +277,7 @@ function Password (props) {
                       service
                     }
                   }}
+                  prefetch='intent'
                 >
                   <RefreshIcon />
                 </Link>

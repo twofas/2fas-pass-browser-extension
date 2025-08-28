@@ -121,6 +121,7 @@ const PasswordBtn = ({ login, more, setMore }) => {
         }}
         onClick={() => { if (more) { setMore(false); } }}
         title={browser.i18n.getMessage('this_tab_fetch_password')}
+        prefetch='intent'
       >
         <ServiceFetchIcon className={S.serviceFetch} />
       </Link>

@@ -146,6 +146,7 @@ function BottomBar () {
             to='/settings'
             className={settingsLinkClass}
             title={settingsTitle}
+            prefetch='intent'
           >
             <SettingsIcon />
           </Link>
