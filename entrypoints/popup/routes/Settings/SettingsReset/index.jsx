@@ -76,6 +76,7 @@ function SettingsReset (props) {
                         e.preventDefault();
                         navigate(-1);
                       }}
+                      prefetch='intent'
                     >
                       {browser.i18n.getMessage('settings_reset_action_cancel_button')}
                     </Link>

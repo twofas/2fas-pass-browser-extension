@@ -305,6 +305,7 @@ function AddNew (props) {
                                   className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
                                   title={browser.i18n.getMessage('add_new_generate_password')}
                                   state={{ from: 'addNew', data: { ...form.getState().values, onMobile, passwordVisible, additionalOverflow } }}
+                                  prefetch='intent'
                                 >
                                   <RefreshIcon />
                                 </Link>
