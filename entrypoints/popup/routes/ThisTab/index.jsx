@@ -229,7 +229,10 @@ function ThisTab (props) {
 
   const hasMatchingLogins = useMemo(() => isLoginsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
   const hasLogins = useMemo(() => isLoginsCorrect(logins) && logins?.length > 0, [logins]);
-  const searchPlaceholder = useMemo(() => browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', logins?.length || 0), [logins?.length]);
+  const searchPlaceholder = useMemo(() => {
+    const amount = selectedTag ? (selectedTag.amount || 0) : (logins?.length || 0);
+    return browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', amount);
+  }, [selectedTag, logins?.length]);
 
   const autofillPopupClass = useMemo(() => `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`, [autofillFailed]);
   const matchingLoginsListClass = useMemo(() => `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`, [hasMatchingLogins, loading]);
