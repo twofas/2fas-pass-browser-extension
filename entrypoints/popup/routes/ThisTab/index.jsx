@@ -64,6 +64,7 @@ function ThisTab (props) {
   const [searchValue, setSearchValue] = useState('');
   const [selectedTag, setSelectedTag] = useState(null);
   const [lastSelectedTagInfo, setLastSelectedTagInfo] = useState(null);
+  const [forceCloseFilters, setForceCloseFilters] = useState(false);
 
   const boxAnimationRef = useRef(null);
   const boxAnimationDarkRef = useRef(null);
@@ -89,6 +90,9 @@ function ThisTab (props) {
 
   const handleSearchChange = useCallback(e => {
     const value = e?.target?.value;
+
+    setForceCloseFilters(true);
+    setTimeout(() => setForceCloseFilters(false), 100);
 
     if (value.trim().length > 0) {
       setSearchActive(true);
@@ -241,7 +245,7 @@ function ThisTab (props) {
   const clearButtonClass = useMemo(() => `${S.thisTabAllLoginsSearchClear} ${searchValue?.length <= 0 ? S.hidden : ''}`, [searchValue?.length]);
 
   const memoizedMatchingLoginsList = useMemo(() => generateMatchingLoginsList(matchingLogins, loading), [matchingLogins, loading]);
-  const memoizedAllLoginsList = useMemo(() => generateAllLoginsList(logins, sort, searchValue, loading, selectedTag), [logins, sort, searchValue, loading, selectedTag]);
+  const memoizedAllLoginsList = useMemo(() => generateAllLoginsList(logins, sort, searchValue, loading, tags, selectedTag), [logins, sort, searchValue, loading, tags, selectedTag]);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
@@ -403,7 +407,7 @@ function ThisTab (props) {
                       <ClearIcon />
                     </button>
                   </div>
-                  {tags.length > 0 ? <Filters tags={tags} selectedTag={selectedTag} onTagChange={handleTagChange} /> : null}
+                  {tags.length > 0 ? <Filters tags={tags} selectedTag={selectedTag} onTagChange={handleTagChange} forceClose={forceCloseFilters} /> : null}
                 </div>
 
                 <div className={`${S.thisTabAllLoginsTagsInfo} ${lastSelectedTagInfo && selectedTag ? S.active : ''}`}>

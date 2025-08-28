@@ -22,7 +22,7 @@ const EmptyListIcon = lazy(() => import('@/assets/popup-window/empty-list.svg?re
 * @param {Object|null} selectedTag - The selected tag object to filter by.
 * @return {JSX.Element|null} The generated login items or null.
 */
-const generateAllLoginsList = (logins, sort, search, loading, selectedTag) => {
+const generateAllLoginsList = (logins, sort, search, loading, tags, selectedTag) => {
   if (!isLoginsCorrect(logins) && !loading) {
     return null;
   }
@@ -65,10 +65,19 @@ const generateAllLoginsList = (logins, sort, search, loading, selectedTag) => {
   if (search && search.length > 0) {
     loginsData = loginsData.filter(login => {
       const urisTexts = login.uris.map(uri => uri.text);
+      
+      let tagNamesMatch = false;
+      if (login?.tags && Array.isArray(login?.tags) && tags && Array.isArray(tags)) {
+        tagNamesMatch = login.tags.some(tagId => {
+          const tag = tags.find(t => t.id === tagId);
+          return tag?.name?.toLowerCase().includes(search?.toLowerCase());
+        });
+      }
 
       return login?.name?.toLowerCase().includes(search?.toLowerCase()) ||
         login?.username?.toLowerCase().includes(search?.toLowerCase()) ||
-        urisTexts.some(uriText => uriText?.toLowerCase().includes(search?.toLowerCase()));
+        urisTexts.some(uriText => uriText?.toLowerCase().includes(search?.toLowerCase())) ||
+        tagNamesMatch;
     });
   }
 
