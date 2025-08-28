@@ -25,13 +25,15 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
   const options = useMemo(() => {
     const tagOptions = tags.map(tag => ({
       value: tag.id,
-      label: `${tag.name} (${tag.amount || 0})`
+      label: `${tag.name} (${tag.amount || 0})`,
+      tag: tag
     }));
 
     if (selectedTag) {
       tagOptions.push({
         value: null,
-        label: browser.i18n.getMessage('filters_clear_choice')
+        label: browser.i18n.getMessage('filters_clear_choice'),
+        tag: null
       });
     }
 
@@ -47,7 +49,7 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
 
   const handleSelectChange = (option) => {
     if (onTagChange) {
-      onTagChange(option ? option.value : null);
+      onTagChange(option ? option.tag : null);
     }
     setIsMenuOpen(false);
   };
@@ -56,7 +58,7 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
     if (!selectedTag) {
       return null;
     }
-    return options.find(opt => opt.value === selectedTag) || null;
+    return options.find(opt => opt.value === selectedTag.id) || null;
   }, [selectedTag, options]);
 
   const customStyles = {

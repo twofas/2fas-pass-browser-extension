@@ -19,7 +19,7 @@ const EmptyListIcon = lazy(() => import('@/assets/popup-window/empty-list.svg?re
 * @param {string} sort - The sorting criteria.
 * @param {string} search - The search query.
 * @param {boolean} loading - Indicates if the logins are still loading.
-* @param {string|null} selectedTag - The selected tag ID to filter by.
+* @param {Object|null} selectedTag - The selected tag object to filter by.
 * @return {JSX.Element|null} The generated login items or null.
 */
 const generateAllLoginsList = (logins, sort, search, loading, selectedTag) => {
@@ -58,7 +58,7 @@ const generateAllLoginsList = (logins, sort, search, loading, selectedTag) => {
 
   if (selectedTag) {
     loginsData = loginsData.filter(login => {
-      return login?.tags && Array.isArray(login?.tags) && login?.tags.includes(selectedTag);
+      return login?.tags && Array.isArray(login?.tags) && login?.tags.includes(selectedTag.id);
     });
   }
 

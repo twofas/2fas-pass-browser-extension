@@ -63,6 +63,7 @@ function ThisTab (props) {
   const [searchActive, setSearchActive] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [selectedTag, setSelectedTag] = useState(null);
+  const [lastSelectedTagInfo, setLastSelectedTagInfo] = useState(null);
 
   const boxAnimationRef = useRef(null);
   const boxAnimationDarkRef = useRef(null);
@@ -103,8 +104,12 @@ function ThisTab (props) {
     setSearchActive(false);
   }, []);
 
-  const handleTagChange = useCallback((tagId) => {
-    setSelectedTag(tagId);
+  const handleTagChange = useCallback((tag) => {
+    setSelectedTag(tag);
+    
+    if (tag) {
+      setLastSelectedTagInfo({ name: tag.name, amount: tag.amount });
+    }
   }, []);
 
   const handleKeepPassword = useCallback(async () => {
@@ -396,6 +401,21 @@ function ThisTab (props) {
                     </button>
                   </div>
                   {tags.length > 0 ? <Filters tags={tags} selectedTag={selectedTag} onTagChange={handleTagChange} /> : null}
+                </div>
+
+                <div className={`${S.thisTabAllLoginsTagsInfo} ${lastSelectedTagInfo && selectedTag ? S.active : ''}`}>
+                  <div 
+                    className={S.thisTabAllLoginsTagsInfoBox}
+                    title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', lastSelectedTagInfo?.amount || '').replace('TAG_NAME', lastSelectedTagInfo?.name || '')}
+                  >
+                    <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', lastSelectedTagInfo?.amount || '').replace('TAG_NAME', lastSelectedTagInfo?.name || '')}</p>
+                    <button 
+                      onClick={() => setSelectedTag(null)}
+                      title={browser.i18n.getMessage('this_tab_clear_tag_filter')}
+                    >
+                      <ClearIcon />
+                    </button>
+                  </div>
                 </div>
 
                 {memoizedAllLoginsList}
