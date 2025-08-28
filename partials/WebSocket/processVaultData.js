@@ -63,7 +63,6 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
 
     await saveServices(vaultDataDecJSON.logins, deviceId);
     await saveTags(vaultDataDecJSON.tags, deviceId);
-    console.log(vaultDataDecJSON.tags);
   } catch (e) {
     throw new TwoFasError(TwoFasError.errors.decryptVaultData, { event: e });
   }
