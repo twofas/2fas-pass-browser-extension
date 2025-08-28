@@ -41,7 +41,7 @@ const CustomOption = option => {
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-const Filters = ({ tags, selectedTag, onTagChange }) => {
+const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const selectRef = useRef(null);
   const buttonRef = useRef(null);
@@ -104,6 +104,12 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (forceClose) {
+      setIsMenuOpen(false);
+    }
+  }, [forceClose]);
 
   return (
     <>
