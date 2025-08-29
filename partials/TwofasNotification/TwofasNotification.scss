@@ -14,7 +14,7 @@
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
-    font-family: 'Twofas-Pass-Inter', sans-serif !important;
+    font-family: Arial, sans-serif !important;
     gap: 12px 0 !important;
     height: calc(100% - 20px) !important;
     justify-content: flex-start !important;
@@ -34,7 +34,7 @@
     * {
       box-shadow: none !important;
       box-sizing: border-box !important;
-      font-family: 'Twofas-Pass-Inter', sans-serif !important;
+      font-family: Arial, sans-serif !important;
     }
 
     &.twofas-pass-transitions {
@@ -714,7 +714,7 @@
 
       p {
         display: inline-block !important;
-        font-family: 'Twofas-Pass-Inter', sans-serif !important;
+        font-family: Arial, sans-serif !important;
         margin: 0 !important;
         opacity: 0 !important;
         padding: 0 !important;
@@ -777,7 +777,7 @@
 
     &-header {
       flex-shrink: 0 !important;
-      font-family: 'Twofas-Pass-Inter', sans-serif !important;
+      font-family: Arial, sans-serif !important;
       font-size: 16px !important;
       font-style: normal !important;
       font-weight: 600 !important;
@@ -862,7 +862,7 @@
           &.twofas-pass-notification-matching-logins-item-secondary-btn {
             border-radius: 4px !important;
             color: v.$primary-color-light !important;
-            font-family: 'Twofas-Pass-Inter', sans-serif !important;
+            font-family: Arial, sans-serif !important;
             font-size: 12px !important;
             font-style: normal !important;
             font-weight: 600 !important;
@@ -964,7 +964,7 @@
 
       p {
         display: inline-block !important;
-        font-family: 'Twofas-Pass-Inter', sans-serif !important;
+        font-family: Arial, sans-serif !important;
         font-size: 16px !important;
         font-style: normal !important;
         font-weight: 600 !important;
@@ -1008,7 +1008,7 @@
         appearance: none !important;
         border: 0 !important;
         cursor: pointer !important;
-        font-family: 'Twofas-Pass-Inter', sans-serif !important;
+        font-family: Arial, sans-serif !important;
         padding: 14px 0 !important;
       }
     }
