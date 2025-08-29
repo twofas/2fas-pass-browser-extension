@@ -13,6 +13,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+if (!process.env.LOCO_KEY) {
+  console.error('LOCO_KEY environment variable is not set.');
+  process.exit(1);
+}
+
 const urls = {
   en: `https://localise.biz/api/export/locale/en.json?format=chrome&key=${process.env.LOCO_KEY}`
 };
