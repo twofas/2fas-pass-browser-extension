@@ -58,7 +58,12 @@ const generateAllLoginsList = (logins, sort, search, loading, tags, selectedTag)
 
   if (selectedTag) {
     loginsData = loginsData.filter(login => {
-      return login?.tags && Array.isArray(login?.tags) && login?.tags.includes(selectedTag.id);
+      if (!login?.tags || !Array.isArray(login?.tags)) {
+        return false;
+      }
+      
+      const tagsSet = new Set(login.tags);
+      return tagsSet.has(selectedTag.id);
     });
   }
 

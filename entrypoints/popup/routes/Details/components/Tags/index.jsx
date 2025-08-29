@@ -90,7 +90,8 @@ function Tags (props) {
   }, [selectedTagIds, availableTags]);
 
   const options = useMemo(() => {
-    const unselectedTags = availableTags.filter(tag => !selectedTagIds.includes(tag.id));
+    const selectedTagIdsSet = new Set(selectedTagIds);
+    const unselectedTags = availableTags.filter(tag => !selectedTagIdsSet.has(tag.id));
     return unselectedTags.map(tag => ({
       value: tag.id,
       label: tag.name,

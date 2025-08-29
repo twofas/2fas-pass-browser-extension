@@ -22,7 +22,7 @@ const urls = {
   en: `https://localise.biz/api/export/locale/en.json?format=chrome&key=${process.env.LOCO_KEY}`
 };
 
-const excludedDirs = [
+const excludedDirsSet = new Set([
   '.output',
   '.wxt',
   'assets',
@@ -30,7 +30,7 @@ const excludedDirs = [
   'node_modules',
   'testFiles',
   'public'
-];
+]);
 
 /** 
 * Function to get all `_locales` folders in the directory recursively.
@@ -49,7 +49,7 @@ const getLocalesFolders = (dir, excludedDirs) => {
     if (stat && stat.isDirectory()) {
       if (file === '_locales') {
         results.push(filePath);
-      } else if (!excludedDirs.includes(file)) {
+      } else if (!excludedDirs.has(file)) {
         results = results.concat(getLocalesFolders(filePath, excludedDirs));
       }
     }
@@ -153,8 +153,9 @@ const updateFiles = (locoFiles, messagesContent) => {
 
       localFilesForLanguage.forEach(file => {
         const fileKeys = Object.keys(file.data);
+        const fileKeysSet = new Set(fileKeys);
         
-        if (fileKeys.includes(key)) {
+        if (fileKeysSet.has(key)) {
           file.data[key] = data[key];
           used = true;
         }
@@ -171,7 +172,7 @@ const updateFiles = (locoFiles, messagesContent) => {
   });
 };
 
-const localesFolders = getLocalesFolders('./', excludedDirs);
+const localesFolders = getLocalesFolders('./', excludedDirsSet);
 const languages = getLanguages(urls);
 const messagesFiles = getMessagesFiles(localesFolders, languages);
 const messagesContent = getMessagesContent(messagesFiles);
