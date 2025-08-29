@@ -33,6 +33,7 @@ const SortUpIcon = lazy(() => import('@/assets/popup-window/sort-up.svg?react'))
 const SortDownIcon = lazy(() => import('@/assets/popup-window/sort-down.svg?react'));
 const NoMatch = lazy(() => import('./components/NoMatch'));
 const Filters = lazy(() => import('./components/Filters'));
+const UpdateComponent = lazy(() => import('./components/UpdateComponent'));
 
 const thisTabTopVariants = {
   visible: { height: 'auto', transition: { duration: 0.3 } },
@@ -65,6 +66,7 @@ function ThisTab (props) {
   const [selectedTag, setSelectedTag] = useState(null);
   const [lastSelectedTagInfo, setLastSelectedTagInfo] = useState(null);
   const [forceCloseFilters, setForceCloseFilters] = useState(false);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const boxAnimationRef = useRef(null);
   const boxAnimationDarkRef = useRef(null);
@@ -229,7 +231,7 @@ function ThisTab (props) {
     return null;
   }, []);
 
-  const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl), [sendUrl]);
+  const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl, setUpdateAvailable), [sendUrl, setUpdateAvailable]);
 
   const hasMatchingLogins = useMemo(() => isLoginsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
   const hasLogins = useMemo(() => isLoginsCorrect(logins) && logins?.length > 0, [logins]);
@@ -345,6 +347,8 @@ function ThisTab (props) {
                 }}
                 style={{ opacity: '1 !important'}}
               >
+                <UpdateComponent updateAvailable={updateAvailable} />
+
                 <div className={S.thisTabHeader}>
                   <h1>
                     {hasMatchingLogins ? browser.i18n.getMessage('this_tab_matching_logins_header') : browser.i18n.getMessage('this_tab_matching_logins_header_no_logins')}

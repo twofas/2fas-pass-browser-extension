@@ -24,4 +24,5 @@ export const REQUEST_ACTIONS = Object.freeze({
   GET_CRYPTO_AVAILABLE: 'getCryptoAvailable', // popup, content
   GET_SAVE_PROMPT: 'getSavePrompt', // prompt, background
   TAB_FOCUS: 'tabFocus', // focus, background
+  UPDATE_AVAILABLE: 'updateAvailable', // background, this_tab
 });
