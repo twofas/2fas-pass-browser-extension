@@ -731,10 +731,6 @@
     "message": "Add tag",
     "description": "Tooltip for add tag button"
   },
-  "details_tags_add_tag": {
-    "message": "Add tag",
-    "description": "Text for add tag button"
-  },
   "details_tags_no_available": {
     "message": "No tags available",
     "description": "Message shown when there are no more tags to add"
@@ -1270,6 +1266,22 @@
   "this_tab_clear_tag_filter": {
     "message": "Clear tag filter",
     "description": "Button label to clear the selected tag filter"
+  },
+  "this_tab_update_available": {
+    "message": "A new version of the extension is available!",
+    "description": "Notification message when a new extension update is available"
+  },
+  "this_tab_update_button": {
+    "message": "Update",
+    "description": "Button label to update the extension"
+  },
+  "this_tab_update_button_title": {
+    "message": "Update the extension to the latest version",
+    "description": "Tooltip for the update button"
+  },
+  "this_tab_update_manual_required": {
+    "message": "Please update the extension manually from your browser's extension settings",
+    "description": "Error message when automatic update is not available"
   },
   "filters_button_title": {
     "message": "Filter by tag",

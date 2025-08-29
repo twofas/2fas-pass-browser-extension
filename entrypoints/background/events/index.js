@@ -13,4 +13,5 @@ export { default as onMessage } from './onMessage';
 export { default as onPromptMessage } from './onPromptMessage';
 export { default as onStartup } from './onStartup';
 export { default as onStorageChange } from './onStorageChange';
+export { default as onUpdateAvailable } from './onUpdateAvailable';
 export { default as onWebRequest } from './onWebRequest';
