@@ -45,7 +45,6 @@ const getServicesKeys = async deviceId => {
     return [];
   }
 
-  // Convert to Set for O(1) lookup
   const storageKeysSet = new Set(storageKeys);
 
   const uuid = await getUUIDforDeviceId(deviceId);

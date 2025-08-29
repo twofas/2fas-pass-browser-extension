@@ -73,7 +73,13 @@ class URIMatcher {
       return url;
     }
 
-    return this.PROTOCOL_REGEX[import.meta.env.BROWSER || 'chrome'].test(url) ? url : 'https://' + url;
+    const cleanedUrl = url.replace(/^[^a-zA-Z0-9]+/, '');
+
+    if (this.PROTOCOL_REGEX[import.meta.env.BROWSER || 'chrome'].test(cleanedUrl)) {
+      return cleanedUrl;
+    }
+
+    return 'https://' + cleanedUrl;
   }
 
   static isUrl (url, internalProtocols = false) {
@@ -254,7 +260,13 @@ class URIMatcher {
     }
 
     const prepended = this.prependProtocol(trimmed);
-    const normalizedIDN = this.normalizeIDN(prepended, internalProtocols);
+    let normalizedIDN;
+    
+    try {
+      normalizedIDN = this.normalizeIDN(prepended, internalProtocols);
+    } catch {
+      throw new Error('Parameter is not a valid URL');
+    }
 
     const lowerCaseURLWithoutPort = this.getLowerCaseURLWithoutPort(normalizedIDN);
     const urlWithoutTrailingChars = this.removeTrailingChars(lowerCaseURLWithoutPort);
@@ -351,7 +363,7 @@ class URIMatcher {
     if (services.length <= 0) {
       return [];
     }
-    
+
     const domainCredentials = [];
 
     try {
@@ -360,7 +372,13 @@ class URIMatcher {
           return;
         }
 
-        const serviceUrls = this.recognizeURIs(account.uris, true)?.urls;
+        let serviceUrls;
+
+        try {
+          serviceUrls = this.recognizeURIs(account.uris, true)?.urls;
+        } catch {
+          return;
+        }
 
         if (!serviceUrls || serviceUrls.length <= 0) {
           return;
@@ -378,6 +396,7 @@ class URIMatcher {
           }
 
           const matcherFunction = this.MATCHER_FUNCTIONS[matcher];
+          
           if (matcherFunction && matcherFunction(text, tabUrl, true)) {
             domainCredentials.push(account);
           }
