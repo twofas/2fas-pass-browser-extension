@@ -22,6 +22,7 @@ const Name = lazy(() => import('./components/Name'));
 const Username = lazy(() => import('./components/Username'));
 const Password = lazy(() => import('./components/Password'));
 const SecurityTier = lazy(() => import('./components/SecurityTier'));
+const Tags = lazy(() => import('./components/Tags'));
 const Notes = lazy(() => import('./components/Notes'));
 const DangerZone = lazy(() => import('./components/DangerZone'));
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -51,6 +52,7 @@ function Details (props) {
   const [usernameMobile, setUsernameMobile] = useState(location?.state?.data?.generatorData?.usernameMobile !== undefined ? location.state.data.generatorData.usernameMobile : false);
   const [tierEditable, setTierEditable] = useState(location?.state?.data?.generatorData?.tierEditable !== undefined ? location.state.data.generatorData.tierEditable : false);
   const [notesEditable, setNotesEditable] = useState(location?.state?.data?.generatorData?.notesEditable !== undefined ? location.state.data.generatorData.notesEditable : false);
+  const [tagsEditable, setTagsEditable] = useState(location?.state?.data?.generatorData?.tagsEditable !== undefined ? location.state.data.generatorData.tagsEditable : false);
   const [inputError, setInputError] = useState(undefined);
   const [storageVersion, setStorageVersion] = useState(null);
 
@@ -209,6 +211,10 @@ function Details (props) {
       stateData.uris = e.uris;
     }
 
+    if (tagsEditable) {
+      stateData.tags = e.tags || [];
+    }
+
     return navigate('/fetch', {
       state: {
         action: 'updateLogin',
@@ -261,6 +267,10 @@ function Details (props) {
                       data={{ service, tierEditable, form }}
                       actions={{ setTierEditable }}
                     />
+                    <Tags
+                      data={{ service, tagsEditable, form }}
+                      actions={{ setTagsEditable }}
+                    />
                     <Notes
                       data={{ service, notesEditable, form }}
                       actions={{ setNotesEditable }}
@@ -269,9 +279,9 @@ function Details (props) {
                       <button
                         type="submit"
                         className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-                        disabled={(getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable).amount <= 0 || submitting) ? 'disabled' : ''}
+                        disabled={(getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable).amount <= 0 || submitting) ? 'disabled' : ''}
                       >
-                        {browser.i18n.getMessage('update')}{getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable).text}
+                        {browser.i18n.getMessage('update')}{getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable).text}
                       </button>
                     </div>
 

@@ -1036,3 +1036,169 @@
     }
   }
 }
+
+.react-select-tags-details-container {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 4px);
+  transform: translateX(-50%);
+  z-index: 9999;
+
+  .react-select-tags-details__control {
+    display: none;
+  }
+
+  .react-select-tags-details__menu {
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .2);
+    margin-bottom: 0;
+    margin-top: 0;
+    max-height: 200px;
+    overflow: hidden;
+    position: relative;
+    transition: opacity .3s ease-in-out;
+    width: 150px;
+    z-index: 9999;
+
+    body.theme-light & {
+      background-color: v.$primary-box-bg-light;
+      border: 1px solid v.$primary-box-stroke-light;
+    }
+
+    body.theme-dark & {
+      background-color: v.$primary-box-bg-dark;
+      border: 1px solid v.$primary-box-stroke-dark;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        background-color: v.$primary-box-bg-light;
+        border: 1px solid v.$primary-box-stroke-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: v.$primary-box-bg-dark;
+        border: 1px solid v.$primary-box-stroke-dark;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+      }
+    }
+  }
+
+  .react-select-tags-details__menu-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 4px;
+  }
+
+  .react-select-tags-details__option {
+    align-items: center;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    font-size: 12px;
+    font-weight: 400;
+    justify-content: space-between;
+    margin-bottom: 2px;
+    overflow: hidden;
+    padding: 8px 12px;
+    transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    body.theme-light & {
+      background-color: transparent;
+      color: v.$primary-text-light;
+
+      &:hover {
+        background-color: v.$hover-color-light;
+      }
+
+      &:focus {
+        background-color: v.$hover-color-light;
+      }
+    }
+
+    body.theme-dark & {
+      background-color: transparent;
+      color: v.$primary-text-dark;
+
+      &:hover {
+        background-color: v.$hover-color-dark;
+      }
+
+      &:focus {
+        background-color: v.$hover-color-dark;
+      }
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        background-color: transparent;
+        color: v.$primary-text-light;
+
+        &:hover {
+          background-color: v.$hover-color-light;
+        }
+
+        &:focus {
+          background-color: v.$hover-color-light;
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: transparent;
+        color: v.$primary-text-dark;
+
+        &:hover {
+          background-color: v.$hover-color-dark;
+        }
+
+        &:focus {
+          background-color: v.$hover-color-dark;
+        }
+      }
+    }
+
+    &-count {
+      color: v.$secondary-text-light;
+      font-size: 11px;
+      margin-left: 8px;
+
+      body.theme-dark & {
+        color: v.$secondary-text-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: dark) {
+          color: v.$secondary-text-dark;
+        }
+      }
+    }
+  }
+
+  .react-select-tags-details__menu-notice {
+    color: v.$secondary-text-light;
+    font-size: 12px;
+    padding: 12px;
+    text-align: center;
+
+    body.theme-dark & {
+      color: v.$secondary-text-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: dark) {
+        color: v.$secondary-text-dark;
+      }
+    }
+  }
+}
+
+.react-select__single-value {
+  margin-left: 0 !important;
+}

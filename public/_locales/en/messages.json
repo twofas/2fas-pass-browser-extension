@@ -715,6 +715,34 @@
     "message": "Generate password",
     "description": "Title for the button that opens password generator"
   },
+  "details_tags_label": {
+    "message": "Tags",
+    "description": "Label for the tags field in details view"
+  },
+  "details_tags_no_tags": {
+    "message": "No tags assigned",
+    "description": "Placeholder text when no tags are selected"
+  },
+  "details_tags_remove": {
+    "message": "Remove tag",
+    "description": "Tooltip for remove tag button"
+  },
+  "details_tags_add": {
+    "message": "Add tag",
+    "description": "Tooltip for add tag button"
+  },
+  "details_tags_add_tag": {
+    "message": "Add tag",
+    "description": "Text for add tag button"
+  },
+  "details_tags_no_available": {
+    "message": "No tags available",
+    "description": "Message shown when there are no more tags to add"
+  },
+  "details_tags_select_tag": {
+    "message": "Select tag",
+    "description": "Placeholder text for the tag selection dropdown"
+  },
   "fetch_push_header": {
     "message": "Check the 2FAS Pass push notification on your mobile phone.",
     "description": "Header prompting the user to check their mobile phone for a push notification"
