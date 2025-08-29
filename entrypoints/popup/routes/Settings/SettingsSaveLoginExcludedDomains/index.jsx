@@ -97,7 +97,8 @@ function SettingsSaveLoginExcludedDomains (props) {
       errors['ignored-domain'] = browser.i18n.getMessage('settings_excluded_domains_add_invalid');
     }
 
-    if (excludedDomains.includes(domain)) {
+    const excludedDomainsSet = new Set(excludedDomains);
+    if (excludedDomainsSet.has(domain)) {
       errors['ignored-domain'] = browser.i18n.getMessage('settings_excluded_domains_add_already_ignored');
     }
 

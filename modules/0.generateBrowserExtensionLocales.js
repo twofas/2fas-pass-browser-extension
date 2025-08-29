@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { defineWxtModule } from 'wxt/modules';
 
-const excludedDirs = [
+const excludedDirsSet = new Set([
   '.output',
   '.wxt',
   'assets',
@@ -16,7 +16,7 @@ const excludedDirs = [
   'node_modules',
   'testFiles',
   'public'
-];
+]);
 
 /** 
 * Function to get all `_locales` folders in the project directory.
@@ -34,7 +34,7 @@ const getLocalesFolders = (dir, excludedDirs) => {
     if (stat && stat.isDirectory()) {
       if (file === '_locales') {
         results.push(filePath);
-      } else if (!excludedDirs.includes(file)) {
+      } else if (!excludedDirs.has(file)) {
         results = results.concat(getLocalesFolders(filePath, excludedDirs));
       }
     }
@@ -153,7 +153,7 @@ const saveMessagesToFile = (allMessages, outputDir) => {
 export default defineWxtModule({
   setup (wxt) {
     wxt.hook('build:before', () => {
-      const localesFolders = getLocalesFolders('./', excludedDirs);
+      const localesFolders = getLocalesFolders('./', excludedDirsSet);
       const languages = getLanguages(localesFolders);
       const messagesFiles = getMessagesFiles(localesFolders, languages);
       const allMessages = concatMessagesFiles(messagesFiles);

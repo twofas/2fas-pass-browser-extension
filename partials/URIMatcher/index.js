@@ -16,14 +16,14 @@ import { URL_REGEX, IP_REGEX } from '@/constants/regex';
 class URIMatcher {
   static URL_REGEX = URL_REGEX;
   static IP_REGEX = IP_REGEX;
-  static TRACKERS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'dclid', 'fbclid', 'msclkid', 'twclid', 'lmsid', 'mc_eid', 'mc_cid'];
+  static TRACKERS = new Set(['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'dclid', 'fbclid', 'msclkid', 'twclid', 'lmsid', 'mc_eid', 'mc_cid']);
 
   static ADDITIONAL_PROTOCOLS = {
-    chrome: ['about:', 'chrome-extension:', 'chrome:'],
-    firefox: ['about:', 'moz-extension:'],
-    opera: ['about:', 'chrome-extension:', 'chrome:', 'opera:'],
-    edge: ['about:', 'chrome-extension:', 'chrome:', 'edge:'],
-    safari: ['about:', 'safari-extension:']
+    chrome: new Set(['about:', 'chrome-extension:', 'chrome:']),
+    firefox: new Set(['about:', 'moz-extension:']),
+    opera: new Set(['about:', 'chrome-extension:', 'chrome:', 'opera:']),
+    edge: new Set(['about:', 'chrome-extension:', 'chrome:', 'edge:']),
+    safari: new Set(['about:', 'safari-extension:'])
   };
 
   static PROTOCOL_REGEX = {
@@ -34,7 +34,7 @@ class URIMatcher {
     safari: /^(about|safari-extension)?:/i
   };
 
-  static BAD_PARSE_DOMAIN_TYPES = [ParseResultType.Invalid, ParseResultType.Reserved, ParseResultType.NotListed];
+  static BAD_PARSE_DOMAIN_TYPES = new Set([ParseResultType.Invalid, ParseResultType.Reserved, ParseResultType.NotListed]);
 
   static M_DOMAIN_TYPE = 0;
   static M_HOST_TYPE = 1;
@@ -192,7 +192,7 @@ class URIMatcher {
     const cleanedParams = {};
 
     searchParams.forEach((value, key) => {
-      if (!this.TRACKERS.includes(key)) {
+      if (!this.TRACKERS.has(key)) {
         cleanedParams[key] = value;
       }
     });
@@ -290,10 +290,10 @@ class URIMatcher {
       return serviceUrlParsed.hostname === browserUrlParsed.hostname;
     }
 
-    if (this.BAD_PARSE_DOMAIN_TYPES.includes(serviceUrlParsed?.type) || this.BAD_PARSE_DOMAIN_TYPES.includes(browserUrlParsed?.type)) {
+    if (this.BAD_PARSE_DOMAIN_TYPES.has(serviceUrlParsed?.type) || this.BAD_PARSE_DOMAIN_TYPES.has(browserUrlParsed?.type)) {
       if (
-        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].includes(serviceUrlObj?.protocol) ||
-        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].includes(browserUrlObj?.protocol)
+        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].has(serviceUrlObj?.protocol) ||
+        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].has(browserUrlObj?.protocol)
       ) {
         return false;
       } else {
