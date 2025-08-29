@@ -1,0 +1,223 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.tags {
+  &-container {
+    align-items: center;
+    background-color: v.$primary-box-bg-light;
+    border: 1px solid v.$object-stroke-light;
+    border-radius: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 36px;
+    padding: 6px 12px;
+    transition: border-color .3s ease-in-out, background-color .3s ease-in-out;
+
+    @include m.darkMode {
+      background-color: v.$primary-box-bg-dark;
+      border-color: v.$object-stroke-dark;
+    }
+
+    &.editable {
+      background-color: v.$primary-box-bg-light;
+      
+      @include m.darkMode {
+        background-color: v.$primary-box-bg-dark;
+      }
+    }
+
+    &.disabled {
+      background-color: v.$additional-light;
+      border-color: v.$object-stroke-light;
+
+      @include m.darkMode {
+        background-color: v.$additional-dark;
+        border-color: v.$object-stroke-dark;
+      }
+    }
+  }
+
+  &-pill {
+    align-items: center;
+    background: v.$hover-color-light;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 400;
+    gap: 4px;
+    height: 24px;
+    padding: 0 8px;
+    position: relative;
+    transition: background .3s ease-in-out, border-color .3s ease-in-out;
+
+    @include m.darkMode {
+      background: v.$hover-color-dark;
+    }
+
+    &.editable {
+      &:hover {
+        background: v.$hover-on-hover-light;
+        border-color: v.$object-stroke-light;
+
+        @include m.darkMode {
+          background: v.$hover-on-hover-dark;
+          border-color: v.$object-stroke-dark;
+        }
+      }
+
+      &:focus {
+        background: v.$hover-on-hover-light;
+        border-color: v.$object-stroke-light;
+
+        @include m.darkMode {
+          background: v.$hover-on-hover-dark;
+          border-color: v.$object-stroke-dark;
+        }
+      }
+    }
+
+    &-text {
+      color: v.$primary-text-light;
+      line-height: 1;
+      max-width: 150px;
+      overflow: hidden;
+      pointer-events: none;
+      text-overflow: ellipsis;
+      transition: color .3s ease-in-out;
+      user-select: none;
+      white-space: nowrap;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    &-delete {
+      align-items: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      font-size: 12px;
+      height: 14px;
+      justify-content: center;
+      line-height: 1;
+      margin: 0;
+      margin-left: 2px;
+      margin-right: -2px;
+      padding: 0;
+      transition: opacity .3s ease-in-out;
+      width: 14px;
+
+      &:hover {
+        opacity: .7;
+      }
+
+      &:focus {
+        opacity: .7;
+      }
+
+      svg {
+        fill: none;
+        height: 12px;
+        stroke: v.$primary-color-light;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5;
+        transition: stroke .3s ease-in-out;
+        width: auto;
+
+        @include m.darkMode {
+          stroke: v.$primary-color-dark;
+        }
+
+        &:hover {
+          stroke: v.$error-light;
+
+          @include m.darkMode {
+            stroke: v.$error-dark;
+          }
+        }
+      }
+    }
+  }
+
+  &-add-button {
+    align-items: center;
+    background: transparent;
+    border: 1px dashed v.$object-stroke-light;
+    border-radius: 4px;
+    color: v.$primary-color-light;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 400;
+    gap: 4px;
+    height: 24px;
+    padding: 0 8px;
+    transition: background .3s ease-in-out, border-color .3s ease-in-out, color .3s ease-in-out;
+
+    @include m.darkMode {
+      border-color: v.$object-stroke-dark;
+      color: v.$primary-color-dark;
+    }
+
+    &:hover {
+      background: v.$hover-color-light;
+      border-color: v.$primary-color-light;
+
+      @include m.darkMode {
+        background: v.$hover-color-dark;
+        border-color: v.$primary-color-dark;
+      }
+    }
+
+    &:focus {
+      background: v.$hover-color-light;
+      border-color: v.$primary-color-light;
+
+      @include m.darkMode {
+        background: v.$hover-color-dark;
+        border-color: v.$primary-color-dark;
+      }
+    }
+
+    svg {
+      fill: none;
+      height: 14px;
+      stroke: v.$primary-color-light;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.5;
+      transition: stroke .3s ease-in-out;
+      width: 14px;
+
+      @include m.darkMode {
+        stroke: v.$primary-color-dark;
+      }
+    }
+  }
+
+  &-select-container {
+    position: relative;
+  }
+
+  &-placeholder {
+    color: v.$secondary-text-light;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+
+    @include m.darkMode {
+      color: v.$secondary-text-dark;
+    }
+  }
+}
