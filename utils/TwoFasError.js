@@ -341,6 +341,10 @@ class TwoFasError extends Error {
       message: 'Response is not ok',
       code: 9025
     },
+    fetchSendPushResponseJsonParse: {
+      message: 'Error parsing JSON response',
+      code: 9026
+    },
     // WEBSOCKET
     websocketInstanceNotExists: {
       message: 'WebSocket instance does not exist',
