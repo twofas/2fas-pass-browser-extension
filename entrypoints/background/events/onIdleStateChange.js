@@ -14,8 +14,6 @@ import isPaidDeviceConnected from '@/partials/functions/isPaidDeviceConnected';
 * @return {Promise<boolean>} A promise that resolves to true if the idle state change is handled successfully, otherwise false.
 */
 const onIdleStateChange = async state => {
-  console.log('onIdle', state);
-
   if (state !== browser.idle.IdleState.IDLE) {
     return false;
   }
