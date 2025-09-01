@@ -683,6 +683,19 @@ class TwoFasError extends Error {
     contextMenuConfiguredError: {
       message: 'Error configuring context menu',
       code: 9390
+    },
+    // CHECK INITIAL INPUT VALUES
+    checkInitialInputsValuesNonceError: {
+      message: 'checkInitialInputsValues: error generating nonce',
+      code: 9400
+    },
+    checkInitialInputsValuesKeyImportError: {
+      message: 'checkInitialInputsValues: error importing key',
+      code: 9401
+    },
+    checkInitialInputsValuesEncryptError: {
+      message: 'checkInitialInputsValues: error encrypting data',
+      code: 9402
     }
   };
 }
