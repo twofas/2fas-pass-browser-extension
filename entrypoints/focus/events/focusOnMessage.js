@@ -19,7 +19,7 @@ const focusOnMessage = (request, sender, sendResponse) => {
     if (!request || !request?.action || request?.target !== REQUEST_TARGETS.FOCUS_CONTENT) {
       return false;
     }
-
+    
     switch (request.action) {
       case REQUEST_ACTIONS.AUTO_CLEAR_CLIPBOARD: {
         const clearClipboardStatus = clearClipboard();

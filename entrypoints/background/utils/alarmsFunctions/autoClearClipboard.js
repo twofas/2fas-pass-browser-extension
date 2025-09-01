@@ -30,7 +30,6 @@ const autoClearClipboard = async (itemId, itemType) => {
   }
 
   const filteredTabs = allTabs.filter(tab => tab && tab.id);
-
   const response = [];
 
   for (const tab of filteredTabs) {
