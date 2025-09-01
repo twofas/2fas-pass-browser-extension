@@ -252,6 +252,16 @@ function ThisTab (props) {
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
 
+    if (browser?.runtime?.requestUpdateCheck && typeof browser?.runtime?.requestUpdateCheck === 'function') {
+      browser.runtime.requestUpdateCheck()
+        .then(([status]) => {
+          if (status === 'update_available') {
+            setUpdateAvailable(true);
+          }
+      })
+      .catch(() => {});
+    }
+
     Promise.all([ getDomain(), getLogins(), getSort(), getStorageTags() ])
       .then(([domain, logins, , tags]) => Promise.all([
         getMatchingLogins(logins, domain),
