@@ -6,6 +6,7 @@
 
 import getServices from '../sessionStorage/getServices';
 import decryptPassword from './decryptPassword';
+import URIMatcher from '../URIMatcher';
 
 /** 
 * Function to check storage auto clear actions.
@@ -67,7 +68,35 @@ const checkStorageAutoClearActions = async () => {
       return;
     }
   } else if (action.itemType === 'uri') {
-    return false; // FUTURE - handle URI actions
+    const uris = service.uris || [];
+    
+    if (!uris || uris.length === 0) {
+      await storage.setItem('session:autoClearActions', []);
+      return false;
+    }
+    
+    const uriTexts = uris.map(uri => uri?.text).filter(text => text);
+    
+    if (!uriTexts || uriTexts.length === 0) {
+      await storage.setItem('session:autoClearActions', []);
+      return false;
+    }
+    
+    serviceValue = [];
+    uriTexts.forEach(text => {
+      serviceValue.push(text);
+
+      try {
+        const normalized = URIMatcher.normalizeUrl(text, true);
+
+        if (normalized !== text) {
+          serviceValue.push(normalized);
+        }
+      } catch {}
+    });
+
+    serviceValue = [...new Set(serviceValue)]; // unique values
+    serviceValue = JSON.stringify(serviceValue);
   } else {
     serviceValue = service[action.itemType];
   }

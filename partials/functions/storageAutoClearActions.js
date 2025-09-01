@@ -32,7 +32,6 @@ const storageAutoClearActions = async () => {
   let clipboardValue;
 
   if (action?.itemId === '00000000-0000-0000-0000-000000000000') {
-    // addNew copyValue
     try {
       clipboardValue = await navigator.clipboard.readText();
     } catch {

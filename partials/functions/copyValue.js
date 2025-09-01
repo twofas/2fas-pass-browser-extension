@@ -30,14 +30,13 @@ const copyValue = async (value, itemId, itemType) => {
   }
 
   if (!navigator?.clipboard) {
-    // @TODO: handle error (toast?)
-    return false;
+    throw new Error('Clipboard API not supported');
   }
 
   try {
-    navigator.clipboard.writeText(value);
+    await navigator.clipboard.writeText(value);
   } catch {
-    return false; // @TODO: handle error (toast?)
+    throw new Error('Failed to copy to clipboard');
   }
 
   const autoClearStorage = await storage.getItem('local:autoClearClipboard');
@@ -55,6 +54,9 @@ const copyValue = async (value, itemId, itemType) => {
 
     try {
       await deleteExistingClearClipboardAlarms();
+    } catch {}
+    
+    try {
       await browser.alarms.create(`autoClearClipboard.${itemId}.${itemType}`, { delayInMinutes: autoClearMinutes });
     } catch {}
 

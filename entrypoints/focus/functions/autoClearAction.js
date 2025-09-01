@@ -59,11 +59,21 @@ const autoClearAction = async request => {
       }
 
       actionValue = ArrayBufferToString(decryptedValueAB);
+
+      try {
+        actionValue = JSON.parse(actionValue);
+      } catch {}
     }
 
     const clipboardValue = await navigator.clipboard.readText().catch(() => '');
 
-    if (clipboardValue === actionValue) {
+    if (Array.isArray(actionValue)) {
+      if (actionValue.some(value => value === clipboardValue)) {
+        try {
+          await navigator.clipboard.writeText('');
+        } catch {}
+      }
+    } else if (clipboardValue === actionValue) {
       try {
         await navigator.clipboard.writeText('');
       } catch {}
