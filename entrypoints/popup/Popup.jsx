@@ -10,6 +10,7 @@ import { useEffect, lazy, useState, useMemo, useCallback, memo } from 'react';
 import { AuthProvider } from '@/hooks/useAuth';
 import { MatchingLoginsProvider } from '@/hooks/useMatchingLogins';
 import { WSProvider } from '@/hooks/useWS';
+import { PopupStateProvider } from '@/hooks/usePopupState';
 import popupOnMessage from './events/popupOnMessage';
 import Blocked from './routes/Blocked';
 import safariBlankLinks from '@/partials/functions/safariBlankLinks';
@@ -55,7 +56,7 @@ const ProtectedRoute = memo(props => {
   }
 
   if (configured === false) {
-    return  <Navigate to='/connect' />;
+    return <Navigate to='/connect' />;
   }
 
   return children;
@@ -151,7 +152,7 @@ function Popup () {
     }
 
     if (history?.scrollRestoration && history.scrollRestoration !== 'manual') {
-      history.scrollRestoration = "manual";
+      history.scrollRestoration = 'manual';
     }
 
     Promise.all([
@@ -159,6 +160,7 @@ function Popup () {
       checkBlockedRoute()
     ]).then(() => {
       setLoaded(true);
+      
       browser.runtime.onMessage.addListener(popupOnMessage);
 
       document.addEventListener('keydown', lockShortcuts);
@@ -209,31 +211,34 @@ function Popup () {
 
   return (
     <section className={mainSectionClassName}>
-      <AuthProvider>
-        <WSProvider>
-          <MatchingLoginsProvider>
-            <TopBar />
-            <Routes>
-              <Route path='/connect' element={<ConnectProtectedRoute blockedRoute={blockedRoute}><Connect className={S.passScreen} /></ConnectProtectedRoute>} />
-              <Route path='/' element={<ProtectedRoute blockedRoute={blockedRoute}><ThisTab className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/add-new' element={<ProtectedRoute blockedRoute={blockedRoute}><AddNew className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings' element={<ProtectedRoute blockedRoute={blockedRoute}><Settings className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings-about' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsAbout className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings-preferences' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsPreferences className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings-security' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsSecurity className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings-reset' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsReset className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings-save-login-excluded-domains' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsSaveLoginExcludedDomains className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/fetch' element={<ProtectedRoute blockedRoute={blockedRoute}><Fetch className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/fetch/:data' element={<ProtectedRoute blockedRoute={blockedRoute}><FetchExternal /></ProtectedRoute>} />
-              <Route path='/details/:id' element={<ProtectedRoute blockedRoute={blockedRoute}><Details className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/password-generator' element={<ProtectedRoute blockedRoute={blockedRoute}><PasswordGenerator className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/blocked' element={<Blocked className={S.passScreen} />} />
-              <Route path='*' element={<ProtectedRoute blockedRoute={blockedRoute}><NotFound className={S.passScreen} /></ProtectedRoute>} />
-            </Routes>
-          </MatchingLoginsProvider>
-          <BottomBar />
-        </WSProvider>
-      </AuthProvider>
+      <PopupStateProvider>
+        <AuthProvider>
+          <WSProvider>
+            <MatchingLoginsProvider>
+              <TopBar />
+              <Routes>
+                <Route path='/connect' element={<ConnectProtectedRoute blockedRoute={blockedRoute}><Connect className={S.passScreen} /></ConnectProtectedRoute>} />
+                <Route path='/' element={<ProtectedRoute blockedRoute={blockedRoute}><ThisTab className={S.passScreen} /></ProtectedRoute>} />
+                <Route path='/add-new' element={<ProtectedRoute blockedRoute={blockedRoute}><AddNew className={S.passScreen} /></ProtectedRoute>} />
+                <Route path='/settings' element={<ProtectedRoute blockedRoute={blockedRoute}><Settings className={S.passScreen} /></ProtectedRoute>} />
+                <Route path='/settings-about' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsAbout className={S.passScreen} /></ProtectedRoute>} />
+                <Route path='/settings-preferences' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsPreferences className={S.passScreen} /></ProtectedRoute>} />
+                <Route path='/settings-security' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsSecurity className={S.passScreen} /></ProtectedRoute>} />
+                <Route path='/settings-reset' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsReset className={S.passScreen} /></ProtectedRoute>} />
+                <Route path='/settings-save-login-excluded-domains' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsSaveLoginExcludedDomains className={S.passScreen} /></ProtectedRoute>} />
+                <Route path='/fetch' element={<ProtectedRoute blockedRoute={blockedRoute}><Fetch className={S.passScreen} /></ProtectedRoute>} />
+                <Route path='/fetch/:data' element={<ProtectedRoute blockedRoute={blockedRoute}><FetchExternal /></ProtectedRoute>} />
+                <Route path='/details/:id' element={<ProtectedRoute blockedRoute={blockedRoute}><Details className={S.passScreen} /></ProtectedRoute>} />
+                <Route path='/password-generator' element={<ProtectedRoute blockedRoute={blockedRoute}><PasswordGenerator className={S.passScreen} /></ProtectedRoute>} />
+                <Route path='/blocked' element={<Blocked className={S.passScreen} />} />
+                <Route path='*' element={<ProtectedRoute blockedRoute={blockedRoute}><NotFound className={S.passScreen} /></ProtectedRoute>} />
+              </Routes>
+            </MatchingLoginsProvider>
+            <BottomBar />
+          </WSProvider>
+        </AuthProvider>
+      </PopupStateProvider>
+      
       <ToastsContent />
     </section>
   );

@@ -60,6 +60,7 @@ function BottomBar () {
   }, []);
 
   const handleNewWindow = useCallback(async () => {
+    // @TODO: Current data
     setNewWindowDisabled(true);
     const { state } = location;
 
@@ -108,6 +109,7 @@ function BottomBar () {
     if (location.pathname === '/connect' || location.pathname === '/blocked') {
       return S.hidden;
     }
+    
     return location.pathname === '/settings' ? S.disabled : '';
   }, [location.pathname]);
 
