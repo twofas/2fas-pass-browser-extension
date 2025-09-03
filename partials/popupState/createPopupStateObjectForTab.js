@@ -9,7 +9,7 @@
 * @param {string} tabId - The ID of the tab for which to create the popup state object.
 * @return {Promise<void>} A promise that resolves when the popup state object has been created.
 */
-const createPopupStateObjectForTab = async tabId => {
+const createPopupStateObjectForTab = async () => { // tabId
   // let popupState = await storage.getItem('session:popupState');
 
   // if (!popupState || typeof popupState !== 'object') {
