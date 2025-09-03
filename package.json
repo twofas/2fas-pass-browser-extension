@@ -32,7 +32,7 @@
     "zip:firefox:dev": "yarn generate-enc-keys-dev && wxt zip -b firefox --mode development --mv3",
     "zip:edge": "yarn generate-enc-keys-prod && wxt zip -b edge --mv3",
     "zip:edge:dev": "yarn generate-enc-keys-dev && wxt zip -b edge --mode development --mv3",
-    "all-build": "yarn lint && yarn all-build:prod && yarn all-build:dev",
+    "all-build": "yarn lint && yarn all-build:prod && yarn all-build:dev && yarn build:safari",
     "all-build:prod": "yarn test && yarn generate-license-info && yarn zip && yarn zip:firefox && yarn zip:edge",
     "all-build:dev": "yarn test && yarn zip:dev && yarn zip:firefox:dev && yarn zip:edge:dev",
     "compile": "tsc --noEmit",
