@@ -21,8 +21,7 @@ const sendAutoClearAction = async (value, cryptoAvailable, sender) => {
   
   const data = {
     action: REQUEST_ACTIONS.AUTO_CLEAR_ACTION,
-    target: REQUEST_TARGETS.FOCUS_CONTENT,
-    cryptoAvailable: cryptoAvailable
+    cryptoAvailable
   };
 
   if (value === 'addNew') {
@@ -68,7 +67,8 @@ const sendAutoClearAction = async (value, cryptoAvailable, sender) => {
     }
   }
 
-  await sendMessageToTab(sender.tab.id, data);
+  await sendMessageToTab(sender.tab.id, { ...data, target: REQUEST_TARGETS.FOCUS_CONTENT });
+  await sendMessageToTab(sender.tab.id, { ...data, target: REQUEST_TARGETS.POPUP });
 };
 
 export default sendAutoClearAction;

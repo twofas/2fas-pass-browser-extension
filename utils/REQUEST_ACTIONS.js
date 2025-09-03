@@ -5,8 +5,7 @@
 // See LICENSE file for full terms
 
 export const REQUEST_ACTIONS = Object.freeze({
-  AUTO_CLEAR_CLIPBOARD: 'autoClearClipboard', // content, popup, focus
-  AUTO_CLEAR_ACTION: 'autoClearAction', // background, focus
+  AUTO_CLEAR_ACTION: 'autoClearAction', // background, focus, popup
   AUTOFILL: 'autofill', // content
   CHECK_AUTOFILL_INPUTS: 'checkAutofillInputs', // content
   SEND_URL: 'sendUrl', // popup
@@ -25,4 +24,5 @@ export const REQUEST_ACTIONS = Object.freeze({
   GET_SAVE_PROMPT: 'getSavePrompt', // prompt, background
   TAB_FOCUS: 'tabFocus', // focus, background
   UPDATE_AVAILABLE: 'updateAvailable', // background, this_tab
+  FOCUS_CHECK: 'focusCheck', // background, popup, focus
 });

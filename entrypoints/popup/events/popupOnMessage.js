@@ -4,7 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import clearClipboard from '@/partials/functions/clearClipboard';
+import autoClearAction from '@/partials/functions/autoClearAction';
+import storageAutoClearActions from '@/partials/functions/storageAutoClearActions';
 
 /** 
 * Function to handle messages sent to the popup.
@@ -20,9 +21,23 @@ const popupOnMessage = (request, sender, sendResponse) => {
     }
 
     switch (request.action) {
-      case REQUEST_ACTIONS.AUTO_CLEAR_CLIPBOARD: {
-        const clearClipboardStatus = clearClipboard();
-        sendResponse(clearClipboardStatus);
+      case REQUEST_ACTIONS.AUTO_CLEAR_ACTION: {
+        if (import.meta.env.BROWSER !== 'safari') {
+          autoClearAction(request).finally(sendResponse({ status: 'ok' }));
+        } else {
+          sendResponse({ status: 'ok' });
+        }
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.FOCUS_CHECK: {
+        if (document?.hasFocus()) {
+          storageAutoClearActions().finally(() => sendResponse({ status: 'ok' }));
+        } else {
+          sendResponse({ status: 'ok' });
+        }
+        
         break;
       }
 

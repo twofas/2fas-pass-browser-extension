@@ -51,8 +51,6 @@ export const PopupStateProvider = ({ children }) => {
 
     getTab()
       .then(tab => {
-        // console.log({ tab, pathname, state });
-
         if (previousTabRef?.current?.id !== tab.id) {
           createPopupStateObjectForTab(tab.id);
         }
