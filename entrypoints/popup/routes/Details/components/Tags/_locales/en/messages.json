@@ -4,23 +4,23 @@
     "description": "Label for the tags field in details view"
   },
   "details_tags_no_tags": {
-    "message": "No tags assigned",
+    "message": "No Tags assigned",
     "description": "Placeholder text when no tags are selected"
   },
   "details_tags_remove": {
-    "message": "Remove tag",
+    "message": "Remove Tag",
     "description": "Tooltip for remove tag button"
   },
   "details_tags_add": {
-    "message": "Add tag",
+    "message": "Add Tag",
     "description": "Tooltip for add tag button"
   },
   "details_tags_no_available": {
-    "message": "No tags available",
+    "message": "No Tags available",
     "description": "Message shown when there are no more tags to add"
   },
   "details_tags_select_tag": {
-    "message": "Select tag",
+    "message": "Select Tag",
     "description": "Placeholder text for the tag selection dropdown"
   }
 }
