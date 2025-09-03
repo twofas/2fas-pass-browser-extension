@@ -4,8 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import clearClipboard from '@/partials/functions/clearClipboard';
-
 /** 
 * Function to handle messages in the prompt context.
 * @param {Object} request - The request object.
@@ -24,12 +22,6 @@ const promptOnMessage = (request, sender, sendResponse, timers, ignore) => {
     switch (request.action) {
       case REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK: {
         sendResponse({ status: 'ok' });
-        break;
-      }
-
-      case REQUEST_ACTIONS.AUTO_CLEAR_CLIPBOARD: {
-        const clearClipboardStatus = clearClipboard();
-        sendResponse(clearClipboardStatus);
         break;
       }
 
