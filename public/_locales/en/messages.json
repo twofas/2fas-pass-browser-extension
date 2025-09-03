@@ -704,7 +704,7 @@
     "description": "Button label to open the service's password change page"
   },
   "details_change_password_in_service_title": {
-    "message": "Open service website in new tab to change password",
+    "message": "Open the service website in a new tab to change the password",
     "description": "Title for the change password section in the service"
   },
   "details_toggle_password_visibility": {
@@ -720,23 +720,23 @@
     "description": "Label for the tags field in details view"
   },
   "details_tags_no_tags": {
-    "message": "No tags assigned",
+    "message": "No Tags assigned",
     "description": "Placeholder text when no tags are selected"
   },
   "details_tags_remove": {
-    "message": "Remove tag",
+    "message": "Remove Tag",
     "description": "Tooltip for remove tag button"
   },
   "details_tags_add": {
-    "message": "Add tag",
+    "message": "Add Tag",
     "description": "Tooltip for add tag button"
   },
   "details_tags_no_available": {
-    "message": "No tags available",
+    "message": "No Tags available",
     "description": "Message shown when there are no more tags to add"
   },
   "details_tags_select_tag": {
-    "message": "Select tag",
+    "message": "Select Tag",
     "description": "Placeholder text for the tag selection dropdown"
   },
   "fetch_push_header": {
@@ -1260,11 +1260,11 @@
     "description": "Label for a dropdown or menu containing additional actions"
   },
   "this_tab_tag_info_text": {
-    "message": "Showing AMOUNT Items tagged: TAG_NAME",
+    "message": "Showing AMOUNT Items Tagged: TAG_NAME",
     "description": "Information text displaying the number of items with a specific tag"
   },
   "this_tab_clear_tag_filter": {
-    "message": "Clear tag filter",
+    "message": "Clear Tag filter",
     "description": "Button label to clear the selected tag filter"
   },
   "this_tab_update_available": {
@@ -1284,11 +1284,11 @@
     "description": "Error message when automatic update is not available"
   },
   "filters_button_title": {
-    "message": "Filter by tag",
+    "message": "Filter by Tag",
     "description": "Tooltip text for the filter button that opens tag selection dropdown"
   },
   "filters_clear_choice": {
-    "message": "Clear choice",
+    "message": "Clear filters",
     "description": "Option text to clear the selected tag filter"
   }
 }
