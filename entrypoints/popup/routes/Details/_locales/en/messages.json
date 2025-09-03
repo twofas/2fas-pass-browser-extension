@@ -84,7 +84,7 @@
     "description": "Button label to open the service's password change page"
   },
   "details_change_password_in_service_title": {
-    "message": "Open service website in new tab to change password",
+    "message": "Open the service website in a new tab to change the password",
     "description": "Title for the change password section in the service"
   },
   "details_toggle_password_visibility": {

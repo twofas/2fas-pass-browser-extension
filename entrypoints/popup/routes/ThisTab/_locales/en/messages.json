@@ -84,11 +84,11 @@
     "description": "Label for a dropdown or menu containing additional actions"
   },
   "this_tab_tag_info_text": {
-    "message": "Showing AMOUNT Items tagged: TAG_NAME",
+    "message": "Showing AMOUNT Items Tagged: TAG_NAME",
     "description": "Information text displaying the number of items with a specific tag"
   },
   "this_tab_clear_tag_filter": {
-    "message": "Clear tag filter",
+    "message": "Clear Tag filter",
     "description": "Button label to clear the selected tag filter"
   },
   "this_tab_update_available": {
