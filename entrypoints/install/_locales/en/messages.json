@@ -40,7 +40,7 @@
     "description": "Instruction to click the extension icon to open it"
   },
   "install_2_use_mobile_app": {
-    "message": "Use 2FAS Pass mobile app to scan the QR Code.",
+    "message": "Tap “Connect” in the 2FAS Pass mobile app to scan the QR Code.",
     "description": "Instruction to use the mobile app to scan the QR code"
   },
   "install_3_info": {

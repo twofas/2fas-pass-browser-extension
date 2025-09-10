@@ -387,6 +387,22 @@
     "message": "Password copied to clipboard",
     "description": "Notification message when the password is successfully copied to the clipboard"
   },
+  "placeholder_domain_uri": {
+    "message": "e.g., https://2fas.com",
+    "description": "Placeholder text for the domain or URI input field"
+  },
+  "placeholder_username": {
+    "message": "Type your username",
+    "description": "Placeholder text for the username input field"
+  },
+  "placeholder_password": {
+    "message": "Type your password",
+    "description": "Placeholder text for the password input field"
+  },
+  "placeholder_name": {
+    "message": "Type your Item name",
+    "description": "Placeholder text for the name input field"
+  },
   "background_contextMenuConfigured_no_accounts": {
     "message": "There are no matching Items for this domain",
     "description": "Message displayed when no login items match the current domain in the context menu"
@@ -468,7 +484,7 @@
     "description": "Instruction to click the extension icon to open it"
   },
   "install_2_use_mobile_app": {
-    "message": "Use 2FAS Pass mobile app to scan the QR Code.",
+    "message": "Tap “Connect” in the 2FAS Pass mobile app to scan the QR Code.",
     "description": "Instruction to use the mobile app to scan the QR code"
   },
   "install_3_info": {
@@ -659,6 +675,70 @@
     "message": "Security Tier",
     "description": "Label for the security type field in the item details"
   },
+  "details_add_domain": {
+    "message": "Add domain",
+    "description": "Button label to add a new domain to the login item"
+  },
+  "details_add_another_domain": {
+    "message": "Add another domain",
+    "description": "Button label to add another domain when at least one exists"
+  },
+  "details_domain": {
+    "message": "Domain",
+    "description": "Label for domain field"
+  },
+  "details_domain_uri": {
+    "message": "Domain (URI URI_NUMBER)",
+    "description": "Header label for domain section with URI number"
+  },
+  "details_no_domain_available": {
+    "message": "No domain available",
+    "description": "Text shown when no domain is assigned to the item"
+  },
+  "details_name_copied": {
+    "message": "Name copied to clipboard",
+    "description": "Success message shown when the name is copied to clipboard"
+  },
+  "details_change_password_in_service": {
+    "message": "Change password in the service",
+    "description": "Button label to open the service's password change page"
+  },
+  "details_change_password_in_service_title": {
+    "message": "Open the service website in a new tab to change the password",
+    "description": "Title for the change password section in the service"
+  },
+  "details_toggle_password_visibility": {
+    "message": "Toggle password visibility",
+    "description": "Title for the button that toggles password visibility"
+  },
+  "details_generate_password": {
+    "message": "Generate password",
+    "description": "Title for the button that opens password generator"
+  },
+  "details_tags_label": {
+    "message": "Tags",
+    "description": "Label for the tags field in details view"
+  },
+  "details_tags_no_tags": {
+    "message": "No Tags assigned",
+    "description": "Placeholder text when no tags are selected"
+  },
+  "details_tags_remove": {
+    "message": "Remove Tag",
+    "description": "Tooltip for remove tag button"
+  },
+  "details_tags_add": {
+    "message": "Add Tag",
+    "description": "Tooltip for add tag button"
+  },
+  "details_tags_no_available": {
+    "message": "No Tags available",
+    "description": "Message shown when there are no more tags to add"
+  },
+  "details_tags_select_tag": {
+    "message": "Select Tag",
+    "description": "Placeholder text for the tag selection dropdown"
+  },
   "fetch_push_header": {
     "message": "Check the 2FAS Pass push notification on your mobile phone.",
     "description": "Header prompting the user to check their mobile phone for a push notification"
@@ -738,6 +818,46 @@
   "not_found_text": {
     "message": "Route not implemented yet ;)",
     "description": "Message shown when a user navigates to an unimplemented route"
+  },
+  "password_generator_title": {
+    "message": "Password generator",
+    "description": "Title for the password generator page"
+  },
+  "password_generator_characters": {
+    "message": "Characters: COUNT",
+    "description": "Label showing the number of characters in password"
+  },
+  "password_generator_include": {
+    "message": "Include",
+    "description": "Label for the include options section"
+  },
+  "password_generator_regenerate": {
+    "message": "Regenerate password",
+    "description": "Title for the regenerate password button"
+  },
+  "password_generator_uppercase": {
+    "message": "A-Z",
+    "description": "Checkbox label for including uppercase letters"
+  },
+  "password_generator_numbers": {
+    "message": "0-9",
+    "description": "Checkbox label for including numbers"
+  },
+  "password_generator_special_chars": {
+    "message": "!@#$%&^",
+    "description": "Checkbox label for including special characters"
+  },
+  "password_generator_use_password": {
+    "message": "Use this Password",
+    "description": "Button text to use the generated password"
+  },
+  "password_generator_password_too_short": {
+    "message": "Password must be at least 6 characters long",
+    "description": "Error message when password is too short"
+  },
+  "password_generator_data_error": {
+    "message": "Something went wrong. Go back and try again.",
+    "description": "Error message displayed when there is a problem with the password generator data"
   },
   "settings_header": {
     "message": "Settings",
@@ -1138,5 +1258,37 @@
   "this_tab_more_actions": {
     "message": "More actions",
     "description": "Label for a dropdown or menu containing additional actions"
+  },
+  "this_tab_tag_info_text": {
+    "message": "Showing AMOUNT Items Tagged: TAG_NAME",
+    "description": "Information text displaying the number of items with a specific tag"
+  },
+  "this_tab_clear_tag_filter": {
+    "message": "Clear Tag filter",
+    "description": "Button label to clear the selected tag filter"
+  },
+  "this_tab_update_available": {
+    "message": "A new version of the extension is available!",
+    "description": "Notification message when a new extension update is available"
+  },
+  "this_tab_update_button": {
+    "message": "Update",
+    "description": "Button label to update the extension"
+  },
+  "this_tab_update_button_title": {
+    "message": "Update the extension to the latest version",
+    "description": "Tooltip for the update button"
+  },
+  "this_tab_update_manual_required": {
+    "message": "Please update the extension manually from your browser's extension settings",
+    "description": "Error message when automatic update is not available"
+  },
+  "filters_button_title": {
+    "message": "Filter by Tag",
+    "description": "Tooltip text for the filter button that opens tag selection dropdown"
+  },
+  "filters_clear_choice": {
+    "message": "Clear filters",
+    "description": "Option text to clear the selected tag filter"
   }
 }

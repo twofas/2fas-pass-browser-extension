@@ -64,17 +64,34 @@ const sendPush = async (device, data = {}) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-  } catch {}
+  } catch (e) {
+    throw new TwoFasError(
+      TwoFasError.internalErrors.fetchSendPushResponseIsNotOk,
+      { event: e, additional: { func: 'sendPush - fetch' } }
+    );
+  }
 
   if (!response || !response.ok) {
     if (json?.firebaseErrorCode === 'UNREGISTERED') {
       return { error: 'UNREGISTERED' };
     } else {
-      throw new TwoFasError(TwoFasError.internalErrors.fetchSendPushResponseIsNotOk, { event: response, additional: { func: 'sendPush' } });
+      throw new TwoFasError(
+        TwoFasError.internalErrors.fetchSendPushResponseIsNotOk,
+        { event: response, additional: { func: 'sendPush - response' } }
+      );
     }
   }
 
-  const json = await response?.json();
+  let json;
+
+  try {
+    json = await response?.json();
+  } catch (e) {
+    throw new TwoFasError(
+      TwoFasError.internalErrors.fetchSendPushResponseJsonParse,
+      { event: e, additional: { func: 'sendPush - response.json' } }
+    );
+  }
 
   return json;
 };

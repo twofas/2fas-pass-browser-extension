@@ -26,8 +26,6 @@ import generateNonce from '@/partials/functions/generateNonce';
 * @return {Promise<Object>} Object containing returnUrl and returnToast or action for autofill.
 */
 const passwordRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
-  console.log(state);
-
   try {
     // Autofill from handleAutofill
     if (state?.from === 'autofill') {

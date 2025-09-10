@@ -6,6 +6,7 @@
 
 @use "variables" as v;
 @use "fonts";
+@use "input";
 
 * {
   box-sizing: border-box;
@@ -84,6 +85,28 @@ a {
 
 :-ms-input-placeholder { /* stylelint-disable-line */
   color: inherit;
+}
+
+::selection {
+  color: v.$primary-text-dark;
+
+  body.theme-light & {
+    background-color: v.$primary-color-light;
+  }
+
+  body.theme-dark & {
+    background-color: v.$primary-color-dark;
+  }
+
+  body.theme-unset & {
+    @media (prefers-color-scheme: light) {
+      background-color: v.$primary-color-light;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      background-color: v.$primary-color-dark;
+    }
+  }
 }
 
 picture {

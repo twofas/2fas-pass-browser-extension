@@ -7,15 +7,23 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { lazy } from 'react';
+import { lazy, useCallback } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
+import { Link } from 'react-router';
 import isT3orT2WithPassword from '@/partials/functions/isT3orT2WithPassword';
 import decryptPassword from '@/partials/functions/decryptPassword';
+import copyValue from '@/partials/functions/copyValue';
+import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
+import { useState, useEffect } from 'react';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
 const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
+const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
+const ExternalLinkIcon = lazy(() => import('@/assets/popup-window/new-tab.svg?react'));
+const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
 
 const passwordDescriptionVariants = {
   hidden: { maxHeight: '0px' },
@@ -27,15 +35,67 @@ const passwordMobileVariants = {
   visible: { maxHeight: '18px' }
 };
 
+const changePasswordVariants = {
+  hidden: { maxHeight: '0px', opacity: 0 },
+  visible: { maxHeight: '16px', opacity: 1 }
+};
+
  /**
 * Function to render the password input field.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
 function Password (props) {
-  const { data, actions } = props;
+  const { data, actions, generatorData } = props;
   const { service, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError, form } = data;
   const { setPasswordEditable, setPasswordVisible, setPasswordMobile, setPasswordDecryptError} = actions;
+  const [changePasswordUrl, setChangePasswordUrl] = useState(null);
+  const [checkingUrl, setCheckingUrl] = useState(false);
+
+  useEffect(() => {
+    const checkChangePasswordSupport = async () => {
+      if (!service?.uris || service.uris.length === 0) {
+        setChangePasswordUrl(null);
+        return;
+      }
+      
+      setCheckingUrl(true);
+      try {
+        const url = await findPasswordChangeUrl(service.uris);
+        setChangePasswordUrl(url);
+      } catch (e) {
+        setChangePasswordUrl(null);
+        CatchError(e);
+      } finally {
+        setCheckingUrl(false);
+      }
+    };
+    
+    checkChangePasswordSupport();
+  }, [service?.uris]);
+
+  const handleCopyPassword = useCallback(async () => {
+    try {
+      let passwordToCopy;
+      
+      const currentPassword = form.getFieldState('password').value;
+      
+      if (currentPassword && currentPassword !== '******') {
+        passwordToCopy = currentPassword;
+      } else if (service?.passwordEncrypted && service?.passwordEncrypted?.length > 0) {
+        const tempService = { ...service, password: service.passwordEncrypted };
+        passwordToCopy = await decryptPassword(tempService);
+      } else {
+        passwordToCopy = '';
+      }
+      
+      await copyValue(passwordToCopy, service.id, 'password');
+      showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
+    } catch (e) {
+      showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
+      await CatchError(e);
+    }
+  }, [service, form]);
 
   const generateSecurityTypeOverlay = service => {
     if (isT3orT2WithPassword(service)) {
@@ -162,12 +222,21 @@ function Password (props) {
 
     setPasswordVisible(!passwordVisible);
   };
+  
+  const handleChangePasswordClick = async e => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!changePasswordUrl) return;
+    
+    await browser.tabs.create({ url: changePasswordUrl });
+  };
 
   return (
     <LazyMotion features={loadDomAnimation}>
       <Field name="password">
         {({ input }) => (
-          <div className={`${pI.passInput} ${passwordEditable ? '' : pI.disabled}`}>
+          <div className={`${pI.passInput} ${!passwordEditable || passwordMobile ? pI.disabled : ''}`}>
             <div className={pI.passInputTop}>
               <label htmlFor="password">{browser.i18n.getMessage('password')}</label>
               <button
@@ -180,25 +249,57 @@ function Password (props) {
             </div>
             {generateSecurityTypeDescription(service)}
             <div className={pI.passInputBottom}>
-              <input
-                type={passwordVisible ? 'text' : 'password'}
+              <PasswordInput
                 {...input}
+                type={passwordVisible ? 'text' : 'password'}
+                placeholder={!passwordMobile && !passwordDecryptError && isT3orT2WithPassword(service) || passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
                 id="password"
+                showPassword={passwordVisible}
+                isDecrypted={service.password !== '******'}
                 className={!passwordEditable && !isT3orT2WithPassword(service) ? pI.hiddenValue : ''}
-                disabled={!passwordEditable || passwordMobile ? 'disabled' : ''}
+                disabled={!passwordEditable || passwordMobile}
                 dir="ltr"
                 spellCheck="false"
                 autoCorrect="off"
                 autoComplete="off"
                 autoCapitalize="off"
               />
-              <button
-                type="button"
-                onClick={handlePasswordVisibleClick}
-                className={`${service.securityType < SECURITY_TIER.SECRET ? (passwordEditable ? '' : pI.hidden) : ''}`}
-              >
-                <VisibleIcon />
-              </button>
+              <div className={pI.passInputBottomButtons}>
+                <Link
+                  to='/password-generator'
+                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${!passwordEditable || passwordMobile ? pI.hiddenButton : ''}`}
+                  title={browser.i18n.getMessage('details_generate_password')}
+                  state={{
+                    from: 'details',
+                    data: {
+                      formValues: { ...form.getState().values, securityType: form.getFieldState('securityType')?.value?.value || service.securityType },
+                      generatorData: { ...generatorData, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError },
+                      service
+                    }
+                  }}
+                  prefetch='intent'
+                >
+                  <RefreshIcon />
+                </Link>
+                <button
+                  type="button"
+                  onClick={handlePasswordVisibleClick}
+                  className={`${pI.iconButton} ${pI.visibleButton} ${isT3orT2WithPassword(service) || passwordEditable ? '' : pI.hidden}`}
+                  title={browser.i18n.getMessage('details_toggle_password_visibility')}
+                >
+                  <VisibleIcon />
+                </button>
+                {(service.securityType === SECURITY_TIER.SECRET || (service.passwordEncrypted && service.passwordEncrypted.length > 0)) && (
+                  <button
+                    type='button'
+                    className={`${bS.btn} ${pI.iconButton}`}
+                    onClick={handleCopyPassword}
+                    title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                  >
+                    <CopyIcon />
+                  </button>
+                )}
+              </div>
 
               {generateSecurityTypeOverlay(service)}
               {generateErrorOverlay()}
@@ -223,6 +324,25 @@ function Password (props) {
                 </label>
               </div>
             </m.div>
+            {!checkingUrl && changePasswordUrl && (
+              <m.div
+                className={pI.passInputLink}
+                variants={changePasswordVariants}
+                initial="hidden"
+                transition={{ duration: .3 }}
+                animate={changePasswordUrl ? 'visible' : 'hidden'}
+              >
+                <button
+                  type="button"
+                  onClick={handleChangePasswordClick}
+                  className={`${bS.btn} ${bS.btnClear} ${pI.passInputLinkButton}`}
+                  title={browser.i18n.getMessage('details_change_password_in_service_title')}
+                >
+                  <span>{browser.i18n.getMessage('details_change_password_in_service')}</span>
+                  <ExternalLinkIcon />
+                </button>
+              </m.div>
+            )}
           </div>
         )}
       </Field>

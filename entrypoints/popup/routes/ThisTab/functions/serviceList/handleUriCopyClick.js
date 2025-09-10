@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import copyValue from './copyValue';
+import copyValue from '@/partials/functions/copyValue';
 
 /** 
 * Function to handle the URI copy action.

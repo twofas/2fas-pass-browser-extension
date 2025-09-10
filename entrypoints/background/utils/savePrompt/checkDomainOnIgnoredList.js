@@ -18,6 +18,8 @@ const checkDomainOnIgnoredList = async detailsUrl => {
     await storage.setItem('local:savePromptIgnoreDomains', storageIgnoreList);
   }
 
+  const ignoredDomainsSet = new Set(storageIgnoreList);
+
   if (detailsUrl) {
     let url;
 
@@ -30,7 +32,7 @@ const checkDomainOnIgnoredList = async detailsUrl => {
       });
     }
 
-    if (storageIgnoreList && Array.isArray(storageIgnoreList) && storageIgnoreList.includes(url.hostname)) {
+    if (ignoredDomainsSet.has(url.hostname)) {
       return true;
     } else {
       return false;

@@ -42,6 +42,18 @@ describe('URIMatcher', () => {
       assert.equal(URIMatcher.prependProtocol('https://www.domain.com'), 'https://www.domain.com');
       assert.equal(URIMatcher.prependProtocol('http://domain.com'), 'http://domain.com');
       assert.equal(URIMatcher.prependProtocol('127.0.0.1'), 'https://127.0.0.1');
+      
+      // Test edge cases - removes all leading non-alphanumeric characters
+      assert.equal(URIMatcher.prependProtocol('://google.com'), 'https://google.com');
+      assert.equal(URIMatcher.prependProtocol('//google.com'), 'https://google.com');
+      assert.equal(URIMatcher.prependProtocol('/google.com'), 'https://google.com');
+      assert.equal(URIMatcher.prependProtocol('://www.example.com/path'), 'https://www.example.com/path');
+      assert.equal(URIMatcher.prependProtocol('//www.example.com/path'), 'https://www.example.com/path');
+      assert.equal(URIMatcher.prependProtocol('/www.example.com/path'), 'https://www.example.com/path');
+      assert.equal(URIMatcher.prependProtocol('123.456.789.0'), 'https://123.456.789.0');
+      assert.equal(URIMatcher.prependProtocol('...google.com'), 'https://google.com');
+      assert.equal(URIMatcher.prependProtocol('!@#$%^&*()google.com'), 'https://google.com');
+      assert.equal(URIMatcher.prependProtocol('2fas.com'), 'https://2fas.com');
     });
   });
 

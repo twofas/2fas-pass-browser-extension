@@ -4,10 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const userNameAttributes = [
+const userNameAttributes = Object.freeze([
   'label',
   'placeholder',
   'aria-label'
-];
+]);
 
 export default userNameAttributes;

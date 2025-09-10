@@ -89,7 +89,11 @@ function SavePasswordPrompt () {
       </form>
 
       {sP === 'default' || sP === 'default_encrypted' ? (
-        <Link to='/settings-save-login-excluded-domains' className={S.settingsSavePasswordPromptExcludedDomainsLink}>
+        <Link
+          to='/settings-save-login-excluded-domains'
+          className={S.settingsSavePasswordPromptExcludedDomainsLink}
+          prefetch='intent'
+        >
           <span>{browser.i18n.getMessage('settings_excluded_domains')}</span>
           <MenuArrowIcon />
         </Link>

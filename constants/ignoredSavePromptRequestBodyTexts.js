@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const ignoredSavePromptRequestBodyTexts = [
+const ignoredSavePromptRequestBodyTexts = Object.freeze([
   'visitorId',
   'customerId',
   'publisher',
@@ -17,6 +17,6 @@ const ignoredSavePromptRequestBodyTexts = [
   'userAgent',
   'unloadEventStart',
   'domComplete'
-];
+]);
 
 export default ignoredSavePromptRequestBodyTexts;
