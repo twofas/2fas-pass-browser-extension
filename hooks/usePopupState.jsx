@@ -24,9 +24,8 @@ const ignoredRoutes = [
 * @return {JSX.Element} The context provider.
 */
 export const PopupStateProvider = ({ children }) => {
-  const { pathname, state } = useLocation();
+  const { pathname } = useLocation();
   const [popupState, setPopupState] = useState({});
-  const [scrollElement, setScrollElement] = useState(null);
   const previousTabRef = useRef(null);
   const scrollElementRef = useRef(null);
   const debounceTimerRef = useRef(null);
@@ -98,29 +97,16 @@ export const PopupStateProvider = ({ children }) => {
   }, [pathname, getTab]);
 
   useEffect(() => {
-    if (!scrollElement) {
-      return;
-    }
-
-    scrollElement.addEventListener('scroll', onScroll, { passive: true });
-
     return () => {
-      scrollElement.removeEventListener('scroll', onScroll);
-
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [scrollElement, onScroll]);
+  }, []);
 
   useEffect(() => {
-    if (scrollElementRef.current && scrollElementRef.current !== scrollElement) {
-      setScrollElement(scrollElementRef.current);
-    }
-  });
-
-  useEffect(() => {
-    if (!previousTabRef.current || !popupState || Object.keys(popupState).length === 0) {
+    const hasPopupState = popupState && Object.keys(popupState).length > 0;
+    if (!previousTabRef.current || !hasPopupState) {
       return;
     }
 
@@ -135,11 +121,7 @@ export const PopupStateProvider = ({ children }) => {
         return;
       }
       
-      let sessionPopupState = await storage.getItem('session:popupState');
-      
-      if (!sessionPopupState || typeof sessionPopupState !== 'object') {
-        sessionPopupState = {};
-      }
+      const sessionPopupState = await storage.getItem('session:popupState') || {};
       
       if (JSON.stringify(sessionPopupState[tabId]) !== JSON.stringify(popupState)) {
         sessionPopupState[tabId] = popupState;
@@ -154,12 +136,28 @@ export const PopupStateProvider = ({ children }) => {
     };
   }, [popupState]);
 
+  const setScrollElementRef = useCallback((element) => {
+    const prevElement = scrollElementRef.current;
+    
+    if (prevElement && prevElement._scrollHandler) {
+      prevElement.removeEventListener('scroll', prevElement._scrollHandler);
+      delete prevElement._scrollHandler;
+    }
+    
+    scrollElementRef.current = element;
+    
+    if (element && element !== prevElement) {
+      element._scrollHandler = onScroll;
+      element.addEventListener('scroll', onScroll, { passive: true });
+    }
+  }, [onScroll]);
+
   const value = useMemo(
     () => ({
-      scrollElementRef,
-      setScrollElement
+      setScrollElementRef,
+      scrollElementRef
     }),
-    [setScrollElement]
+    [setScrollElementRef]
   );
 
   return <PopupStateContext.Provider value={value}>{children}</PopupStateContext.Provider>;

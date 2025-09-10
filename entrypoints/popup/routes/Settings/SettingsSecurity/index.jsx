@@ -5,8 +5,9 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { lazy } from 'react';
+import { lazy, useState } from 'react';
 import { usePopupState } from '@/hooks/usePopupState';
+import { getPopupState } from '../../utils/getPopupState';
 
 const AutoClearClipboard = lazy(() => import('./components/AutoClearClipboard'));
 const IdleLock = lazy(() => import('./components/IdleLock'));
@@ -20,14 +21,26 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSecurity (props) {
-  const { scrollElementRef, setScrollElement } = usePopupState();
+  const { setScrollElementRef, scrollElementRef } = usePopupState();
+  const [popupStateData, setPopupStateData] = useState(null);
+
+  useEffect(() => {
+    getPopupState().then(popupState => {
+      if (popupState) {
+        setPopupStateData(popupState);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
+    }
+  }, [popupStateData, scrollElementRef]);
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => {
-        scrollElementRef.current = el;
-        setScrollElement(el);
-      }}>
+      <div ref={el => { setScrollElementRef(el); }}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />

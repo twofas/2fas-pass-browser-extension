@@ -78,7 +78,7 @@ function ThisTab (props) {
   const thisTabTopRef = useRef(null);
 
   const { changeMatchingLoginsLength } = useMatchingLogins();
-  const { scrollElementRef, setScrollElement } = usePopupState();
+  const { setScrollElementRef, scrollElementRef } = usePopupState();
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
@@ -244,11 +244,11 @@ function ThisTab (props) {
     return browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', amount);
   }, [selectedTag, logins?.length]);
 
-  const autofillPopupClass = useMemo(() => `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`, [autofillFailed]);
-  const matchingLoginsListClass = useMemo(() => `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`, [hasMatchingLogins, loading]);
-  const allLoginsClass = useMemo(() => `${S.thisTabAllLogins} ${!hasLogins && !loading ? S.hidden : ''}`, [hasLogins, loading]);
-  const searchClass = useMemo(() => `${S.thisTabAllLoginsSearch} ${searchActive ? S.active : ''}`, [searchActive]);
-  const clearButtonClass = useMemo(() => `${S.thisTabAllLoginsSearchClear} ${searchValue?.length <= 0 ? S.hidden : ''}`, [searchValue?.length]);
+  const autofillPopupClass = `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`;
+  const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
+  const allLoginsClass = `${S.thisTabAllLogins} ${!hasLogins && !loading ? S.hidden : ''}`;
+  const searchClass = `${S.thisTabAllLoginsSearch} ${searchActive ? S.active : ''}`;
+  const clearButtonClass = `${S.thisTabAllLoginsSearchClear} ${searchValue?.length <= 0 ? S.hidden : ''}`;
 
   const memoizedMatchingLoginsList = useMemo(() => generateMatchingLoginsList(matchingLogins, loading), [matchingLogins, loading]);
   const memoizedAllLoginsList = useMemo(() => generateAllLoginsList(logins, sort, searchValue, loading, tags, selectedTag), [logins, sort, searchValue, loading, tags, selectedTag]);
@@ -327,8 +327,7 @@ function ThisTab (props) {
       <div className={`${props.className ? props.className : ''}`}>
         <div ref={el => {
           scrollableRef.current = el;
-          scrollElementRef.current = el;
-          setScrollElement(el);
+          setScrollElementRef(el);
         }}>
           <section className={S.thisTab}>
             <div className={autofillPopupClass}>

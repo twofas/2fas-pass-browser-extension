@@ -7,8 +7,9 @@
 import S from '../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useNavigate } from 'react-router';
-import { lazy } from 'react';
+import { lazy, useState } from 'react';
 import { usePopupState } from '@/hooks/usePopupState';
+import { getPopupState } from '../../utils/getPopupState';
 
 const WarningIconLight = lazy(() => import('@/assets/popup-window/warning-light.svg?react'));
 const WarningIconDark = lazy(() => import('@/assets/popup-window/warning-dark.svg?react'));
@@ -42,14 +43,26 @@ const resetExtension = async () => {
 */
 function SettingsReset (props) {
   const navigate = useNavigate();
-  const { scrollElementRef, setScrollElement } = usePopupState();
+  const { setScrollElementRef, scrollElementRef } = usePopupState();
+  const [popupStateData, setPopupStateData] = useState(null);
+
+  useEffect(() => {
+    getPopupState().then(popupState => {
+      if (popupState) {
+        setPopupStateData(popupState);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
+    }
+  }, [popupStateData, scrollElementRef]);
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => {
-        scrollElementRef.current = el;
-        setScrollElement(el);
-      }}>
+      <div ref={el => { setScrollElementRef(el); }}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />
