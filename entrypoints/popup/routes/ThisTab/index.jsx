@@ -61,6 +61,8 @@ function ThisTab (props) {
   const [sortDisabled, setSortDisabled] = useState(true);
   const [storageVersion, setStorageVersion] = useState(null);
   const [autofillFailed, setAutofillFailed] = useState(false);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [popupStateData, setPopupStateData] = useState(null);
 
   // Search
   const [searchActive, setSearchActive] = useState(false);
@@ -68,7 +70,6 @@ function ThisTab (props) {
   const [selectedTag, setSelectedTag] = useState(null);
   const [lastSelectedTagInfo, setLastSelectedTagInfo] = useState(null);
   const [forceCloseFilters, setForceCloseFilters] = useState(false);
-  const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const boxAnimationRef = useRef(null);
   const boxAnimationDarkRef = useRef(null);
@@ -307,11 +308,19 @@ function ThisTab (props) {
     }
   }, [state]);
 
-  useState(() => {
+  useEffect(() => {
     getPopupState().then(popupState => {
-      console.log('Restored popup state:', popupState);
+      if (popupState) {
+        setPopupStateData(popupState);
+      }
     });
   }, []);
+
+  useEffect(() => {
+    if (!loading && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
+    }
+  }, [loading, popupStateData, scrollElementRef]);
 
   return (
     <LazyMotion features={loadDomAnimation}>
