@@ -6,6 +6,7 @@
 
 import S from '../Settings.module.scss';
 import { lazy } from 'react';
+import { usePopupState } from '@/hooks/usePopupState';
 
 const AutoClearClipboard = lazy(() => import('./components/AutoClearClipboard'));
 const IdleLock = lazy(() => import('./components/IdleLock'));
@@ -19,9 +20,14 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSecurity (props) {
+  const { scrollElementRef, setScrollElement } = usePopupState();
+
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={el => {
+        scrollElementRef.current = el;
+        setScrollElement(el);
+      }}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />
