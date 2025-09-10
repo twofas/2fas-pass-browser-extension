@@ -11,6 +11,7 @@ import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
 import { usePopupState } from '@/hooks/usePopupState';
+import { getPopupState } from '../../utils/getPopupState';
 
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -26,8 +27,9 @@ function SettingsSaveLoginExcludedDomains (props) {
   const [loading, setLoading] = useState(true);
   const [excludedDomains, setExcludedDomains] = useState([]);
   const [newDomainForm, setNewDomainForm] = useState(false);
+    const [popupStateData, setPopupStateData] = useState(null);
 
-  const { scrollElementRef, setScrollElement } = usePopupState();
+  const { setScrollElementRef, scrollElementRef } = usePopupState();
 
   useEffect(() => {
     const getExcludedDomains = async () => {
@@ -48,6 +50,20 @@ function SettingsSaveLoginExcludedDomains (props) {
       CatchError(e);
     }
   }, []);
+
+  useEffect(() => {
+    getPopupState().then(popupState => {
+      if (popupState) {
+        setPopupStateData(popupState);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!loading && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
+    }
+  }, [loading, popupStateData, scrollElementRef]);
 
   const removeExcludedDomain = async domain => {
     const updatedDomains = excludedDomains.filter((d) => d !== domain);
@@ -132,10 +148,7 @@ function SettingsSaveLoginExcludedDomains (props) {
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => {
-        scrollElementRef.current = el;
-        setScrollElement(el);
-      }}>
+      <div ref={el => { setScrollElementRef(el); }}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />

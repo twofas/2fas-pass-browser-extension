@@ -17,6 +17,7 @@ import valueToNFKD from '@/partials/functions/valueToNFKD';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
 import URIMatcher from '@/partials/URIMatcher';
 import { usePopupState } from '@/hooks/usePopupState';
+import { getPopupState } from '../../utils/getPopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const Name = lazy(() => import('./components/Name'));
@@ -56,9 +57,10 @@ function Details (props) {
   const [tagsEditable, setTagsEditable] = useState(location?.state?.data?.generatorData?.tagsEditable !== undefined ? location.state.data.generatorData.tagsEditable : false);
   const [inputError, setInputError] = useState(undefined);
   const [storageVersion, setStorageVersion] = useState(null);
+  const [popupStateData, setPopupStateData] = useState(null);
 
   const unwatchStorageVersion = useRef(null);
-  const { scrollElementRef, setScrollElement } = usePopupState();
+  const { setScrollElementRef, scrollElementRef } = usePopupState();
 
   const handleRemoveUri = useCallback((index, form) => {
     const currentUris = form.getState().values.uris;
@@ -133,6 +135,20 @@ function Details (props) {
       }
     };
   }, [storageVersion]);
+
+  useEffect(() => {
+    getPopupState().then(popupState => {
+      if (popupState) {
+        setPopupStateData(popupState);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!loading && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
+    }
+  }, [loading, popupStateData, scrollElementRef]);
 
   const validate = values => {
     const errors = {};
@@ -233,10 +249,7 @@ function Details (props) {
   return (
     <LazyMotion features={loadDomAnimation}>
       <div className={`${props.className ? props.className : ''}`}>
-        <div ref={el => {
-          scrollElementRef.current = el;
-          setScrollElement(el);
-        }}>
+        <div ref={el => { setScrollElementRef(el); }}>
           <section className={S.details}>
             <div className={S.detailsContainer}>
               <NavigationButton type='cancel' />

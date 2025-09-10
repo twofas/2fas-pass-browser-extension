@@ -19,6 +19,7 @@ import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
 import copyValue from '@/partials/functions/copyValue';
 import { usePopupState } from '@/hooks/usePopupState';
+import { getPopupState } from '../../utils/getPopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -52,8 +53,9 @@ function AddNew (props) {
   const [onMobile, setOnMobile] = useState(location?.state?.data?.onMobile !== undefined ? location.state.data.onMobile : true);
   const [additionalOverflow, setAdditionalOverflow] = useState(location?.state?.data?.additionalOverflow !== undefined ? filterXSS(location.state.data.additionalOverflow) : true);
   const [passwordVisible, setPasswordVisible] = useState(location?.state?.data?.passwordVisible !== undefined ? location.state.data.passwordVisible : false);
+  const [popupStateData, setPopupStateData] = useState(null);
 
-  const { scrollElementRef, setScrollElement } = usePopupState();
+  const { setScrollElementRef, scrollElementRef } = usePopupState();
 
   useEffect(() => {
     const messageListener = async (request, sender, sendResponse) => await onMessage(request, sender, sendResponse, setUrl);
@@ -93,6 +95,20 @@ function AddNew (props) {
       browser.runtime.onMessage.removeListener(messageListener);
     };
   }, []);
+
+  useEffect(() => {
+    getPopupState().then(popupState => {
+      if (popupState) {
+        setPopupStateData(popupState);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!loading && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
+    }
+  }, [loading, popupStateData, scrollElementRef]);
 
   const handlePasswordVisibleClick = () => {
     setPasswordVisible(!passwordVisible);
@@ -163,10 +179,7 @@ function AddNew (props) {
   return (
     <LazyMotion features={loadDomAnimation}>
       <div className={`${props.className ? props.className : ''}`}>
-        <div ref={el => {
-          scrollElementRef.current = el;
-          setScrollElement(el);
-        }}>
+        <div ref={el => { setScrollElementRef(el); }}>
           <section className={S.addNew}>
             <div className={S.addNewContainer}>
               <NavigationButton type='cancel' />

@@ -10,6 +10,7 @@ import { useState, useEffect, lazy } from 'react';
 import getRatingLink from './functions/getRatingLink';
 import getRatingText from './functions/getRatingText';
 import { usePopupState } from '@/hooks/usePopupState';
+import { getPopupState } from '../../utils/getPopupState';
 
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
@@ -22,10 +23,11 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 */
 function Settings (props) {
   const [version, setVersion] = useState('');
+  const [popupStateData, setPopupStateData] = useState(null);
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
 
-  const { scrollElementRef, setScrollElement } = usePopupState();
+  const { setScrollElementRef, scrollElementRef } = usePopupState();
 
   useEffect(() => {
     try {
@@ -36,12 +38,23 @@ function Settings (props) {
     }
   }, []);
 
+  useEffect(() => {
+    getPopupState().then(popupState => {
+      if (popupState) {
+        setPopupStateData(popupState);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
+    }
+  }, [popupStateData, scrollElementRef]);
+
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => {
-        scrollElementRef.current = el;
-        setScrollElement(el);
-      }}>
+      <div ref={el => { setScrollElementRef(el); }}>
         <section className={S.settings}>
           <NavigationButton type='cancel' />
 
