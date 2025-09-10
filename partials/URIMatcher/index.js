@@ -16,14 +16,14 @@ import { URL_REGEX, IP_REGEX } from '@/constants/regex';
 class URIMatcher {
   static URL_REGEX = URL_REGEX;
   static IP_REGEX = IP_REGEX;
-  static TRACKERS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'dclid', 'fbclid', 'msclkid', 'twclid', 'lmsid', 'mc_eid', 'mc_cid'];
+  static TRACKERS = new Set(['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'dclid', 'fbclid', 'msclkid', 'twclid', 'lmsid', 'mc_eid', 'mc_cid']);
 
   static ADDITIONAL_PROTOCOLS = {
-    chrome: ['about:', 'chrome-extension:', 'chrome:'],
-    firefox: ['about:', 'moz-extension:'],
-    opera: ['about:', 'chrome-extension:', 'chrome:', 'opera:'],
-    edge: ['about:', 'chrome-extension:', 'chrome:', 'edge:'],
-    safari: ['about:', 'safari-extension:']
+    chrome: new Set(['about:', 'chrome-extension:', 'chrome:']),
+    firefox: new Set(['about:', 'moz-extension:']),
+    opera: new Set(['about:', 'chrome-extension:', 'chrome:', 'opera:']),
+    edge: new Set(['about:', 'chrome-extension:', 'chrome:', 'edge:']),
+    safari: new Set(['about:', 'safari-extension:'])
   };
 
   static PROTOCOL_REGEX = {
@@ -34,7 +34,7 @@ class URIMatcher {
     safari: /^(about|safari-extension)?:/i
   };
 
-  static BAD_PARSE_DOMAIN_TYPES = [ParseResultType.Invalid, ParseResultType.Reserved, ParseResultType.NotListed];
+  static BAD_PARSE_DOMAIN_TYPES = new Set([ParseResultType.Invalid, ParseResultType.Reserved, ParseResultType.NotListed]);
 
   static M_DOMAIN_TYPE = 0;
   static M_HOST_TYPE = 1;
@@ -73,7 +73,13 @@ class URIMatcher {
       return url;
     }
 
-    return this.PROTOCOL_REGEX[import.meta.env.BROWSER || 'chrome'].test(url) ? url : 'https://' + url;
+    const cleanedUrl = url.replace(/^[^a-zA-Z0-9]+/, '');
+
+    if (this.PROTOCOL_REGEX[import.meta.env.BROWSER || 'chrome'].test(cleanedUrl)) {
+      return cleanedUrl;
+    }
+
+    return 'https://' + cleanedUrl;
   }
 
   static isUrl (url, internalProtocols = false) {
@@ -192,7 +198,7 @@ class URIMatcher {
     const cleanedParams = {};
 
     searchParams.forEach((value, key) => {
-      if (!this.TRACKERS.includes(key)) {
+      if (!this.TRACKERS.has(key)) {
         cleanedParams[key] = value;
       }
     });
@@ -254,7 +260,13 @@ class URIMatcher {
     }
 
     const prepended = this.prependProtocol(trimmed);
-    const normalizedIDN = this.normalizeIDN(prepended, internalProtocols);
+    let normalizedIDN;
+    
+    try {
+      normalizedIDN = this.normalizeIDN(prepended, internalProtocols);
+    } catch {
+      throw new Error('Parameter is not a valid URL');
+    }
 
     const lowerCaseURLWithoutPort = this.getLowerCaseURLWithoutPort(normalizedIDN);
     const urlWithoutTrailingChars = this.removeTrailingChars(lowerCaseURLWithoutPort);
@@ -290,10 +302,10 @@ class URIMatcher {
       return serviceUrlParsed.hostname === browserUrlParsed.hostname;
     }
 
-    if (this.BAD_PARSE_DOMAIN_TYPES.includes(serviceUrlParsed?.type) || this.BAD_PARSE_DOMAIN_TYPES.includes(browserUrlParsed?.type)) {
+    if (this.BAD_PARSE_DOMAIN_TYPES.has(serviceUrlParsed?.type) || this.BAD_PARSE_DOMAIN_TYPES.has(browserUrlParsed?.type)) {
       if (
-        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].includes(serviceUrlObj?.protocol) ||
-        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].includes(browserUrlObj?.protocol)
+        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].has(serviceUrlObj?.protocol) ||
+        !this.ADDITIONAL_PROTOCOLS[import.meta.env.BROWSER || 'chrome'].has(browserUrlObj?.protocol)
       ) {
         return false;
       } else {
@@ -351,7 +363,7 @@ class URIMatcher {
     if (services.length <= 0) {
       return [];
     }
-    
+
     const domainCredentials = [];
 
     try {
@@ -360,7 +372,13 @@ class URIMatcher {
           return;
         }
 
-        const serviceUrls = this.recognizeURIs(account.uris, true)?.urls;
+        let serviceUrls;
+
+        try {
+          serviceUrls = this.recognizeURIs(account.uris, true)?.urls;
+        } catch {
+          return;
+        }
 
         if (!serviceUrls || serviceUrls.length <= 0) {
           return;
@@ -378,6 +396,7 @@ class URIMatcher {
           }
 
           const matcherFunction = this.MATCHER_FUNCTIONS[matcher];
+          
           if (matcherFunction && matcherFunction(text, tabUrl, true)) {
             domainCredentials.push(account);
           }
@@ -396,7 +415,9 @@ class URIMatcher {
       }
     });
 
-    return Array.from(map.values());
+    const result = Array.from(map.values());
+    map.clear();
+    return result;
   }
 
   static recognizeURIs (uris, internalProtocols = false) {
@@ -405,12 +426,13 @@ class URIMatcher {
     }
 
     const response = { urls: [], others: [] };
-    const seenUrls = new Set();
-    const seenOthers = new Set();
 
     if (uris.length <= 0) {
       return response;
     }
+
+    const seenUrls = new Set();
+    const seenOthers = new Set();
 
     try {
       uris.forEach(uri => {
@@ -437,6 +459,9 @@ class URIMatcher {
       if (e !== this.BreakException) {
         throw e;
       }
+    } finally {
+      seenUrls.clear();
+      seenOthers.clear();
     }
 
     return response;

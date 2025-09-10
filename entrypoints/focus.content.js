@@ -30,7 +30,7 @@ export default defineContentScript({
         return;
       }
 
-      return focusOnMessage(request, sender, sendResponse);
+      return focusOnMessage(request, sender, sendResponse, focusFuncAction);
     };
 
     browser.runtime.onMessage.addListener(focusOnMessageHandler);

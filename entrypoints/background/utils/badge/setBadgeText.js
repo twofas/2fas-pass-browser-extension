@@ -62,9 +62,9 @@ const setBadgeText = async (configured, services, url, tabId) => {
     const text = matchingLogins.length > 9 ? '9+' : matchingLogins.length.toString();
 
     await Promise.all([
-      browser.action.setBadgeTextColor({ color: [255, 255, 255, 255] }).catch(() => false),
-      browser.action.setBadgeBackgroundColor({ color: [13, 47, 170, 255] }).catch(() => false),
-      tabId ? browser.action.setBadgeText({ text, tabId }).catch(() => false) : browser.action.setBadgeText({ text }).catch(() => false)
+      browser?.action?.setBadgeTextColor && typeof browser.action.setBadgeTextColor === 'function' ? browser.action.setBadgeTextColor({ color: [255, 255, 255, 255] }) : () => {},
+      browser?.action?.setBadgeBackgroundColor && typeof browser.action.setBadgeBackgroundColor === 'function' ? browser.action.setBadgeBackgroundColor({ color: [13, 47, 170, 255] }) : () => {},
+      tabId ? browser?.action?.setBadgeText && typeof browser.action.setBadgeText === 'function' ? browser.action.setBadgeText({ text, tabId }) : () => {} : browser?.action?.setBadgeText && typeof browser.action.setBadgeText === 'function' ? browser.action.setBadgeText({ text }) : () => {}
     ]);
   }
 };

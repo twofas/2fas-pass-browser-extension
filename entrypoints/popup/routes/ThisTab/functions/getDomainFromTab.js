@@ -40,7 +40,7 @@ const getDomainFromTab = async () => {
     };
   }
 
-  if (!correctProtocols.includes(url.protocol)) {
+  if (!correctProtocols.has(url.protocol)) {
     return {
       domain: browser.i18n.getMessage('browser_internal_page'),
       url: url.href

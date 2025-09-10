@@ -13,8 +13,8 @@ import * as m from 'motion/react-m';
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const notesVariants = {
-  hidden: { height: '0' },
-  visible: { height: '121px', maxHeight: '600px' }
+  hidden: { height: 'auto', minHeight: '20px', maxHeight: '600px' },
+  visible: { height: '121px', minHeight: '121px', maxHeight: '600px' }
 };
 
  /**
@@ -24,40 +24,23 @@ const notesVariants = {
 */
 function Notes (props) {
   const { data, actions } = props;
-  const { service, notesEditable, notesVisible, form } = data;
-  const { setNotesEditable, setNotesVisible } = actions;
+  const { service, notesEditable, form } = data;
+  const { setNotesEditable } = actions;
 
   const handleNotesEditable = form => {
     setNotesEditable(!notesEditable);
 
     if (notesEditable) {
       form.change('notes', service.notes);
-    } else {
-      setNotesVisible(true);
     }
   };
 
   return (
     <Field name="notes">
       {({ input }) => (
-        <div className={`${pI.passInput} ${pI.resizable} ${notesEditable ? '' : pI.disabled}`}>
+        <div className={`${pI.passInput} ${notesEditable ? pI.resizable : pI.disabled}`}>
           <div className={pI.passInputTop}>
             <div className={pI.passInputTopLabelLike}>
-              <div className={`${bS.passToggle} ${bS.loaded} ${bS.disabledSameColor}`}>
-                <input
-                  type="checkbox"
-                  name="notes"
-                  id="notes-checkbox"
-                  onChange={() => setNotesVisible(!notesVisible)}
-                  checked={notesVisible}
-                  disabled={notesEditable ? 'disabled': ''}
-                />
-                <label htmlFor="notes-checkbox">
-                  <span className={bS.passToggleBox}>
-                    <span className={bS.passToggleBoxCircle}></span>
-                  </span>
-                </label>
-              </div>
               <span>{browser.i18n.getMessage('notes')}</span>
             </div>
             <button
@@ -68,17 +51,18 @@ function Notes (props) {
               {notesEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
           </div>
-          <div className={`${pI.passInputBottomMotion} ${!notesVisible ? pI.hidden : ''}`}>
+          <div className={pI.passInputBottomMotion}>
             <LazyMotion features={loadDomAnimation}>
               <m.div
-                className={pI.passInputBottom}
+                className={`${pI.passInputBottom} ${pI.note} ${notesEditable ? pI.noteEditable : ''}`}
                 variants={notesVariants}
                 initial="hidden"
                 transition={{ duration: 0.3 }}
-                animate={notesVisible ? 'visible' : 'hidden'}
+                animate={input.value.length > 0 || notesEditable ? 'visible' : 'hidden'}
               >
                 <textarea
                   {...input}
+                  placeholder='Notes are empty'
                   id="notes"
                   disabled={!notesEditable ? 'disabled' : ''}
                   dir="ltr"

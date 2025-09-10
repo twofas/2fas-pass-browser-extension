@@ -46,8 +46,8 @@
 
   &.resizable {
     .pass-input-bottom {
-      resize: vertical;
       overflow: auto;
+      resize: vertical;
     }
   }
 
@@ -120,8 +120,8 @@
     display: flex;
     flex-direction: row;
     gap: 0 6px;
-    justify-content: space-between;
-    padding: 8.5px 12px;
+    justify-content: stretch;
+    padding: 9px 12px;
     position: relative;
     transition: border-color .3s ease-in-out, background-color .3s ease-in-out;
 
@@ -140,6 +140,16 @@
 
       > div {
         width: 100%;
+      }
+    }
+
+    &.note {
+      align-items: stretch;
+    }
+
+    &.note-editable {
+      textarea {
+        height: 100% !important;
       }
     }
 
@@ -179,6 +189,7 @@
         stroke-linecap: round;
         stroke-linejoin: round;
         width: auto;
+        transition: stroke .3s ease-in-out;
   
         @include m.darkMode {
           stroke: v.$object-dark;
@@ -189,12 +200,138 @@
     &-buttons {
       align-items: center;
       display: flex;
-      gap: 0 6px;
+      flex-grow: 0;
+      flex-shrink: 0;
       height: 100%;
 
+      a,
       button {
+        align-items: center;
+        display: inline-flex;
+        margin-right: 12px;
+        padding: 0;
+
+        &:last-child {
+          margin-right: 0;
+        }
+
         &.icon-button {
           font-size: 0;
+          
+          svg {
+            fill: none;
+            height: auto;
+            stroke: v.$primary-color-light;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-width: 1.5;
+            transition: stroke .3s ease-in-out;
+            width: 16px;
+
+            @include m.darkMode {
+              stroke: v.$primary-color-dark;
+            }
+          }
+          
+          &:hover,
+          &:focus {
+            svg {
+              stroke: v.$focus-light;
+              
+              @include m.darkMode {
+                stroke: v.$focus-dark;
+              }
+            }
+          }
+          
+          &:active {
+            svg {
+              stroke: v.$pressed-light;
+              
+              @include m.darkMode {
+                stroke: v.$pressed-dark;
+              }
+            }
+          }
+
+          &.trash-button,
+          &.refresh-button {
+            max-width: 16px;
+            opacity: 1;
+            overflow: hidden;
+            transition: opacity .3s ease-in-out, max-width .3s ease-in-out, margin-left .3s ease-in-out, margin-right .3s ease-in-out;
+
+            &.hidden-button {
+              margin-right: 0;
+              max-width: 0;
+              opacity: 0;
+              pointer-events: none;
+            }
+          }
+
+          &.trash-button {
+            max-width: 16px;
+            opacity: 1;
+            overflow: hidden;
+            transition: opacity .3s ease-in-out, max-width .3s ease-in-out, margin-left .3s ease-in-out, margin-right .3s ease-in-out;
+
+            &:hover,
+            &:focus {
+              svg {
+                stroke: v.$error-toast-light !important;
+                
+                @include m.darkMode {
+                  stroke: v.$error-toast-dark !important;
+                }
+              }
+            }
+
+            &.hidden-button {
+              margin-left: -12px;
+            }
+
+            svg {
+              height: auto;
+              stroke: v.$error-light !important;
+              width: 16px;
+
+              @include m.darkMode {
+                stroke: v.$error-dark !important;
+              }
+            }
+          }
+
+          &.visible-button {
+            &:hover,
+            &:focus {
+              svg {
+                stroke: v.$focus-light !important;
+                 
+                @include m.darkMode {
+                  stroke: v.$focus-dark !important;
+                }
+              }
+            }
+            
+            &:active {
+              svg {
+                stroke: v.$pressed-light !important;
+                
+                @include m.darkMode {
+                  stroke: v.$pressed-dark !important;
+                }
+              }
+            }
+
+            svg {
+              transition: stroke .3s ease-in-out;
+              width: 16px;
+
+              @include m.darkMode {
+                stroke: v.$primary-color-dark;
+              }
+            }
+          }
         }
       }
     }
@@ -293,10 +430,57 @@
     textarea {
       height: 100%;
       resize: none;
+
+      &:empty {
+        height: 20px;
+      }
     }
 
     button {
       padding: 0;
+
+      svg {
+        fill: none;
+        height: auto;
+        stroke: v.$primary-color-light;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5;
+        transition: stroke .3s ease-in-out;
+        width: 16px;
+
+        @include m.darkMode {
+          stroke: v.$primary-color-dark;
+        }
+      }
+      
+      &.icon-button {
+        &:hover,
+        &:focus {
+          svg {
+            stroke: v.$focus-light;
+            
+            @include m.darkMode {
+              stroke: v.$focus-dark;
+            }
+          }
+        }
+        
+        &:active {
+          svg {
+            stroke: v.$pressed-light;
+            
+            @include m.darkMode {
+              stroke: v.$pressed-dark;
+            }
+          }
+        }
+      }
+
+      &.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
     }
   }
 
@@ -399,6 +583,57 @@
         @include m.darkMode {
           color: v.$secondary-text-dark;
         }
+      }
+    }
+  }
+  
+  &-link {
+    display: flex;
+    overflow: hidden;
+    
+    &-button {
+      align-items: center;
+      color: v.$primary-color-light;
+      display: flex;
+      gap: 6px;
+      line-height: 1;
+      padding: 0;
+      transition: .3s ease-in-out;
+      
+      @include m.darkMode {
+        color: v.$primary-color-dark;
+      }
+      
+      &:hover,
+      &:focus {
+        color: v.$focus-light;
+
+        @include m.darkMode {
+          color: v.$focus-dark;
+        }
+
+        svg {
+          stroke: v.$focus-light;
+
+          @include m.darkMode {
+            stroke: v.$focus-dark;
+          }
+        }
+      }
+
+      span {
+        font-size: 12px;
+        font-weight: 500;
+      }
+      
+      svg {
+        height: auto;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5;
+        transition: stroke .3s ease-in-out;
+        width: 16px;
       }
     }
   }

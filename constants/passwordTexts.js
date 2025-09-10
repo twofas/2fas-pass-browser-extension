@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const passwordTexts = [
+const passwordTexts = Object.freeze([
   'password',
   'pass',
   'pwd',
@@ -16,6 +16,6 @@ const passwordTexts = [
   'user-password',
   'user-pass',
   'user-pwd'
-];
+]);
 
 export default passwordTexts;

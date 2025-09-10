@@ -82,5 +82,29 @@
   "this_tab_more_actions": {
     "message": "More actions",
     "description": "Label for a dropdown or menu containing additional actions"
+  },
+  "this_tab_tag_info_text": {
+    "message": "Showing AMOUNT Items Tagged: TAG_NAME",
+    "description": "Information text displaying the number of items with a specific tag"
+  },
+  "this_tab_clear_tag_filter": {
+    "message": "Clear Tag filter",
+    "description": "Button label to clear the selected tag filter"
+  },
+  "this_tab_update_available": {
+    "message": "A new version of the extension is available!",
+    "description": "Notification message when a new extension update is available"
+  },
+  "this_tab_update_button": {
+    "message": "Update",
+    "description": "Button label to update the extension"
+  },
+  "this_tab_update_button_title": {
+    "message": "Update the extension to the latest version",
+    "description": "Tooltip for the update button"
+  },
+  "this_tab_update_manual_required": {
+    "message": "Please update the extension manually from your browser's extension settings",
+    "description": "Error message when automatic update is not available"
   }
 }

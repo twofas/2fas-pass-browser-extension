@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import getServices from '@/partials/sessionStorage/getServices';
-import copyValue from './copyValue';
+import copyValue from '@/partials/functions/copyValue';
 
 /** 
 * Function to handle the username action.

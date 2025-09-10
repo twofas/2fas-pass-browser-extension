@@ -1,0 +1,18 @@
+{
+  "placeholder_domain_uri": {
+    "message": "e.g., https://2fas.com",
+    "description": "Placeholder text for the domain or URI input field"
+  },
+  "placeholder_username": {
+    "message": "Type your username",
+    "description": "Placeholder text for the username input field"
+  },
+  "placeholder_password": {
+    "message": "Type your password",
+    "description": "Placeholder text for the password input field"
+  },
+  "placeholder_name": {
+    "message": "Type your Item name",
+    "description": "Placeholder text for the name input field"
+  }
+}
