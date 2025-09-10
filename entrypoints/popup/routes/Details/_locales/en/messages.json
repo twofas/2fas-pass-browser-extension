@@ -54,5 +54,45 @@
   "details_security_type": {
     "message": "Security Tier",
     "description": "Label for the security type field in the item details"
+  },
+  "details_add_domain": {
+    "message": "Add domain",
+    "description": "Button label to add a new domain to the login item"
+  },
+  "details_add_another_domain": {
+    "message": "Add another domain",
+    "description": "Button label to add another domain when at least one exists"
+  },
+  "details_domain": {
+    "message": "Domain",
+    "description": "Label for domain field"
+  },
+  "details_domain_uri": {
+    "message": "Domain (URI URI_NUMBER)",
+    "description": "Header label for domain section with URI number"
+  },
+  "details_no_domain_available": {
+    "message": "No domain available",
+    "description": "Text shown when no domain is assigned to the item"
+  },
+  "details_name_copied": {
+    "message": "Name copied to clipboard",
+    "description": "Success message shown when the name is copied to clipboard"
+  },
+  "details_change_password_in_service": {
+    "message": "Change password in the service",
+    "description": "Button label to open the service's password change page"
+  },
+  "details_change_password_in_service_title": {
+    "message": "Open the service website in a new tab to change the password",
+    "description": "Title for the change password section in the service"
+  },
+  "details_toggle_password_visibility": {
+    "message": "Toggle password visibility",
+    "description": "Title for the button that toggles password visibility"
+  },
+  "details_generate_password": {
+    "message": "Generate password",
+    "description": "Title for the button that opens password generator"
   }
 }

@@ -10,9 +10,10 @@
 * @param {Object} sender - The sender object.
 * @param {Function} sendResponse - The function to send a response.
 * @param {Function} sendUrl - The function to send a URL.
+* @param {Function} setUpdateAvailable - The function to set update availability.
 * @return {boolean} Whether the message was handled.
 */
-const onMessage = (request, sender, sendResponse, sendUrl) => {
+const onMessage = (request, sender, sendResponse, sendUrl, setUpdateAvailable) => {
   try {
     if (!request || !request?.action || request?.target !== REQUEST_TARGETS.POPUP_THIS_TAB) {
       return false;
@@ -21,6 +22,12 @@ const onMessage = (request, sender, sendResponse, sendUrl) => {
     switch (request.action) {
       case REQUEST_ACTIONS.SEND_URL: {
         sendUrl(request);
+        sendResponse({ status: 'ok' });
+        break;
+      }
+
+      case REQUEST_ACTIONS.UPDATE_AVAILABLE: {
+        setUpdateAvailable(true);
         sendResponse({ status: 'ok' });
         break;
       }

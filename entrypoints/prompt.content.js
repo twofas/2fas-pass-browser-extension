@@ -12,6 +12,7 @@ import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import setIDsToInputs from './prompt/setIDsToInputs';
 import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
 import ifCtxIsInvalid from '@/partials/contentScript/ifCtxIsInvalid';
+import checkInitialInputsValues from './prompt/checkInitialInputsValues';
 
 export default defineContentScript({
   matches: ['https://*/*', 'http://*/*'],
@@ -55,6 +56,7 @@ export default defineContentScript({
     
     const allInputs = passwordInputs.concat(usernameInputs);
     setIDsToInputs(allInputs);
+    checkInitialInputsValues(allInputs, localKey, encrypted);
 
     const removeListeners = () => {
       browser.runtime.onMessage.removeListener(handlePromptMessage);

@@ -15,8 +15,8 @@ import isText from '../functions/isText';
 * @return {string|null} The value for the key, or null if not found.
 */
 const getKey = async (key, data) => {
-  const persistentKeys = ['configured', 'configured_nonce', 'ephe_public_key', 'ephe_private_key'];
-  const ephemeralKeys = ['services', 'data_key', 'pass_key_t2', 'pass_key_t3', 'pass_key_t3_new'];
+  const persistentKeys = new Set(['configured', 'configured_nonce', 'ephe_public_key', 'ephe_private_key']);
+  const ephemeralKeys = new Set(['services', 'tags', 'data_key', 'pass_key_t2', 'pass_key_t3', 'pass_key_t3_new']);
 
   const keyEnvName = `VITE_STORAGE_SESSION_${key.toUpperCase()}`;
   const keyEnv = import.meta.env[keyEnvName];
@@ -76,9 +76,9 @@ const getKey = async (key, data) => {
     }
   }
 
-  if (persistentKeys.includes(key)) {
+  if (persistentKeys.has(key)) {
     cryptoKeyB64 = await storage.getItem('local:persistentPublicKey');
-  } else if (ephemeralKeys.includes(key)) {
+  } else if (ephemeralKeys.has(key)) {
     if (!data.uuid && !data.deviceId) {
       throw new TwoFasError(TwoFasError.internalErrors.getKeyNoDeviceIdOrUUID, { additional: { func: 'getKey' } });
     }

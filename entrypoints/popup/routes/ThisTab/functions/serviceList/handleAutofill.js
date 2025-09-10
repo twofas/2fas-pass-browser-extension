@@ -137,7 +137,6 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     if ((!service?.password || service?.password?.length <= 0) && (service?.username && service?.username?.length > 0)) {
       passwordDecrypt = false;
     } else if ((!service?.password || service?.password?.length <= 0) && (!service?.username || service?.username?.length <= 0)) {
-      console.log('test');
       showToast(browser.i18n.getMessage('this_tab_autofill_no_username_and_password'), 'error');
       return;
     }

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { onIdleStateChange, onWebRequest } from './events';
+import { onIdleStateChange, onWebRequest, onUpdateAvailable } from './events';
 
 /** 
 * Function to handle non-Safari background tasks.
@@ -21,6 +21,8 @@ const nonSafariBackground = (tabsInputData, savePromptActions, tabUpdateData) =>
     { urls: ['<all_urls>'], types: ['main_frame', 'xmlhttprequest'] },
     ['requestBody']
   );
+
+  browser.runtime.onUpdateAvailable.addListener(onUpdateAvailable);
 };
 
 export default nonSafariBackground;

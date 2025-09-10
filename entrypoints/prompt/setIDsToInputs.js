@@ -16,9 +16,9 @@ const setIDsToInputs = inputs => {
     let id = input.getAttribute('twofas-pass-id');
 
     if (!id || id.length <= 0) {
-      id = generateInputId();
-
-      // FUTURE - Check if the ID is unique
+      do {
+        id = generateInputId();
+      } while (document.querySelector(`[twofas-pass-id="${id}"]`));
 
       input.setAttribute('twofas-pass-id', id);
     }

@@ -28,6 +28,7 @@ const CustomOption = option => {
           <Link
             to={`/details/${option.data.id}`}
             className='react-select-dropdown__option--uri details'
+            prefetch='intent'
           >
             <DetailsIcon />
             <span>{browser.i18n.getMessage('this_tab_more_details')}</span>

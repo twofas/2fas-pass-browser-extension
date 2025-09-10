@@ -1,5 +1,5 @@
 import getServices from '@/partials/sessionStorage/getServices';
-import copyValue from './copyValue';
+import copyValue from '@/partials/functions/copyValue';
 import decryptPassword from '@/partials/functions/decryptPassword';
 
 const handlePassword = async (id, more, setMore) => {

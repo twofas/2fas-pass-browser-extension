@@ -14,17 +14,27 @@ const lockShortcuts = e => {
     return false;
   }
 
-  if (e.ctrlKey) {
+  const isModifierPressed = e.metaKey || e.ctrlKey;
+
+  if (isModifierPressed) {
     if (
       e.key === 's' || // save
       e.key === 'p' || // print
       e.key === 'u' || // view source
-      e.key === 'a' || // select all
       e.key === 'f' || // find
       e.key === 'g' // find
     ) {
       e.preventDefault();
       e.stopPropagation();
+    }
+
+    if (e.key === 'a') {
+      const tagName = e.target.tagName.toLowerCase();
+      
+      if (tagName !== 'input' && tagName !== 'textarea' && e.target.contentEditable !== 'true') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
     }
   }
 };

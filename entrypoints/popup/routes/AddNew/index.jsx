@@ -9,7 +9,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link, useLocation } from 'react-router';
 import getDomainInfo from './functions/getDomainInfo';
 import { useEffect, lazy } from 'react';
 import { Form, Field } from 'react-final-form';
@@ -17,10 +17,15 @@ import onMessage from './events/onMessage';
 import valueToNFKD from '@/partials/functions/valueToNFKD';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
+import copyValue from '@/partials/functions/copyValue';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
+const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
+const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
+const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
 
 const additionalVariants = {
   hidden: { maxHeight: '0px' },
@@ -34,14 +39,18 @@ const additionalVariants = {
 */
 function AddNew (props) {
   const navigate = useNavigate();
-  
+  const location = useLocation();
+
   const [loading, setLoading] = useState(true);
-  const [url, setUrl] = useState('');
-  const [minLength, setMinLength] = useState('');
-  const [maxLength, setMaxLength] = useState('');
-  const [pattern, setPattern] = useState('');
-  const [onMobile, setOnMobile] = useState(true);
-  const [additionalOverflow, setAdditionalOverflow] = useState(true);
+  const [url, setUrl] = useState(location?.state?.data?.url !== undefined ? filterXSS(location.state.data.url) : '');
+  const [minLength, setMinLength] = useState(location?.state?.data?.minLength ? filterXSS(location.state.data.minLength) : '');
+  const [maxLength, setMaxLength] = useState(location?.state?.data?.maxLength ? filterXSS(location.state.data.maxLength) : '');
+  const [pattern, setPattern] = useState(location?.state?.data?.pattern ? filterXSS(location.state.data.pattern) : '');
+  const [password, ] = useState(location?.state?.data?.password ? filterXSS(location.state.data.password) : '');
+  const [username, ] = useState(location?.state?.data?.username ? filterXSS(location.state.data.username) : '');
+  const [onMobile, setOnMobile] = useState(location?.state?.data?.onMobile !== undefined ? location.state.data.onMobile : true);
+  const [additionalOverflow, setAdditionalOverflow] = useState(location?.state?.data?.additionalOverflow !== undefined ? filterXSS(location.state.data.additionalOverflow) : true);
+  const [passwordVisible, setPasswordVisible] = useState(location?.state?.data?.passwordVisible !== undefined ? location.state.data.passwordVisible : false);
 
   useEffect(() => {
     const messageListener = async (request, sender, sendResponse) => await onMessage(request, sender, sendResponse, setUrl);
@@ -65,21 +74,59 @@ function AddNew (props) {
       if (data.pattern) {
         setPattern(data.pattern); // Do not sanitize
       }
-
-      setLoading(false);
     };
 
     try {
-      getDomainData();
+      if (!location?.state?.data) {
+        getDomainData();
+      }
     } catch (e) {
-      setLoading(false);
       CatchError(e);
+    } finally {
+      setLoading(false);
     }
 
     return () => {
       browser.runtime.onMessage.removeListener(messageListener);
     };
   }, []);
+
+  const handlePasswordVisibleClick = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
+  const handleCopyPassword = async form => {
+    try {
+      const currentPassword = form.getFieldState('password').value;
+      await copyValue(currentPassword, '00000000-0000-0000-0000-000000000000', 'password');
+      showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
+    } catch (e) {
+      showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
+      await CatchError(e);
+    }
+  };
+
+  const handleCopyUrl = async form => {
+    try {
+      const currentUrl = form.getFieldState('url').value;
+      await copyValue(currentUrl, '00000000-0000-0000-0000-000000000000', 'uri');
+      showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
+    } catch (e) {
+      showToast(browser.i18n.getMessage('error_uri_copy_failed'), 'error');
+      await CatchError(e);
+    }
+  };
+
+  const handleCopyUsername = async form => {
+    try {
+      const currentUsername = form.getFieldState('username').value;
+      await copyValue(currentUsername, '00000000-0000-0000-0000-000000000000', 'username');
+      showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
+    } catch (e) {
+      showToast(browser.i18n.getMessage('error_username_copy_failed'), 'error');
+      await CatchError(e);
+    }
+  };
 
   const onSubmit = async e => {
     const data = {
@@ -121,7 +168,7 @@ function AddNew (props) {
               <h2>{browser.i18n.getMessage('add_new_header')}</h2>
               <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
 
-              <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url}} render={({ handleSubmit, submitting }) => ( // form, pristine, values
+              <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url, username, password }} render={({ handleSubmit, form, submitting }) => ( // pristine, values
                   <form onSubmit={handleSubmit}>
                     <Field name="password-minlength" value={minLength}>
                       {({ input }) => <input type="hidden" {...input} id="password-minlength" />}
@@ -142,6 +189,7 @@ function AddNew (props) {
                             <input
                               type="text"
                               {...input}
+                              placeholder={browser.i18n.getMessage('placeholder_domain_uri')}
                               id="add-new-url"
                               dir="ltr"
                               spellCheck="false"
@@ -149,13 +197,29 @@ function AddNew (props) {
                               autoComplete="off"
                               autoCapitalize="off"
                             />
+                            <div className={pI.passInputBottomButtons}>
+                              <button
+                                type='button'
+                                className={`${bS.btn} ${pI.iconButton}`}
+                                onClick={() => handleCopyUrl(form)}
+                                title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                              >
+                                <CopyIcon />
+                              </button>
+                            </div>
                           </div>
                           <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
                             {domainValidation(input.value)}
                           </div>
                           <div className={pI.passInputAdditional}>
                             <div className={`${bS.passToggle} ${bS.loaded}`}>
-                              <input type="checkbox" name="set-in-mobile" id="set-in-mobile" defaultChecked onChange={() => setOnMobile(!onMobile)} />
+                              <input
+                                type="checkbox"
+                                name="set-in-mobile"
+                                id="set-in-mobile"
+                                checked={onMobile}
+                                onChange={() => setOnMobile(!onMobile)}
+                              />
                               <label htmlFor="set-in-mobile">
                                 <span className={bS.passToggleBox}>
                                   <span className={bS.passToggleBoxCircle}></span>
@@ -173,7 +237,7 @@ function AddNew (props) {
                     <m.div
                       className={`${S.addNewAdditional} ${additionalOverflow ? S.overflowH : ''}`}
                       variants={additionalVariants}
-                      initial="hidden"
+                      initial={onMobile ? 'hidden' : 'visible'}
                       transition={{ duration: 0.3, type: 'tween' }}
                       animate={!onMobile ? 'visible' : 'hidden'}
                       onAnimationStart={() => { setAdditionalOverflow(true); }}
@@ -192,7 +256,24 @@ function AddNew (props) {
                               <label htmlFor="username">{browser.i18n.getMessage('username')}</label>
                             </div>
                             <div className={pI.passInputBottom}>
-                              <input type="text" {...input} id="username" disabled={!setOnMobile ? 'disabled' : ''} />
+                              <input
+                                type="text"
+                                {...input}
+                                id="username"
+                                disabled={!setOnMobile ? 'disabled' : ''}
+                                placeholder={browser.i18n.getMessage('placeholder_username')}
+                              />
+                              <div className={pI.passInputBottomButtons}>
+                                <button
+                                  type='button'
+                                  className={`${bS.btn} ${pI.iconButton}`}
+                                  onClick={() => handleCopyUsername(form)}
+                                  title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                                  disabled={!setOnMobile ? 'disabled' : ''}
+                                >
+                                  <CopyIcon />
+                                </button>
+                              </div>
                             </div>
                           </div>
                         )}
@@ -204,7 +285,47 @@ function AddNew (props) {
                               <label htmlFor="password">{browser.i18n.getMessage('password')}</label>
                             </div>
                             <div className={pI.passInputBottom}>
-                              <input type="password" {...input} id="password" disabled={!setOnMobile ? 'disabled' : ''} />
+                              <PasswordInput
+                                {...input}
+                                type={passwordVisible ? 'text' : 'password'}
+                                placeholder={browser.i18n.getMessage('placeholder_password')}
+                                id="password"
+                                showPassword={passwordVisible}
+                                isDecrypted={true}
+                                disabled={!setOnMobile ? 'disabled' : ''}
+                                dir="ltr"
+                                spellCheck="false"
+                                autoCorrect="off"
+                                autoComplete="off"
+                                autoCapitalize="off"
+                              />
+                              <div className={pI.passInputBottomButtons}>
+                                <Link
+                                  to='/password-generator'
+                                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
+                                  title={browser.i18n.getMessage('add_new_generate_password')}
+                                  state={{ from: 'addNew', data: { ...form.getState().values, onMobile, passwordVisible, additionalOverflow } }}
+                                  prefetch='intent'
+                                >
+                                  <RefreshIcon />
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={handlePasswordVisibleClick}
+                                  className={`${pI.iconButton} ${pI.visibleButton}`}
+                                  title={browser.i18n.getMessage('add_new_toggle_password_visibility')}
+                                >
+                                  <VisibleIcon />
+                                </button>
+                                <button
+                                  type='button'
+                                  className={`${bS.btn} ${pI.iconButton}`}
+                                  onClick={() => handleCopyPassword(form)}
+                                  title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                                >
+                                  <CopyIcon />
+                                </button>
+                              </div>
                             </div>
                             <Tooltip className={`${pI.passInputAdditional} tooltip`}>
                               <h4>{browser.i18n.getMessage('add_new_learn_more_tooltip_header')}</h4>

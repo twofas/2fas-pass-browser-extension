@@ -39,6 +39,7 @@ function NavigationButton (props) {
         }
       }}
       title={browser.i18n.getMessage(props.type)}
+      prefetch='intent'
     >
       {props.type === 'cancel' ? <CancelIcon /> : <BackIcon />}
     </Link>

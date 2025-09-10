@@ -45,6 +45,8 @@ const getServicesKeys = async deviceId => {
     return [];
   }
 
+  const storageKeysSet = new Set(storageKeys);
+
   const uuid = await getUUIDforDeviceId(deviceId);
 
   if (!uuid || !isText(uuid) || uuid.length === 0) {
@@ -89,7 +91,7 @@ const getServicesKeys = async deviceId => {
 
     const keySignedB64 = ArrayBufferToBase64(keySigned);
 
-    if (storageKeys.includes(keySignedB64)) {
+    if (storageKeysSet.has(keySignedB64)) {
       servicesKeys.push(`session:${keySignedB64}`);
     } else {
       break;

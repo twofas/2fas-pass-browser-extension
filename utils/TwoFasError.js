@@ -341,6 +341,10 @@ class TwoFasError extends Error {
       message: 'Response is not ok',
       code: 9025
     },
+    fetchSendPushResponseJsonParse: {
+      message: 'Error parsing JSON response',
+      code: 9026
+    },
     // WEBSOCKET
     websocketInstanceNotExists: {
       message: 'WebSocket instance does not exist',
@@ -679,6 +683,19 @@ class TwoFasError extends Error {
     contextMenuConfiguredError: {
       message: 'Error configuring context menu',
       code: 9390
+    },
+    // CHECK INITIAL INPUT VALUES
+    checkInitialInputsValuesNonceError: {
+      message: 'checkInitialInputsValues: error generating nonce',
+      code: 9400
+    },
+    checkInitialInputsValuesKeyImportError: {
+      message: 'checkInitialInputsValues: error importing key',
+      code: 9401
+    },
+    checkInitialInputsValuesEncryptError: {
+      message: 'checkInitialInputsValues: error encrypting data',
+      code: 9402
     }
   };
 }
