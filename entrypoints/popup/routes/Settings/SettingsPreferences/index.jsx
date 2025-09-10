@@ -7,6 +7,7 @@
 import S from '../Settings.module.scss';
 import { Link } from 'react-router';
 import { lazy } from 'react';
+import { usePopupState } from '@/hooks/usePopupState';
 
 const ExtensionName = lazy(() => import('./components/ExtensionName'));
 const Shortcut = lazy(() => import('./components/Shortcut'));
@@ -24,9 +25,14 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsPreferences (props) {
+  const { scrollElementRef, setScrollElement } = usePopupState();
+  
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={el => {
+        scrollElementRef.current = el;
+        setScrollElement(el);
+      }}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />

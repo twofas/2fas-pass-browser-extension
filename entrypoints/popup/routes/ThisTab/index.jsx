@@ -23,6 +23,7 @@ import { useLocation } from 'react-router';
 import keepPassword from './functions/keepPassword';
 import { toast } from 'react-toastify';
 import isLoginsCorrect from './functions/isLoginsCorrect';
+import { usePopupState } from '@/hooks/usePopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const SmallLoginItem = lazy(() => import('./components/SmallLoginItem'));
@@ -75,6 +76,7 @@ function ThisTab (props) {
   const thisTabTopRef = useRef(null);
 
   const { changeMatchingLoginsLength } = useMatchingLogins();
+  const { scrollElementRef, setScrollElement } = usePopupState();
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
@@ -307,7 +309,11 @@ function ThisTab (props) {
   return (
     <LazyMotion features={loadDomAnimation}>
       <div className={`${props.className ? props.className : ''}`}>
-        <div ref={scrollableRef}>
+        <div ref={el => {
+          scrollableRef.current = el;
+          scrollElementRef.current = el;
+          setScrollElement(el);
+        }}>
           <section className={S.thisTab}>
             <div className={autofillPopupClass}>
               <div className={S.thisTabAutofillPopupBox}>

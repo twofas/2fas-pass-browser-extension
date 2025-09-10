@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
 import { lazy } from 'react';
+import { usePopupState } from '@/hooks/usePopupState';
 
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
 const AboutIcon = lazy(() => import('@/assets/popup-window/about.svg?react'));
@@ -29,6 +30,7 @@ function SettingsAbout (props) {
   const [version, setVersion] = useState('');
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
+  const { scrollElementRef, setScrollElement } = usePopupState();
 
   useEffect(() => {
     try {
@@ -41,7 +43,10 @@ function SettingsAbout (props) {
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={el => {
+        scrollElementRef.current = el;
+        setScrollElement(el);
+      }}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />

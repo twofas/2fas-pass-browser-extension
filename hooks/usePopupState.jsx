@@ -12,16 +12,10 @@ import getPopupStateObjectForTab from '@/partials/popupState/getPopupStateObject
 
 const PopupStateContext = createContext();
 const ignoredRoutes = [
+  '/blocked',
   '/connect',
-  '/settings',
-  '/settings-about',
-  '/settings-preferences',
-  '/settings-security',
-  '/settings-reset',
-  '/settings-save-login-excluded-domains', // @TODO: ?
   '/fetch',
-  '/fetch-external',
-  '/blocked'
+  '/fetch-external'
 ];
 
 /** 
@@ -31,8 +25,10 @@ const ignoredRoutes = [
 */
 export const PopupStateProvider = ({ children }) => {
   const { pathname, state } = useLocation();
-  const previousTabRef = useRef(null);
   const [popupState, setPopupState] = useState({});
+  const previousTabRef = useRef(null);
+  const [scrollElement, setScrollElement] = useState(null);
+  const scrollElementRef = useRef(null);
 
   const getTab = async () => {
     let tab;
@@ -44,7 +40,13 @@ export const PopupStateProvider = ({ children }) => {
     return tab;
   };
 
+  const onScroll = e => {
+    console.dir(popupState);
+  };
+
   useEffect(() => {
+    console.log('PopupStateProvider useEffect triggered', pathname, state, scrollElementRef.current);
+
     if (ignoredRoutes.includes(pathname)) {
       return;
     }
@@ -64,12 +66,32 @@ export const PopupStateProvider = ({ children }) => {
       });
   }, [pathname, state]);
 
+  useEffect(() => {
+    if (!scrollElement) {
+      return;
+    }
+
+    scrollElement.addEventListener('scroll', onScroll);
+
+    return () => {
+      scrollElement.removeEventListener('scroll', onScroll);
+    };
+  }, [scrollElement]);
+
+  useEffect(() => {
+    if (scrollElementRef.current && scrollElementRef.current !== scrollElement) {
+      setScrollElement(scrollElementRef.current);
+    }
+  });
+
   const value = useMemo(
     () => ({
       location,
-      popupState
+      popupState,
+      scrollElementRef,
+      setScrollElement
     }),
-    [location, popupState]
+    [location, popupState, scrollElementRef, setScrollElement]
   );
 
   return <PopupStateContext.Provider value={value}>{children}</PopupStateContext.Provider>;

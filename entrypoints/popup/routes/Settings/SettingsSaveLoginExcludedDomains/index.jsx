@@ -10,6 +10,7 @@ import { useState, useEffect, lazy } from 'react';
 import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
+import { usePopupState } from '@/hooks/usePopupState';
 
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -25,6 +26,8 @@ function SettingsSaveLoginExcludedDomains (props) {
   const [loading, setLoading] = useState(true);
   const [excludedDomains, setExcludedDomains] = useState([]);
   const [newDomainForm, setNewDomainForm] = useState(false);
+
+  const { scrollElementRef, setScrollElement } = usePopupState();
 
   useEffect(() => {
     const getExcludedDomains = async () => {
@@ -129,7 +132,10 @@ function SettingsSaveLoginExcludedDomains (props) {
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={el => {
+        scrollElementRef.current = el;
+        setScrollElement(el);
+      }}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />

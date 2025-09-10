@@ -10,7 +10,7 @@ import { useEffect, lazy, useState, useMemo, useCallback, memo } from 'react';
 import { AuthProvider } from '@/hooks/useAuth';
 import { MatchingLoginsProvider } from '@/hooks/useMatchingLogins';
 import { WSProvider } from '@/hooks/useWS';
-// import { PopupStateProvider } from '@/hooks/usePopupState';
+import { PopupStateProvider } from '@/hooks/usePopupState';
 import popupOnMessage from './events/popupOnMessage';
 import Blocked from './routes/Blocked';
 import safariBlankLinks from '@/partials/functions/safariBlankLinks';
@@ -211,7 +211,7 @@ function Popup () {
 
   return (
     <section className={mainSectionClassName}>
-      {/* <PopupStateProvider> */}
+      <PopupStateProvider>
         <AuthProvider>
           <WSProvider>
             <MatchingLoginsProvider>
@@ -237,7 +237,7 @@ function Popup () {
             <BottomBar />
           </WSProvider>
         </AuthProvider>
-      {/* </PopupStateProvider> */}
+      </PopupStateProvider>
       
       <ToastsContent />
     </section>

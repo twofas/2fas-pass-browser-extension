@@ -16,6 +16,7 @@ import getServices from '@/partials/sessionStorage/getServices';
 import valueToNFKD from '@/partials/functions/valueToNFKD';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
 import URIMatcher from '@/partials/URIMatcher';
+import { usePopupState } from '@/hooks/usePopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const Name = lazy(() => import('./components/Name'));
@@ -57,6 +58,7 @@ function Details (props) {
   const [storageVersion, setStorageVersion] = useState(null);
 
   const unwatchStorageVersion = useRef(null);
+  const { scrollElementRef, setScrollElement } = usePopupState();
 
   const handleRemoveUri = useCallback((index, form) => {
     const currentUris = form.getState().values.uris;
@@ -231,7 +233,10 @@ function Details (props) {
   return (
     <LazyMotion features={loadDomAnimation}>
       <div className={`${props.className ? props.className : ''}`}>
-        <div>
+        <div ref={el => {
+          scrollElementRef.current = el;
+          setScrollElement(el);
+        }}>
           <section className={S.details}>
             <div className={S.detailsContainer}>
               <NavigationButton type='cancel' />

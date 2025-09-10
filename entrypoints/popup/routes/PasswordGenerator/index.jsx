@@ -11,6 +11,7 @@ import { lazy, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { Form, Field } from 'react-final-form';
 import copyValue from '@/partials/functions/copyValue';
+import { usePopupState } from '@/hooks/usePopupState';
 
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
@@ -20,6 +21,8 @@ const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react')
 function PasswordGenerator (props) {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { scrollElementRef, setScrollElement } = usePopupState();
 
   useEffect(() => {
     if (
@@ -96,7 +99,10 @@ function PasswordGenerator (props) {
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={el => {
+        scrollElementRef.current = el;
+        setScrollElement(el);
+      }}>
         <section className={S.passwordGenerator}>
           <div className={S.passwordGeneratorContainer}>
             <NavigationButton type='back' />

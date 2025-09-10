@@ -18,6 +18,7 @@ import valueToNFKD from '@/partials/functions/valueToNFKD';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
 import copyValue from '@/partials/functions/copyValue';
+import { usePopupState } from '@/hooks/usePopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -51,6 +52,8 @@ function AddNew (props) {
   const [onMobile, setOnMobile] = useState(location?.state?.data?.onMobile !== undefined ? location.state.data.onMobile : true);
   const [additionalOverflow, setAdditionalOverflow] = useState(location?.state?.data?.additionalOverflow !== undefined ? filterXSS(location.state.data.additionalOverflow) : true);
   const [passwordVisible, setPasswordVisible] = useState(location?.state?.data?.passwordVisible !== undefined ? location.state.data.passwordVisible : false);
+
+  const { scrollElementRef, setScrollElement } = usePopupState();
 
   useEffect(() => {
     const messageListener = async (request, sender, sendResponse) => await onMessage(request, sender, sendResponse, setUrl);
@@ -160,7 +163,10 @@ function AddNew (props) {
   return (
     <LazyMotion features={loadDomAnimation}>
       <div className={`${props.className ? props.className : ''}`}>
-        <div>
+        <div ref={el => {
+          scrollElementRef.current = el;
+          setScrollElement(el);
+        }}>
           <section className={S.addNew}>
             <div className={S.addNewContainer}>
               <NavigationButton type='cancel' />
