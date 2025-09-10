@@ -4,6 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import removePopupStateObjectForTab from '@/partials/popupState/removePopupStateObjectForTab';
+
 /** 
 * Function to handle tab removal in the browser.
 * @param {number} tabId - The ID of the tab that was removed.
@@ -14,6 +16,8 @@ const onTabRemoved = (tabId, tabsInputData) => {
   if (tabsInputData[tabId]) {
     delete tabsInputData[tabId];
   }
+
+  return removePopupStateObjectForTab(tabId);
 };
 
 export default onTabRemoved;

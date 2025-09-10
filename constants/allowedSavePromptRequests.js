@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const allowedSavePromptRequests = [
+const allowedSavePromptRequests = Object.freeze([
   'login',
   'sign_in',
   'sign-in',
@@ -34,6 +34,6 @@ const allowedSavePromptRequests = [
   'login_process.php',
   '/UserSessionResource/create/',
   '/api/tokens'
-];
+]);
 
 export default allowedSavePromptRequests;

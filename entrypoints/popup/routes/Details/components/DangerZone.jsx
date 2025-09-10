@@ -50,6 +50,7 @@ function DangerZone (props) {
           to='/fetch'
           state={{ action: 'deleteLogin', from: 'details', data: { loginId: service.id, deviceId: service.deviceId } }}
           className={S.detailsDangerZoneBodyButton}
+          prefetch='intent'
         >
           <span>{browser.i18n.getMessage('details_delete')}</span>
         </Link>

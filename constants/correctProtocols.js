@@ -4,10 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const correctProtocols = [
+const correctProtocolsSet = new Set([
   'http:',
   'https:',
   'ftp:'
-];
+]);
 
-export default correctProtocols;
+Object.freeze(correctProtocolsSet);
+
+export default correctProtocolsSet;

@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import clearClipboard from '@/partials/functions/clearClipboard';
-import autoClearAction from '../functions/autoClearAction';
+import autoClearAction from '@/partials/functions/autoClearAction';
 
 /** 
 * Function to handle messages in the prompt context.
@@ -14,19 +13,13 @@ import autoClearAction from '../functions/autoClearAction';
 * @param {Function} sendResponse - The function to send the response.
 * @return {Promise<void>} 
 */
-const focusOnMessage = (request, sender, sendResponse) => {
+const focusOnMessage = (request, sender, sendResponse, focusFuncAction) => {
   try {
     if (!request || !request?.action || request?.target !== REQUEST_TARGETS.FOCUS_CONTENT) {
       return false;
     }
-
+    
     switch (request.action) {
-      case REQUEST_ACTIONS.AUTO_CLEAR_CLIPBOARD: {
-        const clearClipboardStatus = clearClipboard();
-        sendResponse(clearClipboardStatus);
-        break;
-      }
-
       case REQUEST_ACTIONS.AUTO_CLEAR_ACTION: {
         if (import.meta.env.BROWSER !== 'safari') {
           autoClearAction(request).finally(sendResponse({ status: 'ok' }));
@@ -34,6 +27,11 @@ const focusOnMessage = (request, sender, sendResponse) => {
           sendResponse({ status: 'ok' });
         }
 
+        break;
+      }
+
+      case REQUEST_ACTIONS.FOCUS_CHECK: {
+        focusFuncAction().finally(() => sendResponse({ status: 'ok' }));
         break;
       }
 

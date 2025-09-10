@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const userNameText = [
+const userNameText = Object.freeze([
   "account",
   "accountid",
   "accountname",
@@ -90,6 +90,6 @@ const userNameText = [
   "accountName",
   "user_email_login",
   "identificator"
-];
+]);
 
 export default userNameText;

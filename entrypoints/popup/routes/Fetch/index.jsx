@@ -57,8 +57,7 @@ function Fetch (props) {
       default: {
         setFetchState(1);
         
-        throw new TwoFasError(TwoFasError.internalErrors.fetchInvalidAction.message, {
-          code: TwoFasError.internalErrors.fetchInvalidAction.code,
+        throw new TwoFasError(TwoFasError.internalErrors.fetchInvalidAction, {
           additional: {
             data: { stateAction: state.action },
             func: 'Fetch - initConnection'
@@ -97,8 +96,7 @@ function Fetch (props) {
 
       state.data.notificationId = json.notificationId;
     } catch (e) {
-      await CatchError(new TwoFasError(TwoFasError.internalErrors.fetchSendPush.message, {
-        code: TwoFasError.internalErrors.fetchSendPush.code,
+      await CatchError(new TwoFasError(TwoFasError.internalErrors.fetchSendPush, {
         event: e,
         additional: {
           data: { device, timestamp, sigPush },
@@ -127,8 +125,7 @@ function Fetch (props) {
     if (socket) {
       try {
         await socket.sendError(
-          new TwoFasError(TwoFasError.errors.userCancelled.message, {
-            code: TwoFasError.errors.userCancelled.code,
+          new TwoFasError(TwoFasError.errors.userCancelled, {
             apiLog: false,
             consoleLog: false
           })

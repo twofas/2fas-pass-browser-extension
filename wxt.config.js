@@ -90,12 +90,6 @@ export default defineConfig({
       ],
       optional_permissions: [
         "clipboardRead"
-      ],
-      web_accessible_resources: [
-        {
-          "resources": ["/fonts/*"],
-          "matches": ["https://*/*", "http://*/*"]
-        }
       ]
     };
 

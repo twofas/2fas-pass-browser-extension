@@ -12,9 +12,10 @@
 * @param {Array<boolean>} domainsEditable - Indicates if the domain fields are editable.
 * @param {boolean} notesEditable - Indicates if the notes field is editable.
 * @param {boolean} tierEditable - Indicates if the tier field is editable.
+* @param {boolean} tagsEditable - Indicates if the tags field is editable.
 * @return {Object} An object containing the editable amount and a text description.
 */
-const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable) => {
+const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable) => {
   let amount = 0;
 
   if (nameEditable) { amount++; }
@@ -22,6 +23,7 @@ const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, dom
   if (passwordEditable) { amount++; }
   if (notesEditable) { amount++; }
   if (tierEditable) { amount++; }
+  if (tagsEditable) { amount++; }
   domainsEditable.forEach(d => { if (d) { amount++; } });
 
   if (amount === 0) {

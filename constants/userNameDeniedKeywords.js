@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const userNameDeniedKeywords = [
+const userNameDeniedKeywords = Object.freeze([
   'password',
   'pass',
   'pwd',
@@ -14,6 +14,6 @@ const userNameDeniedKeywords = [
   'subscribe',
   'order',
   'order-status-email'
-];
+]);
 
 export default userNameDeniedKeywords;

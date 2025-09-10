@@ -15,9 +15,7 @@ import { useEffect } from 'react';
 function NotFound (props) {
   useEffect(() => {
     try {
-      throw new TwoFasError(TwoFasError.internalErrors.notFoundRoute.message, {
-        code: TwoFasError.internalErrors.notFoundRoute.code
-      });
+      throw new TwoFasError(TwoFasError.internalErrors.notFoundRoute);
     } catch (e) {
       CatchError(e);
     }

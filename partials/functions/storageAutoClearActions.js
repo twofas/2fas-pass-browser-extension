@@ -19,6 +19,33 @@ const storageAutoClearActions = async () => {
     return;
   }
 
+  // Get action with latest timestamp
+  const action = storageClearActions.reduce((latest, action) => {
+    return action.timestamp > latest.timestamp ? action : latest;
+  }, storageClearActions[0]);
+
+  if (!action || !action?.itemId || !action?.itemType) {
+    await storage.setItem('session:autoClearActions', []);
+    return;
+  }
+
+  let clipboardValue;
+
+  if (action?.itemId === '00000000-0000-0000-0000-000000000000') {
+    try {
+      clipboardValue = await navigator.clipboard.readText();
+    } catch {
+      await storage.setItem('session:autoClearActions', []);
+      return;
+    }
+
+    if (clipboardValue.length >= 6 && clipboardValue.length <= 64) {
+      try {
+        await navigator.clipboard.writeText('');
+      } catch {}
+    }
+  }
+
   let services;
 
   try {
@@ -32,11 +59,6 @@ const storageAutoClearActions = async () => {
     return;
   }
 
-  // Get service with latest timestamp
-  const action = storageClearActions.reduce((latest, action) => {
-    return action.timestamp > latest.timestamp ? action : latest;
-  }, storageClearActions[0]);
-
   const service = services.find(s => s.id === action.itemId);
 
   if (!service) {
@@ -44,7 +66,7 @@ const storageAutoClearActions = async () => {
     return;
   }
 
-  let serviceValue, clipboardValue;
+  let serviceValue;
 
   if (action.itemType === 'password') {
     try {

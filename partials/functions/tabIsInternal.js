@@ -16,7 +16,7 @@ const tabIsInternal = tab => {
   
   try {
     const url = new URL(tab?.url);
-    internal = !correctProtocols.includes(url.protocol);
+    internal = !correctProtocols.has(url.protocol);
   } catch {
     internal = true;
   }

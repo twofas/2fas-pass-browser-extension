@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const ignoredSavePromptUrls = [
+const ignoredSavePromptUrls = Object.freeze([
   'captcha',
   'google-analytics',
   'analytics',
@@ -31,6 +31,6 @@ const ignoredSavePromptUrls = [
   'assetsconfigcdn.org',
   'prodregistryv2.org',
   'beyondwickedmapping.org'
-];
+]);
 
 export default ignoredSavePromptUrls;
