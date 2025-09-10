@@ -24,6 +24,7 @@ import keepPassword from './functions/keepPassword';
 import { toast } from 'react-toastify';
 import isLoginsCorrect from './functions/isLoginsCorrect';
 import { usePopupState } from '@/hooks/usePopupState';
+import { getPopupState } from '../../utils/getPopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const SmallLoginItem = lazy(() => import('./components/SmallLoginItem'));
@@ -305,6 +306,12 @@ function ThisTab (props) {
       setAutofillFailed(false);
     }
   }, [state]);
+
+  useState(() => {
+    getPopupState().then(popupState => {
+      console.log('Restored popup state:', popupState);
+    });
+  }, []);
 
   return (
     <LazyMotion features={loadDomAnimation}>
