@@ -16,9 +16,15 @@ const createPopupStateObjectForTab = async tabId => {
     popupState = {};
   }
 
-  popupState[tabId] = { href: '', attributes: {} };
+  if (!popupState[tabId]) {
+    popupState[tabId] = {
+      href: '',
+      attributes: {},
+      scrollPosition: 0
+    };
 
-  await storage.setItem('session:popupState', popupState);
+    await storage.setItem('session:popupState', popupState);
+  }
 };
 
 export default createPopupStateObjectForTab;
