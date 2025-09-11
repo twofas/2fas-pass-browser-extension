@@ -11,7 +11,6 @@ import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
 import { usePopupState } from '@/hooks/usePopupState';
-import { getPopupState } from '../../utils/getPopupState';
 
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -27,9 +26,8 @@ function SettingsSaveLoginExcludedDomains (props) {
   const [loading, setLoading] = useState(true);
   const [excludedDomains, setExcludedDomains] = useState([]);
   const [newDomainForm, setNewDomainForm] = useState(false);
-    const [popupStateData, setPopupStateData] = useState(null);
 
-  const { setScrollElementRef, scrollElementRef } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
 
   useEffect(() => {
     const getExcludedDomains = async () => {
@@ -51,13 +49,6 @@ function SettingsSaveLoginExcludedDomains (props) {
     }
   }, []);
 
-  useEffect(() => {
-    getPopupState().then(popupState => {
-      if (popupState) {
-        setPopupStateData(popupState);
-      }
-    });
-  }, []);
 
   useEffect(() => {
     if (!loading && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {

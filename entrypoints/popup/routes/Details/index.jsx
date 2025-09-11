@@ -17,7 +17,6 @@ import valueToNFKD from '@/partials/functions/valueToNFKD';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
 import URIMatcher from '@/partials/URIMatcher';
 import { usePopupState } from '@/hooks/usePopupState';
-import { getPopupState } from '../../utils/getPopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const Name = lazy(() => import('./components/Name'));
@@ -57,10 +56,9 @@ function Details (props) {
   const [tagsEditable, setTagsEditable] = useState(location?.state?.data?.generatorData?.tagsEditable !== undefined ? location.state.data.generatorData.tagsEditable : false);
   const [inputError, setInputError] = useState(undefined);
   const [storageVersion, setStorageVersion] = useState(null);
-  const [popupStateData, setPopupStateData] = useState(null);
 
   const unwatchStorageVersion = useRef(null);
-  const { setScrollElementRef, scrollElementRef } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
 
   const handleRemoveUri = useCallback((index, form) => {
     const currentUris = form.getState().values.uris;
@@ -135,14 +133,6 @@ function Details (props) {
       }
     };
   }, [storageVersion]);
-
-  useEffect(() => {
-    getPopupState().then(popupState => {
-      if (popupState) {
-        setPopupStateData(popupState);
-      }
-    });
-  }, []);
 
   useEffect(() => {
     if (!loading && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {

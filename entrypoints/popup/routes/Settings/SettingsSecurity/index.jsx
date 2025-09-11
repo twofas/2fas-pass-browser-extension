@@ -5,9 +5,8 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { lazy, useState } from 'react';
+import { lazy, useEffect } from 'react';
 import { usePopupState } from '@/hooks/usePopupState';
-import { getPopupState } from '../../utils/getPopupState';
 
 const AutoClearClipboard = lazy(() => import('./components/AutoClearClipboard'));
 const IdleLock = lazy(() => import('./components/IdleLock'));
@@ -21,16 +20,7 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSecurity (props) {
-  const { setScrollElementRef, scrollElementRef } = usePopupState();
-  const [popupStateData, setPopupStateData] = useState(null);
-
-  useEffect(() => {
-    getPopupState().then(popupState => {
-      if (popupState) {
-        setPopupStateData(popupState);
-      }
-    });
-  }, []);
+  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
 
   useEffect(() => {
     if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {

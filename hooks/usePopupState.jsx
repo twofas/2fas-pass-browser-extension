@@ -26,6 +26,7 @@ const ignoredRoutes = [
 export const PopupStateProvider = ({ children }) => {
   const { pathname } = useLocation();
   const [popupState, setPopupState] = useState({});
+  const [popupStateData, setPopupStateData] = useState(null);
   const previousTabRef = useRef(null);
   const scrollElementRef = useRef(null);
   const debounceTimerRef = useRef(null);
@@ -37,6 +38,30 @@ export const PopupStateProvider = ({ children }) => {
     try {
       return await getLastActiveTab();
     } catch {
+      return null;
+    }
+  }, []);
+
+  const getPopupState = useCallback(async () => {
+    try {
+      const extURL = browser.runtime.getURL('/popup.html');
+      const isPopupTab = tab => tab.url === extURL;
+      
+      const targetTab = await getLastActiveTab(
+        null,
+        tab => !isPopupTab(tab)
+      );
+
+      if (!targetTab || !targetTab.id) {
+        return null;
+      }
+      
+      const allPopupStates = await storage.getItem('session:popupState');
+      const tabPopupState = allPopupStates?.[targetTab.id];
+      
+      return tabPopupState || null;
+    } catch (error) {
+      CatchError(error);
       return null;
     }
   }, []);
@@ -97,6 +122,14 @@ export const PopupStateProvider = ({ children }) => {
   }, [pathname, getTab]);
 
   useEffect(() => {
+    getPopupState().then(state => {
+      if (state) {
+        setPopupStateData(state);
+      }
+    });
+  }, [getPopupState]);
+
+  useEffect(() => {
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
@@ -155,9 +188,12 @@ export const PopupStateProvider = ({ children }) => {
   const value = useMemo(
     () => ({
       setScrollElementRef,
-      scrollElementRef
+      scrollElementRef,
+      getPopupState,
+      popupStateData,
+      setPopupStateData
     }),
-    [setScrollElementRef]
+    [setScrollElementRef, getPopupState, popupStateData]
   );
 
   return <PopupStateContext.Provider value={value}>{children}</PopupStateContext.Provider>;

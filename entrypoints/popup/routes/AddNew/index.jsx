@@ -11,7 +11,7 @@ import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useNavigate, Link, useLocation } from 'react-router';
 import getDomainInfo from './functions/getDomainInfo';
-import { useEffect, lazy } from 'react';
+import { useEffect, lazy, useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import onMessage from './events/onMessage';
 import valueToNFKD from '@/partials/functions/valueToNFKD';
@@ -19,7 +19,6 @@ import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
 import copyValue from '@/partials/functions/copyValue';
 import { usePopupState } from '@/hooks/usePopupState';
-import { getPopupState } from '../../utils/getPopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -53,9 +52,8 @@ function AddNew (props) {
   const [onMobile, setOnMobile] = useState(location?.state?.data?.onMobile !== undefined ? location.state.data.onMobile : true);
   const [additionalOverflow, setAdditionalOverflow] = useState(location?.state?.data?.additionalOverflow !== undefined ? filterXSS(location.state.data.additionalOverflow) : true);
   const [passwordVisible, setPasswordVisible] = useState(location?.state?.data?.passwordVisible !== undefined ? location.state.data.passwordVisible : false);
-  const [popupStateData, setPopupStateData] = useState(null);
 
-  const { setScrollElementRef, scrollElementRef } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
 
   useEffect(() => {
     const messageListener = async (request, sender, sendResponse) => await onMessage(request, sender, sendResponse, setUrl);
@@ -94,14 +92,6 @@ function AddNew (props) {
     return () => {
       browser.runtime.onMessage.removeListener(messageListener);
     };
-  }, []);
-
-  useEffect(() => {
-    getPopupState().then(popupState => {
-      if (popupState) {
-        setPopupStateData(popupState);
-      }
-    });
   }, []);
 
   useEffect(() => {
