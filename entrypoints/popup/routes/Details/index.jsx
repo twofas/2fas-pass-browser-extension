@@ -58,7 +58,11 @@ function Details (props) {
   const [storageVersion, setStorageVersion] = useState(null);
 
   const unwatchStorageVersion = useRef(null);
-  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+
+  useEffect(() => {
+    setHref(location.pathname);
+  }, [location.pathname, setHref]);
 
   const handleRemoveUri = useCallback((index, form) => {
     const currentUris = form.getState().values.uris;

@@ -6,7 +6,7 @@
 
 import S from '../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { lazy, useEffect } from 'react';
 import { usePopupState } from '@/hooks/usePopupState';
 
@@ -42,7 +42,12 @@ const resetExtension = async () => {
 */
 function SettingsReset (props) {
   const navigate = useNavigate();
-  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
+  const location = useLocation();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+
+  useEffect(() => {
+    setHref(location.pathname);
+  }, [location.pathname, setHref]);
 
   useEffect(() => {
     if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {

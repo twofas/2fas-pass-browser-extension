@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
 import { lazy } from 'react';
+import { useLocation } from 'react-router';
 import { usePopupState } from '@/hooks/usePopupState';
 
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
@@ -27,10 +28,15 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsAbout (props) {
+  const location = useLocation();
   const [version, setVersion] = useState('');
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
-  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+
+  useEffect(() => {
+    setHref(location.pathname);
+  }, [location.pathname, setHref]);
 
   useEffect(() => {
     try {

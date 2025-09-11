@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { lazy, useEffect } from 'react';
 import { usePopupState } from '@/hooks/usePopupState';
 
@@ -25,8 +25,13 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsPreferences (props) {
-  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
+  const location = useLocation();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
 
+  useEffect(() => {
+    setHref(location.pathname);
+  }, [location.pathname, setHref]);
+  
   useEffect(() => {
     if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
       scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);

@@ -6,6 +6,7 @@
 
 import S from '../Settings.module.scss';
 import { lazy, useEffect } from 'react';
+import { useLocation } from 'react-router';
 import { usePopupState } from '@/hooks/usePopupState';
 
 const AutoClearClipboard = lazy(() => import('./components/AutoClearClipboard'));
@@ -20,7 +21,12 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSecurity (props) {
-  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
+  const location = useLocation();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+
+  useEffect(() => {
+    setHref(location.pathname);
+  }, [location.pathname, setHref]);
 
   useEffect(() => {
     if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {

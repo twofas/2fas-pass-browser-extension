@@ -10,6 +10,7 @@ import { useState, useEffect, lazy } from 'react';
 import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
+import { useLocation } from 'react-router';
 import { usePopupState } from '@/hooks/usePopupState';
 
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
@@ -23,11 +24,16 @@ const CancelIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSaveLoginExcludedDomains (props) {
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [excludedDomains, setExcludedDomains] = useState([]);
   const [newDomainForm, setNewDomainForm] = useState(false);
 
-  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+
+  useEffect(() => {
+    setHref(location.pathname);
+  }, [location.pathname, setHref]);
 
   useEffect(() => {
     const getExcludedDomains = async () => {

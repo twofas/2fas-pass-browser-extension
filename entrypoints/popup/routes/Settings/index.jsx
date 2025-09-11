@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './Settings.module.scss';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { useState, useEffect, lazy } from 'react';
 import getRatingLink from './functions/getRatingLink';
 import getRatingText from './functions/getRatingText';
@@ -21,11 +21,16 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function Settings (props) {
+  const location = useLocation();
   const [version, setVersion] = useState('');
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
 
-  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+
+  useEffect(() => {
+    setHref(location.pathname);
+  }, [location.pathname, setHref]);
 
   useEffect(() => {
     try {
