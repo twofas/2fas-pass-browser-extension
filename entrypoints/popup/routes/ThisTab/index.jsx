@@ -436,7 +436,15 @@ function ThisTab (props) {
                       <ClearIcon />
                     </button>
                   </div>
-                  {tags.length > 0 ? <Filters tags={tags} selectedTag={selectedTag} onTagChange={handleTagChange} forceClose={forceCloseFilters} /> : null}
+                  {
+                    tags.length > 0 ?
+                    <Filters
+                      tags={tags}
+                      selectedTag={selectedTag}
+                      onTagChange={handleTagChange}
+                      forceClose={forceCloseFilters}
+                    /> :
+                    null}
                 </div>
 
                 <div className={`${S.thisTabAllLoginsTagsInfo} ${lastSelectedTagInfo && selectedTag ? S.active : ''}`}>
