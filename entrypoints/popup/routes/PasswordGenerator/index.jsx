@@ -22,7 +22,11 @@ function PasswordGenerator (props) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+
+  useEffect(() => {
+    setHref(location.pathname);
+  }, [location.pathname, setHref]);
 
   useEffect(() => {
     if (

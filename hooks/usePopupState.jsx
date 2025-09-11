@@ -185,15 +185,29 @@ export const PopupStateProvider = ({ children }) => {
     }
   }, [onScroll]);
 
+  const setHref = useCallback((href) => {
+    setPopupState(prev => {
+      if (prev.href === href) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        href
+      };
+    });
+  }, []);
+
   const value = useMemo(
     () => ({
       setScrollElementRef,
       scrollElementRef,
       getPopupState,
       popupStateData,
-      setPopupStateData
+      setPopupStateData,
+      setHref
     }),
-    [setScrollElementRef, getPopupState, popupStateData]
+    [setScrollElementRef, getPopupState, popupStateData, setHref]
   );
 
   return <PopupStateContext.Provider value={value}>{children}</PopupStateContext.Provider>;

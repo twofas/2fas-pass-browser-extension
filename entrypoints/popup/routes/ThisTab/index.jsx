@@ -76,7 +76,7 @@ function ThisTab (props) {
   const thisTabTopRef = useRef(null);
 
   const { changeMatchingLoginsLength } = useMatchingLogins();
-  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
@@ -91,6 +91,10 @@ function ThisTab (props) {
       setSortDisabled(false);
     }
   }, [sort]);
+
+  useEffect(() => {
+    setHref(location.pathname);
+  }, [location.pathname, setHref]);
 
   const handleSearchChange = useCallback(e => {
     const value = e?.target?.value;
