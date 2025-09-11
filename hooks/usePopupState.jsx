@@ -97,28 +97,50 @@ export const PopupStateProvider = ({ children }) => {
     }
 
     lastPathnameRef.current = pathname;
-    isInitializedRef.current = true;
+    
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true;
+      
+      getTab()
+        .then(tab => {
+          if (!tab) {
+            return;
+          }
 
-    getTab()
-      .then(tab => {
-        if (!tab) {
-          return;
-        }
+          const tabChanged = previousTabRef?.current?.id !== tab.id;
+          
+          if (tabChanged) {
+            previousTabRef.current = tab;
+            createPopupStateObjectForTab(tab.id);
+          }
 
-        const tabChanged = previousTabRef?.current?.id !== tab.id;
-        
-        if (tabChanged) {
-          previousTabRef.current = tab;
-          createPopupStateObjectForTab(tab.id);
-        }
+          getPopupStateObjectForTab(tab.id)
+            .then(state => {
+              if (state) {
+                setPopupState(state);
+              }
+            });
+        });
+    } else {
+      getTab()
+        .then(tab => {
+          if (!tab) {
+            return;
+          }
 
-        getPopupStateObjectForTab(tab.id)
-          .then(state => {
-            if (state) {
-              setPopupState(state);
-            }
-          });
-      });
+          const tabChanged = previousTabRef?.current?.id !== tab.id;
+          
+          if (tabChanged) {
+            previousTabRef.current = tab;
+            getPopupStateObjectForTab(tab.id)
+              .then(state => {
+                if (state) {
+                  setPopupState(state);
+                }
+              });
+          }
+        });
+    }
   }, [pathname, getTab]);
 
   useEffect(() => {
@@ -139,6 +161,7 @@ export const PopupStateProvider = ({ children }) => {
 
   useEffect(() => {
     const hasPopupState = popupState && Object.keys(popupState).length > 0;
+    
     if (!previousTabRef.current || !hasPopupState) {
       return;
     }
@@ -185,18 +208,31 @@ export const PopupStateProvider = ({ children }) => {
     }
   }, [onScroll]);
 
-  const setHref = useCallback((href) => {
+  const setHref = useCallback(href => {
     setPopupState(prev => {
       if (prev.href === href) {
         return prev;
       }
 
+      return { ...prev, href, scrollPosition: 0 };
+    });
+    
+    setPopupStateData(prev => {
+      const shouldKeepScroll = prev?.href === href;
+
+      if (!prev) {
+        return { href, scrollPosition: 0 };
+      }
+
       return {
         ...prev,
-        href
+        href,
+        scrollPosition: shouldKeepScroll ? prev.scrollPosition : 0
       };
     });
   }, []);
+
+  const shouldRestoreScroll = useMemo(() => popupStateData?.href === pathname, [popupStateData?.href, pathname]);
 
   const value = useMemo(
     () => ({
@@ -205,9 +241,10 @@ export const PopupStateProvider = ({ children }) => {
       getPopupState,
       popupStateData,
       setPopupStateData,
-      setHref
+      setHref,
+      shouldRestoreScroll
     }),
-    [setScrollElementRef, getPopupState, popupStateData, setHref]
+    [setScrollElementRef, getPopupState, popupStateData, setHref, shouldRestoreScroll]
   );
 
   return <PopupStateContext.Provider value={value}>{children}</PopupStateContext.Provider>;

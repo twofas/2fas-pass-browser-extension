@@ -76,7 +76,7 @@ function ThisTab (props) {
   const thisTabTopRef = useRef(null);
 
   const { changeMatchingLoginsLength } = useMatchingLogins();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
@@ -311,10 +311,10 @@ function ThisTab (props) {
   }, [state]);
 
   useEffect(() => {
-    if (!loading && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+    if (!loading && shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
       scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
     }
-  }, [loading, popupStateData, scrollElementRef]);
+  }, [loading, shouldRestoreScroll, popupStateData, scrollElementRef]);
 
   return (
     <LazyMotion features={loadDomAnimation}>

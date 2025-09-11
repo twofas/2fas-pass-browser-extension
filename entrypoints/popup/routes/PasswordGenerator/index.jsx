@@ -22,7 +22,7 @@ function PasswordGenerator (props) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
 
   useEffect(() => {
     setHref(location.pathname);
@@ -46,10 +46,10 @@ function PasswordGenerator (props) {
   }, [location.state, location.key, navigate]);
 
   useEffect(() => {
-    if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+    if (shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
       scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
     }
-  }, [popupStateData, scrollElementRef]);
+  }, [shouldRestoreScroll, popupStateData, scrollElementRef]);
 
   const generatePassword = (length, useUppercase, useNumbers, useSpecialChars) => {
     let charset = 'abcdefghijklmnopqrstuvwxyz';

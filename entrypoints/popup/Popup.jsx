@@ -19,6 +19,7 @@ import lockRMB from './utils/lockRMB';
 import setTheme from './utils/setTheme';
 import isPopupInSeparateWindowExists from './utils/isPopupInSeparateWindowExists';
 import storageAutoClearActions from '@/partials/functions/storageAutoClearActions';
+import { getInitialRoute } from './utils/getInitialRoute';
 
 const TopBar = lazy(() => import('./components/TopBar'));
 const BottomBar = lazy(() => import('./components/BottomBar'));
@@ -37,6 +38,7 @@ const Details = lazy(() => import('./routes/Details'));
 const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
 const ToastsContent = lazy(() => import('./components/ToastsContent'));
+const InitialRouter = lazy(() => import('./components/InitialRouter'));
 
 /** 
 * ProtectedRoute component to handle access control based on authentication status.
@@ -94,6 +96,7 @@ function Popup () {
   const [blockedRoute, setBlockedRoute] = useState(false);
   const [separateWindow, setSeparateWindow] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [initialRoute, setInitialRoute] = useState(null);
 
   const location = useLocation();
 
@@ -157,8 +160,10 @@ function Popup () {
 
     Promise.all([
       setTheme(),
-      checkBlockedRoute()
-    ]).then(() => {
+      checkBlockedRoute(),
+      getInitialRoute()
+    ]).then(([, , route]) => {
+      setInitialRoute(route || '/');
       setLoaded(true);
       
       browser.runtime.onMessage.addListener(popupOnMessage);
@@ -174,6 +179,8 @@ function Popup () {
       }
     }).catch(e => {
       CatchError(e);
+      setInitialRoute('/');
+      setLoaded(true);
     });
 
     return () => {
@@ -199,7 +206,7 @@ function Popup () {
     };
   }, []);
 
-  if (!loaded) {
+  if (!loaded || !initialRoute) {
     return null;
   } else if (blockedRoute || location.pathname === '/blocked') {
     return (
@@ -215,8 +222,9 @@ function Popup () {
         <AuthProvider>
           <WSProvider>
             <MatchingLoginsProvider>
-              <TopBar />
-              <Routes>
+              <InitialRouter initialRoute={initialRoute}>
+                <TopBar />
+                <Routes>
                 <Route path='/connect' element={<ConnectProtectedRoute blockedRoute={blockedRoute}><Connect className={S.passScreen} /></ConnectProtectedRoute>} />
                 <Route path='/' element={<ProtectedRoute blockedRoute={blockedRoute}><ThisTab className={S.passScreen} /></ProtectedRoute>} />
                 <Route path='/add-new' element={<ProtectedRoute blockedRoute={blockedRoute}><AddNew className={S.passScreen} /></ProtectedRoute>} />
@@ -233,6 +241,7 @@ function Popup () {
                 <Route path='/blocked' element={<Blocked className={S.passScreen} />} />
                 <Route path='*' element={<ProtectedRoute blockedRoute={blockedRoute}><NotFound className={S.passScreen} /></ProtectedRoute>} />
               </Routes>
+              </InitialRouter>
             </MatchingLoginsProvider>
             <BottomBar />
           </WSProvider>

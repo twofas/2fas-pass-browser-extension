@@ -58,7 +58,7 @@ function Details (props) {
   const [storageVersion, setStorageVersion] = useState(null);
 
   const unwatchStorageVersion = useRef(null);
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
 
   useEffect(() => {
     setHref(location.pathname);
@@ -139,10 +139,10 @@ function Details (props) {
   }, [storageVersion]);
 
   useEffect(() => {
-    if (!loading && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+    if (!loading && shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
       scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
     }
-  }, [loading, popupStateData, scrollElementRef]);
+  }, [loading, shouldRestoreScroll, popupStateData, scrollElementRef]);
 
   const validate = values => {
     const errors = {};

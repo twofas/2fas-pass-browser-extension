@@ -53,7 +53,7 @@ function AddNew (props) {
   const [additionalOverflow, setAdditionalOverflow] = useState(location?.state?.data?.additionalOverflow !== undefined ? filterXSS(location.state.data.additionalOverflow) : true);
   const [passwordVisible, setPasswordVisible] = useState(location?.state?.data?.passwordVisible !== undefined ? location.state.data.passwordVisible : false);
 
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
 
   useEffect(() => {
     setHref(location.pathname);
@@ -99,10 +99,10 @@ function AddNew (props) {
   }, []);
 
   useEffect(() => {
-    if (!loading && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+    if (!loading && shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
       scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
     }
-  }, [loading, popupStateData, scrollElementRef]);
+  }, [loading, shouldRestoreScroll, popupStateData, scrollElementRef]);
 
   const handlePasswordVisibleClick = () => {
     setPasswordVisible(!passwordVisible);

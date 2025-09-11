@@ -22,17 +22,17 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 */
 function SettingsSecurity (props) {
   const location = useLocation();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
 
   useEffect(() => {
     setHref(location.pathname);
   }, [location.pathname, setHref]);
 
   useEffect(() => {
-    if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+    if (shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
       scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
     }
-  }, [popupStateData, scrollElementRef]);
+  }, [shouldRestoreScroll, popupStateData, scrollElementRef]);
 
   return (
     <div className={`${props.className ? props.className : ''}`}>

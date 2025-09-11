@@ -29,7 +29,7 @@ function SettingsSaveLoginExcludedDomains (props) {
   const [excludedDomains, setExcludedDomains] = useState([]);
   const [newDomainForm, setNewDomainForm] = useState(false);
 
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
 
   useEffect(() => {
     setHref(location.pathname);
@@ -57,10 +57,10 @@ function SettingsSaveLoginExcludedDomains (props) {
 
 
   useEffect(() => {
-    if (!loading && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+    if (!loading && shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
       scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
     }
-  }, [loading, popupStateData, scrollElementRef]);
+  }, [loading, shouldRestoreScroll, popupStateData, scrollElementRef]);
 
   const removeExcludedDomain = async domain => {
     const updatedDomains = excludedDomains.filter((d) => d !== domain);
