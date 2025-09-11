@@ -9,19 +9,18 @@
  * @param {string} tabId - The ID of the tab for which to remove the popup state object.
  * @return {Promise<void>} A promise that resolves when the popup state object has been removed.
  */
-const removePopupStateObjectForTab = async () => { // tabId
-  // console.log('removePopupStateObjectForTab called with tabId:', tabId);
-  // let popupState = await storage.getItem('session:popupState');
+const removePopupStateObjectForTab = async tabId => {
+  let popupState = await storage.getItem('session:popupState');
 
-  // if (!popupState || typeof popupState !== 'object') {
-  //   popupState = {};
-  // }
+  if (!popupState || typeof popupState !== 'object') {
+    popupState = {};
+  }
 
-  // if (popupState[tabId]) {
-  //   delete popupState[tabId];
-  // }
+  if (popupState[tabId]) {
+    delete popupState[tabId];
+  }
 
-  // return storage.setItem('session:popupState', popupState);
+  return storage.setItem('session:popupState', popupState);
 };
 
 export default removePopupStateObjectForTab;
