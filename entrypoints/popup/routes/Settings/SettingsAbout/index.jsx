@@ -10,7 +10,6 @@ import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
 import { lazy } from 'react';
 import { usePopupState } from '@/hooks/usePopupState';
-import { getPopupState } from '../../utils/getPopupState';
 
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
 const AboutIcon = lazy(() => import('@/assets/popup-window/about.svg?react'));
@@ -29,10 +28,9 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 */
 function SettingsAbout (props) {
   const [version, setVersion] = useState('');
-  const [popupStateData, setPopupStateData] = useState(null);
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
-  const { setScrollElementRef, scrollElementRef } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
 
   useEffect(() => {
     try {
@@ -41,14 +39,6 @@ function SettingsAbout (props) {
     } catch (e) {
       CatchError(e);
     }
-  }, []);
-
-  useEffect(() => {
-    getPopupState().then(popupState => {
-      if (popupState) {
-        setPopupStateData(popupState);
-      }
-    });
   }, []);
 
   useEffect(() => {

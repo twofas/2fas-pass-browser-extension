@@ -7,9 +7,8 @@
 import S from '../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useNavigate } from 'react-router';
-import { lazy, useState } from 'react';
+import { lazy, useEffect } from 'react';
 import { usePopupState } from '@/hooks/usePopupState';
-import { getPopupState } from '../../utils/getPopupState';
 
 const WarningIconLight = lazy(() => import('@/assets/popup-window/warning-light.svg?react'));
 const WarningIconDark = lazy(() => import('@/assets/popup-window/warning-dark.svg?react'));
@@ -43,16 +42,7 @@ const resetExtension = async () => {
 */
 function SettingsReset (props) {
   const navigate = useNavigate();
-  const { setScrollElementRef, scrollElementRef } = usePopupState();
-  const [popupStateData, setPopupStateData] = useState(null);
-
-  useEffect(() => {
-    getPopupState().then(popupState => {
-      if (popupState) {
-        setPopupStateData(popupState);
-      }
-    });
-  }, []);
+  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
 
   useEffect(() => {
     if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {

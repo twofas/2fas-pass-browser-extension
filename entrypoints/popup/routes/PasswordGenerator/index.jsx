@@ -7,12 +7,11 @@
 import S from './PasswordGenerator.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
-import { lazy, useEffect, useState } from 'react';
+import { lazy, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { Form, Field } from 'react-final-form';
 import copyValue from '@/partials/functions/copyValue';
 import { usePopupState } from '@/hooks/usePopupState';
-import { getPopupState } from '../../utils/getPopupState';
 
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
@@ -23,8 +22,7 @@ function PasswordGenerator (props) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { setScrollElementRef, scrollElementRef } = usePopupState();
-  const [popupStateData, setPopupStateData] = useState(null);
+  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
 
   useEffect(() => {
     if (
@@ -42,14 +40,6 @@ function PasswordGenerator (props) {
       }
     }
   }, [location.state, location.key, navigate]);
-
-  useEffect(() => {
-    getPopupState().then(popupState => {
-      if (popupState) {
-        setPopupStateData(popupState);
-      }
-    });
-  }, []);
 
   useEffect(() => {
     if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {

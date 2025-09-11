@@ -6,9 +6,8 @@
 
 import S from '../Settings.module.scss';
 import { Link } from 'react-router';
-import { lazy, useState } from 'react';
+import { lazy, useEffect } from 'react';
 import { usePopupState } from '@/hooks/usePopupState';
-import { getPopupState } from '../../utils/getPopupState';
 
 const ExtensionName = lazy(() => import('./components/ExtensionName'));
 const Shortcut = lazy(() => import('./components/Shortcut'));
@@ -26,16 +25,7 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsPreferences (props) {
-  const { setScrollElementRef, scrollElementRef } = usePopupState();
-  const [popupStateData, setPopupStateData] = useState(null);
-
-  useEffect(() => {
-    getPopupState().then(popupState => {
-      if (popupState) {
-        setPopupStateData(popupState);
-      }
-    });
-  }, []);
+  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
 
   useEffect(() => {
     if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {

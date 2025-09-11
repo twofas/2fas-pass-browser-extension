@@ -24,7 +24,6 @@ import keepPassword from './functions/keepPassword';
 import { toast } from 'react-toastify';
 import isLoginsCorrect from './functions/isLoginsCorrect';
 import { usePopupState } from '@/hooks/usePopupState';
-import { getPopupState } from '../../utils/getPopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const SmallLoginItem = lazy(() => import('./components/SmallLoginItem'));
@@ -62,7 +61,6 @@ function ThisTab (props) {
   const [storageVersion, setStorageVersion] = useState(null);
   const [autofillFailed, setAutofillFailed] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [popupStateData, setPopupStateData] = useState(null);
 
   // Search
   const [searchActive, setSearchActive] = useState(false);
@@ -78,7 +76,7 @@ function ThisTab (props) {
   const thisTabTopRef = useRef(null);
 
   const { changeMatchingLoginsLength } = useMatchingLogins();
-  const { setScrollElementRef, scrollElementRef } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData } = usePopupState();
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
@@ -307,14 +305,6 @@ function ThisTab (props) {
       setAutofillFailed(false);
     }
   }, [state]);
-
-  useEffect(() => {
-    getPopupState().then(popupState => {
-      if (popupState) {
-        setPopupStateData(popupState);
-      }
-    });
-  }, []);
 
   useEffect(() => {
     if (!loading && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
