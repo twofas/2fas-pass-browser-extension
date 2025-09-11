@@ -32,7 +32,7 @@ function SettingsAbout (props) {
   const [version, setVersion] = useState('');
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
 
   useEffect(() => {
     setHref(location.pathname);
@@ -48,10 +48,10 @@ function SettingsAbout (props) {
   }, []);
 
   useEffect(() => {
-    if (popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+    if (shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
       scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
     }
-  }, [popupStateData, scrollElementRef]);
+  }, [shouldRestoreScroll, popupStateData, scrollElementRef]);
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
