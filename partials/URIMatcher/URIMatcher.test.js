@@ -174,6 +174,12 @@ describe('URIMatcher', () => {
       assert.strictEqual(URIMatcher.removeTrailingChars('https://localhost/?'), 'https://localhost');
       assert.strictEqual(URIMatcher.removeTrailingChars('https://localhost:3000/?'), 'https://localhost:3000');
       assert.strictEqual(URIMatcher.removeTrailingChars(''), '');
+      // Test protocol-only strings (should not be modified)
+      assert.strictEqual(URIMatcher.removeTrailingChars('https://'), 'https://');
+      assert.strictEqual(URIMatcher.removeTrailingChars('http://'), 'http://');
+      assert.strictEqual(URIMatcher.removeTrailingChars('chrome-extension://'), 'chrome-extension://');
+      assert.strictEqual(URIMatcher.removeTrailingChars('chrome://'), 'chrome://');
+      assert.strictEqual(URIMatcher.removeTrailingChars('ftp://'), 'ftp://');
       expect(() => URIMatcher.removeTrailingChars(123)).to.throw('Parameter is not a string');
       expect(() => URIMatcher.removeTrailingChars({})).to.throw('Parameter is not a string');
       expect(() => URIMatcher.removeTrailingChars(null)).to.throw('Parameter is not a string');
@@ -518,6 +524,34 @@ describe('URIMatcher', () => {
       assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: [{ text: '10.10.10.10', matcher: URIMatcher.M_HOST_TYPE }] }], '10.10.10.10'), [{ uris: [{ text: 'https://10.10.10.10', matcher: URIMatcher.M_HOST_TYPE }] }]);
       assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: [{ text: '10.10.10.10', matcher: URIMatcher.M_EXACT_TYPE }] }], '10.10.10.10'), [{ uris: [{ text: 'https://10.10.10.10', matcher: URIMatcher.M_EXACT_TYPE }] }]);
       assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: [{ text: '10.10.10.10', matcher: URIMatcher.M_START_WITH_TYPE }] }], '10.10.10.10'), [{ uris: [{ text: 'https://10.10.10.10', matcher: URIMatcher.M_START_WITH_TYPE }] }]);
+      
+      // Test cases with valid URL and invalid URLs
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '1', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'), [{ id: '1', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }] }]);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '2', uris: [{ text: 'https://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '3', uris: [{ text: 'chrome-extension://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '4', uris: [{ text: 'http://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'), []);
+      
+      // Test with multiple URIs - one valid and one invalid
+      assert.deepEqual(
+        URIMatcher.getMatchedAccounts([{ id: '5', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'invalid-url', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'),
+        [{ id: '5', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'invalid-url', matcher: URIMatcher.M_DOMAIN_TYPE }] }]
+      );
+      
+      // Test with protocol-only invalid URLs - these should not be modified by removeTrailingChars
+      assert.deepEqual(
+        URIMatcher.getMatchedAccounts([{ id: '6', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'https://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'),
+        [{ id: '6', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'https://', matcher: URIMatcher.M_DOMAIN_TYPE }] }]
+      );
+      
+      assert.deepEqual(
+        URIMatcher.getMatchedAccounts([{ id: '7', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'chrome-extension://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'),
+        [{ id: '7', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'chrome-extension://', matcher: URIMatcher.M_DOMAIN_TYPE }] }]
+      );
+      
+      assert.deepEqual(
+        URIMatcher.getMatchedAccounts([{ id: '8', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'http://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'),
+        [{ id: '8', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'http://', matcher: URIMatcher.M_DOMAIN_TYPE }] }]
+      );
     });
   });
 
@@ -580,6 +614,11 @@ describe('URIMatcher', () => {
       assert.deepEqual(
         URIMatcher.recognizeURIs([{ text: 'test' }, { text: [] }]),
         { urls: [], others: [{ text: 'test' }] }
+      );
+
+      assert.deepEqual(
+        URIMatcher.recognizeURIs([{ text: 'invalid-url' }]),
+        { urls: [], others: [{ text: 'invalid-url' }] }
       );
 
       assert.deepEqual(
