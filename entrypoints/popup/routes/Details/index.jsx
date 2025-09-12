@@ -219,7 +219,9 @@ function Details (props) {
       stateData.notes = e.notes ? valueToNFKD(e.notes) : '';
     }
 
-    if (domainsEditable.some(e => e)) {
+    const hasUriChanges = domainsEditable.some(e => e) || e.uris?.some(uri => uri._tempId) || (service.uris?.length !== e.uris?.length);
+    
+    if (hasUriChanges) {
       stateData.uris = e.uris;
     }
 
@@ -291,9 +293,9 @@ function Details (props) {
                       <button
                         type="submit"
                         className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-                        disabled={(getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable).amount <= 0 || submitting) ? 'disabled' : ''}
+                        disabled={(getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, service.uris || [], values.uris || []).amount <= 0 || submitting) ? 'disabled' : ''}
                       >
-                        {browser.i18n.getMessage('update')}{getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable).text}
+                        {browser.i18n.getMessage('update')}{getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, service.uris || [], values.uris || []).text}
                       </button>
                     </div>
 
