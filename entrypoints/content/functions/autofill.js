@@ -20,6 +20,41 @@ const autofill = async request => {
     return { status: 'error', message: 'No username and password provided' };
   }
 
+  const isInIframe = window.self !== window.top;
+  
+  if (isInIframe) {
+    try {
+      const currentFrameDomain = new URL(window.location.href).hostname;
+      const topFrameDomain = new URL(window.top.location.href).hostname;
+      
+      if (currentFrameDomain !== topFrameDomain) {
+        const message = browser.i18n.getMessage('autofill_cross_domain_warning')
+          .replace('CURRENT_DOMAIN', currentFrameDomain)
+          .replace('TOP_DOMAIN', topFrameDomain);
+        
+        const userConfirmed = window.confirm(message);
+        
+        if (!userConfirmed) {
+          return { status: 'cancelled', message: 'User cancelled cross-domain autofill' };
+        }
+      }
+    } catch {
+      try {
+        const currentFrameDomain = new URL(window.location.href).hostname;
+        const message = browser.i18n.getMessage('autofill_cross_domain_warning_no_access')
+          .replace('CURRENT_DOMAIN', currentFrameDomain);
+        
+        const userConfirmed = window.confirm(message);
+        
+        if (!userConfirmed) {
+          return { status: 'cancelled', message: 'User cancelled cross-domain autofill' };
+        }
+      } catch (innerError) {
+        CatchError(innerError);
+      }
+    }
+  }
+
   let inputFound = false;
 
   const passwordInputs = getPasswordInputs();
