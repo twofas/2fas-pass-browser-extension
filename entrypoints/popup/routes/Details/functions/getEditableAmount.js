@@ -13,11 +13,10 @@
 * @param {boolean} notesEditable - Indicates if the notes field is editable.
 * @param {boolean} tierEditable - Indicates if the tier field is editable.
 * @param {boolean} tagsEditable - Indicates if the tags field is editable.
-* @param {Array} originalUris - Original URIs array.
 * @param {Array} currentUris - Current URIs array.
 * @return {Object} An object containing the editable amount and a text description.
 */
-const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, originalUris = [], currentUris = []) => {
+const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, currentUris = []) => {
   let amount = 0;
 
   if (nameEditable) { amount++; }
@@ -29,17 +28,6 @@ const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, dom
   
   let uriChanges = 0;
   
-  const originalUriStrings = originalUris.map(uri => 
-    JSON.stringify({ text: uri.text, matcher: uri.matcher })
-  );
-
-  const currentUriStrings = currentUris.filter(uri => !uri._tempId).map(uri => 
-    JSON.stringify({ text: uri.text, matcher: uri.matcher })
-  );
-  
-  const deletedUris = originalUriStrings.filter(uri => !currentUriStrings.includes(uri));
-  uriChanges += deletedUris.length;
-  
   const newUris = currentUris.filter(uri => uri._tempId);
   uriChanges += newUris.length;
   
@@ -49,7 +37,7 @@ const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, dom
     }
 
     const currentUri = currentUris[index];
-
+    
     if (currentUri._tempId) {
       return false;
     }
