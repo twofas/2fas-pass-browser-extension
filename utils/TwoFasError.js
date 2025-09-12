@@ -696,6 +696,11 @@ class TwoFasError extends Error {
     checkInitialInputsValuesEncryptError: {
       message: 'checkInitialInputsValues: error encrypting data',
       code: 9402
+    },
+    // SETUP STYLE OBSERVER
+    setupStyleObserverMutationDetected: {
+      message: 'Style observer detected mutation on shadowHost element',
+      code: 9403
     }
   };
 }
