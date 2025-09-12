@@ -293,9 +293,9 @@ function Details (props) {
                       <button
                         type="submit"
                         className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-                        disabled={(getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, service.uris || [], values.uris || []).amount <= 0 || submitting) ? 'disabled' : ''}
+                        disabled={(getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, values.uris || []).amount <= 0 || submitting) ? 'disabled' : ''}
                       >
-                        {browser.i18n.getMessage('update')}{getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, service.uris || [], values.uris || []).text}
+                        {browser.i18n.getMessage('update')}{getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, values.uris || []).text}
                       </button>
                     </div>
 
