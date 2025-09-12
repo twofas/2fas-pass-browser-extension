@@ -62,6 +62,11 @@ function URLComponent (props) {
     const newDomainsEditable = [...domainsEditable];
 
     if (newDomainsEditable[index]) {
+      if (isNew) {
+        handleRemoveUri(index, form);
+        return;
+      }
+      
       const originalValue = service.uris && service.uris[index] ? service.uris[index].text : '';
       form.change(`uris[${index}].text`, originalValue);
     }
