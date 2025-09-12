@@ -214,6 +214,12 @@ class URIMatcher {
       throw new Error('Parameter is not a string');
     }
 
+    // Don't modify protocol-only strings like 'https://' or 'chrome-extension://'
+    // Check if the URL is just a protocol (ends with :// or :/)
+    if (/^[a-z][a-z0-9+.-]*:\/?\/?$/i.test(url)) {
+      return url;
+    }
+
     return url.replace(/\/(\?|#)*$/, '');
   }
 
