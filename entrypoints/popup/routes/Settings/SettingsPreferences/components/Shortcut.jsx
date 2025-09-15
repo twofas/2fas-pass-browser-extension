@@ -13,7 +13,7 @@ import { useEffect, useState, Fragment } from 'react';
 * Function to render the Shortcut component.
 * @return {JSX.Element} The rendered component.
 */
-function Shortcut () {
+function Shortcut (props) {
   const [shortcut, setShortcut] = useState(null);
   const [shortcutLink, setShortcutLink] = useState('#');
 
@@ -42,6 +42,10 @@ function Shortcut () {
       }
 
       setShortcut(shortcutText);
+
+      if (props.onLoad) {
+        props.onLoad();
+      }
     };
 
     try {
@@ -80,7 +84,7 @@ function Shortcut () {
         break;
       }
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const EmptyShortcutBox = () => (
     <div className={pI.settingsShortcutBoxKey}>{browser.i18n.getMessage('settings_unknown').toUpperCase()}</div>

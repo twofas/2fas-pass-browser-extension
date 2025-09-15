@@ -15,7 +15,7 @@ const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?re
 * Function to render the Save Password Prompt component.
 * @return {JSX.Element} The rendered component.
 */
-function SavePasswordPrompt () {
+function SavePasswordPrompt (props) {
   if (import.meta.env.BROWSER === 'safari') {
     return null; // Safari does not support this feature
   }
@@ -37,6 +37,10 @@ function SavePasswordPrompt () {
 
       setSP(storageSavePasswordPrompt);
       setLoading(false);
+
+      if (props.onLoad) {
+        props.onLoad();
+      }
     };
 
     try {
