@@ -16,7 +16,7 @@ import valueToNFKD from '@/partials/functions/valueToNFKD';
 * Function to render the Extension Name component.
 * @return {JSX.Element} The rendered component.
 */
-function ExtensionName () {
+function ExtensionName (props) {
   const [loading, setLoading] = useState(true);
   const [extName, setExtName] = useState('');
 
@@ -25,14 +25,18 @@ function ExtensionName () {
       const browserInfo = await storage.getItem('local:browserInfo');
       setExtName(filterXSS(browserInfo.name));
       setLoading(false);
+
+      if (props.onLoad) {
+        props.onLoad();
+      }
     };
-    
+
     try {
       getExtName();
     } catch (e) {
       CatchError(e);
     }
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const validate = values => {
     const errors = {};
