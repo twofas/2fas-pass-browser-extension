@@ -4,15 +4,16 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
+/**
 * Function to handle messages sent to the Add New view in the popup.
 * @param {Object} request - The request object containing the message data.
 * @param {Object} sender - The sender object containing information about the message sender.
 * @param {Function} sendResponse - The function to call with the response data.
 * @param {Function} setUrl - The function to call to set the URL.
+* @param {Function} updateData - The function to call to update popupState data.
 * @return {boolean} True if the message was handled, false otherwise.
 */
-const onMessage = (request, sender, sendResponse, setUrl) => {
+const onMessage = (request, sender, sendResponse, setUrl, updateData) => {
   try {
     if (!request || !request?.action || request?.target !== REQUEST_TARGETS.POPUP_ADD_NEW) {
       return false;
@@ -21,6 +22,11 @@ const onMessage = (request, sender, sendResponse, setUrl) => {
     switch (request.action) {
       case REQUEST_ACTIONS.SEND_URL: {
         setUrl(request.url);
+
+        if (updateData) {
+          updateData({ url: request.url });
+        }
+        
         sendResponse({ status: 'ok' });
         break;
       }
