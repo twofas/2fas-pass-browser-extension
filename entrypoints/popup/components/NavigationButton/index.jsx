@@ -17,7 +17,6 @@ const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
 function NavigationButton (props) {
   const navigate = useNavigate();
   const location = useLocation();
-  const doesAnyHistoryEntryExist = location.key !== 'default';
 
   return (
     <Link
@@ -27,9 +26,13 @@ function NavigationButton (props) {
         if (props.type === 'back') {
           e.preventDefault();
 
-          if (doesAnyHistoryEntryExist) {
-            navigate(-1);
-          } else {
+          try {
+            if (window.history.length > 1 && location.key !== 'default') {
+              navigate(-1);
+            } else {
+              navigate('/');
+            }
+          } catch {
             navigate('/');
           }
         } else {
