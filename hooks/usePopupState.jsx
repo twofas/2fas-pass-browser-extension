@@ -214,25 +214,46 @@ export const PopupStateProvider = ({ children }) => {
         return prev;
       }
 
-      return { ...prev, href, scrollPosition: 0 };
+      return {
+        ...prev,
+        href,
+        scrollPosition: 0,
+        data: {}
+      };
     });
-    
+
     setPopupStateData(prev => {
       const shouldKeepScroll = prev?.href === href;
 
       if (!prev) {
-        return { href, scrollPosition: 0 };
+        return { href, scrollPosition: 0, data: {} };
       }
 
       return {
         ...prev,
         href,
-        scrollPosition: shouldKeepScroll ? prev.scrollPosition : 0
+        scrollPosition: shouldKeepScroll ? prev.scrollPosition : 0,
+        data: shouldKeepScroll ? prev.data : {}
       };
     });
   }, []);
 
   const shouldRestoreScroll = useMemo(() => popupStateData?.href === pathname, [popupStateData?.href, pathname]);
+
+  const setData = useCallback((data) => {
+    setPopupState(prev => {
+      const newData = typeof data === 'function' ? data(prev.data || {}) : data;
+
+      if (JSON.stringify(prev.data) === JSON.stringify(newData)) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        data: newData
+      };
+    });
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -242,9 +263,11 @@ export const PopupStateProvider = ({ children }) => {
       popupStateData,
       setPopupStateData,
       setHref,
-      shouldRestoreScroll
+      shouldRestoreScroll,
+      setData,
+      popupState
     }),
-    [setScrollElementRef, getPopupState, popupStateData, setHref, shouldRestoreScroll]
+    [setScrollElementRef, getPopupState, popupStateData, setHref, shouldRestoreScroll, setData, popupState]
   );
 
   return <PopupStateContext.Provider value={value}>{children}</PopupStateContext.Provider>;

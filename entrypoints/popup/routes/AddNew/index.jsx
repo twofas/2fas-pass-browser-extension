@@ -41,50 +41,109 @@ const additionalVariants = {
 function AddNew (props) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll, setData, popupState } = usePopupState();
 
   const [loading, setLoading] = useState(true);
-  const [url, setUrl] = useState(location?.state?.data?.url !== undefined ? filterXSS(location.state.data.url) : '');
-  const [minLength, setMinLength] = useState(location?.state?.data?.minLength ? filterXSS(location.state.data.minLength) : '');
-  const [maxLength, setMaxLength] = useState(location?.state?.data?.maxLength ? filterXSS(location.state.data.maxLength) : '');
-  const [pattern, setPattern] = useState(location?.state?.data?.pattern ? filterXSS(location.state.data.pattern) : '');
-  const [password, ] = useState(location?.state?.data?.password ? filterXSS(location.state.data.password) : '');
-  const [username, ] = useState(location?.state?.data?.username ? filterXSS(location.state.data.username) : '');
-  const [onMobile, setOnMobile] = useState(location?.state?.data?.onMobile !== undefined ? location.state.data.onMobile : true);
-  const [additionalOverflow, setAdditionalOverflow] = useState(location?.state?.data?.additionalOverflow !== undefined ? filterXSS(location.state.data.additionalOverflow) : true);
-  const [passwordVisible, setPasswordVisible] = useState(location?.state?.data?.passwordVisible !== undefined ? location.state.data.passwordVisible : false);
 
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
+  const getInitialValue = (key, fallback = '') => {
+    if (location?.state?.data?.[key] !== undefined) {
+      return typeof location.state.data[key] === 'string' ? filterXSS(location.state.data[key]) : location.state.data[key];
+    }
+
+    if (popupState?.data?.[key] !== undefined) {
+      return typeof popupState.data[key] === 'string' ? filterXSS(popupState.data[key]) : popupState.data[key];
+    }
+
+    return fallback;
+  };
+
+  const [url, setUrl] = useState(getInitialValue('url', ''));
+  const [minLength, setMinLength] = useState(getInitialValue('minLength', ''));
+  const [maxLength, setMaxLength] = useState(getInitialValue('maxLength', ''));
+  const [pattern, setPattern] = useState(getInitialValue('pattern', ''));
+  const [password, setPassword] = useState(getInitialValue('password', ''));
+  const [username, setUsername] = useState(getInitialValue('username', ''));
+  const [onMobile, setOnMobile] = useState(getInitialValue('onMobile', true));
+  const [additionalOverflow, setAdditionalOverflow] = useState(getInitialValue('additionalOverflow', true));
+  const [passwordVisible, setPasswordVisible] = useState(getInitialValue('passwordVisible', false));
+
+  const updateData = useCallback((updates) => {
+    setData(prevData => ({
+      ...prevData,
+      ...updates
+    }));
+  }, [setData]);
 
   useEffect(() => {
     setHref(location.pathname);
   }, [location.pathname, setHref]);
 
   useEffect(() => {
-    const messageListener = async (request, sender, sendResponse) => await onMessage(request, sender, sendResponse, setUrl);
+    if (location?.state?.data && Object.keys(location.state.data).length > 0) {
+      updateData(location.state.data);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (location?.state?.from === 'passwordGenerator' && location?.state?.data) {
+      const data = location.state.data;
+
+      if (data.password !== undefined) {
+        setPassword(data.password);
+      }
+
+      if (data.username !== undefined) {
+        setUsername(data.username);
+      }
+
+      updateData({
+        password: data.password || '',
+        username: data.username || ''
+      });
+    }
+  }, [location?.state, updateData]);
+
+  useEffect(() => {
+    const messageListener = async (request, sender, sendResponse) => onMessage(request, sender, sendResponse, setUrl, updateData);
     browser.runtime.onMessage.addListener(messageListener);
 
     const getDomainData = async () => {
       const data = await getDomainInfo();
+      const updates = {};
 
       if (data.url) {
-        setUrl(filterXSS(data.url));
+        const sanitizedUrl = filterXSS(data.url);
+        setUrl(sanitizedUrl);
+        updates.url = sanitizedUrl;
       }
-      
+
       if (data.minLength) {
-        setMinLength(filterXSS(data.minLength));
+        const sanitizedMinLength = filterXSS(data.minLength);
+        setMinLength(sanitizedMinLength);
+        updates.minLength = sanitizedMinLength;
       }
 
       if (data.maxLength) {
-        setMaxLength(filterXSS(data.maxLength));
+        const sanitizedMaxLength = filterXSS(data.maxLength);
+        setMaxLength(sanitizedMaxLength);
+        updates.maxLength = sanitizedMaxLength;
       }
 
       if (data.pattern) {
         setPattern(data.pattern); // Do not sanitize
+        updates.pattern = data.pattern;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        updateData(updates);
       }
     };
 
     try {
-      if (!location?.state?.data) {
+      const hasLocationData = location?.state?.data && Object.keys(location.state.data).length > 0;
+      const hasPopupStateData = popupState?.data && Object.keys(popupState.data).length > 0;
+
+      if (!hasLocationData && !hasPopupStateData) {
         getDomainData();
       }
     } catch (e) {
@@ -96,7 +155,7 @@ function AddNew (props) {
     return () => {
       browser.runtime.onMessage.removeListener(messageListener);
     };
-  }, []);
+  }, [updateData, popupState?.data, location?.state?.data]);
 
   useEffect(() => {
     if (!loading && shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
@@ -105,7 +164,9 @@ function AddNew (props) {
   }, [loading, shouldRestoreScroll, popupStateData, scrollElementRef]);
 
   const handlePasswordVisibleClick = () => {
-    setPasswordVisible(!passwordVisible);
+    const newValue = !passwordVisible;
+    setPasswordVisible(newValue);
+    updateData({ passwordVisible: newValue });
   };
 
   const handleCopyPassword = async form => {
@@ -182,7 +243,17 @@ function AddNew (props) {
               <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
 
               <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url, username, password }} render={({ handleSubmit, form, submitting }) => ( // pristine, values
-                  <form onSubmit={handleSubmit}>
+                  <form onSubmit={handleSubmit} onChange={() => {
+                    const values = form.getState().values;
+                    updateData({
+                      url: values.url || '',
+                      username: values.username || '',
+                      password: values.password || '',
+                      minLength: values['password-minlength'] || '',
+                      maxLength: values['password-maxlength'] || '',
+                      pattern: values['password-pattern'] || ''
+                    });
+                  }}>
                     <Field name="password-minlength" value={minLength}>
                       {({ input }) => <input type="hidden" {...input} id="password-minlength" />}
                     </Field>
@@ -231,7 +302,11 @@ function AddNew (props) {
                                 name="set-in-mobile"
                                 id="set-in-mobile"
                                 checked={onMobile}
-                                onChange={() => setOnMobile(!onMobile)}
+                                onChange={() => {
+                                const newValue = !onMobile;
+                                setOnMobile(newValue);
+                                updateData({ onMobile: newValue });
+                              }}
                               />
                               <label htmlFor="set-in-mobile">
                                 <span className={bS.passToggleBox}>
@@ -273,7 +348,7 @@ function AddNew (props) {
                                 type="text"
                                 {...input}
                                 id="username"
-                                disabled={!setOnMobile ? 'disabled' : ''}
+                                disabled={onMobile ? 'disabled' : ''}
                                 placeholder={browser.i18n.getMessage('placeholder_username')}
                               />
                               <div className={pI.passInputBottomButtons}>
@@ -282,7 +357,7 @@ function AddNew (props) {
                                   className={`${bS.btn} ${pI.iconButton}`}
                                   onClick={() => handleCopyUsername(form)}
                                   title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
-                                  disabled={!setOnMobile ? 'disabled' : ''}
+                                  disabled={onMobile ? 'disabled' : ''}
                                 >
                                   <CopyIcon />
                                 </button>
@@ -305,7 +380,7 @@ function AddNew (props) {
                                 id="password"
                                 showPassword={passwordVisible}
                                 isDecrypted={true}
-                                disabled={!setOnMobile ? 'disabled' : ''}
+                                disabled={onMobile ? 'disabled' : ''}
                                 dir="ltr"
                                 spellCheck="false"
                                 autoCorrect="off"
