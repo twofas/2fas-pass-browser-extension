@@ -7,7 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import S from '../../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Form, Field } from 'react-final-form';
 import { filterXSS } from 'xss';
 import valueToNFKD from '@/partials/functions/valueToNFKD';
@@ -18,12 +18,26 @@ import valueToNFKD from '@/partials/functions/valueToNFKD';
 */
 function ExtensionName (props) {
   const [loading, setLoading] = useState(true);
-  const [extName, setExtName] = useState('');
+  const [extName, setExtName] = useState(props.popupState?.data?.extName || '');
+
+  const updateData = useCallback(updates => {
+    if (props.setData) {
+      props.setData(prevData => ({
+        ...prevData,
+        ...updates
+      }));
+    }
+  }, [props]);
 
   useEffect(() => {
     const getExtName = async () => {
-      const browserInfo = await storage.getItem('local:browserInfo');
-      setExtName(filterXSS(browserInfo.name));
+      if (!props.popupState?.data?.extName) {
+        const browserInfo = await storage.getItem('local:browserInfo');
+        const name = filterXSS(browserInfo.name);
+        setExtName(name);
+        updateData({ extName: name });
+      }
+
       setLoading(false);
 
       if (props.onLoad) {
@@ -80,8 +94,11 @@ function ExtensionName (props) {
   }
 
   return (
-    <Form onSubmit={onSubmit} initialValues={{ 'ext-name': extName }} render={({ handleSubmit, submitting }) => ( // form, pristine, values
-      <form className={S.settingsExtName} onSubmit={handleSubmit}>
+    <Form onSubmit={onSubmit} initialValues={{ 'ext-name': extName }} render={({ handleSubmit, submitting, form }) => ( // form, pristine, values
+      <form className={S.settingsExtName} onSubmit={handleSubmit} onChange={() => {
+        const values = form.getState().values;
+        updateData({ extName: values['ext-name'] });
+      }}>
         <Field name="ext-name">
           {({ input }) => (
              <div className={`${pI.passInput} ${pI.bigMargin}`}>

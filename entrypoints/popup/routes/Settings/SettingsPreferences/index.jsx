@@ -26,7 +26,7 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 */
 function SettingsPreferences (props) {
   const location = useLocation();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll, popupState, setData } = usePopupState();
   const [loadedComponents, setLoadedComponents] = useState(new Set());
   const componentsToLoad = useRef(['ExtensionName', 'Shortcut', 'Push', 'Theme', 'SavePasswordPrompt', 'ContextMenu', 'Logs']);
 
@@ -65,7 +65,11 @@ function SettingsPreferences (props) {
               </div>
     
               <div className={S.settingsSubmenuBody}>
-                <ExtensionName onLoad={() => handleComponentLoad('ExtensionName')} />
+                <ExtensionName
+                  onLoad={() => handleComponentLoad('ExtensionName')}
+                  popupState={popupState}
+                  setData={setData}
+                />
                 <Shortcut onLoad={() => handleComponentLoad('Shortcut')} />
                 <Push onLoad={() => handleComponentLoad('Push')} />
                 <Theme onLoad={() => handleComponentLoad('Theme')} />
