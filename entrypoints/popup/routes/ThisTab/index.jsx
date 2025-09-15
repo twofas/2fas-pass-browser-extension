@@ -49,6 +49,8 @@ const thisTabTopVariants = {
 function ThisTab (props) {
   const location = useLocation();
   const { state } = location;
+  const { changeMatchingLoginsLength } = useMatchingLogins();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll, setData, popupState } = usePopupState();
 
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('Unknown');
@@ -62,11 +64,23 @@ function ThisTab (props) {
   const [autofillFailed, setAutofillFailed] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
+  const getInitialValue = (key, fallback = null) => {
+    if (location?.state?.data?.[key] !== undefined) {
+      return location.state.data[key];
+    }
+
+    if (popupState?.data?.[key] !== undefined) {
+      return popupState.data[key];
+    }
+
+    return fallback;
+  };
+
   // Search
-  const [searchActive, setSearchActive] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
-  const [selectedTag, setSelectedTag] = useState(null);
-  const [lastSelectedTagInfo, setLastSelectedTagInfo] = useState(null);
+  const [searchActive, setSearchActive] = useState(getInitialValue('searchActive', false));
+  const [searchValue, setSearchValue] = useState(getInitialValue('searchValue', ''));
+  const [selectedTag, setSelectedTag] = useState(getInitialValue('selectedTag', null));
+  const [lastSelectedTagInfo, setLastSelectedTagInfo] = useState(getInitialValue('lastSelectedTagInfo', null));
   const [forceCloseFilters, setForceCloseFilters] = useState(false);
 
   const boxAnimationRef = useRef(null);
@@ -75,8 +89,12 @@ function ThisTab (props) {
   const unwatchStorageVersion = useRef(null);
   const thisTabTopRef = useRef(null);
 
-  const { changeMatchingLoginsLength } = useMatchingLogins();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
+  const updateData = useCallback((updates) => {
+    setData(prevData => ({
+      ...prevData,
+      ...updates
+    }));
+  }, [setData]);
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
@@ -96,6 +114,12 @@ function ThisTab (props) {
     setHref(location.pathname);
   }, [location.pathname, setHref]);
 
+  useEffect(() => {
+    if (location?.state?.data && Object.keys(location.state.data).length > 0) {
+      updateData(location.state.data);
+    }
+  }, []);
+
   const handleSearchChange = useCallback(e => {
     const value = e?.target?.value;
 
@@ -105,24 +129,31 @@ function ThisTab (props) {
     if (value.trim().length > 0) {
       setSearchActive(true);
       setSearchValue(value);
+      updateData({ searchActive: true, searchValue: value });
     } else {
       setSearchActive(false);
       setSearchValue('');
+      updateData({ searchActive: false, searchValue: '' });
     }
-  }, []);
+  }, [updateData]);
 
   const handleSearchClear = useCallback(() => {
     setSearchValue('');
     setSearchActive(false);
-  }, []);
+    updateData({ searchValue: '', searchActive: false });
+  }, [updateData]);
 
   const handleTagChange = useCallback((tag) => {
     setSelectedTag(tag);
-    
+
     if (tag) {
-      setLastSelectedTagInfo({ name: tag.name, amount: tag.amount });
+      const tagInfo = { name: tag.name, amount: tag.amount };
+      setLastSelectedTagInfo(tagInfo);
+      updateData({ selectedTag: tag, lastSelectedTagInfo: tagInfo });
+    } else {
+      updateData({ selectedTag: null });
     }
-  }, []);
+  }, [updateData]);
 
   const handleKeepPassword = useCallback(async () => {
     await keepPassword(state);
@@ -169,6 +200,7 @@ function ThisTab (props) {
 
     setSearchActive(false);
     setSearchValue('');
+    updateData({ searchActive: false, searchValue: '' });
   }, [changeMatchingLoginsLength]);
 
   const watchStorageVersion = useCallback(() => {
