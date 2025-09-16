@@ -58,7 +58,7 @@ function URLComponent (props) {
   
   const isNew = uris && uris[index] && uris[index]._tempId;
 
-  const setDomainEditable = index => {
+  const setDomainEditable = (index, input) => {
     const newDomainsEditable = [...domainsEditable];
 
     if (newDomainsEditable[index]) {
@@ -66,9 +66,15 @@ function URLComponent (props) {
         handleRemoveUri(index, form);
         return;
       }
-      
-      const originalValue = service.uris && service.uris[index] ? service.uris[index].text : '';
+
+      const initialValues = form.getState().initialValues;
+      const originalValue = initialValues.uris && initialValues.uris[index] ? initialValues.uris[index].text : '';
+
       form.change(`uris[${index}].text`, originalValue);
+      
+      if (input) {
+        input.onChange(originalValue);
+      }
     }
 
     newDomainsEditable[index] = !newDomainsEditable[index];
@@ -90,7 +96,7 @@ function URLComponent (props) {
           >
             <div className={pI.passInputTop}>
             <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
-            <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => setDomainEditable(index)}>{domainsEditable[index] ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
+            <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => setDomainEditable(index, input)}>{domainsEditable[index] ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
           </div>
           <div className={pI.passInputBottom}>
             <input

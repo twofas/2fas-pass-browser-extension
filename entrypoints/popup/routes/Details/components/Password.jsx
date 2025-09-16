@@ -60,6 +60,7 @@ function Password (props) {
       }
       
       setCheckingUrl(true);
+
       try {
         const url = await findPasswordChangeUrl(service.uris);
         setChangePasswordUrl(url);
@@ -178,12 +179,9 @@ function Password (props) {
     if (passwordEditable) {
       setPasswordEditable(false);
       service.passwordEdited = null;
-      
-      if (!passwordVisible) {
-        encryptFormPassword();
-      } else {
-        await decryptFormPassword();
-      }
+
+      const initialValues = form.getState().initialValues;
+      form.change('password', initialValues.password || '******');
     } else {
       await decryptFormPassword();
       setPasswordEditable(true);
@@ -227,7 +225,9 @@ function Password (props) {
     e.preventDefault();
     e.stopPropagation();
     
-    if (!changePasswordUrl) return;
+    if (!changePasswordUrl) {
+      return;
+    }
     
     await browser.tabs.create({ url: changePasswordUrl });
   };
