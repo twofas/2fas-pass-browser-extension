@@ -11,15 +11,144 @@ import createPopupStateObjectForTab from '@/partials/popupState/createPopupState
 import getPopupStateObjectForTab from '@/partials/popupState/getPopupStateObjectForTab';
 import getKey from '@/partials/sessionStorage/getKey';
 import getCurrentDevice from '@/partials/functions/getCurrentDevice';
+import generateNonce from '@/partials/functions/generateNonce';
 
 const PopupStateContext = createContext();
+
+const encryptData = async data => {
+  try {
+    const lKey = await storage.getItem('local:lKey');
+
+    if (!lKey) {
+      return JSON.stringify(data);
+    }
+
+    let nonce;
+
+    try {
+      nonce = await generateNonce();
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.popupStateEncryptNonceError, {
+        event: e,
+        additional: { func: 'encryptData - generateNonce' }
+      });
+    }
+
+    const dataString = JSON.stringify(data);
+
+    let localKeyCrypto;
+
+    try {
+      localKeyCrypto = await crypto.subtle.importKey(
+        'raw',
+        Base64ToArrayBuffer(lKey),
+        { name: 'AES-GCM' },
+        false,
+        ['encrypt']
+      );
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.popupStateEncryptImportKeyError, {
+        event: e,
+        additional: { func: 'encryptData - importKey' }
+      });
+    }
+
+    let encryptedValue;
+
+    try {
+      encryptedValue = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+        localKeyCrypto,
+        StringToArrayBuffer(dataString)
+      );
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.popupStateEncryptError, {
+        event: e,
+        additional: { func: 'encryptData - encrypt' }
+      });
+    }
+
+    const combined = EncryptBytes(nonce.ArrayBuffer, encryptedValue);
+
+    return ArrayBufferToBase64(combined);
+  } catch (error) {
+    CatchError(error);
+    return JSON.stringify(data);
+  }
+};
+
+const decryptData = async encryptedData => {
+  try {
+    if (!encryptedData || typeof encryptedData !== 'string') {
+      return {};
+    }
+
+    const lKey = await storage.getItem('local:lKey');
+
+    if (!lKey) {
+      try {
+        return JSON.parse(encryptedData);
+      } catch {
+        return {};
+      }
+    }
+
+    const combined = Base64ToArrayBuffer(encryptedData);
+    const { iv: nonce, data: ciphertext } = DecryptBytes(combined);
+
+    let localKeyCrypto;
+
+    try {
+      localKeyCrypto = await crypto.subtle.importKey(
+        'raw',
+        Base64ToArrayBuffer(lKey),
+        { name: 'AES-GCM' },
+        false,
+        ['decrypt']
+      );
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.popupStateDecryptImportKeyError, {
+        event: e,
+        additional: { func: 'decryptData - importKey' }
+      });
+    }
+
+    let decryptedValue;
+    
+    try {
+      decryptedValue = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: nonce },
+        localKeyCrypto,
+        ciphertext
+      );
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.popupStateDecryptError, {
+        event: e,
+        additional: { func: 'decryptData - decrypt' }
+      });
+    }
+
+    const dataString = ArrayBufferToString(decryptedValue);
+
+    return JSON.parse(dataString);
+  } catch (error) {
+    CatchError(error);
+
+    try {
+      return JSON.parse(encryptedData);
+    } catch {
+      return {};
+    }
+  }
+};
+
 const ignoredRoutePrefixes = [
   '/blocked',
   '/connect',
   '/fetch'
 ];
 
-const isIgnoredRoute = (pathname) => {
+const isIgnoredRoute = pathname => {
   return ignoredRoutePrefixes.some(prefix =>
     pathname === prefix || pathname.startsWith(prefix + '/')
   );
@@ -45,8 +174,11 @@ export const PopupStateProvider = ({ children }) => {
   const getTab = useCallback(async () => {
     try {
       return await getLastActiveTab();
-    } catch {
-      return null;
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.popupStateGetTabError, {
+        event: e,
+        additional: { func: 'getTab' }
+      });
     }
   }, []);
 
@@ -56,7 +188,11 @@ export const PopupStateProvider = ({ children }) => {
     }
 
     try {
-      const device = await getCurrentDevice();
+      let device;
+
+      try {
+        device = await getCurrentDevice();
+      } catch {}
 
       if (!device?.uuid) {
         return null;
@@ -67,8 +203,10 @@ export const PopupStateProvider = ({ children }) => {
 
       return key;
     } catch (error) {
-      CatchError(error);
-      return null;
+      throw new TwoFasError(TwoFasError.internalErrors.popupStateGetKeyError, {
+        event: error,
+        additional: { func: 'getPopupStateKey' }
+      });
     }
   }, []);
 
@@ -92,10 +230,28 @@ export const PopupStateProvider = ({ children }) => {
         return null;
       }
 
-      const allPopupStates = await storage.getItem(`session:${storageKey}`);
+      let allPopupStates;
+      try {
+        allPopupStates = await storage.getItem(`session:${storageKey}`);
+      } catch (e) {
+        throw new TwoFasError(TwoFasError.internalErrors.popupStateStorageError, {
+          event: e,
+          additional: { func: 'getPopupState - getItem' }
+        });
+      }
+
       const tabPopupState = allPopupStates?.[targetTab.id];
 
-      return tabPopupState || null;
+      if (!tabPopupState) {
+        return null;
+      }
+
+      const decryptedData = await decryptData(tabPopupState.data);
+
+      return {
+        ...tabPopupState,
+        data: decryptedData
+      };
     } catch (error) {
       CatchError(error);
       return null;
@@ -118,7 +274,7 @@ export const PopupStateProvider = ({ children }) => {
           scrollPosition: e.target.scrollTop
         };
       });
-    }, 200);
+    }, 100);
   }, []);
 
   useEffect(() => {
@@ -221,13 +377,34 @@ export const PopupStateProvider = ({ children }) => {
         return;
       }
 
-      const sessionPopupState = await storage.getItem(`session:${storageKey}`) || {};
-
-      if (JSON.stringify(sessionPopupState[tabId]) !== JSON.stringify(popupState)) {
-        sessionPopupState[tabId] = popupState;
-        await storage.setItem(`session:${storageKey}`, sessionPopupState);
+      let sessionPopupState;
+      try {
+        sessionPopupState = await storage.getItem(`session:${storageKey}`) || {};
+      } catch (e) {
+        throw new TwoFasError(TwoFasError.internalErrors.popupStateStorageError, {
+          event: e,
+          additional: { func: 'useEffect - getItem' }
+        });
       }
-    }, 300);
+
+      const encryptedData = await encryptData(popupState.data || {});
+      const popupStateToSave = {
+        ...popupState,
+        data: encryptedData
+      };
+
+      if (JSON.stringify(sessionPopupState[tabId]) !== JSON.stringify(popupStateToSave)) {
+        sessionPopupState[tabId] = popupStateToSave;
+        try {
+          await storage.setItem(`session:${storageKey}`, sessionPopupState);
+        } catch (e) {
+          throw new TwoFasError(TwoFasError.internalErrors.popupStateStorageError, {
+            event: e,
+            additional: { func: 'useEffect - setItem' }
+          });
+        }
+      }
+    }, 150);
 
     return () => {
       if (storageDebounceTimerRef.current) {
@@ -236,7 +413,7 @@ export const PopupStateProvider = ({ children }) => {
     };
   }, [popupState, getPopupStateKey]);
 
-  const setScrollElementRef = useCallback((element) => {
+  const setScrollElementRef = useCallback(element => {
     const prevElement = scrollElementRef.current;
     
     if (prevElement && prevElement._scrollHandler) {
@@ -284,7 +461,7 @@ export const PopupStateProvider = ({ children }) => {
 
   const shouldRestoreScroll = useMemo(() => popupStateData?.href === pathname, [popupStateData?.href, pathname]);
 
-  const setData = useCallback((data) => {
+  const setData = useCallback(data => {
     setPopupState(prev => {
       const newData = typeof data === 'function' ? data(prev.data || {}) : data;
 
