@@ -23,17 +23,29 @@ function Name (props) {
   const { setNameEditable } = actions;
 
   const handleCopyName = useCallback(async name => {
-    if (!name) return;
+    if (!name) {
+      return;
+    }
+
     await copyValue(name, service.id, 'name');
     showToast(browser.i18n.getMessage('details_name_copied'), 'success');
   }, [service.id]);
 
-  const handleNameEditable = form => {
+  const handleNameEditable = (form, input) => {
     if (nameEditable) {
-      form.change('name', service.name);
-    }
+      const initialValues = form.getState().initialValues;
+      const valueToRestore = initialValues.name || '';
 
-    setNameEditable(!nameEditable);
+      form.change('name', valueToRestore);
+      
+      if (input) {
+        input.onChange(valueToRestore);
+      }
+
+      setNameEditable(false);
+    } else {
+      setNameEditable(true);
+    }
   };
 
   return (
@@ -45,7 +57,7 @@ function Name (props) {
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
-              onClick={() => handleNameEditable(form)}
+              onClick={() => handleNameEditable(form, input)}
             >
               {nameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>

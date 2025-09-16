@@ -20,7 +20,7 @@ const usernameMobileVariants = {
   visible: { maxHeight: '18px' }
 };
 
- /**
+/**
 * Function to render the username input field.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
@@ -40,12 +40,21 @@ function Username (props) {
     showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
   }, [service.id]);
 
-  const handleUsernameEditable = form => {
+  const handleUsernameEditable = (form, input) => {
     if (usernameEditable) {
-      form.change('username', service.username);
-    }
+      const initialValues = form.getState().initialValues;
+      const valueToRestore = initialValues.username || '';
 
-    setUsernameEditable(!usernameEditable);
+      form.change('username', valueToRestore);
+      
+      if (input) {
+        input.onChange(valueToRestore);
+      }
+
+      setUsernameEditable(false);
+    } else {
+      setUsernameEditable(true);
+    }
   };
 
   const handleUsernameMobile = form => {
@@ -62,7 +71,7 @@ function Username (props) {
         <div className={`${pI.passInput} ${usernameEditable && !usernameMobile ? '' : pI.disabled} ${inputError === 'username' ? pI.error : ''}`}>
           <div className={pI.passInputTop}>
             <label htmlFor="username">{browser.i18n.getMessage('username')}</label>
-            <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => handleUsernameEditable(form)}>{usernameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
+            <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => handleUsernameEditable(form, input)}>{usernameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
           </div>
           <div className={pI.passInputBottom}>
             <input
