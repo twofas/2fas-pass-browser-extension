@@ -26,10 +26,14 @@ export const getInitialRoute = async () => {
       return '/';
     }
 
-    const device = await getCurrentDevice();
+    let device;
+    
+    try {
+      device = await getCurrentDevice();
+    } catch {}
 
     if (!device?.uuid) {
-      return '/';
+      return '/connect';
     }
 
     const storageKey = await getKey('popup_state', { uuid: device.uuid });
