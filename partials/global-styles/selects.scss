@@ -858,6 +858,7 @@
     padding: 9px 12px;
     position: relative;
     transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    user-select: none;
 
     body.theme-light & {
       background-color: rgba(v.$hover-color-light, 0);
@@ -1018,6 +1019,10 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       width: 100%;
+
+      &:first-of-type {
+        padding-right: 8px;
+      }
       
       &.react-select-tags__option_clear {
         body.theme-light & {
