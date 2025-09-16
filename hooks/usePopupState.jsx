@@ -9,14 +9,21 @@ import { useLocation } from 'react-router';
 import getLastActiveTab from '@/partials/functions/getLastActiveTab';
 import createPopupStateObjectForTab from '@/partials/popupState/createPopupStateObjectForTab';
 import getPopupStateObjectForTab from '@/partials/popupState/getPopupStateObjectForTab';
+import getKey from '@/partials/sessionStorage/getKey';
+import getCurrentDevice from '@/partials/functions/getCurrentDevice';
 
 const PopupStateContext = createContext();
-const ignoredRoutes = [
+const ignoredRoutePrefixes = [
   '/blocked',
   '/connect',
-  '/fetch',
-  '/fetch-external'
+  '/fetch'
 ];
+
+const isIgnoredRoute = (pathname) => {
+  return ignoredRoutePrefixes.some(prefix =>
+    pathname === prefix || pathname.startsWith(prefix + '/')
+  );
+};
 
 /** 
 * Function to provide popup state context.
@@ -33,6 +40,7 @@ export const PopupStateProvider = ({ children }) => {
   const storageDebounceTimerRef = useRef(null);
   const isInitializedRef = useRef(false);
   const lastPathnameRef = useRef(pathname);
+  const popupStateKeyRef = useRef(null);
 
   const getTab = useCallback(async () => {
     try {
@@ -42,11 +50,33 @@ export const PopupStateProvider = ({ children }) => {
     }
   }, []);
 
+  const getPopupStateKey = useCallback(async () => {
+    if (popupStateKeyRef.current) {
+      return popupStateKeyRef.current;
+    }
+
+    try {
+      const device = await getCurrentDevice();
+
+      if (!device?.uuid) {
+        return null;
+      }
+
+      const key = await getKey('popup_state', { uuid: device.uuid });
+      popupStateKeyRef.current = key;
+
+      return key;
+    } catch (error) {
+      CatchError(error);
+      return null;
+    }
+  }, []);
+
   const getPopupState = useCallback(async () => {
     try {
       const extURL = browser.runtime.getURL('/popup.html');
       const isPopupTab = tab => tab.url === extURL;
-      
+
       const targetTab = await getLastActiveTab(
         null,
         tab => !isPopupTab(tab)
@@ -55,16 +85,22 @@ export const PopupStateProvider = ({ children }) => {
       if (!targetTab || !targetTab.id) {
         return null;
       }
-      
-      const allPopupStates = await storage.getItem('session:popupState');
+
+      const storageKey = await getPopupStateKey();
+
+      if (!storageKey) {
+        return null;
+      }
+
+      const allPopupStates = await storage.getItem(`session:${storageKey}`);
       const tabPopupState = allPopupStates?.[targetTab.id];
-      
+
       return tabPopupState || null;
     } catch (error) {
       CatchError(error);
       return null;
     }
-  }, []);
+  }, [getPopupStateKey]);
 
   const onScroll = useCallback(e => {
     if (debounceTimerRef.current) {
@@ -86,7 +122,9 @@ export const PopupStateProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (ignoredRoutes.includes(pathname)) {
+    if (isIgnoredRoute(pathname)) {
+      setPopupState({ scrollPosition: 0, data: {}, href: '/' });
+      setPopupStateData({ scrollPosition: 0, data: {}, href: '/' });
       return;
     }
 
@@ -172,16 +210,22 @@ export const PopupStateProvider = ({ children }) => {
 
     storageDebounceTimerRef.current = setTimeout(async () => {
       const tabId = previousTabRef.current?.id;
-      
+
       if (!tabId) {
         return;
       }
-      
-      const sessionPopupState = await storage.getItem('session:popupState') || {};
-      
+
+      const storageKey = await getPopupStateKey();
+
+      if (!storageKey) {
+        return;
+      }
+
+      const sessionPopupState = await storage.getItem(`session:${storageKey}`) || {};
+
       if (JSON.stringify(sessionPopupState[tabId]) !== JSON.stringify(popupState)) {
         sessionPopupState[tabId] = popupState;
-        await storage.setItem('session:popupState', sessionPopupState);
+        await storage.setItem(`session:${storageKey}`, sessionPopupState);
       }
     }, 300);
 
@@ -190,7 +234,7 @@ export const PopupStateProvider = ({ children }) => {
         clearTimeout(storageDebounceTimerRef.current);
       }
     };
-  }, [popupState]);
+  }, [popupState, getPopupStateKey]);
 
   const setScrollElementRef = useCallback((element) => {
     const prevElement = scrollElementRef.current;
