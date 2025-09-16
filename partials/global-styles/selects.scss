@@ -859,6 +859,7 @@
     position: relative;
     transition: background-color .3s ease-in-out, color .3s ease-in-out;
     user-select: none;
+    width: 198px;
 
     body.theme-light & {
       background-color: rgba(v.$hover-color-light, 0);
@@ -1015,6 +1016,10 @@
     }
 
     > span {
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
