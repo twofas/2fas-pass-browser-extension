@@ -16,7 +16,7 @@ import isText from '../functions/isText';
 */
 const getKey = async (key, data) => {
   const persistentKeys = new Set(['configured', 'configured_nonce', 'ephe_public_key', 'ephe_private_key']);
-  const ephemeralKeys = new Set(['services', 'tags', 'data_key', 'pass_key_t2', 'pass_key_t3', 'pass_key_t3_new']);
+  const ephemeralKeys = new Set(['services', 'tags', 'data_key', 'pass_key_t2', 'pass_key_t3', 'pass_key_t3_new', 'popup_state']);
 
   const keyEnvName = `VITE_STORAGE_SESSION_${key.toUpperCase()}`;
   const keyEnv = import.meta.env[keyEnvName];
