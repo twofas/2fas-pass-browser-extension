@@ -75,7 +75,7 @@ function PasswordGenerator (props) {
         includeSpecialChars
       });
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const generatePassword = (length, useUppercase, useNumbers, useSpecialChars) => {
     let charset = 'abcdefghijklmnopqrstuvwxyz';

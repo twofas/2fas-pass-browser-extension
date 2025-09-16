@@ -84,7 +84,7 @@ function Shortcut (props) {
         break;
       }
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const EmptyShortcutBox = () => (
     <div className={pI.settingsShortcutBoxKey}>{browser.i18n.getMessage('settings_unknown').toUpperCase()}</div>

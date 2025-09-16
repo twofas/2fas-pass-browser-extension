@@ -50,7 +50,7 @@ function ExtensionName (props) {
     } catch (e) {
       CatchError(e);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const validate = values => {
     const errors = {};

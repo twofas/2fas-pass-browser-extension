@@ -72,7 +72,7 @@ function SettingsSaveLoginExcludedDomains (props) {
     } catch (e) {
       CatchError(e);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
 
   useEffect(() => {
