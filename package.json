@@ -54,7 +54,7 @@
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "final-form": "^5.0.0",
-    "motion": "^12.23.12",
+    "motion": "^12.23.13",
     "parse-domain": "^8.2.2",
     "qrcode": "^1.5.4",
     "react": "^19.1.1",
