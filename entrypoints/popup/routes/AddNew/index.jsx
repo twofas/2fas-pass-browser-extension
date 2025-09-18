@@ -44,35 +44,26 @@ function AddNew (props) {
   const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll, setData, popupState } = usePopupState();
 
   const [loading, setLoading] = useState(true);
+  const [dataInitialized, setDataInitialized] = useState(false);
+  const [waitingForPopupState, setWaitingForPopupState] = useState(true);
 
-  const getInitialValue = (key, fallback = '') => {
-    if (location?.state?.data?.[key] !== undefined) {
-      return typeof location.state.data[key] === 'string' ? filterXSS(location.state.data[key]) : location.state.data[key];
-    }
+  const [url, setUrl] = useState('');
+  const [minLength, setMinLength] = useState('');
+  const [maxLength, setMaxLength] = useState('');
+  const [pattern, setPattern] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [onMobile, setOnMobile] = useState(true);
+  const [additionalOverflow, setAdditionalOverflow] = useState(true);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
-    if (popupState?.data?.[key] !== undefined) {
-      return typeof popupState.data[key] === 'string' ? filterXSS(popupState.data[key]) : popupState.data[key];
-    }
 
-    return fallback;
-  };
-
-  const [url, setUrl] = useState(getInitialValue('url', ''));
-  const [minLength, setMinLength] = useState(getInitialValue('minLength', ''));
-  const [maxLength, setMaxLength] = useState(getInitialValue('maxLength', ''));
-  const [pattern, setPattern] = useState(getInitialValue('pattern', ''));
-  const [password, setPassword] = useState(getInitialValue('password', ''));
-  const [username, setUsername] = useState(getInitialValue('username', ''));
-  const [onMobile, setOnMobile] = useState(getInitialValue('onMobile', true));
-  const [additionalOverflow, setAdditionalOverflow] = useState(getInitialValue('additionalOverflow', true));
-  const [passwordVisible, setPasswordVisible] = useState(getInitialValue('passwordVisible', false));
-
-  const updateData = useCallback((updates) => {
+  const updateData = updates => {
     setData(prevData => ({
       ...prevData,
       ...updates
     }));
-  }, [setData]);
+  };
 
   useEffect(() => {
     setHref(location.pathname);
@@ -80,26 +71,115 @@ function AddNew (props) {
 
   useEffect(() => {
     if (location?.state?.data && Object.keys(location.state.data).length > 0) {
-      updateData(location.state.data);
+      setWaitingForPopupState(false);
+      return;
     }
-  }, []);
+
+    if (popupState !== undefined) {
+      setWaitingForPopupState(false);
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      setWaitingForPopupState(false);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [popupState, location?.state?.data]);
+
+  useEffect(() => {
+    if (!dataInitialized && !waitingForPopupState) {
+      let sourceData = null;
+
+      if (location?.state?.data && Object.keys(location.state.data).length > 0) {
+        sourceData = location.state.data;
+      } else if (popupState?.data && Object.keys(popupState.data).length > 0) {
+        sourceData = popupState.data;
+      }
+
+      if (sourceData) {
+
+        if (sourceData.url !== undefined) {
+          const value = typeof sourceData.url === 'string' ? filterXSS(sourceData.url) : sourceData.url;
+          setUrl(value);
+        }
+
+        if (sourceData.minLength !== undefined) {
+          const value = typeof sourceData.minLength === 'string' ? filterXSS(sourceData.minLength) : sourceData.minLength;
+          setMinLength(value);
+        }
+
+        if (sourceData.maxLength !== undefined) {
+          const value = typeof sourceData.maxLength === 'string' ? filterXSS(sourceData.maxLength) : sourceData.maxLength;
+          setMaxLength(value);
+        }
+
+        if (sourceData.pattern !== undefined) {
+          setPattern(sourceData.pattern);
+        }
+
+        if (sourceData.password !== undefined) {
+          const value = typeof sourceData.password === 'string' ? filterXSS(sourceData.password) : sourceData.password;
+          setPassword(value);
+        }
+
+        if (sourceData.username !== undefined) {
+          const value = typeof sourceData.username === 'string' ? filterXSS(sourceData.username) : sourceData.username;
+          setUsername(value);
+        }
+
+        if (sourceData.onMobile !== undefined) {
+          setOnMobile(sourceData.onMobile);
+        }
+
+        if (sourceData.passwordVisible !== undefined) {
+          setPasswordVisible(sourceData.passwordVisible);
+        }
+
+        if (sourceData.additionalOverflow !== undefined) {
+          setAdditionalOverflow(sourceData.additionalOverflow);
+        }
+
+        updateData(sourceData);
+      }
+
+      setDataInitialized(true);
+    }
+  }, [dataInitialized, waitingForPopupState, location?.state?.data, popupState, updateData]);
 
   useEffect(() => {
     if (location?.state?.from === 'passwordGenerator' && location?.state?.data) {
       const data = location.state.data;
+      const updates = {};
 
       if (data.password !== undefined) {
         setPassword(data.password);
+        updates.password = data.password;
       }
 
       if (data.username !== undefined) {
         setUsername(data.username);
+        updates.username = data.username;
       }
 
-      updateData({
-        password: data.password || '',
-        username: data.username || ''
-      });
+      if (data.onMobile !== undefined) {
+        setOnMobile(data.onMobile);
+        updates.onMobile = data.onMobile;
+      }
+
+      if (data.passwordVisible !== undefined) {
+        setPasswordVisible(data.passwordVisible);
+        updates.passwordVisible = data.passwordVisible;
+      }
+
+      if (data.additionalOverflow !== undefined) {
+        setAdditionalOverflow(data.additionalOverflow);
+        updates.additionalOverflow = data.additionalOverflow;
+      }
+
+      if (Object.keys(updates).length > 0) {
+        updateData(updates);
+      }
     }
   }, [location?.state, updateData]);
 
@@ -139,23 +219,30 @@ function AddNew (props) {
       }
     };
 
-    try {
-      const hasLocationData = location?.state?.data && Object.keys(location.state.data).length > 0;
-      const hasPopupStateData = popupState?.data && Object.keys(popupState.data).length > 0;
+    const initializeData = async () => {
+      try {
+        if (dataInitialized) {
+          const hasLocationData = location?.state?.data && Object.keys(location.state.data).length > 0;
+          const hasPopupStateData = popupState?.data && Object.keys(popupState.data).length > 0;
 
-      if (!hasLocationData && !hasPopupStateData) {
-        getDomainData();
+          if (!hasLocationData && !hasPopupStateData) {
+            await getDomainData();
+          }
+
+          setLoading(false);
+        }
+      } catch (e) {
+        CatchError(e);
+        setLoading(false);
       }
-    } catch (e) {
-      CatchError(e);
-    } finally {
-      setLoading(false);
-    }
+    };
+
+    initializeData();
 
     return () => {
       browser.runtime.onMessage.removeListener(messageListener);
     };
-  }, [updateData, popupState?.data, location?.state?.data]);
+  }, [updateData, popupState?.data, location?.state?.data, dataInitialized]);
 
   useEffect(() => {
     if (!loading && shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
@@ -227,7 +314,7 @@ function AddNew (props) {
     });
   };
 
-  if (loading) {
+  if (loading || !dataInitialized || waitingForPopupState) {
     return null;
   }
 
@@ -327,7 +414,7 @@ function AddNew (props) {
                       variants={additionalVariants}
                       initial={onMobile ? 'hidden' : 'visible'}
                       transition={{ duration: 0.3, type: 'tween' }}
-                      animate={!onMobile ? 'visible' : 'hidden'}
+                      animate={onMobile ? 'hidden' : 'visible'}
                       onAnimationStart={() => { setAdditionalOverflow(true); }}
                       onAnimationComplete={() => {
                         if (!onMobile) {
