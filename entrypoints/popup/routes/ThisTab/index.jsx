@@ -236,6 +236,10 @@ function ThisTab (props) {
     for (const service of servicesWithTags) {
       for (const tag of service.tags) {
         const tagIndex = tags.findIndex(t => t.id === tag);
+
+        if (tagIndex === -1) {
+          continue;
+        }
         
         if (!tags[tagIndex]?.amount || !Number.isInteger(tags[tagIndex]?.amount)) {
           tags[tagIndex].amount = 0;
