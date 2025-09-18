@@ -5,9 +5,13 @@
 // See LICENSE file for full terms
 
 const userNameAttributes = Object.freeze([
+  'name',
+  'autocomplete',
   'label',
   'placeholder',
-  'aria-label'
+  'aria-label',
+  'data-id',
+  'aria-labelledby'
 ]);
 
 export default userNameAttributes;
