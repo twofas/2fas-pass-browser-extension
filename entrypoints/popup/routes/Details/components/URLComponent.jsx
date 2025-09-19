@@ -47,8 +47,8 @@ const urlVariants = {
 */
 function URLComponent (props) {
   const { data, actions, index } = props;
-  const { service, domainsEditable, inputError, form, uris } = data;
-  const { setDomainsEditable, handleRemoveUri } = actions;
+  const { service, originalService, domainsEditable, inputError, form, uris } = data;
+  const { setDomainsEditable, handleRemoveUri, updateFormValues } = actions;
   
   const handleCopyUri = useCallback(async uri => {
     if (!uri) return;
@@ -67,13 +67,20 @@ function URLComponent (props) {
         return;
       }
 
-      const initialValues = form.getState().initialValues;
-      const originalValue = initialValues.uris && initialValues.uris[index] ? initialValues.uris[index].text : '';
+      const originalValue = originalService?.uris && originalService.uris[index] ? originalService.uris[index].text : '';
 
       form.change(`uris[${index}].text`, originalValue);
-      
+
       if (input) {
         input.onChange(originalValue);
+      }
+
+      if (updateFormValues) {
+        const currentFormValues = form.getState().values;
+        const updatedUris = [...currentFormValues.uris];
+        updatedUris[index] = { ...updatedUris[index], text: originalValue };
+        const updatedFormValues = { ...currentFormValues, uris: updatedUris };
+        updateFormValues(updatedFormValues);
       }
     }
 

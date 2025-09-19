@@ -24,12 +24,12 @@ const notesVariants = {
 */
 function Notes (props) {
   const { data, actions } = props;
-  const { notesEditable, form } = data;
+  const { originalService, notesEditable, form } = data;
   const { setNotesEditable, clearNotesInPopupState } = actions;
 
   const handleNotesEditable = (form, input) => {
     if (notesEditable) {
-      const valueToRestore = '';
+      const valueToRestore = originalService?.notes || '';
 
       form.change('notes', valueToRestore);
 
@@ -37,11 +37,13 @@ function Notes (props) {
         input.onChange(valueToRestore);
       }
 
-      if (clearNotesInPopupState) {
-        clearNotesInPopupState();
-      }
-
       setNotesEditable(false);
+
+      if (clearNotesInPopupState) {
+        const currentFormValues = form.getState().values;
+        const updatedFormValues = { ...currentFormValues, notes: valueToRestore };
+        clearNotesInPopupState(updatedFormValues);
+      }
     } else {
       setNotesEditable(true);
     }

@@ -48,7 +48,7 @@ const changePasswordVariants = {
 function Password (props) {
   const { data, actions, generatorData } = props;
   const { service, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError, form } = data;
-  const { setPasswordEditable, setPasswordVisible, setPasswordMobile, setPasswordDecryptError} = actions;
+  const { setPasswordEditable, setPasswordVisible, setPasswordMobile, setPasswordDecryptError, updateFormValues} = actions;
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
 
@@ -180,8 +180,36 @@ function Password (props) {
       setPasswordEditable(false);
       service.passwordEdited = null;
 
-      const initialValues = form.getState().initialValues;
-      form.change('password', initialValues.password || '******');
+      let passwordValue;
+
+      if (passwordVisible) {
+        if (service.passwordEncrypted && service.passwordEncrypted.length > 0) {
+          try {
+            const tempService = { ...service, password: service.passwordEncrypted };
+            passwordValue = await decryptPassword(tempService);
+          } catch (e) {
+            passwordValue = '******';
+            setPasswordDecryptError(true);
+            await CatchError(e);
+          }
+        } else {
+          passwordValue = '';
+        }
+      } else {
+        if (isT3orT2WithPassword(service)) {
+          passwordValue = '******';
+        } else {
+          passwordValue = '';
+        }
+      }
+
+      form.change('password', passwordValue);
+
+      if (updateFormValues) {
+        const currentFormValues = form.getState().values;
+        const updatedFormValues = { ...currentFormValues, password: passwordValue };
+        updateFormValues(updatedFormValues);
+      }
     } else {
       await decryptFormPassword();
       setPasswordEditable(true);
@@ -208,13 +236,9 @@ function Password (props) {
       }
     } else {
       if (passwordVisible) {
-        if (service.password !== '******') {
-          encryptFormPassword();
-        }
+        encryptFormPassword();
       } else {
-        if (service.password === '******') {
-          await decryptFormPassword();
-        }
+        await decryptFormPassword();
       }
     }
 

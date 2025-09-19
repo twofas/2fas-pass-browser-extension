@@ -27,8 +27,8 @@ const usernameMobileVariants = {
 */
 function Username (props) {
   const { data, actions } = props;
-  const { service, usernameEditable, usernameMobile, inputError, form } = data;
-  const { setUsernameEditable, setUsernameMobile } = actions;
+  const { service, originalService, usernameEditable, usernameMobile, inputError, form } = data;
+  const { setUsernameEditable, setUsernameMobile, updateFormValues } = actions;
 
   const handleCopyUsername = useCallback(async username => {
     if (!username) {
@@ -42,16 +42,21 @@ function Username (props) {
 
   const handleUsernameEditable = (form, input) => {
     if (usernameEditable) {
-      const initialValues = form.getState().initialValues;
-      const valueToRestore = initialValues.username || '';
+      const valueToRestore = originalService?.username || '';
 
       form.change('username', valueToRestore);
-      
+
       if (input) {
         input.onChange(valueToRestore);
       }
 
       setUsernameEditable(false);
+
+      if (updateFormValues) {
+        const currentFormValues = form.getState().values;
+        const updatedFormValues = { ...currentFormValues, username: valueToRestore };
+        updateFormValues(updatedFormValues);
+      }
     } else {
       setUsernameEditable(true);
     }
@@ -59,7 +64,7 @@ function Username (props) {
 
   const handleUsernameMobile = form => {
     if (!usernameMobile) {
-      form.change('username', service.username);
+      form.change('username', originalService?.username || '');
     }
 
     setUsernameMobile(!usernameMobile);
