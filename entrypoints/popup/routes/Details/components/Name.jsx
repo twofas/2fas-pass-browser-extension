@@ -19,8 +19,8 @@ const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?
 */
 function Name (props) {
   const { data, actions } = props;
-  const { service, form, nameEditable, inputError } = data;
-  const { setNameEditable } = actions;
+  const { service, originalService, form, nameEditable, inputError } = data;
+  const { setNameEditable, updateFormValues } = actions;
 
   const handleCopyName = useCallback(async name => {
     if (!name) {
@@ -33,16 +33,21 @@ function Name (props) {
 
   const handleNameEditable = (form, input) => {
     if (nameEditable) {
-      const initialValues = form.getState().initialValues;
-      const valueToRestore = initialValues.name || '';
+      const valueToRestore = originalService?.name || '';
 
       form.change('name', valueToRestore);
-      
+
       if (input) {
         input.onChange(valueToRestore);
       }
 
       setNameEditable(false);
+
+      if (updateFormValues) {
+        const currentFormValues = form.getState().values;
+        const updatedFormValues = { ...currentFormValues, name: valueToRestore };
+        updateFormValues(updatedFormValues);
+      }
     } else {
       setNameEditable(true);
     }
