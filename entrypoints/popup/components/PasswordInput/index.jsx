@@ -30,6 +30,8 @@ function PasswordInput(props) {
   const inputRef = useRef(null);
   const displayRef = useRef(null);
   const textWrapperRef = useRef(null);
+  const previousValueRef = useRef(value);
+  const isTypingRef = useRef(false);
   
   const getCharacterType = useCallback((char) => {
     if (/[0-9]/.test(char)) {
@@ -42,9 +44,15 @@ function PasswordInput(props) {
   }, []);
   
   const handleChange = useCallback((e) => {
+    isTypingRef.current = true;
+
     if (onChange) {
       onChange(e);
     }
+
+    setTimeout(() => {
+      isTypingRef.current = false;
+    }, 100);
   }, [onChange]);
   
   const handleKeyDown = useCallback((e) => {
@@ -147,9 +155,11 @@ function PasswordInput(props) {
       return;
     }
 
-    if (isFocused && value) {
-      const newLength = value.length;
+    const prevLength = previousValueRef.current?.length || 0;
+    const newLength = value?.length || 0;
+    const isExternalChange = !isTypingRef.current && Math.abs(newLength - prevLength) > 1;
 
+    if (isFocused && value && isExternalChange) {
       setTimeout(() => {
         if (inputRef.current && isFocused) {
           inputRef.current.setSelectionRange(newLength, newLength);
@@ -157,6 +167,8 @@ function PasswordInput(props) {
         }
       }, 0);
     }
+
+    previousValueRef.current = value;
   }, [value, isFocused]);
 
   useEffect(() => {
