@@ -230,7 +230,15 @@ function PasswordGenerator (props) {
                               </button>
                               <button
                                 type='button'
-                                onClick={() => copyValue(input.value, '00000000-0000-0000-0000-000000000000', 'password')}
+                                onClick={async () => {
+                                  try {
+                                    await copyValue(input.value, '00000000-0000-0000-0000-000000000000', 'password');
+                                    showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
+                                  } catch (e) {
+                                    await CatchError(e);
+                                    showToast(browser.i18n.getMessage('error_copy_password'));
+                                  }
+                                }}
                                 className={bS.btnIcon}
                                 title={browser.i18n.getMessage('copy_to_clipboard')}
                               >
