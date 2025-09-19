@@ -238,9 +238,10 @@ function ThisTab (props) {
         const tagIndex = tags.findIndex(t => t.id === tag);
 
         if (tagIndex === -1) {
+          await CatchError(new TwoFasError(TwoFasError.internalErrors.tagIndexError, { additional: { tagId: tag } }));
           continue;
         }
-        
+
         if (!tags[tagIndex]?.amount || !Number.isInteger(tags[tagIndex]?.amount)) {
           tags[tagIndex].amount = 0;
         }
