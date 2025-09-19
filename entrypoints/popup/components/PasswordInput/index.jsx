@@ -70,11 +70,11 @@ function PasswordInput(props) {
   
   const updateSelection = useCallback(() => {
     if (inputRef.current && document.activeElement === inputRef.current) {
-      const start = inputRef.current.selectionStart || 0;
-      const end = inputRef.current.selectionEnd || 0;
+      const start = Math.min(inputRef.current.selectionStart || 0, value.length);
+      const end = Math.min(inputRef.current.selectionEnd || 0, value.length);
       setSelection({ start, end });
     }
-  }, []);
+  }, [value]);
   
   const handleMouseDown = useCallback(() => {
     setTimeout(updateSelection, 0);
@@ -88,7 +88,9 @@ function PasswordInput(props) {
   
   useEffect(() => {
     const input = inputRef.current;
-    if (!input) return;
+    if (!input) {
+      return;
+    }
     
     const handleSelectionChange = () => updateSelection();
     const handleMouseUp = () => {
@@ -114,23 +116,25 @@ function PasswordInput(props) {
     if (!value || cursorPos === 0) {
       return 0;
     }
-    
+
+    const validCursorPos = Math.min(cursorPos, value.length);
+
     const tempSpan = document.createElement('span');
-    tempSpan.style.cssText = 'visibility:hidden;position:absolute;font-size:14px;font-weight:400;font-family:inherit';
-    
+    tempSpan.style.cssText = 'visibility:hidden;position:absolute;font-size:14px;font-weight:400;font-family:monospace;white-space:pre;letter-spacing:normal';
+
     const displayText = showPassword ? value : '•'.repeat(value.length);
-    tempSpan.textContent = displayText.substring(0, cursorPos);
-    
+    tempSpan.textContent = displayText.substring(0, validCursorPos);
+
     document.body.appendChild(tempSpan);
     const width = tempSpan.offsetWidth;
     document.body.removeChild(tempSpan);
-    
+
     return width;
   }, [selection.end, value, showPassword]);
   
   const getCharWidth = useCallback(() => {
     const tempSpan = document.createElement('span');
-    tempSpan.style.cssText = 'visibility:hidden;position:absolute;font-size:14px;font-weight:400;font-family:inherit';
+    tempSpan.style.cssText = 'visibility:hidden;position:absolute;font-size:14px;font-weight:400;font-family:monospace';
     tempSpan.textContent = showPassword ? 'a' : '•';
     document.body.appendChild(tempSpan);
     const width = tempSpan.offsetWidth;
@@ -139,15 +143,34 @@ function PasswordInput(props) {
   }, [showPassword]);
 
   useEffect(() => {
-    if (!isFocused || !displayRef.current || !textWrapperRef.current) return;
-    
+    if (!inputRef.current) {
+      return;
+    }
+
+    if (isFocused && value) {
+      const newLength = value.length;
+
+      setTimeout(() => {
+        if (inputRef.current && isFocused) {
+          inputRef.current.setSelectionRange(newLength, newLength);
+          setSelection({ start: newLength, end: newLength });
+        }
+      }, 0);
+    }
+  }, [value, isFocused]);
+
+  useEffect(() => {
+    if (!isFocused || !displayRef.current || !textWrapperRef.current) {
+      return;
+    }
+
     const cursorPosition = getCursorPixelPosition();
     const displayWidth = displayRef.current.clientWidth;
     const scrollLeft = displayRef.current.scrollLeft;
     const charWidth = getCharWidth();
-    
+
     const visibleCursorPosition = cursorPosition - scrollLeft;
-    
+
     if (visibleCursorPosition < 0 && selection.end > 0) {
       displayRef.current.scrollLeft = Math.max(0, scrollLeft - charWidth);
     } else if (visibleCursorPosition > displayWidth - 20) {
@@ -156,7 +179,9 @@ function PasswordInput(props) {
   }, [selection, getCursorPixelPosition, isFocused, getCharWidth]);
   
   const renderColoredText = () => {
-    if (!value) return null;
+    if (!value) {
+      return null;
+    }
     
     const characters = value.split('');
     const shouldColorize = isDecrypted && showPassword;
@@ -194,6 +219,7 @@ function PasswordInput(props) {
           id={id}
           value={value}
           onChange={handleChange}
+          onInput={updateSelection}
           onKeyDown={handleKeyDown}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
@@ -207,10 +233,11 @@ function PasswordInput(props) {
         <div ref={textWrapperRef} className={S.passwordInputTextWrapper}>
           {renderColoredText()}
           {isFocused && selection.start === selection.end ? (
-            <span 
+            <span
               className={S.passwordInputCursor}
-              style={{ 
-                left: `${getCursorPixelPosition()}px`
+              style={{
+                left: `${getCursorPixelPosition()}px`,
+                transition: 'none'
               }}
             />
           ) : null}
