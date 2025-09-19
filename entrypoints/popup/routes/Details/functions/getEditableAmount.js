@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
+/**
 * Function to get the editable amount.
 * @param {boolean} nameEditable - Indicates if the name field is editable.
 * @param {boolean} usernameEditable - Indicates if the username field is editable.
@@ -14,9 +14,10 @@
 * @param {boolean} tierEditable - Indicates if the tier field is editable.
 * @param {boolean} tagsEditable - Indicates if the tags field is editable.
 * @param {Array} currentUris - Current URIs array.
+* @param {Array} originalUris - Original URIs array from the service.
 * @return {Object} An object containing the editable amount and a text description.
 */
-const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, currentUris = []) => {
+const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, currentUris = [], originalUris = []) => {
   let amount = 0;
 
   if (nameEditable) { amount++; }
@@ -25,19 +26,19 @@ const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, dom
   if (notesEditable) { amount++; }
   if (tierEditable) { amount++; }
   if (tagsEditable) { amount++; }
-  
+
   let uriChanges = 0;
-  
+
   const newUris = currentUris.filter(uri => uri._tempId);
   uriChanges += newUris.length;
-  
+
   const editedExistingUris = domainsEditable.filter((editable, index) => {
     if (!editable || index >= currentUris.length) {
       return false;
     }
 
     const currentUri = currentUris[index];
-    
+
     if (currentUri._tempId) {
       return false;
     }
@@ -46,6 +47,13 @@ const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, dom
   }).length;
 
   uriChanges += editedExistingUris;
+
+  const removedUrisCount = originalUris.length - (currentUris.length - newUris.length);
+
+  if (removedUrisCount > 0) {
+    uriChanges += removedUrisCount;
+  }
+
   amount += uriChanges;
 
   if (amount === 0) {
