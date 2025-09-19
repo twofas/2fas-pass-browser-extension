@@ -40,6 +40,8 @@ const NotFound = lazy(() => import('./routes/NotFound'));
 const ToastsContent = lazy(() => import('./components/ToastsContent'));
 const InitialRouter = lazy(() => import('./components/InitialRouter'));
 
+const emptyFunc = () => {};
+
 /** 
 * ProtectedRoute component to handle access control based on authentication status.
 * @param {Object} props - The component props.
@@ -171,8 +173,8 @@ function Popup () {
       document.addEventListener('keydown', lockShortcuts);
       document.addEventListener('contextmenu', lockRMB);
 
-      window.addEventListener('error', handleError);
-      window.addEventListener('unhandledrejection', handleError);
+      window.addEventListener('error', emptyFunc);
+      window.addEventListener('unhandledrejection', emptyFunc);
 
       if (import.meta.env.BROWSER === 'safari') {
         document.addEventListener('click', safariBlankLinks);
@@ -189,8 +191,8 @@ function Popup () {
       document.removeEventListener('keydown', lockShortcuts);
       document.removeEventListener('contextmenu', lockRMB);
 
-      window.removeEventListener('error', handleError);
-      window.removeEventListener('unhandledrejection', handleError);
+      window.removeEventListener('error', emptyFunc);
+      window.removeEventListener('unhandledrejection', emptyFunc);
 
       if (import.meta.env.BROWSER === 'safari') {
         document.removeEventListener('click', safariBlankLinks);
