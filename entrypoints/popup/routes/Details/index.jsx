@@ -385,15 +385,19 @@ function Details (props) {
                   }}>
                     <Name
                       key={`name-${service.id}-${storageVersion}`}
-                      data={{ service, form, nameEditable, inputError }}
-                      actions={{ setNameEditable: val => { setNameEditable(val); updateData({ nameEditable: val }); } }}
+                      data={{ service, originalService, form, nameEditable, inputError }}
+                      actions={{
+                        setNameEditable: val => { setNameEditable(val); updateData({ nameEditable: val }); },
+                        updateFormValues: updatedValues => { setFormValues(updatedValues); updateData({ formValues: updatedValues }); }
+                      }}
                     />
                     <Username
                       key={`username-${service.id}-${storageVersion}`}
-                      data={{ service, usernameEditable, usernameMobile, inputError, form }}
+                      data={{ service, originalService, usernameEditable, usernameMobile, inputError, form }}
                       actions={{
                         setUsernameEditable: val => { setUsernameEditable(val); updateData({ usernameEditable: val }); },
-                        setUsernameMobile: val => { setUsernameMobile(val); updateData({ usernameMobile: val }); }
+                        setUsernameMobile: val => { setUsernameMobile(val); updateData({ usernameMobile: val }); },
+                        updateFormValues: updatedValues => { setFormValues(updatedValues); updateData({ formValues: updatedValues }); }
                       }}
                     />
                     <Password
@@ -403,13 +407,19 @@ function Details (props) {
                         setPasswordEditable: val => { setPasswordEditable(val); updateData({ passwordEditable: val }); },
                         setPasswordVisible: val => { setPasswordVisible(val); updateData({ passwordVisible: val }); },
                         setPasswordMobile: val => { setPasswordMobile(val); updateData({ passwordMobile: val }); },
-                        setPasswordDecryptError: val => { setPasswordDecryptError(val); updateData({ passwordDecryptError: val }); }
+                        setPasswordDecryptError: val => { setPasswordDecryptError(val); updateData({ passwordDecryptError: val }); },
+                        updateFormValues: updatedValues => { setFormValues(updatedValues); updateData({ formValues: updatedValues }); }
                       }}
                       generatorData={{ dangerZoneOpened, nameEditable, usernameEditable, domainsEditable, usernameMobile, tierEditable, notesEditable }}
                     />
                     {generateURLs({
-                      data: { service, uris: values.uris, domainsEditable, inputError, form },
-                      actions: { setDomainsEditable: val => { setDomainsEditable(val); updateData({ domainsEditable: val }); }, handleRemoveUri, handleAddUri }
+                      data: { service, originalService, uris: values.uris, domainsEditable, inputError, form },
+                      actions: {
+                        setDomainsEditable: val => { setDomainsEditable(val); updateData({ domainsEditable: val }); },
+                        handleRemoveUri,
+                        handleAddUri,
+                        updateFormValues: updatedValues => { setFormValues(updatedValues); updateData({ formValues: updatedValues }); }
+                      }
                     })}
                     <SecurityTier
                       data={{ service: originalService || service, tierEditable, form }}
@@ -424,18 +434,23 @@ function Details (props) {
                       }}
                     />
                     <Tags
-                      data={{ service, tagsEditable, form }}
+                      data={{ service, originalService, tagsEditable, form }}
                       actions={{ setTagsEditable: val => { setTagsEditable(val); updateData({ tagsEditable: val }); } }}
                     />
                     <Notes
-                      data={{ service, notesEditable, form }}
+                      data={{ service, originalService, notesEditable, form }}
                       actions={{
                         setNotesEditable: val => { setNotesEditable(val); updateData({ notesEditable: val }); },
-                        clearNotesInPopupState: () => {
-                          const currentFormValues = form.getState().values;
-                          const updatedFormValues = { ...currentFormValues, notes: '' };
-                          setFormValues(updatedFormValues);
-                          updateData({ formValues: updatedFormValues });
+                        clearNotesInPopupState: (updatedFormValues) => {
+                          if (updatedFormValues) {
+                            setFormValues(updatedFormValues);
+                            updateData({ formValues: updatedFormValues });
+                          } else {
+                            const currentFormValues = form.getState().values;
+                            const updatedValues = { ...currentFormValues, notes: '' };
+                            setFormValues(updatedValues);
+                            updateData({ formValues: updatedValues });
+                          }
                         }
                       }}
                     />
