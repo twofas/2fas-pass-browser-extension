@@ -738,6 +738,11 @@ class TwoFasError extends Error {
     popupStateCreateError: {
       message: 'popupState: error creating popup state',
       code: 9418
+    },
+    // TAG INDEX ERROR
+    tagIndexError: {
+      message: 'Tag not found in tags list',
+      code: 9420
     }
   };
 }
