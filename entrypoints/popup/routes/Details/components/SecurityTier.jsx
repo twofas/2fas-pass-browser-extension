@@ -28,8 +28,12 @@ function SecurityTier (props) {
 
   const handleTierEditable = form => {
     if (tierEditable) {
-      const initialValues = form.getState().initialValues;
-      form.change('securityType', initialValues.securityType ?? service.securityType);
+      const originalValue = service?.securityType;
+      form.change('securityType', originalValue);
+
+      if (updateSecurityType) {
+        updateSecurityType(originalValue);
+      }
     }
 
     setTierEditable(!tierEditable);
