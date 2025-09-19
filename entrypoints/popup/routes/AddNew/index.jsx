@@ -46,6 +46,7 @@ function AddNew (props) {
   const [loading, setLoading] = useState(true);
   const [dataInitialized, setDataInitialized] = useState(false);
   const [waitingForPopupState, setWaitingForPopupState] = useState(true);
+  const [passwordGeneratorProcessed, setPasswordGeneratorProcessed] = useState(false);
 
   const [url, setUrl] = useState('');
   const [minLength, setMinLength] = useState('');
@@ -148,7 +149,7 @@ function AddNew (props) {
   }, [dataInitialized, waitingForPopupState, location?.state?.data, popupState, updateData]);
 
   useEffect(() => {
-    if (location?.state?.from === 'passwordGenerator' && location?.state?.data) {
+    if (!passwordGeneratorProcessed && location?.state?.from === 'passwordGenerator' && location?.state?.data) {
       const data = location.state.data;
       const updates = {};
 
@@ -167,11 +168,6 @@ function AddNew (props) {
         updates.onMobile = data.onMobile;
       }
 
-      if (data.passwordVisible !== undefined) {
-        setPasswordVisible(data.passwordVisible);
-        updates.passwordVisible = data.passwordVisible;
-      }
-
       if (data.additionalOverflow !== undefined) {
         setAdditionalOverflow(data.additionalOverflow);
         updates.additionalOverflow = data.additionalOverflow;
@@ -180,8 +176,10 @@ function AddNew (props) {
       if (Object.keys(updates).length > 0) {
         updateData(updates);
       }
+
+      setPasswordGeneratorProcessed(true);
     }
-  }, [location?.state, updateData]);
+  }, [location?.state, updateData, passwordGeneratorProcessed]);
 
   useEffect(() => {
     const messageListener = async (request, sender, sendResponse) => onMessage(request, sender, sendResponse, setUrl, updateData);
@@ -479,7 +477,7 @@ function AddNew (props) {
                                   to='/password-generator'
                                   className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
                                   title={browser.i18n.getMessage('add_new_generate_password')}
-                                  state={{ from: 'addNew', data: { ...form.getState().values, onMobile, passwordVisible, additionalOverflow } }}
+                                  state={{ from: 'addNew', data: { ...form.getState().values, onMobile, additionalOverflow } }}
                                   prefetch='intent'
                                 >
                                   <RefreshIcon />
