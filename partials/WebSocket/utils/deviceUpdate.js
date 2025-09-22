@@ -22,6 +22,7 @@ const deviceUpdate = async (uuid, payload) => {
   device.name = payload.deviceName || '2FAS Pass Mobile App';
   device.id = payload.deviceId;
   device.platform = payload.deviceOs || '';
+  device.supportedFeatures = payload.supportedFeatures || [];
   device.updatedAt = Date.now();
 
   devices = devices.filter(d => d?.id === payload.deviceId && d?.uuid === uuid); // Remove old devices with the same ID

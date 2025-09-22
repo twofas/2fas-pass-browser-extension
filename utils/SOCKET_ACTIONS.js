@@ -5,8 +5,8 @@
 // See LICENSE file for full terms
 
 export const SOCKET_ACTIONS = Object.freeze({
-  CHALLENGE: 'challenge',
   HELLO: 'hello',
+  CHALLENGE: 'challenge',
   INIT_TRANSFER: 'initTransfer',
   INIT_TRANSFER_CONFIRMED: 'initTransferConfirmed',
   TRANSFER_CHUNK: 'transferChunk',
