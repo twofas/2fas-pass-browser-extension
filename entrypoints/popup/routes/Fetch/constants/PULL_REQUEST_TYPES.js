@@ -5,11 +5,11 @@
 // See LICENSE file for full terms
 
 const PULL_REQUEST_TYPES = {
-  PASSWORD_REQUEST: 'passwordRequest',
-  DELETE_LOGIN: 'deleteLogin',
-  NEW_LOGIN: 'newLogin',
-  UPDATE_LOGIN: 'updateLogin',
-  FETCH_REQUEST: 'fetchRequest',
+  SIF_REQUEST: 'sifRequest',
+  DELETE_DATA: 'deleteData',
+  ADD_DATA: 'addData',
+  UPDATE_DATA: 'updateData',
+  FULL_SYNC: 'fullSync',
   COMPLETED: 'pullRequestCompleted'
 };
 

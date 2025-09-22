@@ -46,8 +46,9 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
     throw new TwoFasError(TwoFasError.errors.pullRequestActionWrongData);
   }
 
+  // @TODO: Change function names and constants to more generic ones (not login specific)!
   switch (state.action) {
-    case PULL_REQUEST_TYPES.PASSWORD_REQUEST: {
+    case PULL_REQUEST_TYPES.SIF_REQUEST: {
       switch (data.status) {
         case PULL_REQUEST_STATUSES.CANCEL: {
           closeData = await passwordRequestCancel(json.id);
@@ -74,7 +75,7 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
       break;
     }
 
-    case PULL_REQUEST_TYPES.DELETE_LOGIN: {
+    case PULL_REQUEST_TYPES.DELETE_DATA: {
       switch (data.status) {
         case PULL_REQUEST_STATUSES.CANCEL: {
           closeData = await deleteLoginCancel(json.id);
@@ -94,7 +95,7 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
       break;
     }
 
-    case PULL_REQUEST_TYPES.NEW_LOGIN: {
+    case PULL_REQUEST_TYPES.ADD_DATA: {
       switch (data.status) {
         case PULL_REQUEST_STATUSES.CANCEL: {
           closeData = await newLoginCancel(json.id);
@@ -124,7 +125,7 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
       break;
     }
 
-    case PULL_REQUEST_TYPES.UPDATE_LOGIN: {
+    case PULL_REQUEST_TYPES.UPDATE_DATA: {
       switch (data.status) {
         case PULL_REQUEST_STATUSES.CANCEL: {
           closeData = await updateLoginCancel(state.data.loginId, json.id);
@@ -154,6 +155,8 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
 
       break;
     }
+
+    // @TODO: Add FULL_SYNC
 
     default: {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionWrongAction);
