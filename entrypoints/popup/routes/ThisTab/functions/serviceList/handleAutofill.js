@@ -116,7 +116,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
         navigate(
           '/fetch', {
             state: {
-              action: PULL_REQUEST_TYPES.PASSWORD_REQUEST,
+              action: PULL_REQUEST_TYPES.SIF_REQUEST,
               from: 'autofill',
               data: {
                 loginId: service.id,
