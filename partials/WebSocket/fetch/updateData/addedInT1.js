@@ -11,12 +11,12 @@ import compress from '@/partials/gzip/compress';
 import saveServices from '@/partials/WebSocket/utils/saveServices';
 
 /** 
-* Handles the update of a login that has been added in T1.
+* Handles the update of a item that has been added in T1.
 * @param {Object} state - The state object.
 * @param {string} messageId - The message ID.
 * @return {Promise<Object>}  Object containing returnUrl and returnToast.
 */
-const updateLoginAddedInT1 = async (state, messageId) => {
+const updateDataAddedInT1 = async (state, messageId) => {
   try {
     const [services, servicesKeys] = await Promise.all([
       getServices(),
@@ -59,4 +59,4 @@ const updateLoginAddedInT1 = async (state, messageId) => {
   }
 };
 
-export default updateLoginAddedInT1;
+export default updateDataAddedInT1;

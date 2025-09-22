@@ -7,25 +7,24 @@
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
 
 /** 
-* Handles the cancellation of a login update request.
-* @param {string} loginId - The ID of the login session.
+* Function to handle the cancellation of a new item request.
 * @param {string} messageId - The ID of the message to be sent.
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
-const updateLoginCancel = async (loginId, messageId) => {
+const newDataCancel = async messageId => {
   try {
     await sendPullRequestCompleted(messageId);
 
     return {
-      returnUrl: `/details/${loginId}`,
+      returnUrl: '/',
       returnToast: {
-        text: browser.i18n.getMessage('fetch_update_login_cancel_toast'),
+        text: browser.i18n.getMessage('fetch_new_login_cancel_toast'),
         type: 'info'
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginCancelError, { event: e });
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginCancelError, { event: e });
   }
 };
 
-export default updateLoginCancel;
+export default newDataCancel;
