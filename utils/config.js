@@ -6,6 +6,7 @@
 
 export const config = Object.freeze({
   scheme: 2,
+  supportedFeatures: [],
   webSocketInternalTimeout: 2,
   passwordResetDelay: 3,
   storageMargin: 0.95, // 95%

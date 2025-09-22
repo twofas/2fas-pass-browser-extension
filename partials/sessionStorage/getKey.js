@@ -16,7 +16,7 @@ import isText from '../functions/isText';
 */
 const getKey = async (key, data) => {
   const persistentKeys = new Set(['configured', 'configured_nonce', 'ephe_public_key', 'ephe_private_key']);
-  const ephemeralKeys = new Set(['services', 'tags', 'data_key', 'pass_key_t2', 'pass_key_t3', 'pass_key_t3_new', 'popup_state']);
+  const ephemeralKeys = new Set(['services', 'tags', 'data_key', 'item_key_t2', 'item_key_t3', 'item_key_t3_new', 'popup_state']);
 
   const keyEnvName = `VITE_STORAGE_SESSION_${key.toUpperCase()}`;
   const keyEnv = import.meta.env[keyEnvName];
@@ -44,7 +44,7 @@ const getKey = async (key, data) => {
     }
 
     case 'data_key':
-    case 'pass_key_t3': {
+    case 'item_key_t3': {
       if (data?.deviceId) {
         keyGenerated += `_${data.deviceId}`;
       }
@@ -52,8 +52,8 @@ const getKey = async (key, data) => {
       break;
     }
 
-    case 'pass_key_t2':
-    case 'pass_key_t3_new': {
+    case 'item_key_t2':
+    case 'item_key_t3_new': {
       if (data?.loginId) {
         keyGenerated += `_${data.loginId}`;
       }

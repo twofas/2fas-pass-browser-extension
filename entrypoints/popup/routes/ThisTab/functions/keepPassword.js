@@ -33,20 +33,20 @@ const keepPassword = async state => {
   const servicesGZIP_AB = await compress(servicesStringify);
   const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
-  // generate encryptionPassT2Key
-  const encryptionPassT2Key = await generateEncryptionAESKey(state.hkdfSaltAB, StringToArrayBuffer('PassT2'), state.sessionKeyForHKDF, true);
-  let encryptionPassT2KeyAES_B64;
+  // generate encryptionItemT2Key
+  const encryptionItemT2Key = await generateEncryptionAESKey(state.hkdfSaltAB, StringToArrayBuffer('ItemT2'), state.sessionKeyForHKDF, true);
+  let encryptionItemT2KeyAES_B64;
 
   try {
-    const encryptionPassT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionPassT2Key);
-    encryptionPassT2KeyAES_B64 = ArrayBufferToBase64(encryptionPassT2KeyAESRaw);
+    const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
+    encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.keepPasswordExportKeyError, { event: e });
   }
 
-  // save encryptionPassT2Key in session storage
-  const passT2Key = await getKey('pass_key_t2', { deviceId: state.deviceId, loginId: state.loginId });
-  await storage.setItem(`session:${passT2Key}`, encryptionPassT2KeyAES_B64);
+  // save encryptionItemT2Key in session storage
+  const itemT2Key = await getKey('item_key_t2', { deviceId: state.deviceId, loginId: state.loginId });
+  await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
   // Remove services from session storage (by servicesKeys)
   await storage.removeItems(servicesKeys);

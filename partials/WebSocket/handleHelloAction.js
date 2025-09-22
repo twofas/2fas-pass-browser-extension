@@ -24,11 +24,17 @@ const handleHelloAction = async (json, uuid) => {
     await socket.sendMessage({
       id: json.id,
       action: SOCKET_ACTIONS.HELLO,
-      payload: { browserName, browserVersion, browserExtName }
+      payload: {
+        browserName,
+        browserVersion,
+        browserExtName,
+        supportedFeatures: config.supportedFeatures
+      }
     });
   
     return deviceId;
   } catch (e) {
+    // @TODO: Test if closeWithError is sent
     throw new TwoFasError(TwoFasError.errors.helloAction, { event: e });
   }
 };

@@ -87,6 +87,8 @@ class TwoFasWebSocket {
           throw new TwoFasError(TwoFasError.internalErrors.websocketEventNotTrusted, { additional: { func: 'TwoFasWebSocket - addEventListener message' } });
         }
 
+        // @TODO: Add scheme check
+
         this.#clearTimeout();
 
         let json;

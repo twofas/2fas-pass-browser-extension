@@ -36,17 +36,17 @@ const decryptPassword = async login => {
     throw new TwoFasError(TwoFasError.internalErrors.decryptPasswordDecryptBytes, { event: e, additional: { func: 'decryptPassword' } });
   }
 
-  let passKey;
+  let itemKey;
 
   try {
     if (login.securityType === SECURITY_TIER.SECRET) {
       if (login?.internalType && login?.internalType === 'added') {
-        passKey = await getKey('pass_key_t3_new', { loginId: login.id, deviceId: login.deviceId });
+        itemKey = await getKey('item_key_t3_new', { loginId: login.id, deviceId: login.deviceId });
       } else {
-        passKey = await getKey('pass_key_t3', { deviceId: login.deviceId });
+        itemKey = await getKey('item_key_t3', { deviceId: login.deviceId });
       }
     } else {
-      passKey = await getKey('pass_key_t2', { loginId: login.id, deviceId: login.deviceId });
+      itemKey = await getKey('item_key_t2', { loginId: login.id, deviceId: login.deviceId });
     }
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.decryptPasswordGetKey, {
@@ -58,21 +58,21 @@ const decryptPassword = async login => {
     });
   }
 
-  let encryptionPassKey;
+  let encryptionItemKey;
 
   try {
-    encryptionPassKey = await storage.getItem(`session:${passKey}`);
+    encryptionItemKey = await storage.getItem(`session:${itemKey}`);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.decryptPasswordStorageGetKey, { event: e, additional: { func: 'decryptPassword' } });
   }
 
-  let encryptionPassKeyAB, encryptionKey;
+  let encryptionItemKeyAB, encryptionKey;
 
   try {
-    encryptionPassKeyAB = Base64ToArrayBuffer(encryptionPassKey);
+    encryptionItemKeyAB = Base64ToArrayBuffer(encryptionItemKey);
     encryptionKey = await crypto.subtle.importKey(
       'raw',
-      encryptionPassKeyAB,
+      encryptionItemKeyAB,
       { name: 'AES-GCM' },
       false,
       ['decrypt']

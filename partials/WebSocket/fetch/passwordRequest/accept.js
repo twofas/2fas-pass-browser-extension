@@ -41,12 +41,12 @@ const passwordRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF,
       
       const passwordAB = Base64ToArrayBuffer(password);
       const passwordDecryptedBytes = DecryptBytes(passwordAB);
-      
-      const encryptionPassT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassT2'), sessionKeyForHKDF, true);
+
+      const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('ItemT2'), sessionKeyForHKDF, true);
 
       const decryptedPasswordAB = await crypto.subtle.decrypt(
         { name: 'AES-GCM', iv: passwordDecryptedBytes.iv },
-        encryptionPassT2Key,
+        encryptionItemT2Key,
         passwordDecryptedBytes.data
       );
       const decryptedPassword = ArrayBufferToString(decryptedPasswordAB);
@@ -125,14 +125,14 @@ const passwordRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF,
     const servicesGZIP_AB = await compress(servicesStringify);
     const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
-    // generate encryptionPassT2Key
-    const encryptionPassT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassT2'), sessionKeyForHKDF, true);
-    const encryptionPassT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionPassT2Key);
-    const encryptionPassT2KeyAES_B64 = ArrayBufferToBase64(encryptionPassT2KeyAESRaw);
+    // generate encryptionItemT2Key
+    const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('ItemT2'), sessionKeyForHKDF, true);
+    const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
+    const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
 
-    // save encryptionPassT2Key in session storage
-    const passT2Key = await getKey('pass_key_t2', { deviceId: state.data.deviceId, loginId: state.data.loginId });
-    await storage.setItem(`session:${passT2Key}`, encryptionPassT2KeyAES_B64);
+    // save encryptionItemT2Key in session storage
+    const itemT2Key = await getKey('item_key_t2', { deviceId: state.data.deviceId, loginId: state.data.loginId });
+    await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
     // Remove services from session storage (by servicesKeys)
     await storage.removeItems(servicesKeys);

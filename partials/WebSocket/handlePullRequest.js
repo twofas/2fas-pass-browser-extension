@@ -125,7 +125,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           }
         };
       } else {
-        const keyName = state.data.securityType === SECURITY_TIER.HIGHLY_SECRET ? 'PassT2' : state.data.securityType === SECURITY_TIER.SECRET ? 'PassT3' : null;
+        const keyName = state.data.securityType === SECURITY_TIER.HIGHLY_SECRET ? 'ItemT2' : state.data.securityType === SECURITY_TIER.SECRET ? 'ItemT3' : null;
 
         if (!keyName) {
           throw new TwoFasError(TwoFasError.errors.updateLoginWrongSecurityType);
