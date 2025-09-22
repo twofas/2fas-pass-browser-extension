@@ -394,11 +394,11 @@ class TwoFasError extends Error {
       code: 9102
     },
     decryptPasswordGetKey: {
-      message: 'decryptPassword: error getting key pass_key_t3',
+      message: 'decryptPassword: error getting key item_key_t3',
       code: 9103
     },
     decryptPasswordStorageGetKey: {
-      message: 'decryptPassword: error getting key pass_key_t3 from storage',
+      message: 'decryptPassword: error getting key item_key_t3 from storage',
       code: 9104
     },
     decryptPasswordImportKey: {

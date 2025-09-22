@@ -25,6 +25,7 @@ const ConnectOnMessage = async (json, data, actions) => {
   try {
     switch (json.action) {
       case SOCKET_ACTIONS.CLOSE_WITH_ERROR: {
+        console.log('CLOSE_WITH_ERROR received', json);
         throw new TwoFasError(TwoFasError.errors.closeWithErrorReceived);
       }
   

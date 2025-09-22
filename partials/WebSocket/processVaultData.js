@@ -40,7 +40,7 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
   checkChecksum(ArrayBufferToBase64(internalChecksumAB), checksum);
 
   const encGzipVaultDataBytes = DecryptBytes(Base64ToArrayBuffer(encGzipVaultData));
-  const encryptionPassKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassT3'), sessionKeyForHKDF, true);
+  const encryptionPassKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('ItemT3'), sessionKeyForHKDF, true);
 
   try {
     const encryptionPassKeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionPassKeyAES);
@@ -49,8 +49,8 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
     throw new TwoFasError(TwoFasError.errors.exportEncryptionPassKey, { event: e });
   }
 
-  const passKey = await getKey('pass_key_t3', { deviceId });
-  await storage.setItem(`session:${passKey}`, encryptionPassKeyAES_B64);
+  const itemKey = await getKey('item_key_t3', { deviceId });
+  await storage.setItem(`session:${itemKey}`, encryptionPassKeyAES_B64);
 
   try {
     const vaultDataDec_AB = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: encGzipVaultDataBytes.iv }, encryptionDataKeyAES, encGzipVaultDataBytes.data);
@@ -61,6 +61,7 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
       throw new Error('Invalid vault data format');
     }
 
+    // @TODO: Items! Not saveServices!
     await saveServices(vaultDataDecJSON.logins, deviceId);
     await saveTags(vaultDataDecJSON.tags, deviceId);
   } catch (e) {

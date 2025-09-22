@@ -33,9 +33,9 @@ const passwordT2Reset = async loginId => {
   const servicesGZIP_AB = await compress(servicesStringify);
   const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
-  // Remove encryptionPassT2Key in session storage for this loginId & deviceId
-  const passT2Key = await getKey('pass_key_t2', { deviceId, loginId });
-  await storage.removeItem(`session:${passT2Key}`);
+  // Remove encryptionItemT2Key in session storage for this loginId & deviceId
+  const itemT2Key = await getKey('item_key_t2', { deviceId, loginId });
+  await storage.removeItem(`session:${itemT2Key}`);
 
   // Remove services from session storage (by servicesKeys)
   await storage.removeItems(servicesKeys);

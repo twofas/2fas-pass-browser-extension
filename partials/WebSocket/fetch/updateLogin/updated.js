@@ -54,23 +54,23 @@ const updateLoginUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, me
     const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
     if (data.login.securityType === SECURITY_TIER.SECRET) {
-      // generate encryptionPassT3Key
-      const encryptionPassT3Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassT3'), sessionKeyForHKDF, true);
-      const encryptionPassT3KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionPassT3Key);
-      const encryptionPassT3KeyAES_B64 = ArrayBufferToBase64(encryptionPassT3KeyAESRaw);
+      // generate encryptionItemT3Key
+      const encryptionItemT3Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('ItemT3'), sessionKeyForHKDF, true);
+      const encryptionItemT3KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT3Key);
+      const encryptionItemT3KeyAES_B64 = ArrayBufferToBase64(encryptionItemT3KeyAESRaw);
 
-      // save encryptionPassT3Key in session storage
-      const passT3Key = await getKey('pass_key_t3_new', { deviceId: data.login.deviceId, loginId: data.login.id });
-      await storage.setItem(`session:${passT3Key}`, encryptionPassT3KeyAES_B64);
+      // save encryptionItemT3Key in session storage
+      const itemT3Key = await getKey('item_key_t3_new', { deviceId: data.login.deviceId, loginId: data.login.id });
+      await storage.setItem(`session:${itemT3Key}`, encryptionItemT3KeyAES_B64);
     } else if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      // generate encryptionPassT2Key
-      const encryptionPassT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassT2'), sessionKeyForHKDF, true);
-      const encryptionPassT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionPassT2Key);
-      const encryptionPassT2KeyAES_B64 = ArrayBufferToBase64(encryptionPassT2KeyAESRaw);
+      // generate encryptionItemT2Key
+      const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('ItemT2'), sessionKeyForHKDF, true);
+      const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
+      const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
 
-      // save encryptionPassT2Key in session storage
-      const passT2Key = await getKey('pass_key_t2', { deviceId: data.login.deviceId, loginId: data.login.id });
-      await storage.setItem(`session:${passT2Key}`, encryptionPassT2KeyAES_B64);
+      // save encryptionItemT2Key in session storage
+      const itemT2Key = await getKey('item_key_t2', { deviceId: data.login.deviceId, loginId: data.login.id });
+      await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
     } else {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginUpdatedWrongSecurityType);
     }

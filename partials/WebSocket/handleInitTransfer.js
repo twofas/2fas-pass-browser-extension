@@ -37,6 +37,7 @@ const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid) => 
     throw new TwoFasError(TwoFasError.errors.decryptNewSessionId, { event: e });
   }
 
+  // OPTIONAL
   if (json?.payload?.fcmTokenEnc && json?.payload?.fcmTokenEnc?.length > 0) {
     try {
       const fcmTokenEnc = json.payload.fcmTokenEnc;
@@ -50,6 +51,7 @@ const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid) => 
     }
   }
 
+  // OPTIONAL
   let expirationDateDec_B64 = null;
 
   if (json?.payload?.expirationDateEnc && json?.payload?.expirationDateEnc?.length > 0) {

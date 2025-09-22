@@ -22,10 +22,10 @@ const ServicePasswordIcon = lazy(() => import('@/assets/popup-window/service-pas
 const handleAutofillFailedPassword = async (data, setAutofillFailed) => {
   const passwordAB = Base64ToArrayBuffer(data.password);
   const passwordDecryptedBytes = DecryptBytes(passwordAB);
-  const encryptionPassT2Key = await generateEncryptionAESKey(data.hkdfSaltAB, StringToArrayBuffer('PassT2'), data.sessionKeyForHKDF, false);
+  const encryptionItemT2Key = await generateEncryptionAESKey(data.hkdfSaltAB, StringToArrayBuffer('ItemT2'), data.sessionKeyForHKDF, false);
   const decryptedPasswordAB = await crypto.subtle.decrypt(
     { name: 'AES-GCM', iv: passwordDecryptedBytes.iv },
-    encryptionPassT2Key,
+    encryptionItemT2Key,
     passwordDecryptedBytes.data
   );
   const decryptedPassword = ArrayBufferToString(decryptedPasswordAB);
