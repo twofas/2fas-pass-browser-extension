@@ -116,7 +116,7 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
       <div className={S.thisTabAllLoginsSearchContainerTags} style={{ position: 'relative' }}>
         <button 
           ref={buttonRef}
-          className={`${bS.btn} ${bS.btnFilter}`}
+          className={`${bS.btn} ${bS.btnFilter} ${isMenuOpen ? bS.btnFilterActive : ''}`}
           onClick={handleButtonClick}
           title={browser.i18n.getMessage('filters_button_title')}
         >

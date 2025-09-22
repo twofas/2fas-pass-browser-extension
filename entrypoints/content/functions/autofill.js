@@ -9,7 +9,45 @@ import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import inputSetValue from './autofillFunctions/inputSetValue';
 
-/** 
+/**
+ * Checks if autofill should proceed when in an iframe
+ * @return {Promise<boolean>} true if should proceed, false if cancelled
+ */
+const checkIframePermission = async () => {
+  if (window.self === window.top) {
+    return true;
+  }
+
+  let currentFrameDomain;
+
+  try {
+    currentFrameDomain = new URL(window.location.href).hostname;
+  } catch (e) {
+    CatchError(e);
+    return true;
+  }
+
+  try {
+    const topFrameDomain = new URL(window.top.location.href).hostname;
+
+    if (currentFrameDomain === topFrameDomain) {
+      return true;
+    }
+
+    const message = browser.i18n.getMessage('autofill_cross_domain_warning')
+      .replace('CURRENT_DOMAIN', currentFrameDomain)
+      .replace('TOP_DOMAIN', topFrameDomain);
+
+    return window.confirm(message);
+  } catch {
+    const message = browser.i18n.getMessage('autofill_cross_domain_warning_no_access')
+      .replace('CURRENT_DOMAIN', currentFrameDomain);
+
+    return window.confirm(message);
+  }
+};
+
+/**
 * Function to autofill input fields.
 * @async
 * @param {Object} request - The request object.
@@ -20,89 +58,92 @@ const autofill = async request => {
     return { status: 'error', message: 'No username and password provided' };
   }
 
-  let inputFound = false;
-
   const passwordInputs = getPasswordInputs();
-  const passwordForms = passwordInputs.map(input => input.closest('form'));
 
+  if (passwordInputs.length === 0 && !request?.username) {
+    return { status: 'error', message: 'No input fields found' };
+  }
+
+  const passwordForms = passwordInputs.map(input => input.closest('form'));
   const usernameInputs = getUsernameInputs(passwordForms);
-  
+
   setUsernameSkips(passwordInputs, usernameInputs);
 
-  if (usernameInputs.length > 0) {
-    inputFound = true;
+  const hasUsernameToFill = usernameInputs.length > 0 && request?.username?.length > 0;
+  const hasPasswordToFill = passwordInputs.length > 0 && request?.password?.length > 0;
 
-    if (request?.username && request?.username.length > 0) {
-      usernameInputs.map(input => { inputSetValue(input, request.username); });
-    }
+  if (!hasUsernameToFill && !hasPasswordToFill) {
+    return { status: 'error', message: 'No input fields found' };
   }
 
-  if (passwordInputs.length > 0) {
-    inputFound = true;
+  const userAllowed = await checkIframePermission();
 
-    if (request?.password && request?.password.length > 0) {
-      let localKeyResponse = null;
-      let localKey = null;
-      let decryptedValueString = null;
+  if (!userAllowed) {
+    return { status: 'cancelled', message: 'User cancelled cross-domain autofill' };
+  }
 
-      if (request?.cryptoAvailable) {
-        try {
-          localKeyResponse = await browser.runtime.sendMessage({
-            action: REQUEST_ACTIONS.GET_LOCAL_KEY,
-            target: REQUEST_TARGETS.BACKGROUND
-          });
-        } catch {}
+  if (hasUsernameToFill) {
+    usernameInputs.forEach(input => inputSetValue(input, request.username));
+  }
 
-        if (localKeyResponse?.status === 'ok') {
-          localKey = localKeyResponse?.data;
-        } else {
-          return { status: 'error', message: 'Failed to get local key' };
-        }
+  if (hasPasswordToFill) {
+    let decryptedValueString;
 
-        const localKeyAB = Base64ToArrayBuffer(localKey);
-        let decryptedValueAB, localKeyCrypto;
+    if (request?.cryptoAvailable) {
+      let localKeyResponse;
 
-        try {
-          localKeyCrypto = await crypto.subtle.importKey(
-            'raw',
-            localKeyAB,
-            { name: 'AES-GCM' },
-            false,
-            ['decrypt']
-          );
-        } catch (e) {
-          await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillImportKeyError, { event: e }));
-          return { status: 'error', message: 'ImportKey error' };
-        }
-
-        const valueAB = Base64ToArrayBuffer(request.password);
-        const decryptedBytes = DecryptBytes(valueAB);
-
-        try {
-          decryptedValueAB = await crypto.subtle.decrypt(
-            { name: 'AES-GCM', iv: decryptedBytes.iv },
-            localKeyCrypto,
-            decryptedBytes.data
-          );
-        } catch (e) {
-          await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillDecryptError, { event: e }));
-          return { status: 'error', message: 'Decrypt error' };
-        }
-
-        decryptedValueString = ArrayBufferToString(decryptedValueAB);
-      } else {
-        decryptedValueString = request.password;
+      try {
+        localKeyResponse = await browser.runtime.sendMessage({
+          action: REQUEST_ACTIONS.GET_LOCAL_KEY,
+          target: REQUEST_TARGETS.BACKGROUND
+        });
+      } catch {
+        return { status: 'error', message: 'Failed to get local key' };
       }
 
-      passwordInputs.map(input => { inputSetValue(input, decryptedValueString); });
+      if (localKeyResponse?.status !== 'ok') {
+        return { status: 'error', message: 'Failed to get local key' };
+      }
+
+      const localKeyAB = Base64ToArrayBuffer(localKeyResponse.data);
+      let localKeyCrypto;
+
+      try {
+        localKeyCrypto = await crypto.subtle.importKey(
+          'raw',
+          localKeyAB,
+          { name: 'AES-GCM' },
+          false,
+          ['decrypt']
+        );
+      } catch (e) {
+        await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillImportKeyError, { event: e }));
+        return { status: 'error', message: 'ImportKey error' };
+      }
+
+      const valueAB = Base64ToArrayBuffer(request.password);
+      const decryptedBytes = DecryptBytes(valueAB);
+
+      try {
+        const decryptedValueAB = await crypto.subtle.decrypt(
+          { name: 'AES-GCM', iv: decryptedBytes.iv },
+          localKeyCrypto,
+          decryptedBytes.data
+        );
+
+        decryptedValueString = ArrayBufferToString(decryptedValueAB);
+      } catch (e) {
+        await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillDecryptError, { event: e }));
+        return { status: 'error', message: 'Decrypt error' };
+      }
+    } else {
+      decryptedValueString = request.password;
     }
+
+    passwordInputs.forEach(input => inputSetValue(input, decryptedValueString));
   }
 
-  if (!inputFound) {
-    return { status: 'error', message: 'No input fields found' };
-  } else {
-    return { status: 'ok' };
-  }
+  return { status: 'ok' };
 };
 
 export default autofill;
