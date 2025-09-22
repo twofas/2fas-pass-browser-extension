@@ -17,7 +17,7 @@ import generateNonce from '@/partials/functions/generateNonce';
 // FUTURE - Better error handling
 
 /** 
-* Handles the acceptance of a password request.
+* Handles the acceptance of a sif request.
 * @param {Object} data - The data object.
 * @param {Object} state - The state object.
 * @param {ArrayBuffer} hkdfSaltAB - The HKDF salt as an ArrayBuffer.
@@ -25,7 +25,7 @@ import generateNonce from '@/partials/functions/generateNonce';
 * @param {string} messageId - The message ID.
 * @return {Promise<Object>} Object containing returnUrl and returnToast or action for autofill.
 */
-const passwordRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
+const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
   try {
     // Autofill from handleAutofill
     if (state?.from === 'autofill') {
@@ -158,4 +158,4 @@ const passwordRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF,
   }
 };
 
-export default passwordRequestAccept;
+export default sifRequestAccept;

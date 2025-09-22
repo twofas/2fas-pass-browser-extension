@@ -7,24 +7,24 @@
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
 
 /** 
-* Handles the cancellation of a password request.
+* Function to handle the deletion cancellation.
 * @param {string} messageId - The ID of the message to be sent.
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
-const passwordRequestCancel = async messageId => {
+const deleteDataCancel = async messageId => {
   try {
     await sendPullRequestCompleted(messageId);
 
     return {
       returnUrl: '/',
       returnToast: {
-        text: browser.i18n.getMessage('fetch_password_request_cancel_toast'),
+        text: browser.i18n.getMessage('fetch_delete_login_cancel_toast'),
         type: 'info'
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionPasswordRequestCancelError, { event: e });
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionDeleteCancelError, { event: e });
   }
 };
 
-export default passwordRequestCancel;
+export default deleteDataCancel;

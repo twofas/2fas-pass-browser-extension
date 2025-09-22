@@ -7,11 +7,11 @@
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
 
 /** 
-* Function to handle the addition of a new login in T1.
+* Function to handle the addition of a new item in T1.
 * @param {string} messageId - The ID of the message to be sent.
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
-const newLoginAddedInT1 = async messageId => {
+const newDataAddedInT1 = async messageId => {
   try {
     await sendPullRequestCompleted(messageId);
 
@@ -27,4 +27,4 @@ const newLoginAddedInT1 = async messageId => {
   }
 };
 
-export default newLoginAddedInT1;
+export default newDataAddedInT1;

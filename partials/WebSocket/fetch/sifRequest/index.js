@@ -4,5 +4,5 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export { default as passwordRequestAccept } from './accept';
-export { default as passwordRequestCancel } from './cancel';
+export { default as sifRequestAccept } from './accept';
+export { default as sifRequestCancel } from './cancel';

@@ -11,12 +11,12 @@ import compress from '@/partials/gzip/compress';
 import saveServices from '@/partials/WebSocket/utils/saveServices';
 
 /** 
-* Handles the deletion of a login in T2 or T3.
+* Handles the deletion of an item.
 * @param {Object} state - The state object.
 * @param {string} messageId - The ID of the message to be sent.
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
-const deleteLoginAccept = async (state, messageId) => {
+const deleteDataAccept = async (state, messageId) => {
   try {
     const [services, servicesKeys] = await Promise.all([
       getServices(),
@@ -59,4 +59,4 @@ const deleteLoginAccept = async (state, messageId) => {
   }
 };
 
-export default deleteLoginAccept;
+export default deleteDataAccept;
