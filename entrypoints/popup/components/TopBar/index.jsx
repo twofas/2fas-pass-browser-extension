@@ -61,7 +61,7 @@ function TopBar () {
 
   const addNewClass = useMemo(() => {
     if (location.pathname === '/connect') return '';
-    return parseInt(matchingLoginsLength, 10) <= 0 ? S.highlighted : S.active;
+    return (parseInt(matchingLoginsLength, 10) || 0) <= 0 ? S.highlighted : S.active;
   }, [location.pathname, matchingLoginsLength]);
 
   const addNewBtnClass = useMemo(() => 

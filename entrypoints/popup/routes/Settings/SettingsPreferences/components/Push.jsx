@@ -15,7 +15,7 @@ import TwofasNotification from '@/partials/TwofasNotification';
 * Function to render the Push component.
 * @return {JSX.Element} The rendered component.
 */
-function Push () {
+function Push (props) {
   const [loading, setLoading] = useState(true);
   const [push, setPush] = useState(null);
   const [disabled, setDisabled] = useState(true);
@@ -33,6 +33,10 @@ function Push () {
 
       setLoading(false);
       setDisabled(false);
+
+      if (props.onLoad) {
+        props.onLoad();
+      }
     };
 
     try {

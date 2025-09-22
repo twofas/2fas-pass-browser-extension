@@ -6,6 +6,7 @@
 
 import userNameTexts from '@/constants/userNameTexts';
 import userNameFormTexts from '@/constants/userNameFormTexts';
+import userNameAttributes from '@/constants/userNameAttributes';
 
 /** 
 * Function to get user name input selectors.
@@ -17,27 +18,32 @@ const userNameSelectors = () => {
   ];
 
   userNameTexts.forEach(text => {
+    userNameSelectors.push(`input#${text}`);
     userNameSelectors.push(`input#${text.toLowerCase()}`);
     userNameSelectors.push(`input#${text.toUpperCase()}`);
     userNameSelectors.push(`input#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}`);
-    userNameSelectors.push(`input[name="${text.toLowerCase()}"]`);
-    userNameSelectors.push(`input[name="${text.toUpperCase()}"]`);
-    userNameSelectors.push(`input[name="${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}"]`);
-    userNameSelectors.push(`input[autocomplete="${text.toLowerCase()}"]`);
-    userNameSelectors.push(`input[autocomplete="${text.toUpperCase()}"]`);
-    userNameSelectors.push(`input[autocomplete="${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}"]`);
+
+    userNameAttributes.forEach(attr => {
+      userNameSelectors.push(`input[${attr}="${text}"]`);
+      userNameSelectors.push(`input[${attr}="${text.toLowerCase()}"]`);
+      userNameSelectors.push(`input[${attr}="${text.toUpperCase()}"]`);
+      userNameSelectors.push(`input[${attr}="${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}"]`);
+    });
   });
 
   userNameFormTexts.forEach(text => {
+    userNameSelectors.push(`#${text} input:not([type="password"])`);
     userNameSelectors.push(`#${text.toLowerCase()} input:not([type="password"])`);
     userNameSelectors.push(`#${text.toUpperCase()} input:not([type="password"])`);
     userNameSelectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input:not([type="password"])`);
+
+    userNameSelectors.push(`.${text} input:not([type="password"])`);
     userNameSelectors.push(`.${text.toLowerCase()} input:not([type="password"])`);
     userNameSelectors.push(`.${text.toUpperCase()} input:not([type="password"])`);
     userNameSelectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input:not([type="password"])`);
   });
 
-  return userNameSelectors;
+  return [...new Set(userNameSelectors)];
 };
 
 export default userNameSelectors;

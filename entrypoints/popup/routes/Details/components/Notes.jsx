@@ -17,21 +17,35 @@ const notesVariants = {
   visible: { height: '121px', minHeight: '121px', maxHeight: '600px' }
 };
 
- /**
+/**
 * Function to render the notes input field.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
 function Notes (props) {
   const { data, actions } = props;
-  const { service, notesEditable, form } = data;
-  const { setNotesEditable } = actions;
+  const { originalService, notesEditable, form } = data;
+  const { setNotesEditable, clearNotesInPopupState } = actions;
 
-  const handleNotesEditable = form => {
-    setNotesEditable(!notesEditable);
-
+  const handleNotesEditable = (form, input) => {
     if (notesEditable) {
-      form.change('notes', service.notes);
+      const valueToRestore = originalService?.notes || '';
+
+      form.change('notes', valueToRestore);
+
+      if (input) {
+        input.onChange(valueToRestore);
+      }
+
+      setNotesEditable(false);
+
+      if (clearNotesInPopupState) {
+        const currentFormValues = form.getState().values;
+        const updatedFormValues = { ...currentFormValues, notes: valueToRestore };
+        clearNotesInPopupState(updatedFormValues);
+      }
+    } else {
+      setNotesEditable(true);
     }
   };
 
@@ -46,7 +60,7 @@ function Notes (props) {
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
-              onClick={() => handleNotesEditable(form)}
+              onClick={() => handleNotesEditable(form, input)}
             >
               {notesEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>

@@ -16,7 +16,7 @@ const securityTiersOptions = [
   { value: SECURITY_TIER.TOP_SECRET, label: browser.i18n.getMessage('tier_0_name'), description: browser.i18n.getMessage('tier_0_description') }
 ];
 
- /**
+/**
 * Function to render the security tier selection field.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
@@ -24,14 +24,28 @@ const securityTiersOptions = [
 function SecurityTier (props) {
   const { data, actions } = props;
   const { service, tierEditable, form } = data;
-  const { setTierEditable } = actions;
+  const { setTierEditable, updateSecurityType } = actions;
 
   const handleTierEditable = form => {
     if (tierEditable) {
-      form.change('securityType', service.securityType);
+      const originalValue = service?.securityType;
+      form.change('securityType', originalValue);
+
+      if (updateSecurityType) {
+        updateSecurityType(originalValue);
+      }
     }
 
     setTierEditable(!tierEditable);
+  };
+
+  const handleSelectChange = (selectedOption, input) => {
+    const newValue = selectedOption ? selectedOption.value : null;
+    input.onChange(newValue);
+
+    if (updateSecurityType) {
+      updateSecurityType(newValue);
+    }
   };
 
   return (
@@ -50,12 +64,13 @@ function SecurityTier (props) {
           </div>
           <div className={`${pI.passInputBottom} ${pI.switch}`}>
             <Select
-              {...input}
               className='react-select-container react-select-security-tier-container'
               classNamePrefix='react-select'
               isSearchable={false}
               options={securityTiersOptions}
-              value={securityTiersOptions.find(option => option.value === input.value)}
+              value={securityTiersOptions.find(option => option.value === (typeof input.value === 'number' ? input.value : input.value?.value))}
+              onChange={selectedOption => handleSelectChange(selectedOption, input)}
+              onBlur={input.onBlur}
               menuPlacement='top'
               menuPosition='fixed'
               isDisabled={!tierEditable}

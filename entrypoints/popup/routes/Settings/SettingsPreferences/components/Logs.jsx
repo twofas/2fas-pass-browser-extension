@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 * Function to render the Logs component.
 * @return {JSX.Element} The rendered component.
 */
-function Logs () {
+function Logs (props) {
   const [loading, setLoading] = useState(true);
   const [l, setL] = useState(null);
   const [disabled, setDisabled] = useState(true);
@@ -28,6 +28,10 @@ function Logs () {
       setL(storageLogging);
       setLoading(false);
       setDisabled(false);
+
+      if (props.onLoad) {
+        props.onLoad();
+      }
     };
 
     try {

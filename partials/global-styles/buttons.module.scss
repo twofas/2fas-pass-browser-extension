@@ -356,7 +356,8 @@
     }
 
     &:hover,
-    &:focus {
+    &:focus,
+    &.btn-filter-active {
       background-color: v.$hover-color-light;
       border-color: v.$hover-color-light;
 

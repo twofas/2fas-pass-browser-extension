@@ -23,6 +23,7 @@ import { useLocation } from 'react-router';
 import keepPassword from './functions/keepPassword';
 import { toast } from 'react-toastify';
 import isLoginsCorrect from './functions/isLoginsCorrect';
+import { usePopupState } from '@/hooks/usePopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const SmallLoginItem = lazy(() => import('./components/SmallLoginItem'));
@@ -48,6 +49,8 @@ const thisTabTopVariants = {
 function ThisTab (props) {
   const location = useLocation();
   const { state } = location;
+  const { changeMatchingLoginsLength } = useMatchingLogins();
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll, setData, popupState } = usePopupState();
 
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('Unknown');
@@ -59,14 +62,26 @@ function ThisTab (props) {
   const [sortDisabled, setSortDisabled] = useState(true);
   const [storageVersion, setStorageVersion] = useState(null);
   const [autofillFailed, setAutofillFailed] = useState(false);
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+
+  const getInitialValue = (key, fallback = null) => {
+    if (location?.state?.data?.[key] !== undefined) {
+      return location.state.data[key];
+    }
+
+    if (popupState?.data?.[key] !== undefined) {
+      return popupState.data[key];
+    }
+
+    return fallback;
+  };
 
   // Search
-  const [searchActive, setSearchActive] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
-  const [selectedTag, setSelectedTag] = useState(null);
-  const [lastSelectedTagInfo, setLastSelectedTagInfo] = useState(null);
+  const [searchActive, setSearchActive] = useState(getInitialValue('searchActive', false));
+  const [searchValue, setSearchValue] = useState(getInitialValue('searchValue', ''));
+  const [selectedTag, setSelectedTag] = useState(getInitialValue('selectedTag', null));
+  const [lastSelectedTagInfo, setLastSelectedTagInfo] = useState(getInitialValue('lastSelectedTagInfo', null));
   const [forceCloseFilters, setForceCloseFilters] = useState(false);
-  const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const boxAnimationRef = useRef(null);
   const boxAnimationDarkRef = useRef(null);
@@ -74,7 +89,12 @@ function ThisTab (props) {
   const unwatchStorageVersion = useRef(null);
   const thisTabTopRef = useRef(null);
 
-  const { changeMatchingLoginsLength } = useMatchingLogins();
+  const updateData = useCallback((updates) => {
+    setData(prevData => ({
+      ...prevData,
+      ...updates
+    }));
+  }, [setData]);
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
@@ -90,6 +110,16 @@ function ThisTab (props) {
     }
   }, [sort]);
 
+  useEffect(() => {
+    setHref(location.pathname);
+  }, [location.pathname, setHref]);
+
+  useEffect(() => {
+    if (location?.state?.data && Object.keys(location.state.data).length > 0) {
+      updateData(location.state.data);
+    }
+  }, []);
+
   const handleSearchChange = useCallback(e => {
     const value = e?.target?.value;
 
@@ -99,24 +129,31 @@ function ThisTab (props) {
     if (value.trim().length > 0) {
       setSearchActive(true);
       setSearchValue(value);
+      updateData({ searchActive: true, searchValue: value });
     } else {
       setSearchActive(false);
       setSearchValue('');
+      updateData({ searchActive: false, searchValue: '' });
     }
-  }, []);
+  }, [updateData]);
 
   const handleSearchClear = useCallback(() => {
     setSearchValue('');
     setSearchActive(false);
-  }, []);
+    updateData({ searchValue: '', searchActive: false });
+  }, [updateData]);
 
   const handleTagChange = useCallback((tag) => {
     setSelectedTag(tag);
-    
+
     if (tag) {
-      setLastSelectedTagInfo({ name: tag.name, amount: tag.amount });
+      const tagInfo = { name: tag.name, amount: tag.amount };
+      setLastSelectedTagInfo(tagInfo);
+      updateData({ selectedTag: tag, lastSelectedTagInfo: tagInfo });
+    } else {
+      updateData({ selectedTag: null });
     }
-  }, []);
+  }, [updateData]);
 
   const handleKeepPassword = useCallback(async () => {
     await keepPassword(state);
@@ -163,6 +200,7 @@ function ThisTab (props) {
 
     setSearchActive(false);
     setSearchValue('');
+    updateData({ searchActive: false, searchValue: '' });
   }, [changeMatchingLoginsLength]);
 
   const watchStorageVersion = useCallback(() => {
@@ -198,7 +236,12 @@ function ThisTab (props) {
     for (const service of servicesWithTags) {
       for (const tag of service.tags) {
         const tagIndex = tags.findIndex(t => t.id === tag);
-        
+
+        if (tagIndex === -1) {
+          await CatchError(new TwoFasError(TwoFasError.internalErrors.tagIndexError, { additional: { tagId: tag } }));
+          continue;
+        }
+
         if (!tags[tagIndex]?.amount || !Number.isInteger(tags[tagIndex]?.amount)) {
           tags[tagIndex].amount = 0;
         }
@@ -240,11 +283,11 @@ function ThisTab (props) {
     return browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', amount);
   }, [selectedTag, logins?.length]);
 
-  const autofillPopupClass = useMemo(() => `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`, [autofillFailed]);
-  const matchingLoginsListClass = useMemo(() => `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`, [hasMatchingLogins, loading]);
-  const allLoginsClass = useMemo(() => `${S.thisTabAllLogins} ${!hasLogins && !loading ? S.hidden : ''}`, [hasLogins, loading]);
-  const searchClass = useMemo(() => `${S.thisTabAllLoginsSearch} ${searchActive ? S.active : ''}`, [searchActive]);
-  const clearButtonClass = useMemo(() => `${S.thisTabAllLoginsSearchClear} ${searchValue?.length <= 0 ? S.hidden : ''}`, [searchValue?.length]);
+  const autofillPopupClass = `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`;
+  const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
+  const allLoginsClass = `${S.thisTabAllLogins} ${!hasLogins && !loading ? S.hidden : ''}`;
+  const searchClass = `${S.thisTabAllLoginsSearch} ${searchActive ? S.active : ''}`;
+  const clearButtonClass = `${S.thisTabAllLoginsSearchClear} ${searchValue?.length <= 0 ? S.hidden : ''}`;
 
   const memoizedMatchingLoginsList = useMemo(() => generateMatchingLoginsList(matchingLogins, loading), [matchingLogins, loading]);
   const memoizedAllLoginsList = useMemo(() => generateAllLoginsList(logins, sort, searchValue, loading, tags, selectedTag), [logins, sort, searchValue, loading, tags, selectedTag]);
@@ -304,10 +347,19 @@ function ThisTab (props) {
     }
   }, [state]);
 
+  useEffect(() => {
+    if (!loading && shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
+    }
+  }, [loading, shouldRestoreScroll, popupStateData, scrollElementRef]);
+
   return (
     <LazyMotion features={loadDomAnimation}>
       <div className={`${props.className ? props.className : ''}`}>
-        <div ref={scrollableRef}>
+        <div ref={el => {
+          scrollableRef.current = el;
+          setScrollElementRef(el);
+        }}>
           <section className={S.thisTab}>
             <div className={autofillPopupClass}>
               <div className={S.thisTabAutofillPopupBox}>
@@ -421,7 +473,15 @@ function ThisTab (props) {
                       <ClearIcon />
                     </button>
                   </div>
-                  {tags.length > 0 ? <Filters tags={tags} selectedTag={selectedTag} onTagChange={handleTagChange} forceClose={forceCloseFilters} /> : null}
+                  {
+                    tags.length > 0 ?
+                    <Filters
+                      tags={tags}
+                      selectedTag={selectedTag}
+                      onTagChange={handleTagChange}
+                      forceClose={forceCloseFilters}
+                    /> :
+                    null}
                 </div>
 
                 <div className={`${S.thisTabAllLoginsTagsInfo} ${lastSelectedTagInfo && selectedTag ? S.active : ''}`}>

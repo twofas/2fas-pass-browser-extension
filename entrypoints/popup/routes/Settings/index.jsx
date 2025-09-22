@@ -5,10 +5,11 @@
 // See LICENSE file for full terms
 
 import S from './Settings.module.scss';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { useState, useEffect, lazy } from 'react';
 import getRatingLink from './functions/getRatingLink';
 import getRatingText from './functions/getRatingText';
+import { usePopupState } from '@/hooks/usePopupState';
 
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
@@ -20,9 +21,16 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function Settings (props) {
+  const location = useLocation();
   const [version, setVersion] = useState('');
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
+
+  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
+
+  useEffect(() => {
+    setHref(location.pathname);
+  }, [location.pathname, setHref]);
 
   useEffect(() => {
     try {
@@ -33,9 +41,15 @@ function Settings (props) {
     }
   }, []);
 
+  useEffect(() => {
+    if (shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
+      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
+    }
+  }, [shouldRestoreScroll, popupStateData, scrollElementRef]);
+
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={el => { setScrollElementRef(el); }}>
         <section className={S.settings}>
           <NavigationButton type='cancel' />
 

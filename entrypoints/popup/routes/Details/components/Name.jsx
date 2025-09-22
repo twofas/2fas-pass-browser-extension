@@ -19,21 +19,38 @@ const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?
 */
 function Name (props) {
   const { data, actions } = props;
-  const { service, form, nameEditable, inputError } = data;
-  const { setNameEditable } = actions;
+  const { service, originalService, form, nameEditable, inputError } = data;
+  const { setNameEditable, updateFormValues } = actions;
 
   const handleCopyName = useCallback(async name => {
-    if (!name) return;
+    if (!name) {
+      return;
+    }
+
     await copyValue(name, service.id, 'name');
     showToast(browser.i18n.getMessage('details_name_copied'), 'success');
   }, [service.id]);
 
-  const handleNameEditable = form => {
+  const handleNameEditable = (form, input) => {
     if (nameEditable) {
-      form.change('name', service.name);
-    }
+      const valueToRestore = originalService?.name || '';
 
-    setNameEditable(!nameEditable);
+      form.change('name', valueToRestore);
+
+      if (input) {
+        input.onChange(valueToRestore);
+      }
+
+      setNameEditable(false);
+
+      if (updateFormValues) {
+        const currentFormValues = form.getState().values;
+        const updatedFormValues = { ...currentFormValues, name: valueToRestore };
+        updateFormValues(updatedFormValues);
+      }
+    } else {
+      setNameEditable(true);
+    }
   };
 
   return (
@@ -45,7 +62,7 @@ function Name (props) {
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
-              onClick={() => handleNameEditable(form)}
+              onClick={() => handleNameEditable(form, input)}
             >
               {nameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
