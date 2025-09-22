@@ -13,27 +13,40 @@ import compress from '@/partials/gzip/compress';
 import saveServices from '@/partials/WebSocket/utils/saveServices';
 
 /** 
-* Handles the addition of a new login.
+* Handles the update of a item after it has been modified.
 * @param {Object} data - The data object.
+* @param {Object} state - The state object.
 * @param {ArrayBuffer} hkdfSaltAB - The HKDF salt as an ArrayBuffer.
 * @param {ArrayBuffer} sessionKeyForHKDF - The session key for HKDF as an ArrayBuffer.
 * @param {string} messageId - The message ID.
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
-const newLoginAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
+const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
   if (!data || !data?.login || !data?.login?.deviceId || !data?.login?.id) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongData);
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginUpdatedWrongData);
   }
 
   try {
     const [services, servicesKeys] = await Promise.all([
       getServices(),
-      getServicesKeys(data.login.deviceId)
+      getServicesKeys(state.data.deviceId)
     ]);
 
-    // Add new login to services
-    const newService = { ...data.login, internalType: 'added' };
-    services.push(newService);
+    // Update login & clear alarm if exists
+    const serviceIndex = services.findIndex(service => service.id === state.data.loginId);
+    let service = services.find(service => service.id === state.data.loginId);
+
+    if (service && service.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+      await browser.alarms.clear(`passwordT2Reset-${state.data.loginId}`);
+    }
+
+    service = data.login;
+
+    if (data.login.securityType === SECURITY_TIER.SECRET) {
+      service.internalType = 'added';
+    }
+
+    services[serviceIndex] = service;
 
     // Compress services
     const servicesStringify = JSON.stringify(services);
@@ -59,7 +72,7 @@ const newLoginAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => 
       const itemT2Key = await getKey('item_key_t2', { deviceId: data.login.deviceId, loginId: data.login.id });
       await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
     } else {
-      throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongSecurityType);
+      throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginUpdatedWrongSecurityType);
     }
 
     // Remove services from session storage (by servicesKeys)
@@ -73,19 +86,18 @@ const newLoginAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => 
       await browser.alarms.create(`passwordT2Reset-${data.login.id}`, { delayInMinutes: config.passwordResetDelay });
     }
 
-    // Send response
     await sendPullRequestCompleted(messageId);
 
     return {
-      returnUrl: '/',
+      returnUrl: `/details/${state.data.loginId}`,
       returnToast: {
-        text: browser.i18n.getMessage('fetch_new_login_added_toast'),
+        text: browser.i18n.getMessage('fetch_update_login_updated_toast'),
         type: 'success'
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedError, { event: e });
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginUpdatedError, { event: e });
   }
 };
 
-export default newLoginAdded;
+export default updateDataUpdated;

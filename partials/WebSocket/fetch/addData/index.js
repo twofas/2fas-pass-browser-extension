@@ -4,5 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export { default as deleteLoginAccept } from './accept';
-export { default as deleteLoginCancel } from './cancel';
+export { default as newDataAdded } from './added';
+export { default as newDataAddedInT1 } from './addedInT1';
+export { default as newDataCancel } from './cancel';
