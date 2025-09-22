@@ -41,13 +41,13 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
   }
 
   switch (state.action) {
-    case PULL_REQUEST_TYPES.PASSWORD_REQUEST: {
+    case PULL_REQUEST_TYPES.SIF_REQUEST: {
       if (!state?.data || !state?.data?.loginId) {
         throw new TwoFasError(TwoFasError.errors.passwordRequestNoLoginId);
       }
 
       data = {
-        type: PULL_REQUEST_TYPES.PASSWORD_REQUEST,
+        type: PULL_REQUEST_TYPES.SIF_REQUEST,
         data: {
           loginId: state.data.loginId
         }
@@ -56,13 +56,13 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       break;
     }
 
-    case PULL_REQUEST_TYPES.DELETE_LOGIN: {
+    case PULL_REQUEST_TYPES.DELETE_DATA: {
       if (!state?.data || !state?.data?.loginId) {
         throw new TwoFasError(TwoFasError.errors.deleteLoginNoLoginId);
       }
 
       data = {
-        type: PULL_REQUEST_TYPES.DELETE_LOGIN,
+        type: PULL_REQUEST_TYPES.DELETE_DATA,
         data: {
           loginId: state.data.loginId
         }
@@ -71,14 +71,14 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       break;
     }
 
-    case PULL_REQUEST_TYPES.NEW_LOGIN: {
+    case PULL_REQUEST_TYPES.ADD_DATA: {
       if (!state?.data) {
         throw new TwoFasError(TwoFasError.errors.newLoginNoData);
       }
 
       if (!state?.data?.password) {
         data = {
-          type: PULL_REQUEST_TYPES.NEW_LOGIN,
+          type: PULL_REQUEST_TYPES.ADD_DATA,
           data: state.data
         };
       } else {
@@ -93,7 +93,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         delete state.data.password;
 
         data = {
-          type: PULL_REQUEST_TYPES.NEW_LOGIN,
+          type: PULL_REQUEST_TYPES.ADD_DATA,
           data: {
             ...state.data,
             passwordEnc: passwordEncBytesB64
@@ -104,7 +104,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       break;
     }
 
-    case PULL_REQUEST_TYPES.UPDATE_LOGIN: {
+    case PULL_REQUEST_TYPES.UPDATE_DATA: {
       if (!state?.data || !state?.data?.loginId || (!state?.data?.securityType && !Number.isInteger(state?.data?.securityType))) { // FUTURE - Check if one of the update fields is existing
         throw new TwoFasError(TwoFasError.errors.updateLoginWrongData);
       }
@@ -119,7 +119,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         delete stateData.loginId;
 
         data = {
-          type: PULL_REQUEST_TYPES.UPDATE_LOGIN,
+          type: PULL_REQUEST_TYPES.UPDATE_DATA,
           data: {
             ...stateData
           }
@@ -151,7 +151,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         delete stateData?.password;
 
         data = {
-          type: PULL_REQUEST_TYPES.UPDATE_LOGIN,
+          type: PULL_REQUEST_TYPES.UPDATE_DATA,
           data: {
             ...stateData
           }

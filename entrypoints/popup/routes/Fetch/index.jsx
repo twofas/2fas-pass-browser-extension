@@ -42,14 +42,14 @@ function Fetch (props) {
 
   const initConnection = async () => {
     switch (state?.action) {
-      case PULL_REQUEST_TYPES.UPDATE_LOGIN: {
+      case PULL_REQUEST_TYPES.UPDATE_DATA: {
         setFetchState(3);
         break;
       }
 
-      case PULL_REQUEST_TYPES.NEW_LOGIN:
-      case PULL_REQUEST_TYPES.PASSWORD_REQUEST:
-      case PULL_REQUEST_TYPES.DELETE_LOGIN: {
+      case PULL_REQUEST_TYPES.ADD_DATA:
+      case PULL_REQUEST_TYPES.SIF_REQUEST:
+      case PULL_REQUEST_TYPES.DELETE_DATA: {
         setFetchState(0);
         break;
       }
