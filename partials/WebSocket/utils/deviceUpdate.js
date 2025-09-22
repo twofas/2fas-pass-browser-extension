@@ -13,18 +13,18 @@
 */
 const deviceUpdate = async (uuid, payload) => {
   let devices = await storage.getItem('local:devices') || [];
-  devices = devices.filter(d => d.id !== payload.deviceId); // Remove old devices with the same ID
-
   const device = devices.find(d => d.uuid === uuid);
-
+  
   if (!device) {
     throw new TwoFasError(TwoFasError.internalErrors.deviceNotFound, { additional: { func: 'deviceUpdate' } });
   }
-
+  
   device.name = payload.deviceName || '2FAS Pass Mobile App';
   device.id = payload.deviceId;
   device.platform = payload.deviceOs || '';
   device.updatedAt = Date.now();
+
+  devices = devices.filter(d => d?.id === payload.deviceId && d?.uuid === uuid); // Remove old devices with the same ID
 
   await storage.setItem('local:devices', devices);
 

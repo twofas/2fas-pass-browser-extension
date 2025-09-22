@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 * Function to render the Context Menu component.
 * @return {JSX.Element} The rendered component.
 */
-function ContextMenu () {
+function ContextMenu (props) {
   const [loading, setLoading] = useState(true);
   const [cM, setCM] = useState(null);
   const [disabled, setDisabled] = useState(true);
@@ -28,6 +28,10 @@ function ContextMenu () {
       setCM(storageContextMenu);
       setLoading(false);
       setDisabled(false);
+
+      if (props.onLoad) {
+        props.onLoad();
+      }
     };
 
     try {

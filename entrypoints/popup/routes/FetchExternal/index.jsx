@@ -17,9 +17,18 @@ function FetchExternal () {
   try {
     params = useParams();
 
+    console.log(params);
+
     if (params && params.data) {
-      params = decodeURIComponent(params.data);
-      params = JSON.parse(params);
+      let decodedData;
+
+      try {
+        decodedData = decodeURIComponent(params.data);
+      } catch {
+        decodedData = params.data;
+      }
+
+      params = JSON.parse(decodedData);
 
       action = params.action;
       from = params.from;

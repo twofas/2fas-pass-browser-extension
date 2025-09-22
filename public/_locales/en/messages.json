@@ -443,6 +443,14 @@
     "message": "Save Item",
     "description": "Button label to update an existing login item in 2FAS Pass"
   },
+  "autofill_cross_domain_warning": {
+    "message": "This form is on a different domain (CURRENT_DOMAIN) than the main page (TOP_DOMAIN). Do you want to continue with autofill?",
+    "description": "Warning shown when autofill is attempted on a cross-domain iframe"
+  },
+  "autofill_cross_domain_warning_no_access": {
+    "message": "This form is on CURRENT_DOMAIN which appears to be in a cross-domain iframe. Do you want to continue with autofill?",
+    "description": "Warning shown when autofill is attempted on a cross-domain iframe and we cannot access the parent domain"
+  },
   "install_please_pin_extension": {
     "message": "Please pin the extension to the toolbar.",
     "description": "Prompt asking the user to pin the browser extension to the toolbar"
