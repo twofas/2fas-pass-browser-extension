@@ -20,15 +20,15 @@ const usernameMobileVariants = {
   visible: { maxHeight: '18px' }
 };
 
- /**
+/**
 * Function to render the username input field.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
 function Username (props) {
   const { data, actions } = props;
-  const { service, usernameEditable, usernameMobile, inputError, form } = data;
-  const { setUsernameEditable, setUsernameMobile } = actions;
+  const { service, originalService, usernameEditable, usernameMobile, inputError, form } = data;
+  const { setUsernameEditable, setUsernameMobile, updateFormValues } = actions;
 
   const handleCopyUsername = useCallback(async username => {
     if (!username) {
@@ -40,17 +40,31 @@ function Username (props) {
     showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
   }, [service.id]);
 
-  const handleUsernameEditable = form => {
+  const handleUsernameEditable = (form, input) => {
     if (usernameEditable) {
-      form.change('username', service.username);
-    }
+      const valueToRestore = originalService?.username || '';
 
-    setUsernameEditable(!usernameEditable);
+      form.change('username', valueToRestore);
+
+      if (input) {
+        input.onChange(valueToRestore);
+      }
+
+      setUsernameEditable(false);
+
+      if (updateFormValues) {
+        const currentFormValues = form.getState().values;
+        const updatedFormValues = { ...currentFormValues, username: valueToRestore };
+        updateFormValues(updatedFormValues);
+      }
+    } else {
+      setUsernameEditable(true);
+    }
   };
 
   const handleUsernameMobile = form => {
     if (!usernameMobile) {
-      form.change('username', service.username);
+      form.change('username', originalService?.username || '');
     }
 
     setUsernameMobile(!usernameMobile);
@@ -62,7 +76,7 @@ function Username (props) {
         <div className={`${pI.passInput} ${usernameEditable && !usernameMobile ? '' : pI.disabled} ${inputError === 'username' ? pI.error : ''}`}>
           <div className={pI.passInputTop}>
             <label htmlFor="username">{browser.i18n.getMessage('username')}</label>
-            <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => handleUsernameEditable(form)}>{usernameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
+            <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => handleUsernameEditable(form, input)}>{usernameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
           </div>
           <div className={pI.passInputBottom}>
             <input

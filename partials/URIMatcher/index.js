@@ -214,6 +214,12 @@ class URIMatcher {
       throw new Error('Parameter is not a string');
     }
 
+    // Don't modify protocol-only strings like 'https://' or 'chrome-extension://'
+    // Check if the URL is just a protocol (ends with :// or :/)
+    if (/^[a-z][a-z0-9+.-]*:\/?\/?$/i.test(url)) {
+      return url;
+    }
+
     return url.replace(/\/(\?|#)*$/, '');
   }
 
@@ -377,6 +383,7 @@ class URIMatcher {
         try {
           serviceUrls = this.recognizeURIs(account.uris, true)?.urls;
         } catch {
+          // FUTURE - Log error?
           return;
         }
 
@@ -443,10 +450,18 @@ class URIMatcher {
         }
 
         if (this.isUrl(text, internalProtocols)) {
-          uri.text = this.normalizeUrl(text, internalProtocols);
-          if (!seenUrls.has(uri.text)) {
-            seenUrls.add(uri.text);
-            response.urls.push(uri);
+          try {
+            uri.text = this.normalizeUrl(text, internalProtocols);
+
+            if (!seenUrls.has(uri.text)) {
+              seenUrls.add(uri.text);
+              response.urls.push(uri);
+            }
+          } catch {
+            if (!seenOthers.has(uri.text)) {
+              seenOthers.add(uri.text);
+              response.others.push(uri);
+            }
           }
         } else {
           if (!seenOthers.has(uri.text)) {

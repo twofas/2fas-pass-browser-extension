@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 * Function to render the Theme component.
 * @return {JSX.Element} The rendered component.
 */
-function Theme () {
+function Theme (props) {
   const [loading, setLoading] = useState(true);
   const [t, setT] = useState(null);
   const [disabled, setDisabled] = useState(true);
@@ -23,6 +23,10 @@ function Theme () {
       setT(storageTheme);
       setLoading(false);
       setDisabled(false);
+
+      if (props.onLoad) {
+        props.onLoad();
+      }
     };
 
     try {

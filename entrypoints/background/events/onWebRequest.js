@@ -135,7 +135,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   // Check if details.url contains any of the allowedSavePromptRequests
   const urlContainsAllowedRequest = allowedSavePromptRequests.some(request => details?.url?.toLowerCase().includes(request.toLowerCase()));
 
-  if (!urlContainsAllowedRequest && !formDataOk) {
+  if (!urlContainsAllowedRequest || !formDataOk) {
     return;
   }
 

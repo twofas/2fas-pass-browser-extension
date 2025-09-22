@@ -812,10 +812,10 @@
     box-shadow: none;
     margin-bottom: 0;
     margin-top: 0;
-    max-width: 300px;
-    min-width: 200px;
+    max-width: 200px;
     overflow: hidden;
     right: 0;
+    top: 8px;
     transition: opacity .3s ease-in-out;
     width: auto;
     z-index: 9999;
@@ -841,6 +841,11 @@
         border: 1px solid v.$card-stroke-dark;
       }
     }
+
+    &-list {
+      padding-bottom: 0;
+      padding-top: 0;
+    }
   }
 
   .react-select-tags__option {
@@ -850,32 +855,34 @@
     flex-direction: row;
     justify-content: space-between;
     overflow: hidden;
-    padding: 12px;
+    padding: 9px 12px;
     position: relative;
     transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    user-select: none;
+    width: 198px;
 
     body.theme-light & {
       background-color: rgba(v.$hover-color-light, 0);
-      border-bottom: 1px solid v.$card-stroke-light;
+      border-bottom: 0.5px solid v.$card-stroke-light;
       color: v.$primary-text-light;
     }
 
     body.theme-dark & {
       background-color: rgba(v.$hover-color-dark, 0);
-      border-bottom: 1px solid v.$card-stroke-dark;
+      border-bottom: 0.5px solid v.$card-stroke-dark;
       color: v.$primary-text-dark;
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         background-color: rgba(v.$hover-color-light, 0);
-        border-bottom: 1px solid v.$card-stroke-light;
+        border-bottom: 0.5px solid v.$card-stroke-light;
         color: v.$primary-text-light;
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: rgba(v.$hover-color-dark, 0);
-        border-bottom: 1px solid v.$card-stroke-dark;
+        border-bottom: 0.5px solid v.$card-stroke-dark;
         color: v.$primary-text-dark;
       }
     }
@@ -1009,10 +1016,18 @@
     }
 
     > span {
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       width: 100%;
+
+      &:first-of-type {
+        padding-right: 8px;
+      }
       
       &.react-select-tags__option_clear {
         body.theme-light & {

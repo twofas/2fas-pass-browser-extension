@@ -10,7 +10,7 @@ import { useEffect, lazy, useState, useMemo, useCallback, memo } from 'react';
 import { AuthProvider } from '@/hooks/useAuth';
 import { MatchingLoginsProvider } from '@/hooks/useMatchingLogins';
 import { WSProvider } from '@/hooks/useWS';
-// import { PopupStateProvider } from '@/hooks/usePopupState';
+import { PopupStateProvider } from '@/hooks/usePopupState';
 import popupOnMessage from './events/popupOnMessage';
 import Blocked from './routes/Blocked';
 import safariBlankLinks from '@/partials/functions/safariBlankLinks';
@@ -19,6 +19,7 @@ import lockRMB from './utils/lockRMB';
 import setTheme from './utils/setTheme';
 import isPopupInSeparateWindowExists from './utils/isPopupInSeparateWindowExists';
 import storageAutoClearActions from '@/partials/functions/storageAutoClearActions';
+import { getInitialRoute } from './utils/getInitialRoute';
 
 const TopBar = lazy(() => import('./components/TopBar'));
 const BottomBar = lazy(() => import('./components/BottomBar'));
@@ -37,6 +38,9 @@ const Details = lazy(() => import('./routes/Details'));
 const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
 const ToastsContent = lazy(() => import('./components/ToastsContent'));
+const InitialRouter = lazy(() => import('./components/InitialRouter'));
+
+const emptyFunc = () => {};
 
 /** 
 * ProtectedRoute component to handle access control based on authentication status.
@@ -94,6 +98,7 @@ function Popup () {
   const [blockedRoute, setBlockedRoute] = useState(false);
   const [separateWindow, setSeparateWindow] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [initialRoute, setInitialRoute] = useState(null);
 
   const location = useLocation();
 
@@ -157,8 +162,10 @@ function Popup () {
 
     Promise.all([
       setTheme(),
-      checkBlockedRoute()
-    ]).then(() => {
+      checkBlockedRoute(),
+      getInitialRoute()
+    ]).then(([, , route]) => {
+      setInitialRoute(route || '/');
       setLoaded(true);
       
       browser.runtime.onMessage.addListener(popupOnMessage);
@@ -166,14 +173,16 @@ function Popup () {
       document.addEventListener('keydown', lockShortcuts);
       document.addEventListener('contextmenu', lockRMB);
 
-      window.addEventListener('error', handleError);
-      window.addEventListener('unhandledrejection', handleError);
+      window.addEventListener('error', emptyFunc);
+      window.addEventListener('unhandledrejection', emptyFunc);
 
       if (import.meta.env.BROWSER === 'safari') {
         document.addEventListener('click', safariBlankLinks);
       }
     }).catch(e => {
       CatchError(e);
+      setInitialRoute('/');
+      setLoaded(true);
     });
 
     return () => {
@@ -182,8 +191,8 @@ function Popup () {
       document.removeEventListener('keydown', lockShortcuts);
       document.removeEventListener('contextmenu', lockRMB);
 
-      window.removeEventListener('error', handleError);
-      window.removeEventListener('unhandledrejection', handleError);
+      window.removeEventListener('error', emptyFunc);
+      window.removeEventListener('unhandledrejection', emptyFunc);
 
       if (import.meta.env.BROWSER === 'safari') {
         document.removeEventListener('click', safariBlankLinks);
@@ -199,7 +208,7 @@ function Popup () {
     };
   }, []);
 
-  if (!loaded) {
+  if (!loaded || !initialRoute) {
     return null;
   } else if (blockedRoute || location.pathname === '/blocked') {
     return (
@@ -211,12 +220,13 @@ function Popup () {
 
   return (
     <section className={mainSectionClassName}>
-      {/* <PopupStateProvider> */}
+      <PopupStateProvider>
         <AuthProvider>
           <WSProvider>
             <MatchingLoginsProvider>
-              <TopBar />
-              <Routes>
+              <InitialRouter initialRoute={initialRoute}>
+                <TopBar />
+                <Routes>
                 <Route path='/connect' element={<ConnectProtectedRoute blockedRoute={blockedRoute}><Connect className={S.passScreen} /></ConnectProtectedRoute>} />
                 <Route path='/' element={<ProtectedRoute blockedRoute={blockedRoute}><ThisTab className={S.passScreen} /></ProtectedRoute>} />
                 <Route path='/add-new' element={<ProtectedRoute blockedRoute={blockedRoute}><AddNew className={S.passScreen} /></ProtectedRoute>} />
@@ -233,11 +243,12 @@ function Popup () {
                 <Route path='/blocked' element={<Blocked className={S.passScreen} />} />
                 <Route path='*' element={<ProtectedRoute blockedRoute={blockedRoute}><NotFound className={S.passScreen} /></ProtectedRoute>} />
               </Routes>
+              </InitialRouter>
             </MatchingLoginsProvider>
             <BottomBar />
           </WSProvider>
         </AuthProvider>
-      {/* </PopupStateProvider> */}
+      </PopupStateProvider>
       
       <ToastsContent />
     </section>

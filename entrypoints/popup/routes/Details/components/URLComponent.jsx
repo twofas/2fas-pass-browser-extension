@@ -47,8 +47,8 @@ const urlVariants = {
 */
 function URLComponent (props) {
   const { data, actions, index } = props;
-  const { service, domainsEditable, inputError, form, uris } = data;
-  const { setDomainsEditable, handleRemoveUri } = actions;
+  const { service, originalService, domainsEditable, inputError, form, uris } = data;
+  const { setDomainsEditable, handleRemoveUri, updateFormValues } = actions;
   
   const handleCopyUri = useCallback(async uri => {
     if (!uri) return;
@@ -58,12 +58,30 @@ function URLComponent (props) {
   
   const isNew = uris && uris[index] && uris[index]._tempId;
 
-  const setDomainEditable = index => {
+  const setDomainEditable = (index, input) => {
     const newDomainsEditable = [...domainsEditable];
 
     if (newDomainsEditable[index]) {
-      const originalValue = service.uris && service.uris[index] ? service.uris[index].text : '';
+      if (isNew) {
+        handleRemoveUri(index, form);
+        return;
+      }
+
+      const originalValue = originalService?.uris && originalService.uris[index] ? originalService.uris[index].text : '';
+
       form.change(`uris[${index}].text`, originalValue);
+
+      if (input) {
+        input.onChange(originalValue);
+      }
+
+      if (updateFormValues) {
+        const currentFormValues = form.getState().values;
+        const updatedUris = [...currentFormValues.uris];
+        updatedUris[index] = { ...updatedUris[index], text: originalValue };
+        const updatedFormValues = { ...currentFormValues, uris: updatedUris };
+        updateFormValues(updatedFormValues);
+      }
     }
 
     newDomainsEditable[index] = !newDomainsEditable[index];
@@ -85,7 +103,7 @@ function URLComponent (props) {
           >
             <div className={pI.passInputTop}>
             <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
-            <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => setDomainEditable(index)}>{domainsEditable[index] ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
+            <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => setDomainEditable(index, input)}>{domainsEditable[index] ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
           </div>
           <div className={pI.passInputBottom}>
             <input

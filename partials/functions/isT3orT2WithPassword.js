@@ -11,7 +11,6 @@
 */
 const isT3orT2WithPassword = service => {
   if (
-    !service?.securityType ||
     !Number.isInteger(service.securityType) ||
     service.securityType < SECURITY_TIER.TOP_SECRET ||
     service.securityType > SECURITY_TIER.SECRET

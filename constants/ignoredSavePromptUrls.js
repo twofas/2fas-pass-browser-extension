@@ -30,7 +30,9 @@ const ignoredSavePromptUrls = Object.freeze([
   'featureassets.org',
   'assetsconfigcdn.org',
   'prodregistryv2.org',
-  'beyondwickedmapping.org'
+  'beyondwickedmapping.org',
+  'ajaxsetcookiepreferences',
+  'cookie'
 ]);
 
 export default ignoredSavePromptUrls;
