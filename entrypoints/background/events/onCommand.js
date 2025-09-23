@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import shortcutAutofill from '../utils/shortcutAutofill';
+import { shortcutAutofill } from '../utils';
 
 /** 
 * Function to handle command events.

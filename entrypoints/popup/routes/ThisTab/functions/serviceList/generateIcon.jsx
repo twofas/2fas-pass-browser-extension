@@ -6,9 +6,8 @@
 
 import S from '../../ThisTab.module.scss';
 import { lazy } from 'react';
-import getDomain from '@/partials/functions/getDomain';
-import getTextColor from '@/partials/functions/getTextColor';
-import { HEX_REGEX } from '@/constants/regex';
+import { getDomain, getTextColor } from '@/partials/functions';
+import { HEX_REGEX } from '@/constants';
 import URIMatcher from '@/partials/URIMatcher';
 import { parseDomain, ParseResultType } from 'parse-domain';
 

@@ -4,13 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { sendMessageToAllFrames, sendMessageToTab, decryptPassword, generateNonce } from '@/partials/functions';
 import getServices from '@/partials/sessionStorage/getServices';
-import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
-import sendMessageToTab from '@/partials/functions/sendMessageToTab';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
-import decryptPassword from '@/partials/functions/decryptPassword';
-import generateNonce from '@/partials/functions/generateNonce';
 
 /** 
 * Function to send autofill data to a specific tab.

@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import secIconColors from '@/constants/secIconColors';
-import secIconSVGs from '@/constants/secIconSVGs';
+import { secIconColors, secIconSVGs } from '@/constants';
 
 /** 
 * Function to generate a security icon based on a Base64 encoded key.

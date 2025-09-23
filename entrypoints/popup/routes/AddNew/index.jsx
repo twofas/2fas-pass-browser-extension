@@ -14,10 +14,9 @@ import getDomainInfo from './functions/getDomainInfo';
 import { useEffect, lazy, useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import onMessage from './events/onMessage';
-import valueToNFKD from '@/partials/functions/valueToNFKD';
+import { valueToNFKD, copyValue } from '@/partials/functions';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
-import copyValue from '@/partials/functions/copyValue';
 import { usePopupState } from '@/hooks/usePopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);

@@ -4,9 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getLastActiveTab from '@/partials/functions/getLastActiveTab';
 import getKey from '@/partials/sessionStorage/getKey';
-import getCurrentDevice from '@/partials/functions/getCurrentDevice';
+import { getLastActiveTab, getCurrentDevice } from '@/partials/functions';
 
 /**
 * Get the initial route from popupState

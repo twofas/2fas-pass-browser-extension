@@ -7,7 +7,7 @@
 import removeSavePromptAction from './removeSavePromptAction';
 import decryptValues from './decryptValues';
 import openPopupWindowInNewWindow from '../openPopupWindowInNewWindow';
-import { SAVE_PROMPT_ACTIONS } from '@/constants/savePromptActions';
+import { SAVE_PROMPT_ACTIONS } from '@/constants';
 
 // FUTURE - actions should be moved to a separate files
 /** 

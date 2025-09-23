@@ -11,8 +11,7 @@ import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncrypt
 import getKey from '@/partials/sessionStorage/getKey';
 import compress from '@/partials/gzip/compress';
 import saveServices from '@/partials/WebSocket/utils/saveServices';
-import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
-import generateNonce from '@/partials/functions/generateNonce';
+import { sendMessageToAllFrames, generateNonce } from '@/partials/functions';
 
 // FUTURE - Better error handling
 

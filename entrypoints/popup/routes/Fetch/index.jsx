@@ -7,15 +7,12 @@
 import S from './Fetch.module.scss';
 import { useLocation, useNavigate } from 'react-router';
 import { useState, useEffect, lazy } from 'react';
-import getCurrentDevice from '@/partials/functions/getCurrentDevice';
-import sendPush from '@/partials/functions/sendPush';
 import FetchOnMessage from './socket/FetchOnMessage';
 import FetchOnClose from './socket/FetchOnClose';
 import TwoFasWebSocket from '@/partials/WebSocket';
 import PULL_REQUEST_TYPES from './constants/PULL_REQUEST_TYPES';
 import calculateSignature from './functions/calculateSignature';
-import getNTPTime from '@/partials/functions/getNTPTime';
-import deletePush from '@/partials/functions/deletePush';
+import { getCurrentDevice, sendPush, getNTPTime, deletePush } from '@/partials/functions';
 
 const PushNotification = lazy(() => import('./components/PushNotification'));
 const ConnectionError = lazy(() => import('./components/ConnectionError'));
