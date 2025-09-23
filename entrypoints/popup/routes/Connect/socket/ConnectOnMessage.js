@@ -12,6 +12,7 @@ import handleSendVaultData from '@/partials/WebSocket/handleSendVaultData';
 import processVaultData from '@/partials/WebSocket/processVaultData';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import TwoFasWebSocket from '@/partials/WebSocket';
+import eventBus from '@/utils/EventBus';
 
 /** 
 * Function to handle incoming Connect messages.
@@ -30,11 +31,11 @@ const ConnectOnMessage = async (json, data, actions) => {
       }
   
       case SOCKET_ACTIONS.HELLO: {
-        actions.setSocketConnecting(true);
-        actions.setConnectingLoader(getLoaderProgress(10));
+        eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, true);
+        eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(10));
         
         data.deviceId = await handleHelloAction(json, data.uuid);
-        actions.setConnectingLoader(getLoaderProgress(25));
+        eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(25));
 
         break;
       }
@@ -45,7 +46,7 @@ const ConnectOnMessage = async (json, data, actions) => {
         data.PK_EPHE_MA_ECDH = res.pkEpheMa;
         data.sessionKeyForHKDF = res.sessionKeyForHKDF;
 
-        actions.setConnectingLoader(getLoaderProgress(40));
+        eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(40));
 
         break;
       }
@@ -60,7 +61,7 @@ const ConnectOnMessage = async (json, data, actions) => {
         data.totalChunks = res.totalChunks;
         data.chunks = new Array(res.totalChunks);
 
-        actions.setConnectingLoader(getLoaderProgress(60));
+        eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(60));
 
         break;
       }
@@ -71,11 +72,11 @@ const ConnectOnMessage = async (json, data, actions) => {
         data.chunks[res.chunkIndex] = res.chunkData;
         const arrayWithoutUndefined = data.chunks.filter(chunk => chunk !== undefined);
   
-        actions.setConnectingLoader(getLoaderProgress(60 + (arrayWithoutUndefined.length / data.totalChunks) * 30));
+        eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(60 + (arrayWithoutUndefined.length / data.totalChunks) * 30));
   
         if (arrayWithoutUndefined.length === data.totalChunks) {
           await processVaultData(json, data.sha256GzipVaultDataEnc, data.chunks, data.encryptionDataKey, data.hkdfSalt, data.sessionKeyForHKDF, data.deviceId);
-          actions.setConnectingLoader(getLoaderProgress(100));
+          eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(100));
         }
   
         break;
@@ -93,10 +94,10 @@ const ConnectOnMessage = async (json, data, actions) => {
   } catch (e) {
     await CatchError(e, async errObj => {
       actions.wsDeactivate();
-      actions.setSocketError(true);
-      actions.setHeaderText(errObj?.visibleErrorMessage || browser.i18n.getMessage('error_general'));
-      actions.setSocketConnecting(false);
-      actions.setConnectingLoader(264);
+      eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+      eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, errObj?.visibleErrorMessage || browser.i18n.getMessage('error_general'));
+      eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, false);
+      eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, 264);
 
       if (errObj?.code !== TwoFasError.errors.closeWithErrorReceived.code) {
         try {
