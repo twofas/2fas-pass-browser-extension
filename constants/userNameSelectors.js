@@ -4,9 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import userNameTexts from '@/constants/userNameTexts';
-import userNameFormTexts from '@/constants/userNameFormTexts';
-import userNameAttributes from '@/constants/userNameAttributes';
+import { userNameTexts, userNameFormTexts, userNameAttributes } from '@/constants';
 
 /** 
 * Function to get user name input selectors.

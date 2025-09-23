@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import promptInput from '../utils/promptInput';
+import { promptInput } from '../utils';
 
 /** 
 * Function to handle messages related to prompts.

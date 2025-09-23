@@ -4,6 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export { default as newDataAdded } from './added';
-export { default as newDataAddedInT1 } from './addedInT1';
-export { default as newDataCancel } from './cancel';
+export { default as addDataAdded } from './added';
+export { default as addDataAddedInT1 } from './addedInT1';
+export { default as addDataCancel } from './cancel';

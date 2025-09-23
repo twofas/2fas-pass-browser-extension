@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
-import getPopupWindowData from '@/partials/functions/getPopupWindowData';
+import { popupIsInSeparateWindow, getPopupWindowData } from '@/partials/functions';
 
 /** 
 * Function to open a popup window in a new window with the specified data.

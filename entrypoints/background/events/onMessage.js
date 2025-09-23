@@ -4,15 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import openBrowserPage from '../utils/openBrowserPage';
-import openPopupWindowInNewWindow from '../utils/openPopupWindowInNewWindow';
-import isText from '@/partials/functions/isText';
-import openInstallPage from '../utils/openInstallPage';
+import { isText, checkStorageAutoClearActions } from '@/partials/functions';
+import { openBrowserPage, openPopupWindowInNewWindow, openInstallPage, getLocalKey, sendAutoClearAction } from '../utils';
 import runMigrations from '../migrations';
-import getLocalKey from '../utils/getLocalKey';
 import onTabFocused from '../tabs/onTabFocused';
-import checkStorageAutoClearActions from '@/partials/functions/checkStorageAutoClearActions';
-import sendAutoClearAction from '../utils/sendAutoClearAction';
 
 /** 
 * Function to handle messages sent to the background script.

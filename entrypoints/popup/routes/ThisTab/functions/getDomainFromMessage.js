@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import correctProtocols from '@/constants/correctProtocols';
+import { correctProtocols } from '@/constants';
 
 /** 
 * Function to get the domain from a message.

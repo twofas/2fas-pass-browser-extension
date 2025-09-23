@@ -4,9 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import openPopupWindowInNewWindow from '../utils/openPopupWindowInNewWindow';
-import sendAutofillToTab from '../utils/sendAutofillToTab';
-import { SERVICE_REGEX, FETCH_REGEX } from '@/constants/regex';
+import { openPopupWindowInNewWindow, sendAutofillToTab } from '../utils';
+import { SERVICE_REGEX, FETCH_REGEX } from '@/constants';
 
 /** 
 * Function to handle context menu click events.

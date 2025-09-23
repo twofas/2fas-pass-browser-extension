@@ -4,14 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { HEX_REGEX, selectors as S } from '@/constants';
 import { createElement, createSVGElement, createTextElement } from '@/partials/DOMElements';
-import S from '@/constants/selectors';
+import { getDomain, getTextColor } from '@/partials/functions';
 import logoSrc from '@/assets/logo.svg?raw';
 import logoSrcDark from '@/assets/logo-dark.svg?raw';
 import closeSrc from '@/assets/popup-window/cancel.svg?raw';
-import { HEX_REGEX } from '@/constants/regex';
-import getDomain from '@/partials/functions/getDomain';
-import getTextColor from '@/partials/functions/getTextColor';
 import URIMatcher from '@/partials/URIMatcher';
 import { parseDomain, ParseResultType } from 'parse-domain';
 

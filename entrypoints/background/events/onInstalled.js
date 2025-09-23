@@ -4,9 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import openInstallPage from '../utils/openInstallPage';
 import initContextMenu from '../contextMenu/initContextMenu';
-import updateBadge from '../utils/badge/updateBadge';
+import { openInstallPage, updateBadge } from '../utils';
 import runMigrations from '../migrations';
 
 /** 

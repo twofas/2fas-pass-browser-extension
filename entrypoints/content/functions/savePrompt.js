@@ -5,11 +5,10 @@
 // See LICENSE file for full terms
 
 import { createElement, createSVGElement, createTextElement } from '@/partials/DOMElements';
-import S from '@/constants/selectors';
+import { selectors as S, SAVE_PROMPT_ACTIONS } from '@/constants';
 import logoSrc from '@/assets/logo.svg?raw';
 import logoSrcDark from '@/assets/logo-dark.svg?raw';
 import closeSrc from '@/assets/popup-window/cancel.svg?raw';
-import { SAVE_PROMPT_ACTIONS } from '@/constants/savePromptActions';
 
 /** 
 * Function to close the notification.

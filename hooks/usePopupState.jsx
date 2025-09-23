@@ -6,12 +6,10 @@
 
 import { createContext, useContext, useMemo, useEffect, useRef, useState, useCallback } from 'react';
 import { useLocation } from 'react-router';
-import getLastActiveTab from '@/partials/functions/getLastActiveTab';
+import { getLastActiveTab, getCurrentDevice, generateNonce } from '@/partials/functions';
 import createPopupStateObjectForTab from '@/partials/popupState/createPopupStateObjectForTab';
 import getPopupStateObjectForTab from '@/partials/popupState/getPopupStateObjectForTab';
 import getKey from '@/partials/sessionStorage/getKey';
-import getCurrentDevice from '@/partials/functions/getCurrentDevice';
-import generateNonce from '@/partials/functions/generateNonce';
 
 const PopupStateContext = createContext();
 

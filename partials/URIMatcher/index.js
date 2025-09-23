@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { parseDomain, ParseResultType } from 'parse-domain';
-import { URL_REGEX, IP_REGEX } from '@/constants/regex';
+import { URL_REGEX, IP_REGEX } from '@/constants';
 
 // FUTURE - Check if TwoFasError works here
 

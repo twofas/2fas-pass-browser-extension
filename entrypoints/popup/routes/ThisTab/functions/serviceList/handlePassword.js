@@ -1,7 +1,20 @@
-import getServices from '@/partials/sessionStorage/getServices';
-import copyValue from '@/partials/functions/copyValue';
-import decryptPassword from '@/partials/functions/decryptPassword';
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
 
+import getServices from '@/partials/sessionStorage/getServices';
+import { copyValue, decryptPassword } from '@/partials/functions';
+
+/** 
+* Function to handle copying the password to clipboard.
+* @async
+* @param {number} id - The ID of the service.
+* @param {boolean} more - Indicates if more actions are available.
+* @param {function} setMore - Function to update the more state.
+* @return {Promise<void>}
+*/
 const handlePassword = async (id, more, setMore) => {
   let servicesStorage, service;
 

@@ -4,17 +4,15 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { tabIsInternal, openPopup, isT3orT2WithPassword } from '@/partials/functions';
 import getServices from '@/partials/sessionStorage/getServices';
 import URIMatcher from '@/partials/URIMatcher';
 import sendAutofillToTab from './sendAutofillToTab';
 import openPopupWindowInNewWindow from './openPopupWindowInNewWindow';
 import TwofasNotification from '@/partials/TwofasNotification';
-import tabIsInternal from '@/partials/functions/tabIsInternal';
 import sendMatchingLoginsToTab from './sendMatchingLoginsToTab';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import openPopup from '@/partials/functions/openPopup';
-import isT3orT2WithPassword from '@/partials/functions/isT3orT2WithPassword';
 
 /** 
 * Function to handle the autofill shortcut action.

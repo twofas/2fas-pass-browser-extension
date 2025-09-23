@@ -13,12 +13,11 @@ import { WSProvider } from '@/hooks/useWS';
 import { PopupStateProvider } from '@/hooks/usePopupState';
 import popupOnMessage from './events/popupOnMessage';
 import Blocked from './routes/Blocked';
-import safariBlankLinks from '@/partials/functions/safariBlankLinks';
 import lockShortcuts from './utils/lockShortcuts';
 import lockRMB from './utils/lockRMB';
 import setTheme from './utils/setTheme';
 import isPopupInSeparateWindowExists from './utils/isPopupInSeparateWindowExists';
-import storageAutoClearActions from '@/partials/functions/storageAutoClearActions';
+import { safariBlankLinks, storageAutoClearActions } from '@/partials/functions';
 import { getInitialRoute } from './utils/getInitialRoute';
 
 const TopBar = lazy(() => import('./components/TopBar'));
