@@ -4,16 +4,9 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
-import sendMessageToTab from '@/partials/functions/sendMessageToTab';
-import tabIsInternal from '@/partials/functions/tabIsInternal';
+import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, decryptPassword, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, generateNonce } from '@/partials/functions';
 import getServices from '@/partials/sessionStorage/getServices';
-import getLastActiveTab from '@/partials/functions/getLastActiveTab';
-import decryptPassword from '@/partials/functions/decryptPassword';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
-import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
-import closeWindowIfNotInSeparateWindow from '@/partials/functions/closeWindowIfNotInSeparateWindow';
-import generateNonce from '@/partials/functions/generateNonce';
 import PULL_REQUEST_TYPES from '../../../Fetch/constants/PULL_REQUEST_TYPES';
 
 /** 

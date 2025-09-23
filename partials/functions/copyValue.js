@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants/regex';
+import { AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants';
 
 const deleteExistingClearClipboardAlarms = async () => {
   const existingAlarms = await browser.alarms.getAll();

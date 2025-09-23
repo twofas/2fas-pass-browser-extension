@@ -4,14 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import isVisible from '@/partials/functions/isVisible';
-import isElementInArray from '@/partials/functions/isElementInArray';
+import { isVisible, isElementInArray, generateNonce } from '@/partials/functions';
 import getPasswordInputs from '@/partials/inputFunctions/getPasswordInputs';
 import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import generateInputId from './generateInputId';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
-import generateNonce from '@/partials/functions/generateNonce';
 
 /** 
 * Function to handle input events.

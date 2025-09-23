@@ -4,9 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import autoClearClipboard from '../utils/alarmsFunctions/autoClearClipboard';
-import passwordT2Reset from '../utils/alarmsFunctions/passwordT2Reset';
-import { PASSWORD_T2_RESET_REGEX, AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants/regex';
+import { autoClearClipboard, passwordT2Reset } from '../utils';
+import { PASSWORD_T2_RESET_REGEX, AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants';
 
 /** 
 * Function to handle alarm events.

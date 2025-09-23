@@ -4,9 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import sendMessageToTab from '@/partials/functions/sendMessageToTab';
+import { sendMessageToTab, getPopupWindowData } from '@/partials/functions';
 import addAutoClearAction from './addAutoClearAction';
-import getPopupWindowData from '@/partials/functions/getPopupWindowData';
 
 /** 
 * Function to automatically clear the clipboard.

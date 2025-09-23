@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import autoClearAction from '@/partials/functions/autoClearAction';
-import storageAutoClearActions from '@/partials/functions/storageAutoClearActions';
+import { autoClearAction, storageAutoClearActions } from '@/partials/functions';
 
 /** 
 * Function to handle messages sent to the popup.

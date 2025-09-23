@@ -5,17 +5,9 @@
 // See LICENSE file for full terms
 
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import checkDomainOnIgnoredList from '../utils/savePrompt/checkDomainOnIgnoredList';
-import getValuesFromTabsInputData from '../utils/savePrompt/getValuesFromTabsInputData';
-import checkServicesData from '../utils/savePrompt/checkServicesData';
-import savePromptAction from '../utils/savePrompt/savePromptAction';
-import allowedSavePromptRequests from '@/constants/allowedSavePromptRequests';
-import ignoredSavePromptUrls from '@/constants/ignoredSavePromptUrls';
-import ignoredSavePromptRequestBodyTexts from '@/constants/ignoredSavePromptRequestBodyTexts';
-import cleanTabsInputData from '../utils/savePrompt/cleanTabsInputData';
-import addSavePromptAction from '../utils/savePrompt/addSavePromptAction';
+import { checkDomainOnIgnoredList, getValuesFromTabsInputData, checkServicesData, savePromptAction, cleanTabsInputData, addSavePromptAction, checkFormData } from '../utils';
+import { allowedSavePromptRequests, ignoredSavePromptUrls, ignoredSavePromptRequestBodyTexts } from '@/constants';
 import isText from '@/partials/functions/isText';
-import checkFormData from '../utils/savePrompt/checkFormData';
 
 /** 
 * Function to handle web requests for saving prompts.

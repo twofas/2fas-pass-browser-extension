@@ -11,9 +11,7 @@ import { lazy, useCallback } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { Link } from 'react-router';
-import isT3orT2WithPassword from '@/partials/functions/isT3orT2WithPassword';
-import decryptPassword from '@/partials/functions/decryptPassword';
-import copyValue from '@/partials/functions/copyValue';
+import { isT3orT2WithPassword, decryptPassword, copyValue } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect } from 'react';
 

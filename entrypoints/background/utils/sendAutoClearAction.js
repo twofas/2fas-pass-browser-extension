@@ -5,8 +5,7 @@
 // See LICENSE file for full terms
 
 import getLocalKey from './getLocalKey';
-import generateNonce from '@/partials/functions/generateNonce';
-import sendMessageToTab from '@/partials/functions/sendMessageToTab';
+import { generateNonce, sendMessageToTab } from '@/partials/functions';
 
 /** 
 * Brief description of the function here.
