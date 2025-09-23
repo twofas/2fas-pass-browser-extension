@@ -54,7 +54,7 @@
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "final-form": "^5.0.0",
-    "motion": "^12.23.18",
+    "motion": "^12.23.19",
     "parse-domain": "^8.2.2",
     "qrcode": "^1.5.4",
     "react": "^19.1.1",
@@ -74,7 +74,7 @@
     "dotenv": "^17.2.2",
     "eslint": "^9.36.0",
     "eslint-plugin-react": "^7.37.5",
-    "sass-embedded": "1.93.0",
+    "sass-embedded": "1.93.1",
     "terser": "^5.44.0",
     "vitest": "^3.2.4",
     "wxt": "^0.20.11"
