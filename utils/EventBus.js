@@ -8,6 +8,18 @@
 * A simple event bus for managing events across the application.
 */
 class EventBus {
+  EVENTS = {
+    CONNECT: {
+      CONNECTING: 'connect_connecting',
+      LOADER: 'connect_loader',
+      SOCKET_ERROR: 'connect_socket_error',
+      HEADER_TEXT: 'connect_header_text'
+    },
+    FETCH: {
+
+    }
+  };
+
   constructor() {
     this.listeners = {};
   }
@@ -37,5 +49,4 @@ class EventBus {
 
 const eventBus = new EventBus();
 
-export { EventBus };
 export default eventBus;

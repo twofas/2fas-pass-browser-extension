@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
+import eventBus from '@/utils/EventBus';
 
 /** 
 * Function to handle the Connect close event.
@@ -15,7 +16,7 @@ import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfig
 */
 const ConnectOnClose = async (event, data, actions) => {
   actions.wsDeactivate();
-  actions.setSocketConnecting(false);
+  eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, false);
 
   switch (event.code) {
     case 1000: {
@@ -33,9 +34,9 @@ const ConnectOnClose = async (event, data, actions) => {
       }
   
       if (!connected) {
-        actions.setSocketConnecting(false);
-        actions.setSocketError(true);
-        actions.setHeaderText(browser.i18n.getMessage('error_general'));
+        eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, false);
+        eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+        eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, browser.i18n.getMessage('error_general'));
       }
 
       break;
@@ -45,20 +46,20 @@ const ConnectOnClose = async (event, data, actions) => {
     case WEBSOCKET_STATES.CANT_CREATE_PROXY:
     case WEBSOCKET_STATES.CONNECTION_ALREADY_ESTABLISHED:
     case WEBSOCKET_STATES.BROWSER_EXTENSION_NOT_CONNECTED: {
-      actions.setSocketError(true);
-      actions.setHeaderText(browser.i18n.getMessage('error_general'));
+      eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+      eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, browser.i18n.getMessage('error_general'));
       break;
     }
 
     case WEBSOCKET_STATES.CONNECTION_TIMEOUT: {
-      actions.setSocketError(true);
-      actions.setHeaderText(browser.i18n.getMessage('error_timeout'));
+      eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+      eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, browser.i18n.getMessage('error_timeout'));
       break;
     }
 
     case WEBSOCKET_STATES.MOBILE_DISCONNECTED: {
-      actions.setSocketError(true);
-      actions.setHeaderText(browser.i18n.getMessage('error_mobile_disconnected'));
+      eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+      eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, browser.i18n.getMessage('error_mobile_disconnected'));
       break;
     }
 
@@ -69,7 +70,7 @@ const ConnectOnClose = async (event, data, actions) => {
 
     case WEBSOCKET_STATES.NORMAL_CLOSURE:
     default: {
-      actions.setSocketError(false);
+      eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, false);
       break;
     }
   }

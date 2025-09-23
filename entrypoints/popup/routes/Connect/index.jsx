@@ -9,11 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, lazy } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import generateSessionKeysNonces from './functions/generateSessionKeysNonces';
-import generateEphemeralKeys from './functions/generateEphemeralKeys';
-import generateSessionID from './functions/generateSessionID';
-import calculateSignature from './functions/calculateSignature';
-import generateQR from './functions/generateQR';
+import { generateSessionKeysNonces, generateEphemeralKeys, generateSessionID, calculateSignature, generateQR } from './functions';
 import ConnectOnMessage from './socket/ConnectOnMessage';
 import ConnectOnClose from './socket/ConnectOnClose';
 import TwoFasWebSocket from '@/partials/WebSocket';
@@ -50,7 +46,7 @@ function Connect (props) {
       ephemeralData = await generateEphemeralKeys();
       sessionID = await generateSessionID();
       signature = await calculateSignature(ephemeralData.publicKey, sessionID);
-      qr = await generateQR(ephemeralData.publicKey, sessionID, signature);  
+      qr = await generateQR(ephemeralData.publicKey, sessionID, signature);
     } catch (e) {
       await CatchError(e, () => {
         setSocketError(true);
@@ -58,12 +54,13 @@ function Connect (props) {
         setSocketConnecting(false);
         setConnectingLoader(264);
       });
-      
+
       return;
     }
 
     // Try to create socket up to 5 times with 200ms delay
     let socketCreated = false;
+
     for (let i = 0; i < 5; i++) {
       try {
         socket = new TwoFasWebSocket(sessionID);
@@ -75,7 +72,7 @@ function Connect (props) {
         }
       }
     }
-    
+
     if (!socketCreated) {
       setSocketError(true);
       setHeaderText(browser.i18n.getMessage('error_general'));
@@ -85,8 +82,8 @@ function Connect (props) {
     }
 
     socket.open(() => { wsActivate(); });
-    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralData.uuid }, { setSocketConnecting, setConnectingLoader, setSocketError, setHeaderText, wsDeactivate, login });
-    socket.addEventListener('close', ConnectOnClose, {}, { setSocketConnecting, setSocketError, setHeaderText, wsDeactivate });
+    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralData.uuid }, { wsDeactivate, login });
+    socket.addEventListener('close', ConnectOnClose, {}, { wsDeactivate });
 
     setQrCode(qr);
   };
@@ -98,7 +95,20 @@ function Connect (props) {
   };
 
   useEffect(() => {
+    // FUTURE - add value validation
+    eventBus.on(eventBus.EVENTS.CONNECT.CONNECTING, setSocketConnecting);
+    eventBus.on(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
+    eventBus.on(eventBus.EVENTS.CONNECT.SOCKET_ERROR, setSocketError);
+    eventBus.on(eventBus.EVENTS.CONNECT.HEADER_TEXT, setHeaderText);
+
     initConnection();
+
+    return () => {
+      eventBus.off(eventBus.EVENTS.CONNECT.CONNECTING, setSocketConnecting);
+      eventBus.off(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
+      eventBus.off(eventBus.EVENTS.CONNECT.SOCKET_ERROR, setSocketError);
+      eventBus.off(eventBus.EVENTS.CONNECT.HEADER_TEXT, setHeaderText);
+    };
   }, []);
 
   return (
