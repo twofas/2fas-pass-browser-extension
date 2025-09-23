@@ -5,8 +5,7 @@
 // See LICENSE file for full terms
 
 import initContextMenu from '../contextMenu/initContextMenu';
-import updateContextMenu from '../utils/updateContextMenu';
-import updateBadge from '../utils/badge/updateBadge';
+import { updateContextMenu, updateBadge } from '../utils';
 import getServices from '@/partials/sessionStorage/getServices';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 

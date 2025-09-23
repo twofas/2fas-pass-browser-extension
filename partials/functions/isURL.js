@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { URL_REGEX } from '@/constants/regex';
+import { URL_REGEX } from '@/constants';
 
 /** 
 * Check if a string is a valid URL.

@@ -13,8 +13,7 @@ import generateURLs from './functions/generateURLs';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import getServices from '@/partials/sessionStorage/getServices';
-import valueToNFKD from '@/partials/functions/valueToNFKD';
-import sanitizeObject from '@/partials/functions/sanitizeObject';
+import { valueToNFKD, sanitizeObject } from '@/partials/functions';
 import URIMatcher from '@/partials/URIMatcher';
 import { usePopupState } from '@/hooks/usePopupState';
 

@@ -4,11 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getBrowserInfo from '../../utils/getBrowserInfo';
-import generatePersistentKeys from '../../utils/generatePersistentKeys';
-import generateSecurityIcon from '../../utils/generateSecurityIcon';
+import { getBrowserInfo, generatePersistentKeys, generateSecurityIcon, generateLocalKey } from '../../utils';
 import compressPublicKey from '@/partials/functions/compressPublicKey';
-import generateLocalKey from '../../utils/generateLocalKey';
 
 /** 
 * Function to set default values for storage.

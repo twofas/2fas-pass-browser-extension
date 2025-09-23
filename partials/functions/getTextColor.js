@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import luminanceFromHex from './luminanceFromHex';
-import { HEX_REGEX } from '@/constants/regex';
+import { HEX_REGEX } from '@/constants';
 
 /** 
 * Gets the text color based on the label color.

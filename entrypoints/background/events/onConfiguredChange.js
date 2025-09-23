@@ -6,10 +6,8 @@
 
 import contextMenuConfigured from '../contextMenu/contextMenuConfigured';
 import contextMenuNotConfigured from '../contextMenu/contextMenuNotConfigured';
-import updateBadge from '../utils/badge/updateBadge';
-import updateContextMenu from '../utils/updateContextMenu';
+import { updateBadge, updateContextMenu, setBadgeLocked } from '../utils';
 import getServices from '@/partials/sessionStorage/getServices';
-import setBadgeLocked from '../utils/badge/setBadgeLocked';
 
 /** 
 * Function to handle changes in configuration.

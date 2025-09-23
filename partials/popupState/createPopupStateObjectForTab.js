@@ -5,8 +5,7 @@
 // See LICENSE file for full terms
 
 import getKey from '@/partials/sessionStorage/getKey';
-import getCurrentDevice from '@/partials/functions/getCurrentDevice';
-import generateNonce from '@/partials/functions/generateNonce';
+import { getCurrentDevice, generateNonce } from '@/partials/functions';
 
 const encryptData = async data => {
   try {
