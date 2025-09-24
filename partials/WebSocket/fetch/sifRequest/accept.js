@@ -100,7 +100,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
       
       if (state?.from === 'autofill') {
         return {
-          action: 'autofill',
+          action: 'autofill', // non-fetch action here
           autofillRes,
           loginId: state.data.loginId,
           deviceId: state.data.deviceId,

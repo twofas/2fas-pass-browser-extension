@@ -6,4 +6,3 @@
 
 export { default as FETCH_STATE } from './FETCH_STATE';
 export { default as PULL_REQUEST_STATUSES } from './PULL_REQUEST_STATUSES';
-export { default as PULL_REQUEST_TYPES } from './PULL_REQUEST_TYPES';
