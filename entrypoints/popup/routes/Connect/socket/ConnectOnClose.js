@@ -5,17 +5,13 @@
 // See LICENSE file for full terms
 
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import eventBus from '@/utils/EventBus';
 
 /** 
 * Function to handle the Connect close event.
 * @param {Object} event - The WebSocket close event.
-* @param {Object} data - The data object containing relevant information.
-* @param {Object} actions - The actions object containing functions to update the UI state.
 * @return {Promise<void>} A promise that resolves when the close event has been processed.
 */
-const ConnectOnClose = async (event, data, actions) => {
-  actions.wsDeactivate();
+const ConnectOnClose = async event => {
   eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, false);
 
   switch (event.code) {
