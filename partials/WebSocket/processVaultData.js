@@ -10,6 +10,7 @@ import saveTags from './utils/saveTags';
 import getKey from '@/partials/sessionStorage/getKey';
 import checkChecksum from './utils/checkChecksum';
 import TwoFasWebSocket from '@/partials/WebSocket';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
 * Processes the vault data.
@@ -40,7 +41,7 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
   checkChecksum(ArrayBufferToBase64(internalChecksumAB), checksum);
 
   const encGzipVaultDataBytes = DecryptBytes(Base64ToArrayBuffer(encGzipVaultData));
-  const encryptionPassKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('ItemT3'), sessionKeyForHKDF, true);
+  const encryptionPassKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_T3.crypto), sessionKeyForHKDF, true);
 
   try {
     const encryptionPassKeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionPassKeyAES);
@@ -49,7 +50,7 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
     throw new TwoFasError(TwoFasError.errors.exportEncryptionPassKey, { event: e });
   }
 
-  const itemKey = await getKey('item_key_t3', { deviceId });
+  const itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3.sK, { deviceId });
   await storage.setItem(`session:${itemKey}`, encryptionPassKeyAES_B64);
 
   try {

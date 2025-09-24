@@ -8,6 +8,7 @@
 export { default as allowedSavePromptRequests } from './allowedSavePromptRequests.js';
 export { default as badgeIcons } from './badgeIcons.js';
 export { default as correctProtocols } from './correctProtocols.js';
+export { default as ENCRYPTION_KEYS } from './encryptionKeys.js';
 export { default as ignoredSavePromptRequestBodyTexts } from './ignoredSavePromptRequestBodyTexts.js';
 export { default as ignoredSavePromptUrls } from './ignoredSavePromptUrls.js';
 export { default as ignoredTypes } from './ignoredTypes.js';
