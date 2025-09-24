@@ -15,7 +15,7 @@ import TwoFasWebSocket from '@/partials/WebSocket';
 * @param {Function} navigate - The navigation function.
 * @return {Promise<void>}
 */
-const handleCloseSignalAction = async (newSessionId, uuid, login) => {
+const handleCloseSignalAction = async (newSessionId, uuid) => {
   await addNewSessionIdToDevice(uuid, newSessionId); // FUTURE - Change to deviceId instead of uuid?
 
   try {
@@ -23,7 +23,7 @@ const handleCloseSignalAction = async (newSessionId, uuid, login) => {
     socket.close();
   } catch {}
 
-  await login();
+  eventBus.emit(eventBus.EVENTS.CONNECT.LOGIN);
 
   return true;
 };
