@@ -81,8 +81,8 @@ function Connect (props) {
     }
 
     socket.open();
-    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralData.uuid }, {});
-    socket.addEventListener('close', ConnectOnClose, {}, {});
+    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralData.uuid });
+    socket.addEventListener('close', ConnectOnClose);
 
     setQrCode(qr);
   };
