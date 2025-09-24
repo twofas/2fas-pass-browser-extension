@@ -24,7 +24,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
   const newSessionIdEncAB = Base64ToArrayBuffer(newSessionIdEnc);
   const newSessionIdDecBytes = DecryptBytes(newSessionIdEncAB);
 
-  const encryptionDataKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.DATA.crypto), sessionKeyForHKDF, false);
+  const encryptionDataKeyAES = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.DATA.crypto, sessionKeyForHKDF, false);
 
   try {
     const newSessionIdDec_AB = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: newSessionIdDecBytes.iv }, encryptionDataKeyAES, newSessionIdDecBytes.data);
@@ -84,7 +84,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       } else {
         const [nonceP, encryptionPassNewKeyAES] = await Promise.all([
           generateNonce(),
-          generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_NEW.crypto), sessionKeyForHKDF, true)
+          generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_NEW.crypto, sessionKeyForHKDF, true)
         ]);
         const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassNewKeyAES, StringToArrayBuffer(state.data.password));
         const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
@@ -133,7 +133,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
 
         const [nonceP, encryptionPassTierKeyAES] = await Promise.all([
           generateNonce(),
-          generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(keyName), sessionKeyForHKDF, true)
+          generateEncryptionAESKey(hkdfSaltAB, keyName, sessionKeyForHKDF, true)
         ]);
 
         const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassTierKeyAES, StringToArrayBuffer(state.data.password));
