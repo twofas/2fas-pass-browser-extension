@@ -21,7 +21,7 @@ import TwoFasWebSocket from '@/partials/WebSocket';
 * @param {Object} actions - The actions object containing functions to update the UI state.
 * @return {Promise<void>} A promise that resolves when the message has been processed.
 */
-const ConnectOnMessage = async (json, data, actions) => {
+const ConnectOnMessage = async (json, data) => {
   try {
     switch (json.action) {
       case SOCKET_ACTIONS.CLOSE_WITH_ERROR: {
@@ -82,7 +82,7 @@ const ConnectOnMessage = async (json, data, actions) => {
       }
   
       case SOCKET_ACTIONS.CLOSE_WITH_SUCCESS: {
-        await handleCloseSignalAction(data.newSessionId, data.uuid, actions.login);
+        await handleCloseSignalAction(data.newSessionId, data.uuid);
         break;
       }
   
