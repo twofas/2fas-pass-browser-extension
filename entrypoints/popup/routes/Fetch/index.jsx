@@ -10,7 +10,7 @@ import { useState, useEffect, lazy } from 'react';
 import FetchOnMessage from './socket/FetchOnMessage';
 import FetchOnClose from './socket/FetchOnClose';
 import TwoFasWebSocket from '@/partials/WebSocket';
-import PULL_REQUEST_TYPES from './constants/PULL_REQUEST_TYPES';
+import { PULL_REQUEST_TYPES, FETCH_STATE } from './constants';
 import calculateSignature from './functions/calculateSignature';
 import { getCurrentDevice, sendPush, getNTPTime, deletePush } from '@/partials/functions';
 
@@ -33,25 +33,25 @@ function Fetch (props) {
 
   let device;
 
-  const [fetchState, setFetchState] = useState(-1); // 0 - pushNotification, 1 - connectionError, 2 - connectionTimeout, 3 - continueUpdate
+  const [fetchState, setFetchState] = useState(FETCH_STATE.DEFAULT);
   const [errorText, setErrorText] = useState(browser.i18n.getMessage('fetch_connection_error_header'));
 
   const initConnection = async () => {
     switch (state?.action) {
       case PULL_REQUEST_TYPES.UPDATE_DATA: {
-        setFetchState(3);
+        setFetchState(FETCH_STATE.CONTINUE_UPDATE);
         break;
       }
 
       case PULL_REQUEST_TYPES.ADD_DATA:
       case PULL_REQUEST_TYPES.SIF_REQUEST:
       case PULL_REQUEST_TYPES.DELETE_DATA: {
-        setFetchState(0);
+        setFetchState(FETCH_STATE.PUSH_NOTIFICATION);
         break;
       }
 
       default: {
-        setFetchState(1);
+        setFetchState(FETCH_STATE.CONNECTION_ERROR);
         
         throw new TwoFasError(TwoFasError.internalErrors.fetchInvalidAction, {
           additional: {
@@ -68,7 +68,7 @@ function Fetch (props) {
       device = await getCurrentDevice(state?.data?.deviceId || null);
 
       if (!device?.sessionId || !device?.id || !device?.uuid) {
-        setFetchState(1);
+        setFetchState(FETCH_STATE.CONNECTION_ERROR);
         setErrorText(browser.i18n.getMessage('error_general'));
         return false;
       }
@@ -78,14 +78,14 @@ function Fetch (props) {
       timestamp = timestampValue.toString();
       sigPush = await calculateSignature(sessionId, device?.id, device?.uuid, timestamp);
     } catch (e) {
-      await CatchError(e, () => { setFetchState(1); });
+      await CatchError(e, () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
     }
     
     try {
       const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
 
       if (json?.error === 'UNREGISTERED') {
-        setFetchState(1);
+        setFetchState(FETCH_STATE.CONNECTION_ERROR);
         setErrorText(browser.i18n.getMessage('fetch_token_unregistered_header'));
         return false;
       }
@@ -98,7 +98,7 @@ function Fetch (props) {
           data: { device, timestamp, sigPush },
           func: 'Fetch - initConnection'
         }
-      }), () => { setFetchState(1); });
+      }), () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
     }
 
     const socket = new TwoFasWebSocket(sessionId);
