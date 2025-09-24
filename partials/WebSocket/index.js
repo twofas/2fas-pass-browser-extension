@@ -67,14 +67,9 @@ class TwoFasWebSocket {
     TwoFasWebSocket.instance = null;
   };
 
-  #onOpen (callbackOnOpen = null) {
+  #onOpen () {
     this.timeoutID = setTimeout(() => this.close(true), 1000 * 60 * config.webSocketInternalTimeout);
-
     TwoFasWebSocket.#notifyStateChange(true);
-
-    if (callbackOnOpen && typeof callbackOnOpen === 'function') {
-      callbackOnOpen();
-    }
   };
 
   #onError (event) {
@@ -95,8 +90,8 @@ class TwoFasWebSocket {
     return true;
   };
 
-  open (callbackOnOpen = null) {
-    this.#openListener = () => this.#onOpen(callbackOnOpen);
+  open () {
+    this.#openListener = () => this.#onOpen();
     this.#errorListener = event => this.#onError(event);
 
     this.socket = new WebSocket(this.socketURL, '2FAS-Pass');
@@ -104,14 +99,12 @@ class TwoFasWebSocket {
     this.socket.addEventListener('error', this.#errorListener);
   };
 
-  addEventListener (event, callback, data = {}, actions = {}) {
+  addEventListener (event, callback, data = {}) {
     if (event === 'message') {
       this.socket.addEventListener('message', e => {
         if (!this.#isEventTrusted(e)) {
           throw new TwoFasError(TwoFasError.internalErrors.websocketEventNotTrusted, { additional: { func: 'TwoFasWebSocket - addEventListener message' } });
         }
-
-        // @TODO: Add scheme check
 
         this.#clearTimeout();
 
@@ -123,21 +116,31 @@ class TwoFasWebSocket {
           throw new TwoFasError(TwoFasError.internalErrors.websocketMessageFailToParse, { event: error, additional: { func: 'TwoFasWebSocket - addEventListener message' } });
         }
 
-        return callback(json, data, actions);
+        if (json.scheme !== config.scheme) {
+          throw new TwoFasError(TwoFasError.internalErrors.websocketSchemeMismatch, { 
+            additional: { 
+              func: 'TwoFasWebSocket - addEventListener message',
+              receivedScheme: json.scheme,
+              expectedScheme: config.scheme
+            } 
+          });
+        }
+
+        return callback(json, data);
       });
     } else if (event === 'close') {
       this.socket.addEventListener('close', e => {
         this.#clearTimeout();
         this.#clearInstance();
-        return callback(e, data, actions);
+        return callback(e, data);
       });
     } else {
       this.socket.addEventListener(event, e => {
         this.#clearTimeout();
-        return callback(e, data, actions);
+        return callback(e, data);
       });  
     }
-  };
+  };;
 
   close (timeout = false) {
     this.socket.removeEventListener('open', this.#openListener);
