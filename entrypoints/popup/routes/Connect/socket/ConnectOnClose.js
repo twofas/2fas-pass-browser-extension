@@ -41,9 +41,16 @@ const ConnectOnClose = async event => {
     case WEBSOCKET_STATES.TOO_MANY_CONNECTED_CLIENTS:
     case WEBSOCKET_STATES.CANT_CREATE_PROXY:
     case WEBSOCKET_STATES.CONNECTION_ALREADY_ESTABLISHED:
-    case WEBSOCKET_STATES.BROWSER_EXTENSION_NOT_CONNECTED: {
+    case WEBSOCKET_STATES.BROWSER_EXTENSION_NOT_CONNECTED:
+    case WEBSOCKET_STATES.INVALID_MESSAGE_ERROR: {
       eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
       eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, browser.i18n.getMessage('error_general'));
+      break;
+    }
+
+    case WEBSOCKET_STATES.INVALID_SCHEME: {
+      eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+      eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, browser.i18n.getMessage('error_scheme_mismatch'));
       break;
     }
 
