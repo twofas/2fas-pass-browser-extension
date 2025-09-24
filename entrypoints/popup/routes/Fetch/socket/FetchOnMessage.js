@@ -11,15 +11,15 @@ import handlePullRequest from '@/partials/WebSocket/handlePullRequest';
 import handlePullRequestAction from '@/partials/WebSocket/handlePullRequestAction';
 import deletePush from '@/partials/functions/deletePush';
 import TwoFasWebSocket from '@/partials/WebSocket';
+import { FETCH_STATE } from '../constants';
 
 /**
 * Function to handle incoming Fetch messages.
 * @param {Object} json - The incoming message data.
 * @param {Object} data - The current state data.
-* @param {Object} actions - The actions to perform.
 * @return {Promise<void>} A promise that resolves when the message is handled.
 */
-const FetchOnMessage = async (json, data, actions) => {
+const FetchOnMessage = async (json, data) => {
   try {
     switch (json.action) {
       case SOCKET_ACTIONS.CLOSE_WITH_ERROR: {
@@ -57,7 +57,7 @@ const FetchOnMessage = async (json, data, actions) => {
       }
   
       case SOCKET_ACTIONS.CLOSE_WITH_SUCCESS: {
-        await handleCloseSignalPullRequestAction(data.newSessionId, data.device.uuid, data.closeData, actions.navigate, data.state);
+        await handleCloseSignalPullRequestAction(data.newSessionId, data.device.uuid, data.closeData, data.state);
         break;
       }
   
@@ -67,9 +67,8 @@ const FetchOnMessage = async (json, data, actions) => {
     }
   } catch (e) {
     await CatchError(e, async errObj => {
-      actions.setFetchState(1);
-      // FUTURE - Base on error code
-      actions.setErrorText(errObj?.additional?.errorMessage || browser.i18n.getMessage('error_general'));
+      eventBus.emit(eventBus.EVENTS.FETCH.SET_FETCH_STATE, FETCH_STATE.CONNECTION_ERROR);
+      eventBus.emit(eventBus.EVENTS.FETCH.ERROR_TEXT, errObj?.additional?.errorMessage || browser.i18n.getMessage('error_general')); // FUTURE - Base on error code
 
       if (data?.state?.deviceId && data?.state?.notificationId) {
         await deletePush(data.state.deviceId, data.state.notificationId);
