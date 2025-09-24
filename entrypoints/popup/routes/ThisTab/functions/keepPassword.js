@@ -10,6 +10,7 @@ import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncrypt
 import getKey from '@/partials/sessionStorage/getKey';
 import compress from '@/partials/gzip/compress';
 import saveServices from '@/partials/WebSocket/utils/saveServices';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
 * Function to keep the password.
@@ -34,7 +35,7 @@ const keepPassword = async state => {
   const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
   // generate encryptionItemT2Key
-  const encryptionItemT2Key = await generateEncryptionAESKey(state.hkdfSaltAB, StringToArrayBuffer('ItemT2'), state.sessionKeyForHKDF, true);
+  const encryptionItemT2Key = await generateEncryptionAESKey(state.hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_T2.crypto), state.sessionKeyForHKDF, true);
   let encryptionItemT2KeyAES_B64;
 
   try {
@@ -45,7 +46,7 @@ const keepPassword = async state => {
   }
 
   // save encryptionItemT2Key in session storage
-  const itemT2Key = await getKey('item_key_t2', { deviceId: state.deviceId, loginId: state.loginId });
+  const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.deviceId, loginId: state.loginId });
   await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
   // Remove services from session storage (by servicesKeys)

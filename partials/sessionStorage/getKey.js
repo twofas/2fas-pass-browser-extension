@@ -6,6 +6,7 @@
 
 import getUUIDforDeviceId from './getUUIDforDeviceId';
 import isText from '../functions/isText';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
 * Gets a encrypted key for session storage.
@@ -16,7 +17,7 @@ import isText from '../functions/isText';
 */
 const getKey = async (key, data) => {
   const persistentKeys = new Set(['configured', 'configured_nonce', 'ephe_public_key', 'ephe_private_key']);
-  const ephemeralKeys = new Set(['services', 'tags', 'data_key', 'item_key_t2', 'item_key_t3', 'item_key_t3_new', 'popup_state']);
+  const ephemeralKeys = new Set(['services', 'tags', ENCRYPTION_KEYS.DATA.sK, ENCRYPTION_KEYS.ITEM_T2.sK, ENCRYPTION_KEYS.ITEM_T3.sK, ENCRYPTION_KEYS.ITEM_T3_NEW.sK, 'popup_state']);
 
   const keyEnvName = `VITE_STORAGE_SESSION_${key.toUpperCase()}`;
   const keyEnv = import.meta.env[keyEnvName];
@@ -43,8 +44,8 @@ const getKey = async (key, data) => {
       break;
     }
 
-    case 'data_key':
-    case 'item_key_t3': {
+    case ENCRYPTION_KEYS.DATA.sK:
+    case ENCRYPTION_KEYS.ITEM_T3.sK: {
       if (data?.deviceId) {
         keyGenerated += `_${data.deviceId}`;
       }
@@ -52,8 +53,8 @@ const getKey = async (key, data) => {
       break;
     }
 
-    case 'item_key_t2':
-    case 'item_key_t3_new': {
+    case ENCRYPTION_KEYS.ITEM_T2.sK:
+    case ENCRYPTION_KEYS.ITEM_T3_NEW.sK: {
       if (data?.loginId) {
         keyGenerated += `_${data.loginId}`;
       }

@@ -9,6 +9,7 @@ import getServicesKeys from '@/partials/sessionStorage/getServicesKeys';
 import compress from '@/partials/gzip/compress';
 import getKey from '@/partials/sessionStorage/getKey';
 import saveServices from '@/partials/WebSocket/utils/saveServices';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
 * Function to handle the forget password action.
@@ -42,7 +43,7 @@ const handleForgetPassword = async (e, loginId, toggleMenu) => {
   const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
   // Remove encryptionItemT2Key in session storage for this loginId & deviceId
-  const itemT2Key = await getKey('item_key_t2', { deviceId, loginId });
+  const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, loginId });
   await storage.removeItem(`session:${itemT2Key}`);
 
   // Remove services from session storage (by servicesKeys)
