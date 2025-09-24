@@ -42,7 +42,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
       const passwordAB = Base64ToArrayBuffer(password);
       const passwordDecryptedBytes = DecryptBytes(passwordAB);
 
-      const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_T2.crypto), sessionKeyForHKDF, true);
+      const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
 
       const decryptedPasswordAB = await crypto.subtle.decrypt(
         { name: 'AES-GCM', iv: passwordDecryptedBytes.iv },
@@ -126,7 +126,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
     const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
     // generate encryptionItemT2Key
-    const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_T2.crypto), sessionKeyForHKDF, true);
+    const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
     const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
     const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
 

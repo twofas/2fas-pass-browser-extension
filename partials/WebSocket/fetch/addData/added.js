@@ -43,7 +43,7 @@ const newDataAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
 
     if (data.login.securityType === SECURITY_TIER.SECRET) {
       // generate encryptionItemT3Key
-      const encryptionItemT3Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_T3.crypto), sessionKeyForHKDF, true);
+      const encryptionItemT3Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T3.crypto, sessionKeyForHKDF, true);
       const encryptionItemT3KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT3Key);
       const encryptionItemT3KeyAES_B64 = ArrayBufferToBase64(encryptionItemT3KeyAESRaw);
 
@@ -52,7 +52,7 @@ const newDataAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
       await storage.setItem(`session:${itemT3Key}`, encryptionItemT3KeyAES_B64);
     } else if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       // generate encryptionItemT2Key
-      const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_T2.crypto), sessionKeyForHKDF, true);
+      const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
       const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
       const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
 

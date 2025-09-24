@@ -41,7 +41,7 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
   checkChecksum(ArrayBufferToBase64(internalChecksumAB), checksum);
 
   const encGzipVaultDataBytes = DecryptBytes(Base64ToArrayBuffer(encGzipVaultData));
-  const encryptionPassKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_T3.crypto), sessionKeyForHKDF, true);
+  const encryptionPassKeyAES = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T3.crypto, sessionKeyForHKDF, true);
 
   try {
     const encryptionPassKeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionPassKeyAES);
