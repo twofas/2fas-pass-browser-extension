@@ -18,6 +18,7 @@ import { valueToNFKD, copyValue } from '@/partials/functions';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
 import { usePopupState } from '@/hooks/usePopupState';
+import { PULL_REQUEST_TYPES } from '@/constants';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -304,7 +305,7 @@ function AddNew (props) {
 
     return navigate('/fetch', {
       state: {
-        action: 'newLogin',
+        action: PULL_REQUEST_TYPES.ADD_DATA,
         from: 'add-new',
         data
       }

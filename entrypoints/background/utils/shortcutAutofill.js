@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { tabIsInternal, openPopup, isT3orT2WithPassword } from '@/partials/functions';
+import { PULL_REQUEST_TYPES } from '@/constants';
 import getServices from '@/partials/sessionStorage/getServices';
 import URIMatcher from '@/partials/URIMatcher';
 import sendAutofillToTab from './sendAutofillToTab';
@@ -70,7 +71,7 @@ const shortcutAutofill = async () => {
 
   if (matchingLogins.length === 1) {
     if (!isT3orT2WithPassword(matchingLogins[0])) {
-      const data = encodeURIComponent(JSON.stringify({ action: 'passwordRequest', from: 'shortcut', data: { loginId: matchingLogins[0].id, deviceId: matchingLogins[0].deviceId, tabId: tab.id }}));
+      const data = encodeURIComponent(JSON.stringify({ action: PULL_REQUEST_TYPES.SIF_REQUEST, from: 'shortcut', data: { loginId: matchingLogins[0].id, deviceId: matchingLogins[0].deviceId, tabId: tab.id }}));
       return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
     }
 
@@ -93,7 +94,7 @@ const shortcutAutofill = async () => {
     const service = services.filter(service => service.id === matchingLoginsAction.id)[0];
 
     if (service.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      const data = encodeURIComponent(JSON.stringify({ action: 'passwordRequest', from: 'shortcut', data: { loginId: matchingLoginsAction.id, deviceId: matchingLoginsAction.deviceId, tabId: tab.id }}));
+      const data = encodeURIComponent(JSON.stringify({ action: PULL_REQUEST_TYPES.SIF_REQUEST, from: 'shortcut', data: { loginId: matchingLoginsAction.id, deviceId: matchingLoginsAction.deviceId, tabId: tab.id }}));
       return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
     }
 

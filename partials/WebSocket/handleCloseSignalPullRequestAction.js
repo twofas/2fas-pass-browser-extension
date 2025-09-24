@@ -62,7 +62,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
       eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, '/', {
         state: {
-          action: 'autofillT2Failed',
+          action: 'autofillT2Failed', // Non-fetch action here
           loginId: closeData.loginId,
           deviceId: closeData.deviceId,
           password: closeData.password,

@@ -8,6 +8,7 @@ import S from '../Details.module.scss';
 import * as m from 'motion/react-m';
 import { Link } from 'react-router';
 import { lazy } from 'react';
+import { PULL_REQUEST_TYPES } from '@/constants';
 
 const ChevronIcon = lazy(() => import('@/assets/popup-window/chevron.svg?react'));
 
@@ -48,7 +49,7 @@ function DangerZone (props) {
         <p>{browser.i18n.getMessage('details_delete_header')}</p>
         <Link
           to='/fetch'
-          state={{ action: 'deleteLogin', from: 'details', data: { loginId: service.id, deviceId: service.deviceId } }}
+          state={{ action: PULL_REQUEST_TYPES.DELETE_DATA, from: 'details', data: { loginId: service.id, deviceId: service.deviceId } }}
           className={S.detailsDangerZoneBodyButton}
           prefetch='intent'
         >

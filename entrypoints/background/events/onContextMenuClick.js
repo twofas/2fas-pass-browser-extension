@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { openPopupWindowInNewWindow, sendAutofillToTab } from '../utils';
-import { SERVICE_REGEX, FETCH_REGEX } from '@/constants';
+import { SERVICE_REGEX, FETCH_REGEX, PULL_REQUEST_TYPES } from '@/constants';
 
 /** 
 * Function to handle context menu click events.
@@ -31,7 +31,7 @@ const onContextMenuClick = async (info, tab) => {
       const loginId = fetchRegexTest[1];
       const deviceId = fetchRegexTest[2];
 
-      const data = encodeURIComponent(JSON.stringify({ action: 'passwordRequest', from: 'contextMenu', data: { loginId, deviceId } }));
+      const data = encodeURIComponent(JSON.stringify({ action: PULL_REQUEST_TYPES.SIF_REQUEST, from: 'contextMenu', data: { loginId, deviceId } }));
       await openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
       return true;
     }

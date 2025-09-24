@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import PULL_REQUEST_TYPES from '@/entrypoints/popup/routes/Fetch/constants/PULL_REQUEST_TYPES';
+import PULL_REQUEST_TYPES from '@/constants/PULL_REQUEST_TYPES';
 import PULL_REQUEST_STATUSES from '@/entrypoints/popup/routes/Fetch/constants/PULL_REQUEST_STATUSES';
 import { deleteDataAccept, deleteDataCancel } from './fetch/deleteData';
 import { addDataAdded, addDataAddedInT1, addDataCancel } from './fetch/addData';

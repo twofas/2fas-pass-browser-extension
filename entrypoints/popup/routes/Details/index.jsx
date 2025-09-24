@@ -16,6 +16,7 @@ import getServices from '@/partials/sessionStorage/getServices';
 import { valueToNFKD, sanitizeObject } from '@/partials/functions';
 import URIMatcher from '@/partials/URIMatcher';
 import { usePopupState } from '@/hooks/usePopupState';
+import { PULL_REQUEST_TYPES } from '@/constants';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const Name = lazy(() => import('./components/Name'));
@@ -346,7 +347,7 @@ function Details (props) {
 
     return navigate('/fetch', {
       state: {
-        action: 'updateLogin',
+        action: PULL_REQUEST_TYPES.UPDATE_DATA,
         from: 'details',
         data: stateData
       }
