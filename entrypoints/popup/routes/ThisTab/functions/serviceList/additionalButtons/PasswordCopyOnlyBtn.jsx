@@ -9,6 +9,7 @@ import copyValue from '@/partials/functions/copyValue';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import { toast } from 'react-toastify';
 import { lazy } from 'react';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 const ServicePasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));
 
@@ -22,7 +23,7 @@ const ServicePasswordIcon = lazy(() => import('@/assets/popup-window/service-pas
 const handleAutofillFailedPassword = async (data, setAutofillFailed) => {
   const passwordAB = Base64ToArrayBuffer(data.password);
   const passwordDecryptedBytes = DecryptBytes(passwordAB);
-  const encryptionItemT2Key = await generateEncryptionAESKey(data.hkdfSaltAB, StringToArrayBuffer('ItemT2'), data.sessionKeyForHKDF, false);
+  const encryptionItemT2Key = await generateEncryptionAESKey(data.hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_T2.crypto), data.sessionKeyForHKDF, false);
   const decryptedPasswordAB = await crypto.subtle.decrypt(
     { name: 'AES-GCM', iv: passwordDecryptedBytes.iv },
     encryptionItemT2Key,

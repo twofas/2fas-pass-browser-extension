@@ -8,6 +8,7 @@ import PULL_REQUEST_TYPES from '@/entrypoints/popup/routes/Fetch/constants/PULL_
 import generateNonce from '@/partials/functions/generateNonce';
 import generateEncryptionAESKey from './utils/generateEncryptionAESKey';
 import TwoFasWebSocket from '@/partials/WebSocket';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
 * Handles the pull request action.
@@ -24,7 +25,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
   const newSessionIdEncAB = Base64ToArrayBuffer(newSessionIdEnc);
   const newSessionIdDecBytes = DecryptBytes(newSessionIdEncAB);
 
-  const encryptionDataKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('Data'), sessionKeyForHKDF, false);
+  const encryptionDataKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.DATA.crypto), sessionKeyForHKDF, false);
 
   try {
     const newSessionIdDec_AB = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: newSessionIdDecBytes.iv }, encryptionDataKeyAES, newSessionIdDecBytes.data);
@@ -84,7 +85,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       } else {
         const [nonceP, encryptionPassNewKeyAES] = await Promise.all([
           generateNonce(),
-          generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('PassNew'), sessionKeyForHKDF, true)
+          generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_NEW.crypto), sessionKeyForHKDF, true)
         ]);
         const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassNewKeyAES, StringToArrayBuffer(state.data.password));
         const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
@@ -125,7 +126,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           }
         };
       } else {
-        const keyName = state.data.securityType === SECURITY_TIER.HIGHLY_SECRET ? 'ItemT2' : state.data.securityType === SECURITY_TIER.SECRET ? 'ItemT3' : null;
+        const keyName = state.data.securityType === SECURITY_TIER.HIGHLY_SECRET ? ENCRYPTION_KEYS.ITEM_T2.crypto : state.data.securityType === SECURITY_TIER.SECRET ? ENCRYPTION_KEYS.ITEM_T3.crypto : null;
 
         if (!keyName) {
           throw new TwoFasError(TwoFasError.errors.updateLoginWrongSecurityType);
