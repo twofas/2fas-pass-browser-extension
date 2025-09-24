@@ -10,6 +10,7 @@ import addExpirationDateToDevice from './utils/addExpirationDateToDevice';
 import checkStorageSessionCapacity from './utils/checkStorageSessionCapacity';
 import checkChecksumLength from './utils/checkChecksumLength';
 import TwoFasWebSocket from '@/partials/WebSocket';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
 * Handles the initialization of the transfer process.
@@ -26,7 +27,7 @@ const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid) => 
   checkChecksumLength(sha256GzipVaultDataEnc);
   await checkStorageSessionCapacity(totalSize);
 
-  const encryptionDataKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('Data'), sessionKeyForHKDF, false);
+  const encryptionDataKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.DATA.crypto), sessionKeyForHKDF, false);
 
   try {
     const newSessionIdEncAB = Base64ToArrayBuffer(newSessionIdEnc);

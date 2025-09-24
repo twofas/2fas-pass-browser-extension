@@ -12,6 +12,7 @@ import getKey from '@/partials/sessionStorage/getKey';
 import compress from '@/partials/gzip/compress';
 import saveServices from '@/partials/WebSocket/utils/saveServices';
 import { sendMessageToAllFrames, generateNonce } from '@/partials/functions';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 // FUTURE - Better error handling
 
@@ -41,7 +42,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
       const passwordAB = Base64ToArrayBuffer(password);
       const passwordDecryptedBytes = DecryptBytes(passwordAB);
 
-      const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('ItemT2'), sessionKeyForHKDF, true);
+      const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_T2.crypto), sessionKeyForHKDF, true);
 
       const decryptedPasswordAB = await crypto.subtle.decrypt(
         { name: 'AES-GCM', iv: passwordDecryptedBytes.iv },
@@ -125,12 +126,12 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
     const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
     // generate encryptionItemT2Key
-    const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('ItemT2'), sessionKeyForHKDF, true);
+    const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_T2.crypto), sessionKeyForHKDF, true);
     const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
     const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
 
     // save encryptionItemT2Key in session storage
-    const itemT2Key = await getKey('item_key_t2', { deviceId: state.data.deviceId, loginId: state.data.loginId });
+    const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.data.deviceId, loginId: state.data.loginId });
     await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
     // Remove services from session storage (by servicesKeys)

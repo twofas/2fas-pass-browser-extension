@@ -7,6 +7,7 @@
 import getKey from '@/partials/sessionStorage/getKey';
 import isText from './isText';
 import { SECURITY_TIER } from '@/utils/SECURITY_TIER';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
 * Decrypts the password using the encryption key from the session storage.
@@ -41,12 +42,12 @@ const decryptPassword = async login => {
   try {
     if (login.securityType === SECURITY_TIER.SECRET) {
       if (login?.internalType && login?.internalType === 'added') {
-        itemKey = await getKey('item_key_t3_new', { loginId: login.id, deviceId: login.deviceId });
+        itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { loginId: login.id, deviceId: login.deviceId });
       } else {
-        itemKey = await getKey('item_key_t3', { deviceId: login.deviceId });
+        itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3.sK, { deviceId: login.deviceId });
       }
     } else {
-      itemKey = await getKey('item_key_t2', { loginId: login.id, deviceId: login.deviceId });
+      itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { loginId: login.id, deviceId: login.deviceId });
     }
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.decryptPasswordGetKey, {
