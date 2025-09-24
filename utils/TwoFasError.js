@@ -370,6 +370,10 @@ class TwoFasError extends Error {
       message: 'WebSocket is not opened',
       code: 9045
     },
+    websocketSchemeMismatch: {
+      message: 'WebSocket message scheme mismatch',
+      code: 9046
+    },
     // DEVICE
     deviceNotFound: {
       message: 'Device not found',
