@@ -127,6 +127,7 @@ function Fetch (props) {
             consoleLog: false
           })
         );
+        socket.close();
       } catch {}
     }
   };

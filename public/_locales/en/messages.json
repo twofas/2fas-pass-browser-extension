@@ -91,6 +91,10 @@
     "message": "Data size exceeded. \nUse less data or try a different browser.",
     "description": "Error shown when storage capacity exceeds the limit"
   },
+  "error_scheme_mismatch": {
+    "message": "Please update \nthe 2FAS Pass mobile app.",
+    "description": "Error shown when there is a scheme mismatch between the extension and mobile app"
+  },
   "error_mobile_disconnected": {
     "message": "Mobile device disconnected\nPlease try again.",
     "description": "Error shown when the mobile device disconnects"

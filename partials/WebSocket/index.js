@@ -74,9 +74,7 @@ class TwoFasWebSocket {
 
   #onError (event) {
     this.#clearTimeout();
-
     TwoFasWebSocket.#notifyStateChange(false);
-
     this.#clearInstance();
 
     throw new TwoFasError(TwoFasError.internalErrors.websocketError, { event, additional: { func: 'TwoFasWebSocket - onError' } });
@@ -101,32 +99,48 @@ class TwoFasWebSocket {
 
   addEventListener (event, callback, data = {}) {
     if (event === 'message') {
-      this.socket.addEventListener('message', e => {
-        if (!this.#isEventTrusted(e)) {
-          throw new TwoFasError(TwoFasError.internalErrors.websocketEventNotTrusted, { additional: { func: 'TwoFasWebSocket - addEventListener message' } });
-        }
-
-        this.#clearTimeout();
-
-        let json;
-
+      this.socket.addEventListener('message', async e => {
         try {
-          json = JSON.parse(e.data);
+          if (!this.#isEventTrusted(e)) {
+            await this.sendError({ errorCode: WEBSOCKET_STATES.INVALID_MESSAGE_ERROR, errorMessage: 'Event not trusted' });
+            this.close(WEBSOCKET_STATES.INVALID_MESSAGE_ERROR, 'Event not trusted');
+            throw new TwoFasError(TwoFasError.internalErrors.websocketEventNotTrusted, { additional: { func: 'TwoFasWebSocket - addEventListener message' } });
+          }
+
+          this.#clearTimeout();
+
+          let json;
+
+          try {
+            json = JSON.parse(e.data);
+          } catch (error) {
+            await this.sendError({ errorCode: WEBSOCKET_STATES.INVALID_MESSAGE_ERROR, errorMessage: 'Failed to parse message' });
+            this.close(WEBSOCKET_STATES.INVALID_MESSAGE_ERROR, 'Failed to parse message');
+            throw new TwoFasError(TwoFasError.internalErrors.websocketMessageFailToParse, { event: error, additional: { func: 'TwoFasWebSocket - addEventListener message' } });
+          }
+
+          if (json.scheme !== config.scheme) {
+            await this.sendError({ errorCode: WEBSOCKET_STATES.INVALID_SCHEME, errorMessage: `Scheme mismatch: received ${json.scheme}, expected ${config.scheme}` });
+            this.close(WEBSOCKET_STATES.INVALID_SCHEME, 'Scheme mismatch');
+            throw new TwoFasError(TwoFasError.internalErrors.websocketSchemeMismatch, {
+              additional: {
+                func: 'TwoFasWebSocket - addEventListener message',
+                receivedScheme: json.scheme,
+                expectedScheme: config.scheme
+              }
+            });
+          }
+
+          return callback(json, data);
         } catch (error) {
-          throw new TwoFasError(TwoFasError.internalErrors.websocketMessageFailToParse, { event: error, additional: { func: 'TwoFasWebSocket - addEventListener message' } });
-        }
+          // If error wasn't already handled with specific close code, close with generic error
+          if (this.socket.readyState === WebSocket.OPEN) {
+            await this.sendError({ errorCode: WEBSOCKET_STATES.INVALID_MESSAGE_ERROR, errorMessage: 'Message processing error' });
+            this.close(WEBSOCKET_STATES.INVALID_MESSAGE_ERROR, 'Message processing error');
+          }
 
-        if (json.scheme !== config.scheme) {
-          throw new TwoFasError(TwoFasError.internalErrors.websocketSchemeMismatch, { 
-            additional: { 
-              func: 'TwoFasWebSocket - addEventListener message',
-              receivedScheme: json.scheme,
-              expectedScheme: config.scheme
-            } 
-          });
+          throw error;
         }
-
-        return callback(json, data);
       });
     } else if (event === 'close') {
       this.socket.addEventListener('close', e => {
@@ -142,24 +156,24 @@ class TwoFasWebSocket {
     }
   };;
 
-  close (timeout = false) {
+  close (codeOrTimeout = false, reason = '') {
     this.socket.removeEventListener('open', this.#openListener);
     this.socket.removeEventListener('error', this.#errorListener);
 
-    if (timeout) {
-      this.socket.close(WEBSOCKET_STATES.CONNECTION_TIMEOUT, 'Timeout');
-    }
-
     if (this.socket.readyState !== WebSocket.CLOSED) {
       try {
-        this.socket.close();
+        if (typeof codeOrTimeout === 'boolean' && codeOrTimeout) {
+          this.socket.close(WEBSOCKET_STATES.CONNECTION_TIMEOUT, 'Timeout');
+        } else if (typeof codeOrTimeout === 'number') {
+          this.socket.close(codeOrTimeout, reason);
+        } else {
+          this.socket.close();
+        }
       } catch {}
     }
 
     this.#clearTimeout();
-
     TwoFasWebSocket.#notifyStateChange(false);
-
     this.#clearInstance();
   };
 
@@ -197,18 +211,6 @@ class TwoFasWebSocket {
         errorMessage: data.errorMessage || data.message || 'Unknown error'
       }
     }));
-
-    if (this.socket.readyState !== WebSocket.CLOSED) {
-      try {
-        this.socket.close(WEBSOCKET_STATES.INTERNAL_ERROR, 'Internal error');
-      } catch {}
-    }
-
-    this.#clearTimeout();
-
-    TwoFasWebSocket.#notifyStateChange(false);
-
-    this.#clearInstance();
   };
 }
 
