@@ -7,7 +7,7 @@
 import removeSavePromptAction from './removeSavePromptAction';
 import decryptValues from './decryptValues';
 import openPopupWindowInNewWindow from '../openPopupWindowInNewWindow';
-import { SAVE_PROMPT_ACTIONS } from '@/constants';
+import { SAVE_PROMPT_ACTIONS, PULL_REQUEST_TYPES } from '@/constants';
 
 // FUTURE - actions should be moved to a separate files
 /** 
@@ -41,7 +41,7 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
       }
 
       const data = JSON.stringify({
-        action: 'newLogin',
+        action: PULL_REQUEST_TYPES.ADD_DATA,
         from: 'savePrompt',
         data: {
           url,
@@ -70,7 +70,7 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
       }
 
       const data = JSON.stringify({
-        action: 'updateLogin',
+        action: PULL_REQUEST_TYPES.UPDATE_DATA,
         from: 'savePrompt',
         data: {
           url,

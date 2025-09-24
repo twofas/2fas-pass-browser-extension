@@ -7,7 +7,7 @@
 import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, decryptPassword, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, generateNonce } from '@/partials/functions';
 import getServices from '@/partials/sessionStorage/getServices';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
-import PULL_REQUEST_TYPES from '../../../Fetch/constants/PULL_REQUEST_TYPES';
+import { PULL_REQUEST_TYPES } from '@/constants';
 
 /** 
 * Function to handle the autofill action.

@@ -9,6 +9,7 @@ import handlePassword from '../handlePassword';
 import { Link } from 'react-router';
 import { useEffect, useState, lazy } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
+import { PULL_REQUEST_TYPES } from '@/constants';
 
 const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 const ServicePasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));
@@ -115,7 +116,7 @@ const PasswordBtn = ({ login, more, setMore }) => {
       <Link
         to='/fetch'
         state={{
-          action: 'passwordRequest',
+          action: PULL_REQUEST_TYPES.SIF_REQUEST,
           from: 'service',
           data: { loginId: login.id, deviceId: login.deviceId }
         }}
