@@ -15,11 +15,10 @@ import sendMessageToAllFrames from '../functions/sendMessageToAllFrames';
 * @param {string} newSessionId - The new session ID.
 * @param {string} uuid - The unique identifier for the user.
 * @param {Object} closeData - The data related to the close action.
-* @param {Function} navigate - The navigation function.
 * @param {Object} state - The current state of fetch action.
 * @return {Promise<void>} 
 */
-const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData, navigate, state) => {
+const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData, state) => {
   await addNewSessionIdToDevice(uuid, newSessionId); // FUTURE - Change to deviceId instead of uuid?
 
   try {
@@ -56,12 +55,12 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
       if (separateWindow || (!window || typeof window?.close !== 'function' || import.meta.env.BROWSER === 'safari')) {
         showToast(browser.i18n.getMessage('this_tab_autofill_success'), 'success');
-        navigate('/');
+        eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, '/');
       }
     } else {
       const toastId = showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
 
-      navigate('/', {
+      eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, '/', {
         state: {
           action: 'autofillT2Failed',
           loginId: closeData.loginId,
@@ -76,7 +75,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
   }
 
   if (closeData?.returnUrl) {
-    navigate(closeData.returnUrl);
+    eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, closeData.returnUrl);
   }
 
   if (closeData?.returnToast) {

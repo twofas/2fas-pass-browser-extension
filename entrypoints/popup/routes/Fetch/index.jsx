@@ -52,7 +52,7 @@ function Fetch (props) {
 
       default: {
         setFetchState(FETCH_STATE.CONNECTION_ERROR);
-        
+
         throw new TwoFasError(TwoFasError.internalErrors.fetchInvalidAction, {
           additional: {
             data: { stateAction: state.action },
@@ -103,8 +103,8 @@ function Fetch (props) {
 
     const socket = new TwoFasWebSocket(sessionId);
     socket.open();
-    socket.addEventListener('message', FetchOnMessage, { state, device }, { setFetchState, setErrorText, navigate });
-    socket.addEventListener('close', FetchOnClose, { state }, { setFetchState, setErrorText });
+    socket.addEventListener('message', FetchOnMessage, { state, device }, {});
+    socket.addEventListener('close', FetchOnClose, { state }, {});
   };
 
   const closeConnection = async () => {
@@ -159,9 +159,18 @@ function Fetch (props) {
   };
 
   useEffect(() => {
+    // FUTURE - add value validation
+    eventBus.on(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
+    eventBus.on(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
+    eventBus.on(eventBus.EVENTS.FETCH.NAVIGATE, navigate);
+
     initConnection();
 
     return () => {
+      eventBus.off(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
+      eventBus.off(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
+      eventBus.off(eventBus.EVENTS.FETCH.NAVIGATE, navigate);
+
       closeConnection();
     };
   }, []);

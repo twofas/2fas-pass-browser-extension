@@ -5,15 +5,15 @@
 // See LICENSE file for full terms
 
 import deletePush from '@/partials/functions/deletePush';
+import { FETCH_STATE } from '../constants';
 
 /**
 * Function to handle Fetch closure events.
 * @param {Object} event - The WebSocket event data.
 * @param {Object} data - The current state data.
-* @param {Object} actions - The actions to perform.
 * @return {Promise<void>} A promise that resolves when the closure is handled.
 */
-const FetchOnClose = async (event, data, actions) => {
+const FetchOnClose = async (event, data) => {
   if (data?.state?.data?.loginId && data?.state?.data?.notificationId) {
     await deletePush(data.state.data.deviceId, data.state.data.notificationId);
   }
@@ -23,19 +23,19 @@ const FetchOnClose = async (event, data, actions) => {
     case WEBSOCKET_STATES.CANT_CREATE_PROXY:
     case WEBSOCKET_STATES.CONNECTION_ALREADY_ESTABLISHED:
     case WEBSOCKET_STATES.BROWSER_EXTENSION_NOT_CONNECTED: {
-      actions.setFetchState(1);
-      actions.setErrorText(browser.i18n.getMessage('fetch_connection_error_header'));
+      eventBus.emit(eventBus.EVENTS.FETCH.SET_FETCH_STATE, FETCH_STATE.CONNECTION_ERROR);
+      eventBus.emit(eventBus.EVENTS.FETCH.ERROR_TEXT, browser.i18n.getMessage('fetch_connection_error_header'));
       break;
     }
 
     case WEBSOCKET_STATES.CONNECTION_TIMEOUT: {
-      actions.setFetchState(2);
+      eventBus.emit(eventBus.EVENTS.FETCH.SET_FETCH_STATE, FETCH_STATE.CONNECTION_TIMEOUT);
       break;
     }
 
     case WEBSOCKET_STATES.MOBILE_DISCONNECTED: {
-      actions.setFetchState(1);
-      actions.setErrorText(browser.i18n.getMessage('error_mobile_disconnected'));
+      eventBus.emit(eventBus.EVENTS.FETCH.SET_FETCH_STATE, FETCH_STATE.CONNECTION_ERROR);
+      eventBus.emit(eventBus.EVENTS.FETCH.ERROR_TEXT, browser.i18n.getMessage('error_mobile_disconnected'));
       break;
     }
 
