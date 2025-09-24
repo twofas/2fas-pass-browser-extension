@@ -67,7 +67,6 @@ const FetchOnMessage = async (json, data, actions) => {
     }
   } catch (e) {
     await CatchError(e, async errObj => {
-      actions.wsDeactivate();
       actions.setFetchState(1);
       // FUTURE - Base on error code
       actions.setErrorText(errObj?.additional?.errorMessage || browser.i18n.getMessage('error_general'));

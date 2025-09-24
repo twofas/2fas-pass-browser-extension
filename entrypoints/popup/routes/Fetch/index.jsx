@@ -30,7 +30,6 @@ function Fetch (props) {
   const { state } = location;
 
   const navigate = useNavigate();
-  const { wsActivate, wsDeactivate } = useWS();
 
   let device;
 
@@ -103,9 +102,9 @@ function Fetch (props) {
     }
 
     const socket = new TwoFasWebSocket(sessionId);
-    socket.open(() => { wsActivate(); });
-    socket.addEventListener('message', FetchOnMessage, { state, device }, { setFetchState, setErrorText, navigate, wsDeactivate });
-    socket.addEventListener('close', FetchOnClose, { state }, { setFetchState, setErrorText, wsDeactivate });
+    socket.open();
+    socket.addEventListener('message', FetchOnMessage, { state, device }, { setFetchState, setErrorText, navigate });
+    socket.addEventListener('close', FetchOnClose, { state }, { setFetchState, setErrorText });
   };
 
   const closeConnection = async () => {
