@@ -13,4 +13,6 @@ const PULL_REQUEST_TYPES = {
   COMPLETED: 'pullRequestCompleted'
 };
 
+Object.freeze(PULL_REQUEST_TYPES);
+
 export default PULL_REQUEST_TYPES;
