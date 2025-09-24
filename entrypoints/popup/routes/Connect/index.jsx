@@ -81,7 +81,7 @@ function Connect (props) {
     }
 
     socket.open();
-    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralData.uuid }, { login });
+    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralData.uuid }, {});
     socket.addEventListener('close', ConnectOnClose, {}, {});
 
     setQrCode(qr);
@@ -99,6 +99,7 @@ function Connect (props) {
     eventBus.on(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
     eventBus.on(eventBus.EVENTS.CONNECT.SOCKET_ERROR, setSocketError);
     eventBus.on(eventBus.EVENTS.CONNECT.HEADER_TEXT, setHeaderText);
+    eventBus.on(eventBus.EVENTS.CONNECT.LOGIN, login);
 
     initConnection();
 
@@ -107,6 +108,7 @@ function Connect (props) {
       eventBus.off(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
       eventBus.off(eventBus.EVENTS.CONNECT.SOCKET_ERROR, setSocketError);
       eventBus.off(eventBus.EVENTS.CONNECT.HEADER_TEXT, setHeaderText);
+      eventBus.off(eventBus.EVENTS.CONNECT.LOGIN, login);
     };
   }, []);
 

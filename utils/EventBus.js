@@ -13,7 +13,8 @@ class EventBus {
       CONNECTING: 'connect_connecting',
       LOADER: 'connect_loader',
       SOCKET_ERROR: 'connect_socket_error',
-      HEADER_TEXT: 'connect_header_text'
+      HEADER_TEXT: 'connect_header_text',
+      LOGIN: 'connect_login'
     },
     FETCH: {
 
