@@ -104,8 +104,8 @@ function Fetch (props) {
 
     const socket = new TwoFasWebSocket(sessionId);
     socket.open();
-    socket.addEventListener('message', FetchOnMessage, { state, device }, {});
-    socket.addEventListener('close', FetchOnClose, { state }, {});
+    socket.addEventListener('message', FetchOnMessage, { state, device });
+    socket.addEventListener('close', FetchOnClose, { state });
   };
 
   const closeConnection = async () => {
