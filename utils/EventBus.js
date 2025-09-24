@@ -17,7 +17,9 @@ class EventBus {
       LOGIN: 'connect_login'
     },
     FETCH: {
-
+      SET_FETCH_STATE: 'fetch_set_fetch_state',
+      ERROR_TEXT: 'fetch_error_text',
+      NAVIGATE: 'fetch_navigate'
     }
   };
 
