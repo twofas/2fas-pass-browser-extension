@@ -10,7 +10,8 @@ import { useState, useEffect, lazy } from 'react';
 import FetchOnMessage from './socket/FetchOnMessage';
 import FetchOnClose from './socket/FetchOnClose';
 import TwoFasWebSocket from '@/partials/WebSocket';
-import { PULL_REQUEST_TYPES, FETCH_STATE } from './constants';
+import { FETCH_STATE } from './constants';
+import { PULL_REQUEST_TYPES } from '@/constants';
 import calculateSignature from './functions/calculateSignature';
 import { getCurrentDevice, sendPush, getNTPTime, deletePush } from '@/partials/functions';
 

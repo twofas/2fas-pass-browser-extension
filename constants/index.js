@@ -13,6 +13,7 @@ export { default as ignoredSavePromptRequestBodyTexts } from './ignoredSavePromp
 export { default as ignoredSavePromptUrls } from './ignoredSavePromptUrls.js';
 export { default as ignoredTypes } from './ignoredTypes.js';
 export { default as passwordSelectors } from './passwordSelectors.js';
+export { default as PULL_REQUEST_TYPES } from './PULL_REQUEST_TYPES.js';
 export { default as secIconColors } from './secIconColors.js';
 export { default as secIconSVGs } from './secIconSVGs.js';
 export { default as selectors } from './selectors.js';

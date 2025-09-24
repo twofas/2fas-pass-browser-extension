@@ -4,11 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import PULL_REQUEST_TYPES from '@/entrypoints/popup/routes/Fetch/constants/PULL_REQUEST_TYPES';
 import generateNonce from '@/partials/functions/generateNonce';
 import generateEncryptionAESKey from './utils/generateEncryptionAESKey';
 import TwoFasWebSocket from '@/partials/WebSocket';
-import { ENCRYPTION_KEYS } from '@/constants';
+import { ENCRYPTION_KEYS, PULL_REQUEST_TYPES } from '@/constants';
 
 /** 
 * Handles the pull request action.
