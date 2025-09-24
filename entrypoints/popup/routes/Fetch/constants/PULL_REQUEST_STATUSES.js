@@ -12,4 +12,6 @@ const PULL_REQUEST_ACTION_STATUSES = {
   UPDATED: 'updated'
 };
 
+Object.freeze(PULL_REQUEST_ACTION_STATUSES);
+
 export default PULL_REQUEST_ACTION_STATUSES;
