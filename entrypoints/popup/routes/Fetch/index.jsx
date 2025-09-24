@@ -173,10 +173,10 @@ function Fetch (props) {
           <div className={S.fetchContainer}>
             <NavigationButton type='cancel' onClick={cancelHandle} />
 
-            {fetchState === 0 && <PushNotification fetchState={fetchState} /> }
-            {fetchState === 1 && <ConnectionError fetchState={fetchState} errorText={errorText} /> }
-            {fetchState === 2 && <ConnectionTimeout fetchState={fetchState} tryAgainHandle={tryAgainHandle} />}
-            {fetchState === 3 && <ContinueUpdate fetchState={fetchState} />}
+            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} /> }
+            {fetchState === FETCH_STATE.CONNECTION_ERROR && <ConnectionError fetchState={fetchState} errorText={errorText} /> }
+            {fetchState === FETCH_STATE.CONNECTION_TIMEOUT && <ConnectionTimeout fetchState={fetchState} tryAgainHandle={tryAgainHandle} />}
+            {fetchState === FETCH_STATE.CONTINUE_UPDATE && <ContinueUpdate fetchState={fetchState} />}
           </div>
         </section>
       </div>
