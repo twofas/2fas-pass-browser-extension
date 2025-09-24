@@ -11,6 +11,7 @@
 class TwoFasWebSocket {
   static exists = false;
   static instance = null;
+  static #stateListeners = new Set();
 
   #openListener = null;
   #errorListener = null;
@@ -36,6 +37,24 @@ class TwoFasWebSocket {
     return TwoFasWebSocket.instance;
   };
 
+  static addStateListener (listener) {
+    TwoFasWebSocket.#stateListeners.add(listener);
+  };
+
+  static removeStateListener (listener) {
+    TwoFasWebSocket.#stateListeners.delete(listener);
+  };
+
+  static #notifyStateChange (isActive) {
+    TwoFasWebSocket.#stateListeners.forEach(listener => {
+      try {
+        listener(isActive);
+      } catch (error) {
+        console.error('Error in WebSocket state listener:', error);
+      }
+    });
+  };
+
   #clearTimeout () {
     if (this.timeoutID) {
       clearTimeout(this.timeoutID);
@@ -51,6 +70,8 @@ class TwoFasWebSocket {
   #onOpen (callbackOnOpen = null) {
     this.timeoutID = setTimeout(() => this.close(true), 1000 * 60 * config.webSocketInternalTimeout);
 
+    TwoFasWebSocket.#notifyStateChange(true);
+
     if (callbackOnOpen && typeof callbackOnOpen === 'function') {
       callbackOnOpen();
     }
@@ -58,6 +79,9 @@ class TwoFasWebSocket {
 
   #onError (event) {
     this.#clearTimeout();
+
+    TwoFasWebSocket.#notifyStateChange(false);
+
     this.#clearInstance();
 
     throw new TwoFasError(TwoFasError.internalErrors.websocketError, { event, additional: { func: 'TwoFasWebSocket - onError' } });
@@ -122,14 +146,17 @@ class TwoFasWebSocket {
     if (timeout) {
       this.socket.close(WEBSOCKET_STATES.CONNECTION_TIMEOUT, 'Timeout');
     }
-    
+
     if (this.socket.readyState !== WebSocket.CLOSED) {
       try {
         this.socket.close();
       } catch {}
     }
-    
+
     this.#clearTimeout();
+
+    TwoFasWebSocket.#notifyStateChange(false);
+
     this.#clearInstance();
   };
 
@@ -167,7 +194,7 @@ class TwoFasWebSocket {
         errorMessage: data.errorMessage || data.message || 'Unknown error'
       }
     }));
-    
+
     if (this.socket.readyState !== WebSocket.CLOSED) {
       try {
         this.socket.close(WEBSOCKET_STATES.INTERNAL_ERROR, 'Internal error');
@@ -175,6 +202,9 @@ class TwoFasWebSocket {
     }
 
     this.#clearTimeout();
+
+    TwoFasWebSocket.#notifyStateChange(false);
+
     this.#clearInstance();
   };
 }

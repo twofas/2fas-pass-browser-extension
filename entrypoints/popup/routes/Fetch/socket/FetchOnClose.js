@@ -14,8 +14,6 @@ import deletePush from '@/partials/functions/deletePush';
 * @return {Promise<void>} A promise that resolves when the closure is handled.
 */
 const FetchOnClose = async (event, data, actions) => {
-  actions.wsDeactivate();
-
   if (data?.state?.data?.loginId && data?.state?.data?.notificationId) {
     await deletePush(data.state.data.deviceId, data.state.data.notificationId);
   }

@@ -12,7 +12,6 @@ import handleSendVaultData from '@/partials/WebSocket/handleSendVaultData';
 import processVaultData from '@/partials/WebSocket/processVaultData';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import TwoFasWebSocket from '@/partials/WebSocket';
-import eventBus from '@/utils/EventBus';
 
 /** 
 * Function to handle incoming Connect messages.
@@ -93,7 +92,6 @@ const ConnectOnMessage = async (json, data, actions) => {
     }
   } catch (e) {
     await CatchError(e, async errObj => {
-      actions.wsDeactivate();
       eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
       eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, errObj?.visibleErrorMessage || browser.i18n.getMessage('error_general'));
       eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, false);

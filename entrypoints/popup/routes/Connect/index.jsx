@@ -36,7 +36,6 @@ function Connect (props) {
   const [connectingLoader, setConnectingLoader] = useState(264);
 
   const { login } = useAuth();
-  const { wsActivate, wsDeactivate } = useWS();
 
   const initConnection = async () => {
     let sessionID, signature, qr, ephemeralData, socket;
@@ -81,9 +80,9 @@ function Connect (props) {
       return;
     }
 
-    socket.open(() => { wsActivate(); });
-    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralData.uuid }, { wsDeactivate, login });
-    socket.addEventListener('close', ConnectOnClose, {}, { wsDeactivate });
+    socket.open();
+    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralData.uuid }, { login });
+    socket.addEventListener('close', ConnectOnClose, {}, {});
 
     setQrCode(qr);
   };

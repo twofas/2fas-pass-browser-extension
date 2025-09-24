@@ -9,7 +9,6 @@ import { Route, Routes, Navigate, useLocation } from 'react-router';
 import { useEffect, lazy, useState, useMemo, useCallback, memo } from 'react';
 import { AuthProvider } from '@/hooks/useAuth';
 import { MatchingLoginsProvider } from '@/hooks/useMatchingLogins';
-import { WSProvider } from '@/hooks/useWS';
 import { PopupStateProvider } from '@/hooks/usePopupState';
 import popupOnMessage from './events/popupOnMessage';
 import Blocked from './routes/Blocked';
@@ -221,11 +220,10 @@ function Popup () {
     <section className={mainSectionClassName}>
       <PopupStateProvider>
         <AuthProvider>
-          <WSProvider>
-            <MatchingLoginsProvider>
-              <InitialRouter initialRoute={initialRoute}>
-                <TopBar />
-                <Routes>
+          <MatchingLoginsProvider>
+            <InitialRouter initialRoute={initialRoute}>
+              <TopBar />
+              <Routes>
                 <Route path='/connect' element={<ConnectProtectedRoute blockedRoute={blockedRoute}><Connect className={S.passScreen} /></ConnectProtectedRoute>} />
                 <Route path='/' element={<ProtectedRoute blockedRoute={blockedRoute}><ThisTab className={S.passScreen} /></ProtectedRoute>} />
                 <Route path='/add-new' element={<ProtectedRoute blockedRoute={blockedRoute}><AddNew className={S.passScreen} /></ProtectedRoute>} />
@@ -242,13 +240,11 @@ function Popup () {
                 <Route path='/blocked' element={<Blocked className={S.passScreen} />} />
                 <Route path='*' element={<ProtectedRoute blockedRoute={blockedRoute}><NotFound className={S.passScreen} /></ProtectedRoute>} />
               </Routes>
-              </InitialRouter>
-            </MatchingLoginsProvider>
-            <BottomBar />
-          </WSProvider>
+            </InitialRouter>
+          </MatchingLoginsProvider>
+          <BottomBar />
         </AuthProvider>
       </PopupStateProvider>
-      
       <ToastsContent />
     </section>
   );
