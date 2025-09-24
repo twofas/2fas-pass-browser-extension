@@ -27,7 +27,7 @@ const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid) => 
   checkChecksumLength(sha256GzipVaultDataEnc);
   await checkStorageSessionCapacity(totalSize);
 
-  const encryptionDataKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.DATA.crypto), sessionKeyForHKDF, false);
+  const encryptionDataKeyAES = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.DATA.crypto, sessionKeyForHKDF, false);
 
   try {
     const newSessionIdEncAB = Base64ToArrayBuffer(newSessionIdEnc);

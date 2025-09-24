@@ -7,15 +7,15 @@
 /** 
 * Generate AES key for encryption/decryption.
 * @param {ArrayBuffer} salt - Salt for key derivation.
-* @param {ArrayBuffer} info - Info for key derivation.
+* @param {String} infoString - Info string for key derivation.
 * @param {CryptoKey} key - Key for key derivation.
 * @param {Boolean} extractable - Extractable key.
 * @return {CryptoKey} The derived AES key for encryption/decryption.
 */
-const generateEncryptionAESKey = (salt, info, key, extractable) => {
+const generateEncryptionAESKey = (salt, infoString, key, extractable) => {
   try {
     return crypto.subtle.deriveKey(
-      { name: 'HKDF', hash: 'SHA-256', salt, info },
+      { name: 'HKDF', hash: 'SHA-256', salt, info: StringToArrayBuffer(infoString) },
       key,
       { name: 'AES-GCM', length: 256 },
       extractable,
