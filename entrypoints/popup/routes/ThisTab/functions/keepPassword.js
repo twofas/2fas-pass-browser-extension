@@ -35,7 +35,7 @@ const keepPassword = async state => {
   const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
   // generate encryptionItemT2Key
-  const encryptionItemT2Key = await generateEncryptionAESKey(state.hkdfSaltAB, StringToArrayBuffer(ENCRYPTION_KEYS.ITEM_T2.crypto), state.sessionKeyForHKDF, true);
+  const encryptionItemT2Key = await generateEncryptionAESKey(state.hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, state.sessionKeyForHKDF, true);
   let encryptionItemT2KeyAES_B64;
 
   try {
