@@ -8,7 +8,6 @@ import S from './Popup.module.scss';
 import { Route, Routes, Navigate, useLocation } from 'react-router';
 import { useEffect, lazy, useState, useMemo, useCallback, memo } from 'react';
 import { AuthProvider } from '@/hooks/useAuth';
-import { PopupStateProvider } from '@/hooks/usePopupState';
 import popupOnMessage from './events/popupOnMessage';
 import Blocked from './routes/Blocked';
 import lockShortcuts from './utils/lockShortcuts';
@@ -16,7 +15,6 @@ import lockRMB from './utils/lockRMB';
 import setTheme from './utils/setTheme';
 import isPopupInSeparateWindowExists from './utils/isPopupInSeparateWindowExists';
 import { safariBlankLinks, storageAutoClearActions } from '@/partials/functions';
-import { getInitialRoute } from './utils/getInitialRoute';
 
 const TopBar = lazy(() => import('./components/TopBar'));
 const BottomBar = lazy(() => import('./components/BottomBar'));
@@ -35,7 +33,6 @@ const Details = lazy(() => import('./routes/Details'));
 const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
 const ToastsContent = lazy(() => import('./components/ToastsContent'));
-const InitialRouter = lazy(() => import('./components/InitialRouter'));
 
 const emptyFunc = () => {};
 
@@ -95,7 +92,6 @@ function Popup () {
   const [blockedRoute, setBlockedRoute] = useState(false);
   const [separateWindow, setSeparateWindow] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [initialRoute, setInitialRoute] = useState(null);
 
   const location = useLocation();
 
@@ -159,10 +155,8 @@ function Popup () {
 
     Promise.all([
       setTheme(),
-      checkBlockedRoute(),
-      getInitialRoute()
-    ]).then(([, , route]) => {
-      setInitialRoute(route || '/');
+      checkBlockedRoute()
+    ]).then(() => {
       setLoaded(true);
       
       browser.runtime.onMessage.addListener(popupOnMessage);
@@ -178,7 +172,6 @@ function Popup () {
       }
     }).catch(e => {
       CatchError(e);
-      setInitialRoute('/');
       setLoaded(true);
     });
 
@@ -205,7 +198,7 @@ function Popup () {
     };
   }, []);
 
-  if (!loaded || !initialRoute) {
+  if (!loaded) {
     return null;
   } else if (blockedRoute || location.pathname === '/blocked') {
     return (
@@ -217,31 +210,27 @@ function Popup () {
 
   return (
     <section className={mainSectionClassName}>
-      <PopupStateProvider>
-        <AuthProvider>
-          <InitialRouter initialRoute={initialRoute}>
-            <TopBar />
-            <Routes>
-              <Route path='/connect' element={<ConnectProtectedRoute blockedRoute={blockedRoute}><Connect className={S.passScreen} /></ConnectProtectedRoute>} />
-              <Route path='/' element={<ProtectedRoute blockedRoute={blockedRoute}><ThisTab className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/add-new' element={<ProtectedRoute blockedRoute={blockedRoute}><AddNew className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings' element={<ProtectedRoute blockedRoute={blockedRoute}><Settings className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings-about' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsAbout className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings-preferences' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsPreferences className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings-security' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsSecurity className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings-reset' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsReset className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/settings-save-login-excluded-domains' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsSaveLoginExcludedDomains className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/fetch' element={<ProtectedRoute blockedRoute={blockedRoute}><Fetch className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/fetch/:data' element={<ProtectedRoute blockedRoute={blockedRoute}><FetchExternal /></ProtectedRoute>} />
-              <Route path='/details/:id' element={<ProtectedRoute blockedRoute={blockedRoute}><Details className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/password-generator' element={<ProtectedRoute blockedRoute={blockedRoute}><PasswordGenerator className={S.passScreen} /></ProtectedRoute>} />
-              <Route path='/blocked' element={<Blocked className={S.passScreen} />} />
-              <Route path='*' element={<ProtectedRoute blockedRoute={blockedRoute}><NotFound className={S.passScreen} /></ProtectedRoute>} />
-            </Routes>
-          </InitialRouter>
-          <BottomBar />
-        </AuthProvider>
-      </PopupStateProvider>
+      <AuthProvider>
+        <TopBar />
+        <Routes>
+          <Route path='/connect' element={<ConnectProtectedRoute blockedRoute={blockedRoute}><Connect className={S.passScreen} /></ConnectProtectedRoute>} />
+          <Route path='/' element={<ProtectedRoute blockedRoute={blockedRoute}><ThisTab className={S.passScreen} /></ProtectedRoute>} />
+          <Route path='/add-new' element={<ProtectedRoute blockedRoute={blockedRoute}><AddNew className={S.passScreen} /></ProtectedRoute>} />
+          <Route path='/settings' element={<ProtectedRoute blockedRoute={blockedRoute}><Settings className={S.passScreen} /></ProtectedRoute>} />
+          <Route path='/settings-about' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsAbout className={S.passScreen} /></ProtectedRoute>} />
+          <Route path='/settings-preferences' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsPreferences className={S.passScreen} /></ProtectedRoute>} />
+          <Route path='/settings-security' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsSecurity className={S.passScreen} /></ProtectedRoute>} />
+          <Route path='/settings-reset' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsReset className={S.passScreen} /></ProtectedRoute>} />
+          <Route path='/settings-save-login-excluded-domains' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsSaveLoginExcludedDomains className={S.passScreen} /></ProtectedRoute>} />
+          <Route path='/fetch' element={<ProtectedRoute blockedRoute={blockedRoute}><Fetch className={S.passScreen} /></ProtectedRoute>} />
+          <Route path='/fetch/:data' element={<ProtectedRoute blockedRoute={blockedRoute}><FetchExternal /></ProtectedRoute>} />
+          <Route path='/details/:id' element={<ProtectedRoute blockedRoute={blockedRoute}><Details className={S.passScreen} /></ProtectedRoute>} />
+          <Route path='/password-generator' element={<ProtectedRoute blockedRoute={blockedRoute}><PasswordGenerator className={S.passScreen} /></ProtectedRoute>} />
+          <Route path='/blocked' element={<Blocked className={S.passScreen} />} />
+          <Route path='*' element={<ProtectedRoute blockedRoute={blockedRoute}><NotFound className={S.passScreen} /></ProtectedRoute>} />
+        </Routes>
+        <BottomBar />
+      </AuthProvider>
       <ToastsContent />
     </section>
   );

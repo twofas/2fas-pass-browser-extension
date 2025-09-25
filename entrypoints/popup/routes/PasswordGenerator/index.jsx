@@ -7,11 +7,10 @@
 import S from './PasswordGenerator.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
-import { lazy, useEffect, useCallback } from 'react';
+import { lazy, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { Form, Field } from 'react-final-form';
 import copyValue from '@/partials/functions/copyValue';
-import { usePopupState } from '@/hooks/usePopupState';
 
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
@@ -21,21 +20,9 @@ const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react')
 function PasswordGenerator (props) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll, setData, popupState } = usePopupState();
-
-  const updateData = useCallback(updates => {
-    setData(prevData => ({
-      ...prevData,
-      ...updates
-    }));
-  }, [setData]);
 
   useEffect(() => {
-    setHref(location.pathname);
-  }, [location.pathname, setHref]);
-
-  useEffect(() => {
-    const currentState = location?.state || popupState?.data?.navigationState;
+    const currentState = location?.state;
 
     if (
       !currentState ||
@@ -51,31 +38,9 @@ function PasswordGenerator (props) {
         navigate('/');
       }
     }
-  }, [location.state, location.key, navigate, popupState?.data?.navigationState]);
+  }, [location.state, location.key, navigate]);
 
-  useEffect(() => {
-    if (shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
-      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
-    }
-  }, [shouldRestoreScroll, popupStateData, scrollElementRef]);
 
-  useEffect(() => {
-    if (location?.state) {
-      updateData({
-        ...location.state.data,
-        navigationState: location.state,
-        generatedPassword: initialPassword
-      });
-    } else if (!savedPassword) {
-      updateData({
-        generatedPassword: initialPassword,
-        characters,
-        includeUppercase,
-        includeNumbers,
-        includeSpecialChars
-      });
-    }
-  }, []);
 
   const generatePassword = (length, useUppercase, useNumbers, useSpecialChars) => {
     let charset = 'abcdefghijklmnopqrstuvwxyz';
@@ -106,9 +71,6 @@ function PasswordGenerator (props) {
       return location.state.data[key];
     }
 
-    if (popupState?.data?.[key] !== undefined) {
-      return popupState.data[key];
-    }
 
     return fallback;
   };
@@ -130,7 +92,7 @@ function PasswordGenerator (props) {
   };
 
   const onSubmit = values => {
-    const currentState = location?.state || popupState?.data?.navigationState;
+    const currentState = location?.state;
 
     if (!currentState) {
       showToast(browser.i18n.getMessage('password_generator_data_error'));
@@ -162,7 +124,7 @@ function PasswordGenerator (props) {
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => { setScrollElementRef(el); }}>
+      <div>
         <section className={S.passwordGenerator}>
           <div className={S.passwordGeneratorContainer}>
             <NavigationButton type='back' />
@@ -183,29 +145,10 @@ function PasswordGenerator (props) {
                   );
 
                   form.change('password', newPassword);
-
-                  setTimeout(() => {
-                    updateData({
-                      generatedPassword: newPassword,
-                      characters: currentValues.characters,
-                      includeUppercase: currentValues.includeUppercase,
-                      includeNumbers: currentValues.includeNumbers,
-                      includeSpecialChars: currentValues.includeSpecialChars
-                    });
-                  }, 0);
                 };
 
                 return (
-                  <form onSubmit={handleSubmit} className={S.passwordGeneratorForm} onChange={() => {
-                    const values = form.getState().values;
-                    updateData({
-                      generatedPassword: values.password,
-                      characters: values.characters,
-                      includeUppercase: values.includeUppercase,
-                      includeNumbers: values.includeNumbers,
-                      includeSpecialChars: values.includeSpecialChars
-                    });
-                  }}>
+                  <form onSubmit={handleSubmit} className={S.passwordGeneratorForm}>
                     <Field name='password'>
                       {({ input }) => (
                         <div className={`${pI.passInput} ${pI.disabled} ${pI.withoutMargin}`}>
