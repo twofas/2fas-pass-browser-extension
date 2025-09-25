@@ -67,7 +67,6 @@ function ThisTab (props) {
       return location.state.data[key];
     }
 
-
     return fallback;
   };
 
@@ -98,8 +97,6 @@ function ThisTab (props) {
       setSortDisabled(false);
     }
   }, [sort]);
-
-
 
   const handleSearchChange = useCallback(e => {
     const value = e?.target?.value;

@@ -8,6 +8,7 @@ import S from './TopBar.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useLocation } from 'react-router';
 import { useEffect, useRef, lazy, useCallback, useMemo, memo } from 'react';
+import { useAuthActions } from '@/hooks/useAuth';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
@@ -23,7 +24,7 @@ const AddNewIcon = lazy(() => import('@/assets/popup-window/add-new.svg?react'))
 */
 function TopBar () {
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout } = useAuthActions();
   const { matchingLoginsLength } = useMatchingLogins();
   const unwatchConfigured = useRef(null);
 
