@@ -17,8 +17,6 @@ import onMessage from './events/onMessage';
 import { valueToNFKD, copyValue } from '@/partials/functions';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
-import { usePopupState } from '@/hooks/usePopupState';
-import { PULL_REQUEST_TYPES } from '@/constants';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -33,7 +31,7 @@ const additionalVariants = {
   visible: { maxHeight: '189px' }
 };
 
-/** 
+/**
 * AddNew component for creating a new login entry.
 * @param {Object} props - The properties passed to the component.
 * @return {JSX.Element} The rendered component.
@@ -41,11 +39,9 @@ const additionalVariants = {
 function AddNew (props) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll, setData, popupState } = usePopupState();
 
   const [loading, setLoading] = useState(true);
   const [dataInitialized, setDataInitialized] = useState(false);
-  const [waitingForPopupState, setWaitingForPopupState] = useState(true);
   const [passwordGeneratorProcessed, setPasswordGeneratorProcessed] = useState(false);
 
   const [url, setUrl] = useState('');
@@ -58,48 +54,15 @@ function AddNew (props) {
   const [additionalOverflow, setAdditionalOverflow] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
-
-  const updateData = updates => {
-    setData(prevData => ({
-      ...prevData,
-      ...updates
-    }));
-  };
-
   useEffect(() => {
-    setHref(location.pathname);
-  }, [location.pathname, setHref]);
-
-  useEffect(() => {
-    if (location?.state?.data && Object.keys(location.state.data).length > 0) {
-      setWaitingForPopupState(false);
-      return;
-    }
-
-    if (popupState !== undefined) {
-      setWaitingForPopupState(false);
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
-      setWaitingForPopupState(false);
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [popupState, location?.state?.data]);
-
-  useEffect(() => {
-    if (!dataInitialized && !waitingForPopupState) {
+    if (!dataInitialized) {
       let sourceData = null;
 
       if (location?.state?.data && Object.keys(location.state.data).length > 0) {
         sourceData = location.state.data;
-      } else if (popupState?.data && Object.keys(popupState.data).length > 0) {
-        sourceData = popupState.data;
       }
 
       if (sourceData) {
-
         if (sourceData.url !== undefined) {
           const value = typeof sourceData.url === 'string' ? filterXSS(sourceData.url) : sourceData.url;
           setUrl(value);
@@ -140,80 +103,60 @@ function AddNew (props) {
         if (sourceData.additionalOverflow !== undefined) {
           setAdditionalOverflow(sourceData.additionalOverflow);
         }
-
-        updateData(sourceData);
       }
 
       setDataInitialized(true);
     }
-  }, [dataInitialized, waitingForPopupState, location?.state?.data, popupState, updateData]);
+  }, [dataInitialized, location?.state?.data]);
 
   useEffect(() => {
     if (!passwordGeneratorProcessed && location?.state?.from === 'passwordGenerator' && location?.state?.data) {
       const data = location.state.data;
-      const updates = {};
 
       if (data.password !== undefined) {
         setPassword(data.password);
-        updates.password = data.password;
       }
 
       if (data.username !== undefined) {
         setUsername(data.username);
-        updates.username = data.username;
       }
 
       if (data.onMobile !== undefined) {
         setOnMobile(data.onMobile);
-        updates.onMobile = data.onMobile;
       }
 
       if (data.additionalOverflow !== undefined) {
         setAdditionalOverflow(data.additionalOverflow);
-        updates.additionalOverflow = data.additionalOverflow;
-      }
-
-      if (Object.keys(updates).length > 0) {
-        updateData(updates);
       }
 
       setPasswordGeneratorProcessed(true);
     }
-  }, [location?.state, updateData, passwordGeneratorProcessed]);
+  }, [location?.state, passwordGeneratorProcessed]);
 
   useEffect(() => {
-    const messageListener = async (request, sender, sendResponse) => onMessage(request, sender, sendResponse, setUrl, updateData);
+    const messageListener = async (request, sender, sendResponse) => onMessage(request, sender, sendResponse, setUrl);
     browser.runtime.onMessage.addListener(messageListener);
 
     const getDomainData = async () => {
       const data = await getDomainInfo();
-      const updates = {};
 
       if (data.url) {
         const sanitizedUrl = filterXSS(data.url);
         setUrl(sanitizedUrl);
-        updates.url = sanitizedUrl;
       }
 
       if (data.minLength) {
         const sanitizedMinLength = filterXSS(data.minLength);
         setMinLength(sanitizedMinLength);
-        updates.minLength = sanitizedMinLength;
       }
 
       if (data.maxLength) {
         const sanitizedMaxLength = filterXSS(data.maxLength);
         setMaxLength(sanitizedMaxLength);
-        updates.maxLength = sanitizedMaxLength;
       }
 
       if (data.pattern) {
-        setPattern(data.pattern); // Do not sanitize
-        updates.pattern = data.pattern;
-      }
-
-      if (Object.keys(updates).length > 0) {
-        updateData(updates);
+        setPattern(data.pattern);
       }
     };
 
@@ -221,9 +164,8 @@ function AddNew (props) {
       try {
         if (dataInitialized) {
           const hasLocationData = location?.state?.data && Object.keys(location.state.data).length > 0;
-          const hasPopupStateData = popupState?.data && Object.keys(popupState.data).length > 0;
 
-          if (!hasLocationData && !hasPopupStateData) {
+          if (!hasLocationData) {
             await getDomainData();
           }
 
@@ -240,18 +182,10 @@ function AddNew (props) {
     return () => {
       browser.runtime.onMessage.removeListener(messageListener);
     };
-  }, [updateData, popupState?.data, location?.state?.data, dataInitialized]);
-
-  useEffect(() => {
-    if (!loading && shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
-      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
-    }
-  }, [loading, shouldRestoreScroll, popupStateData, scrollElementRef]);
+  }, [location?.state?.data, dataInitialized]);
 
   const handlePasswordVisibleClick = () => {
-    const newValue = !passwordVisible;
-    setPasswordVisible(newValue);
-    updateData({ passwordVisible: newValue });
+    setPasswordVisible(!passwordVisible);
   };
 
   const handleCopyPassword = async form => {
@@ -305,40 +239,30 @@ function AddNew (props) {
 
     return navigate('/fetch', {
       state: {
-        action: PULL_REQUEST_TYPES.ADD_DATA,
+        action: 'newLogin',
         from: 'add-new',
         data
       }
     });
   };
 
-  if (loading || !dataInitialized || waitingForPopupState) {
+  if (loading || !dataInitialized) {
     return null;
   }
 
   return (
     <LazyMotion features={loadDomAnimation}>
       <div className={`${props.className ? props.className : ''}`}>
-        <div ref={el => { setScrollElementRef(el); }}>
+        <div>
           <section className={S.addNew}>
             <div className={S.addNewContainer}>
               <NavigationButton type='cancel' />
-          
+
               <h2>{browser.i18n.getMessage('add_new_header')}</h2>
               <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
 
-              <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url, username, password }} render={({ handleSubmit, form, submitting }) => ( // pristine, values
-                  <form onSubmit={handleSubmit} onChange={() => {
-                    const values = form.getState().values;
-                    updateData({
-                      url: values.url || '',
-                      username: values.username || '',
-                      password: values.password || '',
-                      minLength: values['password-minlength'] || '',
-                      maxLength: values['password-maxlength'] || '',
-                      pattern: values['password-pattern'] || ''
-                    });
-                  }}>
+              <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url, username, password }} render={({ handleSubmit, form, submitting }) => (
+                  <form onSubmit={handleSubmit}>
                     <Field name="password-minlength" value={minLength}>
                       {({ input }) => <input type="hidden" {...input} id="password-minlength" />}
                     </Field>
@@ -388,10 +312,8 @@ function AddNew (props) {
                                 id="set-in-mobile"
                                 checked={onMobile}
                                 onChange={() => {
-                                const newValue = !onMobile;
-                                setOnMobile(newValue);
-                                updateData({ onMobile: newValue });
-                              }}
+                                  setOnMobile(!onMobile);
+                                }}
                               />
                               <label htmlFor="set-in-mobile">
                                 <span className={bS.passToggleBox}>
@@ -477,7 +399,7 @@ function AddNew (props) {
                                   to='/password-generator'
                                   className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
                                   title={browser.i18n.getMessage('add_new_generate_password')}
-                                  state={{ from: 'addNew', data: { ...form.getState().values, onMobile, additionalOverflow } }}
+                                  state={{ from: 'addNew', data: { ...form.getState().values, onMobile, additionalOverflow, passwordVisible } }}
                                   prefetch='intent'
                                 >
                                   <RefreshIcon />

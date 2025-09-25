@@ -5,9 +5,8 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { Link, useLocation } from 'react-router';
-import { lazy, useEffect, useState, useRef } from 'react';
-import { usePopupState } from '@/hooks/usePopupState';
+import { Link } from 'react-router';
+import { lazy } from 'react';
 
 const ExtensionName = lazy(() => import('./components/ExtensionName'));
 const Shortcut = lazy(() => import('./components/Shortcut'));
@@ -25,35 +24,11 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsPreferences (props) {
-  const location = useLocation();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll, popupState, setData } = usePopupState();
-  const [loadedComponents, setLoadedComponents] = useState(new Set());
-  const componentsToLoad = useRef(['ExtensionName', 'Shortcut', 'Push', 'Theme', 'SavePasswordPrompt', 'ContextMenu', 'Logs']);
-
-  useEffect(() => {
-    setHref(location.pathname);
-  }, [location.pathname, setHref]);
-
-  useEffect(() => {
-    if (loadedComponents.size === componentsToLoad.current.length) {
-      if (shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
-        scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
-      }
-    }
-  }, [loadedComponents, shouldRestoreScroll, popupStateData, scrollElementRef]);
-
-  const handleComponentLoad = (componentName) => {
-    setLoadedComponents(prev => {
-      const newSet = new Set(prev);
-      newSet.add(componentName);
-      return newSet;
-    });
-  };
   
   
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => { setScrollElementRef(el); }}>
+      <div>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />
@@ -65,22 +40,18 @@ function SettingsPreferences (props) {
               </div>
     
               <div className={S.settingsSubmenuBody}>
-                <ExtensionName
-                  onLoad={() => handleComponentLoad('ExtensionName')}
-                  popupState={popupState}
-                  setData={setData}
-                />
-                <Shortcut onLoad={() => handleComponentLoad('Shortcut')} />
-                <Push onLoad={() => handleComponentLoad('Push')} />
-                <Theme onLoad={() => handleComponentLoad('Theme')} />
-                <SavePasswordPrompt onLoad={() => handleComponentLoad('SavePasswordPrompt')} />
+                <ExtensionName />
+                <Shortcut />
+                <Push />
+                <Theme />
+                <SavePasswordPrompt />
 
                 <div className={S.settingsAdvanced}>
                   <h4>{browser.i18n.getMessage('advanced')}</h4>
 
                   <div className={S.settingsAdvancedContainer}>
-                    <ContextMenu onLoad={() => handleComponentLoad('ContextMenu')} />
-                    <Logs onLoad={() => handleComponentLoad('Logs')} />
+                    <ContextMenu />
+                    <Logs />
                   </div>
                 </div>
 
