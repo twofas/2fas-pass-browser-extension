@@ -5,9 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { lazy, useEffect } from 'react';
-import { useLocation } from 'react-router';
-import { usePopupState } from '@/hooks/usePopupState';
+import { lazy,  } from 'react';
 
 const AutoClearClipboard = lazy(() => import('./components/AutoClearClipboard'));
 const IdleLock = lazy(() => import('./components/IdleLock'));
@@ -21,22 +19,13 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSecurity (props) {
-  const location = useLocation();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
+  
 
-  useEffect(() => {
-    setHref(location.pathname);
-  }, [location.pathname, setHref]);
 
-  useEffect(() => {
-    if (shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
-      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
-    }
-  }, [shouldRestoreScroll, popupStateData, scrollElementRef]);
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => { setScrollElementRef(el); }}>
+      <div>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />

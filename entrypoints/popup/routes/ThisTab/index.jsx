@@ -23,7 +23,6 @@ import { useLocation } from 'react-router';
 import keepPassword from './functions/keepPassword';
 import { toast } from 'react-toastify';
 import isLoginsCorrect from './functions/isLoginsCorrect';
-import { usePopupState } from '@/hooks/usePopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const SmallLoginItem = lazy(() => import('./components/SmallLoginItem'));
@@ -50,8 +49,7 @@ function ThisTab (props) {
   const location = useLocation();
   const { state } = location;
   const { changeMatchingLoginsLength } = useMatchingLogins();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll, setData, popupState } = usePopupState();
-
+  
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('Unknown');
   const [url, setUrl] = useState('Unknown');
@@ -69,9 +67,6 @@ function ThisTab (props) {
       return location.state.data[key];
     }
 
-    if (popupState?.data?.[key] !== undefined) {
-      return popupState.data[key];
-    }
 
     return fallback;
   };
@@ -89,12 +84,6 @@ function ThisTab (props) {
   const unwatchStorageVersion = useRef(null);
   const thisTabTopRef = useRef(null);
 
-  const updateData = useCallback((updates) => {
-    setData(prevData => ({
-      ...prevData,
-      ...updates
-    }));
-  }, [setData]);
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
@@ -110,15 +99,7 @@ function ThisTab (props) {
     }
   }, [sort]);
 
-  useEffect(() => {
-    setHref(location.pathname);
-  }, [location.pathname, setHref]);
 
-  useEffect(() => {
-    if (location?.state?.data && Object.keys(location.state.data).length > 0) {
-      updateData(location.state.data);
-    }
-  }, []);
 
   const handleSearchChange = useCallback(e => {
     const value = e?.target?.value;
@@ -129,19 +110,16 @@ function ThisTab (props) {
     if (value.trim().length > 0) {
       setSearchActive(true);
       setSearchValue(value);
-      updateData({ searchActive: true, searchValue: value });
     } else {
       setSearchActive(false);
       setSearchValue('');
-      updateData({ searchActive: false, searchValue: '' });
     }
-  }, [updateData]);
+  });
 
   const handleSearchClear = useCallback(() => {
     setSearchValue('');
     setSearchActive(false);
-    updateData({ searchValue: '', searchActive: false });
-  }, [updateData]);
+  });
 
   const handleTagChange = useCallback((tag) => {
     setSelectedTag(tag);
@@ -149,11 +127,8 @@ function ThisTab (props) {
     if (tag) {
       const tagInfo = { name: tag.name, amount: tag.amount };
       setLastSelectedTagInfo(tagInfo);
-      updateData({ selectedTag: tag, lastSelectedTagInfo: tagInfo });
-    } else {
-      updateData({ selectedTag: null });
     }
-  }, [updateData]);
+  });
 
   const handleKeepPassword = useCallback(async () => {
     await keepPassword(state);
@@ -200,7 +175,6 @@ function ThisTab (props) {
 
     setSearchActive(false);
     setSearchValue('');
-    updateData({ searchActive: false, searchValue: '' });
   }, [changeMatchingLoginsLength]);
 
   const watchStorageVersion = useCallback(() => {
@@ -347,18 +321,12 @@ function ThisTab (props) {
     }
   }, [state]);
 
-  useEffect(() => {
-    if (!loading && shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
-      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
-    }
-  }, [loading, shouldRestoreScroll, popupStateData, scrollElementRef]);
 
   return (
     <LazyMotion features={loadDomAnimation}>
       <div className={`${props.className ? props.className : ''}`}>
         <div ref={el => {
           scrollableRef.current = el;
-          setScrollElementRef(el);
         }}>
           <section className={S.thisTab}>
             <div className={autofillPopupClass}>

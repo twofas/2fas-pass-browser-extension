@@ -706,43 +706,6 @@ class TwoFasError extends Error {
       message: 'Style observer detected mutation on shadowHost element',
       code: 9403
     },
-    // POPUP STATE ENCRYPTION
-    popupStateEncryptNonceError: {
-      message: 'popupState: error generating nonce',
-      code: 9410
-    },
-    popupStateEncryptImportKeyError: {
-      message: 'popupState: error importing key',
-      code: 9411
-    },
-    popupStateEncryptError: {
-      message: 'popupState: error encrypting data',
-      code: 9412
-    },
-    popupStateDecryptImportKeyError: {
-      message: 'popupState: error importing key for decryption',
-      code: 9413
-    },
-    popupStateDecryptError: {
-      message: 'popupState: error decrypting data',
-      code: 9414
-    },
-    popupStateGetTabError: {
-      message: 'popupState: error getting tab',
-      code: 9415
-    },
-    popupStateGetKeyError: {
-      message: 'popupState: error getting storage key',
-      code: 9416
-    },
-    popupStateStorageError: {
-      message: 'popupState: error accessing storage',
-      code: 9417
-    },
-    popupStateCreateError: {
-      message: 'popupState: error creating popup state',
-      code: 9418
-    },
     // TAG INDEX ERROR
     tagIndexError: {
       message: 'Tag not found in tags list',
