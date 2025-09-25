@@ -9,6 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, lazy } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
+import { useAuthActions } from '@/hooks/useAuth';
 import { generateSessionKeysNonces, generateEphemeralKeys, generateSessionID, calculateSignature, generateQR } from './functions';
 import ConnectOnMessage from './socket/ConnectOnMessage';
 import ConnectOnClose from './socket/ConnectOnClose';
@@ -35,7 +36,7 @@ function Connect (props) {
   const [headerText, setHeaderText] = useState(browser.i18n.getMessage('connect_header'));
   const [connectingLoader, setConnectingLoader] = useState(264);
 
-  const { login } = useAuth();
+  const { login } = useAuthActions();
 
   const initConnection = async () => {
     let sessionID, signature, qr, ephemeralData, socket;
