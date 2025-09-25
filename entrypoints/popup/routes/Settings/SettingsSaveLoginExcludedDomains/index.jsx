@@ -6,12 +6,10 @@
 
 import S from '../Settings.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
-import { useState, useEffect, lazy, useCallback } from 'react';
+import { useState, useEffect, lazy } from 'react';
 import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
-import { useLocation } from 'react-router';
-import { usePopupState } from '@/hooks/usePopupState';
 
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -24,13 +22,9 @@ const CancelIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSaveLoginExcludedDomains (props) {
-  const location = useLocation();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll, popupState, setData } = usePopupState();
-
+  
+  
   const getInitialValue = (key, fallback) => {
-    if (popupState?.data?.[key] !== undefined) {
-      return popupState.data[key];
-    }
     return fallback;
   };
 
@@ -39,20 +33,10 @@ function SettingsSaveLoginExcludedDomains (props) {
   const [newDomainForm, setNewDomainForm] = useState(getInitialValue('newDomainForm', false));
   const [inputValue, setInputValue] = useState(getInitialValue('inputValue', ''));
 
-  const updateData = useCallback(updates => {
-    setData(prevData => ({
-      ...prevData,
-      ...updates
-    }));
-  }, [setData]);
-
-  useEffect(() => {
-    setHref(location.pathname);
-  }, [location.pathname, setHref]);
 
   useEffect(() => {
     const getExcludedDomains = async () => {
-      if (!popupState?.data?.excludedDomains) {
+      {
         let storageExcludedDomains = await storage.getItem('local:savePromptIgnoreDomains');
 
         if (!storageExcludedDomains) {
@@ -61,7 +45,6 @@ function SettingsSaveLoginExcludedDomains (props) {
         }
 
         setExcludedDomains(storageExcludedDomains);
-        updateData({ excludedDomains: storageExcludedDomains });
       }
 
       setLoading(false);
@@ -75,16 +58,10 @@ function SettingsSaveLoginExcludedDomains (props) {
   }, []);
 
 
-  useEffect(() => {
-    if (!loading && shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
-      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
-    }
-  }, [loading, shouldRestoreScroll, popupStateData, scrollElementRef]);
 
   const removeExcludedDomain = async domain => {
     const updatedDomains = excludedDomains.filter((d) => d !== domain);
     setExcludedDomains(updatedDomains);
-    updateData({ excludedDomains: updatedDomains });
     await storage.setItem('local:savePromptIgnoreDomains', updatedDomains);
     showToast(browser.i18n.getMessage('settings_excluded_domains_remove_toast'), 'success');
   };
@@ -156,7 +133,6 @@ function SettingsSaveLoginExcludedDomains (props) {
     setExcludedDomains(updatedDomains);
     setNewDomainForm(false);
     setInputValue('');
-    updateData({ excludedDomains: updatedDomains, newDomainForm: false, inputValue: '' });
     form.reset();
     showToast(browser.i18n.getMessage('settings_excluded_domains_add_success'), 'success');
   };
@@ -167,7 +143,7 @@ function SettingsSaveLoginExcludedDomains (props) {
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => { setScrollElementRef(el); }}>
+      <div>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />
@@ -186,7 +162,6 @@ function SettingsSaveLoginExcludedDomains (props) {
                 <div className={`${S.settingsExcludedDomainsAdd} ${newDomainForm ? S.hidden : ''} ${excludedDomains.length > 0 ? S.settingsExcludedDomainsAddAnother : ''}`}>
                   <button className={S.settingsExcludedDomainsAddButton} onClick={() => {
                     setNewDomainForm(true);
-                    updateData({ newDomainForm: true });
                   }}>
                     <AddNewIcon />
                     <span>{excludedDomains.length > 0 ? browser.i18n.getMessage('settings_excluded_domains_add_another_domain_text') : browser.i18n.getMessage('settings_excluded_domains_add_domain_text')}</span>
@@ -198,7 +173,6 @@ function SettingsSaveLoginExcludedDomains (props) {
                       <form className={S.settingsExcludedDomainsNewForm} onSubmit={handleSubmit} onChange={() => {
                         const values = form.getState().values;
                         setInputValue(values['ignored-domain'] || '');
-                        updateData({ inputValue: values['ignored-domain'] || '' });
                       }}>
                         <Field name='ignored-domain'>
                           {({ input }) => (
@@ -231,7 +205,6 @@ function SettingsSaveLoginExcludedDomains (props) {
                                     onClick={() => {
                                       setNewDomainForm(false);
                                       setInputValue('');
-                                      updateData({ newDomainForm: false, inputValue: '' });
                                       form.reset();
                                     }}
                                   >

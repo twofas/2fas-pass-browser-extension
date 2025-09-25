@@ -21,9 +21,9 @@ function NavigationButton (props) {
   return (
     <Link
       className={`${props.type} ${props.className || ''}`}
-      to={props.type === 'cancel' ? '/' : '..'}
+      to={props?.type === 'cancel' ? '/' : '..'}
       onClick={e => {
-        if (props.type === 'back') {
+        if (props?.type === 'back') {
           e.preventDefault();
 
           try {
@@ -36,15 +36,15 @@ function NavigationButton (props) {
             navigate('/');
           }
         } else {
-          if (props.onClick && typeof props.onClick === 'function') {
+          if (props?.onClick && typeof props?.onClick === 'function') {
             props.onClick(e);
           }
         }
       }}
-      title={browser.i18n.getMessage(props.type)}
+      title={props?.type ? browser.i18n.getMessage(props.type) : ''}
       prefetch='intent'
     >
-      {props.type === 'cancel' ? <CancelIcon /> : <BackIcon />}
+      {props?.type === 'cancel' ? <CancelIcon /> : <BackIcon />}
     </Link>
   );
 }
