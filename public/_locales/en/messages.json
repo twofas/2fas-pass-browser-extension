@@ -1055,6 +1055,10 @@
     "message": "To set or change this shortcut, go to your browser settings, extensions, then click on the gear icon and select “Manage Extension Shortcuts.”",
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
+  "settings_shortcut_safari_tooltip": {
+    "message": "To set or change this shortcut, go to your browser settings, extensions, 2FAS Pass Browser Extension, then change the shortcut in the provided field.",
+    "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
+  },
   "settings_push_native": {
     "message": "Native Browser's Notifications",
     "description": "Option to use the browser's native notification system"
