@@ -17,10 +17,6 @@ function Shortcut (props) {
   const [shortcut, setShortcut] = useState(null);
   const [shortcutLink, setShortcutLink] = useState('#');
 
-  if (import.meta.env.BROWSER === 'safari') {
-    return null;
-  }
-
   useEffect(() => {
     const getShortcut = async () => {
       let commands;
@@ -143,27 +139,42 @@ function Shortcut (props) {
     }
   };
 
+  if (
+    import.meta.env.BROWSER === 'safari' && 
+    (!browser?.commands?.getAll || typeof browser?.commands?.getAll !== 'function')
+  ) {
+    return null;
+  }
+
   return (
     <div className={S.settingsShortcut}>
       <div className={pI.passInput}>
-        <div className={`${pI.passInputTop} ${(shortcutLink === 'firefox' && !openShortcutSettingsAvailable()) ? S.settingsShortcutFirefoxInput : ''}`}>
+        <div className={`${pI.passInputTop} ${((shortcutLink === 'firefox' && !openShortcutSettingsAvailable()) || (shortcutLink === 'safari')) ? S.settingsShortcutFirefoxInput : ''}`}>
           <label htmlFor="shortcut">{browser.i18n.getMessage('settings_shortcut')}</label>
+          <button
+            type='button'
+            className={`${bS.btn} ${bS.btnClear} ${((shortcutLink === 'firefox' && !openShortcutSettingsAvailable()) || (shortcutLink === 'safari')) ? S.settingsShortcutFirefoxBtn : ''}`} 
+            onClick={onEditShortcut}
+          >
+            {{
+              'firefox': openShortcutSettingsAvailable() ? browser.i18n.getMessage('edit') : browser.i18n.getMessage('info'),
+              'safari': browser.i18n.getMessage('info')
+            }[shortcutLink] || browser.i18n.getMessage('edit')}
+          </button>
           {
-            import.meta.env.BROWSER === 'safari' ? null : (
-              <button
-                type='button'
-                className={`${bS.btn} ${bS.btnClear} ${(shortcutLink === 'firefox' && !openShortcutSettingsAvailable()) ? S.settingsShortcutFirefoxBtn : ''}`} 
-                onClick={onEditShortcut}
-              >
-                {shortcutLink === 'firefox' ?
-                (openShortcutSettingsAvailable() ? browser.i18n.getMessage('edit') : browser.i18n.getMessage('info')) :
-                browser.i18n.getMessage('edit')}
-              </button>
-            )
+            import.meta.env.BROWSER === 'firefox' ? (
+              <div className={`${S.settingsShortcutFirefoxTooltip}`}>
+                <p>{browser.i18n.getMessage('settings_shortcut_firefox_tooltip')}</p>
+              </div>
+            ) : null
           }
-          <div className={`${S.settingsShortcutFirefoxTooltip}`}>
-            <p>{browser.i18n.getMessage('settings_shortcut_firefox_tooltip')}</p>
-          </div>
+          {
+            import.meta.env.BROWSER === 'safari' ? (
+              <div className={`${S.settingsShortcutFirefoxTooltip}`}>
+                <p>{browser.i18n.getMessage('settings_shortcut_safari_tooltip')}</p>
+              </div>
+            ) : null
+          }
         </div>
         <div className={pI.passInputDescription}>
           <p>{browser.i18n.getMessage('settings_shortcut_description')}</p>
