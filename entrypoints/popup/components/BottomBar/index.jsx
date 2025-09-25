@@ -8,9 +8,11 @@ import S from './BottomBar.module.scss';
 import { useState, useEffect, lazy, useCallback, useMemo, memo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
+import { PULL_REQUEST_TYPES } from '@/constants';
 
 const NewWindowIcon = lazy(() => import('@/assets/popup-window/new-window.svg?react'));
 const SettingsIcon = lazy(() => import('@/assets/popup-window/settings.svg?react'));
+const FullSyncIcon = lazy(() => import('@/assets/popup-window/full-sync.svg?react'));
 
 /** 
 * Function to get the security icon.
@@ -100,20 +102,27 @@ function BottomBar () {
     }
   }, [location, navigate]);
 
-  const newWindowButtonClass = useMemo(() => 
+  const newWindowButtonClass = useMemo(() =>
     separateWindow ? S.hiddenPermanent : '',
     [separateWindow]
   );
 
   const settingsLinkClass = useMemo(() => {
-    if (location.pathname === '/connect' || location.pathname === '/blocked') {
-      return S.hidden;
+    const path = location?.pathname;
+
+    if (!path || path === '/connect' || path === '/blocked') {
+      return '';
     }
-    
-    return location.pathname === '/settings' ? S.disabled : '';
+
+    return path === '/settings' ? `${S.visible} ${S.disabled}` : S.visible;
   }, [location.pathname]);
 
-  const secIconClass = useMemo(() => 
+  const fetchLinkClass = useMemo(() => {
+    const path = location?.pathname;
+    return path && path !== '/connect' && path !== '/blocked' ? S.visible : '';
+  }, [location.pathname]);
+
+  const secIconClass = useMemo(() =>
     `${S.bottombarSecIcon} ${securityIcon ? S.active : ''} ${wsActive ? S.wsActive : ''}`,
     [securityIcon, wsActive]
   );
@@ -157,6 +166,19 @@ function BottomBar () {
         <div className={secIconClass}>
           <div className={S.bottombarSecIconContent} dangerouslySetInnerHTML={{ __html: securityIcon }} />
         </div>
+
+        <div className={`${S.bottombarFetch} ${fetchLinkClass}`}>
+          <Link
+            to='/fetch'
+            state={{ action: PULL_REQUEST_TYPES.FULL_SYNC, from: 'bottomBar' }}
+            title={browser.i18n.getMessage('sync_title')}
+            prefetch='intent'
+          >
+            <FullSyncIcon />
+            <span>{browser.i18n.getMessage('sync')}</span>
+          </Link>
+        </div>
+
         <p className={S.bottombarSecIconTooltip}>
           <span>{tooltipHeader}</span>
           <span>{tooltipText}</span>

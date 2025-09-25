@@ -182,5 +182,13 @@
   "no_valid_domain": {
     "message": "No valid domain detected. If it is a non-standard domain, add the appropriate protocol (e.g. https) at the beginning.",
     "description": "Label for a state where no valid domain is provided"
+  },
+  "sync": {
+    "message": "Sync",
+    "description": "Label for the sync functionality"
+  },
+  "sync_title": {
+    "message": "Full Sync Data with 2FAS Pass Mobile App",
+    "description": "Title for the sync data section"
   }
 }
