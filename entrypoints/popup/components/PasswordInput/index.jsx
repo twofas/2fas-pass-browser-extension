@@ -14,15 +14,16 @@ import S from './PasswordInput.module.scss';
  * @return {JSX.Element} The rendered component
  */
 function PasswordInput(props) {
-  const { 
-    value = '', 
-    onChange, 
-    disabled = false, 
+  const {
+    value = '',
+    onChange,
+    disabled = false,
     showPassword = false,
     isDecrypted = false,
+    passwordDecryptError = false,
     id,
     className = '',
-    ...inputProps 
+    ...inputProps
   } = props;
   
   const [isFocused, setIsFocused] = useState(false);
@@ -242,7 +243,7 @@ function PasswordInput(props) {
           className={S.passwordInputHiddenInput}
         />
         
-        <div ref={textWrapperRef} className={S.passwordInputTextWrapper}>
+        <div ref={textWrapperRef} className={`${S.passwordInputTextWrapper} ${passwordDecryptError ? S.passwordInputHidden : ''}`}>
           {renderColoredText()}
           {isFocused && selection.start === selection.end ? (
             <span

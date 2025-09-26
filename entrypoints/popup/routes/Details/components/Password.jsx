@@ -45,8 +45,9 @@ const changePasswordVariants = {
 */
 function Password (props) {
   const { data, actions, generatorData } = props;
-  const { service, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError, form } = data;
-  const { setPasswordEditable, setPasswordVisible, setPasswordMobile, setPasswordDecryptError, updateFormValues} = actions;
+  const { service, passwordEditable, passwordVisible, passwordMobile, form } = data;
+  const { setPasswordEditable, setPasswordVisible, setPasswordMobile, updateFormValues} = actions;
+  const [passwordDecryptError, setPasswordDecryptError] = useState(false);
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
 
@@ -274,11 +275,12 @@ function Password (props) {
               <PasswordInput
                 {...input}
                 type={passwordVisible ? 'text' : 'password'}
-                placeholder={!passwordMobile && !passwordDecryptError && isT3orT2WithPassword(service) || passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
+                placeholder={!passwordMobile && isT3orT2WithPassword(service) || passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
                 id="password"
                 showPassword={passwordVisible}
                 isDecrypted={service.password !== '******'}
-                className={!passwordEditable && !isT3orT2WithPassword(service) ? pI.hiddenValue : ''}
+                passwordDecryptError={passwordDecryptError}
+                className={passwordDecryptError || (!passwordEditable && !isT3orT2WithPassword(service)) ? pI.hiddenValue : ''}
                 disabled={!passwordEditable || passwordMobile}
                 dir="ltr"
                 spellCheck="false"
@@ -289,13 +291,13 @@ function Password (props) {
               <div className={pI.passInputBottomButtons}>
                 <Link
                   to='/password-generator'
-                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${!passwordEditable || passwordMobile ? pI.hiddenButton : ''}`}
+                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${passwordDecryptError || !passwordEditable || passwordMobile ? pI.hiddenButton : ''}`}
                   title={browser.i18n.getMessage('details_generate_password')}
                   state={{
                     from: 'details',
                     data: {
                       formValues: { ...form.getState().values, securityType: form.getFieldState('securityType')?.value?.value || service.securityType },
-                      generatorData: { ...generatorData, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError },
+                      generatorData: { ...generatorData, passwordEditable, passwordVisible, passwordMobile },
                       service
                     }
                   }}
@@ -306,7 +308,7 @@ function Password (props) {
                 <button
                   type="button"
                   onClick={handlePasswordVisibleClick}
-                  className={`${pI.iconButton} ${pI.visibleButton} ${isT3orT2WithPassword(service) || passwordEditable ? '' : pI.hidden}`}
+                  className={`${pI.iconButton} ${pI.visibleButton} ${passwordDecryptError || !(isT3orT2WithPassword(service) || passwordEditable) ? pI.hidden : ''}`}
                   title={browser.i18n.getMessage('details_toggle_password_visibility')}
                 >
                   <VisibleIcon />
@@ -314,7 +316,7 @@ function Password (props) {
                 {(service.securityType === SECURITY_TIER.SECRET || (service.passwordEncrypted && service.passwordEncrypted.length > 0)) && (
                   <button
                     type='button'
-                    className={`${bS.btn} ${pI.iconButton}`}
+                    className={`${bS.btn} ${pI.iconButton} ${passwordDecryptError ? pI.hidden : ''}`}
                     onClick={handleCopyPassword}
                     title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
                   >
