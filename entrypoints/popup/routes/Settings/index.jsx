@@ -48,19 +48,19 @@ function Settings (props) {
             <div className={S.settingsMenu}>
               <ul>
                 <li>
-                  <Link to='/settings-preferences' prefetch='intent'>
+                  <Link to='/settings/preferences' prefetch='intent'>
                     <span>{browser.i18n.getMessage('settings_preferences')}</span>
                     <MenuArrowIcon />
                   </Link>
                 </li>
                 <li>
-                  <Link to='/settings-security' prefetch='intent'>
+                  <Link to='/settings/security' prefetch='intent'>
                     <span>{browser.i18n.getMessage('settings_security')}</span>
                     <MenuArrowIcon />
                   </Link>
                 </li>
                 <li>
-                  <Link to='/settings-about' prefetch='intent'>
+                  <Link to='/settings/about' prefetch='intent'>
                     <span>{browser.i18n.getMessage('settings_about')}</span>
                     <MenuArrowIcon />
                   </Link>
