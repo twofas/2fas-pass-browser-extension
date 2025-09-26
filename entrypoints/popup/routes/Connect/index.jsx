@@ -6,7 +6,7 @@
 
 import S from './Connect.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { useState, useEffect, lazy } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, lazy } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useAuthActions } from '@/hooks/useAuth';
@@ -37,8 +37,16 @@ function Connect (props) {
   const [connectingLoader, setConnectingLoader] = useState(264);
 
   const { login } = useAuthActions();
+  const closeConnectionRef = useRef(null);
 
-  const initConnection = async () => {
+  const connectHeaderText = useMemo(() => browser.i18n.getMessage('connect_header'), []);
+  const errorGeneralText = useMemo(() => browser.i18n.getMessage('error_general'), []);
+  const reloadText = useMemo(() => browser.i18n.getMessage('reload'), []);
+  const connectingText = useMemo(() => browser.i18n.getMessage('connect_connecting'), []);
+  const connectionOpenedText = useMemo(() => browser.i18n.getMessage('connect_connection_opened'), []);
+  const connectDescriptionText = useMemo(() => browser.i18n.getMessage('connect_description'), []);
+
+  const initConnection = useCallback(async () => {
     let sessionID, signature, qr, ephemeralData, socket;
 
     try {
@@ -50,7 +58,7 @@ function Connect (props) {
     } catch (e) {
       await CatchError(e, () => {
         setSocketError(true);
-        setHeaderText(browser.i18n.getMessage('error_general'));
+        setHeaderText(errorGeneralText);
         setSocketConnecting(false);
         setConnectingLoader(264);
       });
@@ -58,7 +66,6 @@ function Connect (props) {
       return;
     }
 
-    // Try to create socket up to 5 times with 200ms delay
     let socketCreated = false;
 
     for (let i = 0; i < 5; i++) {
@@ -66,16 +73,22 @@ function Connect (props) {
         socket = new TwoFasWebSocket(sessionID);
         socketCreated = true;
         break;
-      } catch {
-        if (i < 4) {
-          await new Promise(res => setTimeout(res, 250));
+      } catch (e) {
+        if (e?.name === 'TwoFasError' && e?.code === 9041) {
+          const tempSocket = TwoFasWebSocket.getInstance();
+
+          if (tempSocket) {
+            tempSocket.close(1000, 'Recreating socket');
+          }
         }
+
+        await new Promise(res => setTimeout(res, 250));
       }
     }
 
     if (!socketCreated) {
       setSocketError(true);
-      setHeaderText(browser.i18n.getMessage('error_general'));
+      setHeaderText(errorGeneralText);
       setSocketConnecting(false);
       setConnectingLoader(264);
       return;
@@ -86,16 +99,37 @@ function Connect (props) {
     socket.addEventListener('close', ConnectOnClose);
 
     setQrCode(qr);
-  };
+  }, [errorGeneralText]);
 
-  const handleSocketReload = async () => {
+  const handleSocketReload = useCallback(async () => {
     await initConnection();
     setSocketError(false);
-    setHeaderText(browser.i18n.getMessage('connect_header'));
-  };
+    setHeaderText(connectHeaderText);
+  }, [initConnection, connectHeaderText]);
 
   useEffect(() => {
-    // FUTURE - add value validation
+    closeConnectionRef.current = () => {
+      try {
+        const socket = TwoFasWebSocket.getInstance();
+
+        if (socket) {
+          socket.close(1000, 'Component unmounted');
+        }
+      } catch (e) {
+        if (e?.name !== 'TwoFasError' || e?.code !== 9040) {
+          CatchError(e);
+        }
+      }
+    };
+
+    return () => {
+      if (closeConnectionRef.current) {
+        closeConnectionRef.current();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     eventBus.on(eventBus.EVENTS.CONNECT.CONNECTING, setSocketConnecting);
     eventBus.on(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
     eventBus.on(eventBus.EVENTS.CONNECT.SOCKET_ERROR, setSocketError);
@@ -111,7 +145,7 @@ function Connect (props) {
       eventBus.off(eventBus.EVENTS.CONNECT.HEADER_TEXT, setHeaderText);
       eventBus.off(eventBus.EVENTS.CONNECT.LOGIN, login);
     };
-  }, []);
+  }, [initConnection, login]);
 
   return (
     <LazyMotion features={loadDomAnimation}>
@@ -129,7 +163,7 @@ function Connect (props) {
 
               <div className={`${S.connectContainerQr} ${socketError ? S.error : ''}`}>
                 <div className={S.connectContainerQrErrorContent}>
-                  <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnQrReload}`} onClick={handleSocketReload}>{browser.i18n.getMessage('reload')}</button>
+                  <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnQrReload}`} onClick={handleSocketReload}>{reloadText}</button>
                 </div>
 
                 <QR qrCode={qrCode} />
@@ -137,7 +171,7 @@ function Connect (props) {
 
               <div className={S.connectDescription}>
                 <InfoIcon />
-                <p>{browser.i18n.getMessage('connect_description')}</p>
+                <p>{connectDescriptionText}</p>
               </div>
             </div>
           </m.section>
@@ -155,11 +189,11 @@ function Connect (props) {
                   <circle cx="48" cy="48" r="42" />
                 </svg>
             
-                <span>{browser.i18n.getMessage('connect_connecting')}</span>
+                <span>{connectingText}</span>
               </div>
 
               <div className={S.progressDescription}>
-                <p>{browser.i18n.getMessage('connect_connection_opened')}</p>
+                <p>{connectionOpenedText}</p>
               </div>
             </div>
           </m.section>
