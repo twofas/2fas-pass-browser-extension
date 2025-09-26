@@ -48,8 +48,6 @@ function Details (props) {
       return location.state.data.generatorData[key];
     }
 
-    
-
     return fallback;
   }, [location?.state?.data?.generatorData]);
 
@@ -58,8 +56,6 @@ function Details (props) {
       return location.state.data.service;
     }
 
-    
-
     return {};
   }, [location?.state?.data?.service]);
 
@@ -67,8 +63,6 @@ function Details (props) {
     if (location?.state?.data?.formValues) {
       return location.state.data.formValues;
     }
-
-    
 
     return null;
   }, [location?.state?.data?.formValues]);
@@ -82,7 +76,6 @@ function Details (props) {
   const [usernameEditable, setUsernameEditable] = useState(getInitialValue('usernameEditable', false));
   const [passwordEditable, setPasswordEditable] = useState(getInitialValue('passwordEditable', false));
   const [passwordVisible, setPasswordVisible] = useState(getInitialValue('passwordVisible', false));
-  const [passwordDecryptError, setPasswordDecryptError] = useState(getInitialValue('passwordDecryptError', false));
   const [domainsEditable, setDomainsEditable] = useState(getInitialValue('domainsEditable', []));
   const [passwordMobile, setPasswordMobile] = useState(getInitialValue('passwordMobile', false));
   const [usernameMobile, setUsernameMobile] = useState(getInitialValue('usernameMobile', false));
@@ -91,7 +84,6 @@ function Details (props) {
   const [tagsEditable, setTagsEditable] = useState(getInitialValue('tagsEditable', false));
   const [inputError, setInputError] = useState(undefined);
   const [storageVersion, setStorageVersion] = useState(null);
-
 
   const handleRemoveUri = useCallback((index, form) => {
     const currentValues = form.getState().values;
@@ -326,12 +318,11 @@ function Details (props) {
                     />
                     <Password
                       key={`password-${service.id}-${storageVersion}`}
-                      data={{ service: originalService || service, passwordEditable, passwordVisible, passwordMobile, passwordDecryptError, form }}
+                      data={{ service: originalService || service, passwordEditable, passwordVisible, passwordMobile, form }}
                       actions={{
                         setPasswordEditable,
                         setPasswordVisible,
-                        setPasswordMobile,
-                        setPasswordDecryptError
+                        setPasswordMobile
                       }}
                       generatorData={{ dangerZoneOpened, nameEditable, usernameEditable, domainsEditable, usernameMobile, tierEditable, notesEditable }}
                     />
