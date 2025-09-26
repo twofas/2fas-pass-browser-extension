@@ -9,6 +9,7 @@ import { useState, useEffect, lazy, useCallback, useMemo, memo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import { PULL_REQUEST_TYPES } from '@/constants';
+import { useAuthState } from '@/hooks/useAuth';
 
 const NewWindowIcon = lazy(() => import('@/assets/popup-window/new-window.svg?react'));
 const SettingsIcon = lazy(() => import('@/assets/popup-window/settings.svg?react'));
@@ -47,6 +48,7 @@ function BottomBar () {
   const location = useLocation();
   const navigate = useNavigate();
   const { wsActive } = useWS();
+  const { configured } = useAuthState();
 
   const setSecIcon = useCallback(async () => {
     const svgContent = await getSecIcon();
@@ -119,8 +121,13 @@ function BottomBar () {
 
   const fetchLinkClass = useMemo(() => {
     const path = location?.pathname;
-    return path && path !== '/connect' && path !== '/blocked' ? S.visible : '';
-  }, [location.pathname]);
+
+    if (!configured || path === '/blocked') {
+      return '';
+    }
+
+    return S.visible;
+  }, [configured, location.pathname]);
 
   const secIconClass = useMemo(() =>
     `${S.bottombarSecIcon} ${securityIcon ? S.active : ''} ${wsActive ? S.wsActive : ''}`,
