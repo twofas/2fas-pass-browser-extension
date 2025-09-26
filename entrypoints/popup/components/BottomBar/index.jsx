@@ -110,7 +110,7 @@ function BottomBar () {
   const settingsLinkClass = useMemo(() => {
     const path = location?.pathname;
 
-    if (!path || path === '/connect' || path === '/blocked') {
+    if (!path || path === '/blocked') {
       return '';
     }
 
