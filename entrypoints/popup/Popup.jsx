@@ -38,20 +38,20 @@ import Blocked from './routes/Blocked';
 const emptyFunc = () => {};
 
 const routeConfig = [
-  { path: '/connect', component: Connect, isConnectRoute: true },
-  { path: '/', component: ThisTab },
-  { path: '/add-new', component: AddNew },
-  { path: '/settings', component: Settings },
-  { path: '/settings/about', component: SettingsAbout },
-  { path: '/settings/preferences', component: SettingsPreferences },
-  { path: '/settings/security', component: SettingsSecurity },
-  { path: '/settings/reset', component: SettingsReset },
-  { path: '/settings/save-login-excluded-domains', component: SettingsSaveLoginExcludedDomains },
-  { path: '/fetch', component: Fetch },
-  { path: '/fetch/:data', component: FetchExternal, noClassName: true },
-  { path: '/details/:id', component: Details },
-  { path: '/password-generator', component: PasswordGenerator },
-  { path: '/blocked', component: Blocked, noGuard: true },
+  { path: '/connect', component: Connect },
+  { path: '/', component: ThisTab, isProtectedRoute: true },
+  { path: '/add-new', component: AddNew, isProtectedRoute: true },
+  { path: '/settings', component: Settings, isProtectedRoute: false },
+  { path: '/settings/about', component: SettingsAbout, isProtectedRoute: false },
+  { path: '/settings/preferences', component: SettingsPreferences, isProtectedRoute: false },
+  { path: '/settings/security', component: SettingsSecurity, isProtectedRoute: false },
+  { path: '/settings/reset', component: SettingsReset, isProtectedRoute: false },
+  { path: '/settings/save-login-excluded-domains', component: SettingsSaveLoginExcludedDomains, isProtectedRoute: false },
+  { path: '/fetch', component: Fetch, isProtectedRoute: true },
+  { path: '/fetch/:data', component: FetchExternal, noClassName: true, isProtectedRoute: true },
+  { path: '/details/:id', component: Details, isProtectedRoute: true },
+  { path: '/password-generator', component: PasswordGenerator, isProtectedRoute: true },
+  { path: '/blocked', component: Blocked },
   { path: '*', component: NotFound }
 ];
 
@@ -60,16 +60,16 @@ const routeConfig = [
 * @param {Object} props - The component props.
 * @return {JSX.Element|null} The rendered component or null.
 */
-const RouteGuard = memo(({ configured, blocked, isConnectRoute, children }) => {
+const RouteGuard = memo(({ configured, blocked, isProtectedRoute, children }) => {
   if (blocked) {
     return <Navigate replace to='/blocked' />;
   }
 
-  if (isConnectRoute) {
-    return configured ? <Navigate replace to='/' /> : children;
+  if (isProtectedRoute) {
+    return configured ? children : <Navigate replace to='/connect' />;
   }
 
-  return configured ? children : <Navigate replace to='/connect' />;
+  return configured ? <Navigate replace to='/' /> : children;
 });
 
 /**
@@ -81,16 +81,16 @@ const AuthRoutes = memo(({ blocked, configured }) => {
   const routeElements = useMemo(() => {
     return routeConfig.map(route => {
       const Component = route.component;
-      const element = route.noGuard ? (
-        <Component className={S.passScreen} />
-      ) : (
+      const element = route.isProtectedRoute ? (
         <RouteGuard
           configured={configured}
           blocked={blocked}
-          isConnectRoute={route.isConnectRoute}
+          isProtectedRoute={route.isProtectedRoute}
         >
           {route.noClassName ? <Component /> : <Component className={S.passScreen} />}
         </RouteGuard>
+      ) : (
+        <Component className={S.passScreen} />
       );
 
       return (
