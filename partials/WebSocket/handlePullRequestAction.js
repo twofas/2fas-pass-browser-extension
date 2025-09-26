@@ -10,6 +10,7 @@ import { deleteDataAccept, deleteDataCancel } from './fetch/deleteData';
 import { addDataAdded, addDataAddedInT1, addDataCancel } from './fetch/addData';
 import { sifRequestAccept, sifRequestCancel } from './fetch/sifRequest';
 import { updateDataAddedInT1, updateDataCancel, updateDataUpdated } from './fetch/updateData';
+import { fullSyncAccept, fullSyncCancel } from './fetch/fullSync';
 
 /** 
 * Handles the pull request action.
@@ -155,7 +156,34 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
       break;
     }
 
-    // @TODO: Add FULL_SYNC
+    case PULL_REQUEST_TYPES.FULL_SYNC: {
+      switch (data.status) {
+        case PULL_REQUEST_STATUSES.CANCEL: {
+          // @TODO
+          closeData = await fullSyncCancel(json.id);
+          break;
+        }
+
+        case PULL_REQUEST_STATUSES.ACCEPT: {
+          // @TODO
+          closeData = await fullSyncAccept(
+            data,
+            state,
+            hkdfSaltAB,
+            sessionKeyForHKDF,
+            json.id
+          );
+
+          break;
+        }
+
+        default: {
+          throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginWrongStatus);
+        }
+      }
+
+      break;
+    }
 
     default: {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionWrongAction);
