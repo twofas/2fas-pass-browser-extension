@@ -6,34 +6,33 @@
 
 import S from '../../Settings.module.scss';
 import Select from 'react-select';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 /**
 * Function to render the Theme component.
 * @return {JSX.Element} The rendered component.
 */
-function Theme (props) {
-  const [loading, setLoading] = useState(true);
-  const [t, setT] = useState(null);
-  const [disabled, setDisabled] = useState(true);
+function Theme () {
+  const [t, setT] = useState('unset');
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const getDefaultTheme = async () => {
-      const storageTheme = await storage.getItem('local:theme');
-      setT(storageTheme);
-      setLoading(false);
-      setDisabled(false);
+      try {
+        const storageTheme = await storage.getItem('local:theme');
 
-      if (props.onLoad) {
-        props.onLoad();
+        if (storageTheme) {
+          setT(storageTheme);
+        }
+
+        setIsInitialized(true);
+      } catch (e) {
+        await CatchError(e);
+        setIsInitialized(true);
       }
     };
 
-    try {
-      getDefaultTheme();
-    } catch (e) {
-      CatchError(e);
-    }
+    getDefaultTheme();
   }, []);
 
   const themeOptions = [
@@ -42,12 +41,13 @@ function Theme (props) {
     { value: 'dark', label: browser.i18n.getMessage('dark_mode') }
   ];
 
-  const handleThemeChange = async change => {
-    setDisabled(true);
+  const handleThemeChange = useCallback(async change => {
+    if (!isInitialized) {
+      return;
+    }
 
     try {
       const value = change?.value;
-      await storage.setItem('local:theme', value);
       setT(value);
 
       document.body.classList.remove('theme-light', 'theme-dark', 'theme-unset');
@@ -56,18 +56,22 @@ function Theme (props) {
       document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-unset');
       document.documentElement.classList.add(`theme-${value}`);
 
+      await storage.setItem('local:theme', value);
       showToast(browser.i18n.getMessage('notification_theme_setting_success'), 'success');
     } catch (e) {
+      const previousValue = await storage.getItem('local:theme') || 'unset';
+      setT(previousValue);
+
+      document.body.classList.remove('theme-light', 'theme-dark', 'theme-unset');
+      document.body.classList.add(`theme-${previousValue}`);
+
+      document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-unset');
+      document.documentElement.classList.add(`theme-${previousValue}`);
+
       showToast(browser.i18n.getMessage('error_setting_theme_value'), 'error');
       await CatchError(e);
-    } finally {
-      setDisabled(false);
     }
-  };
-
-  if (loading) {
-    return null;
-  }
+  }, [isInitialized]);
 
   return (
     <div className={S.settingsTheme}>
@@ -79,9 +83,9 @@ function Theme (props) {
           classNamePrefix='react-select'
           isSearchable={false}
           options={themeOptions}
-          defaultValue={themeOptions.find(el => el.value === t)}
+          value={themeOptions.find(el => el.value === t)}
           onChange={handleThemeChange}
-          disabled={disabled ? 'disabled' : ''}
+          isDisabled={!isInitialized}
         />
       </form>
     </div>
