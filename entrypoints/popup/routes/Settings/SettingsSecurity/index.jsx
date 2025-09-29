@@ -5,7 +5,9 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { lazy,  } from 'react';
+import { lazy, useRef } from 'react';
+import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import useHref from '@/entrypoints/popup/hooks/useHref';
 
 const AutoClearClipboard = lazy(() => import('./components/AutoClearClipboard'));
 const IdleLock = lazy(() => import('./components/IdleLock'));
@@ -19,13 +21,14 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSecurity (props) {
-  
+  const scrollableRef = useRef(null);
 
-
+  useScrollPosition(scrollableRef, false);
+  useHref();
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={scrollableRef}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />
