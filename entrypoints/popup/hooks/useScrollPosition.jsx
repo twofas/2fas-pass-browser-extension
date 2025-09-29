@@ -5,18 +5,21 @@
 // See LICENSE file for full terms
 
 import { useEffect, useRef, useCallback } from 'react';
+import { useLocation } from 'react-router';
 import usePopupStateStore from '../store/popupState';
 
 /**
  * Custom hook for managing scroll position.
- * Stores scroll position in zustand store and restores it when component mounts.
+ * Stores scroll position in zustand store and restores it only when the stored href matches current pathname.
  * @param {React.RefObject} scrollableRef - Reference to the scrollable element
  * @param {boolean} loading - Loading state to determine when to restore scroll position
  * @return {Object} Object containing saveScrollPosition, restoreScrollPosition and scrollPosition
  */
 const useScrollPosition = (scrollableRef, loading = false) => {
+  const location = useLocation();
   const scrollPosition = usePopupStateStore(state => state.scrollPosition);
   const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
+  const storedHref = usePopupStateStore(state => state.href);
   const hasRestoredRef = useRef(false);
 
   const saveScrollPosition = useCallback(() => {
@@ -29,7 +32,7 @@ const useScrollPosition = (scrollableRef, loading = false) => {
   }, [scrollableRef, setScrollPosition]);
 
   const restoreScrollPosition = useCallback(() => {
-    if (!scrollableRef?.current || scrollPosition === undefined) {
+    if (!scrollableRef?.current || scrollPosition === undefined || storedHref !== location.pathname) {
       return;
     }
 
@@ -40,7 +43,7 @@ const useScrollPosition = (scrollableRef, loading = false) => {
         behavior: 'instant'
       });
     }
-  }, [scrollableRef, scrollPosition]);
+  }, [scrollableRef, scrollPosition, storedHref, location.pathname]);
 
   useEffect(() => {
     const scrollElement = scrollableRef?.current;
@@ -67,13 +70,17 @@ const useScrollPosition = (scrollableRef, loading = false) => {
   }, [scrollableRef, saveScrollPosition]);
 
   useEffect(() => {
-    if (!loading && !hasRestoredRef.current && scrollableRef?.current && scrollPosition !== undefined) {
+    if (!loading && !hasRestoredRef.current && scrollableRef?.current && scrollPosition !== undefined && storedHref === location.pathname) {
       requestAnimationFrame(() => {
         restoreScrollPosition();
         hasRestoredRef.current = true;
       });
     }
-  }, [loading, scrollableRef, scrollPosition, restoreScrollPosition]);
+  }, [loading, scrollableRef, scrollPosition, restoreScrollPosition, storedHref, location.pathname]);
+
+  useEffect(() => {
+    hasRestoredRef.current = false;
+  }, [location.pathname]);
 
   useEffect(() => {
     return () => {
@@ -81,7 +88,6 @@ const useScrollPosition = (scrollableRef, loading = false) => {
         const scrollTop = scrollableRef.current.scrollTop;
 
         if (scrollTop > 0) {
-          // Save the scroll position when component unmounts
           setScrollPosition(scrollTop);
         }
       }
