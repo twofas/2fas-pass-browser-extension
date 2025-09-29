@@ -24,6 +24,7 @@ import keepPassword from './functions/keepPassword';
 import { toast } from 'react-toastify';
 import isLoginsCorrect from './functions/isLoginsCorrect';
 import usePopupStateStore from '../../store/popupState';
+import useScrollPosition from '../../hooks/useScrollPosition';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const SmallLoginItem = lazy(() => import('./components/SmallLoginItem'));
@@ -73,6 +74,9 @@ function ThisTab (props) {
   const scrollableRef = useRef(null);
   const unwatchStorageVersion = useRef(null);
   const thisTabTopRef = useRef(null);
+
+  // Use scroll position hook
+  useScrollPosition('thisTab', scrollableRef, loading);
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
