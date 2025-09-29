@@ -11,5 +11,9 @@ import '@/partials/global-styles/selects.scss';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Popup from './Popup.jsx';
+import { preloadInterFontAsync } from '@/partials/functions/preloadFonts.js';
+
+// Preload only Inter font for popup
+preloadInterFontAsync();
 
 createRoot(document.getElementById('root')).render(<Popup />);
