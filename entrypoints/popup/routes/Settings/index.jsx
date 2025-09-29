@@ -6,9 +6,11 @@
 
 import S from './Settings.module.scss';
 import { Link } from 'react-router';
-import { useState, useEffect, lazy } from 'react';
+import { useState, useEffect, lazy, useRef } from 'react';
 import getRatingLink from './functions/getRatingLink';
 import getRatingText from './functions/getRatingText';
+import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import useHref from '@/entrypoints/popup/hooks/useHref';
 
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
@@ -24,7 +26,10 @@ function Settings (props) {
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
 
+  const scrollableRef = useRef(null);
 
+  useScrollPosition(scrollableRef, false);
+  useHref();
 
   useEffect(() => {
     try {
@@ -35,10 +40,9 @@ function Settings (props) {
     }
   }, []);
 
-
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={scrollableRef}>
         <section className={S.settings}>
           <NavigationButton type='cancel' />
 
