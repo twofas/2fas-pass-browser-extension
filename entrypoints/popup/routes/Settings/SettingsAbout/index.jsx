@@ -5,10 +5,12 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
 import { lazy } from 'react';
+import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import useHref from '@/entrypoints/popup/hooks/useHref';
 
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
 const AboutIcon = lazy(() => import('@/assets/popup-window/about.svg?react'));
@@ -26,24 +28,30 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsAbout (props) {
+  const [loading, setLoading] = useState(true);
   const [version, setVersion] = useState('');
+
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
 
+  const scrollableRef = useRef(null);
+
+  useScrollPosition(scrollableRef, loading);
+  useHref();
 
   useEffect(() => {
     try {
       const manifest = browser.runtime.getManifest();
       setVersion(manifest.version);
+      setLoading(false);
     } catch (e) {
       CatchError(e);
     }
   }, []);
 
-
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={scrollableRef}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />
