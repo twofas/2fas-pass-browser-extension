@@ -65,8 +65,9 @@ function ThisTab (props) {
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [forceCloseFilters, setForceCloseFilters] = useState(false);
 
-  const thisTabPopupState = usePopupStateStore(state => state.thisTab);
-  const setThisTabPopupState = usePopupStateStore(state => state.setThisTab);
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
+  const thisTabPopupState = data || {};
 
   // Refs
   const boxAnimationRef = useRef(null);
@@ -76,7 +77,7 @@ function ThisTab (props) {
   const thisTabTopRef = useRef(null);
 
   // Use scroll position hook
-  useScrollPosition('thisTab', scrollableRef, loading);
+  useScrollPosition(scrollableRef, loading);
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
@@ -99,27 +100,27 @@ function ThisTab (props) {
     setTimeout(() => setForceCloseFilters(false), 100);
 
     if (value.trim().length > 0) {
-      setThisTabPopupState('searchActive', true);
-      setThisTabPopupState('searchValue', value);
+      setData('searchActive', true);
+      setData('searchValue', value);
     } else {
-      setThisTabPopupState('searchActive', false);
-      setThisTabPopupState('searchValue', '');
+      setData('searchActive', false);
+      setData('searchValue', '');
     }
-  });
+  }, [setData]);
 
   const handleSearchClear = useCallback(() => {
-    setThisTabPopupState('searchValue', '');
-    setThisTabPopupState('searchActive', false);
-  });
+    setData('searchValue', '');
+    setData('searchActive', false);
+  }, [setData]);
 
   const handleTagChange = useCallback((tag) => {
-    setThisTabPopupState('selectedTag', tag);
+    setData('selectedTag', tag);
 
     if (tag) {
       const tagInfo = { name: tag.name, amount: tag.amount };
-      setThisTabPopupState('lastSelectedTagInfo', tagInfo);
+      setData('lastSelectedTagInfo', tagInfo);
     }
-  });
+  }, [setData]);
 
   const handleKeepPassword = useCallback(async () => {
     await keepPassword(state);
@@ -164,9 +165,9 @@ function ThisTab (props) {
       changeMatchingLoginsLength(matchingLogins?.length || 0);
     }, 200);
 
-    setThisTabPopupState('searchActive', false);
-    setThisTabPopupState('searchValue', '');
-  }, [changeMatchingLoginsLength]);
+    setData('searchActive', false);
+    setData('searchValue', '');
+  }, [changeMatchingLoginsLength, setData]);
 
   const watchStorageVersion = useCallback(() => {
     const uSV = storage.watch('session:storageVersion', async newValue => {
@@ -449,8 +450,8 @@ function ThisTab (props) {
                     title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', thisTabPopupState.lastSelectedTagInfo?.amount || '').replace('TAG_NAME', thisTabPopupState.lastSelectedTagInfo?.name || '')}
                   >
                     <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', thisTabPopupState.lastSelectedTagInfo?.amount || '').replace('TAG_NAME', thisTabPopupState.lastSelectedTagInfo?.name || '')}</p>
-                    <button 
-                      onClick={() => setThisTabPopupState('selectedTag', null)}
+                    <button
+                      onClick={() => setData('selectedTag', null)}
                       title={browser.i18n.getMessage('this_tab_clear_tag_filter')}
                     >
                       <ClearIcon />
