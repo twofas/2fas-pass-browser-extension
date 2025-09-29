@@ -565,6 +565,7 @@
         height: 100%;
         justify-content: center;
         line-height: 1;
+        min-height: 36px;
         padding: 11px 12px;
 
         @include m.darkMode {
