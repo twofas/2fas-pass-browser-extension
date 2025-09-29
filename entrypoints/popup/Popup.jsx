@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './Popup.module.scss';
-import { HashRouter, Route, Routes, Navigate } from 'react-router';
+import { HashRouter, Route, Routes, Navigate, useNavigate, useLocation } from 'react-router';
 import { useEffect, useState, useMemo, memo, useRef } from 'react';
 import { AuthProvider, useAuthState } from '@/hooks/useAuth';
 import popupOnMessage from './events/popupOnMessage';
@@ -17,6 +17,7 @@ import { safariBlankLinks, storageAutoClearActions } from '@/partials/functions'
 import ToastsContent from './components/ToastsContent';
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
+import usePopupStateStore from './store/popupState';
 
 // ROUTES
 import ThisTab from './routes/ThisTab';
@@ -74,10 +75,35 @@ const RouteGuard = memo(({ configured, blocked, isProtectedRoute, children }) =>
 
 /**
 * AuthRoutes component that provides configured state to all routes.
+* Handles initial navigation based on stored href before rendering routes.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered routes.
 */
 const AuthRoutes = memo(({ blocked, configured }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const storedHref = usePopupStateStore(state => state.href);
+  const [initialCheckDone, setInitialCheckDone] = useState(false);
+  const hasNavigated = useRef(false);
+
+  useEffect(() => {
+    if (hasNavigated.current || !configured) {
+      setInitialCheckDone(true);
+      return;
+    }
+
+    const excludedRoutes = ['/connect', '/', '/fetch', '/blocked'];
+
+    if (storedHref && location.pathname === '/' && !excludedRoutes.includes(storedHref)) {
+      if (!storedHref.startsWith('/fetch/')) {
+        hasNavigated.current = true;
+        navigate(storedHref, { replace: true });
+      }
+    }
+
+    setInitialCheckDone(true);
+  }, [navigate, storedHref, location.pathname, configured]);
+
   const routeElements = useMemo(() => {
     return routeConfig.map(route => {
       const Component = route.component;
@@ -102,6 +128,11 @@ const AuthRoutes = memo(({ blocked, configured }) => {
       );
     });
   }, [configured, blocked]);
+
+  // Don't render routes until initial navigation check is done
+  if (!initialCheckDone) {
+    return null;
+  }
 
   return (
     <Routes>

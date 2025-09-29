@@ -25,6 +25,7 @@ import { toast } from 'react-toastify';
 import isLoginsCorrect from './functions/isLoginsCorrect';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
+import useHref from '../../hooks/useHref';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const SmallLoginItem = lazy(() => import('./components/SmallLoginItem'));
@@ -76,8 +77,8 @@ function ThisTab (props) {
   const unwatchStorageVersion = useRef(null);
   const thisTabTopRef = useRef(null);
 
-  // Use scroll position hook
   useScrollPosition(scrollableRef, loading);
+  useHref();
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
@@ -313,13 +314,10 @@ function ThisTab (props) {
     }
   }, [state]);
 
-
   return (
     <LazyMotion features={loadDomAnimation}>
       <div className={`${props.className ? props.className : ''}`}>
-        <div ref={el => {
-          scrollableRef.current = el;
-        }}>
+        <div ref={scrollableRef}>
           <section className={S.thisTab}>
             <div className={autofillPopupClass}>
               <div className={S.thisTabAutofillPopupBox}>
