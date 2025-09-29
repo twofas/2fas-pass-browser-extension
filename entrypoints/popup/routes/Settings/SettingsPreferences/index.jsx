@@ -6,15 +6,17 @@
 
 import S from '../Settings.module.scss';
 import { Link } from 'react-router';
-import { lazy } from 'react';
+import { lazy, useRef, Suspense } from 'react';
+import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import useHref from '@/entrypoints/popup/hooks/useHref';
+import ExtensionName from './components/ExtensionName';
+import Shortcut from './components/Shortcut';
+import Push from './components/Push';
+import Theme from './components/Theme';
+import SavePasswordPrompt from './components/SavePasswordPrompt';
+import ContextMenu from './components/ContextMenu';
+import Logs from './components/Logs';
 
-const ExtensionName = lazy(() => import('./components/ExtensionName'));
-const Shortcut = lazy(() => import('./components/Shortcut'));
-const Push = lazy(() => import('./components/Push'));
-const Theme = lazy(() => import('./components/Theme'));
-const SavePasswordPrompt = lazy(() => import('./components/SavePasswordPrompt'));
-const ContextMenu = lazy(() => import('./components/ContextMenu'));
-const Logs = lazy(() => import('./components/Logs'));
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
@@ -24,14 +26,21 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsPreferences (props) {
-  
+  const scrollableRef = useRef(null);
+
+  useScrollPosition(scrollableRef, false);
+  useHref();
   
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={scrollableRef}>
         <section className={S.settings}>
-          <NavigationButton type='back' />
-          <NavigationButton type='cancel' />
+          <Suspense fallback={null}>
+            <NavigationButton type='back' />
+          </Suspense>
+          <Suspense fallback={null}>
+            <NavigationButton type='cancel' />
+          </Suspense>
 
           <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
             <div className={S.settingsSubmenu}>
@@ -60,7 +69,9 @@ function SettingsPreferences (props) {
 
                   <Link to='/settings/reset' className={S.settingsDangerZoneLink}>
                     <span>{browser.i18n.getMessage('settings_danger_zone_reset')}</span>
-                    <MenuArrowIcon />
+                    <Suspense fallback={null}>
+                      <MenuArrowIcon />
+                    </Suspense>
                   </Link>
                 </div>
               </div>
