@@ -47,7 +47,8 @@ const sendPush = async (device, data = {}) => {
     data: {
       ...data,
       pkPersBe,
-      pkEpheBe
+      pkEpheBe,
+      scheme: config.scheme
     }
   };
 
