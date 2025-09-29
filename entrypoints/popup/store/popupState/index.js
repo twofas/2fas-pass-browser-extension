@@ -17,24 +17,10 @@ import { getLastActiveTab } from '@/partials/functions';
 const usePopupStateStore = create(
   persist(
     set => ({
-      thisTab: {},
-      setThisTab: (name, data) => set(state => ({ thisTab: { ...state.thisTab, [name]: data } })),
-      details: {},
-      setDetails: (name, data) => set(state => ({ details: { ...state.details, [name]: data } })),
-      addNew: {},
-      setAddNew: (name, data) => set(state => ({ addNew: { ...state.addNew, [name]: data } })),
-      settingsAbout: {},
-      setSettingsAbout: (name, data) => set(state => ({ settingsAbout: { ...state.settingsAbout, [name]: data } })),
-      settingsPreferences: {},
-      setSettingsPreferences: (name, data) => set(state => ({ settingsPreferences: { ...state.settingsPreferences, [name]: data } })),
-      settingsSecurity: {},
-      setSettingsSecurity: (name, data) => set(state => ({ settingsSecurity: { ...state.settingsSecurity, [name]: data } })),
-      settingsReset: {},
-      setSettingsReset: (name, data) => set(state => ({ settingsReset: { ...state.settingsReset, [name]: data } })),
-      settingsSaveLoginExcludedDomains: {},
-      setSettingsSaveLoginExcludedDomains: (name, data) => set(state => ({ settingsSaveLoginExcludedDomains: { ...state.settingsSaveLoginExcludedDomains, [name]: data } })),
-      passwordGenerator: {},
-      setPasswordGenerator: (name, data) => set(state => ({ passwordGenerator: { ...state.passwordGenerator, [name]: data } })),
+      data: {},
+      setData: (name, data) => set(state => ({ data: { ...state.data, [name]: data } })),
+      scrollPosition: 0,
+      setScrollPosition: position => set({ scrollPosition: position }),
     }),
     {
       name: 'popupState',
