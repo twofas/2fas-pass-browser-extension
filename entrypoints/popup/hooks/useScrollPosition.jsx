@@ -8,16 +8,15 @@ import { useEffect, useRef, useCallback } from 'react';
 import usePopupStateStore from '../store/popupState';
 
 /**
- * Custom hook for managing scroll position of components.
+ * Custom hook for managing scroll position.
  * Stores scroll position in zustand store and restores it when component mounts.
- * @param {string} componentName - Name of the component (must match store keys: thisTab, details, addNew, etc.)
  * @param {React.RefObject} scrollableRef - Reference to the scrollable element
  * @param {boolean} loading - Loading state to determine when to restore scroll position
- * @return {Object} Object containing saveScrollPosition and restoreScrollPosition functions
+ * @return {Object} Object containing saveScrollPosition, restoreScrollPosition and scrollPosition
  */
-const useScrollPosition = (componentName, scrollableRef, loading = false) => {
-  const popupState = usePopupStateStore(state => state[componentName]);
-  const setPopupState = usePopupStateStore(state => state[`set${componentName.charAt(0).toUpperCase()}${componentName.slice(1)}`]);
+const useScrollPosition = (scrollableRef, loading = false) => {
+  const scrollPosition = usePopupStateStore(state => state.scrollPosition);
+  const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
   const hasRestoredRef = useRef(false);
 
   const saveScrollPosition = useCallback(() => {
@@ -26,27 +25,22 @@ const useScrollPosition = (componentName, scrollableRef, loading = false) => {
     }
 
     const scrollTop = scrollableRef.current.scrollTop;
-
-    if (setPopupState) {
-      setPopupState('scrollPosition', scrollTop);
-    }
-  }, [scrollableRef, setPopupState]);
+    setScrollPosition(scrollTop);
+  }, [scrollableRef, setScrollPosition]);
 
   const restoreScrollPosition = useCallback(() => {
-    if (!scrollableRef?.current || popupState?.scrollPosition === undefined) {
+    if (!scrollableRef?.current || scrollPosition === undefined) {
       return;
     }
 
-    const scrollTop = popupState.scrollPosition;
-
-    if (scrollTop !== undefined) {
+    if (scrollPosition !== undefined && scrollPosition > 0) {
       scrollableRef.current.scrollTo({
-        top: scrollTop,
+        top: scrollPosition,
         left: 0,
         behavior: 'instant'
       });
     }
-  }, [scrollableRef, popupState?.scrollPosition]);
+  }, [scrollableRef, scrollPosition]);
 
   useEffect(() => {
     const scrollElement = scrollableRef?.current;
@@ -73,30 +67,31 @@ const useScrollPosition = (componentName, scrollableRef, loading = false) => {
   }, [scrollableRef, saveScrollPosition]);
 
   useEffect(() => {
-    if (!loading && !hasRestoredRef.current && scrollableRef?.current && popupState?.scrollPosition !== undefined) {
+    if (!loading && !hasRestoredRef.current && scrollableRef?.current && scrollPosition !== undefined) {
       requestAnimationFrame(() => {
         restoreScrollPosition();
         hasRestoredRef.current = true;
       });
     }
-  }, [loading, scrollableRef, popupState?.scrollPosition, restoreScrollPosition]);
+  }, [loading, scrollableRef, scrollPosition, restoreScrollPosition]);
 
   useEffect(() => {
     return () => {
       if (scrollableRef?.current) {
         const scrollTop = scrollableRef.current.scrollTop;
 
-        if (setPopupState && scrollTop > 0) {
-          setPopupState('scrollPosition', scrollTop);
+        if (scrollTop > 0) {
+          // Save the scroll position when component unmounts
+          setScrollPosition(scrollTop);
         }
       }
     };
-  }, [scrollableRef, setPopupState]);
+  }, [scrollableRef, setScrollPosition]);
 
   return {
     saveScrollPosition,
     restoreScrollPosition,
-    scrollPosition: popupState?.scrollPosition
+    scrollPosition
   };
 };
 
