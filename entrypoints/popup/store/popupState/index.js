@@ -1,7 +1,19 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getLastActiveTab } from '@/partials/functions';
 
+/** 
+* Store for popup state management using Zustand with persistence.
+* This store manages various sections of the popup state, including tabs, details, settings, and password generator.
+* The state is persisted in session storage, scoped by the active browser tab.
+* @return {object} The Zustand store for popup state management.
+*/
 const usePopupStateStore = create(
   persist(
     set => ({
