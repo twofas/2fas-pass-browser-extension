@@ -17,6 +17,8 @@ import { getLastActiveTab } from '@/partials/functions';
 const usePopupStateStore = create(
   persist(
     set => ({
+      href: '',
+      setHref: href => set({ href }),
       data: {},
       setData: (name, data) => set(state => ({ data: { ...state.data, [name]: data } })),
       scrollPosition: 0,
