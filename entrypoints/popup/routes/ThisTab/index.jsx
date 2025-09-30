@@ -25,7 +25,6 @@ import { toast } from 'react-toastify';
 import isLoginsCorrect from './functions/isLoginsCorrect';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
-import useHref from '../../hooks/useHref';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const SmallLoginItem = lazy(() => import('./components/SmallLoginItem'));
@@ -78,7 +77,6 @@ function ThisTab (props) {
   const thisTabTopRef = useRef(null);
 
   useScrollPosition(scrollableRef, loading);
-  useHref();
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);

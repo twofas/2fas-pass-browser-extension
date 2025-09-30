@@ -8,7 +8,6 @@ import S from '../Settings.module.scss';
 import { Link } from 'react-router';
 import { lazy, useRef, Suspense } from 'react';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
-import useHref from '@/entrypoints/popup/hooks/useHref';
 import ExtensionName from './components/ExtensionName';
 import Shortcut from './components/Shortcut';
 import Push from './components/Push';
@@ -27,10 +26,8 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 */
 function SettingsPreferences (props) {
   const scrollableRef = useRef(null);
-
   useScrollPosition(scrollableRef, false);
-  useHref();
-  
+
   return (
     <div className={`${props.className ? props.className : ''}`}>
       <div ref={scrollableRef}>
