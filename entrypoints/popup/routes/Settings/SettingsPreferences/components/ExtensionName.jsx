@@ -11,13 +11,16 @@ import { useEffect, useState, useCallback } from 'react';
 import { Form, Field } from 'react-final-form';
 import { filterXSS } from 'xss';
 import valueToNFKD from '@/partials/functions/valueToNFKD';
+import usePopupStateStore from '../../../../store/popupState';
 
 /**
 * Function to render the Extension Name component.
 * @return {JSX.Element} The rendered component.
 */
 function ExtensionName () {
-  const [extName, setExtName] = useState('');
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
+
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
@@ -27,7 +30,7 @@ function ExtensionName () {
 
         if (browserInfo?.name) {
           const name = filterXSS(browserInfo.name);
-          setExtName(name);
+          setData('extName', name);
         }
 
         setIsInitialized(true);
@@ -37,7 +40,11 @@ function ExtensionName () {
       }
     };
 
-    getExtName();
+    if (!data.extName) {
+      getExtName();
+    } else {
+      setIsInitialized(true);
+    }
   }, []);
 
   const validate = useCallback(values => {
@@ -70,7 +77,7 @@ function ExtensionName () {
       await storage.setItem('local:browserInfo', browserInfo);
 
       // Update local state to reflect the change
-      setExtName(browserInfo.name);
+      setData('extName', browserInfo.name);
 
       showToast(browser.i18n.getMessage('notification_extension_name_update_success'), 'success');
     } catch (e) {
@@ -84,8 +91,8 @@ function ExtensionName () {
   return (
     <Form
       onSubmit={onSubmit}
-      initialValues={{ 'ext-name': extName }}
-      key={extName} // Force re-render when extName changes
+      initialValues={{ 'ext-name': data.extName }}
+      key={data.extName} // Force re-render when extName changes
       render={({ handleSubmit, submitting }) => (
         <form className={S.settingsExtName} onSubmit={handleSubmit}>
           <Field name="ext-name">
@@ -112,6 +119,10 @@ function ExtensionName () {
                     autoCorrect="on"
                     autoComplete="on"
                     disabled={!isInitialized}
+                    onChange={e => {
+                      input.onChange(e);
+                      setData('extName', e.target.value);
+                    }}
                   />
                 </div>
               </div>
