@@ -18,6 +18,7 @@ import ToastsContent from './components/ToastsContent';
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
 import usePopupStateStore from './store/popupState';
+import useHref from './hooks/useHref';
 import { addToNavigationHistory } from './utils/navigationHistory';
 
 // ROUTES
@@ -87,6 +88,8 @@ const AuthRoutes = memo(({ blocked, configured }) => {
   const [initialCheckDone, setInitialCheckDone] = useState(false);
   const hasNavigated = useRef(false);
 
+  useHref();
+  
   useEffect(() => {
     addToNavigationHistory(location.pathname);
   }, [location.pathname]);
