@@ -10,6 +10,7 @@ import { useState, useEffect, lazy } from 'react';
 import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
+import usePopupStateStore from '../../../store/popupState';
 
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
 const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
@@ -22,17 +23,11 @@ const CancelIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSaveLoginExcludedDomains (props) {
-  
-  
-  const getInitialValue = (key, fallback) => {
-    return fallback;
-  };
-
   const [loading, setLoading] = useState(true);
-  const [excludedDomains, setExcludedDomains] = useState(getInitialValue('excludedDomains', []));
-  const [newDomainForm, setNewDomainForm] = useState(getInitialValue('newDomainForm', false));
-  const [inputValue, setInputValue] = useState(getInitialValue('inputValue', ''));
+  const [excludedDomains, setExcludedDomains] = useState([]);
 
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
 
   useEffect(() => {
     const getExcludedDomains = async () => {
@@ -56,8 +51,6 @@ function SettingsSaveLoginExcludedDomains (props) {
       CatchError(e);
     }
   }, []);
-
-
 
   const removeExcludedDomain = async domain => {
     const updatedDomains = excludedDomains.filter((d) => d !== domain);
@@ -131,8 +124,8 @@ function SettingsSaveLoginExcludedDomains (props) {
     const updatedDomains = [...excludedDomains, getDomain(e['ignored-domain'])];
     await storage.setItem('local:savePromptIgnoreDomains', updatedDomains);
     setExcludedDomains(updatedDomains);
-    setNewDomainForm(false);
-    setInputValue('');
+    setData('newDomainForm', false);
+    setData('inputValue', '');
     form.reset();
     showToast(browser.i18n.getMessage('settings_excluded_domains_add_success'), 'success');
   };
@@ -159,20 +152,20 @@ function SettingsSaveLoginExcludedDomains (props) {
                   {generateExcludedDomains()}
                 </div>
 
-                <div className={`${S.settingsExcludedDomainsAdd} ${newDomainForm ? S.hidden : ''} ${excludedDomains.length > 0 ? S.settingsExcludedDomainsAddAnother : ''}`}>
+                <div className={`${S.settingsExcludedDomainsAdd} ${data?.newDomainForm ? S.hidden : ''} ${excludedDomains.length > 0 ? S.settingsExcludedDomainsAddAnother : ''}`}>
                   <button className={S.settingsExcludedDomainsAddButton} onClick={() => {
-                    setNewDomainForm(true);
+                    setData('newDomainForm', true);
                   }}>
                     <AddNewIcon />
                     <span>{excludedDomains.length > 0 ? browser.i18n.getMessage('settings_excluded_domains_add_another_domain_text') : browser.i18n.getMessage('settings_excluded_domains_add_domain_text')}</span>
                   </button>
                 </div>
                 
-                <div className={`${S.settingsExcludedDomainsNew} ${newDomainForm ? '' : S.hidden}`}>
-                  <Form onSubmit={onSubmit} initialValues={{ 'ignored-domain': inputValue }} render={({ handleSubmit, submitting, form }) => ( // form, pristine, values
+                <div className={`${S.settingsExcludedDomainsNew} ${data?.newDomainForm ? '' : S.hidden}`}>
+                  <Form onSubmit={onSubmit} initialValues={{ 'ignored-domain': data?.inputValue }} render={({ handleSubmit, submitting, form }) => ( // form, pristine, values
                       <form className={S.settingsExcludedDomainsNewForm} onSubmit={handleSubmit} onChange={() => {
                         const values = form.getState().values;
-                        setInputValue(values['ignored-domain'] || '');
+                        setData('inputValue', values['ignored-domain'] || '');
                       }}>
                         <Field name='ignored-domain'>
                           {({ input }) => (
@@ -203,8 +196,8 @@ function SettingsSaveLoginExcludedDomains (props) {
                                     type='button'
                                     title={browser.i18n.getMessage('settings_excluded_domains_add_cancel_title')}
                                     onClick={() => {
-                                      setNewDomainForm(false);
-                                      setInputValue('');
+                                      setData('newDomainForm', false);
+                                      setData('inputValue', '');
                                       form.reset();
                                     }}
                                   >

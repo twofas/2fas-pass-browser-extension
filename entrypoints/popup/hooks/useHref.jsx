@@ -4,37 +4,41 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router';
 import usePopupStateStore from '../store/popupState';
-import { addToNavigationHistory } from '../utils/navigationHistory';
 
 /**
  * Custom hook for tracking and storing current pathname in popup state.
  * Automatically updates the href in the store when the location changes.
  * Resets data and scrollPosition when navigating to a different route.
- * Also tracks navigation history for back button logic.
  * @return {string} Current pathname from the location
  */
 const useHref = () => {
   const location = useLocation();
   const setHref = usePopupStateStore(state => state.setHref);
-  const setData = usePopupStateStore(state => state.setData);
   const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
-  const href = usePopupStateStore(state => state.href);
+  const lastPathnameRef = useRef(null);
+  const changeCountRef = useRef(0);
 
   useEffect(() => {
     const pathname = location.pathname;
 
-    addToNavigationHistory(pathname);
+    if (pathname !== lastPathnameRef.current) {
+      changeCountRef.current += 1;
 
-    if (pathname !== href) {
+      const shouldResetData = changeCountRef.current > 2;
+
+      lastPathnameRef.current = pathname;
       setHref(pathname);
-      setScrollPosition(0);
 
-      usePopupStateStore.setState({ data: {} });
+      if (shouldResetData) {
+        setScrollPosition(0);
+
+        usePopupStateStore.setState({ data: {} });
+      }
     }
-  }, [location.pathname, setHref, setData, setScrollPosition, href]);
+  }, [location.pathname, setHref, setScrollPosition]);
 
   return location.pathname;
 };
