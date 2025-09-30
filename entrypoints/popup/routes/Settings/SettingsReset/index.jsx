@@ -7,7 +7,9 @@
 import S from '../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useNavigate } from 'react-router';
-import { lazy } from 'react';
+import { lazy, useRef } from 'react';
+import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import useHref from '@/entrypoints/popup/hooks/useHref';
 
 const WarningIconLight = lazy(() => import('@/assets/popup-window/warning-light.svg?react'));
 const WarningIconDark = lazy(() => import('@/assets/popup-window/warning-dark.svg?react'));
@@ -42,11 +44,14 @@ const resetExtension = async () => {
 function SettingsReset (props) {
   const navigate = useNavigate();
   
+  const scrollableRef = useRef(null);
 
+  useScrollPosition(scrollableRef, false);
+  useHref();
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={scrollableRef}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />
