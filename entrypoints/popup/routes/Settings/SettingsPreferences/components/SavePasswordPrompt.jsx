@@ -100,7 +100,7 @@ function SavePasswordPrompt () {
 
       {sP === 'default' || sP === 'default_encrypted' ? (
         <Link
-          to='/settings/save-login-excluded-domains'
+          to='/settings/preferences/save-login-excluded-domains'
           className={S.settingsSavePasswordPromptExcludedDomainsLink}
           prefetch='intent'
         >

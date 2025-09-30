@@ -6,6 +6,7 @@
 
 import { Link, useNavigate, useLocation } from 'react-router';
 import { lazy } from 'react';
+import { getPreviousPath } from '../../utils/navigationHistory';
 
 const BackIcon = lazy(() => import('@/assets/popup-window/back.svg?react'));
 const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
@@ -17,6 +18,7 @@ const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
 function NavigationButton (props) {
   const navigate = useNavigate();
   const location = useLocation();
+  const previousPath = getPreviousPath();
 
   return (
     <Link
@@ -27,10 +29,34 @@ function NavigationButton (props) {
           e.preventDefault();
 
           try {
+            const currentPath = location.pathname;
+            const currentSegments = currentPath.split('/').filter(segment => segment);
+
             if (window.history.length > 1 && location.key !== 'default') {
+              if (previousPath && previousPath !== currentPath) {
+                const previousSegments = previousPath.split('/').filter(segment => segment);
+
+                if (previousSegments.length > currentSegments.length) {
+                  if (currentSegments.length > 0) {
+                    currentSegments.pop();
+                    const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
+                    navigate(parentPath);
+                  } else {
+                    navigate('/');
+                  }
+                  return;
+                }
+              }
+
               navigate(-1);
             } else {
-              navigate('/');
+              if (currentSegments.length > 0) {
+                currentSegments.pop();
+                const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
+                navigate(parentPath);
+              } else {
+                navigate('/');
+              }
             }
           } catch {
             navigate('/');
