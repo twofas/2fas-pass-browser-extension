@@ -10,7 +10,6 @@ import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
 import { lazy } from 'react';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
-import useHref from '@/entrypoints/popup/hooks/useHref';
 
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
 const AboutIcon = lazy(() => import('@/assets/popup-window/about.svg?react'));
@@ -37,7 +36,6 @@ function SettingsAbout (props) {
   const scrollableRef = useRef(null);
 
   useScrollPosition(scrollableRef, loading);
-  useHref();
 
   useEffect(() => {
     try {
