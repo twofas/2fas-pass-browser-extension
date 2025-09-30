@@ -7,7 +7,6 @@
 import S from '../Settings.module.scss';
 import { lazy, useRef } from 'react';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
-import useHref from '@/entrypoints/popup/hooks/useHref';
 
 const AutoClearClipboard = lazy(() => import('./components/AutoClearClipboard'));
 const IdleLock = lazy(() => import('./components/IdleLock'));
@@ -22,9 +21,7 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 */
 function SettingsSecurity (props) {
   const scrollableRef = useRef(null);
-
   useScrollPosition(scrollableRef, false);
-  useHref();
 
   return (
     <div className={`${props.className ? props.className : ''}`}>

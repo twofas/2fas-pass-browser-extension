@@ -10,7 +10,6 @@ import { useState, useEffect, lazy, useRef } from 'react';
 import getRatingLink from './functions/getRatingLink';
 import getRatingText from './functions/getRatingText';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
-import useHref from '@/entrypoints/popup/hooks/useHref';
 
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
@@ -29,7 +28,6 @@ function Settings (props) {
   const scrollableRef = useRef(null);
 
   useScrollPosition(scrollableRef, false);
-  useHref();
 
   useEffect(() => {
     try {
