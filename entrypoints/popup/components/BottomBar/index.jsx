@@ -174,6 +174,11 @@ function BottomBar () {
           <div className={S.bottombarSecIconContent} dangerouslySetInnerHTML={{ __html: securityIcon }} />
         </div>
 
+        <p className={S.bottombarSecIconTooltip}>
+          <span>{tooltipHeader}</span>
+          <span>{tooltipText}</span>
+        </p>
+
         <div className={`${S.bottombarFetch} ${fetchLinkClass}`}>
           <Link
             to='/fetch'
@@ -185,11 +190,6 @@ function BottomBar () {
             <span>{browser.i18n.getMessage('sync')}</span>
           </Link>
         </div>
-
-        <p className={S.bottombarSecIconTooltip}>
-          <span>{tooltipHeader}</span>
-          <span>{tooltipText}</span>
-        </p>
       </footer>
     </>
   );
