@@ -67,7 +67,7 @@ function SettingsPreferences (props) {
                 <div className={S.settingsDangerZone}>
                   <h4>{browser.i18n.getMessage('settings_danger_zone')}</h4>
 
-                  <Link to='/settings/reset' className={S.settingsDangerZoneLink}>
+                  <Link to='/settings/preferences/reset' className={S.settingsDangerZoneLink}>
                     <span>{browser.i18n.getMessage('settings_danger_zone_reset')}</span>
                     <Suspense fallback={null}>
                       <MenuArrowIcon />

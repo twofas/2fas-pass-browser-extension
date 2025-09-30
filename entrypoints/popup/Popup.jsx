@@ -18,6 +18,7 @@ import ToastsContent from './components/ToastsContent';
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
 import usePopupStateStore from './store/popupState';
+import { addToNavigationHistory } from './utils/navigationHistory';
 
 // ROUTES
 import ThisTab from './routes/ThisTab';
@@ -46,8 +47,8 @@ const routeConfig = [
   { path: '/settings/about', component: SettingsAbout, isProtectedRoute: false },
   { path: '/settings/preferences', component: SettingsPreferences, isProtectedRoute: false },
   { path: '/settings/security', component: SettingsSecurity, isProtectedRoute: false },
-  { path: '/settings/reset', component: SettingsReset, isProtectedRoute: false },
-  { path: '/settings/save-login-excluded-domains', component: SettingsSaveLoginExcludedDomains, isProtectedRoute: false },
+  { path: '/settings/preferences/reset', component: SettingsReset, isProtectedRoute: false },
+  { path: '/settings/preferences/save-login-excluded-domains', component: SettingsSaveLoginExcludedDomains, isProtectedRoute: false },
   { path: '/fetch', component: Fetch, isProtectedRoute: true },
   { path: '/fetch/:data', component: FetchExternal, noClassName: true, isProtectedRoute: true },
   { path: '/details/:id', component: Details, isProtectedRoute: true },
@@ -85,6 +86,10 @@ const AuthRoutes = memo(({ blocked, configured }) => {
   const storedHref = usePopupStateStore(state => state.href);
   const [initialCheckDone, setInitialCheckDone] = useState(false);
   const hasNavigated = useRef(false);
+
+  useEffect(() => {
+    addToNavigationHistory(location.pathname);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (hasNavigated.current || !configured) {

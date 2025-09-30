@@ -7,11 +7,13 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import usePopupStateStore from '../store/popupState';
+import { addToNavigationHistory } from '../utils/navigationHistory';
 
 /**
  * Custom hook for tracking and storing current pathname in popup state.
  * Automatically updates the href in the store when the location changes.
  * Resets data and scrollPosition when navigating to a different route.
+ * Also tracks navigation history for back button logic.
  * @return {string} Current pathname from the location
  */
 const useHref = () => {
@@ -23,6 +25,8 @@ const useHref = () => {
 
   useEffect(() => {
     const pathname = location.pathname;
+
+    addToNavigationHistory(pathname);
 
     if (pathname !== href) {
       setHref(pathname);
