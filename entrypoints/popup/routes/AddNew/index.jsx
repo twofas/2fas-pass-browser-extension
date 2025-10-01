@@ -11,20 +11,22 @@ import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useNavigate, Link, useLocation } from 'react-router';
 import getDomainInfo from './functions/getDomainInfo';
-import { useEffect, lazy, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Form, Field } from 'react-final-form';
 import onMessage from './events/onMessage';
 import { valueToNFKD, copyValue } from '@/partials/functions';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
+import usePopupStateStore from '../../store/popupState';
+import useScrollPosition from '../../hooks/useScrollPosition';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
+import Tooltip from '@/entrypoints/popup/components/Tooltip';
+import VisibleIcon from '@/assets/popup-window/visible.svg?react';
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
+import PasswordInput from '@/entrypoints/popup/components/PasswordInput';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
-const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
-const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
-const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
-const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
 
 const additionalVariants = {
   hidden: { maxHeight: '0px' },
@@ -41,136 +43,61 @@ function AddNew (props) {
   const location = useLocation();
 
   const [loading, setLoading] = useState(true);
-  const [dataInitialized, setDataInitialized] = useState(false);
-  const [passwordGeneratorProcessed, setPasswordGeneratorProcessed] = useState(false);
 
-  const [url, setUrl] = useState('');
-  const [minLength, setMinLength] = useState('');
-  const [maxLength, setMaxLength] = useState('');
-  const [pattern, setPattern] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const [onMobile, setOnMobile] = useState(true);
-  const [additionalOverflow, setAdditionalOverflow] = useState(true);
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
+
+  const scrollableRef = useRef(null);
+  useScrollPosition(scrollableRef, loading);
 
   useEffect(() => {
-    if (!dataInitialized) {
-      let sourceData = null;
-
-      if (location?.state?.data && Object.keys(location.state.data).length > 0) {
-        sourceData = location.state.data;
-      }
-
-      if (sourceData) {
-        if (sourceData.url !== undefined) {
-          const value = typeof sourceData.url === 'string' ? filterXSS(sourceData.url) : sourceData.url;
-          setUrl(value);
-        }
-
-        if (sourceData.minLength !== undefined) {
-          const value = typeof sourceData.minLength === 'string' ? filterXSS(sourceData.minLength) : sourceData.minLength;
-          setMinLength(value);
-        }
-
-        if (sourceData.maxLength !== undefined) {
-          const value = typeof sourceData.maxLength === 'string' ? filterXSS(sourceData.maxLength) : sourceData.maxLength;
-          setMaxLength(value);
-        }
-
-        if (sourceData.pattern !== undefined) {
-          setPattern(sourceData.pattern);
-        }
-
-        if (sourceData.password !== undefined) {
-          const value = typeof sourceData.password === 'string' ? filterXSS(sourceData.password) : sourceData.password;
-          setPassword(value);
-        }
-
-        if (sourceData.username !== undefined) {
-          const value = typeof sourceData.username === 'string' ? filterXSS(sourceData.username) : sourceData.username;
-          setUsername(value);
-        }
-
-        if (sourceData.onMobile !== undefined) {
-          setOnMobile(sourceData.onMobile);
-        }
-
-        if (sourceData.passwordVisible !== undefined) {
-          setPasswordVisible(sourceData.passwordVisible);
-        }
-
-        if (sourceData.additionalOverflow !== undefined) {
-          setAdditionalOverflow(sourceData.additionalOverflow);
-        }
-      }
-
-      setDataInitialized(true);
-    }
-  }, [dataInitialized, location?.state?.data]);
-
-  useEffect(() => {
-    if (!passwordGeneratorProcessed && location?.state?.from === 'passwordGenerator' && location?.state?.data) {
-      const data = location.state.data;
-
-      if (data.password !== undefined) {
-        setPassword(data.password);
-      }
-
-      if (data.username !== undefined) {
-        setUsername(data.username);
-      }
-
-      if (data.onMobile !== undefined) {
-        setOnMobile(data.onMobile);
-      }
-
-      if (data.additionalOverflow !== undefined) {
-        setAdditionalOverflow(data.additionalOverflow);
-      }
-
-      setPasswordGeneratorProcessed(true);
-    }
-  }, [location?.state, passwordGeneratorProcessed]);
-
-  useEffect(() => {
-    const messageListener = async (request, sender, sendResponse) => onMessage(request, sender, sendResponse, setUrl);
+    const messageListener = async (request, sender, sendResponse) => onMessage(request, sender, sendResponse, value => setData('url', value));
     browser.runtime.onMessage.addListener(messageListener);
-
-    const getDomainData = async () => {
-      const data = await getDomainInfo();
-
-      if (data.url) {
-        const sanitizedUrl = filterXSS(data.url);
-        setUrl(sanitizedUrl);
-      }
-
-      if (data.minLength) {
-        const sanitizedMinLength = filterXSS(data.minLength);
-        setMinLength(sanitizedMinLength);
-      }
-
-      if (data.maxLength) {
-        const sanitizedMaxLength = filterXSS(data.maxLength);
-        setMaxLength(sanitizedMaxLength);
-      }
-
-      if (data.pattern) {
-        setPattern(data.pattern);
-      }
-    };
 
     const initializeData = async () => {
       try {
-        if (dataInitialized) {
-          const hasLocationData = location?.state?.data && Object.keys(location.state.data).length > 0;
+        const stateData = location?.state?.data || {};
+        const storeData = data || {};
+        const domainData = await getDomainInfo();
 
-          if (!hasLocationData) {
-            await getDomainData();
+        const sanitizeValue = value => typeof value === 'string' ? filterXSS(value) : value;
+
+        const getValueWithPriority = (stateValue, storeValue, fallback, shouldSanitize = false) => {
+          if (stateValue !== undefined) {
+            return shouldSanitize ? sanitizeValue(stateValue) : stateValue;
           }
 
-          setLoading(false);
+          if (storeValue !== undefined && storeValue !== null) {
+            return null;
+          }
+
+          return fallback !== undefined ? (shouldSanitize ? sanitizeValue(fallback) : fallback) : null;
+        };
+
+        const fieldDefinitions = [
+          { key: 'url', fallback: domainData.url, sanitize: true },
+          { key: 'username', fallback: undefined, sanitize: true },
+          { key: 'password', fallback: undefined, sanitize: true },
+          { key: 'minLength', fallback: domainData.minLength, sanitize: true },
+          { key: 'maxLength', fallback: domainData.maxLength, sanitize: true },
+          { key: 'pattern', fallback: domainData.pattern, sanitize: false },
+          { key: 'onMobile', fallback: true, sanitize: false },
+          { key: 'additionalOverflow', fallback: true, sanitize: false }
+        ];
+
+        fieldDefinitions.forEach(({ key, fallback, sanitize }) => {
+          const value = getValueWithPriority(stateData[key], storeData[key], fallback, sanitize);
+
+          if (value !== null) {
+            setData(key, value);
+          }
+        });
+
+        if (stateData.passwordVisible !== undefined) {
+          setData('passwordVisible', stateData.passwordVisible);
         }
+
+        setLoading(false);
       } catch (e) {
         CatchError(e);
         setLoading(false);
@@ -182,10 +109,10 @@ function AddNew (props) {
     return () => {
       browser.runtime.onMessage.removeListener(messageListener);
     };
-  }, [location?.state?.data, dataInitialized]);
+  }, [location?.state?.data]);
 
   const handlePasswordVisibleClick = () => {
-    setPasswordVisible(!passwordVisible);
+    setData('passwordVisible', !data?.passwordVisible);
   };
 
   const handleCopyPassword = async form => {
@@ -222,38 +149,38 @@ function AddNew (props) {
   };
 
   const onSubmit = async e => {
-    const data = {
+    const formData = {
       url: e.url ? valueToNFKD(e.url) : '',
       passwordMinLength: e['password-minlength'] ? valueToNFKD(e['password-minlength']) : null,
       passwordMaxLength: e['password-maxlength'] ? valueToNFKD(e['password-maxlength']) : null,
       passwordPattern: e['password-pattern'] ? valueToNFKD(e['password-pattern']) : null
     };
 
-    if (onMobile) {
-      data.usernamePasswordMobile = true;
+    if (data?.onMobile) {
+      formData.usernamePasswordMobile = true;
     } else {
-      data.usernamePasswordMobile = false;
-      data.username = e.username ? valueToNFKD(e.username) : '';
-      data.password = e.password ? valueToNFKD(e.password) : '';
+      formData.usernamePasswordMobile = false;
+      formData.username = e.username ? valueToNFKD(e.username) : '';
+      formData.password = e.password ? valueToNFKD(e.password) : '';
     }
 
     return navigate('/fetch', {
       state: {
         action: 'newLogin',
         from: 'add-new',
-        data
+        data: formData
       }
     });
   };
 
-  if (loading || !dataInitialized) {
+  if (loading) {
     return null;
   }
 
   return (
     <LazyMotion features={loadDomAnimation}>
       <div className={`${props.className ? props.className : ''}`}>
-        <div>
+        <div ref={scrollableRef}>
           <section className={S.addNew}>
             <div className={S.addNewContainer}>
               <NavigationButton type='cancel' />
@@ -261,15 +188,15 @@ function AddNew (props) {
               <h2>{browser.i18n.getMessage('add_new_header')}</h2>
               <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
 
-              <Form onSubmit={onSubmit} initialValues={{ minLength, maxLength, pattern, url, username, password }} render={({ handleSubmit, form, submitting }) => (
+              <Form onSubmit={onSubmit} initialValues={{ minLength: data?.minLength || '', maxLength: data?.maxLength || '', pattern: data?.pattern || '', url: data?.url || '', username: data?.username || '', password: data?.password || '' }} render={({ handleSubmit, form, submitting }) => (
                   <form onSubmit={handleSubmit}>
-                    <Field name="password-minlength" value={minLength}>
+                    <Field name="password-minlength" value={data?.minLength || ''}>
                       {({ input }) => <input type="hidden" {...input} id="password-minlength" />}
                     </Field>
-                    <Field name="password-maxlength" value={maxLength}>
+                    <Field name="password-maxlength" value={data?.maxLength || ''}>
                       {({ input }) => <input type="hidden" {...input} id="password-maxlength" />}
                     </Field>
-                    <Field name="password-pattern" value={pattern}>
+                    <Field name="password-pattern" value={data?.pattern || ''}>
                       {({ input }) => <input type="hidden" {...input} id="password-pattern" />}
                     </Field>
                     <Field name="url">
@@ -289,6 +216,10 @@ function AddNew (props) {
                               autoCorrect="off"
                               autoComplete="off"
                               autoCapitalize="off"
+                              onChange={e => {
+                                input.onChange(e);
+                                setData('url', e.target.value);
+                              }}
                             />
                             <div className={pI.passInputBottomButtons}>
                               <button
@@ -310,9 +241,9 @@ function AddNew (props) {
                                 type="checkbox"
                                 name="set-in-mobile"
                                 id="set-in-mobile"
-                                checked={onMobile}
+                                checked={data?.onMobile}
                                 onChange={() => {
-                                  setOnMobile(!onMobile);
+                                  setData('onMobile', !data?.onMobile);
                                 }}
                               />
                               <label htmlFor="set-in-mobile">
@@ -330,23 +261,23 @@ function AddNew (props) {
                       )}
                     </Field>
                     <m.div
-                      className={`${S.addNewAdditional} ${additionalOverflow ? S.overflowH : ''}`}
+                      className={`${S.addNewAdditional} ${data?.additionalOverflow ? S.overflowH : ''}`}
                       variants={additionalVariants}
-                      initial={onMobile ? 'hidden' : 'visible'}
+                      initial={data?.onMobile ? 'hidden' : 'visible'}
                       transition={{ duration: 0.3, type: 'tween' }}
-                      animate={onMobile ? 'hidden' : 'visible'}
-                      onAnimationStart={() => { setAdditionalOverflow(true); }}
+                      animate={data?.onMobile ? 'hidden' : 'visible'}
+                      onAnimationStart={() => { setData('additionalOverflow', true); }}
                       onAnimationComplete={() => {
-                        if (!onMobile) {
-                          setAdditionalOverflow(false);
+                        if (!data?.onMobile) {
+                          setData('additionalOverflow', false);
                         } else {
-                          setAdditionalOverflow(true);
+                          setData('additionalOverflow', true);
                         }
                       }}
                     >
                       <Field name="username">
                         {({ input }) => (
-                          <div className={`${pI.passInput} ${onMobile ? pI.disabled : ''} ${S.passInput}`}>
+                          <div className={`${pI.passInput} ${data?.onMobile ? pI.disabled : ''} ${S.passInput}`}>
                             <div className={pI.passInputTop}>
                               <label htmlFor="username">{browser.i18n.getMessage('username')}</label>
                             </div>
@@ -355,8 +286,12 @@ function AddNew (props) {
                                 type="text"
                                 {...input}
                                 id="username"
-                                disabled={onMobile ? 'disabled' : ''}
+                                disabled={data?.onMobile ? 'disabled' : ''}
                                 placeholder={browser.i18n.getMessage('placeholder_username')}
+                                onChange={e => {
+                                  input.onChange(e);
+                                  setData('username', e.target.value);
+                                }}
                               />
                               <div className={pI.passInputBottomButtons}>
                                 <button
@@ -364,7 +299,7 @@ function AddNew (props) {
                                   className={`${bS.btn} ${pI.iconButton}`}
                                   onClick={() => handleCopyUsername(form)}
                                   title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
-                                  disabled={onMobile ? 'disabled' : ''}
+                                  disabled={data?.onMobile ? 'disabled' : ''}
                                 >
                                   <CopyIcon />
                                 </button>
@@ -375,31 +310,35 @@ function AddNew (props) {
                       </Field>
                       <Field name="password">
                         {({ input }) => (
-                          <div className={`${pI.passInput} ${onMobile ? pI.disabled : ''} ${S.passInput}`}>
+                          <div className={`${pI.passInput} ${data?.onMobile ? pI.disabled : ''} ${S.passInput}`}>
                             <div className={pI.passInputTop}>
                               <label htmlFor="password">{browser.i18n.getMessage('password')}</label>
                             </div>
                             <div className={pI.passInputBottom}>
                               <PasswordInput
                                 {...input}
-                                type={passwordVisible ? 'text' : 'password'}
+                                type={data?.passwordVisible ? 'text' : 'password'}
                                 placeholder={browser.i18n.getMessage('placeholder_password')}
                                 id="password"
-                                showPassword={passwordVisible}
+                                showPassword={data?.passwordVisible}
                                 isDecrypted={true}
-                                disabled={onMobile ? 'disabled' : ''}
+                                disabled={data?.onMobile ? 'disabled' : ''}
                                 dir="ltr"
                                 spellCheck="false"
                                 autoCorrect="off"
                                 autoComplete="off"
                                 autoCapitalize="off"
+                                onChange={e => {
+                                  input.onChange(e);
+                                  setData('password', e.target.value);
+                                }}
                               />
                               <div className={pI.passInputBottomButtons}>
                                 <Link
                                   to='/password-generator'
                                   className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
                                   title={browser.i18n.getMessage('add_new_generate_password')}
-                                  state={{ from: 'addNew', data: { ...form.getState().values, onMobile, additionalOverflow, passwordVisible } }}
+                                  state={{ from: 'addNew', data: { ...form.getState().values, onMobile: data?.onMobile, additionalOverflow: data?.additionalOverflow, passwordVisible: data?.passwordVisible } }}
                                   prefetch='intent'
                                 >
                                   <RefreshIcon />
