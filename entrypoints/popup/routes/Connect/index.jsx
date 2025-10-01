@@ -6,7 +6,7 @@
 
 import S from './Connect.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { useState, useEffect, useCallback, useMemo, useRef, lazy } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, lazy, memo } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useAuthActions } from '@/hooks/useAuth';
@@ -24,6 +24,15 @@ const viewVariants = {
   hidden: { opacity: 0, borderWidth: '0px', pointerEvents: 'none' }
 };
 
+const i18nKeys = {
+  connectHeader: 'connect_header',
+  errorGeneral: 'error_general',
+  reload: 'reload',
+  connecting: 'connect_connecting',
+  connectionOpened: 'connect_connection_opened',
+  connectDescription: 'connect_description'
+};
+
 /** 
 * Function component that renders the Connect page.
 * @param {Object} props - The properties passed to the component.
@@ -33,18 +42,21 @@ function Connect (props) {
   const [qrCode, setQrCode] = useState(null);
   const [socketConnecting, setSocketConnecting] = useState(false);
   const [socketError, setSocketError] = useState(false);
-  const [headerText, setHeaderText] = useState(browser.i18n.getMessage('connect_header'));
   const [connectingLoader, setConnectingLoader] = useState(264);
 
   const { login } = useAuthActions();
   const closeConnectionRef = useRef(null);
 
-  const connectHeaderText = useMemo(() => browser.i18n.getMessage('connect_header'), []);
-  const errorGeneralText = useMemo(() => browser.i18n.getMessage('error_general'), []);
-  const reloadText = useMemo(() => browser.i18n.getMessage('reload'), []);
-  const connectingText = useMemo(() => browser.i18n.getMessage('connect_connecting'), []);
-  const connectionOpenedText = useMemo(() => browser.i18n.getMessage('connect_connection_opened'), []);
-  const connectDescriptionText = useMemo(() => browser.i18n.getMessage('connect_description'), []);
+  const i18n = useMemo(() => ({
+    connectHeader: browser.i18n.getMessage(i18nKeys.connectHeader),
+    errorGeneral: browser.i18n.getMessage(i18nKeys.errorGeneral),
+    reload: browser.i18n.getMessage(i18nKeys.reload),
+    connecting: browser.i18n.getMessage(i18nKeys.connecting),
+    connectionOpened: browser.i18n.getMessage(i18nKeys.connectionOpened),
+    connectDescription: browser.i18n.getMessage(i18nKeys.connectDescription)
+  }), []);
+
+  const [headerText, setHeaderText] = useState(i18n.connectHeader);
 
   const initConnection = useCallback(async () => {
     let sessionID, signature, qr, ephemeralData, socket;
@@ -58,7 +70,7 @@ function Connect (props) {
     } catch (e) {
       await CatchError(e, () => {
         setSocketError(true);
-        setHeaderText(errorGeneralText);
+        setHeaderText(i18n.errorGeneral);
         setSocketConnecting(false);
         setConnectingLoader(264);
       });
@@ -88,7 +100,7 @@ function Connect (props) {
 
     if (!socketCreated) {
       setSocketError(true);
-      setHeaderText(errorGeneralText);
+      setHeaderText(i18n.errorGeneral);
       setSocketConnecting(false);
       setConnectingLoader(264);
       return;
@@ -99,13 +111,13 @@ function Connect (props) {
     socket.addEventListener('close', ConnectOnClose);
 
     setQrCode(qr);
-  }, [errorGeneralText]);
+  }, [i18n.errorGeneral]);
 
   const handleSocketReload = useCallback(async () => {
     await initConnection();
     setSocketError(false);
-    setHeaderText(connectHeaderText);
-  }, [initConnection, connectHeaderText]);
+    setHeaderText(i18n.connectHeader);
+  }, [initConnection, i18n.connectHeader]);
 
   useEffect(() => {
     closeConnectionRef.current = () => {
@@ -136,7 +148,9 @@ function Connect (props) {
     eventBus.on(eventBus.EVENTS.CONNECT.HEADER_TEXT, setHeaderText);
     eventBus.on(eventBus.EVENTS.CONNECT.LOGIN, login);
 
-    initConnection();
+    requestAnimationFrame(() => {
+      initConnection();
+    });
 
     return () => {
       eventBus.off(eventBus.EVENTS.CONNECT.CONNECTING, setSocketConnecting);
@@ -163,7 +177,7 @@ function Connect (props) {
 
               <div className={`${S.connectContainerQr} ${socketError ? S.error : ''}`}>
                 <div className={S.connectContainerQrErrorContent}>
-                  <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnQrReload}`} onClick={handleSocketReload}>{reloadText}</button>
+                  <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnQrReload}`} onClick={handleSocketReload}>{i18n.reload}</button>
                 </div>
 
                 <QR qrCode={qrCode} />
@@ -171,7 +185,7 @@ function Connect (props) {
 
               <div className={S.connectDescription}>
                 <InfoIcon />
-                <p>{connectDescriptionText}</p>
+                <p>{i18n.connectDescription}</p>
               </div>
             </div>
           </m.section>
@@ -188,12 +202,12 @@ function Connect (props) {
                   <circle cx="48" cy="48" r="42" className={S.progressLoaderCircleBg} />
                   <circle cx="48" cy="48" r="42" />
                 </svg>
-            
-                <span>{connectingText}</span>
+
+                <span>{i18n.connecting}</span>
               </div>
 
               <div className={S.progressDescription}>
-                <p>{connectionOpenedText}</p>
+                <p>{i18n.connectionOpened}</p>
               </div>
             </div>
           </m.section>
@@ -203,4 +217,4 @@ function Connect (props) {
   );
 }
 
-export default Connect;
+export default memo(Connect);

@@ -84,13 +84,7 @@
         height: 250px;
         image-rendering: pixelated;
         opacity: 0;
-        transition: filter .3s ease-in-out, opacity .3s ease-in-out;
         width: 250px;
-    
-        &.loading {
-          filter: blur(4px);
-          image-rendering: optimizespeed;
-        }
 
         &[src] {
           opacity: 1;
