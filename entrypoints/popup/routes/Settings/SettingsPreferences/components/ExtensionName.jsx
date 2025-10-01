@@ -92,7 +92,6 @@ function ExtensionName () {
     <Form
       onSubmit={onSubmit}
       initialValues={{ 'ext-name': data.extName }}
-      key={data.extName} // Force re-render when extName changes
       render={({ handleSubmit, submitting }) => (
         <form className={S.settingsExtName} onSubmit={handleSubmit}>
           <Field name="ext-name">
