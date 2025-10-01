@@ -14,6 +14,8 @@ import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import getServices from '@/partials/sessionStorage/getServices';
 import { valueToNFKD, sanitizeObject } from '@/partials/functions';
+import usePopupStateStore from '../../store/popupState';
+import useScrollPosition from '../../hooks/useScrollPosition';
 
 import URIMatcher from '@/partials/URIMatcher';
 import { PULL_REQUEST_TYPES } from '@/constants';
@@ -39,17 +41,28 @@ function Details (props) {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
-  
+
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
+
   const isInitialLoadRef = useRef(true);
   const unwatchStorageVersion = useRef(null);
+  const scrollableRef = useRef(null);
 
   const getInitialValue = useCallback((key, fallback) => {
-    if (location?.state?.data?.generatorData?.[key] !== undefined) {
-      return location.state.data.generatorData[key];
+    const fromState = location?.state?.data?.generatorData?.[key];
+    const fromStore = data?.[key];
+
+    if (fromState !== undefined) {
+      return fromState;
+    }
+
+    if (fromStore !== undefined && fromStore !== null) {
+      return fromStore;
     }
 
     return fallback;
-  }, [location?.state?.data?.generatorData]);
+  }, [location?.state?.data?.generatorData, data]);
 
   const getInitialService = useCallback(() => {
     if (location?.state?.data?.service) {
@@ -64,8 +77,12 @@ function Details (props) {
       return location.state.data.formValues;
     }
 
+    if (data?.formValues) {
+      return data.formValues;
+    }
+
     return null;
-  }, [location?.state?.data?.formValues]);
+  }, [location?.state?.data?.formValues, data?.formValues]);
 
   const [service, setService] = useState(getInitialService());
   const [originalService, setOriginalService] = useState(null);
@@ -85,6 +102,8 @@ function Details (props) {
   const [inputError, setInputError] = useState(undefined);
   const [storageVersion, setStorageVersion] = useState(null);
 
+  useScrollPosition(scrollableRef, loading);
+
   const handleRemoveUri = useCallback((index, form) => {
     const currentValues = form.getState().values;
     const newUris = currentValues.uris.filter((_, i) => i !== index);
@@ -93,6 +112,7 @@ function Details (props) {
 
     const newDomainsEditable = domainsEditable.filter((_, i) => i !== index);
     setDomainsEditable(newDomainsEditable);
+    setData('domainsEditable', newDomainsEditable);
 
     const updatedFormValues = {
       ...currentValues,
@@ -100,8 +120,9 @@ function Details (props) {
     };
 
     setFormValues(updatedFormValues);
+    setData('formValues', updatedFormValues);
 
-    }, [domainsEditable]);
+    }, [domainsEditable, setData]);
 
   const handleAddUri = useCallback(form => {
     const currentValues = form.getState().values;
@@ -117,6 +138,7 @@ function Details (props) {
 
     const newDomainsEditable = [...domainsEditable, true];
     setDomainsEditable(newDomainsEditable);
+    setData('domainsEditable', newDomainsEditable);
 
     const updatedFormValues = {
       ...currentValues,
@@ -124,16 +146,29 @@ function Details (props) {
     };
 
     setFormValues(updatedFormValues);
+    setData('formValues', updatedFormValues);
+  }, [domainsEditable, setData]);
 
-    }, [domainsEditable]);
+  const updateFormValues = useCallback(updatedValues => {
+    setFormValues(updatedValues);
+    setData('formValues', updatedValues);
+  }, [setData]);
 
   const getData = useCallback(async () => {
     if (location?.state?.data?.service) {
       setOriginalService(location.state.data.service);
+
+      if (location.state.data.formValues) {
+        setFormValues(location.state.data.formValues);
+        setData('formValues', location.state.data.formValues);
+      } else if (data?.formValues) {
+        setFormValues(data.formValues);
+      }
+
       setLoading(false);
     } else {
-      const data = await getServices();
-      let s = data.find(s => s.id === params.id);
+      const serviceData = await getServices();
+      let s = serviceData.find(s => s.id === params.id);
 
       if (!s || s.length <= 0) {
         showToast(browser.i18n.getMessage('details_service_not_found'), 'error');
@@ -150,15 +185,23 @@ function Details (props) {
       setOriginalService(s);
 
       const urisLength = s.uris?.length || 0;
+      const newDomainsEditable = new Array(urisLength).fill(false);
 
       setService(s);
-      setDomainsEditable(new Array(urisLength).fill(false));
+      setDomainsEditable(newDomainsEditable);
+      setData('domainsEditable', newDomainsEditable);
+
+      if (data?.formValues) {
+        setFormValues(data.formValues);
+      }
+
       setLoading(false);
       setPasswordEditable(false);
+      setData('passwordEditable', false);
     }
 
     isInitialLoadRef.current = false;
-  }, [location?.state?.data?.service, params.id, navigate]);
+  }, [location?.state?.data?.service, location?.state?.data?.formValues, params.id, navigate, setData, data?.formValues]);
 
   const watchStorageVersion = useCallback(() => {
     const uSV = storage.watch('session:storageVersion', async newValue => {
@@ -282,7 +325,7 @@ function Details (props) {
   return (
     <LazyMotion features={loadDomAnimation}>
       <div className={`${props.className ? props.className : ''}`}>
-        <div >
+        <div ref={scrollableRef}>
           <section className={S.details}>
             <div className={S.detailsContainer}>
               <NavigationButton type='cancel' />
@@ -294,60 +337,102 @@ function Details (props) {
                 initialValues={formValues || service}
                 render={({ handleSubmit, form, submitting, values }) => (
                   <form onSubmit={handleSubmit} onChange={() => {
-                    // Track form value changes (but not for URI changes, which are handled separately)
                     setTimeout(() => {
                       const currentValues = form.getState().values;
-                      // Only update if not already updated by handleAddUri or handleRemoveUri
+
                       if (JSON.stringify(currentValues) !== JSON.stringify(formValues)) {
                         setFormValues(currentValues);
-                        }
+                        setData('formValues', currentValues);
+                      }
                     }, 0);
                   }}>
                     <Name
                       key={`name-${service.id}-${storageVersion}`}
                       data={{ service, form, nameEditable, inputError }}
-                      actions={{ setNameEditable }}
+                      actions={{
+                        setNameEditable: value => {
+                          setNameEditable(value);
+                          setData('nameEditable', value);
+                        }
+                      }}
                     />
                     <Username
                       key={`username-${service.id}-${storageVersion}`}
                       data={{ service, usernameEditable, usernameMobile, inputError, form }}
                       actions={{
-                        setUsernameEditable,
-                        setUsernameMobile
+                        setUsernameEditable: value => {
+                          setUsernameEditable(value);
+                          setData('usernameEditable', value);
+                        },
+                        setUsernameMobile: value => {
+                          setUsernameMobile(value);
+                          setData('usernameMobile', value);
+                        }
                       }}
                     />
                     <Password
                       key={`password-${service.id}-${storageVersion}`}
                       data={{ service: originalService || service, passwordEditable, passwordVisible, passwordMobile, form }}
                       actions={{
-                        setPasswordEditable,
-                        setPasswordVisible,
-                        setPasswordMobile
+                        setPasswordEditable: value => {
+                          setPasswordEditable(value);
+                          setData('passwordEditable', value);
+                        },
+                        setPasswordVisible: value => {
+                          setPasswordVisible(value);
+                          setData('passwordVisible', value);
+                        },
+                        setPasswordMobile: value => {
+                          setPasswordMobile(value);
+                          setData('passwordMobile', value);
+                        }
                       }}
-                      generatorData={{ dangerZoneOpened, nameEditable, usernameEditable, domainsEditable, usernameMobile, tierEditable, notesEditable }}
+                      generatorData={{ dangerZoneOpened, nameEditable, usernameEditable, domainsEditable, usernameMobile, tierEditable, notesEditable, passwordEditable, passwordVisible, passwordMobile }}
                     />
                     {generateURLs({
-                      data: { service, uris: values.uris, domainsEditable, inputError, form },
-                      actions: { setDomainsEditable, handleRemoveUri, handleAddUri }
+                      data: { service, uris: values.uris, domainsEditable, inputError, form, originalService },
+                      actions: {
+                        setDomainsEditable: value => {
+                          setDomainsEditable(value);
+                          setData('domainsEditable', value);
+                        },
+                        handleRemoveUri,
+                        handleAddUri,
+                        updateFormValues
+                      }
                     })}
                     <SecurityTier
                       data={{ service: originalService || service, tierEditable, form }}
                       actions={{
-                        setTierEditable,
-                        updateSecurityType: (value) => {
+                        setTierEditable: value => {
+                          setTierEditable(value);
+                          setData('tierEditable', value);
+                        },
+                        updateSecurityType: value => {
                           const currentFormValues = form.getState().values;
                           const updatedFormValues = { ...currentFormValues, securityType: value };
                           setFormValues(updatedFormValues);
-                          }
+                          setData('formValues', updatedFormValues);
+                        }
                       }}
                     />
                     <Tags
                       data={{ service, tagsEditable, form }}
-                      actions={{ setTagsEditable }}
+                      actions={{
+                        setTagsEditable: value => {
+                          setTagsEditable(value);
+                          setData('tagsEditable', value);
+                        }
+                      }}
                     />
                     <Notes
                       data={{ service: originalService || service, notesEditable, form }}
-                      actions={{ setNotesEditable }}
+                      actions={{
+                        setNotesEditable: value => {
+                          setNotesEditable(value);
+                          setData('notesEditable', value);
+                        }
+                      }}
                     />
                     <div className={S.detailsButton}>
                       <button
@@ -361,7 +446,12 @@ function Details (props) {
 
                     <DangerZone
                       data={{ service, dangerZoneOpened, submitting }}
-                      actions={{ setDangerZoneOpened }}
+                      actions={{
+                        setDangerZoneOpened: value => {
+                          setDangerZoneOpened(value);
+                          setData('dangerZoneOpened', value);
+                        }
+                      }}
                     />
                   </form>
                 )}
