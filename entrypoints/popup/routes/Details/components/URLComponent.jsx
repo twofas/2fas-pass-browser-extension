@@ -92,8 +92,8 @@ function URLComponent (props) {
     <LazyMotion features={loadDomAnimation}>
       <Field name={`uris[${index}].text`}>
         {({ input }) => (
-          <m.div 
-            className={`${pI.passInput} ${domainsEditable[index] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`} 
+          <m.div
+            className={`${pI.passInput} ${domainsEditable[index] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
             key={index}
             variants={urlVariants}
             initial={isNew ? "hidden" : "visible"}
@@ -102,42 +102,42 @@ function URLComponent (props) {
             layout
           >
             <div className={pI.passInputTop}>
-            <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
-            <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => setDomainEditable(index, input)}>{domainsEditable[index] ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
-          </div>
-          <div className={pI.passInputBottom}>
-            <input
-              type="text"
-              placeholder={browser.i18n.getMessage('placeholder_domain_uri')}
-              {...input}
-              id={`uri-${index}`}
-              disabled={!domainsEditable[index] ? 'disabled' : ''}
-              dir="ltr"
-              spellCheck="false"
-              autoCorrect="off"
-              autoComplete="on"
-              autoCapitalize="off"
-            />
-            <div className={pI.passInputBottomButtons}>
-              <button
-                type='button'
-                className={`${bS.btn} ${pI.iconButton}`}
-                onClick={() => handleCopyUri(input.value)}
-                title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
-              >
-                <CopyIcon />
-              </button>
-              <button
-                type='button'
-                className={`${bS.btn} ${pI.iconButton} ${pI.trashButton} ${domainsEditable[index] ? '' : pI.hiddenButton}`}
-                onClick={() => handleRemoveUri(index, form)}
-                title={browser.i18n.getMessage('remove')}
-                disabled={!domainsEditable[index]}
-              >
-                <TrashIcon />
-              </button>
+              <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
+              <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => setDomainEditable(index, input)}>{domainsEditable[index] ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
             </div>
+            <div className={pI.passInputBottom}>
+              <input
+                type="text"
+                placeholder={browser.i18n.getMessage('placeholder_domain_uri')}
+                {...input}
+                id={`uri-${index}`}
+                disabled={!domainsEditable[index] ? 'disabled' : ''}
+                dir="ltr"
+                spellCheck="false"
+                autoCorrect="off"
+                autoComplete="on"
+                autoCapitalize="off"
+              />
+          <div className={pI.passInputBottomButtons}>
+            <button
+              type='button'
+              className={`${bS.btn} ${pI.iconButton}`}
+              onClick={() => handleCopyUri(input.value)}
+              title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+            >
+              <CopyIcon />
+            </button>
+            <button
+              type='button'
+              className={`${bS.btn} ${pI.iconButton} ${pI.trashButton} ${domainsEditable[index] ? '' : pI.hiddenButton}`}
+              onClick={() => handleRemoveUri(index, form)}
+              title={browser.i18n.getMessage('remove')}
+              disabled={!domainsEditable[index]}
+            >
+              <TrashIcon />
+            </button>
           </div>
+        </div>
             <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
               {domainValidation(input.value)}
             </div>
