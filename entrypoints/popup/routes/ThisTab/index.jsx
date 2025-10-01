@@ -8,7 +8,7 @@ import S from './ThisTab.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import { useEffect, useState, useRef, lazy, useCallback, useMemo, memo } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo, memo } from 'react';
 import getDomainFromTab from './functions/getDomainFromTab';
 import onMessage from './events/onMessage';
 import generateAllLoginsList from './functions/generateAllLoginsList';
@@ -25,17 +25,17 @@ import { toast } from 'react-toastify';
 import isLoginsCorrect from './functions/isLoginsCorrect';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
+import SmallLoginItem from './components/SmallLoginItem';
+import DomainIcon from '@/assets/popup-window/domain.svg?react';
+import SearchIcon from '@/assets/popup-window/search-icon.svg?react';
+import ClearIcon from '@/assets/popup-window/clear.svg?react';
+import SortUpIcon from '@/assets/popup-window/sort-up.svg?react';
+import SortDownIcon from '@/assets/popup-window/sort-down.svg?react';
+import NoMatch from './components/NoMatch';
+import Filters from './components/Filters';
+import UpdateComponent from './components/UpdateComponent';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const SmallLoginItem = lazy(() => import('./components/SmallLoginItem'));
-const DomainIcon = lazy(() => import('@/assets/popup-window/domain.svg?react'));
-const SearchIcon = lazy(() => import('@/assets/popup-window/search-icon.svg?react'));
-const ClearIcon = lazy(() => import('@/assets/popup-window/clear.svg?react'));
-const SortUpIcon = lazy(() => import('@/assets/popup-window/sort-up.svg?react'));
-const SortDownIcon = lazy(() => import('@/assets/popup-window/sort-down.svg?react'));
-const NoMatch = lazy(() => import('./components/NoMatch'));
-const Filters = lazy(() => import('./components/Filters'));
-const UpdateComponent = lazy(() => import('./components/UpdateComponent'));
 
 const thisTabTopVariants = {
   visible: { height: 'auto', transition: { duration: 0.3 } },
