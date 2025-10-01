@@ -6,7 +6,7 @@
 
 import S from './Popup.module.scss';
 import { HashRouter, Route, Routes, Navigate, useNavigate, useLocation } from 'react-router';
-import { useEffect, useState, useMemo, memo, useRef } from 'react';
+import { useEffect, useState, useMemo, memo, useRef, lazy, Suspense } from 'react';
 import { AuthProvider, useAuthState } from '@/hooks/useAuth';
 import popupOnMessage from './events/popupOnMessage';
 import lockShortcuts from './utils/lockShortcuts';
@@ -20,23 +20,22 @@ import BottomBar from './components/BottomBar';
 import usePopupStateStore from './store/popupState';
 import useHref from './hooks/useHref';
 import { addToNavigationHistory } from './utils/navigationHistory';
-
-// ROUTES
-import ThisTab from './routes/ThisTab';
-import Connect from './routes/Connect';
-import AddNew from './routes/AddNew';
-import Settings from './routes/Settings';
-import SettingsAbout from './routes/Settings/SettingsAbout';
-import SettingsPreferences from './routes/Settings/SettingsPreferences';
-import SettingsSecurity from './routes/Settings/SettingsSecurity';
-import SettingsReset from './routes/Settings/SettingsReset';
-import SettingsSaveLoginExcludedDomains from './routes/Settings/SettingsSaveLoginExcludedDomains';
-import Fetch from './routes/Fetch';
-import FetchExternal from './routes/FetchExternal';
-import Details from './routes/Details';
-import PasswordGenerator from './routes/PasswordGenerator';
-import NotFound from './routes/NotFound';
 import Blocked from './routes/Blocked';
+
+const ThisTab = lazy(() => import('./routes/ThisTab'));
+const Connect = lazy(() => import('./routes/Connect'));
+const AddNew = lazy(() => import('./routes/AddNew'));
+const Settings = lazy(() => import('./routes/Settings'));
+const SettingsAbout = lazy(() => import('./routes/Settings/SettingsAbout'));
+const SettingsPreferences = lazy(() => import('./routes/Settings/SettingsPreferences'));
+const SettingsSecurity = lazy(() => import('./routes/Settings/SettingsSecurity'));
+const SettingsReset = lazy(() => import('./routes/Settings/SettingsReset'));
+const SettingsSaveLoginExcludedDomains = lazy(() => import('./routes/Settings/SettingsSaveLoginExcludedDomains'));
+const Fetch = lazy(() => import('./routes/Fetch'));
+const FetchExternal = lazy(() => import('./routes/FetchExternal'));
+const Details = lazy(() => import('./routes/Details'));
+const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
+const NotFound = lazy(() => import('./routes/NotFound'));
 
 const emptyFunc = () => {};
 
@@ -137,15 +136,16 @@ const AuthRoutes = memo(({ blocked, configured }) => {
     });
   }, [configured, blocked]);
 
-  // Don't render routes until initial navigation check is done
   if (!initialCheckDone) {
     return null;
   }
 
   return (
-    <Routes>
-      {routeElements}
-    </Routes>
+    <Suspense fallback={null}>
+      <Routes>
+        {routeElements}
+      </Routes>
+    </Suspense>
   );
 });
 
@@ -312,13 +312,16 @@ const PopupMain = memo(() => {
     browser.runtime.onMessage.addListener(popupOnMessage);
     document.addEventListener('keydown', lockShortcuts);
     document.addEventListener('contextmenu', lockRMB);
-    window.addEventListener('error', emptyFunc);
-    window.addEventListener('unhandledrejection', emptyFunc);
     window.addEventListener('focus', storageAutoClearActions);
 
     if (import.meta.env.BROWSER === 'safari') {
       document.addEventListener('click', safariBlankLinks);
     }
+
+    requestAnimationFrame(() => {
+      window.addEventListener('error', emptyFunc);
+      window.addEventListener('unhandledrejection', emptyFunc);
+    });
 
     return () => {
       browser.runtime.onMessage.removeListener(popupOnMessage);
