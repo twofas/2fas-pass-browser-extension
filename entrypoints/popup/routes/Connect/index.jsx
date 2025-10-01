@@ -6,7 +6,7 @@
 
 import S from './Connect.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { useState, useEffect, useCallback, useMemo, useRef, lazy, memo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useAuthActions } from '@/hooks/useAuth';
@@ -14,10 +14,10 @@ import { generateSessionKeysNonces, generateEphemeralKeys, generateSessionID, ca
 import ConnectOnMessage from './socket/ConnectOnMessage';
 import ConnectOnClose from './socket/ConnectOnClose';
 import TwoFasWebSocket from '@/partials/WebSocket';
+import InfoIcon from '@/assets/popup-window/info.svg?react';
+import QR from './components/QR';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
-const QR = lazy(() => import('./components/QR'));
 
 const viewVariants = {
   visible: { opacity: 1, borderWidth: '1px', pointerEvents: 'auto' },
