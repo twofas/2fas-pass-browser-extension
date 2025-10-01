@@ -5,65 +5,28 @@
 // See LICENSE file for full terms
 
 import S from '../../Connect.module.scss';
-import { useState, useEffect } from 'react';
-import qrcode from 'qrcode';
+import { useMemo, memo } from 'react';
 
-/** 
-* Function to generate a QR code.
-* @param {string} ephemeralPublicKey - The ephemeral public key.
-* @param {string} sessionID - The session ID.
-* @param {string} signature - The signature.
-* @return {Promise<string>} A promise that resolves to the generated QR code.
+/**
+* QR code display component.
+* @param {Object} props - Component props.
+* @param {string} props.qrCode - The QR code data URL to display.
+* @return {JSX.Element} The rendered QR component.
 */
 function QR (props) {
-  const [qrTextIndex, setQrText] = useState(-1);
-  const [qrCode, setQrCode] = useState();
-  const [qrLoading, setQrLoading] = useState(true);
+  const isLoading = !props.qrCode;
 
-  let qrAnimationInterval = null;
-
-  const QRLoadingAnimation = async () => {
-    if (props.qrCode && props.qrCode.length > 0) {
-      return;
+  const displaySrc = useMemo(() => {
+    if (props.qrCode) {
+      return props.qrCode;
     }
 
-    let qrTextI;
-    const qrTexts = [
-      browser.i18n.getMessage('connect_qr_placeholder_1'),
-      browser.i18n.getMessage('connect_qr_placeholder_2'),
-      browser.i18n.getMessage('connect_qr_placeholder_3')
-    ];
-
-    do {
-      qrTextI = Math.floor(Math.random() * qrTexts.length);
-    } while (qrTextI === qrTextIndex);
-
-    const qrText = qrTexts[qrTextI].toLowerCase().replace(/ /g, '');
-    const qrCode = await qrcode.toDataURL(qrText, { type: 'image/jpeg', errorCorrectionLevel: 'h', quality: 0.5, width: 197, margin: 0 });
-
-    setQrText(qrTextI);
-    setQrCode(qrCode);
-  };
-
-  useEffect(() => {
-    if (props?.qrCode && props?.qrCode.length > 0) {
-      clearInterval(qrAnimationInterval);
-      setQrCode(props.qrCode);
-      setQrLoading(false);
-    }
-
-    qrAnimationInterval = setInterval(async () => {
-      await QRLoadingAnimation();
-    }, 1000);
-
-    return () => {
-      clearInterval(qrAnimationInterval);
-    };
+    return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 197 197"%3E%3Crect width="197" height="197" fill="%23ffffff"/%3E%3C/svg%3E';
   }, [props.qrCode]);
 
   return (
-    <img src={qrCode} className={`${qrLoading ? S.loading : ''}`} />
+    <img src={displaySrc} className={`${isLoading ? S.loading : ''}`} alt="QR Code" />
   );
 }
 
-export default QR;
+export default memo(QR);
