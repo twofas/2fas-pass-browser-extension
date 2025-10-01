@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { createContext, useContext, useMemo, useEffect, useState, memo, useRef } from 'react';
+import { createContext, useContext, useMemo, useEffect, useState, memo, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import setConfigured from '@/partials/sessionStorage/configured/setConfigured';
@@ -12,6 +12,8 @@ import cleanupDevices from '@/partials/functions/cleanupDevices';
 
 const AuthStateContext = createContext();
 const AuthActionsContext = createContext();
+
+const LoadingSkeleton = memo(() => <div style={{ opacity: 0 }} />);
 
 /**
 * AuthProviderInner - The actual provider that renders after loading
@@ -45,27 +47,24 @@ export const AuthProvider = memo(({ children }) => {
   const [configured, setStateConfigured] = useState(false);
   const navigate = useNavigate();
 
-  const actionsRef = useRef();
+  const login = useCallback(async () => {
+    await setConfigured(Date.now());
+    setStateConfigured(true);
+    navigate('/', { replace: true });
+  }, [navigate]);
 
-  if (!actionsRef.current) {
-    actionsRef.current = {
-      login: async () => {
-        await setConfigured(Date.now());
-        setStateConfigured(true);
-        navigate('/', { replace: true });
-      },
-      logout: async (clear = true) => {
-        await cleanupDevices();
+  const logout = useCallback(async (clear = true) => {
+    await cleanupDevices();
 
-        if (clear) {
-          await browser.storage.session.clear();
-        }
+    if (clear) {
+      await browser.storage.session.clear();
+    }
 
-        setStateConfigured(false);
-        navigate('/connect', { replace: true });
-      }
-    };
-  }
+    setStateConfigured(false);
+    navigate('/connect', { replace: true });
+  }, [navigate]);
+
+  const actions = useMemo(() => ({ login, logout }), [login, logout]);
 
   useEffect(() => {
     const getData = async () => {
@@ -78,13 +77,13 @@ export const AuthProvider = memo(({ children }) => {
   }, []);
 
   if (isLoading) {
-    return null;
+    return <LoadingSkeleton />;
   }
 
   return (
     <AuthProviderInner
       configured={configured}
-      actions={actionsRef.current}
+      actions={actions}
     >
       {children}
     </AuthProviderInner>
