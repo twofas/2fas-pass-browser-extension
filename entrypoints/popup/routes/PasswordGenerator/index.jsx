@@ -7,40 +7,27 @@
 import S from './PasswordGenerator.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
-import { lazy, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { Form, Field } from 'react-final-form';
 import copyValue from '@/partials/functions/copyValue';
-
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
-const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
-const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
+import PasswordInput from '@/entrypoints/popup/components/PasswordInput';
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
+import usePopupStateStore from '../../store/popupState';
+import useScrollPosition from '../../hooks/useScrollPosition';
 
 function PasswordGenerator (props) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const currentState = location?.state;
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
 
-    if (
-      !currentState ||
-      !currentState?.from ||
-      !currentState?.data ||
-      (currentState?.from !== 'addNew' && currentState?.from !== 'details')
-    ) {
-      const doesAnyHistoryEntryExist = location.key !== 'default';
+  const scrollableRef = useRef(null);
 
-      if (doesAnyHistoryEntryExist) {
-        navigate(-1);
-      } else {
-        navigate('/');
-      }
-    }
-  }, [location.state, location.key, navigate]);
-
-
+  useScrollPosition(scrollableRef);
 
   const generatePassword = (length, useUppercase, useNumbers, useSpecialChars) => {
     let charset = 'abcdefghijklmnopqrstuvwxyz';
@@ -56,7 +43,7 @@ function PasswordGenerator (props) {
     if (useSpecialChars) {
       charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
     }
-    
+
     let password = '';
 
     for (let i = 0; i < length; i++) {
@@ -67,10 +54,16 @@ function PasswordGenerator (props) {
   };
 
   const getInitialValue = (key, fallback) => {
-    if (location?.state?.data?.[key] !== undefined) {
-      return location.state.data[key];
+    const fromState = location?.state?.data?.[key];
+    const fromStore = data?.[key];
+
+    if (fromState !== undefined) {
+      return fromState;
     }
 
+    if (fromStore !== undefined && fromStore !== null) {
+      return fromStore;
+    }
 
     return fallback;
   };
@@ -79,9 +72,29 @@ function PasswordGenerator (props) {
   const includeUppercase = getInitialValue('includeUppercase', true);
   const includeNumbers = getInitialValue('includeNumbers', true);
   const includeSpecialChars = getInitialValue('includeSpecialChars', true);
-  const savedPassword = getInitialValue('generatedPassword', null);
 
-  const initialPassword = savedPassword || generatePassword(characters, includeUppercase, includeNumbers, includeSpecialChars);
+  const [initialPassword, setInitialPassword] = useState(() => {
+    const fromState = location?.state?.data?.generatedPassword;
+
+    if (fromState) {
+      return fromState;
+    }
+
+    const fromStore = data?.generatedPassword;
+
+    if (fromStore) {
+      return fromStore;
+    }
+
+    const newPassword = generatePassword(characters, includeUppercase, includeNumbers, includeSpecialChars);
+    return newPassword;
+  });
+
+  useEffect(() => {
+    if (initialPassword) {
+      setData('generatedPassword', initialPassword);
+    }
+  }, []);
 
   const initialValues = {
     password: initialPassword,
@@ -91,29 +104,84 @@ function PasswordGenerator (props) {
     includeSpecialChars
   };
 
-  const onSubmit = values => {
-    const currentState = location?.state;
+  useEffect(() => {
+    const handleNavigationContext = () => {
+      const currentState = location?.state;
+      const storedNavigationContext = data?.navigationContext;
 
-    if (!currentState) {
+      if (
+        !currentState ||
+        !currentState?.from ||
+        !currentState?.data ||
+        (currentState?.from !== 'addNew' && currentState?.from !== 'details')
+      ) {
+        if (!storedNavigationContext?.from) {
+          const doesAnyHistoryEntryExist = location.key !== 'default';
+
+          if (doesAnyHistoryEntryExist) {
+            navigate(-1);
+          } else {
+            navigate('/');
+          }
+        }
+      } else {
+        const stateData = currentState.data;
+
+        if (stateData.characters !== undefined) {
+          setData('characters', stateData.characters);
+        }
+
+        if (stateData.includeUppercase !== undefined) {
+          setData('includeUppercase', stateData.includeUppercase);
+        }
+
+        if (stateData.includeNumbers !== undefined) {
+          setData('includeNumbers', stateData.includeNumbers);
+        }
+
+        if (stateData.includeSpecialChars !== undefined) {
+          setData('includeSpecialChars', stateData.includeSpecialChars);
+        }
+
+        const contextToSave = {
+          from: currentState.from,
+          data: stateData
+        };
+
+        setData('navigationContext', contextToSave);
+      }
+    };
+
+    handleNavigationContext();
+  }, [location.state, location.key, navigate, setData, data?.navigationContext]);
+
+  const onSubmit = async values => {
+    const currentState = location?.state;
+    const storedContext = data?.navigationContext;
+
+    const navigationContext = currentState || storedContext;
+
+    if (!navigationContext || !navigationContext.from || !navigationContext.data) {
       showToast(browser.i18n.getMessage('password_generator_data_error'));
       return;
     }
 
-    const from = currentState.from;
-    const data = { ...currentState.data, password: values.password };
+    const from = navigationContext.from;
+    const contextData = navigationContext.data;
+    const submissionData = { ...contextData, password: values.password };
 
     if (from === 'addNew') {
       return navigate(`/add-new`, {
         state: {
           from: 'passwordGenerator',
-          data
+          data: submissionData
         }
       });
-    } else if (from === 'details' && currentState.data?.service?.id) {
-      return navigate(`/details/${currentState.data.service.id}`, {
+    } else if (from === 'details' && contextData?.service?.id) {
+      return navigate(`/details/${contextData.service.id}`, {
         state: {
           from: 'passwordGenerator',
-          data: { ...data, formValues: { ...data.formValues, password: values.password } }
+          data: { ...submissionData, formValues: { ...submissionData.formValues, password: values.password } }
         }
       });
     } else {
@@ -124,7 +192,7 @@ function PasswordGenerator (props) {
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div>
+      <div ref={scrollableRef}>
         <section className={S.passwordGenerator}>
           <div className={S.passwordGeneratorContainer}>
             <NavigationButton type='back' />
@@ -135,7 +203,7 @@ function PasswordGenerator (props) {
               onSubmit={onSubmit}
               initialValues={initialValues}
               render={({ handleSubmit, form, values }) => {
-                const regeneratePassword = (overrides = {}) => {
+                const regeneratePassword = async (overrides = {}) => {
                   const currentValues = { ...values, ...overrides };
                   const newPassword = generatePassword(
                     currentValues.characters,
@@ -145,6 +213,8 @@ function PasswordGenerator (props) {
                   );
 
                   form.change('password', newPassword);
+                  setInitialPassword(newPassword);
+                  setData('generatedPassword', newPassword);
                 };
 
                 return (
@@ -227,6 +297,7 @@ function PasswordGenerator (props) {
                                 onChange={(e) => {
                                   const newValue = parseInt(e.target.value);
                                   input.onChange(e);
+                                  setData('characters', newValue);
                                   regeneratePassword({ characters: newValue });
                                 }}
                               />
@@ -250,6 +321,7 @@ function PasswordGenerator (props) {
                                   onChange={(e) => {
                                     const newValue = e.target.checked;
                                     input.onChange(e);
+                                    setData('includeUppercase', newValue);
                                     regeneratePassword({ includeUppercase: newValue });
                                   }}
                                 />
@@ -276,6 +348,7 @@ function PasswordGenerator (props) {
                                   onChange={(e) => {
                                     const newValue = e.target.checked;
                                     input.onChange(e);
+                                    setData('includeNumbers', newValue);
                                     regeneratePassword({ includeNumbers: newValue });
                                   }}
                                 />
@@ -302,6 +375,7 @@ function PasswordGenerator (props) {
                                   onChange={(e) => {
                                     const newValue = e.target.checked;
                                     input.onChange(e);
+                                    setData('includeSpecialChars', newValue);
                                     regeneratePassword({ includeSpecialChars: newValue });
                                   }}
                                 />
