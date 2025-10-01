@@ -6,7 +6,7 @@
 
 import S from './Popup.module.scss';
 import { HashRouter, Route, Routes, Navigate, useNavigate, useLocation } from 'react-router';
-import { useEffect, useState, useMemo, memo, useRef, lazy, Suspense } from 'react';
+import { useEffect, useState, useMemo, memo, useRef, lazy } from 'react';
 import { AuthProvider, useAuthState } from '@/hooks/useAuth';
 import popupOnMessage from './events/popupOnMessage';
 import lockShortcuts from './utils/lockShortcuts';
@@ -21,9 +21,9 @@ import usePopupStateStore from './store/popupState';
 import useHref from './hooks/useHref';
 import { addToNavigationHistory } from './utils/navigationHistory';
 import Blocked from './routes/Blocked';
+import ThisTab from './routes/ThisTab';
+import Connect from './routes/Connect';
 
-const ThisTab = lazy(() => import('./routes/ThisTab'));
-const Connect = lazy(() => import('./routes/Connect'));
 const AddNew = lazy(() => import('./routes/AddNew'));
 const Settings = lazy(() => import('./routes/Settings'));
 const SettingsAbout = lazy(() => import('./routes/Settings/SettingsAbout'));
@@ -88,7 +88,7 @@ const AuthRoutes = memo(({ blocked, configured }) => {
   const hasNavigated = useRef(false);
 
   useHref();
-  
+
   useEffect(() => {
     addToNavigationHistory(location.pathname);
   }, [location.pathname]);
@@ -114,6 +114,7 @@ const AuthRoutes = memo(({ blocked, configured }) => {
   const routeElements = useMemo(() => {
     return routeConfig.map(route => {
       const Component = route.component;
+
       const element = route.isProtectedRoute ? (
         <RouteGuard
           configured={configured}
@@ -141,11 +142,9 @@ const AuthRoutes = memo(({ blocked, configured }) => {
   }
 
   return (
-    <Suspense fallback={null}>
-      <Routes>
-        {routeElements}
-      </Routes>
-    </Suspense>
+    <Routes>
+      {routeElements}
+    </Routes>
   );
 });
 
