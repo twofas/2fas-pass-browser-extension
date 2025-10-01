@@ -46,7 +46,7 @@ const changePasswordVariants = {
 function Password (props) {
   const { data, actions, generatorData } = props;
   const { service, passwordEditable, passwordVisible, passwordMobile, form } = data;
-  const { setPasswordEditable, setPasswordVisible, setPasswordMobile, updateFormValues} = actions;
+  const { setPasswordEditable, setPasswordVisible, setPasswordMobile, updateFormValues } = actions;
   const [passwordDecryptError, setPasswordDecryptError] = useState(false);
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);

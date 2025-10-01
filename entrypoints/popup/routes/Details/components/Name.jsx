@@ -80,16 +80,16 @@ function Name (props) {
               autoComplete="off"
               autoCapitalize="off"
             />
-            <button
-              type='button'
-              className={`${bS.btn} ${pI.iconButton}`}
-              onClick={() => handleCopyName(input.value)}
-              title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
-            >
-              <CopyIcon />
-            </button>
-          </div>
+          <button
+            type='button'
+            className={`${bS.btn} ${pI.iconButton}`}
+            onClick={() => handleCopyName(input.value)}
+            title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+          >
+            <CopyIcon />
+          </button>
         </div>
+      </div>
       )}
     </Field>
   );
