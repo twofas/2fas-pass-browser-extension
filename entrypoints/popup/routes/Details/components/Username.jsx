@@ -91,38 +91,38 @@ function Username (props) {
               autoComplete="on"
               autoCapitalize="off"
             />
-            <button
-              type='button'
-              className={`${bS.btn} ${pI.iconButton}`}
-              onClick={() => handleCopyUsername(input.value)}
-              title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
-            >
-              <CopyIcon />
-            </button>
-          </div>
-          <LazyMotion features={loadDomAnimation}>
-            <m.div
-              className={`${pI.passInputAdditional} ${usernameEditable ? '' : pI.removeMarginTop}`}
-              variants={usernameMobileVariants}
-              initial="hidden"
-              transition={{ duration: 0.3 }}
-              animate={usernameEditable ? 'visible' : 'hidden'}
-            >
-              <div className={`${bS.passToggle} ${bS.loaded}`}>
-                <input type="checkbox" name="username-mobile" id="username-mobile" checked={usernameMobile} onChange={() => handleUsernameMobile(form)} />
-                <label htmlFor="username-mobile">
-                  <span className={bS.passToggleText}>
-                    <span>{browser.i18n.getMessage('enter_on_mobile')}</span>
-                  </span>
-
-                  <span className={bS.passToggleBox}>
-                    <span className={bS.passToggleBoxCircle}></span>
-                  </span>
-                </label>
-              </div>
-            </m.div>
-          </LazyMotion>
+          <button
+            type='button'
+            className={`${bS.btn} ${pI.iconButton}`}
+            onClick={() => handleCopyUsername(input.value)}
+            title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+          >
+            <CopyIcon />
+          </button>
         </div>
+        <LazyMotion features={loadDomAnimation}>
+          <m.div
+            className={`${pI.passInputAdditional} ${usernameEditable ? '' : pI.removeMarginTop}`}
+            variants={usernameMobileVariants}
+            initial="hidden"
+            transition={{ duration: 0.3 }}
+            animate={usernameEditable ? 'visible' : 'hidden'}
+          >
+            <div className={`${bS.passToggle} ${bS.loaded}`}>
+              <input type="checkbox" name="username-mobile" id="username-mobile" checked={usernameMobile} onChange={() => handleUsernameMobile(form)} />
+              <label htmlFor="username-mobile">
+                <span className={bS.passToggleText}>
+                  <span>{browser.i18n.getMessage('enter_on_mobile')}</span>
+                </span>
+
+                <span className={bS.passToggleBox}>
+                  <span className={bS.passToggleBoxCircle}></span>
+                </span>
+              </label>
+            </div>
+          </m.div>
+        </LazyMotion>
+      </div>
       )}
     </Field>
   );
