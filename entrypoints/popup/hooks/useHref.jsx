@@ -12,6 +12,7 @@ import usePopupStateStore from '../store/popupState';
  * Custom hook for tracking and storing current pathname in popup state.
  * Automatically updates the href in the store when the location changes.
  * Resets data and scrollPosition when navigating to a different route.
+ * Excludes specific routes from tracking: /fetch, /fetch/*, /connect, /blocked
  * @return {string} Current pathname from the location
  */
 const useHref = () => {
@@ -23,6 +24,14 @@ const useHref = () => {
 
   useEffect(() => {
     const pathname = location.pathname;
+
+    const excludedPaths = ['/fetch', '/blocked'];
+    const isExcluded = excludedPaths.includes(pathname) || pathname.startsWith('/fetch/');
+
+    if (isExcluded) {
+      setHref('/');
+      return;
+    }
 
     if (pathname !== lastPathnameRef.current) {
       changeCountRef.current += 1;
