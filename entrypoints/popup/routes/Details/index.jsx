@@ -16,6 +16,7 @@ import getServices from '@/partials/sessionStorage/getServices';
 import { valueToNFKD, sanitizeObject } from '@/partials/functions';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
 import URIMatcher from '@/partials/URIMatcher';
 import { PULL_REQUEST_TYPES } from '@/constants';
@@ -28,7 +29,6 @@ const SecurityTier = lazy(() => import('./components/SecurityTier'));
 const Tags = lazy(() => import('./components/Tags'));
 const Notes = lazy(() => import('./components/Notes'));
 const DangerZone = lazy(() => import('./components/DangerZone'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 const hiddenPassword = '******';
 
