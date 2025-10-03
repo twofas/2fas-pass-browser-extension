@@ -14,12 +14,12 @@ import { FETCH_STATE } from './constants';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import calculateSignature from './functions/calculateSignature';
 import { getCurrentDevice, sendPush, getNTPTime, deletePush } from '@/partials/functions';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
 const PushNotification = lazy(() => import('./components/PushNotification'));
 const ConnectionError = lazy(() => import('./components/ConnectionError'));
 const ConnectionTimeout = lazy(() => import('./components/ConnectionTimeout'));
 const ContinueUpdate = lazy(() => import('./components/ContinueUpdate'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to handle the Fetch component.

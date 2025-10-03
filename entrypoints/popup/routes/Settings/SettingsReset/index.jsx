@@ -9,10 +9,10 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useNavigate } from 'react-router';
 import { lazy, useRef } from 'react';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
 const WarningIconLight = lazy(() => import('@/assets/popup-window/warning-light.svg?react'));
 const WarningIconDark = lazy(() => import('@/assets/popup-window/warning-dark.svg?react'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to reset the extension.

@@ -15,9 +15,9 @@ import Theme from './components/Theme';
 import SavePasswordPrompt from './components/SavePasswordPrompt';
 import ContextMenu from './components/ContextMenu';
 import Logs from './components/Logs';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to render the Settings Preferences component.
