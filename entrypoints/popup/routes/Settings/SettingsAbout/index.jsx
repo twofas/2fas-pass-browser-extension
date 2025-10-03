@@ -10,6 +10,7 @@ import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
 import { lazy } from 'react';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
 const AboutIcon = lazy(() => import('@/assets/popup-window/about.svg?react'));
@@ -19,7 +20,6 @@ const DiscordIcon = lazy(() => import('@/assets/social/discord.svg?react'));
 const YoutubeIcon = lazy(() => import('@/assets/social/youtube.svg?react'));
 const TwitterIcon = lazy(() => import('@/assets/social/twitter.svg?react'));
 const GithubIcon = lazy(() => import('@/assets/social/github.svg?react'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to render the Settings About component.

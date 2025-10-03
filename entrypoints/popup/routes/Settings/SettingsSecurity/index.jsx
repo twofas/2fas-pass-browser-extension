@@ -7,10 +7,10 @@
 import S from '../Settings.module.scss';
 import { lazy, useRef } from 'react';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
 const AutoClearClipboard = lazy(() => import('./components/AutoClearClipboard'));
 const IdleLock = lazy(() => import('./components/IdleLock'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 // const SafeBrowsing = lazy(() => import('./components/SafeBrowsing'));
 // const SafeBrowsingReports = lazy(() => import('./components/SafeBrowsingReports'));
 
