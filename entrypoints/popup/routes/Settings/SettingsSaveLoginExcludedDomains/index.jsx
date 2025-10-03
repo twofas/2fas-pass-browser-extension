@@ -11,9 +11,9 @@ import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
 import usePopupStateStore from '../../../store/popupState';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 const AddNewIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
 const CancelIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
 

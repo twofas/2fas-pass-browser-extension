@@ -10,10 +10,10 @@ import { useState, useEffect, lazy, useRef } from 'react';
 import getRatingLink from './functions/getRatingLink';
 import getRatingText from './functions/getRatingText';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to render the Settings component.
