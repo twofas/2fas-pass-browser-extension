@@ -47,7 +47,8 @@ function PasswordGenerator (props) {
     let password = '';
 
     for (let i = 0; i < length; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length));
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      password += charset.charAt(randomIndex);
     }
 
     return password;
@@ -73,31 +74,52 @@ function PasswordGenerator (props) {
   const includeNumbers = getInitialValue('includeNumbers', true);
   const includeSpecialChars = getInitialValue('includeSpecialChars', true);
 
+  const initialPasswordRef = useRef(null);
+
+  const storedPassword = usePopupStateStore.getState().data?.generatedPassword;
+
   const [initialPassword, setInitialPassword] = useState(() => {
+    if (initialPasswordRef.current) {
+      return initialPasswordRef.current;
+    }
+
     const fromState = location?.state?.data?.generatedPassword;
 
     if (fromState) {
+      initialPasswordRef.current = fromState;
       return fromState;
     }
 
-    const fromStore = data?.generatedPassword;
-
-    if (fromStore) {
-      return fromStore;
+    if (storedPassword) {
+      initialPasswordRef.current = storedPassword;
+      return storedPassword;
     }
 
-    const newPassword = generatePassword(characters, includeUppercase, includeNumbers, includeSpecialChars);
-    return newPassword;
+    return null;
   });
 
   useEffect(() => {
-    if (initialPassword) {
+    if (!initialPassword && data?.generatedPassword) {
+      initialPasswordRef.current = data.generatedPassword;
+      setInitialPassword(data.generatedPassword);
+    } else if (!initialPassword && !data?.generatedPassword) {
+      const newPassword = generatePassword(characters, includeUppercase, includeNumbers, includeSpecialChars);
+      
+      initialPasswordRef.current = newPassword;
+      setInitialPassword(newPassword);
+
+      setData('generatedPassword', newPassword);
+    }
+  }, [data?.generatedPassword, characters, includeUppercase, includeNumbers, includeSpecialChars, setData]);
+
+  useEffect(() => {
+    if (initialPassword && initialPasswordRef.current === initialPassword) {
       setData('generatedPassword', initialPassword);
     }
-  }, []);
+  }, [initialPassword, setData]);
 
   const initialValues = {
-    password: initialPassword,
+    password: initialPassword || '',
     characters,
     includeUppercase,
     includeNumbers,
@@ -190,6 +212,24 @@ function PasswordGenerator (props) {
     }
   };
 
+  if (!initialPassword) {
+    return (
+      <div className={`${props.className ? props.className : ''}`}>
+        <div ref={scrollableRef}>
+          <section className={S.passwordGenerator}>
+            <div className={S.passwordGeneratorContainer}>
+              <NavigationButton type='back' />
+              <h2>{browser.i18n.getMessage('password_generator_title')}</h2>
+              <div style={{ padding: '20px', textAlign: 'center' }}>
+                {browser.i18n.getMessage('loading') || 'Loading...'}
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`${props.className ? props.className : ''}`}>
       <div ref={scrollableRef}>
@@ -202,9 +242,11 @@ function PasswordGenerator (props) {
             <Form
               onSubmit={onSubmit}
               initialValues={initialValues}
+              key={initialPassword || 'waiting'} // Force remount when password changes
               render={({ handleSubmit, form, values }) => {
                 const regeneratePassword = async (overrides = {}) => {
                   const currentValues = { ...values, ...overrides };
+
                   const newPassword = generatePassword(
                     currentValues.characters,
                     currentValues.includeUppercase,
@@ -215,6 +257,8 @@ function PasswordGenerator (props) {
                   form.change('password', newPassword);
                   setInitialPassword(newPassword);
                   setData('generatedPassword', newPassword);
+
+                  initialPasswordRef.current = newPassword;
                 };
 
                 return (
