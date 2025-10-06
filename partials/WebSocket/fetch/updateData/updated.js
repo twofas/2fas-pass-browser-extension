@@ -34,11 +34,11 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
     ]);
 
     // Update login & clear alarm if exists
-    const serviceIndex = services.findIndex(service => service.id === state.data.loginId);
-    let service = services.find(service => service.id === state.data.loginId);
+    const serviceIndex = services.findIndex(service => service.id === state.data.itemId);
+    let service = services.find(service => service.id === state.data.itemId);
 
     if (service && service.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await browser.alarms.clear(`passwordT2Reset-${state.data.loginId}`);
+      await browser.alarms.clear(`passwordT2Reset-${state.data.itemId}`);
     }
 
     service = data.login;
@@ -61,7 +61,7 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
       const encryptionItemT3KeyAES_B64 = ArrayBufferToBase64(encryptionItemT3KeyAESRaw);
 
       // save encryptionItemT3Key in session storage
-      const itemT3Key = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { deviceId: data.login.deviceId, loginId: data.login.id });
+      const itemT3Key = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { deviceId: data.login.deviceId, itemId: data.login.id });
       await storage.setItem(`session:${itemT3Key}`, encryptionItemT3KeyAES_B64);
     } else if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       // generate encryptionItemT2Key
@@ -70,7 +70,7 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
       const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
 
       // save encryptionItemT2Key in session storage
-      const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: data.login.deviceId, loginId: data.login.id });
+      const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: data.login.deviceId, itemId: data.login.id });
       await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
     } else {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginUpdatedWrongSecurityType);
@@ -90,7 +90,7 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
     await sendPullRequestCompleted(messageId);
 
     return {
-      returnUrl: `/details/${state.data.loginId}`,
+      returnUrl: `/details/${state.data.itemId}`,
       returnToast: {
         text: browser.i18n.getMessage('fetch_update_login_updated_toast'),
         type: 'success'

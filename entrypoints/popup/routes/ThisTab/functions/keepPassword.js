@@ -26,7 +26,7 @@ const keepPassword = async state => {
   const servicesKeys = await getServicesKeys(state.deviceId);
 
   // Update password
-  const service = services.find(service => service.id === state.loginId);
+  const service = services.find(service => service.id === state.itemId);
   service.password = state.password;
 
   // Compress services
@@ -46,7 +46,7 @@ const keepPassword = async state => {
   }
 
   // save encryptionItemT2Key in session storage
-  const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.deviceId, loginId: state.loginId });
+  const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.deviceId, itemId: state.itemId });
   await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
   // Remove services from session storage (by servicesKeys)
@@ -56,7 +56,7 @@ const keepPassword = async state => {
   await saveServices(servicesGZIP, state.deviceId);
   
   // Set alarm for 3 minutes
-  await browser.alarms.create(`passwordT2Reset-${state.loginId}`, { delayInMinutes: config.passwordResetDelay });
+  await browser.alarms.create(`passwordT2Reset-${state.itemId}`, { delayInMinutes: config.passwordResetDelay });
 };
 
 export default keepPassword;

@@ -42,14 +42,14 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
 
   switch (state.action) {
     case PULL_REQUEST_TYPES.SIF_REQUEST: {
-      if (!state?.data || !state?.data?.loginId) {
+      if (!state?.data || !state?.data?.itemId) {
         throw new TwoFasError(TwoFasError.errors.passwordRequestNoLoginId);
       }
 
       data = {
         type: PULL_REQUEST_TYPES.SIF_REQUEST,
         data: {
-          loginId: state.data.loginId
+          itemId: state.data.itemId
         }
       };
 
@@ -57,14 +57,14 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
     }
 
     case PULL_REQUEST_TYPES.DELETE_DATA: {
-      if (!state?.data || !state?.data?.loginId) {
+      if (!state?.data || !state?.data?.itemId) {
         throw new TwoFasError(TwoFasError.errors.deleteLoginNoLoginId);
       }
 
       data = {
         type: PULL_REQUEST_TYPES.DELETE_DATA,
         data: {
-          loginId: state.data.loginId
+          itemId: state.data.itemId
         }
       };
 
@@ -105,7 +105,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
     }
 
     case PULL_REQUEST_TYPES.UPDATE_DATA: {
-      if (!state?.data || !state?.data?.loginId || (!state?.data?.securityType && !Number.isInteger(state?.data?.securityType))) { // FUTURE - Check if one of the update fields is existing
+      if (!state?.data || !state?.data?.itemId || (!state?.data?.securityType && !Number.isInteger(state?.data?.securityType))) { // FUTURE - Check if one of the update fields is existing
         throw new TwoFasError(TwoFasError.errors.updateLoginWrongData);
       }
 
@@ -115,8 +115,8 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         delete stateData?.password;
         delete stateData.deviceId;
 
-        stateData.id = stateData.loginId;
-        delete stateData.loginId;
+        stateData.id = stateData.itemId;
+        delete stateData.itemId;
 
         data = {
           type: PULL_REQUEST_TYPES.UPDATE_DATA,
@@ -143,8 +143,8 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         const stateData = structuredClone(state.data);
         delete stateData?.deviceId;
         
-        stateData.id = stateData.loginId;
-        delete stateData?.loginId;
+        stateData.id = stateData.itemId;
+        delete stateData?.itemId;
         
         stateData.passwordEnc = passwordEncBytesB64;
         delete state?.data?.password;

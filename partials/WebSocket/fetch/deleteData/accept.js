@@ -24,14 +24,14 @@ const deleteDataAccept = async (state, messageId) => {
     ]);
 
     // Clear alarm if exists
-    const service = services.find(service => service.id === state.data.loginId);
+    const service = services.find(service => service.id === state.data.itemId);
 
     if (service && service.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await browser.alarms.clear(`passwordT2Reset-${state.data.loginId}`);
+      await browser.alarms.clear(`passwordT2Reset-${state.data.itemId}`);
     }
 
     // Remove login from services
-    const servicesFiltered = services.filter(service => service.id !== state.data.loginId);
+    const servicesFiltered = services.filter(service => service.id !== state.data.itemId);
 
     // Compress services
     const servicesStringify = JSON.stringify(servicesFiltered);

@@ -91,7 +91,7 @@ const checkServicesData = async (details, values) => {
     // FUTURE - ask user which service to update if there is more than one
     return {
       type: 'updateService',
-      loginId: matchedServicesMatchedUsername[0].id,
+      itemId: matchedServicesMatchedUsername[0].id,
       securityType: matchedServicesMatchedUsername[0].securityType
     };
   } else {

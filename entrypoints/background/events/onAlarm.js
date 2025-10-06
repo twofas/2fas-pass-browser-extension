@@ -21,8 +21,8 @@ const onAlarm = async alarm => {
 
   try {
     if (passwordT2ResetRegexTest) {
-      const loginId = passwordT2ResetRegexTest[1];
-      await passwordT2Reset(loginId);
+      const itemId = passwordT2ResetRegexTest[1];
+      await passwordT2Reset(itemId);
       return true;
     } else if (autoClearClipboardRegexTest) {
       const [, itemId, itemType] = autoClearClipboardRegexTest;

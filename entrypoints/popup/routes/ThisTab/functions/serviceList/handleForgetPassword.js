@@ -15,10 +15,10 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * Function to handle the forget password action.
 * @async
 * @param {Event} e - The click event.
-* @param {number} loginId - The ID of the login.
+* @param {number} itemId - The ID of the login.
 * @return {Promise<void>}
 */
-const handleForgetPassword = async (e, loginId, toggleMenu) => {
+const handleForgetPassword = async (e, itemId, toggleMenu) => {
   e.preventDefault();
   e.stopPropagation();
 
@@ -30,7 +30,7 @@ const handleForgetPassword = async (e, loginId, toggleMenu) => {
   const services = await getServices();
 
   // Update password
-  const service = services.find(service => service.id === loginId);
+  const service = services.find(service => service.id === itemId);
   const deviceId = service.deviceId;
   delete service.password;
 
@@ -42,8 +42,8 @@ const handleForgetPassword = async (e, loginId, toggleMenu) => {
   const servicesGZIP_AB = await compress(servicesStringify);
   const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
-  // Remove encryptionItemT2Key in session storage for this loginId & deviceId
-  const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, loginId });
+  // Remove encryptionItemT2Key in session storage for this itemId & deviceId
+  const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, itemId });
   await storage.removeItem(`session:${itemT2Key}`);
 
   // Remove services from session storage (by servicesKeys)

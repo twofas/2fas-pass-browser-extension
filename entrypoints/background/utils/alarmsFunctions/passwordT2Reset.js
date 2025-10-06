@@ -14,15 +14,15 @@ import { ENCRYPTION_KEYS } from '@/constants';
 /** 
 * Function to forget the password for a specific login ID.
 * @async
-* @param {string} loginId - The ID of the login for which the password should be forgotten.
+* @param {string} itemId - The ID of the login for which the password should be forgotten.
 * @return {Promise<void>} A promise that resolves when the password forget is complete.
 */
-const passwordT2Reset = async loginId => {
+const passwordT2Reset = async itemId => {
   // Get services
   const services = await getServices();
 
   // Update password
-  const service = services.find(service => service.id === loginId);
+  const service = services.find(service => service.id === itemId);
   const deviceId = service.deviceId;
   delete service.password;
 
@@ -34,8 +34,8 @@ const passwordT2Reset = async loginId => {
   const servicesGZIP_AB = await compress(servicesStringify);
   const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
-  // Remove encryptionItemT2Key in session storage for this loginId & deviceId
-  const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, loginId });
+  // Remove encryptionItemT2Key in session storage for this itemId & deviceId
+  const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, itemId });
   await storage.removeItem(`session:${itemT2Key}`);
 
   // Remove services from session storage (by servicesKeys)
