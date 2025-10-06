@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import generateEncryptionAESKey from './utils/generateEncryptionAESKey';
-import saveServices from './utils/saveServices';
+import saveItems from './utils/saveItems';
 import saveTags from './utils/saveTags';
 import getKey from '@/partials/sessionStorage/getKey';
 import checkChecksum from './utils/checkChecksum';
@@ -58,12 +58,13 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
     const vaultDataDec = ArrayBufferToString(vaultDataDec_AB);
     const vaultDataDecJSON = JSON.parse(vaultDataDec);
 
-    if (!vaultDataDecJSON || !vaultDataDecJSON.logins) {
+    if (!vaultDataDecJSON || !vaultDataDecJSON.items) { // @TODO: Wrong for now, there should be vaults
       throw new Error('Invalid vault data format');
     }
 
     // @TODO: Items! Not saveServices!
-    await saveServices(vaultDataDecJSON.logins, deviceId);
+    // await saveServices(vaultDataDecJSON.items, deviceId);
+    await saveItems(vaultDataDecJSON.items, deviceId);
     await saveTags(vaultDataDecJSON.tags, deviceId);
   } catch (e) {
     throw new TwoFasError(TwoFasError.errors.decryptVaultData, { event: e });
