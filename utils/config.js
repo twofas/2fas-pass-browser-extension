@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 export const config = Object.freeze({
-  scheme: 1, // 2 in prod
+  scheme: 2,
   supportedFeatures: [],
   webSocketInternalTimeout: 2,
   passwordResetDelay: 3,
