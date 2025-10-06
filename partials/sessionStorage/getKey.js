@@ -17,7 +17,7 @@ import { ENCRYPTION_KEYS } from '@/constants';
 */
 const getKey = async (key, data) => {
   const persistentKeys = new Set(['configured', 'configured_nonce', 'ephe_public_key', 'ephe_private_key']);
-  const ephemeralKeys = new Set(['services', 'tags', ENCRYPTION_KEYS.DATA.sK, ENCRYPTION_KEYS.ITEM_T2.sK, ENCRYPTION_KEYS.ITEM_T3.sK, ENCRYPTION_KEYS.ITEM_T3_NEW.sK, 'popup_state']);
+  const ephemeralKeys = new Set(['items', 'tags', ENCRYPTION_KEYS.DATA.sK, ENCRYPTION_KEYS.ITEM_T2.sK, ENCRYPTION_KEYS.ITEM_T3.sK, ENCRYPTION_KEYS.ITEM_T3_NEW.sK, 'popup_state']);
 
   const keyEnvName = `VITE_STORAGE_SESSION_${key.toUpperCase()}`;
   const keyEnv = import.meta.env[keyEnvName];
@@ -32,7 +32,7 @@ const getKey = async (key, data) => {
   }
 
   switch (key) {
-    case 'services': {
+    case 'items': {
       if (data?.deviceId) {
         keyGenerated += `_${data.deviceId}`;
       }
