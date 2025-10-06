@@ -128,7 +128,7 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
     case PULL_REQUEST_TYPES.UPDATE_DATA: {
       switch (data.status) {
         case PULL_REQUEST_STATUSES.CANCEL: {
-          closeData = await updateDataCancel(state.data.loginId, json.id);
+          closeData = await updateDataCancel(state.data.itemId, json.id);
           break;
         }
 

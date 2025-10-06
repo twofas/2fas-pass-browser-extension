@@ -112,7 +112,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
               action: PULL_REQUEST_TYPES.SIF_REQUEST,
               from: 'autofill',
               data: {
-                loginId: service.id,
+                itemId: service.id,
                 deviceId: service.deviceId,
                 tabId: tab.id,
                 cryptoAvailable: cryptoAvailableRes.cryptoAvailable

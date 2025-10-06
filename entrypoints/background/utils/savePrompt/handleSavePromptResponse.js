@@ -74,7 +74,7 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
         from: 'savePrompt',
         data: {
           url,
-          loginId: res.loginId,
+          itemId: res.itemId,
           securityType: res.securityType,
           username: decryptedValues.username,
           password: decryptedValues.password

@@ -28,10 +28,10 @@ const onContextMenuClick = async (info, tab) => {
     const fetchRegexTest = FETCH_REGEX.exec(menuItemId);
   
     if (fetchRegexTest) {
-      const loginId = fetchRegexTest[1];
+      const itemId = fetchRegexTest[1];
       const deviceId = fetchRegexTest[2];
 
-      const data = encodeURIComponent(JSON.stringify({ action: PULL_REQUEST_TYPES.SIF_REQUEST, from: 'contextMenu', data: { loginId, deviceId } }));
+      const data = encodeURIComponent(JSON.stringify({ action: PULL_REQUEST_TYPES.SIF_REQUEST, from: 'contextMenu', data: { itemId, deviceId } }));
       await openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
       return true;
     }

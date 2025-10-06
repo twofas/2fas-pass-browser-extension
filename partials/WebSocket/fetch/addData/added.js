@@ -48,7 +48,7 @@ const newDataAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
       const encryptionItemT3KeyAES_B64 = ArrayBufferToBase64(encryptionItemT3KeyAESRaw);
 
       // save encryptionItemT3Key in session storage
-      const itemT3Key = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { deviceId: data.login.deviceId, loginId: data.login.id });
+      const itemT3Key = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { deviceId: data.login.deviceId, itemId: data.login.id });
       await storage.setItem(`session:${itemT3Key}`, encryptionItemT3KeyAES_B64);
     } else if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       // generate encryptionItemT2Key
@@ -57,7 +57,7 @@ const newDataAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
       const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
 
       // save encryptionItemT2Key in session storage
-      const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: data.login.deviceId, loginId: data.login.id });
+      const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: data.login.deviceId, itemId: data.login.id });
       await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
     } else {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongSecurityType);
