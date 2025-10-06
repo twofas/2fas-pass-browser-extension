@@ -21,12 +21,12 @@ function SmallLoginItem (props) {
   const ref = useRef(null);
 
   const getLogin = async () => {
-    if (!props?.loginId) {
+    if (!props?.itemId) {
       return false;
     }
 
     const logins = await getServices();
-    const login = logins.filter(l => l.id === props.loginId)[0];
+    const login = logins.filter(l => l.id === props.itemId)[0];
 
     setLogin(login);
   };

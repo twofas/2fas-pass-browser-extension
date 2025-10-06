@@ -14,7 +14,7 @@ import { FETCH_STATE } from '../constants';
 * @return {Promise<void>} A promise that resolves when the closure is handled.
 */
 const FetchOnClose = async (event, data) => {
-  if (data?.state?.data?.loginId && data?.state?.data?.notificationId) {
+  if (data?.state?.data?.itemId && data?.state?.data?.notificationId) {
     await deletePush(data.state.data.deviceId, data.state.data.notificationId);
   }
 

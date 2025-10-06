@@ -322,7 +322,7 @@ function ThisTab (props) {
                 <h2>Password for the following service successfully fetched.</h2>
                 <div className={S.thisTabAutofillPopupBoxLoginItem}>
                   <SmallLoginItem
-                    loginId={state?.loginId}
+                    itemId={state?.itemId}
                     state={state}
                     setAutofillFailed={setAutofillFailed}
                   />

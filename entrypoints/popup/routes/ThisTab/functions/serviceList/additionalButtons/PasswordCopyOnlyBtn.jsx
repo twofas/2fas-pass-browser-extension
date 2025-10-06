@@ -31,7 +31,7 @@ const handleAutofillFailedPassword = async (data, setAutofillFailed) => {
   );
   const decryptedPassword = ArrayBufferToString(decryptedPasswordAB);
 
-  await copyValue(decryptedPassword, data.loginId, 'password');
+  await copyValue(decryptedPassword, data.itemId, 'password');
 
   if (data.toastId) {
     toast.dismiss(data.toastId);

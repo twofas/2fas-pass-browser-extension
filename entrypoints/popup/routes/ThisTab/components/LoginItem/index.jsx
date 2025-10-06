@@ -104,7 +104,7 @@ function LoginItem (props) {
       </button>
       <div className={S.servicesListItemAdditionalButtons}>
         <PasswordBtn login={props.login} more={more} setMore={toggleMenuCallback} />
-        <UsernameBtn loginId={props.login.id} more={more} setMore={toggleMenuCallback} />
+        <UsernameBtn itemId={props.login.id} more={more} setMore={toggleMenuCallback} />
         <MoreBtn more={more} setMore={toggleMenuCallback} />
       </div>
       <Select
