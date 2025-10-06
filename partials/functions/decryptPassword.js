@@ -42,12 +42,12 @@ const decryptPassword = async login => {
   try {
     if (login.securityType === SECURITY_TIER.SECRET) {
       if (login?.internalType && login?.internalType === 'added') {
-        itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { loginId: login.id, deviceId: login.deviceId });
+        itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { itemId: login.id, deviceId: login.deviceId });
       } else {
         itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3.sK, { deviceId: login.deviceId });
       }
     } else {
-      itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { loginId: login.id, deviceId: login.deviceId });
+      itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { itemId: login.id, deviceId: login.deviceId });
     }
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.decryptPasswordGetKey, {

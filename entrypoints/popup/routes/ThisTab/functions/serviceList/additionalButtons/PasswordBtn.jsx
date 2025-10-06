@@ -118,7 +118,7 @@ const PasswordBtn = ({ login, more, setMore }) => {
         state={{
           action: PULL_REQUEST_TYPES.SIF_REQUEST,
           from: 'service',
-          data: { loginId: login.id, deviceId: login.deviceId }
+          data: { itemId: login.id, deviceId: login.deviceId }
         }}
         onClick={() => { if (more) { setMore(false); } }}
         title={browser.i18n.getMessage('this_tab_fetch_password')}

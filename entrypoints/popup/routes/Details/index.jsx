@@ -267,7 +267,7 @@ function Details (props) {
     });
 
     const stateData = {
-      loginId: service.id ? valueToNFKD(service.id) : null,
+      itemId: service.id ? valueToNFKD(service.id) : null,
       deviceId: service?.deviceId
     };
 

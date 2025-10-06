@@ -10,6 +10,7 @@ import setStorageChunkSize from './setStorageChunkSize';
 
 /** 
 * Saves the services in chunks in the session storage.
+* @deprecated Use saveItems instead.
 * @async
 * @param {string} gzipData - The gzip data to be saved in chunks.
 * @param {string} deviceId - The device ID.

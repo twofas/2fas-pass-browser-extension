@@ -33,7 +33,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
       const services = await getServices();
 
       // Get service (for username only)
-      const service = services.find(service => service.id === state.data.loginId);
+      const service = services.find(service => service.id === state.data.itemId);
 
       // Decrypt password
       const password = data.passwordEnc;
@@ -102,7 +102,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
         return {
           action: 'autofill', // non-fetch action here
           autofillRes,
-          loginId: state.data.loginId,
+          itemId: state.data.itemId,
           deviceId: state.data.deviceId,
           password: password,
           hkdfSaltAB,
@@ -117,7 +117,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
     ]);
 
     // Update password
-    const service = services.find(service => service.id === state.data.loginId);
+    const service = services.find(service => service.id === state.data.itemId);
     service.password = data.passwordEnc;
 
     // Compress services
@@ -131,7 +131,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
     const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
 
     // save encryptionItemT2Key in session storage
-    const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.data.deviceId, loginId: state.data.loginId });
+    const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.data.deviceId, itemId: state.data.itemId });
     await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
     // Remove services from session storage (by servicesKeys)
@@ -141,7 +141,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
     await saveServices(servicesGZIP, state.data.deviceId);
 
     // Set alarm for 3 minutes
-    await browser.alarms.create(`passwordT2Reset-${state.data.loginId}`, { delayInMinutes: config.passwordResetDelay });
+    await browser.alarms.create(`passwordT2Reset-${state.data.itemId}`, { delayInMinutes: config.passwordResetDelay });
 
     // Send response
     await sendPullRequestCompleted(messageId);

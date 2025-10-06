@@ -49,7 +49,7 @@ function DangerZone (props) {
         <p>{browser.i18n.getMessage('details_delete_header')}</p>
         <Link
           to='/fetch'
-          state={{ action: PULL_REQUEST_TYPES.DELETE_DATA, from: 'details', data: { loginId: service.id, deviceId: service.deviceId } }}
+          state={{ action: PULL_REQUEST_TYPES.DELETE_DATA, from: 'details', data: { itemId: service.id, deviceId: service.deviceId } }}
           className={S.detailsDangerZoneBodyButton}
           prefetch='intent'
         >
