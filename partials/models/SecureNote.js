@@ -5,7 +5,9 @@
 // See LICENSE file for full terms
 
 class SecureNote {
-  contentType = 'secureNote';
+  static contentType = 'secureNote';
+  static contentVersion = 1;
+
   contentVersion = 1;
 
   constructor (data) {
