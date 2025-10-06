@@ -5,6 +5,9 @@
 // See LICENSE file for full terms
 
 class Tag {
+  static contentType = 'tag';
+  static contentVersion = 1;
+
   constructor (data) {
     this.id = data.id;
     this.name = data.content.name;
