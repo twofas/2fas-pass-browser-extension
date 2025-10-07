@@ -7,21 +7,27 @@
 import getUUIDforDeviceId from './getUUIDforDeviceId';
 import getKey from './getKey';
 import isText from '@/partials/functions/isText';
+import { BASE64_REGEX } from '@/constants/regex';
 
-/** 
+const SESSION_PREFIX = 'session:';
+
+/**
 * Gets the items keys for a device ID from session storage.
 * @async
 * @param {string} deviceId - The device ID to look up.
 * @return {string[]} The array of items keys for the device ID.
 */
 const getItemsKeys = async deviceId => {
-  if (!deviceId || !isText(deviceId) || deviceId.length === 0) {
+  const MAX_ITEMS = 10000;
+  const BATCH_SIZE = 20;
+
+  if (!deviceId || !isText(deviceId)) {
     return [];
   }
 
   const keyEnv = import.meta.env.VITE_STORAGE_SESSION_ITEMS;
 
-  if (!keyEnv || !isText(keyEnv) || keyEnv.length === 0) {
+  if (!keyEnv || !isText(keyEnv)) {
     throw new TwoFasError(TwoFasError.internalErrors.getItemsKeysNotDefined, { additional: { func: 'getItemsKeys' } });
   }
 
@@ -41,7 +47,7 @@ const getItemsKeys = async deviceId => {
     }
   }
 
-  if (!storageKeys || storageKeys.length <= 0) {
+  if (!storageKeys || storageKeys.length === 0) {
     return [];
   }
 
@@ -49,20 +55,24 @@ const getItemsKeys = async deviceId => {
 
   const uuid = await getUUIDforDeviceId(deviceId);
 
-  if (!uuid || !isText(uuid) || uuid.length === 0) {
+  if (!uuid || !isText(uuid)) {
     return [];
   }
 
   const publicKeyKey = await getKey('ephe_public_key', { uuid });
 
-  if (!publicKeyKey || !isText(publicKeyKey) || publicKeyKey.length === 0) {
+  if (!publicKeyKey || !isText(publicKeyKey)) {
     return [];
   }
 
-  const cryptoKeyB64 = await storage.getItem(`session:${publicKeyKey}`);
+  const cryptoKeyB64 = await storage.getItem(SESSION_PREFIX + publicKeyKey);
 
-  if (!cryptoKeyB64 || !isText(cryptoKeyB64) || cryptoKeyB64.length === 0) {
+  if (!cryptoKeyB64 || !isText(cryptoKeyB64)) {
     return [];
+  }
+
+  if (!BASE64_REGEX.test(cryptoKeyB64)) {
+    throw new TwoFasError(TwoFasError.internalErrors.getItemsKeysInvalidBase64, { additional: { func: 'getItemsKeys' } });
   }
 
   let cryptoKeyImported;
@@ -80,25 +90,60 @@ const getItemsKeys = async deviceId => {
     throw new TwoFasError(TwoFasError.internalErrors.getItemsKeysCryptoKeyError, { event: e, additional: { func: 'getItemsKeys' } });
   }
 
-  while (true) {
-    const sKey = keyGenerated + `_${i}`;
+  while (i < MAX_ITEMS) {
+    const batchEnd = Math.min(i + BATCH_SIZE, MAX_ITEMS);
+    const batchIndices = [];
 
-    const keySigned = await crypto.subtle.sign(
-      { name: 'HMAC' },
-      cryptoKeyImported,
-      StringToArrayBuffer(sKey)
-    );
+    for (let j = i; j < batchEnd; j++) {
+      batchIndices.push(j);
+    }
 
-    const keySignedB64 = ArrayBufferToBase64(keySigned);
+    let batchResults;
 
-    if (storageKeysSet.has(keySignedB64)) {
-      itemsKeys.push(`session:${keySignedB64}`);
-    } else {
+    try {
+      batchResults = await Promise.all(
+        batchIndices.map(async index => {
+          const sKey = keyGenerated + '_' + index;
+          const keySigned = await crypto.subtle.sign(
+            { name: 'HMAC' },
+            cryptoKeyImported,
+            StringToArrayBuffer(sKey)
+          );
+          return {
+            index,
+            keySignedB64: ArrayBufferToBase64(keySigned)
+          };
+        })
+      );
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.getItemsKeysSignError, { event: e, additional: { func: 'getItemsKeys', iteration: i } });
+    }
+
+    let foundGap = false;
+
+    for (const result of batchResults) {
+      if (storageKeysSet.has(result.keySignedB64)) {
+        itemsKeys.push(SESSION_PREFIX + result.keySignedB64);
+      } else {
+        foundGap = true;
+        break;
+      }
+    }
+
+    if (foundGap) {
       break;
     }
 
-    i++;
+    i = batchEnd;
   }
+
+  if (i >= MAX_ITEMS && itemsKeys.length > 0) {
+    throw new TwoFasError(TwoFasError.internalErrors.getItemsKeysMaxIterationsExceeded, { additional: { func: 'getItemsKeys', maxItems: MAX_ITEMS } });
+  }
+
+  try {
+    cryptoKeyImported = null;
+  } catch {}
 
   return itemsKeys;
 };
