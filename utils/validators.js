@@ -83,3 +83,28 @@ export const isValidArray = (value, elementValidator = null) => {
 
   return true;
 };
+
+/**
+ * Validates a condition and throws an error if the condition is false.
+ * @param {boolean} condition - The condition to validate.
+ * @param {string} message - The error message to throw if the condition is false.
+ * @throws {Error} Throws an error with the provided message if the condition is false.
+ */
+export const validate = (condition, message) => {
+  if (!condition) {
+    throw new Error(message);
+  }
+};
+
+/**
+ * Validates an optional value using a validator function.
+ * @param {*} value - The value to validate.
+ * @param {Function} validator - The validator function to use.
+ * @param {string} message - The error message to throw if validation fails.
+ * @throws {Error} Throws an error with the provided message if validation fails.
+ */
+export const validateOptional = (value, validator, message) => {
+  if (value !== undefined) {
+    validate(validator(value), message);
+  }
+};
