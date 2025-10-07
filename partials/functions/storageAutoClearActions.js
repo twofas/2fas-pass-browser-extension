@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '../sessionStorage/getServices';
+import getItems from '../sessionStorage/getItems';
 import decryptPassword from './decryptPassword';
 import URIMatcher from '../URIMatcher';
 
@@ -46,39 +46,39 @@ const storageAutoClearActions = async () => {
     }
   }
 
-  let services;
+  let items;
 
   try {
-    services = await getServices();
+    items = await getItems();
   } catch {
     return;
   }
 
-  if (!services || services.length === 0) {
+  if (!items || items.length === 0) {
     await storage.setItem('session:autoClearActions', []);
     return;
   }
 
-  const service = services.find(s => s.id === action.itemId);
+  const item = items.find(s => s.id === action.itemId);
 
-  if (!service) {
+  if (!item) {
     await storage.setItem('session:autoClearActions', []);
     return;
   }
 
-  let serviceValue;
+  let itemValue;
 
   if (action.itemType === 'password') {
     try {
-      serviceValue = await decryptPassword(service);
+      itemValue = await decryptPassword(item);
     } catch {
       await storage.setItem('session:autoClearActions', []);
       return;
     }
   } else if (action.itemType === 'uri') {
-    serviceValue = service.uris || [];
+    itemValue = item.uris || [];
   } else {
-    serviceValue = service[action.itemType];
+    itemValue = item[action.itemType];
   }
 
   try {
@@ -89,7 +89,7 @@ const storageAutoClearActions = async () => {
   }
 
   if (action.itemType === 'uri') {
-    const uriFiltered = serviceValue.filter(uri => {
+    const uriFiltered = itemValue.filter(uri => {
       let normalizedUrl;
 
       try {
@@ -106,7 +106,7 @@ const storageAutoClearActions = async () => {
     }
   }
 
-  if (serviceValue === clipboardValue) {
+  if (itemValue === clipboardValue) {
     try {
       await navigator.clipboard.writeText('');
     } catch {}

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import compress from '@/partials/gzip/compress';
 import getKey from '@/partials/sessionStorage/getKey';
@@ -18,31 +18,31 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @return {Promise<void>} A promise that resolves when the password forget is complete.
 */
 const passwordT2Reset = async itemId => {
-  // Get services
-  const services = await getServices();
+  // Get items
+  const items = await getItems();
 
   // Update password
-  const service = services.find(service => service.id === itemId);
-  const deviceId = service.deviceId;
-  delete service.password;
+  const item = items.find(item => item.id === itemId);
+  const deviceId = item.deviceId;
+  delete item.password;
 
-  // Get servicesKeys
-  const servicesKeys = await getItemsKeys(deviceId);
+  // Get itemsKeys
+  const itemsKeys = await getItemsKeys(deviceId);
 
-  // Compress services
-  const servicesStringify = JSON.stringify(services);
-  const servicesGZIP_AB = await compress(servicesStringify);
-  const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
+  // Compress items
+  const itemsStringify = JSON.stringify(items);
+  const itemsGZIP_AB = await compress(itemsStringify);
+  const itemsGZIP = ArrayBufferToBase64(itemsGZIP_AB);
 
   // Remove encryptionItemT2Key in session storage for this itemId & deviceId
   const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, itemId });
   await storage.removeItem(`session:${itemT2Key}`);
 
-  // Remove services from session storage (by servicesKeys)
-  await storage.removeItems(servicesKeys);
+  // Remove items from session storage (by itemsKeys)
+  await storage.removeItems(itemsKeys);
 
   // saveItems
-  await saveItems(servicesGZIP, deviceId);
+  await saveItems(itemsGZIP, deviceId);
 };
 
 export default passwordT2Reset;

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
@@ -19,20 +19,20 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @return {Promise<void>} A promise that resolves when the password is kept.
 */
 const keepPassword = async state => {
-  // Get services
-  const services = await getServices();
+  // Get items
+  const items = await getItems();
 
   // Get itemsKeys
   const itemsKeys = await getItemsKeys(state.deviceId);
 
   // Update password
-  const service = services.find(service => service.id === state.itemId);
-  service.password = state.password;
+  const item = items.find(item => item.id === state.itemId);
+  item.password = state.password;
 
-  // Compress services
-  const servicesStringify = JSON.stringify(services);
-  const servicesGZIP_AB = await compress(servicesStringify);
-  const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
+  // Compress items
+  const itemsStringify = JSON.stringify(items);
+  const itemsGZIP_AB = await compress(itemsStringify);
+  const itemsGZIP = ArrayBufferToBase64(itemsGZIP_AB);
 
   // generate encryptionItemT2Key
   const encryptionItemT2Key = await generateEncryptionAESKey(state.hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, state.sessionKeyForHKDF, true);
@@ -53,7 +53,7 @@ const keepPassword = async state => {
   await storage.removeItems(itemsKeys);
 
   // saveItems
-  await saveItems(servicesGZIP, state.deviceId);
+  await saveItems(itemsGZIP, state.deviceId);
   
   // Set alarm for 3 minutes
   await browser.alarms.create(`passwordT2Reset-${state.itemId}`, { delayInMinutes: config.passwordResetDelay });

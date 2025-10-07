@@ -5,21 +5,21 @@
 // See LICENSE file for full terms
 
 import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, decryptPassword, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, generateNonce } from '@/partials/functions';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { PULL_REQUEST_TYPES } from '@/constants';
 
 /** 
 * Function to handle the autofill action.
 * @async
-* @param {number} id - The ID of the service.
+* @param {number} id - The ID of the item.
 * @param {function} navigate - The navigate function.
 * @param {boolean} more - Indicates if more actions are available.
 * @param {function} setMore - Function to update the more state.
 * @return {Promise<void>}
 */
 const handleAutofill = async (id, navigate, more, setMore) => {
-  let servicesStorage, service, res;
+  let itemsStorage, item, res;
   let passwordDecrypt = true;
   let passwordAvailable = true;
 
@@ -28,15 +28,15 @@ const handleAutofill = async (id, navigate, more, setMore) => {
   }
 
   try {
-    servicesStorage = await getServices();
-    service = servicesStorage.find(service => service.id === id);
+    itemsStorage = await getItems();
+    item = itemsStorage.find(item => item.id === id);
   } catch (e) {
     showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
     await CatchError(e);
     return;
   }
 
-  if (!service) {
+  if (!item) {
     showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handleAutofillNoService, { additional: { func: 'handleAutofill' } }));
     return;
@@ -46,7 +46,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
 
   try {
     tab = await getLastActiveTab(() => {
-      if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+      if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
         showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
       } else {
         showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
@@ -63,7 +63,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
   try {
     await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
   } catch (e) {
-    if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+    if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
     } else {
       showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
@@ -81,8 +81,8 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     target: REQUEST_TARGETS.CONTENT
   });
 
-  if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-    if (!service?.password || service?.password?.length <= 0) {
+  if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+    if (!item?.password || item?.password?.length <= 0) {
       let canAutofill = false;
       let canAutofillPassword, canAutofillUsername;
 
@@ -112,8 +112,8 @@ const handleAutofill = async (id, navigate, more, setMore) => {
               action: PULL_REQUEST_TYPES.SIF_REQUEST,
               from: 'autofill',
               data: {
-                itemId: service.id,
-                deviceId: service.deviceId,
+                itemId: item.id,
+                deviceId: item.deviceId,
                 tabId: tab.id,
                 cryptoAvailable: cryptoAvailableRes.cryptoAvailable
               }
@@ -126,10 +126,10 @@ const handleAutofill = async (id, navigate, more, setMore) => {
         passwordAvailable = false;
       }
     }
-  } else if (service?.securityType === SECURITY_TIER.SECRET) {
-    if ((!service?.password || service?.password?.length <= 0) && (service?.username && service?.username?.length > 0)) {
+  } else if (item?.securityType === SECURITY_TIER.SECRET) {
+    if ((!item?.password || item?.password?.length <= 0) && (item?.username && item?.username?.length > 0)) {
       passwordDecrypt = false;
-    } else if ((!service?.password || service?.password?.length <= 0) && (!service?.username || service?.username?.length <= 0)) {
+    } else if ((!item?.password || item?.password?.length <= 0) && (!item?.username || item?.username?.length <= 0)) {
       showToast(browser.i18n.getMessage('this_tab_autofill_no_username_and_password'), 'error');
       return;
     }
@@ -140,7 +140,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
 
   if (passwordAvailable && passwordDecrypt) {
     try {
-      decryptedPassword = await decryptPassword(service);
+      decryptedPassword = await decryptPassword(item);
     } catch (e) {
       showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
       await CatchError(e);
@@ -181,7 +181,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
 
   const actionData = {
     action: REQUEST_ACTIONS.AUTOFILL,
-    username: service.username,
+    username: item.username,
     target: REQUEST_TARGETS.CONTENT,
     cryptoAvailable: cryptoAvailableRes.cryptoAvailable
   };

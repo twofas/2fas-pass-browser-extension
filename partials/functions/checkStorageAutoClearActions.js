@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '../sessionStorage/getServices';
+import getItems from '../sessionStorage/getItems';
 import decryptPassword from './decryptPassword';
 import URIMatcher from '../URIMatcher';
 
@@ -24,7 +24,7 @@ const checkStorageAutoClearActions = async () => {
     return false;
   }
   
-  // Get service with latest timestamp
+  // Get item with latest timestamp
   const action = storageClearActions.reduce((latest, action) => {
     return action.timestamp > latest.timestamp ? action : latest;
   }, storageClearActions[0]);
@@ -34,41 +34,41 @@ const checkStorageAutoClearActions = async () => {
     return false;
   }
 
-  let serviceValue;
+  let itemValue;
 
   if (action?.itemId === '00000000-0000-0000-0000-000000000000') {
     return 'addNew';
   }
 
-  let services;
+  let items;
 
   try {
-    services = await getServices();
+    items = await getItems();
   } catch {
     return false;
   }
 
-  if (!services || services.length === 0) {
+  if (!items || items.length === 0) {
     await storage.setItem('session:autoClearActions', []);
     return false;
   }
 
-  const service = services.find(s => s?.id === action?.itemId);
+  const item = items.find(s => s?.id === action?.itemId);
 
-  if (!service) {
+  if (!item) {
     await storage.setItem('session:autoClearActions', []);
     return false;
   }
 
   if (action.itemType === 'password') {
     try {
-      serviceValue = await decryptPassword(service);
+      itemValue = await decryptPassword(item);
     } catch {
       await storage.setItem('session:autoClearActions', []);
       return;
     }
   } else if (action.itemType === 'uri') {
-    const uris = service.uris || [];
+    const uris = item.uris || [];
     
     if (!uris || uris.length === 0) {
       await storage.setItem('session:autoClearActions', []);
@@ -82,28 +82,28 @@ const checkStorageAutoClearActions = async () => {
       return false;
     }
     
-    serviceValue = [];
+    itemValue = [];
     uriTexts.forEach(text => {
-      serviceValue.push(text);
+      itemValue.push(text);
 
       try {
         const normalized = URIMatcher.normalizeUrl(text, true);
 
         if (normalized !== text) {
-          serviceValue.push(normalized);
+          itemValue.push(normalized);
         }
       } catch {}
     });
 
-    serviceValue = [...new Set(serviceValue)]; // unique values
-    serviceValue = JSON.stringify(serviceValue);
+    itemValue = [...new Set(itemValue)]; // unique values
+    itemValue = JSON.stringify(itemValue);
   } else {
-    serviceValue = service[action.itemType];
+    itemValue = item[action.itemType];
   }
 
   await storage.setItem('session:autoClearActions', []);
 
-  return serviceValue;
+  return itemValue;
 };
 
 export default checkStorageAutoClearActions;

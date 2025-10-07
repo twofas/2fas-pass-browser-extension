@@ -7,7 +7,7 @@
 import contextMenuConfigured from '../contextMenu/contextMenuConfigured';
 import contextMenuNotConfigured from '../contextMenu/contextMenuNotConfigured';
 import { updateBadge, updateContextMenu, setBadgeLocked } from '../utils';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 
 /** 
 * Function to handle changes in configuration.
@@ -16,10 +16,10 @@ import getServices from '@/partials/sessionStorage/getServices';
 * @return {Promise<boolean>} A promise that resolves to true if the configuration change is handled successfully, otherwise false.
 */
 const onConfiguredChange = async newValue => {
-  let services;
+  let items;
 
   try {
-    services = await getServices();
+    items = await getItems();
   } catch {}
 
   try {
@@ -32,11 +32,11 @@ const onConfiguredChange = async newValue => {
   
     if (newValue === true) {
       await Promise.all([
-        updateBadge(true, services).catch(() => {}),
-        contextMenuConfigured(services).catch(() => {})
+        updateBadge(true, items).catch(() => {}),
+        contextMenuConfigured(items).catch(() => {})
       ]);
 
-      await updateContextMenu(services);
+      await updateContextMenu(items);
     } else {
       await Promise.all([
         setBadgeLocked().catch(() => {}),

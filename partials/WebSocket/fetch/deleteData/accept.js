@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import compress from '@/partials/gzip/compress';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
@@ -18,31 +18,31 @@ import saveItems from '@/partials/WebSocket/utils/saveItems';
 */
 const deleteDataAccept = async (state, messageId) => {
   try {
-    const [services, itemsKeys] = await Promise.all([
-      getServices(),
+    const [items, itemsKeys] = await Promise.all([
+      getItems(),
       getItemsKeys(state.data.deviceId)
     ]);
 
     // Clear alarm if exists
-    const service = services.find(service => service.id === state.data.itemId);
+    const item = items.find(item => item.id === state.data.itemId);
 
-    if (service && service.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+    if (item && item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       await browser.alarms.clear(`passwordT2Reset-${state.data.itemId}`);
     }
 
-    // Remove login from services
-    const servicesFiltered = services.filter(service => service.id !== state.data.itemId);
+    // Remove data from items
+    const itemsFiltered = items.filter(item => item.id !== state.data.itemId);
 
-    // Compress services
-    const servicesStringify = JSON.stringify(servicesFiltered);
-    const servicesGZIP_AB = await compress(servicesStringify);
-    const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
+    // Compress items
+    const itemsStringify = JSON.stringify(itemsFiltered);
+    const itemsGZIP_AB = await compress(itemsStringify);
+    const itemsGZIP = ArrayBufferToBase64(itemsGZIP_AB);
 
     // Remove items from session storage (by itemsKeys)
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(servicesGZIP, state.data.deviceId);
+    await saveItems(itemsGZIP, state.data.deviceId);
 
     // Send response
     await sendPullRequestCompleted(messageId);

@@ -14,7 +14,7 @@ import onMessage from './events/onMessage';
 import generateAllLoginsList from './functions/generateAllLoginsList';
 import generateMatchingLoginsList from './functions/generateMatchingLoginsList';
 import URIMatcher from '@/partials/URIMatcher';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import getTags from '@/partials/sessionStorage/getTags';
 import { filterXSS } from 'xss';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
@@ -145,17 +145,17 @@ function ThisTab (props) {
     setDomain(d.domain);
     setUrl(d.url);
 
-    let logins = [];
+    let items = [];
     let matchingLogins = [];
 
     try {
-      logins = await getServices();
+      items = await getItems();
     } catch (e) {
       await CatchError(e);
     }
 
     try {
-      matchingLogins = URIMatcher.getMatchedAccounts(logins, d.url);
+      matchingLogins = URIMatcher.getMatchedAccounts(items, d.url);
     } catch {}
 
     setMatchingLogins(matchingLogins);
@@ -184,7 +184,7 @@ function ThisTab (props) {
   }, []);
 
   const getLogins = useCallback(async () => {
-    const l = await getServices();
+    const l = await getItems();
     setLogins(l);
     
     return l;
