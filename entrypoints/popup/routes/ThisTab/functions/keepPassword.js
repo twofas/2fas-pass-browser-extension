@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import getServices from '@/partials/sessionStorage/getServices';
-import getServicesKeys from '@/partials/sessionStorage/getServicesKeys';
+import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
 import compress from '@/partials/gzip/compress';
@@ -22,8 +22,8 @@ const keepPassword = async state => {
   // Get services
   const services = await getServices();
 
-  // Get servicesKeys
-  const servicesKeys = await getServicesKeys(state.deviceId);
+  // Get itemsKeys
+  const itemsKeys = await getItemsKeys(state.deviceId);
 
   // Update password
   const service = services.find(service => service.id === state.itemId);
@@ -49,8 +49,8 @@ const keepPassword = async state => {
   const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.deviceId, itemId: state.itemId });
   await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
-  // Remove services from session storage (by servicesKeys)
-  await storage.removeItems(servicesKeys);
+  // Remove items from session storage (by itemsKeys)
+  await storage.removeItems(itemsKeys);
 
   // saveServices
   await saveServices(servicesGZIP, state.deviceId);

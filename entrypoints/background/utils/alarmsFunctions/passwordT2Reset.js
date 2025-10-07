@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import getServices from '@/partials/sessionStorage/getServices';
-import getServicesKeys from '@/partials/sessionStorage/getServicesKeys';
+import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import compress from '@/partials/gzip/compress';
 import getKey from '@/partials/sessionStorage/getKey';
 import saveServices from '@/partials/WebSocket/utils/saveServices';
@@ -27,7 +27,7 @@ const passwordT2Reset = async itemId => {
   delete service.password;
 
   // Get servicesKeys
-  const servicesKeys = await getServicesKeys(deviceId);
+  const servicesKeys = await getItemsKeys(deviceId);
 
   // Compress services
   const servicesStringify = JSON.stringify(services);
