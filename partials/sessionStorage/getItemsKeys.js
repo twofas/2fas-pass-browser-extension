@@ -9,25 +9,25 @@ import getKey from './getKey';
 import isText from '@/partials/functions/isText';
 
 /** 
-* Gets the service keys for a device ID from session storage.
+* Gets the items keys for a device ID from session storage.
 * @async
 * @param {string} deviceId - The device ID to look up.
-* @return {string[]} The array of service keys for the device ID.
+* @return {string[]} The array of items keys for the device ID.
 */
-const getServicesKeys = async deviceId => {
+const getItemsKeys = async deviceId => {
   if (!deviceId || !isText(deviceId) || deviceId.length === 0) {
     return [];
   }
 
-  const keyEnv = import.meta.env.VITE_STORAGE_SESSION_SERVICES;
+  const keyEnv = import.meta.env.VITE_STORAGE_SESSION_ITEMS;
 
   if (!keyEnv || !isText(keyEnv) || keyEnv.length === 0) {
-    throw new TwoFasError(TwoFasError.internalErrors.getServicesKeysNotDefined, { additional: { func: 'getServicesKeys' } });
+    throw new TwoFasError(TwoFasError.internalErrors.getItemsKeysNotDefined, { additional: { func: 'getItemsKeys' } });
   }
 
   const keyGenerated = keyEnv + `_${deviceId}`;
   let i = 0;
-  const servicesKeys = [];
+  const itemsKeys = [];
   let storageKeys;
 
   try {
@@ -77,7 +77,7 @@ const getServicesKeys = async deviceId => {
       ['sign']
     );
   } catch (e) {
-    throw new TwoFasError(TwoFasError.internalErrors.getServicesKeysCryptoKeyError, { event: e, additional: { func: 'getServicesKeys' } });
+    throw new TwoFasError(TwoFasError.internalErrors.getItemsKeysCryptoKeyError, { event: e, additional: { func: 'getItemsKeys' } });
   }
 
   while (true) {
@@ -92,7 +92,7 @@ const getServicesKeys = async deviceId => {
     const keySignedB64 = ArrayBufferToBase64(keySigned);
 
     if (storageKeysSet.has(keySignedB64)) {
-      servicesKeys.push(`session:${keySignedB64}`);
+      itemsKeys.push(`session:${keySignedB64}`);
     } else {
       break;
     }
@@ -100,7 +100,7 @@ const getServicesKeys = async deviceId => {
     i++;
   }
 
-  return servicesKeys;
+  return itemsKeys;
 };
 
-export default getServicesKeys;
+export default getItemsKeys;

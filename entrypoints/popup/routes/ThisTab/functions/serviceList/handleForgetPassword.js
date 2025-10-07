@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import getServices from '@/partials/sessionStorage/getServices';
-import getServicesKeys from '@/partials/sessionStorage/getServicesKeys';
+import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import compress from '@/partials/gzip/compress';
 import getKey from '@/partials/sessionStorage/getKey';
 import saveServices from '@/partials/WebSocket/utils/saveServices';
@@ -34,8 +34,8 @@ const handleForgetPassword = async (e, itemId, toggleMenu) => {
   const deviceId = service.deviceId;
   delete service.password;
 
-  // Get servicesKeys
-  const servicesKeys = await getServicesKeys(deviceId);
+  // Get itemsKeys
+  const itemsKeys = await getItemsKeys(deviceId);
 
   // Compress services
   const servicesStringify = JSON.stringify(services);
@@ -46,8 +46,8 @@ const handleForgetPassword = async (e, itemId, toggleMenu) => {
   const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, itemId });
   await storage.removeItem(`session:${itemT2Key}`);
 
-  // Remove services from session storage (by servicesKeys)
-  await storage.removeItems(servicesKeys);
+  // Remove services from session storage (by itemsKeys)
+  await storage.removeItems(itemsKeys);
 
   // saveServices
   await saveServices(servicesGZIP, deviceId);
