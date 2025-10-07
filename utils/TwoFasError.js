@@ -498,6 +498,18 @@ class TwoFasError extends Error {
       message: 'getItemsKeys: cryptoKeyImported error',
       code: 9201
     },
+    getItemsKeysSignError: {
+      message: 'getItemsKeys: error signing data in loop',
+      code: 9202
+    },
+    getItemsKeysInvalidBase64: {
+      message: 'getItemsKeys: invalid Base64 cryptoKey',
+      code: 9203
+    },
+    getItemsKeysMaxIterationsExceeded: {
+      message: 'getItemsKeys: maximum iterations exceeded',
+      code: 9204
+    },
     // CHECK DOMAIN ON IGNORED LIST
     checkDomainOnIgnoredListUrlError: {
       message: 'checkDomainOnIgnoredList: error parsing URL',
