@@ -8,7 +8,7 @@ import S from '../../ThisTab.module.scss';
 import PasswordCopyOnlyBtn from '../../functions/serviceList/additionalButtons/PasswordCopyOnlyBtn';
 import generateIcon from '../../functions/serviceList/generateIcon';
 import { useState, useEffect, useRef } from 'react';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 
 /** 
 * Function to render a small login item.
@@ -25,8 +25,8 @@ function SmallLoginItem (props) {
       return false;
     }
 
-    const logins = await getServices();
-    const login = logins.filter(l => l.id === props.itemId)[0];
+    const items = await getItems();
+    const login = items.filter(l => l.id === props.itemId)[0];
 
     setLogin(login);
   };

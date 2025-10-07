@@ -4,42 +4,42 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import copyValue from '@/partials/functions/copyValue';
 
 /** 
 * Function to handle the username action.
 * @async
-* @param {number} id - The ID of the service.
+* @param {number} id - The ID of the item.
 * @param {boolean} more - Indicates if more actions are available.
 * @param {function} setMore - Function to update the more state.
 * @return {Promise<void>} 
 */
 const handleUsername = async (id, more, setMore) => {
-  let servicesStorage, service;
+  let itemsStorage, item;
 
   if (more) {
     setMore(false);
   }
 
   try {
-    servicesStorage = await getServices();
-    service = servicesStorage.find(service => service.id === id);
+    itemsStorage = await getItems();
+    item = itemsStorage.find(item => item.id === id);
   } catch (e) {
     showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
     await CatchError(e);
     return;
   }
 
-  if (!service) {
+  if (!item) {
     showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handleUsernameNoService, { additional: { func: 'handleUsername' } }));
     return;
   }
 
   try {
-    const { username } = service;
-    await copyValue(username, service.id, 'username');
+    const { username } = item;
+    await copyValue(username, item.id, 'username');
     showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
   } catch (e) {
     showToast(browser.i18n.getMessage('error_username_copy_failed'), 'error');

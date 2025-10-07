@@ -4,48 +4,48 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import { copyValue, decryptPassword } from '@/partials/functions';
 
 /** 
 * Function to handle copying the password to clipboard.
 * @async
-* @param {number} id - The ID of the service.
+* @param {number} id - The ID of the item.
 * @param {boolean} more - Indicates if more actions are available.
 * @param {function} setMore - Function to update the more state.
 * @return {Promise<void>}
 */
 const handlePassword = async (id, more, setMore) => {
-  let servicesStorage, service;
+  let itemsStorage, item;
 
   if (more) {
     setMore(false);
   }
 
   try {
-    servicesStorage = await getServices();
-    service = servicesStorage.find(service => service.id === id);
+    itemsStorage = await getItems();
+    item = itemsStorage.find(item => item.id === id);
   } catch (e) {
     showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
     await CatchError(e);
     return;
   }
 
-  if (!service) {
+  if (!item) {
     showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handlePasswordNoService, { additional: { func: 'handlePassword' } }));
     return;
   }
 
-  if (!service.password || service.password.length <= 0) {
+  if (!item.password || item.password.length <= 0) {
     navigator.clipboard.writeText('');
     showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
     return;
   }
 
   try {
-    const decryptedPassword = await decryptPassword(service);
-    await copyValue(decryptedPassword, service.id, 'password');
+    const decryptedPassword = await decryptPassword(item);
+    await copyValue(decryptedPassword, item.id, 'password');
     showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
   } catch (e) {
     showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
