@@ -10,7 +10,7 @@ import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
 import compress from '@/partials/gzip/compress';
-import saveServices from '@/partials/WebSocket/utils/saveServices';
+import saveItems from '@/partials/WebSocket/utils/saveItems';
 import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
@@ -79,8 +79,8 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
     // Remove items from session storage (by itemsKeys)
     await storage.removeItems(itemsKeys);
 
-    // saveServices
-    await saveServices(servicesGZIP, data.login.deviceId);
+    // saveItems
+    await saveItems(servicesGZIP, data.login.deviceId);
 
     // Set alarm for 3 minutes if T2
     if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {

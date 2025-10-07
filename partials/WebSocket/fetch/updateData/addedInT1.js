@@ -8,7 +8,7 @@ import sendPullRequestCompleted from '../sendPullRequestCompleted';
 import getServices from '@/partials/sessionStorage/getServices';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import compress from '@/partials/gzip/compress';
-import saveServices from '@/partials/WebSocket/utils/saveServices';
+import saveItems from '@/partials/WebSocket/utils/saveItems';
 
 /** 
 * Handles the update of a item that has been added in T1.
@@ -41,8 +41,8 @@ const updateDataAddedInT1 = async (state, messageId) => {
     // Remove items from session storage (by itemsKeys)
     await storage.removeItems(itemsKeys);
 
-    // saveServices
-    await saveServices(servicesGZIP, state.data.deviceId);
+    // saveItems
+    await saveItems(servicesGZIP, state.data.deviceId);
 
     // Send response
     await sendPullRequestCompleted(messageId);
