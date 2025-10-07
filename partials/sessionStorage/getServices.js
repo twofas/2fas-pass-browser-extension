@@ -7,7 +7,7 @@
 import decompress from '@/partials/gzip/decompress';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import getServicesKeys from './getServicesKeys';
+import getItemsKeys from './getItemsKeys';
 
 /** 
 * Gets the services from session storage.
@@ -32,8 +32,8 @@ const getServices = async () => {
   // Process all devices in parallel
   const devicePromises = devicesIds.map(async deviceId => {
     try {
-      const servicesKeys = await getServicesKeys(deviceId);
-      const chunks = await storage.getItems(servicesKeys);
+      const itemsKeys = await getItemsKeys(deviceId);
+      const chunks = await storage.getItems(itemsKeys);
   
       if (chunks.length > 0) {
         const chunksValues = chunks.map(chunk => chunk.value);

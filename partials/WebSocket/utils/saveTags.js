@@ -30,8 +30,6 @@ const saveTags = async (gzipInputData, deviceId) => {
     } catch {}
   }
 
-  console.log('Valid tags:', validTags);
-
   const jsonString = JSON.stringify(validTags);
   const gzipDataAB = await compress(jsonString);
   const gzipData = ArrayBufferToBase64(gzipDataAB);

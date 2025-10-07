@@ -6,7 +6,7 @@
 
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
 import getServices from '@/partials/sessionStorage/getServices';
-import getServicesKeys from '@/partials/sessionStorage/getServicesKeys';
+import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
 import compress from '@/partials/gzip/compress';
@@ -28,9 +28,9 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
   }
 
   try {
-    const [services, servicesKeys] = await Promise.all([
+    const [services, itemsKeys] = await Promise.all([
       getServices(),
-      getServicesKeys(state.data.deviceId)
+      getItemsKeys(state.data.deviceId)
     ]);
 
     // Update login & clear alarm if exists
@@ -76,8 +76,8 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
       throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginUpdatedWrongSecurityType);
     }
 
-    // Remove services from session storage (by servicesKeys)
-    await storage.removeItems(servicesKeys);
+    // Remove items from session storage (by itemsKeys)
+    await storage.removeItems(itemsKeys);
 
     // saveServices
     await saveServices(servicesGZIP, data.login.deviceId);

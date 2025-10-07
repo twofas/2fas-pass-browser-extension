@@ -489,13 +489,13 @@ class TwoFasError extends Error {
       message: 'getKey: error signing data',
       code: 9187
     },
-    // GET SERVICES KEYS
-    getServicesKeysNotDefined: {
-      message: 'getServicesKeys: keyEnv is not defined',
+    // GET ITEMS KEYS
+    getItemsKeysNotDefined: {
+      message: 'getItemsKeys: keyEnv is not defined',
       code: 9200
     },
-    getServicesKeysCryptoKeyError: {
-      message: 'getServicesKeys: cryptoKeyImported error',
+    getItemsKeysCryptoKeyError: {
+      message: 'getItemsKeys: cryptoKeyImported error',
       code: 9201
     },
     // CHECK DOMAIN ON IGNORED LIST
