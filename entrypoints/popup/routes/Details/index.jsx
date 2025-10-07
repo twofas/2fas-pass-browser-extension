@@ -12,7 +12,7 @@ import { useState, useEffect, lazy, useCallback, useRef } from 'react';
 import generateURLs from './functions/generateURLs';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import { valueToNFKD, sanitizeObject } from '@/partials/functions';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
@@ -167,27 +167,27 @@ function Details (props) {
 
       setLoading(false);
     } else {
-      const serviceData = await getServices();
-      let s = serviceData.find(s => s.id === params.id);
+      const itemData = await getItems();
+      let item = itemData.find(item => item.id === params.id);
 
-      if (!s || s.length <= 0) {
+      if (!item || item.length <= 0) {
         showToast(browser.i18n.getMessage('details_service_not_found'), 'error');
         navigate('/');
         return;
       }
 
-      if (s.password) {
-        s.passwordEncrypted = s.password;
-        s.password = hiddenPassword;
+      if (item.password) {
+        item.passwordEncrypted = item.password;
+        item.password = hiddenPassword;
       }
 
-      s = sanitizeObject(s);
-      setOriginalService(s);
+      item = sanitizeObject(item);
+      setOriginalService(item);
 
-      const urisLength = s.uris?.length || 0;
+      const urisLength = item.uris?.length || 0;
       const newDomainsEditable = new Array(urisLength).fill(false);
 
-      setService(s);
+      setService(item);
       setDomainsEditable(newDomainsEditable);
       setData('domainsEditable', newDomainsEditable);
 

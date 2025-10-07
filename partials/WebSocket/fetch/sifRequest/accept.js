@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
@@ -29,11 +29,11 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
   try {
     // Autofill from handleAutofill
     if (state?.from === 'autofill') {
-      // Get services
-      const services = await getServices();
+      // Get items
+      const items = await getItems();
 
-      // Get service (for username only)
-      const service = services.find(service => service.id === state.data.itemId);
+      // Get item (for username only)
+      const item = items.find(item => item.id === state.data.itemId);
 
       // Decrypt password
       const password = data.passwordEnc;
@@ -84,7 +84,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
         tabId,
         {
           action: REQUEST_ACTIONS.AUTOFILL,
-          username: service.username,
+          username: item.username,
           password: encryptedValueB64,
           target: REQUEST_TARGETS.CONTENT,
           cryptoAvailable: state?.data?.cryptoAvailable
@@ -111,19 +111,19 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
       }
     }
 
-    const [services, itemsKeys] = await Promise.all([
-      getServices(),
+    const [items, itemsKeys] = await Promise.all([
+      getItems(),
       getItemsKeys(state.data.deviceId)
     ]);
 
     // Update password
-    const service = services.find(service => service.id === state.data.itemId);
-    service.password = data.passwordEnc;
+    const item = items.find(item => item.id === state.data.itemId);
+    item.password = data.passwordEnc;
 
-    // Compress services
-    const servicesStringify = JSON.stringify(services);
-    const servicesGZIP_AB = await compress(servicesStringify);
-    const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
+    // Compress items
+    const itemsStringify = JSON.stringify(items);
+    const itemsGZIP_AB = await compress(itemsStringify);
+    const itemsGZIP = ArrayBufferToBase64(itemsGZIP_AB);
 
     // generate encryptionItemT2Key
     const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
@@ -138,7 +138,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(servicesGZIP, state.data.deviceId);
+    await saveItems(itemsGZIP, state.data.deviceId);
 
     // Set alarm for 3 minutes
     await browser.alarms.create(`passwordT2Reset-${state.data.itemId}`, { delayInMinutes: config.passwordResetDelay });

@@ -10,7 +10,7 @@ import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
 import checkPromptCS from '@/partials/contentScript/checkPromptCS';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { parseDomain } from 'parse-domain';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
 /** 
@@ -76,16 +76,16 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
       tabUpdateData[tabID].savePromptVisible = false;
     }
 
-    let services;
+    let items;
 
     try {
-      services = await getServices();
+      items = await getItems();
     } catch {}
 
     await Promise.all([
-      setBadgeText(configured, services, tab.url, tabID).catch(e => CatchError(e)),
+      setBadgeText(configured, items, tab.url, tabID).catch(e => CatchError(e)),
       sendDomainToPopupWindow(tabID),
-      updateNoAccountItem(tabID, services),
+      updateNoAccountItem(tabID, items),
       checkPromptCS(tabID)
     ]);
 

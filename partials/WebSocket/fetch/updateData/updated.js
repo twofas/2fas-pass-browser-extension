@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
@@ -28,31 +28,31 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
   }
 
   try {
-    const [services, itemsKeys] = await Promise.all([
-      getServices(),
+    const [items, itemsKeys] = await Promise.all([
+      getItems(),
       getItemsKeys(state.data.deviceId)
     ]);
 
     // Update login & clear alarm if exists
-    const serviceIndex = services.findIndex(service => service.id === state.data.itemId);
-    let service = services.find(service => service.id === state.data.itemId);
+    const itemIndex = items.findIndex(item => item.id === state.data.itemId);
+    let item = items.find(item => item.id === state.data.itemId);
 
-    if (service && service.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+    if (item && item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       await browser.alarms.clear(`passwordT2Reset-${state.data.itemId}`);
     }
 
-    service = data.login;
+    item = data.login;
 
     if (data.login.securityType === SECURITY_TIER.SECRET) {
-      service.internalType = 'added';
+      item.internalType = 'added';
     }
 
-    services[serviceIndex] = service;
+    items[itemIndex] = item;
 
-    // Compress services
-    const servicesStringify = JSON.stringify(services);
-    const servicesGZIP_AB = await compress(servicesStringify);
-    const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
+    // Compress items
+    const itemsStringify = JSON.stringify(items);
+    const itemsGZIP_AB = await compress(itemsStringify);
+    const itemsGZIP = ArrayBufferToBase64(itemsGZIP_AB);
 
     if (data.login.securityType === SECURITY_TIER.SECRET) {
       // generate encryptionItemT3Key
@@ -80,7 +80,7 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(servicesGZIP, data.login.deviceId);
+    await saveItems(itemsGZIP, data.login.deviceId);
 
     // Set alarm for 3 minutes if T2
     if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {

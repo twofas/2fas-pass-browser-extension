@@ -10,11 +10,11 @@ import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfig
 import getItemsKeys from './getItemsKeys';
 
 /** 
-* Gets the services from session storage.
+* Gets the items from session storage.
 * @async
-* @return {Object[]} The array of services.
+* @return {Object[]} The array of items.
 */
-const getServices = async () => {
+const getItems = async () => {
   const configured = await getConfiguredBoolean();
 
   if (!configured) {
@@ -47,18 +47,18 @@ const getServices = async () => {
     }
   });
 
-  const loginsB64 = (await Promise.all(devicePromises)).filter(Boolean);
+  const itemsB64 = (await Promise.all(devicePromises)).filter(Boolean);
 
-  if (loginsB64.length === 0) {
+  if (itemsB64.length === 0) {
     return [];
   }
 
   // Process decompression and parsing in parallel
-  const processPromises = loginsB64.map(async logins => {
+  const processPromises = itemsB64.map(async items => {
     try {
-      const loginsDeviceGZIP = Base64ToArrayBuffer(logins);
-      const loginsDeviceStr = await decompress(loginsDeviceGZIP);
-      return JSON.parse(loginsDeviceStr);
+      const itemsDeviceGZIP = Base64ToArrayBuffer(items);
+      const itemsDeviceStr = await decompress(itemsDeviceGZIP);
+      return JSON.parse(itemsDeviceStr);
     } catch (e) {
       await CatchError(e);
       return null;
@@ -67,15 +67,18 @@ const getServices = async () => {
 
   const jsons = (await Promise.all(processPromises)).filter(Boolean);
 
-  // Flatten all jsons into single array
-  const json = jsons.flat().filter(
-    login =>
-      login?.deviceId && 
-      login?.id && 
-      (login?.securityType && Number.isInteger(login?.securityType) && login?.securityType >= SECURITY_TIER.TOP_SECRET && login?.securityType <= SECURITY_TIER.SECRET)
-  );
+  console.log(jsons.flat());
+  return jsons.flat();
 
-  return sanitizeObject(json);
+//   // Flatten all jsons into single array
+//   const json = jsons.flat().filter(
+//     login =>
+//       login?.deviceId && 
+//       login?.id && 
+//       (login?.securityType && Number.isInteger(login?.securityType) && login?.securityType >= SECURITY_TIER.TOP_SECRET && login?.securityType <= SECURITY_TIER.SECRET)
+//   );
+
+//   return sanitizeObject(json);
 };
 
-export default getServices;
+export default getItems;
