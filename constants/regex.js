@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 export const HEX_REGEX = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+export const BASE64_REGEX = /^[A-Za-z0-9+/]+=*$/;
 export const SERVICE_REGEX = /^2fas-pass-autofill-(.*)$/;
 export const FETCH_REGEX = /^2fas-pass-fetch-(.*)\|(.*)$/;
 export const PASSWORD_T2_RESET_REGEX = /^passwordT2Reset-(.*)$/;
