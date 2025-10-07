@@ -8,12 +8,18 @@ class Tag {
   static contentType = 'tag';
   static contentVersion = 1;
 
-  constructor (data) {
-    this.id = data.id;
-    this.name = data.content.name;
-    this.color = data?.content?.color || null;
-    this.position = data?.content?.position || null;
-    this.updatedAt = data.updatedAt || null;
+  constructor (tagData) {
+    validate(tagData && typeof tagData === 'object', 'Invalid tag data');
+
+    validate(isValidUUID(tagData.id), 'Invalid or missing id: must be a valid UUID');
+    validate(isValidInteger(tagData.updatedAt), 'Invalid or missing updatedAt: must be an integer');
+    validate(typeof tagData.name === 'string', `Invalid tagData.name must be a string`);
+    validate(isValidInteger(tagData.position, 0, 999), 'Invalid or missing tagData.position: must be an integer between 0 and 999');
+
+    this.id = tagData.id;
+    this.updatedAt = tagData.updatedAt;
+    this.name = tagData.name;
+    this.position = tagData.position;
   }
 }
 
