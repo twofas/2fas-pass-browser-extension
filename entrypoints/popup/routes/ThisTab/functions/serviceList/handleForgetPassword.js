@@ -8,7 +8,7 @@ import getServices from '@/partials/sessionStorage/getServices';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import compress from '@/partials/gzip/compress';
 import getKey from '@/partials/sessionStorage/getKey';
-import saveServices from '@/partials/WebSocket/utils/saveServices';
+import saveItems from '@/partials/WebSocket/utils/saveItems';
 import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
@@ -49,8 +49,8 @@ const handleForgetPassword = async (e, itemId, toggleMenu) => {
   // Remove services from session storage (by itemsKeys)
   await storage.removeItems(itemsKeys);
 
-  // saveServices
-  await saveServices(servicesGZIP, deviceId);
+  // saveItems
+  await saveItems(servicesGZIP, deviceId);
 };
 
 export default handleForgetPassword;
