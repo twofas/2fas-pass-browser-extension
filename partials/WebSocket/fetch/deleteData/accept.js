@@ -6,7 +6,7 @@
 
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
 import getServices from '@/partials/sessionStorage/getServices';
-import getServicesKeys from '@/partials/sessionStorage/getServicesKeys';
+import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import compress from '@/partials/gzip/compress';
 import saveServices from '@/partials/WebSocket/utils/saveServices';
 
@@ -18,9 +18,9 @@ import saveServices from '@/partials/WebSocket/utils/saveServices';
 */
 const deleteDataAccept = async (state, messageId) => {
   try {
-    const [services, servicesKeys] = await Promise.all([
+    const [services, itemsKeys] = await Promise.all([
       getServices(),
-      getServicesKeys(state.data.deviceId)
+      getItemsKeys(state.data.deviceId)
     ]);
 
     // Clear alarm if exists
@@ -38,8 +38,8 @@ const deleteDataAccept = async (state, messageId) => {
     const servicesGZIP_AB = await compress(servicesStringify);
     const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
 
-    // Remove services from session storage (by servicesKeys)
-    await storage.removeItems(servicesKeys);
+    // Remove items from session storage (by itemsKeys)
+    await storage.removeItems(itemsKeys);
 
     // saveServices
     await saveServices(servicesGZIP, state.data.deviceId);

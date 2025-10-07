@@ -62,8 +62,6 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
       throw new Error('Invalid vault data format');
     }
 
-    console.log('Decrypted vault data:', vaultDataDecJSON);
-
     await saveItems(vaultDataDecJSON.items, deviceId);
     await saveTags(vaultDataDecJSON.tags, deviceId);
   } catch (e) {

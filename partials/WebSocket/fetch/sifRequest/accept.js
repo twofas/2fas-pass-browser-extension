@@ -6,7 +6,7 @@
 
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
 import getServices from '@/partials/sessionStorage/getServices';
-import getServicesKeys from '@/partials/sessionStorage/getServicesKeys';
+import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
 import compress from '@/partials/gzip/compress';
@@ -111,9 +111,9 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
       }
     }
 
-    const [services, servicesKeys] = await Promise.all([
+    const [services, itemsKeys] = await Promise.all([
       getServices(),
-      getServicesKeys(state.data.deviceId)
+      getItemsKeys(state.data.deviceId)
     ]);
 
     // Update password
@@ -134,8 +134,8 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
     const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.data.deviceId, itemId: state.data.itemId });
     await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
-    // Remove services from session storage (by servicesKeys)
-    await storage.removeItems(servicesKeys);
+    // Remove items from session storage (by itemsKeys)
+    await storage.removeItems(itemsKeys);
 
     // saveServices
     await saveServices(servicesGZIP, state.data.deviceId);

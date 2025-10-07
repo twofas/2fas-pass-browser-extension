@@ -6,7 +6,7 @@
 
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
 import getServices from '@/partials/sessionStorage/getServices';
-import getServicesKeys from '@/partials/sessionStorage/getServicesKeys';
+import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
 import compress from '@/partials/gzip/compress';
@@ -27,9 +27,9 @@ const newDataAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
   }
 
   try {
-    const [services, servicesKeys] = await Promise.all([
+    const [services, itemsKeys] = await Promise.all([
       getServices(),
-      getServicesKeys(data.login.deviceId)
+      getItemsKeys(data.login.deviceId)
     ]);
 
     // Add new login to services
@@ -63,8 +63,8 @@ const newDataAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongSecurityType);
     }
 
-    // Remove services from session storage (by servicesKeys)
-    await storage.removeItems(servicesKeys);
+    // Remove items from session storage (by itemsKeys)
+    await storage.removeItems(itemsKeys);
 
     // saveServices
     await saveServices(servicesGZIP, data.login.deviceId);
