@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
@@ -27,19 +27,19 @@ const newDataAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
   }
 
   try {
-    const [services, itemsKeys] = await Promise.all([
-      getServices(),
+    const [items, itemsKeys] = await Promise.all([
+      getItems(),
       getItemsKeys(data.login.deviceId)
     ]);
 
-    // Add new login to services
-    const newService = { ...data.login, internalType: 'added' };
-    services.push(newService);
+    // Add new data to items
+    const newItem = { ...data.login, internalType: 'added' };
+    items.push(newItem);
 
-    // Compress services
-    const servicesStringify = JSON.stringify(services);
-    const servicesGZIP_AB = await compress(servicesStringify);
-    const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
+    // Compress items
+    const itemsStringify = JSON.stringify(items);
+    const itemsGZIP_AB = await compress(itemsStringify);
+    const itemsGZIP = ArrayBufferToBase64(itemsGZIP_AB);
 
     if (data.login.securityType === SECURITY_TIER.SECRET) {
       // generate encryptionItemT3Key
@@ -67,7 +67,7 @@ const newDataAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(servicesGZIP, data.login.deviceId);
+    await saveItems(itemsGZIP, data.login.deviceId);
 
     // Set alarm for 3 minutes if T2
     if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {

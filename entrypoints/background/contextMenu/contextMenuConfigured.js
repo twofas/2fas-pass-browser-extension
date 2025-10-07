@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import URIMatcher from '@/partials/URIMatcher';
 
 let isContextMenuConfiguring = false;
@@ -12,10 +12,10 @@ let isContextMenuConfiguring = false;
 /** 
 * Function to configure the context menu for the 2FAS Pass Browser Extension.
 * @async
-* @param {Array} services - An array of services to configure the context menu for.
+* @param {Array} items - An array of items to configure the context menu for.
 * @return {void}
 */
-const contextMenuConfigured = async (services = null) => {
+const contextMenuConfigured = async (items = null) => {
   if (isContextMenuConfiguring) {
     return;
   }
@@ -42,8 +42,8 @@ const contextMenuConfigured = async (services = null) => {
     }
 
     try {
-      if (!services) {
-        services = await getServices();
+      if (!items) {
+        items = await getItems();
       }
     } catch (e) {
       await CatchError(e);
@@ -65,15 +65,15 @@ const contextMenuConfigured = async (services = null) => {
       await CatchError(e);
     }
 
-    for (const service of services) {
-      if (service.securityType !== SECURITY_TIER.HIGHLY_SECRET && service.securityType !== SECURITY_TIER.SECRET) {
+    for (const item of items) {
+      if (item.securityType !== SECURITY_TIER.HIGHLY_SECRET && item.securityType !== SECURITY_TIER.SECRET) {
         return;
       }
 
       let documentUrlPatterns = [];
 
       try {
-        const recognizedURIs = URIMatcher.recognizeURIs(service.uris);
+        const recognizedURIs = URIMatcher.recognizeURIs(item.uris);
 
         if (recognizedURIs?.urls && recognizedURIs?.urls.length > 0) {
           documentUrlPatterns = recognizedURIs.urls.flatMap(uri => URIMatcher.generateDocumentUrlPatterns(uri));
@@ -85,14 +85,14 @@ const contextMenuConfigured = async (services = null) => {
       }
 
       if (
-        service?.securityType === SECURITY_TIER.SECRET ||
-        (service?.securityType === SECURITY_TIER.HIGHLY_SECRET && service?.password && service?.password?.length > 0)
+        item?.securityType === SECURITY_TIER.SECRET ||
+        (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.password && item?.password?.length > 0)
       ) {
         try {
           browser.contextMenus.create({
-            id: `2fas-pass-autofill-${service.id}`,
+            id: `2fas-pass-autofill-${item.id}`,
             enabled: true,
-            title: `${browser.i18n.getMessage('autofill')} ${service.username || service.name}`,
+            title: `${browser.i18n.getMessage('autofill')} ${item.username || item.name}`,
             type: 'normal',
             visible: true,
             parentId: '2fas-pass-configured',
@@ -103,12 +103,12 @@ const contextMenuConfigured = async (services = null) => {
           await CatchError(e);
           continue;
         }
-      } else if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET && !service?.password || service?.password?.length <= 0) {
+      } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && !item?.password || item?.password?.length <= 0) {
         try {
           browser.contextMenus.create({
-            id: `2fas-pass-fetch-${service.id}|${service.deviceId}`,
+            id: `2fas-pass-fetch-${item.id}|${item.deviceId}`,
             enabled: true,
-            title: `${browser.i18n.getMessage('fetch')} ${service.username || service.name}...`,
+            title: `${browser.i18n.getMessage('fetch')} ${item.username || item.name}...`,
             type: 'normal',
             visible: true,
             parentId: '2fas-pass-configured',
@@ -122,7 +122,7 @@ const contextMenuConfigured = async (services = null) => {
       } else {
         throw new TwoFasError(TwoFasError.internalErrors.wrongSecurityType, {
           additional: {
-            securityType: service.securityType,
+            securityType: item.securityType,
             func: 'contextMenuConfigured'
           }
         });

@@ -6,7 +6,7 @@
 
 import initContextMenu from '../contextMenu/initContextMenu';
 import { updateContextMenu, updateBadge } from '../utils';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
 /** 
@@ -22,18 +22,18 @@ const onStorageVersionChange = async () => {
     return;
   }
 
-  let services, configured;
+  let items, configured;
 
   try {
-    [services, configured] = await Promise.all([
-      getServices().catch(() => []),
+    [items, configured] = await Promise.all([
+      getItems().catch(() => []),
       getConfiguredBoolean().catch(() => false)
     ]);
   } catch {}
 
   await initContextMenu();
-  await updateContextMenu(services);
-  await updateBadge(configured, services);
+  await updateContextMenu(items);
+  await updateBadge(configured, items);
 };
 
 export default onStorageVersionChange;
