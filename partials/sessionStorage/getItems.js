@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import decompress from '@/partials/gzip/decompress';
-import sanitizeObject from '@/partials/functions/sanitizeObject';
+// import sanitizeObject from '@/partials/functions/sanitizeObject';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import getItemsKeys from './getItemsKeys';
 
@@ -15,32 +15,54 @@ import getItemsKeys from './getItemsKeys';
 * @return {Object[]} The array of items.
 */
 const getItems = async () => {
-  const configured = await getConfiguredBoolean();
+  let configured;
+
+  try {
+    configured = await getConfiguredBoolean();
+  } catch (e) {
+    await CatchError(e);
+    return [];
+  }
 
   if (!configured) {
     return [];
   }
 
-  const devices = await storage.getItem('local:devices');
+  let devices;
 
-  if (!devices || devices.length <= 0) {
+  try {
+    devices = await storage.getItem('local:devices');
+  } catch (e) {
+    await CatchError(e);
     return [];
   }
 
-  const devicesIds = devices.map(device => device.id).filter(id => id);
+  if (!devices || !Array.isArray(devices) || devices.length === 0) {
+    return [];
+  }
+
+  const devicesIds = devices.map(device => device?.id).filter(id => id);
+
+  if (devicesIds.length === 0) {
+    return [];
+  }
 
   // Process all devices in parallel
   const devicePromises = devicesIds.map(async deviceId => {
     try {
       const itemsKeys = await getItemsKeys(deviceId);
-      const chunks = await storage.getItems(itemsKeys);
-  
-      if (chunks.length > 0) {
-        const chunksValues = chunks.map(chunk => chunk.value);
-        return chunksValues.join('');
+
+      if (!Array.isArray(itemsKeys) || itemsKeys.length === 0) {
+        return null;
       }
 
-      return null;
+      const chunks = await storage.getItems(itemsKeys);
+
+      if (!Array.isArray(chunks) || chunks.length === 0) {
+        return null;
+      }
+
+      return chunks.map(chunk => chunk?.value).filter(Boolean).join('');
     } catch (e) {
       await CatchError(e);
       return null;
@@ -58,7 +80,13 @@ const getItems = async () => {
     try {
       const itemsDeviceGZIP = Base64ToArrayBuffer(items);
       const itemsDeviceStr = await decompress(itemsDeviceGZIP);
-      return JSON.parse(itemsDeviceStr);
+      const parsed = JSON.parse(itemsDeviceStr);
+
+      if (!Array.isArray(parsed)) {
+        return null;
+      }
+
+      return parsed;
     } catch (e) {
       await CatchError(e);
       return null;
@@ -66,9 +94,10 @@ const getItems = async () => {
   });
 
   const jsons = (await Promise.all(processPromises)).filter(Boolean);
+  const flattened = jsons.flat();
 
-  console.log(jsons.flat());
-  return jsons.flat();
+  console.log(flattened);
+  return flattened;
 
 //   // Flatten all jsons into single array
 //   const json = jsons.flat().filter(
