@@ -24,8 +24,6 @@ const CustomOption = lazy(() => import('./components/CustomOption'));
 * @return {JSX.Element} The rendered component.
 */
 function LoginItem (props) {
-  console.log(props);
-
   const [more, setMore] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
   const [additionalButtonsHover, setAdditionalButtonsHover] = useState(false);
