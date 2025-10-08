@@ -11,7 +11,7 @@ import { lazy, useCallback } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { Link } from 'react-router';
-import { isT3orT2WithPassword, decryptPassword, copyValue } from '@/partials/functions';
+import { isT3orT2WithPassword, copyValue } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect } from 'react';
 
@@ -83,8 +83,9 @@ function Password (props) {
       if (currentPassword && currentPassword !== '******') {
         passwordToCopy = currentPassword;
       } else if (service?.passwordEncrypted && service?.passwordEncrypted?.length > 0) {
-        const tempService = { ...service, password: service.passwordEncrypted };
-        passwordToCopy = await decryptPassword(tempService);
+        // @TODO: Fix this!
+        // const tempService = { ...service, password: service.passwordEncrypted };
+        // passwordToCopy = await decrypt_Password(tempService);
       } else {
         passwordToCopy = '';
       }
@@ -155,7 +156,8 @@ function Password (props) {
     if (service?.passwordEncrypted && service?.passwordEncrypted?.length > 0) {
       try {
         service.password = service.passwordEncrypted;
-        const decryptedPassword = await decryptPassword(service);
+        const decryptedData = await service.decryptSif();
+        const decryptedPassword = decryptedData.password;
         form.change('password', decryptedPassword);
       } catch (e) {
         setPasswordDecryptError(true);
@@ -184,8 +186,9 @@ function Password (props) {
       if (passwordVisible) {
         if (service.passwordEncrypted && service.passwordEncrypted.length > 0) {
           try {
-            const tempService = { ...service, password: service.passwordEncrypted };
-            passwordValue = await decryptPassword(tempService);
+            // @TODO: Fix this!
+            // const tempService = { ...service, password: service.passwordEncrypted };
+            // passwordValue = await decrypt_Password(tempService);
           } catch (e) {
             passwordValue = '******';
             setPasswordDecryptError(true);

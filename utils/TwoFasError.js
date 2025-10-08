@@ -384,46 +384,34 @@ class TwoFasError extends Error {
       message: 'Wrong security type',
       code: 9070
     },
-    // DECRYPT PASSWORD
-    decryptPasswordNotDefined: {
-      message: 'decryptPassword: password is not defined',
+    // DECRYPT SIF
+    decryptSifDecryptBytes: {
+      message: 'decryptSif: error decrypting bytes',
       code: 9100
     },
-    decryptPasswordDeviceIdNotDefined: {
-      message: 'decryptPassword: deviceId is not defined',
+    decryptSifGetKey: {
+      message: 'decryptSif: error getting key item_key_t3',
       code: 9101
     },
-    decryptPasswordDecryptBytes: {
-      message: 'decryptPassword: error decrypting bytes',
+    decryptSifStorageGetKey: {
+      message: 'decryptSif: error getting key item_key_t3 from storage',
       code: 9102
     },
-    decryptPasswordGetKey: {
-      message: 'decryptPassword: error getting key item_key_t3',
+    decryptSifImportKey: {
+      message: 'decryptSif: error importing key',
       code: 9103
     },
-    decryptPasswordStorageGetKey: {
-      message: 'decryptPassword: error getting key item_key_t3 from storage',
+    decryptSifDecrypt: {
+      message: 'decryptSif: error decrypting password',
       code: 9104
-    },
-    decryptPasswordImportKey: {
-      message: 'decryptPassword: error importing key',
-      code: 9105
-    },
-    decryptPasswordDecrypt: {
-      message: 'decryptPassword: error decrypting password',
-      code: 9106
-    },
-    decryptPasswordSecurityTypeNotDefined: {
-      message: 'decryptPassword: security type is not defined',
-      code: 9107
     },
     // SEND AUTOFILL TO TAB
     sendAutofillToTabToTabService: {
       message: 'sendAutofillToTab: service error',
       code: 9120
     },
-    sendAutofillToTabDecryptPassword: {
-      message: 'sendAutofillToTab: error decrypting password',
+    sendAutofillToTabDecryptSif: {
+      message: 'sendAutofillToTab: error decrypting SIF',
       code: 9121
     },
     sendAutofillToTabNonceError: {

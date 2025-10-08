@@ -19,8 +19,6 @@ import SecureNote from './models/SecureNote';
 * @return {JSX.Element} The rendered component.
 */
 function Item (props) {
-  console.log(props.data);
-
   const [more, setMore] = useState(false);
 
   const ref = useRef(null);

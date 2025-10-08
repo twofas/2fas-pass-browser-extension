@@ -6,7 +6,6 @@
 
 import getItems from '@/partials/sessionStorage/getItems';
 import URIMatcher from '@/partials/URIMatcher';
-import decryptPassword from '@/partials/functions/decryptPassword';
 import decryptValues from './decryptValues';
 
 /** 
@@ -73,7 +72,8 @@ const checkServicesData = async (details, values) => {
     }
 
     try {
-      decryptedPassword = await decryptPassword(item);
+      const decryptedData = await item.decryptSif();
+      decryptedPassword = decryptedData.password;
     } catch (e) {
       throw new TwoFasError(TwoFasError.internalErrors.checkServicesDataDecryptError, {
         event: e,
