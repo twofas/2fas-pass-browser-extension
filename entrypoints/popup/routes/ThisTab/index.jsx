@@ -22,7 +22,7 @@ import getDomainFromMessage from './functions/getDomainFromMessage';
 import { useLocation } from 'react-router';
 import keepPassword from './functions/keepPassword';
 import { toast } from 'react-toastify';
-import isLoginsCorrect from './functions/isLoginsCorrect';
+import isItemsCorrect from './functions/isItemsCorrect';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import SmallLoginItem from './components/SmallLoginItem';
@@ -241,8 +241,8 @@ function ThisTab (props) {
 
   const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl, setUpdateAvailable), [sendUrl, setUpdateAvailable]);
 
-  const hasMatchingLogins = useMemo(() => isLoginsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
-  const hasLogins = useMemo(() => isLoginsCorrect(items) && items?.length > 0, [items]);
+  const hasMatchingLogins = useMemo(() => isItemsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
+  const hasLogins = useMemo(() => isItemsCorrect(items) && items?.length > 0, [items]);
   const searchPlaceholder = useMemo(() => {
     const amount = thisTabPopupState?.selectedTag ? (thisTabPopupState.selectedTag.amount || 0) : (items?.length || 0);
     return browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', amount);
@@ -255,7 +255,7 @@ function ThisTab (props) {
   const clearButtonClass = `${S.thisTabAllLoginsSearchClear} ${thisTabPopupState?.searchValue?.length <= 0 ? S.hidden : ''}`;
 
   const memoizedMatchingLoginsList = useMemo(() => generateMatchingLoginsList(matchingLogins, loading), [matchingLogins, loading]);
-  const memoizedAllLoginsList = useMemo(() => generateAllItemsList(items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag), [items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag]);
+  const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag), [items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag]);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
@@ -429,15 +429,12 @@ function ThisTab (props) {
                       <ClearIcon />
                     </button>
                   </div>
-                  {
-                    tags.length > 0 ?
-                    <Filters
-                      tags={tags}
-                      selectedTag={thisTabPopupState.selectedTag}
-                      onTagChange={handleTagChange}
-                      forceClose={forceCloseFilters}
-                    /> :
-                    null}
+                  <Filters
+                    tags={tags}
+                    selectedTag={thisTabPopupState.selectedTag}
+                    onTagChange={handleTagChange}
+                    forceClose={forceCloseFilters}
+                  />
                 </div>
 
                 <div className={`${S.thisTabAllLoginsTagsInfo} ${thisTabPopupState.lastSelectedTagInfo && thisTabPopupState.selectedTag ? S.active : ''}`}>
@@ -455,7 +452,7 @@ function ThisTab (props) {
                   </div>
                 </div>
 
-                {memoizedAllLoginsList}
+                {memoizedAllItemsList}
               </div>
             </div>
           </section>

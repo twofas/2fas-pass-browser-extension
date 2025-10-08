@@ -25,7 +25,7 @@ const generateIcon = (login, faviconError, setFaviconError, loading) => {
   const handleFaviconError = () => { setFaviconError(true); };
 
   if (loading) {
-    return <Skeleton />;
+    return <Skeleton type='icon' />;
   } else if ((!login?.iconType && login?.iconType !== 0) || login?.iconType === 1 || faviconError) {
     // Label
     const style = {};

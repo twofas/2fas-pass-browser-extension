@@ -5,11 +5,11 @@
 // See LICENSE file for full terms
 
 import S from '../ThisTab.module.scss';
-import LoginItem from '../components/LoginItem';
+import Item from '../components/Item';
 import { ViewportList } from 'react-viewport-list';
 import { lazy } from 'react';
 import sortByName from '@/partials/functions/sortByName';
-import isLoginsCorrect from './isLoginsCorrect';
+import isItemsCorrect from './isItemsCorrect';
 
 const EmptyListIcon = lazy(() => import('@/assets/popup-window/empty-list.svg?react'));
 
@@ -23,11 +23,11 @@ const EmptyListIcon = lazy(() => import('@/assets/popup-window/empty-list.svg?re
 * @return {JSX.Element|null} The generated item list or null.
 */
 const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) => {
-  if (!isLoginsCorrect(items) && !loading) {
+  if (!isItemsCorrect(items) && !loading) {
     return null;
   }
 
-  if (!isLoginsCorrect(items) && loading) {
+  if (!isItemsCorrect(items) && loading) {
     const itemsEmpty = [];
 
     for (let i = 0; i < 3; i++) {
@@ -37,7 +37,7 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
     return (
       <div className={S.thisTabAllLoginsList}>
         <ViewportList items={itemsEmpty}>
-          {item => <LoginItem item={item} key={item.id} loading={loading} />}
+          {item => <Item item={item} key={item.id} loading={loading} />}
         </ViewportList>
       </div>
     );
@@ -45,8 +45,8 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
 
   let itemsData;
 
-  let fetchedItems = items.filter(item => item.securityType === SECURITY_TIER.HIGHLY_SECRET && item.password && item.password.length > 0);
-  let restItems = items.filter(item => item.securityType !== SECURITY_TIER.HIGHLY_SECRET || (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.password));
+  let fetchedItems = items.filter(item => item.securityType === SECURITY_TIER.HIGHLY_SECRET && item.sifExists);
+  let restItems = items.filter(item => item.securityType !== SECURITY_TIER.HIGHLY_SECRET || (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.sifExists));
 
   fetchedItems = sortByName(fetchedItems, sort);
   restItems = sortByName(restItems, sort);
@@ -97,7 +97,7 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
   return (
     <div className={S.thisTabAllLoginsList}>
       <ViewportList items={itemsData} overscan={5}>
-        {item => <LoginItem item={item} key={item.id} />}
+        {item => <Item item={item} key={item.id} />}
       </ViewportList>
     </div>
   );

@@ -887,7 +887,7 @@
       }
     }
 
-    &:hover {
+    &:not(.react-select-tags__option_disabled):hover {
       body.theme-light & {
         background-color: rgba(v.$hover-color-light, 1);
         color: v.$primary-color-light;
@@ -929,6 +929,11 @@
           }
         }
       }
+    }
+
+    &.react-select-tags__option_disabled {
+      height: 34px;
+      cursor: default;
     }
 
     &:last-of-type {
