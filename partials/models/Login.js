@@ -103,4 +103,68 @@ export default class Login extends Item {
 
     return dO;
   }
+
+  get contextMenuItem () {
+    if (this.securityType !== SECURITY_TIER.HIGHLY_SECRET && this.securityType !== SECURITY_TIER.SECRET) {
+      return {};
+    }
+
+    const contexts = ['page', 'editable'];
+
+    if (import.meta.env.BROWSER !== 'safari')  {
+      contexts.push('page_action'); // @TODO: Check this with latest Safari
+    }
+
+    const documentUrlPatterns = new Set();
+
+    try {
+      const recognizedURIs = URIMatcher.recognizeURIs(this.uris);
+
+      if (recognizedURIs?.urls && recognizedURIs?.urls.length > 0) {
+        recognizedURIs.urls.forEach(uri => {
+          const patterns = URIMatcher.generateDocumentUrlPatterns(uri);
+
+          if (patterns && patterns.length > 0) {
+            patterns.forEach(pattern => documentUrlPatterns.add(pattern));
+          }
+        });
+      }
+    } catch {}
+
+    if (!documentUrlPatterns || documentUrlPatterns.size <= 0) {
+      return {};
+    }
+
+    if (
+      this.securityType === SECURITY_TIER.SECRET ||
+      (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.s_password && this.s_password !== '')
+    ) {
+      return {
+        id: `2fas-pass-autofill-${this.id}`,
+        enabled: true,
+        title: `${browser.i18n.getMessage('autofill')} ${this.username || this.name}`,
+        type: 'normal',
+        visible: true,
+        parentId: '2fas-pass-configured',
+        documentUrlPatterns: [...documentUrlPatterns],
+        contexts
+      };
+    } else if (
+      this.securityType === SECURITY_TIER.HIGHLY_SECRET && !this.s_password ||
+      this.s_password?.length <= 0
+    ) {
+      return {
+        id: `2fas-pass-fetch-${this.id}|${this.deviceId}`,
+        enabled: true,
+        title: `${browser.i18n.getMessage('fetch')} ${this.username || this.name}...`,
+        type: 'normal',
+        visible: true,
+        parentId: '2fas-pass-configured',
+        documentUrlPatterns,
+        contexts
+      };
+    } else {
+      return {};
+    }
+  }
 }
