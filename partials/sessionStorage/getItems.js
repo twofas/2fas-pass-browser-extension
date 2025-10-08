@@ -98,6 +98,8 @@ const getItems = async () => {
 
   const mapped = flattened.map(matchModel).filter(Boolean);
 
+  console.log(mapped);
+
   return mapped;
 };
 

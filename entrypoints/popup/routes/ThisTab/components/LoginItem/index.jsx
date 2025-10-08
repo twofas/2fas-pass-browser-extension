@@ -10,7 +10,6 @@ import handleAutofill from '../../functions/serviceList/handleAutofill';
 import Select from 'react-select';
 import { useState, useEffect, useRef, lazy, useCallback, useMemo, memo } from 'react';
 import { useNavigate } from 'react-router';
-import generateDropdown from './functions/generateDropdown';
 import toggleMenu from './functions/toggleMenu';
 
 const Skeleton = lazy(() => import('../Skeleton'));
@@ -25,6 +24,8 @@ const CustomOption = lazy(() => import('./components/CustomOption'));
 * @return {JSX.Element} The rendered component.
 */
 function LoginItem (props) {
+  console.log(props);
+
   const [more, setMore] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
   const [additionalButtonsHover, setAdditionalButtonsHover] = useState(false);
@@ -32,7 +33,7 @@ function LoginItem (props) {
   const ref = useRef(null);
   const selectRef = useRef(null);
   const autofillBtnRef = useRef(null);
-  const dropdownOptions = useMemo(() => generateDropdown(props.login), [props.login]);
+  const dropdownOptions = useMemo(() => props.item.dropdownList, [props.item.dropdownList]);
 
   const navigate = useNavigate();
   const setMoreFalse = useCallback(() => setMore(false), []);
@@ -44,8 +45,8 @@ function LoginItem (props) {
   }, []);
 
   const handleAutofillClick = useCallback(async () => {
-    await handleAutofill(props.login.id, navigate, more, value => toggleMenu(value, { ref, selectRef }, { setMore }));
-  }, [props.login.id, navigate, more]);
+    await handleAutofill(props.item.id, navigate, more, value => toggleMenu(value, { ref, selectRef }, { setMore }));
+  }, [props.item.id, navigate, more]);
 
   const toggleMenuCallback = useCallback((value) => {
     toggleMenu(value, { ref, selectRef }, { setMore });
@@ -81,7 +82,7 @@ function LoginItem (props) {
 
   return (
     <div
-      key={props.login.id}
+      key={props.item.id}
       className={itemClassName}
       ref={ref}
       onMouseEnter={() => setAdditionalButtonsHover(true)}
@@ -96,15 +97,15 @@ function LoginItem (props) {
         onClick={handleAutofillClick}
         ref={autofillBtnRef}
       >
-        {generateIcon(props.login, faviconError, setFaviconError, props.loading)}
+        {generateIcon(props.item, faviconError, setFaviconError, props.loading)}
         <span>
-          {props.loading ? <Skeleton /> : <span>{props.login.name || browser.i18n.getMessage('no_item_name')}</span>}
-          {props.loading ? <Skeleton /> : (props?.login?.username && props?.login?.username?.length > 0 ? <span>{props.login.username}</span> : null)}
+          {props.loading ? <Skeleton /> : <span>{props.item.name || browser.i18n.getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton /> : (props?.login?.username && props?.login?.username?.length > 0 ? <span>{props.item.username}</span> : null)}
         </span>
       </button>
       <div className={S.servicesListItemAdditionalButtons}>
-        <PasswordBtn login={props.login} more={more} setMore={toggleMenuCallback} />
-        <UsernameBtn itemId={props.login.id} more={more} setMore={toggleMenuCallback} />
+        <PasswordBtn login={props.item} more={more} setMore={toggleMenuCallback} />
+        <UsernameBtn itemId={props.item.id} more={more} setMore={toggleMenuCallback} />
         <MoreBtn more={more} setMore={toggleMenuCallback} />
       </div>
       <Select
