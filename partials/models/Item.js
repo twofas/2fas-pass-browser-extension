@@ -4,7 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { HEX_REGEX } from '@/constants';
+import { HEX_REGEX, ENCRYPTION_KEYS } from '@/constants';
+import getKey from '@/partials/sessionStorage/getKey';
 
 /**
 * Class representing an item.
@@ -12,6 +13,19 @@ import { HEX_REGEX } from '@/constants';
 class Item {
   constructor (data) {
     validate(data && typeof data === 'object', 'Invalid item data');
+    validate(isValidUUID(data.id), 'Invalid or missing id: must be a valid UUID');
+    validate(isValidInteger(data.createdAt), 'Invalid or missing createdAt: must be an integer');
+    validate(isValidInteger(data.updatedAt), 'Invalid or missing updatedAt: must be an integer');
+    validate(isValidInteger(data.securityType, 0, 2), 'Invalid or missing securityType: must be an integer between 0 and 2');
+
+    validateOptional(data.tags, tags => isValidArray(tags, tag => isValidString(tag)), 'Invalid tags: must be an array of strings');
+    validateOptional(data.internalType, internalType => isValidString(internalType) && ['added'].includes(internalType), 'Invalid internalType: must be string with "added" value');
+
+    this.id = data.id;
+    this.createdAt = data.createdAt;
+    this.updatedAt = data.updatedAt;
+    this.securityType = data.securityType;
+    this.tags = data.tags || [];
   }
 
   /** 
@@ -54,6 +68,98 @@ class Item {
   #luminanceFromHex (hex) {
     const [r, g, b] = this.#hexToRgb(hex);
     return this.#calculateLuminance(r, g, b);
+  }
+
+  async decryptSif (secureItemValue) {
+    if (!secureItemValue || typeof secureItemValue !== 'string') {
+      throw new Error('Invalid secure item field');
+    }
+
+    let sifDecryptedBytes;
+
+    try {
+      const sifAB = Base64ToArrayBuffer(secureItemValue);
+      sifDecryptedBytes = DecryptBytes(sifAB);
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.decryptSifDecryptBytes, { event: e, additional: { func: 'decryptSif' } });
+    }
+
+    let itemKey;
+
+    try {
+      if (this.securityType === SECURITY_TIER.SECRET) {
+        if (this?.internalType && this?.internalType === 'added') {
+          itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { itemId: this.id, deviceId: this.deviceId });
+        } else {
+          itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3.sK, { deviceId: this.deviceId });
+        }
+      } else {
+        itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { itemId: this.id, deviceId: this.deviceId });
+      }
+    } catch (e) {
+      sifDecryptedBytes = null;
+
+      throw new TwoFasError(TwoFasError.internalErrors.decryptSifGetKey, {
+        event: e,
+        additional: {
+          func: 'decryptSif',
+          deviceId: this?.deviceId || null
+        }
+      });
+    }
+
+    let encryptionItemKey;
+
+    try {
+      encryptionItemKey = await storage.getItem(`session:${itemKey}`);
+    } catch (e) {
+      sifDecryptedBytes = null;
+      throw new TwoFasError(TwoFasError.internalErrors.decryptSifStorageGetKey, { event: e, additional: { func: 'decryptSif' } });
+    }
+
+    itemKey = null;
+    let encryptionKey;
+
+    try {
+      const encryptionItemKeyAB = Base64ToArrayBuffer(encryptionItemKey);
+      encryptionKey = await crypto.subtle.importKey(
+        'raw',
+        encryptionItemKeyAB,
+        { name: 'AES-GCM' },
+        false,
+        ['decrypt']
+      );
+    } catch (e) {
+      sifDecryptedBytes = null;
+      throw new TwoFasError(TwoFasError.internalErrors.decryptSifImportKey, { event: e, additional: { func: 'decryptSif' } });
+    }
+
+    encryptionItemKey = null;
+    let decryptedSifAB;
+
+    try {
+      decryptedSifAB = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: sifDecryptedBytes.iv },
+        encryptionKey,
+        sifDecryptedBytes.data
+      );
+    } catch (e) {
+      sifDecryptedBytes = null;
+      encryptionKey = null;
+
+      throw new TwoFasError(TwoFasError.internalErrors.decryptSifDecrypt, {
+        event: e,
+        additional: { func: 'decryptSif' }
+      });
+    }
+
+    sifDecryptedBytes = null;
+    encryptionKey = null;
+
+    const result = ArrayBufferToString(decryptedSifAB);
+    decryptedSifAB = null;
+
+    return result;
   }
 
   /** 

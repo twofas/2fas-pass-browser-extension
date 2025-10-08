@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import getItems from '@/partials/sessionStorage/getItems';
-import { copyValue, decryptPassword } from '@/partials/functions';
+import { copyValue } from '@/partials/functions';
 
 /** 
 * Function to handle copying the password to clipboard.
@@ -37,15 +37,15 @@ const handlePassword = async (id, more, setMore) => {
     return;
   }
 
-  if (!item.password || item.password.length <= 0) {
+  if (!item.sifExists) {
     navigator.clipboard.writeText('');
     showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
     return;
   }
 
   try {
-    const decryptedPassword = await decryptPassword(item);
-    await copyValue(decryptedPassword, item.id, 'password');
+    const decryptedData = await item.decryptSif();
+    await copyValue(decryptedData.password, item.id, 'password');
     showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
   } catch (e) {
     showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
