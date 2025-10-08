@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, decryptPassword, generateNonce } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, generateNonce } from '@/partials/functions';
 import getItems from '@/partials/sessionStorage/getItems';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
@@ -64,11 +64,12 @@ const sendAutofillToTab = async (tabId, itemId) => {
 
   if (!noPassword) {
     try {
-      decryptedPassword = await decryptPassword(item);
+      const decryptedData = await item.decryptSif();
+      decryptedPassword = decryptedData.password;
     } catch (e) {
-      throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabDecryptPassword, {
+      throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabDecryptSif, {
         event: e,
-        additional: { func: 'sendAutofillToTab - decryptPassword' }
+        additional: { func: 'sendAutofillToTab - decryptSif' }
       });
     }
 

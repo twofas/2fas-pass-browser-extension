@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, decryptPassword, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, generateNonce } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, generateNonce } from '@/partials/functions';
 import getItems from '@/partials/sessionStorage/getItems';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { PULL_REQUEST_TYPES } from '@/constants';
@@ -140,7 +140,8 @@ const handleAutofill = async (id, navigate, more, setMore) => {
 
   if (passwordAvailable && passwordDecrypt) {
     try {
-      decryptedPassword = await decryptPassword(item);
+      const decryptedValue = await item.decryptSif();
+      decryptedPassword = decryptedValue.password;
     } catch (e) {
       showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
       await CatchError(e);

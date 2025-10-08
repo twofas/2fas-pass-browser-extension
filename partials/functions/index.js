@@ -10,7 +10,6 @@ export { default as cleanupDevices } from './cleanupDevices.js';
 export { default as closeWindowIfNotInSeparateWindow } from './closeWindowIfNotInSeparateWindow.js';
 export { default as compressPublicKey } from './compressPublicKey.js';
 export { default as copyValue } from './copyValue.js';
-export { default as decryptPassword } from './decryptPassword.js';
 export { default as delay } from './delay.js';
 export { default as deletePush } from './deletePush.js';
 export { default as focusPopupWindow } from './focusPopupWindow.js';

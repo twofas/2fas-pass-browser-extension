@@ -98,8 +98,6 @@ const getItems = async (filter = []) => {
 
   const mapped = flattened.map(matchModel).filter(Boolean);
 
-  console.log(mapped);
-
   if (filter && Array.isArray(filter) && filter.length > 0) {
     return mapped.filter(item => filter.includes(item?.constructor?.name));
   }
