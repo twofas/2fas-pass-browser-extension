@@ -1049,21 +1049,30 @@
   animation: skeleton 1s ease-in-out forwards infinite;
   animation-direction: alternate;
   background-color: v.$secondary-text-light;
-  border-radius: 4px;
+  border-radius: 6px;
   display: inline-block;
   width: 100%;
 
   @include m.darkMode {
     background-color: v.$secondary-text-dark;
   }
+
+  &.icon {
+    animation: none;
+    border: 1px solid v.$object-stroke-light;
+
+    @include m.darkMode {
+      border-color: v.$object-stroke-dark;
+    }
+  }
 }
 
 @keyframes skeleton {
   0% {
-    opacity: .4;
+    opacity: .1;
   }
 
   85%, 100% {
-    opacity: 1;
+    opacity: .2;
   }
 }

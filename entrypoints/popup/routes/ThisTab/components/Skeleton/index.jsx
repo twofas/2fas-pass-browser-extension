@@ -10,8 +10,8 @@ import S from '../../ThisTab.module.scss';
 * Function to render a skeleton component.
 * @return {JSX.Element} The rendered component.
 */
-function Skeleton () {
-  return <span className={S.skeleton}>&nbsp;</span>;
+function Skeleton (props) {
+  return <span className={`${S.skeleton} ${props.type ? S[props.type] : ''}`}>&nbsp;</span>;
 }
 
 export default Skeleton;

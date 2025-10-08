@@ -1,4 +1,8 @@
 {
+  "filters_no_tags": {
+    "message": "No tags available",
+    "description": "Message shown in the tag filter dropdown when there are no tags created yet"
+  },
   "filters_button_title": {
     "message": "Filter by Tag",
     "description": "Tooltip text for the filter button that opens tag selection dropdown"
