@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 import getItems from '@/partials/sessionStorage/getItems';
-import URIMatcher from '@/partials/URIMatcher';
 
 let isContextMenuConfiguring = false;
 
@@ -26,7 +25,7 @@ const contextMenuConfigured = async (items = null) => {
     const contexts = ['page', 'editable'];
 
     if (import.meta.env.BROWSER !== 'safari')  {
-      contexts.push('page_action');
+      contexts.push('page_action'); // @TODO: Check this with latest Safari
     }
 
     let contextMenuSetting;
@@ -43,7 +42,7 @@ const contextMenuConfigured = async (items = null) => {
 
     try {
       if (!items) {
-        items = await getItems();
+        items = await getItems(['Login']);
       }
     } catch (e) {
       await CatchError(e);
@@ -66,66 +65,16 @@ const contextMenuConfigured = async (items = null) => {
     }
 
     for (const item of items) {
-      if (item.securityType !== SECURITY_TIER.HIGHLY_SECRET && item.securityType !== SECURITY_TIER.SECRET) {
-        return;
-      }
+      const contextMenuItem = item?.contextMenuItem;
 
-      let documentUrlPatterns = [];
-
-      try {
-        const recognizedURIs = URIMatcher.recognizeURIs(item.uris);
-
-        if (recognizedURIs?.urls && recognizedURIs?.urls.length > 0) {
-          documentUrlPatterns = recognizedURIs.urls.flatMap(uri => URIMatcher.generateDocumentUrlPatterns(uri));
-        }
-      } catch {}
-
-      if (!documentUrlPatterns || documentUrlPatterns.length <= 0) {
+      if (!contextMenuItem || Object.keys(contextMenuItem).length === 0) {
         continue;
       }
 
-      if (
-        item?.securityType === SECURITY_TIER.SECRET ||
-        (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.password && item?.password?.length > 0)
-      ) {
-        try {
-          browser.contextMenus.create({
-            id: `2fas-pass-autofill-${item.id}`,
-            enabled: true,
-            title: `${browser.i18n.getMessage('autofill')} ${item.username || item.name}`,
-            type: 'normal',
-            visible: true,
-            parentId: '2fas-pass-configured',
-            documentUrlPatterns,
-            contexts
-          });
-        } catch (e) {
-          await CatchError(e);
-          continue;
-        }
-      } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && !item?.password || item?.password?.length <= 0) {
-        try {
-          browser.contextMenus.create({
-            id: `2fas-pass-fetch-${item.id}|${item.deviceId}`,
-            enabled: true,
-            title: `${browser.i18n.getMessage('fetch')} ${item.username || item.name}...`,
-            type: 'normal',
-            visible: true,
-            parentId: '2fas-pass-configured',
-            documentUrlPatterns,
-            contexts
-          });
-        } catch (e) {
-          await CatchError(e);
-          continue;
-        }
-      } else {
-        throw new TwoFasError(TwoFasError.internalErrors.wrongSecurityType, {
-          additional: {
-            securityType: item.securityType,
-            func: 'contextMenuConfigured'
-          }
-        });
+      try {
+        browser.contextMenus.create(contextMenuItem);
+      } catch (e) {
+        await CatchError(e);
       }
     }
 
