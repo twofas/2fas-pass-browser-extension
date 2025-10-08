@@ -4,6 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import URIMatcher from '../URIMatcher';
 export default class Login {
   static contentType = 'login';
   static contentVersion = 1;
@@ -56,7 +57,7 @@ export default class Login {
     this.name = content.name;
     this.username = content.username;
     this.s_password = content.s_password;
-    this.uris = content.uris || [];
+    this.uris = this.normalizeUris(content.uris) || [];
     this.iconType = content.iconType;
     this.iconUriIndex = content.iconUriIndex ?? null;
     this.labelText = content.labelText ?? null;
@@ -64,5 +65,36 @@ export default class Login {
     this.customImageUrl = content.customImageUrl ?? null;
     this.notes = content.notes ?? null;
     this.tags = loginData.tags || [];
+  }
+
+  normalizeUris (uris) {
+    if (uris && uris.length > 0) {
+      uris = uris.filter(uri => uri && uri?.text && uri.text !== '' && URIMatcher.isText(uri.text) && URIMatcher.isUrl(uri.text, true));
+      uris.forEach(uri => {
+        uri.text = URIMatcher.normalizeUrl(uri.text, true);
+      });
+    }
+
+    return uris;
+  }
+
+  get dropdownList () {
+    const dO = [
+      { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), id: this.id, type: 'details' }
+    ];
+
+    if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.s_password && this.s_password !== '') {
+      dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_password'), id: this.id, type: 'forget' });
+    }
+
+    if (this.uris && this.uris.length > 0) {
+      dO.push({ value: 'uris:', label: `${browser.i18n.getMessage('this_tab_more_uris')}`, type: 'urisHeader' });
+
+      this.uris.forEach(uri => {
+        dO.push({ value: uri.text, label: uri.text, itemId: this.id });
+      });
+    }
+
+    return dO;
   }
 }
