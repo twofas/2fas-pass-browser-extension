@@ -37,7 +37,7 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
     return (
       <div className={S.thisTabAllLoginsList}>
         <ViewportList items={itemsEmpty}>
-          {item => <Item item={item} key={item.id} loading={loading} />}
+          {item => <Item data={item} key={item.id} loading={loading} />}
         </ViewportList>
       </div>
     );
@@ -97,7 +97,7 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
   return (
     <div className={S.thisTabAllLoginsList}>
       <ViewportList items={itemsData} overscan={5}>
-        {item => <Item item={item} key={item.id} />}
+        {item => <Item data={item} key={item.id} />}
       </ViewportList>
     </div>
   );
