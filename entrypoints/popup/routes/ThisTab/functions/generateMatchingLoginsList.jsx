@@ -4,10 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import LoginItem from '../components/LoginItem';
+import LoginItem from '../components/Item';
 import { ViewportList } from 'react-viewport-list';
 import sortByName from '@/partials/functions/sortByName';
-import isLoginsCorrect from './isLoginsCorrect';
+import isItemsCorrect from './isItemsCorrect';
 
 /** 
 * Function to generate a list of matching logins.
@@ -16,11 +16,11 @@ import isLoginsCorrect from './isLoginsCorrect';
 * @return {JSX.Element|null} The generated login items or null.
 */
 const generateMatchingLoginsList = (items, loading) => {
-  if (!isLoginsCorrect(items) && !loading) {
+  if (!isItemsCorrect(items) && !loading) {
     return null;
   }
 
-  if (!isLoginsCorrect(items) && loading) {
+  if (!isItemsCorrect(items) && loading) {
     const itemsEmpty = [{ id: 0, item: [] }];
 
     return (

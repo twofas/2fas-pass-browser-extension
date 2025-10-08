@@ -14,6 +14,8 @@ class SecureNote extends Item {
   static contentType = 'secureNote';
   static contentVersion = 1;
 
+  #s_text;
+
   constructor (secureNoteData) {
     super(secureNoteData);
 
@@ -31,11 +33,23 @@ class SecureNote extends Item {
 
     this.id = secureNoteData.id;
     this.name = content.name;
-    this.s_text = content.s_text;
     this.securityType = secureNoteData.securityType;
     this.tags = secureNoteData.tags || [];
     this.createdAt = secureNoteData.createdAt || null;
     this.updatedAt = secureNoteData.updatedAt || null;
+
+    // Secure Input Fields
+    this.#s_text = content.s_text;
+  }
+
+  get dropdownList () {
+    return [
+      { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), id: this.id, type: 'details' }
+    ];
+  }
+
+  get sifExists () {
+    return this.#s_text && this.#s_text.length > 0;
   }
 }
 

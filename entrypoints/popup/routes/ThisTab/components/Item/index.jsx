@@ -19,11 +19,11 @@ const UsernameBtn = lazy(() => import('../../functions/serviceList/additionalBut
 const CustomOption = lazy(() => import('./components/CustomOption'));
 
 /** 
-* Function to render the login item.
+* Function to render the item.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function LoginItem (props) {
+function Item (props) {
   const [more, setMore] = useState(false);
   const [faviconError, setFaviconError] = useState(false);
   const [additionalButtonsHover, setAdditionalButtonsHover] = useState(false);
@@ -123,4 +123,4 @@ function LoginItem (props) {
   );
 }
 
-export default memo(LoginItem);
+export default memo(Item);
