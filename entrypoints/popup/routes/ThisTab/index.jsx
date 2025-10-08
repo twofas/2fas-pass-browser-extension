@@ -11,7 +11,7 @@ import * as m from 'motion/react-m';
 import { useEffect, useState, useRef, useCallback, useMemo, memo } from 'react';
 import getDomainFromTab from './functions/getDomainFromTab';
 import onMessage from './events/onMessage';
-import generateAllLoginsList from './functions/generateAllLoginsList';
+import generateAllItemsList from './functions/generateAllItemsList';
 import generateMatchingLoginsList from './functions/generateMatchingLoginsList';
 import URIMatcher from '@/partials/URIMatcher';
 import getItems from '@/partials/sessionStorage/getItems';
@@ -55,7 +55,7 @@ function ThisTab (props) {
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('Unknown');
   const [url, setUrl] = useState('Unknown');
-  const [logins, setLogins] = useState([]);
+  const [items, setItems] = useState([]);
   const [tags, setTags] = useState([]);
   const [matchingLogins, setMatchingLogins] = useState([]);
   const [sort, setSort] = useState(false); // false - asc, true - desc
@@ -183,11 +183,11 @@ function ThisTab (props) {
     return filterXSS(d.url);
   }, []);
 
-  const getLogins = useCallback(async () => {
-    const l = await getItems();
-    setLogins(l);
-    
-    return l;
+  const getStorageItems = useCallback(async () => {
+    const i = await getItems();
+    setItems(i);
+
+    return i;
   }, []);
 
   const getStorageTags = useCallback(async () => {
@@ -242,11 +242,11 @@ function ThisTab (props) {
   const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl, setUpdateAvailable), [sendUrl, setUpdateAvailable]);
 
   const hasMatchingLogins = useMemo(() => isLoginsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
-  const hasLogins = useMemo(() => isLoginsCorrect(logins) && logins?.length > 0, [logins]);
+  const hasLogins = useMemo(() => isLoginsCorrect(items) && items?.length > 0, [items]);
   const searchPlaceholder = useMemo(() => {
-    const amount = thisTabPopupState?.selectedTag ? (thisTabPopupState.selectedTag.amount || 0) : (logins?.length || 0);
+    const amount = thisTabPopupState?.selectedTag ? (thisTabPopupState.selectedTag.amount || 0) : (items?.length || 0);
     return browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', amount);
-  }, [thisTabPopupState?.selectedTag, logins?.length]);
+  }, [thisTabPopupState?.selectedTag, items?.length]);
 
   const autofillPopupClass = `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`;
   const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
@@ -255,7 +255,7 @@ function ThisTab (props) {
   const clearButtonClass = `${S.thisTabAllLoginsSearchClear} ${thisTabPopupState?.searchValue?.length <= 0 ? S.hidden : ''}`;
 
   const memoizedMatchingLoginsList = useMemo(() => generateMatchingLoginsList(matchingLogins, loading), [matchingLogins, loading]);
-  const memoizedAllLoginsList = useMemo(() => generateAllLoginsList(logins, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag), [logins, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag]);
+  const memoizedAllLoginsList = useMemo(() => generateAllItemsList(items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag), [items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag]);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
@@ -270,15 +270,15 @@ function ThisTab (props) {
       .catch(() => {});
     }
 
-    Promise.all([ getDomain(), getLogins(), getSort(), getStorageTags() ])
-      .then(([domain, logins, , tags]) => Promise.all([
-        getMatchingLogins(logins, domain),
-        getTagsAmount(tags, logins)
+    Promise.all([ getDomain(), getStorageItems(), getSort(), getStorageTags() ])
+      .then(([domain, items, , tags]) => Promise.all([
+        getMatchingLogins(items, domain),
+        getTagsAmount(tags, items)
       ]))
       .then(() => {
         setSortDisabled(false);
 
-        if (logins.length === 0) {
+        if (items.length === 0) {
           setTimeout(() => {
             if (boxAnimationRef?.current?.play) {
               boxAnimationRef.current.play();

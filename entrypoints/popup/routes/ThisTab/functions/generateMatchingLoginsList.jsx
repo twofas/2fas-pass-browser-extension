@@ -15,32 +15,32 @@ import isLoginsCorrect from './isLoginsCorrect';
 * @param {boolean} loading - Indicates if the logins are still loading.
 * @return {JSX.Element|null} The generated login items or null.
 */
-const generateMatchingLoginsList = (logins, loading) => {
-  if (!isLoginsCorrect(logins) && !loading) {
+const generateMatchingLoginsList = (items, loading) => {
+  if (!isLoginsCorrect(items) && !loading) {
     return null;
   }
 
-  if (!isLoginsCorrect(logins) && loading) {
-    const logins = [{ id: 0, login: [] }];
+  if (!isLoginsCorrect(items) && loading) {
+    const itemsEmpty = [{ id: 0, item: [] }];
 
     return (
-      <ViewportList items={logins}>
-        {login => <LoginItem login={login} key={login.id} loading={loading} />}
+      <ViewportList items={itemsEmpty}>
+        {item => <LoginItem item={item} key={item.id} loading={loading} />}
       </ViewportList>
     );
   }
 
-  let fetchedLogins = logins.filter(login => login.securityType === SECURITY_TIER.HIGHLY_SECRET && login.password && login.password.length > 0);
-  let restLogins = logins.filter(login => login.securityType !== SECURITY_TIER.HIGHLY_SECRET || (login.securityType === SECURITY_TIER.HIGHLY_SECRET && !login.password));
+  let fetchedLogins = items.filter(item => item.securityType === SECURITY_TIER.HIGHLY_SECRET && item.password && item.password.length > 0);
+  let restLogins = items.filter(item => item.securityType !== SECURITY_TIER.HIGHLY_SECRET || (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.password));
 
   fetchedLogins = sortByName(fetchedLogins);
   restLogins = sortByName(restLogins);
 
-  const loginsData = fetchedLogins.concat(restLogins);
+  const itemsData = fetchedLogins.concat(restLogins);
 
   return (
-    <ViewportList items={loginsData} overscan={2}>
-      {login => <LoginItem login={login} key={login.id} />}
+    <ViewportList items={itemsData} overscan={2}>
+      {item => <LoginItem item={item} key={item.id} />}
     </ViewportList>
   );
 };
