@@ -5,9 +5,9 @@
 // See LICENSE file for full terms
 
 import decompress from '@/partials/gzip/decompress';
-import sanitizeObject from '@/partials/functions/sanitizeObject';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import getKey from './getKey';
+import Tag from '../models/Tag';
 
 /** 
 * Gets the tags from session storage.
@@ -66,11 +66,17 @@ const getTags = async () => {
   });
 
   const jsons = (await Promise.all(processPromises)).filter(Boolean);
+  const flattened = jsons.flat();
 
-  // Flatten all jsons into single array
-  const json = jsons.flat().filter(tag => tag?.deviceId && tag?.id && tag?.name);
+  const mapped = flattened.map(tag => {
+    try {
+      return new Tag(tag);
+    } catch {
+      return null;
+    }
+  }).filter(Boolean);
 
-  return sanitizeObject(json);
+  return mapped;
 };
 
 export default getTags;
