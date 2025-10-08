@@ -9,7 +9,7 @@ import shuffleArray from '@/partials/functions/shuffleArray';
 import setStorageChunkSize from './setStorageChunkSize';
 import decompress from '@/partials/gzip/decompress';
 import compress from '@/partials/gzip/compress';
-import filterModel from './filterModel';
+import filterModel from '../../models/filterModel';
 
 /** 
 * Saves the items in chunks in the session storage.
