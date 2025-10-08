@@ -14,7 +14,7 @@ import matchModel from '../models/matchModel';
 * @async
 * @return {Object[]} The array of items.
 */
-const getItems = async () => {
+const getItems = async (filter = []) => {
   let configured;
 
   try {
@@ -99,6 +99,10 @@ const getItems = async () => {
   const mapped = flattened.map(matchModel).filter(Boolean);
 
   console.log(mapped);
+
+  if (filter && Array.isArray(filter) && filter.length > 0) {
+    return mapped.filter(item => filter.includes(item?.constructor?.name));
+  }
 
   return mapped;
 };
