@@ -4,12 +4,18 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-class SecureNote {
+import Item from './Item';
+
+/**
+* Class representing a secure note.
+* @extends Item
+*/
+class SecureNote extends Item {
   static contentType = 'secureNote';
   static contentVersion = 1;
 
   constructor (secureNoteData) {
-    validate(secureNoteData && typeof secureNoteData === 'object', 'Invalid secure note data');
+    super(secureNoteData);
 
     validate(isValidUUID(secureNoteData.id), 'Invalid or missing id: must be a valid UUID');
     validate(isValidInteger(secureNoteData.createdAt), 'Invalid or missing createdAt: must be an integer');

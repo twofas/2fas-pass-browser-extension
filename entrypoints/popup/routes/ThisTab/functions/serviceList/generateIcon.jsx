@@ -6,7 +6,7 @@
 
 import S from '../../ThisTab.module.scss';
 import { lazy } from 'react';
-import { getDomain, getTextColor } from '@/partials/functions';
+import { getDomain } from '@/partials/functions';
 import { HEX_REGEX } from '@/constants';
 import URIMatcher from '@/partials/URIMatcher';
 import { parseDomain, ParseResultType } from 'parse-domain';
@@ -36,7 +36,7 @@ const generateIcon = (login, faviconError, setFaviconError, loading) => {
 
     return (
       <span className={S.iconLabel} style={style}>
-        <span style={{ color: getTextColor(login.labelColor) }}>{login?.labelText?.toUpperCase() || login?.name?.substring(0, 2).toUpperCase() || ''}</span>
+        <span style={{ color: login.textColor }}>{login?.labelText?.toUpperCase() || login?.name?.substring(0, 2).toUpperCase() || ''}</span>
       </span>
     );
   } else if (login?.iconType === 0) {
