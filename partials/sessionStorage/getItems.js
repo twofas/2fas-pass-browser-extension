@@ -5,9 +5,9 @@
 // See LICENSE file for full terms
 
 import decompress from '@/partials/gzip/decompress';
-// import sanitizeObject from '@/partials/functions/sanitizeObject';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import getItemsKeys from './getItemsKeys';
+import matchModel from '../models/matchModel';
 
 /** 
 * Gets the items from session storage.
@@ -96,18 +96,9 @@ const getItems = async () => {
   const jsons = (await Promise.all(processPromises)).filter(Boolean);
   const flattened = jsons.flat();
 
-  console.log(flattened);
-  return flattened;
+  const mapped = flattened.map(matchModel).filter(Boolean);
 
-//   // Flatten all jsons into single array
-//   const json = jsons.flat().filter(
-//     login =>
-//       login?.deviceId && 
-//       login?.id && 
-//       (login?.securityType && Number.isInteger(login?.securityType) && login?.securityType >= SECURITY_TIER.TOP_SECRET && login?.securityType <= SECURITY_TIER.SECRET)
-//   );
-
-//   return sanitizeObject(json);
+  return mapped;
 };
 
 export default getItems;
