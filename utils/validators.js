@@ -104,7 +104,7 @@ export const validate = (condition, message) => {
  * @throws {Error} Throws an error with the provided message if validation fails.
  */
 export const validateOptional = (value, validator, message) => {
-  if (value !== undefined) {
+  if (value !== undefined && value !== null) {
     validate(validator(value), message);
   }
 };
