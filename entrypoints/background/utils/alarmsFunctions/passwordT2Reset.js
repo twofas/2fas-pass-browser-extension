@@ -6,7 +6,7 @@
 
 import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
-import compress from '@/partials/gzip/compress';
+import compressObject from '@/partials/gzip/compressObject';
 import getKey from '@/partials/sessionStorage/getKey';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
 import { ENCRYPTION_KEYS } from '@/constants';
@@ -30,9 +30,7 @@ const passwordT2Reset = async itemId => {
   const itemsKeys = await getItemsKeys(deviceId);
 
   // Compress items
-  const itemsStringify = JSON.stringify(items);
-  const itemsGZIP_AB = await compress(itemsStringify);
-  const itemsGZIP = ArrayBufferToBase64(itemsGZIP_AB);
+  const itemsGZIP = await compressObject(items);
 
   // Remove encryptionItemT2Key in session storage for this itemId & deviceId
   const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, itemId });
