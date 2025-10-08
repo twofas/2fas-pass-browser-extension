@@ -9,7 +9,7 @@ import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
-import compress from '@/partials/gzip/compress';
+import compressObject from '@/partials/gzip/compressObject';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
 import { ENCRYPTION_KEYS } from '@/constants';
 
@@ -37,9 +37,7 @@ const newDataAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
     items.push(newItem);
 
     // Compress items
-    const itemsStringify = JSON.stringify(items);
-    const itemsGZIP_AB = await compress(itemsStringify);
-    const itemsGZIP = ArrayBufferToBase64(itemsGZIP_AB);
+    const itemsGZIP = await compressObject(items);
 
     if (data.login.securityType === SECURITY_TIER.SECRET) {
       // generate encryptionItemT3Key

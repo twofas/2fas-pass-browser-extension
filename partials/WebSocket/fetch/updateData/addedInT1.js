@@ -7,7 +7,7 @@
 import sendPullRequestCompleted from '../sendPullRequestCompleted';
 import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
-import compress from '@/partials/gzip/compress';
+import compressObject from '@/partials/gzip/compressObject';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
 
 /** 
@@ -34,9 +34,7 @@ const updateDataAddedInT1 = async (state, messageId) => {
     const itemsFiltered = items.filter(item => item.id !== state.data.itemId);
 
     // Compress items
-    const itemsStringify = JSON.stringify(itemsFiltered);
-    const itemsGZIP_AB = await compress(itemsStringify);
-    const itemsGZIP = ArrayBufferToBase64(itemsGZIP_AB);
+    const itemsGZIP = await compressObject(itemsFiltered);
 
     // Remove items from session storage (by itemsKeys)
     await storage.removeItems(itemsKeys);
