@@ -15,6 +15,8 @@ export default class Login extends Item {
   static contentType = 'login';
   static contentVersion = 1;
 
+  #s_password;
+
   constructor (loginData) {
     super (loginData);
 
@@ -62,7 +64,6 @@ export default class Login extends Item {
     this.securityType = loginData.securityType;
     this.name = content.name;
     this.username = content.username;
-    this.s_password = content.s_password;
     this.uris = this.#normalizeUris(content.uris) || [];
     this.iconType = content.iconType;
     this.iconUriIndex = content.iconUriIndex ?? null;
@@ -71,6 +72,9 @@ export default class Login extends Item {
     this.customImageUrl = content.customImageUrl ?? null;
     this.notes = content.notes ?? null;
     this.tags = loginData.tags || [];
+
+    // Secure Input Fields
+    this.#s_password = content.s_password;
   }
 
   #normalizeUris (uris) {
@@ -89,7 +93,7 @@ export default class Login extends Item {
       { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), id: this.id, type: 'details' }
     ];
 
-    if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.s_password && this.s_password !== '') {
+    if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
       dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_password'), id: this.id, type: 'forget' });
     }
 
@@ -160,11 +164,15 @@ export default class Login extends Item {
         type: 'normal',
         visible: true,
         parentId: '2fas-pass-configured',
-        documentUrlPatterns,
+        documentUrlPatterns: [...documentUrlPatterns],
         contexts
       };
     } else {
       return {};
     }
+  }
+
+  get sifExists () {
+    return this.#s_password && this.#s_password !== '';
   }
 }
