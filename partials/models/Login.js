@@ -5,12 +5,18 @@
 // See LICENSE file for full terms
 
 import URIMatcher from '../URIMatcher';
-export default class Login {
+import Item from './Item';
+
+/**
+* Class representing a login.
+* @extends Item
+*/
+export default class Login extends Item {
   static contentType = 'login';
   static contentVersion = 1;
 
   constructor (loginData) {
-    validate(loginData && typeof loginData === 'object', 'Invalid login data');
+    super (loginData);
 
     validate(isValidUUID(loginData.id), 'Invalid or missing id: must be a valid UUID');
     validate(isValidUUID(loginData.deviceId), 'Invalid or missing deviceId: must be a valid UUID');
