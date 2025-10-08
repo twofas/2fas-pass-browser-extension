@@ -39,6 +39,7 @@ const filterModel = itemData => {
     new Model(itemData);
     return true;
   } catch {
+    // @TODO: log error?
     return false;
   }
 };
