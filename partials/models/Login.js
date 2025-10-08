@@ -63,7 +63,7 @@ export default class Login extends Item {
     this.name = content.name;
     this.username = content.username;
     this.s_password = content.s_password;
-    this.uris = this.normalizeUris(content.uris) || [];
+    this.uris = this.#normalizeUris(content.uris) || [];
     this.iconType = content.iconType;
     this.iconUriIndex = content.iconUriIndex ?? null;
     this.labelText = content.labelText ?? null;
@@ -73,7 +73,7 @@ export default class Login extends Item {
     this.tags = loginData.tags || [];
   }
 
-  normalizeUris (uris) {
+  #normalizeUris (uris) {
     if (uris && uris.length > 0) {
       uris = uris.filter(uri => uri && uri?.text && uri.text !== '' && URIMatcher.isText(uri.text) && URIMatcher.isUrl(uri.text, true));
       uris.forEach(uri => {
