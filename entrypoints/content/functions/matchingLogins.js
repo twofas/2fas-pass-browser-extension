@@ -6,7 +6,7 @@
 
 import { HEX_REGEX, selectors as S } from '@/constants';
 import { createElement, createSVGElement, createTextElement } from '@/partials/DOMElements';
-import { getDomain, getTextColor } from '@/partials/functions';
+import { getDomain } from '@/partials/functions';
 import logoSrc from '@/assets/logo.svg?raw';
 import logoSrcDark from '@/assets/logo-dark.svg?raw';
 import closeSrc from '@/assets/popup-window/cancel.svg?raw';
@@ -69,7 +69,7 @@ const generateLabel = (item, itemIcon) => {
   itemIcon.classList.add('icon-label');
   itemIcon.setAttribute('style', `background: ${backgroundColor} !important;`);
   const itemLabelText = createTextElement('span', item?.labelText?.toUpperCase() || item?.name?.substring(0, 2).toUpperCase() || '');
-  itemLabelText.style.color = getTextColor(item.labelColor);
+  itemLabelText.style.color = item.textColor;
   itemIcon.appendChild(itemLabelText);
 };
 
