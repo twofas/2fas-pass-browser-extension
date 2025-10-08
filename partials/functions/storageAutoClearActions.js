@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 import getItems from '../sessionStorage/getItems';
-import decryptPassword from './decryptPassword';
 import URIMatcher from '../URIMatcher';
 
 /** 
@@ -70,7 +69,8 @@ const storageAutoClearActions = async () => {
 
   if (action.itemType === 'password') {
     try {
-      itemValue = await decryptPassword(item);
+      const decryptedSif = await item.decryptSif();
+      itemValue = decryptedSif.password; // @TODO: Change for other models
     } catch {
       await storage.setItem('session:autoClearActions', []);
       return;

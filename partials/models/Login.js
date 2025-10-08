@@ -20,11 +20,7 @@ export default class Login extends Item {
   constructor (loginData) {
     super (loginData);
 
-    validate(isValidUUID(loginData.id), 'Invalid or missing id: must be a valid UUID');
     validate(isValidUUID(loginData.deviceId), 'Invalid or missing deviceId: must be a valid UUID');
-    validate(isValidInteger(loginData.createdAt), 'Invalid or missing createdAt: must be an integer');
-    validate(isValidInteger(loginData.updatedAt), 'Invalid or missing updatedAt: must be an integer');
-    validate(isValidInteger(loginData.securityType, 0, 2), 'Invalid or missing securityType: must be an integer between 0 and 2');
 
     const content = loginData?.content ? JSON.parse(loginData.content) : {};
 
@@ -55,13 +51,9 @@ export default class Login extends Item {
     validateOptional(content.labelColor, isValidHexColor, 'Invalid content.labelColor: must be a hex color string (3 or 6 characters)');
     validateOptional(content.customImageUrl, isValidString, 'Invalid content.customImageUrl: must be a string');
     validateOptional(content.notes, isValidString, 'Invalid content.notes: must be a string');
-    validateOptional(loginData.tags, tags => isValidArray(tags, tag => isValidString(tag)), 'Invalid tags: must be an array of strings');
+    
 
-    this.id = loginData.id;
     this.deviceId = loginData.deviceId;
-    this.createdAt = loginData.createdAt;
-    this.updatedAt = loginData.updatedAt;
-    this.securityType = loginData.securityType;
     this.name = content.name;
     this.username = content.username;
     this.uris = this.#normalizeUris(content.uris) || [];
@@ -71,7 +63,6 @@ export default class Login extends Item {
     this.labelColor = content.labelColor ?? null;
     this.customImageUrl = content.customImageUrl ?? null;
     this.notes = content.notes ?? null;
-    this.tags = loginData.tags || [];
 
     // Secure Input Fields
     this.#s_password = content.s_password;
@@ -86,6 +77,12 @@ export default class Login extends Item {
     }
 
     return uris;
+  }
+
+  async decryptSif () {
+    return {
+      password: await super.decryptSif(this.#s_password)
+    };
   }
 
   get dropdownList () {
