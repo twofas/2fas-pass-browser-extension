@@ -23,7 +23,6 @@ export { default as getPopupWindowData } from './getPopupWindowData.js';
 export { default as isCryptoAvailable } from './isCryptoAvailable.js';
 export { default as isElementInArray } from './isElementInArray.js';
 export { default as isPaidDeviceConnected } from './isPaidDeviceConnected.js';
-export { default as isT3orT2WithPassword } from './isT3orT2WithPassword.js';
 export { default as isText } from './isText.js';
 export { default as isURL } from './isURL.js';
 export { default as isVisible } from './isVisible.js';
