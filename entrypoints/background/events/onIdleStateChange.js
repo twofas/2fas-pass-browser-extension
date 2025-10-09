@@ -26,7 +26,6 @@ const onIdleStateChange = async state => {
     }
   
     await cleanupDevices();
-    console.log('Session cleared due to idle state');
     await browser.storage.session.clear();
     return true;
   } catch (e) {
