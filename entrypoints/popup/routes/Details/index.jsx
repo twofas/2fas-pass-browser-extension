@@ -82,7 +82,6 @@ function Details (props) {
     }
 
     const constructorName = data?.item?.constructor?.name;
-    console.log('Rendering model:', constructorName, data?.item);
 
     const modelData = {
       storageVersion
