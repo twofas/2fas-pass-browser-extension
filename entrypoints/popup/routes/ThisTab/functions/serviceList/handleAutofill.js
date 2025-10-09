@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, generateNonce } from '@/partials/functions';
-import getItems from '@/partials/sessionStorage/getItems';
+import getItem from '@/partials/sessionStorage/getItem';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { PULL_REQUEST_TYPES } from '@/constants';
 
@@ -19,7 +19,7 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 * @return {Promise<void>}
 */
 const handleAutofill = async (id, navigate, more, setMore) => {
-  let itemsStorage, item, res;
+  let item, res;
   let passwordDecrypt = true;
   let passwordAvailable = true;
 
@@ -28,8 +28,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
   }
 
   try {
-    itemsStorage = await getItems();
-    item = itemsStorage.find(item => item.id === id);
+    item = await getItem(id);
   } catch (e) {
     showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
     await CatchError(e);
