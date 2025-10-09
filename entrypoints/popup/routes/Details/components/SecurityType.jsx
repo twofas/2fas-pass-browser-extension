@@ -7,8 +7,12 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
+import { useCallback } from 'react';
 import Select from 'react-select';
 import CustomTierOption from './CustomTierOption';
+import usePopupStateStore from '../../../store/popupState';
+import getItem from '@/partials/sessionStorage/getItem';
+import Login from '@/partials/models/Login';
 
 const securityTiersOptions = [
   { value: SECURITY_TIER.SECRET, label: browser.i18n.getMessage('tier_2_name'), description: browser.i18n.getMessage('tier_2_description') },
@@ -17,36 +21,34 @@ const securityTiersOptions = [
 ];
 
 /**
-* Function to render the security tier selection field.
-* @param {Object} props - The component props.
+* Function to render the security type selection field.
 * @return {JSX.Element} The rendered component.
 */
-function SecurityTier (props) {
-  const { data, actions } = props;
-  const { service, tierEditable, form } = data;
-  const { setTierEditable, updateSecurityType } = actions;
+function SecurityType () {
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
 
-  const handleTierEditable = form => {
-    if (tierEditable) {
-      const originalValue = service?.securityType;
-      form.change('securityType', originalValue);
+  const handleTierEditable = async () => {
+    if (data.tierEditable) {
+      let item = await getItem(data.item.id);
+      let login = new Login({ ...data.item, securityType: item.securityType }, true);
+      item = null;
 
-      if (updateSecurityType) {
-        updateSecurityType(originalValue);
-      }
+      setData('tierEditable', false);
+      setData('item', login);
+
+      login = null;
+    } else {
+      setData('tierEditable', true);
     }
-
-    setTierEditable(!tierEditable);
   };
 
-  const handleSelectChange = (selectedOption, input) => {
+  const handleSelectChange = useCallback(selectedOption => {
     const newValue = selectedOption ? selectedOption.value : null;
-    input.onChange(newValue);
+    const updatedItem = new Login({ ...data.item, securityType: newValue }, true);
 
-    if (updateSecurityType) {
-      updateSecurityType(newValue);
-    }
-  };
+    setData('item', updatedItem);
+  }, [data.item, setData]);
 
   return (
     <Field name="securityType">
@@ -57,9 +59,9 @@ function SecurityTier (props) {
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
-              onClick={() => handleTierEditable(form)}
+              onClick={handleTierEditable}
             >
-              {tierEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data.tierEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
           </div>
           <div className={`${pI.passInputBottom} ${pI.switch}`}>
@@ -68,12 +70,12 @@ function SecurityTier (props) {
               classNamePrefix='react-select'
               isSearchable={false}
               options={securityTiersOptions}
-              value={securityTiersOptions.find(option => option.value === (typeof input.value === 'number' ? input.value : input.value?.value))}
-              onChange={selectedOption => handleSelectChange(selectedOption, input)}
+              value={securityTiersOptions.find(option => option.value === input.value)}
+              onChange={selectedOption => handleSelectChange(selectedOption)}
               onBlur={input.onBlur}
               menuPlacement='top'
               menuPosition='fixed'
-              isDisabled={!tierEditable}
+              isDisabled={!data.tierEditable}
               components={{
                 Option: CustomTierOption
               }}
@@ -85,4 +87,4 @@ function SecurityTier (props) {
   );
 }
 
-export default SecurityTier;
+export default SecurityType;

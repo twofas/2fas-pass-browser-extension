@@ -20,7 +20,7 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 const Name = lazy(() => import('../components/Name'));
 const Username = lazy(() => import('../components/Username'));
 const Password = lazy(() => import('../components/Password'));
-const SecurityTier = lazy(() => import('../components/SecurityTier'));
+const SecurityType = lazy(() => import('../components/SecurityType'));
 const Tags = lazy(() => import('../components/Tags'));
 const Notes = lazy(() => import('../components/Notes'));
 const DangerZone = lazy(() => import('../components/DangerZone'));
@@ -52,144 +52,144 @@ function Login (props) {
   const [inputError, setInputError] = useState(undefined);
 
   const handleRemoveUri = useCallback((index, form) => {
-    const currentValues = form.getState().values;
-    const newUris = currentValues.uris.filter((_, i) => i !== index);
+    // const currentValues = form.getState().values;
+    // const newUris = currentValues.uris.filter((_, i) => i !== index);
 
-    form.change('uris', newUris);
+    // form.change('uris', newUris);
 
-    const newDomainsEditable = domainsEditable.filter((_, i) => i !== index);
-    setDomainsEditable(newDomainsEditable);
-    setData('domainsEditable', newDomainsEditable);
+    // const newDomainsEditable = domainsEditable.filter((_, i) => i !== index);
+    // setDomainsEditable(newDomainsEditable);
+    // setData('domainsEditable', newDomainsEditable);
 
-    const updatedFormValues = {
-      ...currentValues,
-      uris: newUris
-    };
+    // const updatedFormValues = {
+    //   ...currentValues,
+    //   uris: newUris
+    // };
 
-    setFormValues(updatedFormValues);
-    setData('formValues', updatedFormValues);
+    // setFormValues(updatedFormValues);
+    // setData('formValues', updatedFormValues);
 
-    }, [domainsEditable, setData]);
+  }, [domainsEditable, setData]);
 
   const handleAddUri = useCallback(form => {
-    const currentValues = form.getState().values;
-    const currentUris = currentValues.uris || [];
-    const newUri = {
-      text: '',
-      matcher: URIMatcher.M_DOMAIN_TYPE,
-      _tempId: `new-${Date.now()}-${Math.random()}`
-    };
+    // const currentValues = form.getState().values;
+    // const currentUris = currentValues.uris || [];
+    // const newUri = {
+    //   text: '',
+    //   matcher: URIMatcher.M_DOMAIN_TYPE,
+    //   _tempId: `new-${Date.now()}-${Math.random()}`
+    // };
 
-    const newUris = [...currentUris, newUri];
-    form.change('uris', newUris);
+    // const newUris = [...currentUris, newUri];
+    // form.change('uris', newUris);
 
-    const newDomainsEditable = [...domainsEditable, true];
-    setDomainsEditable(newDomainsEditable);
-    setData('domainsEditable', newDomainsEditable);
+    // const newDomainsEditable = [...domainsEditable, true];
+    // setDomainsEditable(newDomainsEditable);
+    // setData('domainsEditable', newDomainsEditable);
 
-    const updatedFormValues = {
-      ...currentValues,
-      uris: newUris
-    };
+    // const updatedFormValues = {
+    //   ...currentValues,
+    //   uris: newUris
+    // };
 
-    setFormValues(updatedFormValues);
-    setData('formValues', updatedFormValues);
+    // setFormValues(updatedFormValues);
+    // setData('formValues', updatedFormValues);
   }, [domainsEditable, setData]);
 
   const validate = values => {
     console.log(values);
 
-    const errors = {};
+    // const errors = {};
 
-    if (!values.name || values.name?.length <= 0) {
-      errors.name = browser.i18n.getMessage('details_name_required');
-    } else if (values.name?.length > 255) {
-      errors.name = browser.i18n.getMessage('details_name_max_length');
-    } else if (values.username?.length > 255) {
-      errors.username = browser.i18n.getMessage('details_username_max_length');
-    }
+    // if (!values.name || values.name?.length <= 0) {
+    //   errors.name = browser.i18n.getMessage('details_name_required');
+    // } else if (values.name?.length > 255) {
+    //   errors.name = browser.i18n.getMessage('details_name_max_length');
+    // } else if (values.username?.length > 255) {
+    //   errors.username = browser.i18n.getMessage('details_username_max_length');
+    // }
 
-    values.uris.forEach((uri, index) => {
-      if (uri?.text?.length > 2048) {
-        errors[`uris[${index}]`] = browser.i18n.getMessage('details_uri_max_length');
-      }
-    });
+    // values.uris.forEach((uri, index) => {
+    //   if (uri?.text?.length > 2048) {
+    //     errors[`uris[${index}]`] = browser.i18n.getMessage('details_uri_max_length');
+    //   }
+    // });
 
-    const errorKeys = Object.keys(errors);
+    // const errorKeys = Object.keys(errors);
 
-    if (errorKeys.length > 0) {
-      showToast(errors[errorKeys[0]], 'error');
-      setInputError(errorKeys[0]);
-      return false;
-    }
+    // if (errorKeys.length > 0) {
+    //   showToast(errors[errorKeys[0]], 'error');
+    //   setInputError(errorKeys[0]);
+    //   return false;
+    // }
 
-    return true;
+    // return true;
   };
 
   const onSubmit = async e => {
-    setInputError(undefined);
+    // setInputError(undefined);
 
-    if (!validate(e)) {
-      return false;
-    }
+    // if (!validate(e)) {
+    //   return false;
+    // }
 
-    e.uris = e.uris.map(uri => {
-      return {
-        text: uri?.text ? valueToNFKD(uri.text) : '',
-        matcher: uri?.matcher
-      };
-    });
+    // e.uris = e.uris.map(uri => {
+    //   return {
+    //     text: uri?.text ? valueToNFKD(uri.text) : '',
+    //     matcher: uri?.matcher
+    //   };
+    // });
 
-    const stateData = {
-      itemId: service.id ? valueToNFKD(service.id) : null,
-      deviceId: service?.deviceId
-    };
+    // const stateData = {
+    //   itemId: service.id ? valueToNFKD(service.id) : null,
+    //   deviceId: service?.deviceId
+    // };
 
-    stateData.securityType = e?.securityType !== undefined ? (typeof e.securityType === 'number' ? e.securityType : e.securityType?.value) : (originalService || service)?.securityType;
+    // stateData.securityType = e?.securityType !== undefined ? (typeof e.securityType === 'number' ? e.securityType : e.securityType?.value) : (originalService || service)?.securityType;
 
-    if (nameEditable) {
-      stateData.name = e.name ? valueToNFKD(e.name) : '';
-    }
+    // if (nameEditable) {
+    //   stateData.name = e.name ? valueToNFKD(e.name) : '';
+    // }
 
-    if (usernameEditable) {
-      if (usernameMobile) {
-        stateData.usernameMobile = true;
-      } else {
-        stateData.username = e.username ? valueToNFKD(e.username) : '';
-        stateData.usernameMobile = false;
-      }
-    }
+    // if (usernameEditable) {
+    //   if (usernameMobile) {
+    //     stateData.usernameMobile = true;
+    //   } else {
+    //     stateData.username = e.username ? valueToNFKD(e.username) : '';
+    //     stateData.usernameMobile = false;
+    //   }
+    // }
 
-    if (passwordEditable) {
-      if (passwordMobile) {
-        stateData.passwordMobile = true;
-      } else {
-        stateData.password = e.password ? valueToNFKD(e.password) : '';
-        stateData.passwordMobile = false;
-      }
-    }
+    // if (passwordEditable) {
+    //   if (passwordMobile) {
+    //     stateData.passwordMobile = true;
+    //   } else {
+    //     stateData.password = e.password ? valueToNFKD(e.password) : '';
+    //     stateData.passwordMobile = false;
+    //   }
+    // }
 
-    if (notesEditable) {
-      stateData.notes = e.notes ? valueToNFKD(e.notes) : '';
-    }
+    // if (notesEditable) {
+    //   stateData.notes = e.notes ? valueToNFKD(e.notes) : '';
+    // }
 
-    const hasUriChanges = domainsEditable.some(e => e) || e.uris?.some(uri => uri._tempId) || (service.uris?.length !== e.uris?.length);
+    // const hasUriChanges = domainsEditable.some(e => e) || e.uris?.some(uri => uri._tempId) || (service.uris?.length !== e.uris?.length);
     
-    if (hasUriChanges) {
-      stateData.uris = e.uris;
-    }
+    // if (hasUriChanges) {
+    //   stateData.uris = e.uris;
+    // }
 
-    if (tagsEditable) {
-      stateData.tags = e.tags || [];
-    }
+    // if (tagsEditable) {
+    //   stateData.tags = e.tags || [];
+    // }
 
-    return navigate('/fetch', {
-      state: {
-        action: PULL_REQUEST_TYPES.UPDATE_DATA,
-        from: 'details',
-        data: stateData
-      }
-    });
+    // return navigate('/fetch', {
+    //   state: {
+    //     action: PULL_REQUEST_TYPES.UPDATE_DATA,
+    //     from: 'details',
+    //     data: stateData
+    //   }
+    // });
   };
 
   return (
@@ -237,22 +237,7 @@ function Login (props) {
               // updateFormValues
             }
           })}
-          <SecurityTier
-            key={`security-tier-${data.item.id}-${props.storageVersion}`}
-            data={{ service: data.item, tierEditable, form }}
-            actions={{
-              setTierEditable: value => {
-                setTierEditable(value);
-                setData('tierEditable', value);
-              },
-              updateSecurityType: value => {
-                const currentFormValues = form.getState().values;
-                const updatedFormValues = { ...currentFormValues, securityType: value };
-                // setFormValues(updatedFormValues);
-                setData('formValues', updatedFormValues);
-              }
-            }}
-          />
+          <SecurityType key={`security-type-${data.item.id}-${props.storageVersion}`} />
           <Tags
             key={`tags-${data.item.id}-${props.storageVersion}`}
             data={{ service: data.item, tagsEditable, form }}
