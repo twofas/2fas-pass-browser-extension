@@ -9,7 +9,15 @@ import getItem from '@/partials/sessionStorage/getItem';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { PULL_REQUEST_TYPES } from '@/constants';
 
-/** 
+const showT2Toast = () => {
+  showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
+};
+
+const showGenericToast = () => {
+  showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
+};
+
+/**
 * Function to handle the autofill action.
 * @async
 * @param {number} id - The ID of the item.
@@ -19,13 +27,11 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 * @return {Promise<void>}
 */
 const handleAutofill = async (id, navigate, more, setMore) => {
-  let item, res;
-  let passwordDecrypt = true;
-  let passwordAvailable = true;
-
   if (more) {
     setMore(false);
   }
+
+  let item;
 
   try {
     item = await getItem(id);
@@ -41,16 +47,13 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     return;
   }
 
+  const isHighlySecret = item.securityType === SECURITY_TIER.HIGHLY_SECRET;
+  const onTabError = isHighlySecret ? showT2Toast : showGenericToast;
+
   let tab;
 
   try {
-    tab = await getLastActiveTab(() => {
-      if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-        showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
-      } else {
-        showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
-      }
-    }, tab => !tabIsInternal(tab));
+    tab = await getLastActiveTab(onTabError, t => !tabIsInternal(t));
   } catch (e) {
     await CatchError(e);
   }
@@ -62,11 +65,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
   try {
     await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
   } catch (e) {
-    if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
-    } else {
-      showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
-    }
+    onTabError();
 
     if (!e.message.includes('showing error page')) {
       await CatchError(e);
@@ -80,10 +79,14 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     target: REQUEST_TARGETS.CONTENT
   });
 
-  if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-    if (!item?.password || item?.password?.length <= 0) {
+  const hasPassword = item.sifExists;
+  const hasUsername = item?.username && item.username.length > 0;
+  let passwordDecrypt = true;
+
+  if (isHighlySecret) {
+    if (!hasPassword) {
       let canAutofill = false;
-      let canAutofillPassword, canAutofillUsername;
+      let canAutofillPassword = false;
 
       try {
         const inputTests = await sendMessageToAllFrames(tab.id, {
@@ -92,15 +95,14 @@ const handleAutofill = async (id, navigate, more, setMore) => {
         });
 
         canAutofillPassword = inputTests.some(input => input.canAutofillPassword);
-        canAutofillUsername = inputTests.some(input => input.canAutofillUsername);
-
+        const canAutofillUsername = inputTests.some(input => input.canAutofillUsername);
         canAutofill = canAutofillPassword || canAutofillUsername;
       } catch {
         canAutofill = false;
       }
 
       if (!canAutofill) {
-        showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
+        showT2Toast();
         return;
       }
 
@@ -121,23 +123,23 @@ const handleAutofill = async (id, navigate, more, setMore) => {
         );
 
         return;
-      } else {
-        passwordAvailable = false;
       }
-    }
-  } else if (item?.securityType === SECURITY_TIER.SECRET) {
-    if ((!item?.password || item?.password?.length <= 0) && (item?.username && item?.username?.length > 0)) {
+
       passwordDecrypt = false;
-    } else if ((!item?.password || item?.password?.length <= 0) && (!item?.username || item?.username?.length <= 0)) {
+    }
+  } else if (item.securityType === SECURITY_TIER.SECRET) {
+    if (!hasPassword && hasUsername) {
+      passwordDecrypt = false;
+    } else if (!hasPassword && !hasUsername) {
       showToast(browser.i18n.getMessage('this_tab_autofill_no_username_and_password'), 'error');
       return;
     }
   }
 
   let decryptedPassword = '';
-  let encryptedValueB64;
+  let encryptedValueB64 = null;
 
-  if (passwordAvailable && passwordDecrypt) {
+  if (passwordDecrypt) {
     try {
       const decryptedValue = await item.decryptSif();
       decryptedPassword = decryptedValue.password;
@@ -146,37 +148,47 @@ const handleAutofill = async (id, navigate, more, setMore) => {
       await CatchError(e);
       return;
     }
-  }
 
-  if (passwordAvailable) {
     if (cryptoAvailableRes.status !== 'ok' || !cryptoAvailableRes.cryptoAvailable) {
       encryptedValueB64 = decryptedPassword;
     } else {
+      let nonce = null;
+      let localKeyCrypto = null;
+      let value = null;
+
       try {
-        const nonce = generateNonce();
+        nonce = generateNonce();
         const localKey = await storage.getItem('local:lKey');
-        const localKeyCrypto = await crypto.subtle.importKey(
+        const localKeyAB = Base64ToArrayBuffer(localKey);
+
+        localKeyCrypto = await crypto.subtle.importKey(
           'raw',
-          Base64ToArrayBuffer(localKey),
+          localKeyAB,
           { name: 'AES-GCM' },
           false,
           ['encrypt']
         );
-      
-        const value = await crypto.subtle.encrypt(
+
+        value = await crypto.subtle.encrypt(
           { name: 'AES-GCM', iv: nonce.ArrayBuffer },
           localKeyCrypto,
           StringToArrayBuffer(decryptedPassword)
         );
-      
+
         const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
         encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
       } catch (e) {
         showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
         await CatchError(e);
         return;
+      } finally {
+        nonce = null;
+        localKeyCrypto = null;
+        value = null;
       }
     }
+
+    decryptedPassword = '';
   }
 
   const actionData = {
@@ -186,13 +198,18 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     cryptoAvailable: cryptoAvailableRes.cryptoAvailable
   };
 
-  if (passwordAvailable) {
+  if (passwordDecrypt) {
     actionData.password = encryptedValueB64;
   }
 
+  encryptedValueB64 = null;
+  let res;
+
   try {
     res = await sendMessageToAllFrames(tab.id, actionData);
-  } catch {}
+  } catch (e) {
+    await CatchError(e);
+  }
 
   if (!res) {
     showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
@@ -200,19 +217,17 @@ const handleAutofill = async (id, navigate, more, setMore) => {
     return;
   }
 
-  const isOk = res.filter(frameResponse => frameResponse.status === 'ok').length > 0;
+  const isOk = res.some(frameResponse => frameResponse.status === 'ok');
 
   if (isOk) {
     const separateWindow = await popupIsInSeparateWindow();
 
     if (!passwordDecrypt) {
       showToast(browser.i18n.getMessage('this_tab_autofill_no_password'), 'info');
+    } else if (!separateWindow) {
+      await closeWindowIfNotInSeparateWindow(separateWindow);
     } else {
-      if (!separateWindow) {
-        await closeWindowIfNotInSeparateWindow(separateWindow);  
-      } else {
-        showToast(browser.i18n.getMessage('this_tab_autofill_success'), 'success');
-      }
+      showToast(browser.i18n.getMessage('this_tab_autofill_success'), 'success');
     }
   } else {
     showToast(browser.i18n.getMessage('this_tab_can_t_find_inputs'), 'info');
