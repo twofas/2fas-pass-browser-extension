@@ -4,6 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import usePopupStateStore from '../../../store/popupState';
+
 /**
 * Function to get the editable amount.
 * @param {boolean} nameEditable - Indicates if the name field is editable.
@@ -17,42 +19,25 @@
 * @param {Array} originalUris - Original URIs array from the service.
 * @return {Object} An object containing the editable amount and a text description.
 */
-const getEditableAmount = (nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, currentUris = [], originalUris = []) => {
+const getEditableAmount = () => {
+  const data = usePopupStateStore(state => state.data);
+
   let amount = 0;
 
-  if (nameEditable) { amount++; }
-  if (usernameEditable) { amount++; }
-  if (passwordEditable) { amount++; }
-  if (notesEditable) { amount++; }
-  if (tierEditable) { amount++; }
-  if (tagsEditable) { amount++; }
+  if (data?.nameEditable) { amount++; }
+  if (data?.usernameEditable) { amount++; }
+  if (data?.passwordEditable) { amount++; }
+  if (data?.notesEditable) { amount++; }
+  if (data?.tierEditable) { amount++; }
+  if (data?.tagsEditable) { amount++; }
 
   let uriChanges = 0;
 
-  const newUris = currentUris.filter(uri => uri._tempId);
+  const newUris = data?.uris?.filter(uri => uri.new) || [];
   uriChanges += newUris.length;
 
-  const editedExistingUris = domainsEditable.filter((editable, index) => {
-    if (!editable || index >= currentUris.length) {
-      return false;
-    }
-
-    const currentUri = currentUris[index];
-
-    if (currentUri._tempId) {
-      return false;
-    }
-
-    return true;
-  }).length;
-
-  uriChanges += editedExistingUris;
-
-  const removedUrisCount = originalUris.length - (currentUris.length - newUris.length);
-
-  if (removedUrisCount > 0) {
-    uriChanges += removedUrisCount;
-  }
+  uriChanges += data?.urisRemoved || 0;
+  uriChanges += data?.domainsEditable ? Object.values(data.domainsEditable).filter(v => v).length : 0;
 
   amount += uriChanges;
 
