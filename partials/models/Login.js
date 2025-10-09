@@ -32,7 +32,10 @@ export default class Login extends Item {
 
     validateOptional(content.name, isValidString, 'Invalid content.name: must be a string');
     validateOptional(content.username, isValidString, 'Invalid content.username: must be a string');
-    validateOptional(content.s_password, isValidBase64, 'Invalid content.s_password: must be a base64 string');
+
+    if (!internal) {
+      validateOptional(content.s_password, isValidBase64, 'Invalid content.s_password: must be a base64 string');
+    }
 
     if (content.uris !== undefined) {
       validate(Array.isArray(content.uris), 'Invalid content.uris: must be an array');
@@ -46,9 +49,9 @@ export default class Login extends Item {
       }
     }
 
-    if (content.iconUriIndex !== undefined) {
+    if (content.iconUriIndex !== undefined && content.iconUriIndex !== null) {
       const urisLength = content.uris?.length && content.uris.length > 0 ? content.uris.length : 1;
-      validate(isValidInteger(content.iconUriIndex, 0, urisLength - 1), `Invalid content.iconUriIndex: must be an integer between 0 and ${urisLength - 1}`);
+      validate(isValidInteger(content.iconUriIndex, -1, urisLength - 1), `Invalid content.iconUriIndex: must be an integer between 0 and ${urisLength - 1}`);
     }
 
     validateOptional(content.labelText, isValidString, 'Invalid content.labelText: must be a string');
@@ -67,6 +70,7 @@ export default class Login extends Item {
     this.labelColor = content.labelColor ?? null;
     this.customImageUrl = content.customImageUrl ?? null;
     this.notes = content.notes ?? null;
+    this.s_password = '******';
 
     // Secure Input Fields
     this.#s_password = content.s_password;
@@ -190,5 +194,10 @@ export default class Login extends Item {
 
   get sifExists () {
     return this.#s_password && this.#s_password !== '';
+  }
+
+  get isT3orT2WithPassword () {
+    return this.securityType === SECURITY_TIER.SECRET 
+      || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
   }
 }

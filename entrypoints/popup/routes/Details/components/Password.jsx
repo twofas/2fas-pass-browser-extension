@@ -11,9 +11,12 @@ import { lazy, useCallback } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { Link } from 'react-router';
-import { isT3orT2WithPassword, copyValue } from '@/partials/functions';
+import { copyValue } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect } from 'react';
+import usePopupStateStore from '../../../store/popupState';
+import getItem from '@/partials/sessionStorage/getItem';
+import Login from '@/partials/models/Login';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
@@ -44,16 +47,22 @@ const changePasswordVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Password (props) {
-  const { data, actions, generatorData } = props;
-  const { service, passwordEditable, passwordVisible, passwordMobile, form } = data;
-  const { setPasswordEditable, setPasswordVisible, setPasswordMobile, updateFormValues } = actions;
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
+
+  const { formData } = props;
+  const { form } = formData;
+
+  // const { data, actions, generatorData } = props;
+  // const { service, passwordEditable, passwordVisible, passwordMobile, form } = data;
+  // const { setPasswordEditable, setPasswordVisible, setPasswordMobile, updateFormValues } = actions;
   const [passwordDecryptError, setPasswordDecryptError] = useState(false);
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
 
   useEffect(() => {
     const checkChangePasswordSupport = async () => {
-      if (!service?.uris || service.uris.length === 0) {
+      if (!data.item?.normalizedUris || data.item.normalizedUris.length === 0) {
         setChangePasswordUrl(null);
         return;
       }
@@ -61,7 +70,7 @@ function Password (props) {
       setCheckingUrl(true);
 
       try {
-        const url = await findPasswordChangeUrl(service.uris);
+        const url = await findPasswordChangeUrl(data.item.normalizedUris);
         setChangePasswordUrl(url);
       } catch (e) {
         setChangePasswordUrl(null);
@@ -72,40 +81,41 @@ function Password (props) {
     };
     
     checkChangePasswordSupport();
-  }, [service?.uris]);
+  }, [data.item?.normalizedUris]);
 
-  const handleCopyPassword = useCallback(async () => {
+  const handleCopyPassword = async () => {
     try {
       let passwordToCopy;
       
-      const currentPassword = form.getFieldState('password').value;
+      const currentPassword = data.item.s_password;
       
       if (currentPassword && currentPassword !== '******') {
         passwordToCopy = currentPassword;
-      } else if (service?.passwordEncrypted && service?.passwordEncrypted?.length > 0) {
-        // @TODO: Fix this!
-        // const tempService = { ...service, password: service.passwordEncrypted };
-        // passwordToCopy = await decrypt_Password(tempService);
+      } else if (data.item.sifExists) {
+        let decryptedData = await data.item.decryptSif();
+        passwordToCopy = decryptedData.password;
+        decryptedData = null;
       } else {
         passwordToCopy = '';
       }
-      
-      await copyValue(passwordToCopy, service.id, 'password');
+
+      await copyValue(passwordToCopy, data.item.id, 'password');
       showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
       await CatchError(e);
+      return;
     }
-  }, [service, form]);
+  };
 
-  const generateSecurityTypeOverlay = service => {
-    if (isT3orT2WithPassword(service)) {
+  const generateSecurityTypeOverlay = item => {
+    if (item.isT3orT2WithPassword) {
       return null;
     }
 
     // FUTURE - move to separate component
     return (
-      <div className={`${pI.passInputBottomOverlay} ${passwordEditable ? pI.hidden : ''}`}>
+      <div className={`${pI.passInputBottomOverlay} ${data?.passwordEditable ? pI.hidden : ''}`}>
         <InfoIcon />
         <span>{browser.i18n.getMessage('details_password_overlay')}</span>
       </div>
@@ -126,18 +136,18 @@ function Password (props) {
     );
   };
 
-  const generateSecurityTypeDescription = service => {
-    if (isT3orT2WithPassword(service)) {
+  const generateSecurityTypeDescription = item => {
+    if (item.isT3orT2WithPassword) {
       return null;
     }
 
     return (
       <m.div
-        className={`${pI.passInputDescription} ${passwordEditable ? '' : pI.removeMarginTop}`}
+        className={`${pI.passInputDescription} ${data?.passwordEditable ? '' : pI.removeMarginTop}`}
         variants={passwordDescriptionVariants}
-        initial="hidden"
+        initial='hidden'
         transition={{ duration: 0.3 }}
-        animate={passwordEditable ? 'visible' : 'hidden'}
+        animate={data?.passwordEditable ? 'visible' : 'hidden'}
       >
         <p>{browser.i18n.getMessage('details_password_description')}</p>
       </m.div>
@@ -145,106 +155,109 @@ function Password (props) {
   };
 
   const handlePasswordOnMobileChange = async () => {
-    if (!passwordMobile) {
+    if (!data?.passwordMobile) {
       await decryptFormPassword();
     }
 
-    setPasswordMobile(!passwordMobile);
+    setData('passwordMobile', !data?.passwordMobile);
   };
 
   const decryptFormPassword = async () => {
-    if (service?.passwordEncrypted && service?.passwordEncrypted?.length > 0) {
+    if (data.item.sifExists) {
       try {
-        service.password = service.passwordEncrypted;
-        const decryptedData = await service.decryptSif();
-        const decryptedPassword = decryptedData.password;
-        form.change('password', decryptedPassword);
+        let decryptedData = await data.item.decryptSif();
+        data.item.s_password = decryptedData.password;
+
+        form.change('s_password', decryptedData.password);
+
+        setData('item', data.item);
+        setPasswordDecryptError(false);
+
+        decryptedData = null;
       } catch (e) {
         setPasswordDecryptError(true);
         await CatchError(e);
+        return;
       }
     } else {
-      service.password = '';
-      form.change('password', '');
+      data.item.s_password = '';
+      setData('item', data.item);
+      form.change('s_password', '');
     }
   };
 
   const encryptFormPassword = () => {
-    if (service.passwordEncrypted && service.passwordEncrypted.length > 0) {
-      service.password = '******';
-      form.change('password', '******');
-    }
+    data.item.s_password = '******';
+    setData('item', data.item);
+    form.change('s_password', '******');
   };
 
   const handleEditableClick = async () => {
-    if (passwordEditable) {
-      setPasswordEditable(false);
-      service.passwordEdited = null;
+    if (data?.passwordEditable) {
+      setData('passwordEditable', false);
+      // service.passwordEdited = null;
 
-      let passwordValue;
-
-      if (passwordVisible) {
-        if (service.passwordEncrypted && service.passwordEncrypted.length > 0) {
-          try {
-            // @TODO: Fix this!
-            // const tempService = { ...service, password: service.passwordEncrypted };
-            // passwordValue = await decrypt_Password(tempService);
-          } catch (e) {
-            passwordValue = '******';
-            setPasswordDecryptError(true);
-            await CatchError(e);
-          }
-        } else {
-          passwordValue = '';
-        }
+      if (data?.passwordVisible) {
+        // if (service.passwordEncrypted && service.passwordEncrypted.length > 0) {
+        //   try {
+        //     // @TODO: Fix this!
+        //     // const tempService = { ...service, password: service.passwordEncrypted };
+        //     // passwordValue = await decrypt_Password(tempService);
+        //   } catch (e) {
+        //     passwordValue = '******';
+        //     setPasswordDecryptError(true);
+        //     await CatchError(e);
+        //   }
+        // } else {
+        //   passwordValue = '';
+        // }
       } else {
-        if (isT3orT2WithPassword(service)) {
-          passwordValue = '******';
+        if (data.item.isT3orT2WithPassword) {
+          data.item.s_password = '******';
+          setData('item', data.item);
         } else {
-          passwordValue = '';
+          data.item.s_password = '';
+          setData('item', data.item);
         }
       }
 
-      form.change('password', passwordValue);
-
-      if (updateFormValues) {
-        const currentFormValues = form.getState().values;
-        const updatedFormValues = { ...currentFormValues, password: passwordValue };
-        updateFormValues(updatedFormValues);
-      }
+      form.change('s_password', data.item.s_password);
     } else {
       await decryptFormPassword();
-      setPasswordEditable(true);
+      setData('passwordEditable', true);
     }
   };
 
   const handlePasswordVisibleClick = async () => {
-    if (passwordEditable) {
-      if (passwordVisible) {
-        if (service.password !== '******') {
-          const passwordFieldValue = form.getFieldState('password').value;
-          service.passwordEdited = passwordFieldValue;
+    console.log('passwordEditable', data?.passwordEditable);
+    console.log('passwordVisible', data?.passwordVisible);
+
+    if (data?.passwordEditable) {
+      if (data?.passwordVisible) {
+        if (data.item.s_password !== '******') {
+        //   const passwordFieldValue = form.getFieldState('password').value;
+        //   service.passwordEdited = passwordFieldValue;
         }
       } else {
-        if (service.password === '******') {
-          if (service.passwordEdited && service.passwordEdited.length > 0) {
-            service.password = service.passwordEdited;
-            form.change('password', service.passwordEdited);
-            service.passwordEdited = null;
+        if (data.item.s_password === '******') {
+          if (data?.passwordEdited && data?.passwordEdited.length > 0) {
+            // service.password = service.passwordEdited;
+            // form.change('password', service.passwordEdited);
+            // service.passwordEdited = null;
           } else {
             await decryptFormPassword();
           }
         }
       }
     } else {
-      if (passwordVisible) {
+      if (data?.passwordVisible) {
         encryptFormPassword();
       } else {
         await decryptFormPassword();
       }
     }
 
-    setPasswordVisible(!passwordVisible);
+    setData('passwordVisible', !data?.passwordVisible);
   };
   
   const handleChangePasswordClick = async e => {
@@ -260,31 +273,31 @@ function Password (props) {
 
   return (
     <LazyMotion features={loadDomAnimation}>
-      <Field name="password">
+      <Field name="s_password">
         {({ input }) => (
-          <div className={`${pI.passInput} ${!passwordEditable || passwordMobile ? pI.disabled : ''}`}>
+          <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile ? pI.disabled : ''}`}>
             <div className={pI.passInputTop}>
-              <label htmlFor="password">{browser.i18n.getMessage('password')}</label>
+              <label htmlFor="s_password">{browser.i18n.getMessage('password')}</label>
               <button
                 type='button'
                 className={`${bS.btn} ${bS.btnClear}`}
                 onClick={handleEditableClick}
               >
-                {passwordEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+                {data?.passwordEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
               </button>
             </div>
-            {generateSecurityTypeDescription(service)}
+            {generateSecurityTypeDescription(data.item)}
             <div className={pI.passInputBottom}>
               <PasswordInput
                 {...input}
-                type={passwordVisible ? 'text' : 'password'}
-                placeholder={!passwordMobile && isT3orT2WithPassword(service) || passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
-                id="password"
-                showPassword={passwordVisible}
-                isDecrypted={service.password !== '******'}
+                type={data?.passwordVisible ? 'text' : 'password'}
+                placeholder={!data?.passwordMobile && data.item.isT3orT2WithPassword || data?.passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
+                id='s_password'
+                showPassword={data?.passwordVisible}
+                isDecrypted={data.item.s_password !== '******'}
                 passwordDecryptError={passwordDecryptError}
-                className={passwordDecryptError || (!passwordEditable && !isT3orT2WithPassword(service)) ? pI.hiddenValue : ''}
-                disabled={!passwordEditable || passwordMobile}
+                className={passwordDecryptError || (!data?.passwordEditable && !data.item.isT3orT2WithPassword) ? pI.hiddenValue : ''}
+                disabled={!data?.passwordEditable || data?.passwordMobile}
                 dir="ltr"
                 spellCheck="false"
                 autoCorrect="off"
@@ -294,14 +307,14 @@ function Password (props) {
               <div className={pI.passInputBottomButtons}>
                 <Link
                   to='/password-generator'
-                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${passwordDecryptError || !passwordEditable || passwordMobile ? pI.hiddenButton : ''}`}
+                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${passwordDecryptError || !data?.passwordEditable || data?.passwordMobile ? pI.hiddenButton : ''}`}
                   title={browser.i18n.getMessage('details_generate_password')}
                   state={{
                     from: 'details',
                     data: {
-                      formValues: { ...form.getState().values, securityType: form.getFieldState('securityType')?.value?.value || service.securityType },
-                      generatorData: { ...generatorData, passwordEditable, passwordVisible, passwordMobile },
-                      service
+                      // formValues: { ...form.getState().values, securityType: form.getFieldState('securityType')?.value?.value || service.securityType },
+                      // generatorData: { ...generatorData, passwordEditable, passwordVisible, passwordMobile },
+                      // service
                     }
                   }}
                   prefetch='intent'
@@ -311,12 +324,12 @@ function Password (props) {
                 <button
                   type="button"
                   onClick={handlePasswordVisibleClick}
-                  className={`${pI.iconButton} ${pI.visibleButton} ${passwordDecryptError || !(isT3orT2WithPassword(service) || passwordEditable) ? pI.hidden : ''}`}
+                  className={`${pI.iconButton} ${pI.visibleButton} ${passwordDecryptError || !(data.item.isT3orT2WithPassword || data?.passwordEditable) ? pI.hidden : ''}`}
                   title={browser.i18n.getMessage('details_toggle_password_visibility')}
                 >
                   <VisibleIcon />
                 </button>
-                {(service.securityType === SECURITY_TIER.SECRET || (service.passwordEncrypted && service.passwordEncrypted.length > 0)) && (
+                {(data.item.securityType === SECURITY_TIER.SECRET || (data.item.passwordEncrypted && data.item.passwordEncrypted.length > 0)) && (
                   <button
                     type='button'
                     className={`${bS.btn} ${pI.iconButton} ${passwordDecryptError ? pI.hidden : ''}`}
@@ -328,15 +341,15 @@ function Password (props) {
                 )}
               </div>
 
-              {generateSecurityTypeOverlay(service)}
+              {generateSecurityTypeOverlay(data.item)}
               {generateErrorOverlay()}
             </div>
             <m.div
-              className={`${pI.passInputAdditional} ${passwordEditable ? '' : pI.removeMarginTop}`}
+              className={`${pI.passInputAdditional} ${data?.passwordEditable ? '' : pI.removeMarginTop}`}
               variants={passwordMobileVariants}
               initial="hidden"
               transition={{ duration: 0.3 }}
-              animate={passwordEditable ? 'visible' : 'hidden'}
+              animate={data?.passwordEditable ? 'visible' : 'hidden'}
             >
               <div className={`${bS.passToggle} ${bS.loaded}`}>
                 <input type="checkbox" name="password-mobile" id="password-mobile" onChange={handlePasswordOnMobileChange} />
