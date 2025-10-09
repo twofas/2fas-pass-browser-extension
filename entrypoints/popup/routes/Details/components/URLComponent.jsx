@@ -12,6 +12,10 @@ import { lazy, useCallback } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import copyValue from '@/partials/functions/copyValue';
+import usePopupStateStore from '../../../store/popupState';
+import getItem from '@/partials/sessionStorage/getItem';
+import Login from '@/partials/models/Login';
+import URIMatcher from '@/partials/URIMatcher';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
@@ -46,54 +50,100 @@ const urlVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function URLComponent (props) {
-  const { data, actions, index } = props;
-  const { service, originalService, domainsEditable, inputError, form, uris } = data;
-  const { setDomainsEditable, handleRemoveUri, updateFormValues } = actions;
-  
-  const handleCopyUri = useCallback(async uri => {
-    if (!uri) return;
-    await copyValue(uri, service.id, 'uri');
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
+
+  const { inputError, uri, index } = props;
+
+  const handleCopyUri = useCallback(async index => {
+    const uri = data.item.uris && data.item.uris[index] ? data.item.uris[index].text : '';
+    await copyValue(uri, data.item.id, `uri-${index}`);
     showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
-  }, [service.id]);
-  
-  const isNew = uris && uris[index] && uris[index]._tempId;
+  }, [data.item]);
 
-  const setDomainEditable = (index, input) => {
-    const newDomainsEditable = [...domainsEditable];
+  const isNew = data.item.uris && data.item.uris[index] && data.item.uris[index].new;
 
-    if (newDomainsEditable[index]) {
-      if (isNew) {
-        handleRemoveUri(index, form);
-        return;
-      }
-
-      const originalValue = originalService?.uris && originalService.uris[index] ? originalService.uris[index].text : '';
-
-      form.change(`uris[${index}].text`, originalValue);
-
-      if (input) {
-        input.onChange(originalValue);
-      }
-
-      if (updateFormValues) {
-        const currentFormValues = form.getState().values;
-        const updatedUris = [...currentFormValues.uris];
-        updatedUris[index] = { ...updatedUris[index], text: originalValue };
-        const updatedFormValues = { ...currentFormValues, uris: updatedUris };
-        updateFormValues(updatedFormValues);
-      }
+  const handleUriEditable = async () => {
+    if (!data?.domainsEditable) {
+      data.domainsEditable = {};
+      setData('domainsEditable', data.domainsEditable);
     }
 
-    newDomainsEditable[index] = !newDomainsEditable[index];
-    setDomainsEditable(newDomainsEditable);
+    if (!data?.domainsEditable[uri._tempId]) {
+      const oldDomainsEditable = data?.domainsEditable;
+      oldDomainsEditable[uri._tempId] = true;
+      setData('domainsEditable', oldDomainsEditable);
+    } else {
+      const item = await getItem(data.item.id);
+
+      const newUris = [...data.item.uris];
+
+      if (item.uris && item.uris[index]) {
+        newUris[index] = item.uris[index];
+      } else {
+        newUris[index] = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE };
+      }
+
+      const updatedItem = new Login({ ...data.item, uris: newUris }, true);
+      setData('item', updatedItem);
+      
+      data.domainsEditable[uri._tempId] = false;
+      setData('domainsEditable', data.domainsEditable);
+    }
   };
+
+  const handleRemoveUri = () => {
+    const newUris = [...data.item.uris];
+    const removedUri = newUris.find(u => u._tempId === uri._tempId);
+
+    if (!removedUri) {
+      return;
+    }
+
+    const removedIndex = newUris.indexOf(removedUri);
+    if (removedIndex > -1) {
+      newUris.splice(removedIndex, 1);
+    }
+
+    const updatedItem = new Login({
+      ...data.item,
+      uris: newUris,
+      iconUriIndex: data.item.iconUriIndex > 0 ? data.item.iconUriIndex - 1 : 0
+    }, true);
+    setData('item', updatedItem);
+
+    if (data?.domainsEditable && data.domainsEditable[uri._tempId] !== undefined) {
+      delete data.domainsEditable[uri._tempId];
+      setData('domainsEditable', data.domainsEditable);
+    }
+  };
+
+  const handleUriChange = useCallback(e => {
+    const newUri = e.target.value;
+    const newUris = [...data.item.uris];
+
+    const uriToUpdate = newUris.find(u => u._tempId === uri._tempId);
+
+    if (!uriToUpdate) {
+      return;
+    }
+
+    const uriIndex = newUris.indexOf(uriToUpdate);
+
+    if (uriIndex > -1) {
+      newUris[uriIndex] = { ...uriToUpdate, text: newUri };
+    }
+
+    const updatedItem = new Login({ ...data.item, uris: newUris }, true);
+    setData('item', updatedItem);
+  });
 
   return (
     <LazyMotion features={loadDomAnimation}>
       <Field name={`uris[${index}].text`}>
         {({ input }) => (
           <m.div
-            className={`${pI.passInput} ${domainsEditable[index] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
+            className={`${pI.passInput} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
             key={index}
             variants={urlVariants}
             initial={isNew ? "hidden" : "visible"}
@@ -103,41 +153,45 @@ function URLComponent (props) {
           >
             <div className={pI.passInputTop}>
               <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
-              <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => setDomainEditable(index, input)}>{domainsEditable[index] ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
+              <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={handleUriEditable}>{data?.domainsEditable?.[uri._tempId] === true ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
             </div>
             <div className={pI.passInputBottom}>
               <input
                 type="text"
-                placeholder={browser.i18n.getMessage('placeholder_domain_uri')}
                 {...input}
+                onChange={e => {
+                  input.onChange(e);
+                  handleUriChange(e);
+                }}
+                placeholder={browser.i18n.getMessage('placeholder_domain_uri')}
                 id={`uri-${index}`}
-                disabled={!domainsEditable[index] ? 'disabled' : ''}
+                disabled={!data?.domainsEditable?.[uri._tempId] ? 'disabled' : ''}
                 dir="ltr"
                 spellCheck="false"
                 autoCorrect="off"
                 autoComplete="on"
                 autoCapitalize="off"
               />
-          <div className={pI.passInputBottomButtons}>
-            <button
-              type='button'
-              className={`${bS.btn} ${pI.iconButton}`}
-              onClick={() => handleCopyUri(input.value)}
-              title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
-            >
-              <CopyIcon />
-            </button>
-            <button
-              type='button'
-              className={`${bS.btn} ${pI.iconButton} ${pI.trashButton} ${domainsEditable[index] ? '' : pI.hiddenButton}`}
-              onClick={() => handleRemoveUri(index, form)}
-              title={browser.i18n.getMessage('remove')}
-              disabled={!domainsEditable[index]}
-            >
-              <TrashIcon />
-            </button>
-          </div>
-        </div>
+              <div className={pI.passInputBottomButtons}>
+                <button
+                  type='button'
+                  className={`${bS.btn} ${pI.iconButton}`}
+                  onClick={() => handleCopyUri(index)}
+                  title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                >
+                  <CopyIcon />
+                </button>
+                <button
+                  type='button'
+                  className={`${bS.btn} ${pI.iconButton} ${pI.trashButton} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.hiddenButton}`}
+                  onClick={handleRemoveUri}
+                  title={browser.i18n.getMessage('remove')}
+                  disabled={!data?.domainsEditable?.[uri._tempId]}
+                >
+                  <TrashIcon />
+                </button>
+              </div>
+            </div>
             <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
               {domainValidation(input.value)}
             </div>
