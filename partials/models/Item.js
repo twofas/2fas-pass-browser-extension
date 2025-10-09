@@ -11,7 +11,7 @@ import getKey from '@/partials/sessionStorage/getKey';
 * Class representing an item.
 */
 class Item {
-  constructor (data) {
+  constructor (data, internal = false) {
     validate(data && typeof data === 'object', 'Invalid item data');
     validate(isValidUUID(data.id), 'Invalid or missing id: must be a valid UUID');
     validate(isValidInteger(data.createdAt), 'Invalid or missing createdAt: must be an integer');

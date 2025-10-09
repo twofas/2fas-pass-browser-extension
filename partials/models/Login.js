@@ -17,12 +17,14 @@ export default class Login extends Item {
 
   #s_password;
 
-  constructor (loginData) {
-    super (loginData);
+  constructor (loginData, internal = false) {
+    super (loginData, internal);
 
     validate(isValidUUID(loginData.deviceId), 'Invalid or missing deviceId: must be a valid UUID');
 
-    const content = loginData?.content ? JSON.parse(loginData.content) : {};
+    const content = internal
+      ? loginData
+      : (loginData?.content ? JSON.parse(loginData.content) : null);
 
     validate(content && typeof content === 'object', 'Invalid login content data');
     validate(isValidInteger(content.iconType, 0, 2), 'Invalid or missing content.iconType: must be an integer between 0 and 2');
@@ -51,7 +53,6 @@ export default class Login extends Item {
     validateOptional(content.labelColor, isValidHexColor, 'Invalid content.labelColor: must be a hex color string (3 or 6 characters)');
     validateOptional(content.customImageUrl, isValidString, 'Invalid content.customImageUrl: must be a string');
     validateOptional(content.notes, isValidString, 'Invalid content.notes: must be a string');
-    
 
     this.deviceId = loginData.deviceId;
     this.name = content.name;
