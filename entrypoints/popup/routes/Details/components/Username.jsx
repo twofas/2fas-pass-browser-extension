@@ -11,6 +11,9 @@ import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { lazy, useCallback } from 'react';
 import copyValue from '@/partials/functions/copyValue';
+import usePopupStateStore from '../../../store/popupState';
+import getItem from '@/partials/sessionStorage/getItem';
+import Login from '@/partials/models/Login';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
@@ -26,65 +29,78 @@ const usernameMobileVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Username (props) {
-  const { data, actions } = props;
-  const { service, originalService, usernameEditable, usernameMobile, inputError, form } = data;
-  const { setUsernameEditable, setUsernameMobile, updateFormValues } = actions;
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
+
+  const { formData } = props;
+  const { inputError } = formData;
 
   const handleCopyUsername = useCallback(async username => {
     if (!username) {
-      await copyValue('', service.id, 'username');
+      await copyValue('', data.item.id, 'username');
     } else {
-      await copyValue(username, service.id, 'username');
+      await copyValue(username, data.item.id, 'username');
     }
 
     showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
-  }, [service.id]);
+  }, [data.item.id]);
 
-  const handleUsernameEditable = (form, input) => {
-    if (usernameEditable) {
-      const valueToRestore = originalService?.username || '';
+  const handleUsernameEditable = async () => {
+    if (data.usernameEditable) {
+      let item = await getItem(data.item.id);
+      const login = new Login({ ...data.item, username: item.username }, true);
+      item = null;
 
-      form.change('username', valueToRestore);
-
-      if (input) {
-        input.onChange(valueToRestore);
-      }
-
-      setUsernameEditable(false);
-
-      if (updateFormValues) {
-        const currentFormValues = form.getState().values;
-        const updatedFormValues = { ...currentFormValues, username: valueToRestore };
-        updateFormValues(updatedFormValues);
-      }
+      setData('usernameEditable', false);
+      setData('item', login);
     } else {
-      setUsernameEditable(true);
+      setData('usernameEditable', true);
     }
   };
 
-  const handleUsernameMobile = form => {
-    if (!usernameMobile) {
-      form.change('username', originalService?.username || '');
+  const handleUsernameMobile = async () => {
+    if (!data.usernameMobile) {
+      let item = await getItem(data.item.id);
+      const login = new Login(item, true);
+      item = null;
+
+      setData('item', login);
     }
 
-    setUsernameMobile(!usernameMobile);
+    setData('usernameMobile', !data.usernameMobile);
   };
+
+  const handleUsernameChange = useCallback(e => {
+    const newUsername = e.target.value;
+    const updatedItem = new Login({ ...data.item, username: newUsername }, true);
+
+    setData('item', updatedItem);
+  }, [data.item, setData]);
 
   return (
     <Field name="username">
       {({ input }) => (
-        <div className={`${pI.passInput} ${usernameEditable && !usernameMobile ? '' : pI.disabled} ${inputError === 'username' ? pI.error : ''}`}>
+        <div className={`${pI.passInput} ${data.usernameEditable && !data.usernameMobile ? '' : pI.disabled} ${inputError === 'username' ? pI.error : ''}`}>
           <div className={pI.passInputTop}>
             <label htmlFor="username">{browser.i18n.getMessage('username')}</label>
-            <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={() => handleUsernameEditable(form, input)}>{usernameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
+            <button
+              type='button'
+              className={`${bS.btn} ${bS.btnClear}`}
+              onClick={handleUsernameEditable}>
+                {data.usernameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              </button>
           </div>
           <div className={pI.passInputBottom}>
             <input
               type="text"
-              placeholder={browser.i18n.getMessage('placeholder_username')}
               {...input}
+              onChange={e => {
+                input.onChange(e);
+                handleUsernameChange(e);
+              }}
+              placeholder={browser.i18n.getMessage('placeholder_username')}
               id="username"
-              disabled={!usernameEditable || usernameMobile ? 'disabled' : ''}
+              disabled={!data.usernameEditable || data.usernameMobile ? 'disabled' : ''}
               dir="ltr"
               spellCheck="false"
               autoCorrect="off"
@@ -102,14 +118,14 @@ function Username (props) {
         </div>
         <LazyMotion features={loadDomAnimation}>
           <m.div
-            className={`${pI.passInputAdditional} ${usernameEditable ? '' : pI.removeMarginTop}`}
+            className={`${pI.passInputAdditional} ${data.usernameEditable ? '' : pI.removeMarginTop}`}
             variants={usernameMobileVariants}
             initial="hidden"
             transition={{ duration: 0.3 }}
-            animate={usernameEditable ? 'visible' : 'hidden'}
+            animate={data.usernameEditable ? 'visible' : 'hidden'}
           >
             <div className={`${bS.passToggle} ${bS.loaded}`}>
-              <input type="checkbox" name="username-mobile" id="username-mobile" checked={usernameMobile} onChange={() => handleUsernameMobile(form)} />
+              <input type="checkbox" name="username-mobile" id="username-mobile" checked={data.usernameMobile} onChange={handleUsernameMobile} />
               <label htmlFor="username-mobile">
                 <span className={bS.passToggleText}>
                   <span>{browser.i18n.getMessage('enter_on_mobile')}</span>
