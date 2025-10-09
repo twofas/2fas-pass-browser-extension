@@ -10,6 +10,10 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import S from '../Details.module.scss';
 import { AnimatePresence } from 'motion/react';
+import usePopupStateStore from '../../../store/popupState';
+import Login from '@/partials/models/Login';
+import URIMatcher from '@/partials/URIMatcher';
+import { v4 as uuidv4 } from 'uuid';
 
 const AddIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
 
@@ -19,22 +23,41 @@ const AddIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
 * @return {JSX.Element|null} The generated URLs or null if not available.
 */
 const generateURLs = props => {
-  const { data, actions } = props;
-  const { uris = [], form } = data;
-  const { handleAddUri } = actions;
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
 
+  const { formData } = props;
+  const { inputError, storageVersion } = formData;
+
+  const handleAddUri = async () => {
+    const newUri = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true, _tempId: uuidv4() };
+    const newUris = [...data.item.uris, newUri];
+    const updatedItem = new Login({ ...data.item, uris: newUris }, true);
+
+    setData('item', updatedItem);
+
+    if (!data?.domainsEditable) {
+      data.domainsEditable = {};
+      setData('domainsEditable', data.domainsEditable);
+    }
+
+    data.domainsEditable[newUri._tempId] = true;
+    setData('domainsEditable', data.domainsEditable);
+  };
+  
   return (
     <>
-      <AnimatePresence mode="popLayout">
-        {uris.length > 0 ? (
-          uris.map((uri, index) => {
-            const key = uri._tempId || `uri-${index}`;
+      <AnimatePresence mode='popLayout'>
+        {data.item.uris.length > 0 ? (
+          data.item.uris.map((uri, index) => {
+            const key = `uri-${data.item.id}-${index}-${storageVersion}`;
+
             return (
               <URLComponent
-                key={key}
+                key={key} 
                 index={index}
-                data={data}
-                actions={actions}
+                inputError={inputError}
+                uri={uri}
               />
             );
           })
@@ -50,10 +73,10 @@ const generateURLs = props => {
         <button
           type='button'
           className={`${bS.btn} ${bS.btnClear} ${bS.domainAdd}`}
-          onClick={() => handleAddUri(form)}
+          onClick={handleAddUri}
         >
           <AddIcon />
-          <span>{uris.length > 0 ? browser.i18n.getMessage('details_add_another_domain') : browser.i18n.getMessage('details_add_domain')}</span>
+          <span>{data.item.uris.length > 0 ? browser.i18n.getMessage('details_add_another_domain') : browser.i18n.getMessage('details_add_domain')}</span>
         </button>
       </div>
     </>

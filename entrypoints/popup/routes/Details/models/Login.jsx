@@ -31,13 +31,9 @@ const DangerZone = lazy(() => import('../components/DangerZone'));
 * @return {JSX.Element} The rendered component.
 */
 function Login (props) {
-  const location = useLocation();
-  const navigate = useNavigate();
-
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
 
-  // const [formValues, setFormValues] = useState(getInitialFormValues());
   const [dangerZoneOpened, setDangerZoneOpened] = useState(false);
   const [nameEditable, setNameEditable] = useState(false);
   const [usernameEditable, setUsernameEditable] = useState(false);
@@ -50,51 +46,6 @@ function Login (props) {
   const [notesEditable, setNotesEditable] = useState(false);
   const [tagsEditable, setTagsEditable] = useState(false);
   const [inputError, setInputError] = useState(undefined);
-
-  const handleRemoveUri = useCallback((index, form) => {
-    // const currentValues = form.getState().values;
-    // const newUris = currentValues.uris.filter((_, i) => i !== index);
-
-    // form.change('uris', newUris);
-
-    // const newDomainsEditable = domainsEditable.filter((_, i) => i !== index);
-    // setDomainsEditable(newDomainsEditable);
-    // setData('domainsEditable', newDomainsEditable);
-
-    // const updatedFormValues = {
-    //   ...currentValues,
-    //   uris: newUris
-    // };
-
-    // setFormValues(updatedFormValues);
-    // setData('formValues', updatedFormValues);
-
-  }, [domainsEditable, setData]);
-
-  const handleAddUri = useCallback(form => {
-    // const currentValues = form.getState().values;
-    // const currentUris = currentValues.uris || [];
-    // const newUri = {
-    //   text: '',
-    //   matcher: URIMatcher.M_DOMAIN_TYPE,
-    //   _tempId: `new-${Date.now()}-${Math.random()}`
-    // };
-
-    // const newUris = [...currentUris, newUri];
-    // form.change('uris', newUris);
-
-    // const newDomainsEditable = [...domainsEditable, true];
-    // setDomainsEditable(newDomainsEditable);
-    // setData('domainsEditable', newDomainsEditable);
-
-    // const updatedFormValues = {
-    //   ...currentValues,
-    //   uris: newUris
-    // };
-
-    // setFormValues(updatedFormValues);
-    // setData('formValues', updatedFormValues);
-  }, [domainsEditable, setData]);
 
   const validate = values => {
     console.log(values);
@@ -225,18 +176,7 @@ function Login (props) {
             }}
             generatorData={{ dangerZoneOpened, nameEditable, usernameEditable, domainsEditable, usernameMobile, tierEditable, notesEditable, passwordEditable, passwordVisible, passwordMobile }}
           />
-          {generateURLs({
-            data: { service: data.item, uris: values.uris, domainsEditable, inputError, form }, // originalService
-            actions: {
-              setDomainsEditable: value => {
-                setDomainsEditable(value);
-                setData('domainsEditable', value);
-              },
-              handleRemoveUri,
-              handleAddUri,
-              // updateFormValues
-            }
-          })}
+          {generateURLs({ formData: { inputError, storageVersion: props.storageVersion } })}
           <SecurityType key={`security-type-${data.item.id}-${props.storageVersion}`} />
           <Tags key={`tags-${data.item.id}-${props.storageVersion}`} />
           <Notes key={`notes-${data.item.id}-${props.storageVersion}`} />
