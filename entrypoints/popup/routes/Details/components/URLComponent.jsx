@@ -101,6 +101,7 @@ function URLComponent (props) {
     }
 
     const removedIndex = newUris.indexOf(removedUri);
+
     if (removedIndex > -1) {
       newUris.splice(removedIndex, 1);
     }
@@ -110,12 +111,21 @@ function URLComponent (props) {
       uris: newUris,
       iconUriIndex: data.item.iconUriIndex > 0 ? data.item.iconUriIndex - 1 : 0
     }, true);
+
     setData('item', updatedItem);
 
     if (data?.domainsEditable && data.domainsEditable[uri._tempId] !== undefined) {
       delete data.domainsEditable[uri._tempId];
       setData('domainsEditable', data.domainsEditable);
     }
+
+    if (!data?.urisRemoved) {
+      data.urisRemoved = 0;
+      setData('urisRemoved', data.urisRemoved);
+    }
+
+    data.urisRemoved++;
+    setData('urisRemoved', data.urisRemoved);
   };
 
   const handleUriChange = useCallback(e => {

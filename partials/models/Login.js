@@ -34,8 +34,6 @@ export default class Login extends Item {
     validateOptional(content.username, isValidString, 'Invalid content.username: must be a string');
     validateOptional(content.s_password, isValidBase64, 'Invalid content.s_password: must be a base64 string');
 
-    console.log('Login content.uris:', content.uris);
-
     if (content.uris !== undefined) {
       validate(Array.isArray(content.uris), 'Invalid content.uris: must be an array');
 
@@ -48,7 +46,6 @@ export default class Login extends Item {
       }
     }
 
-    console.log('Login content.iconUriIndex:', content.iconUriIndex);
     if (content.iconUriIndex !== undefined) {
       const urisLength = content.uris?.length && content.uris.length > 0 ? content.uris.length : 1;
       validate(isValidInteger(content.iconUriIndex, 0, urisLength - 1), `Invalid content.iconUriIndex: must be an integer between 0 and ${urisLength - 1}`);
@@ -62,8 +59,8 @@ export default class Login extends Item {
     this.deviceId = loginData.deviceId;
     this.name = content.name;
     this.username = content.username;
-    this.uris = content.uris || [];
-    this.normalizedUris = internal ? (content.uris || []) : (this.#normalizeUris(content.uris) || []);
+    this.uris = this.#urisWidthTempIds(content.uris) || [];
+    this.normalizedUris = internal ? (this.#urisWidthTempIds(content.uris) || []) : (this.#normalizeUris(content.uris) || []);
     this.iconType = content.iconType;
     this.iconUriIndex = content.iconUriIndex ?? null;
     this.labelText = content.labelText ?? null;
@@ -81,6 +78,20 @@ export default class Login extends Item {
       uris.forEach(uri => {
         uri.text = URIMatcher.normalizeUrl(uri.text, true);
         uri._tempId = uuidv4();
+      });
+    }
+
+    return uris;
+  }
+
+  #urisWidthTempIds (uris) {
+    if (uris && uris.length > 0) {
+      uris = uris.map(uri => {
+        return {
+          text: uri.text,
+          matcher: uri.matcher,
+          _tempId: uri._tempId || uuidv4()
+        };
       });
     }
 

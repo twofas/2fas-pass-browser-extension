@@ -48,8 +48,6 @@ function Login (props) {
   const [inputError, setInputError] = useState(undefined);
 
   const validate = values => {
-    console.log(values);
-
     // const errors = {};
 
     // if (!values.name || values.name?.length <= 0) {
@@ -184,9 +182,9 @@ function Login (props) {
             <button
               type="submit"
               className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-              disabled={(getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, values.uris || []).amount <= 0 || submitting) ? 'disabled' : ''}
+              disabled={(getEditableAmount().amount <= 0 || submitting) ? 'disabled' : ''}
             >
-              {browser.i18n.getMessage('update')}{getEditableAmount(nameEditable, usernameEditable, passwordEditable, domainsEditable, notesEditable, tierEditable, tagsEditable, values.uris || []).text}
+              {browser.i18n.getMessage('update')}{getEditableAmount().text}
             </button>
           </div>
 
