@@ -7,6 +7,7 @@
 import initContextMenu from '../contextMenu/initContextMenu';
 import { openInstallPage, updateBadge } from '../utils';
 import runMigrations from '../migrations';
+import setIdleInterval from '@/partials/functions/setIdleInterval';
 
 /** 
 * Function to handle the installation and update of the extension.
@@ -27,6 +28,9 @@ const onInstalled = async (details, migrations) => {
   } else {
     migrations.state = true;
   }
+
+  const idleLockValue = await storage.getItem('local:autoIdleLock');
+  setIdleInterval(idleLockValue);
 
   if (details?.reason === 'install') {
     if (import.meta.env.BROWSER !== 'safari') {

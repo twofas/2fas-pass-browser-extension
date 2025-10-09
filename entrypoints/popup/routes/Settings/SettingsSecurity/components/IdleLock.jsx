@@ -9,6 +9,7 @@ import Select from 'react-select';
 import { useEffect, useState, lazy } from 'react';
 import isPaidDeviceConnected from '@/partials/functions/isPaidDeviceConnected';
 import PremiumLockIcon from '@/assets/popup-window/premium-lock.svg?react';
+import setIdleInterval from '@/partials/functions/setIdleInterval';
 
 const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
 
@@ -71,13 +72,8 @@ function IdleLock () {
     try {
       const value = change?.value;
       await storage.setItem('local:autoIdleLock', value);
-
-      if (value === 'default') {
-        browser.idle.setDetectionInterval(config.defaultStorageIdleLock * 60);
-      } else {
-        browser.idle.setDetectionInterval(value * 60);
-      }
-
+      
+      setIdleInterval(value);
       setIL(value);
 
       showToast(browser.i18n.getMessage('notification_idle_lock_success'), 'success');
