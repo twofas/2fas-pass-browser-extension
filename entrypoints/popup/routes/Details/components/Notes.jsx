@@ -9,6 +9,10 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
+import usePopupStateStore from '../../../store/popupState';
+import getItem from '@/partials/sessionStorage/getItem';
+import Login from '@/partials/models/Login';
+import { useCallback } from 'react';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
@@ -22,31 +26,36 @@ const notesVariants = {
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function Notes (props) {
-  const { data, actions } = props;
-  const { originalService, notesEditable, form } = data;
-  const { setNotesEditable } = actions;
+function Notes () {
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
 
-  const handleNotesEditable = (form, input) => {
-    if (notesEditable) {
-      const valueToRestore = originalService?.notes || '';
+  const handleNotesEditable = async () => {
+    if (data.notesEditable) {
+      let item = await getItem(data.item.id);
+      let login = new Login({ ...data.item, notes: item?.notes || '' }, true);
+      item = null;
 
-      form.change('notes', valueToRestore);
+      setData('item', login);
+      setData('notesEditable', false);
 
-      if (input) {
-        input.onChange(valueToRestore);
-      }
-
-      setNotesEditable(false);
+      login = null;
     } else {
-      setNotesEditable(true);
+      setData('notesEditable', true);
     }
   };
+
+  const handleNotesChange = useCallback(e => {
+    const newNotes = e.target.value;
+    const updatedItem = new Login({ ...data.item, notes: newNotes }, true);
+
+    setData('item', updatedItem);
+  }, [data.item, setData]);
 
   return (
     <Field name="notes">
       {({ input }) => (
-        <div className={`${pI.passInput} ${notesEditable ? pI.resizable : pI.disabled}`}>
+        <div className={`${pI.passInput} ${data.notesEditable ? pI.resizable : pI.disabled}`}>
           <div className={pI.passInputTop}>
             <div className={pI.passInputTopLabelLike}>
               <span>{browser.i18n.getMessage('notes')}</span>
@@ -54,25 +63,29 @@ function Notes (props) {
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
-              onClick={() => handleNotesEditable(form, input)}
+              onClick={handleNotesEditable}
             >
-              {notesEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data.notesEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
           </div>
           <div className={pI.passInputBottomMotion}>
             <LazyMotion features={loadDomAnimation}>
               <m.div
-                className={`${pI.passInputBottom} ${pI.note} ${notesEditable ? pI.noteEditable : ''}`}
+                className={`${pI.passInputBottom} ${pI.note} ${data.notesEditable ? pI.noteEditable : ''}`}
                 variants={notesVariants}
                 initial="hidden"
                 transition={{ duration: 0.3 }}
-                animate={input.value.length > 0 || notesEditable ? 'visible' : 'hidden'}
+                animate={input.value.length > 0 || data.notesEditable ? 'visible' : 'hidden'}
               >
                 <textarea
                   {...input}
+                  onChange={e => {
+                    input.onChange(e);
+                    handleNotesChange(e);
+                  }}
                   placeholder='Notes are empty'
                   id="notes"
-                  disabled={!notesEditable ? 'disabled' : ''}
+                  disabled={!data.notesEditable ? 'disabled' : ''}
                   dir="ltr"
                   spellCheck="true"
                   autoCorrect="off"
