@@ -38,7 +38,8 @@ const filterModel = itemData => {
   try {
     new Model(itemData);
     return true;
-  } catch {
+  } catch (e) {
+    console.error('Model validation error:', e);
     // @TODO: log error?
     return false;
   }

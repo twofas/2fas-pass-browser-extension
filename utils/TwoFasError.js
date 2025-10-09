@@ -605,11 +605,7 @@ class TwoFasError extends Error {
       message: 'compressPublicKey: error exporting key',
       code: 9322
     },
-    // IS T3 OR T2 WITH PASSWORD
-    isT3orT2WithPasswordWrongSecurityTypeError: {
-      message: 'isT3orT2WithPassword: wrong security type',
-      code: 9330
-    },
+    // EMPTY 9330
     // GET CONFIGURED
     getConfiguredNonceError: {
       message: 'getConfigured: error getting nonce',

@@ -6,6 +6,8 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import S from './PasswordInput.module.scss';
+import usePopupStateStore from '../../store/popupState';
+import Login from '@/partials/models/Login';
 
 /**
  * PasswordInput component that displays each character with different colors
@@ -13,7 +15,7 @@ import S from './PasswordInput.module.scss';
  * @param {Object} props - Component props
  * @return {JSX.Element} The rendered component
  */
-function PasswordInput(props) {
+function PasswordInput (props) {
   const {
     value = '',
     onChange,
@@ -25,6 +27,9 @@ function PasswordInput(props) {
     className = '',
     ...inputProps
   } = props;
+
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
   
   const [isFocused, setIsFocused] = useState(false);
   const [selection, setSelection] = useState({ start: 0, end: 0 });
@@ -51,6 +56,8 @@ function PasswordInput(props) {
       onChange(e);
     }
 
+    // setData('item', new Login({ ...data.item, s_password: e.target.value }, true));
+
     setTimeout(() => {
       isTypingRef.current = false;
     }, 100);
@@ -59,6 +66,7 @@ function PasswordInput(props) {
   const handleKeyDown = useCallback((e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
       e.preventDefault();
+
       if (inputRef.current && value) {
         inputRef.current.setSelectionRange(0, value.length);
         setTimeout(() => {
