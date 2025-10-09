@@ -23,7 +23,6 @@ const notesVariants = {
 
 /**
 * Function to render the notes input field.
-* @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
 function Notes () {
