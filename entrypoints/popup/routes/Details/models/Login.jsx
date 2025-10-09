@@ -251,13 +251,8 @@ function Login (props) {
           </div>
 
           <DangerZone
-            data={{ service: data.item, dangerZoneOpened, submitting }}
-            actions={{
-              setDangerZoneOpened: value => {
-                setDangerZoneOpened(value);
-                setData('dangerZoneOpened', value);
-              }
-            }}
+            key={`danger-zone-${data.item.id}-${props.storageVersion}`}
+            formData={{ submitting }}
           />
         </form>
       )}
