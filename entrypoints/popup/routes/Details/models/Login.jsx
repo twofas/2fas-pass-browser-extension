@@ -32,19 +32,6 @@ const DangerZone = lazy(() => import('../components/DangerZone'));
 */
 function Login (props) {
   const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-
-  const [dangerZoneOpened, setDangerZoneOpened] = useState(false);
-  const [nameEditable, setNameEditable] = useState(false);
-  const [usernameEditable, setUsernameEditable] = useState(false);
-  const [passwordEditable, setPasswordEditable] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [domainsEditable, setDomainsEditable] = useState([]);
-  const [passwordMobile, setPasswordMobile] = useState(false);
-  const [usernameMobile, setUsernameMobile] = useState(false);
-  const [tierEditable, setTierEditable] = useState(false);
-  const [notesEditable, setNotesEditable] = useState(false);
-  const [tagsEditable, setTagsEditable] = useState(false);
   const [inputError, setInputError] = useState(undefined);
 
   const validate = values => {
@@ -145,7 +132,7 @@ function Login (props) {
     <Form
       onSubmit={onSubmit}
       initialValues={data.item}
-      render={({ handleSubmit, form, submitting, values }) => (
+      render={({ handleSubmit, form, submitting }) => ( // form, values
         <form onSubmit={handleSubmit}>
           <Name
             key={`name-${data.item.id}-${props.storageVersion}`}
@@ -157,22 +144,7 @@ function Login (props) {
           />
           <Password
             key={`password-${data.item.id}-${props.storageVersion}`}
-            data={{ service: data.item, passwordEditable, passwordVisible, passwordMobile, form }}
-            actions={{
-              setPasswordEditable: value => {
-                setPasswordEditable(value);
-                setData('passwordEditable', value);
-              },
-              setPasswordVisible: value => {
-                setPasswordVisible(value);
-                setData('passwordVisible', value);
-              },
-              setPasswordMobile: value => {
-                setPasswordMobile(value);
-                setData('passwordMobile', value);
-              }
-            }}
-            generatorData={{ dangerZoneOpened, nameEditable, usernameEditable, domainsEditable, usernameMobile, tierEditable, notesEditable, passwordEditable, passwordVisible, passwordMobile }}
+            formData={{ form }}
           />
           {generateURLs({ formData: { inputError, storageVersion: props.storageVersion } })}
           <SecurityType key={`security-type-${data.item.id}-${props.storageVersion}`} />

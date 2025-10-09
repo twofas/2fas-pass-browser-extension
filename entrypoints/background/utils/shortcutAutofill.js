@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { tabIsInternal, openPopup, isT3orT2WithPassword } from '@/partials/functions';
+import { tabIsInternal, openPopup } from '@/partials/functions';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import getItems from '@/partials/sessionStorage/getItems';
 import URIMatcher from '@/partials/URIMatcher';
@@ -70,7 +70,7 @@ const shortcutAutofill = async () => {
   }
 
   if (matchingLogins.length === 1) {
-    if (!isT3orT2WithPassword(matchingLogins[0])) {
+    if (!matchingLogins[0].isT3orT2WithPassword) {
       const data = encodeURIComponent(JSON.stringify({ action: PULL_REQUEST_TYPES.SIF_REQUEST, from: 'shortcut', data: { itemId: matchingLogins[0].id, deviceId: matchingLogins[0].deviceId, tabId: tab.id }}));
       return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
     }
