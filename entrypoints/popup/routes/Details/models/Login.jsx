@@ -195,33 +195,14 @@ function Login (props) {
       onSubmit={onSubmit}
       initialValues={data.item}
       render={({ handleSubmit, form, submitting, values }) => (
-        <form onSubmit={handleSubmit} onChange={() => {
-          setTimeout(() => {
-            // const currentValues = form.getState().values;
-
-            // if (JSON.stringify(currentValues) !== JSON.stringify(formValues)) {
-            //   setFormValues(currentValues);
-            //   setData('formValues', currentValues);
-            // }
-          }, 0);
-        }}>
+        <form onSubmit={handleSubmit}>
           <Name
             key={`name-${data.item.id}-${props.storageVersion}`}
-            formData={{ inputError }} // service: data.item, form, nameEditable
+            formData={{ inputError }}
           />
           <Username
             key={`username-${data.item.id}-${props.storageVersion}`}
-            data={{ service: data.item, usernameEditable, usernameMobile, inputError, form }}
-            actions={{
-              setUsernameEditable: value => {
-                setUsernameEditable(value);
-                setData('usernameEditable', value);
-              },
-              setUsernameMobile: value => {
-                setUsernameMobile(value);
-                setData('usernameMobile', value);
-              }
-            }}
+            formData={{ inputError }}
           />
           <Password
             key={`password-${data.item.id}-${props.storageVersion}`}
@@ -264,7 +245,7 @@ function Login (props) {
               updateSecurityType: value => {
                 const currentFormValues = form.getState().values;
                 const updatedFormValues = { ...currentFormValues, securityType: value };
-                setFormValues(updatedFormValues);
+                // setFormValues(updatedFormValues);
                 setData('formValues', updatedFormValues);
               }
             }}
