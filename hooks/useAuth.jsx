@@ -54,7 +54,6 @@ export const AuthProvider = memo(({ children }) => {
   }, [navigate]);
 
   const logout = useCallback(async (clear = true) => {
-    console.log('Logout! Clear:', clear);
     await cleanupDevices();
 
     if (clear) {
