@@ -6,6 +6,7 @@
 
 import URIMatcher from '../URIMatcher';
 import Item from './Item';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
 * Class representing a login.
@@ -33,19 +34,23 @@ export default class Login extends Item {
     validateOptional(content.username, isValidString, 'Invalid content.username: must be a string');
     validateOptional(content.s_password, isValidBase64, 'Invalid content.s_password: must be a base64 string');
 
+    console.log('Login content.uris:', content.uris);
+
     if (content.uris !== undefined) {
       validate(Array.isArray(content.uris), 'Invalid content.uris: must be an array');
 
-      content.uris.forEach((uri, index) => {
-        validate(uri && typeof uri === 'object', `Invalid content.uris[${index}]: must be an object`);
-        validate(typeof uri.text === 'string', `Invalid content.uris[${index}].text: must be a string`);
-        validate(typeof uri.matcher === 'string' || Number.isInteger(uri.matcher), `Invalid content.uris[${index}].matcher: must be a string or integer`);
-      });
+      if (content.uris.length > 0) {
+        content.uris.forEach((uri, index) => {
+          validate(uri && typeof uri === 'object', `Invalid content.uris[${index}]: must be an object`);
+          validate(typeof uri.text === 'string', `Invalid content.uris[${index}].text: must be a string`);
+          validate(isValidInteger(uri.matcher, URIMatcher.M_DOMAIN_TYPE, URIMatcher.M_EXACT_TYPE), `Invalid content.uris[${index}].matcher: must be an integer`);
+        });
+      }
     }
 
+    console.log('Login content.iconUriIndex:', content.iconUriIndex);
     if (content.iconUriIndex !== undefined) {
-      const urisLength = content.uris?.length || 0;
-
+      const urisLength = content.uris?.length && content.uris.length > 0 ? content.uris.length : 1;
       validate(isValidInteger(content.iconUriIndex, 0, urisLength - 1), `Invalid content.iconUriIndex: must be an integer between 0 and ${urisLength - 1}`);
     }
 
@@ -57,7 +62,8 @@ export default class Login extends Item {
     this.deviceId = loginData.deviceId;
     this.name = content.name;
     this.username = content.username;
-    this.uris = this.#normalizeUris(content.uris) || [];
+    this.uris = content.uris || [];
+    this.normalizedUris = internal ? (content.uris || []) : (this.#normalizeUris(content.uris) || []);
     this.iconType = content.iconType;
     this.iconUriIndex = content.iconUriIndex ?? null;
     this.labelText = content.labelText ?? null;
@@ -74,6 +80,7 @@ export default class Login extends Item {
       uris = uris.filter(uri => uri && uri?.text && uri.text !== '' && URIMatcher.isText(uri.text) && URIMatcher.isUrl(uri.text, true));
       uris.forEach(uri => {
         uri.text = URIMatcher.normalizeUrl(uri.text, true);
+        uri._tempId = uuidv4();
       });
     }
 
@@ -95,10 +102,10 @@ export default class Login extends Item {
       dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_password'), id: this.id, type: 'forget' });
     }
 
-    if (this.uris && this.uris.length > 0) {
+    if (this.normalizedUris && this.normalizedUris.length > 0) {
       dO.push({ value: 'uris:', label: `${browser.i18n.getMessage('this_tab_more_uris')}`, type: 'urisHeader' });
 
-      this.uris.forEach(uri => {
+      this.normalizedUris.forEach(uri => {
         dO.push({ value: uri.text, label: uri.text, itemId: this.id });
       });
     }
@@ -120,7 +127,7 @@ export default class Login extends Item {
     const documentUrlPatterns = new Set();
 
     try {
-      const recognizedURIs = URIMatcher.recognizeURIs(this.uris);
+      const recognizedURIs = URIMatcher.recognizeURIs(this.normalizedUris);
 
       if (recognizedURIs?.urls && recognizedURIs?.urls.length > 0) {
         recognizedURIs.urls.forEach(uri => {
