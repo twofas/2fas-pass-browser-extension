@@ -97,6 +97,8 @@ function Login (props) {
   }, [domainsEditable, setData]);
 
   const validate = values => {
+    console.log(values);
+
     const errors = {};
 
     if (!values.name || values.name?.length <= 0) {
@@ -236,6 +238,7 @@ function Login (props) {
             }
           })}
           <SecurityTier
+            key={`security-tier-${data.item.id}-${props.storageVersion}`}
             data={{ service: data.item, tierEditable, form }}
             actions={{
               setTierEditable: value => {
@@ -251,6 +254,7 @@ function Login (props) {
             }}
           />
           <Tags
+            key={`tags-${data.item.id}-${props.storageVersion}`}
             data={{ service: data.item, tagsEditable, form }}
             actions={{
               setTagsEditable: value => {
@@ -259,15 +263,7 @@ function Login (props) {
               }
             }}
           />
-          <Notes
-            data={{ service: data.item, notesEditable, form }}
-            actions={{
-              setNotesEditable: value => {
-                setNotesEditable(value);
-                setData('notesEditable', value);
-              }
-            }}
-          />
+          <Notes key={`notes-${data.item.id}-${props.storageVersion}`} />
           <div className={S.detailsButton}>
             <button
               type="submit"
