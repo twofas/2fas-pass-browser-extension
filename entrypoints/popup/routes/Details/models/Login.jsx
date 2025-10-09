@@ -238,16 +238,7 @@ function Login (props) {
             }
           })}
           <SecurityType key={`security-type-${data.item.id}-${props.storageVersion}`} />
-          <Tags
-            key={`tags-${data.item.id}-${props.storageVersion}`}
-            data={{ service: data.item, tagsEditable, form }}
-            actions={{
-              setTagsEditable: value => {
-                setTagsEditable(value);
-                setData('tagsEditable', value);
-              }
-            }}
-          />
+          <Tags key={`tags-${data.item.id}-${props.storageVersion}`} />
           <Notes key={`notes-${data.item.id}-${props.storageVersion}`} />
           <div className={S.detailsButton}>
             <button
