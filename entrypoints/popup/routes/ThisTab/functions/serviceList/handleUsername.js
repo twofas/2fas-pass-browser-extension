@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getItems from '@/partials/sessionStorage/getItems';
+import getItem from '@/partials/sessionStorage/getItem';
 import copyValue from '@/partials/functions/copyValue';
 
 /** 
@@ -16,15 +16,14 @@ import copyValue from '@/partials/functions/copyValue';
 * @return {Promise<void>} 
 */
 const handleUsername = async (id, more, setMore) => {
-  let itemsStorage, item;
+  let item;
 
   if (more) {
     setMore(false);
   }
 
   try {
-    itemsStorage = await getItems();
-    item = itemsStorage.find(item => item.id === id);
+    item = await getItem(id);
   } catch (e) {
     showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
     await CatchError(e);
