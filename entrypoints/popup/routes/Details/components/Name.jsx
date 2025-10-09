@@ -39,11 +39,13 @@ function Name (props) {
   const handleNameEditable = async () => {
     if (data.nameEditable) {
       let item = await getItem(data.item.id);
-      const login = new Login({ ...data.item, name: item.name }, true);
+      let login = new Login({ ...data.item, name: item.name }, true);
       item = null;
 
       setData('nameEditable', false);
       setData('item', login);
+
+      login = null;
     } else {
       setData('nameEditable', true);
     }

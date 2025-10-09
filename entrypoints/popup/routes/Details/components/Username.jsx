@@ -48,11 +48,13 @@ function Username (props) {
   const handleUsernameEditable = async () => {
     if (data.usernameEditable) {
       let item = await getItem(data.item.id);
-      const login = new Login({ ...data.item, username: item.username }, true);
+      let login = new Login({ ...data.item, username: item.username }, true);
       item = null;
 
       setData('usernameEditable', false);
       setData('item', login);
+
+      login = null;
     } else {
       setData('usernameEditable', true);
     }
