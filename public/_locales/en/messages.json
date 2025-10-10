@@ -675,9 +675,9 @@
     "message": "URL must be less than 2048 characters.",
     "description": "Validation message indicating the maximum length for the URL field"
   },
-  "details_service_not_found": {
-    "message": "Something went wrong. Service not found. Lock the Browser Extension and reconnect.",
-    "description": "Error shown when the requested service is not found, suggesting reconnection"
+  "details_item_not_found": {
+    "message": "Something went wrong. Item not found. Lock the Browser Extension and reconnect.",
+    "description": "Error shown when the requested item is not found, suggesting reconnection"
   },
   "details_security_type": {
     "message": "Security Tier",

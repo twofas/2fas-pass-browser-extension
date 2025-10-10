@@ -121,6 +121,7 @@
     flex-direction: row;
     gap: 0 6px;
     justify-content: stretch;
+    min-height: 39px;
     padding: 9px 12px;
     position: relative;
     transition: border-color .3s ease-in-out, background-color .3s ease-in-out;
@@ -362,7 +363,7 @@
       }
 
       &.hidden-value {
-        opacity: 0;
+        opacity: 0 !important;
       }
 
       &:-webkit-autofill,
