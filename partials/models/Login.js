@@ -70,10 +70,18 @@ export default class Login extends Item {
     this.labelColor = content.labelColor ?? null;
     this.customImageUrl = content.customImageUrl ?? null;
     this.notes = content.notes ?? null;
-    this.s_password = '******';
+    if (internal && content.s_password !== undefined && content.s_password !== '******' && !isValidBase64(content.s_password)) {
+      this.s_password = content.s_password;
+    } else {
+      this.s_password = this.securityType === SECURITY_TIER.SECRET ? '******' : null;
+    }
 
     // Secure Input Fields
-    this.#s_password = content.s_password;
+    if (content.s_password && isValidBase64(content.s_password)) {
+      this.#s_password = content.s_password;
+    } else {
+      this.#s_password = null;
+    }
   }
 
   #normalizeUris (uris) {

@@ -6,8 +6,8 @@
 
 import { memo } from 'react';
 
-function SecureNote () {
+function SecureNoteDetailsView () {
   return null;
 }
 
-export default memo(SecureNote);
+export default memo(SecureNoteDetailsView);

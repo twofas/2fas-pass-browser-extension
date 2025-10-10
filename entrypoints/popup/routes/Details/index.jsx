@@ -15,8 +15,8 @@ import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import Login from '@/partials/models/Login';
 
 // Model Views
-import LoginView from './models/Login';
-import SecureNoteView from './models/SecureNote';
+import LoginView from './modelsViews/LoginDetailsView';
+import SecureNoteView from './modelsViews/SecureNoteDetailsView';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
