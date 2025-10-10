@@ -205,7 +205,37 @@ export default class Login extends Item {
   }
 
   get isT3orT2WithPassword () {
-    return this.securityType === SECURITY_TIER.SECRET 
+    return this.securityType === SECURITY_TIER.SECRET
       || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
+  }
+
+  get mobileFormat () {
+    const content = {
+      name: this.name,
+      username: this.username,
+      s_password: this.#s_password,
+      uris: this.uris.map(uri => ({
+        text: uri.text,
+        matcher: uri.matcher
+      })),
+      iconType: this.iconType,
+      iconUriIndex: this.iconUriIndex,
+      labelText: this.labelText,
+      labelColor: this.labelColor,
+      customImageUrl: this.customImageUrl,
+      notes: this.notes
+    };
+
+    return {
+      id: this.id,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      securityType: this.securityType,
+      tags: this.tags,
+      deviceId: this.deviceId,
+      contentType: Login.contentType,
+      contentVersion: Login.contentVersion,
+      content: JSON.stringify(content)
+    };
   }
 }

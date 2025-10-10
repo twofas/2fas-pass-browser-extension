@@ -33,8 +33,11 @@ const deleteDataAccept = async (state, messageId) => {
     // Remove data from items
     const itemsFiltered = items.filter(item => item.id !== state.data.itemId);
 
+    // MobileFormat
+    const itemsMobileFormat = itemsFiltered.map(item => item.mobileFormat);
+
     // Compress items
-    const itemsGZIP = await compressObject(itemsFiltered);
+    const itemsGZIP = await compressObject(itemsMobileFormat);
 
     // Remove items from session storage (by itemsKeys)
     await storage.removeItems(itemsKeys);
