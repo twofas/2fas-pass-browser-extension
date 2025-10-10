@@ -7,7 +7,7 @@
 // Alarms functions
 export { default as addAutoClearAction } from './alarmsFunctions/addAutoClearAction.js';
 export { default as autoClearClipboard } from './alarmsFunctions/autoClearClipboard.js';
-export { default as passwordT2Reset } from './alarmsFunctions/passwordT2Reset.js';
+export { default as sifT2Reset } from './alarmsFunctions/sifT2Reset.js';
 
 // Badge functions
 export { default as setBadgeIcon } from './badge/setBadgeIcon.js';
