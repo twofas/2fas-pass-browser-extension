@@ -15,7 +15,7 @@ import isItemsCorrect from './isItemsCorrect';
 * @param {boolean} loading - Indicates if the logins are still loading.
 * @return {JSX.Element|null} The generated login items or null.
 */
-const generateMatchingLoginsList = (items, loading) => {
+const generateMatchingItemsList = (items, loading) => {
   if (!isItemsCorrect(items) && !loading) {
     return null;
   }
@@ -40,9 +40,9 @@ const generateMatchingLoginsList = (items, loading) => {
 
   return (
     <ViewportList items={itemsData} overscan={2}>
-      {item => <LoginItem item={item} key={item.id} />}
+      {item => <LoginItem data={item} key={item.id} />}
     </ViewportList>
   );
 };
 
-export default generateMatchingLoginsList;
+export default generateMatchingItemsList;
