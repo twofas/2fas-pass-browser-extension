@@ -12,8 +12,8 @@
     "description": "Validation message displayed when the Domain (URI) entered is invalid"
   },
   "add_new_header": {
-    "message": "Adding a new service to \n2FAS Pass",
-    "description": "Header for the section to add a new service"
+    "message": "Adding a new item to \n2FAS Pass",
+    "description": "Header for the section to add a new item"
   },
   "add_new_subheader": {
     "message": "Start the process here and continue in the mobile app.",
