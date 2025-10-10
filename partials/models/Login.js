@@ -25,7 +25,7 @@ export default class Login extends Item {
 
     const content = internal
       ? loginData
-      : (loginData?.content ? JSON.parse(loginData.content) : null);
+      : (loginData?.content ? loginData.content : null);
 
     validate(content && typeof content === 'object', 'Invalid login content data');
     validate(isValidInteger(content.iconType, 0, 2), 'Invalid or missing content.iconType: must be an integer between 0 and 2');
@@ -235,7 +235,7 @@ export default class Login extends Item {
       deviceId: this.deviceId,
       contentType: Login.contentType,
       contentVersion: Login.contentVersion,
-      content: JSON.stringify(content)
+      content
     };
   }
 }
