@@ -70,7 +70,7 @@ function TopBar () {
   }, [configured, matchingLoginsLength]);
 
   const addNewBtnClass = useMemo(() =>
-    `${S.topbarAddNewBtn} ${location.pathname === '/add-new' || !configured ? S.disabled : ''}`,
+    `${S.topbarAddNewBtn} ${location.pathname === '/add-new/Login' || !configured ? S.disabled : ''}`,
     [configured, location.pathname]
   );
 
@@ -125,7 +125,7 @@ function TopBar () {
 
         <div className={`${S.topbarAddNew} ${addNewClass}`}>
           <Link
-            to='/add-new'
+            to='/add-new/Login'
             className={addNewBtnClass}
             prefetch='intent'
           >

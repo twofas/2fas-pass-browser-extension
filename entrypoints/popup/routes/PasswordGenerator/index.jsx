@@ -193,7 +193,7 @@ function PasswordGenerator (props) {
     const submissionData = { ...contextData, password: values.password };
 
     if (from === 'addNew') {
-      return navigate(`/add-new`, {
+      return navigate(`/add-new/Login`, {
         state: {
           from: 'passwordGenerator',
           data: submissionData
