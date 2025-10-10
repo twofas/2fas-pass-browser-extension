@@ -53,8 +53,8 @@ const keepPassword = async state => {
   // saveItems
   await saveItems(itemsGZIP, state.deviceId);
   
-  // Set alarm for 3 minutes
-  await browser.alarms.create(`passwordT2Reset-${state.itemId}`, { delayInMinutes: config.passwordResetDelay });
+  // Set alarm for reset T2 SIF
+  await browser.alarms.create(`sifT2Reset-${state.itemId}`, { delayInMinutes: config.passwordResetDelay }); // @TODO: Check this case
 };
 
 export default keepPassword;

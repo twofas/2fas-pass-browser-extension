@@ -26,6 +26,8 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @return {Promise<Object>} Object containing returnUrl and returnToast or action for autofill.
 */
 const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
+  console.log('sifRequestAccept', { data, state, hkdfSaltAB, sessionKeyForHKDF, messageId });
+
   try {
     // Autofill from handleAutofill
     if (state?.from === 'autofill') {
@@ -120,8 +122,11 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
     const item = items.find(item => item.id === state.data.itemId);
     item.password = data.passwordEnc;
 
+    // MobileFormat
+    const itemsMobileFormat = items.map(item => item.mobileFormat);
+
     // Compress items
-    const itemsGZIP = await compressObject(items);
+    const itemsGZIP = await compressObject(itemsMobileFormat);
 
     // generate encryptionItemT2Key
     const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
@@ -138,8 +143,9 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
     // saveItems
     await saveItems(itemsGZIP, state.data.deviceId);
 
-    // Set alarm for 3 minutes
-    await browser.alarms.create(`passwordT2Reset-${state.data.itemId}`, { delayInMinutes: config.passwordResetDelay });
+    // Set alarm for reset T2 SIF
+    const sifResetTime = data.expireInSeconds && data.expireInSeconds > 30 ? data.expireInSeconds * 60 : config.passwordResetDelay;
+    await browser.alarms.create(`sifT2Reset-${state.data.itemId}`, { delayInMinutes: sifResetTime });
 
     // Send response
     await sendPullRequestCompleted(messageId);

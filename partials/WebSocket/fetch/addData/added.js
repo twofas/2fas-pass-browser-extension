@@ -67,9 +67,10 @@ const newDataAdded = async (data, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
     // saveItems
     await saveItems(itemsGZIP, data.login.deviceId);
 
-    // Set alarm for 3 minutes if T2
+    // Set alarm for reset T2 SIF
     if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await browser.alarms.create(`passwordT2Reset-${data.login.id}`, { delayInMinutes: config.passwordResetDelay });
+      const sifResetTime = data.expireInSeconds && data.expireInSeconds > 30 ? data.expireInSeconds * 60 : config.passwordResetDelay;
+      await browser.alarms.create(`sifT2Reset-${data.login.id}`, { delayInMinutes: sifResetTime });
     }
 
     // Send response

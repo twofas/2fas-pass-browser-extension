@@ -38,7 +38,7 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
     let item = items.find(item => item.id === state.data.itemId);
 
     if (item && item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await browser.alarms.clear(`passwordT2Reset-${state.data.itemId}`);
+      await browser.alarms.clear(`sifT2Reset-${state.data.itemId}`);
     }
 
     item = data.login;
@@ -80,9 +80,10 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
     // saveItems
     await saveItems(itemsGZIP, data.login.deviceId);
 
-    // Set alarm for 3 minutes if T2
+    // Set alarm for reset T2 SIF
     if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await browser.alarms.create(`passwordT2Reset-${data.login.id}`, { delayInMinutes: config.passwordResetDelay });
+      const sifResetTime = data.expireInSeconds && data.expireInSeconds > 30 ? data.expireInSeconds * 60 : config.passwordResetDelay;
+      await browser.alarms.create(`sifT2Reset-${data.login.id}`, { delayInMinutes: sifResetTime });
     }
 
     await sendPullRequestCompleted(messageId);

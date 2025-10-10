@@ -12,12 +12,12 @@ import saveItems from '@/partials/WebSocket/utils/saveItems';
 import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
-* Function to forget the password for a specific login ID.
+* Function to forget the sif for a specific item ID.
 * @async
-* @param {string} itemId - The ID of the login for which the password should be forgotten.
-* @return {Promise<void>} A promise that resolves when the password forget is complete.
+* @param {string} itemId - The ID of the item for which the sif should be forgotten.
+* @return {Promise<void>} A promise that resolves when the sif forget is complete.
 */
-const passwordT2Reset = async itemId => {
+const sifT2Reset = async itemId => {
   // Get items
   const items = await getItems();
 
@@ -43,4 +43,4 @@ const passwordT2Reset = async itemId => {
   await saveItems(itemsGZIP, deviceId);
 };
 
-export default passwordT2Reset;
+export default sifT2Reset;
