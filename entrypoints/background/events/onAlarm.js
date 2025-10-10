@@ -4,8 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { autoClearClipboard, passwordT2Reset } from '../utils';
-import { PASSWORD_T2_RESET_REGEX, AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants';
+import { autoClearClipboard, sifT2Reset } from '../utils';
+import { SIF_T2_RESET_REGEX, AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants';
 
 /** 
 * Function to handle alarm events.
@@ -16,13 +16,13 @@ import { PASSWORD_T2_RESET_REGEX, AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants
 */
 const onAlarm = async alarm => {
   const { name } = alarm;
-  const passwordT2ResetRegexTest = PASSWORD_T2_RESET_REGEX.exec(name);
+  const sifT2ResetRegexTest = SIF_T2_RESET_REGEX.exec(name);
   const autoClearClipboardRegexTest = AUTO_CLEAR_CLIPBOARD_REGEX.exec(name);
 
   try {
-    if (passwordT2ResetRegexTest) {
-      const itemId = passwordT2ResetRegexTest[1];
-      await passwordT2Reset(itemId);
+    if (sifT2ResetRegexTest) {
+      const itemId = sifT2ResetRegexTest[1];
+      await sifT2Reset(itemId);
       return true;
     } else if (autoClearClipboardRegexTest) {
       const [, itemId, itemType] = autoClearClipboardRegexTest;
