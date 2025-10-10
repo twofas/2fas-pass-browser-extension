@@ -12,7 +12,7 @@ import { useEffect, useState, useRef, useCallback, useMemo, memo } from 'react';
 import getDomainFromTab from './functions/getDomainFromTab';
 import onMessage from './events/onMessage';
 import generateAllItemsList from './functions/generateAllItemsList';
-import generateMatchingLoginsList from './functions/generateMatchingLoginsList';
+import generateMatchingItemsList from './functions/generateMatchingItemsList';
 import URIMatcher from '@/partials/URIMatcher';
 import getItems from '@/partials/sessionStorage/getItems';
 import getTags from '@/partials/sessionStorage/getTags';
@@ -254,7 +254,7 @@ function ThisTab (props) {
   const searchClass = `${S.thisTabAllLoginsSearch} ${thisTabPopupState?.searchActive ? S.active : ''}`;
   const clearButtonClass = `${S.thisTabAllLoginsSearchClear} ${thisTabPopupState?.searchValue?.length <= 0 ? S.hidden : ''}`;
 
-  const memoizedMatchingLoginsList = useMemo(() => generateMatchingLoginsList(matchingLogins, loading), [matchingLogins, loading]);
+  const memoizedMatchingItemsList = useMemo(() => generateMatchingItemsList(matchingLogins, loading), [matchingLogins, loading]);
   const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag), [items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag]);
 
   useEffect(() => {
@@ -379,7 +379,7 @@ function ThisTab (props) {
 
                 <div className={S.thisTabMatchingLogins}>
                   <div className={matchingLoginsListClass}>
-                    {memoizedMatchingLoginsList}
+                    {memoizedMatchingItemsList}
                   </div>
 
                   <NoMatch
