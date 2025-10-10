@@ -30,7 +30,7 @@ const DangerZone = lazy(() => import('../components/DangerZone'));
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function Login (props) {
+function LoginDetailsView (props) {
   const data = usePopupStateStore(state => state.data);
   const [inputError, setInputError] = useState(undefined);
 
@@ -170,4 +170,4 @@ function Login (props) {
   );
 }
 
-export default Login;
+export default LoginDetailsView;
