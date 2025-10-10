@@ -43,7 +43,7 @@ const onContextMenuClick = async (info, tab) => {
       }
   
       case '2fas-pass-add-account': {
-        await openPopupWindowInNewWindow({ pathname: '/add-new' });
+        await openPopupWindowInNewWindow({ pathname: '/add-new/Login' });
         return true;
       }
   

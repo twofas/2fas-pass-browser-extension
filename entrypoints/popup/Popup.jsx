@@ -42,7 +42,7 @@ const emptyFunc = () => {};
 const routeConfig = [
   { path: '/connect', component: Connect },
   { path: '/', component: ThisTab, isProtectedRoute: true },
-  { path: '/add-new', component: AddNew, isProtectedRoute: true },
+  { path: '/add-new/:model', component: AddNew, isProtectedRoute: true },
   { path: '/settings', component: Settings, isProtectedRoute: false },
   { path: '/settings/about', component: SettingsAbout, isProtectedRoute: false },
   { path: '/settings/preferences', component: SettingsPreferences, isProtectedRoute: false },
