@@ -44,11 +44,11 @@ const sendPush = async (device, data = {}) => {
 
   const body = {
     deviceId: device.id,
-    scheme: config.scheme,
     data: {
       ...data,
       pkPersBe,
-      pkEpheBe
+      pkEpheBe,
+      scheme: String(config.scheme)
     }
   };
 
