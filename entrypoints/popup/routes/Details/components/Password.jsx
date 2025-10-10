@@ -15,8 +15,6 @@ import { copyValue } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect } from 'react';
 import usePopupStateStore from '../../../store/popupState';
-import getItem from '@/partials/sessionStorage/getItem';
-import Login from '@/partials/models/Login';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
@@ -53,9 +51,6 @@ function Password (props) {
   const { formData } = props;
   const { form } = formData;
 
-  // const { data, actions, generatorData } = props;
-  // const { service, passwordEditable, passwordVisible, passwordMobile, form } = data;
-  // const { setPasswordEditable, setPasswordVisible, setPasswordMobile, updateFormValues } = actions;
   const [passwordDecryptError, setPasswordDecryptError] = useState(false);
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
@@ -194,34 +189,14 @@ function Password (props) {
 
   const handleEditableClick = async () => {
     if (data?.passwordEditable) {
-      setData('passwordEditable', false);
-      // service.passwordEdited = null;
+      await decryptFormPassword();
 
-      if (data?.passwordVisible) {
-        // if (service.passwordEncrypted && service.passwordEncrypted.length > 0) {
-        //   try {
-        //     // @TODO: Fix this!
-        //     // const tempService = { ...service, password: service.passwordEncrypted };
-        //     // passwordValue = await decrypt_Password(tempService);
-        //   } catch (e) {
-        //     passwordValue = '******';
-        //     setPasswordDecryptError(true);
-        //     await CatchError(e);
-        //   }
-        // } else {
-        //   passwordValue = '';
-        // }
-      } else {
-        if (data.item.isT3orT2WithPassword) {
-          data.item.s_password = '******';
-          setData('item', data.item);
-        } else {
-          data.item.s_password = '';
-          setData('item', data.item);
-        }
+      if (!data?.passwordVisible) {
+        encryptFormPassword();
       }
 
-      form.change('s_password', data.item.s_password);
+      setData('passwordEdited', false);
+      setData('passwordEditable', false);
     } else {
       await decryptFormPassword();
       setData('passwordEditable', true);
@@ -229,27 +204,11 @@ function Password (props) {
   };
 
   const handlePasswordVisibleClick = async () => {
-    console.log('passwordEditable', data?.passwordEditable);
-    console.log('passwordVisible', data?.passwordVisible);
-
     if (data?.passwordEditable) {
-      if (data?.passwordVisible) {
-        if (data.item.s_password !== '******') {
-        //   const passwordFieldValue = form.getFieldState('password').value;
-        //   service.passwordEdited = passwordFieldValue;
-        }
-      } else {
-        if (data.item.s_password === '******') {
-          if (data?.passwordEdited && data?.passwordEdited.length > 0) {
-            // service.password = service.passwordEdited;
-            // form.change('password', service.passwordEdited);
-            // service.passwordEdited = null;
-          } else {
-            await decryptFormPassword();
-          }
-        }
-      }
+      // In edit mode: password is already decrypted for editing
+      // Just toggle visibility flag without encrypting/decrypting
     } else {
+      // In view mode: toggle between encrypted and decrypted
       if (data?.passwordVisible) {
         encryptFormPassword();
       } else {
@@ -296,7 +255,7 @@ function Password (props) {
                 showPassword={data?.passwordVisible}
                 isDecrypted={data.item.s_password !== '******'}
                 passwordDecryptError={passwordDecryptError}
-                className={passwordDecryptError || (!data?.passwordEditable && !data.item.isT3orT2WithPassword) ? pI.hiddenValue : ''}
+                state={passwordDecryptError || (!data?.passwordEditable && !data.item.isT3orT2WithPassword) ? 'hidden' : ''}
                 disabled={!data?.passwordEditable || data?.passwordMobile}
                 dir="ltr"
                 spellCheck="false"

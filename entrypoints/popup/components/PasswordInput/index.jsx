@@ -7,7 +7,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import S from './PasswordInput.module.scss';
 import usePopupStateStore from '../../store/popupState';
-import Login from '@/partials/models/Login';
 
 /**
  * PasswordInput component that displays each character with different colors
@@ -24,6 +23,7 @@ function PasswordInput (props) {
     isDecrypted = false,
     passwordDecryptError = false,
     id,
+    state = '',
     className = '',
     ...inputProps
   } = props;
@@ -56,12 +56,17 @@ function PasswordInput (props) {
       onChange(e);
     }
 
-    // setData('item', new Login({ ...data.item, s_password: e.target.value }, true));
+    if (!data?.passwordEdited) {
+      setData('passwordEdited', true);
+    }
+
+    data.item.s_password = e.target.value;
+    setData('item', data.item);
 
     setTimeout(() => {
       isTypingRef.current = false;
     }, 100);
-  }, [onChange]);
+  }, [onChange, data]);
   
   const handleKeyDown = useCallback((e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'a') {
@@ -250,8 +255,8 @@ function PasswordInput (props) {
           disabled={disabled}
           className={S.passwordInputHiddenInput}
         />
-        
-        <div ref={textWrapperRef} className={`${S.passwordInputTextWrapper} ${passwordDecryptError ? S.passwordInputHidden : ''}`}>
+
+        <div ref={textWrapperRef} className={`${S.passwordInputTextWrapper} ${passwordDecryptError || state === 'hidden' ? S.passwordInputHidden : ''}`}>
           {renderColoredText()}
           {isFocused && selection.start === selection.end ? (
             <span
