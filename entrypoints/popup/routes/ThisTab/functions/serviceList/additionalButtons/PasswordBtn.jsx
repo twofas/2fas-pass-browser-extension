@@ -35,7 +35,7 @@ const PasswordBtn = ({ login, more, setMore }) => {
       let alarmTime;
 
       try {
-        alarmTime = await browser.alarms.get(`passwordT2Reset-${login.id}`);
+        alarmTime = await browser.alarms.get(`sifT2Reset-${login.id}`);
       } catch {
         return false;
       }

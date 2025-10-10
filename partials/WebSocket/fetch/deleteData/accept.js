@@ -27,7 +27,7 @@ const deleteDataAccept = async (state, messageId) => {
     const item = items.find(item => item.id === state.data.itemId);
 
     if (item && item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await browser.alarms.clear(`passwordT2Reset-${state.data.itemId}`);
+      await browser.alarms.clear(`sifT2Reset-${state.data.itemId}`);
     }
 
     // Remove data from items
