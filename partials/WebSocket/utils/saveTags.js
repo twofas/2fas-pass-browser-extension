@@ -12,18 +12,16 @@ import Tag from '@/partials/models/Tag';
 /** 
 * Saves the tags in the session storage.
 * @async
-* @param {string} gzipInputData - The gzip input data to be saved.
+* @param {string} tagsData - The tags array to be saved.
+* @param {string} vaultId - The ID of the vault.
 * @param {string} deviceId - The device ID.
 * @return {boolean} Returns true if the tags are saved successfully, otherwise false.
 */
-const saveTags = async (gzipInputData, deviceId) => {
-  // @TODO: Add ifs for empty data etc.
-  const decompressedData = await decompress(Base64ToArrayBuffer(gzipInputData));
-  const decompressedJSON = JSON.parse(decompressedData);
-
+const saveTags = async (tagsData, vaultId, deviceId) => {
+  // @TODO: Add ifs for non array etc.
   const validTags = [];
 
-  for (const tagData of decompressedJSON) {
+  for (const tagData of tagsData) {
     try {
       const tag = new Tag(tagData);
       validTags.push(tag);
@@ -34,7 +32,7 @@ const saveTags = async (gzipInputData, deviceId) => {
   const gzipDataAB = await compress(jsonString);
   const gzipData = ArrayBufferToBase64(gzipDataAB);
 
-  const tagsKey = await getKey('tags', { deviceId });
+  const tagsKey = await getKey('tags', { vaultId, deviceId });
   await storage.setItem(`session:${tagsKey}`, gzipData);
 
   let storageVersion = await storage.getItem('session:storageVersion');

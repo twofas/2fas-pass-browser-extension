@@ -14,10 +14,11 @@ const SESSION_PREFIX = 'session:';
 /**
 * Gets the items keys for a device ID from session storage.
 * @async
+* @param {string} vaultId - The vault ID to look up.
 * @param {string} deviceId - The device ID to look up.
 * @return {string[]} The array of items keys for the device ID.
 */
-const getItemsKeys = async deviceId => {
+const getItemsKeys = async (vaultId, deviceId) => {
   const MAX_ITEMS = 10000;
   const BATCH_SIZE = 20;
 
@@ -31,7 +32,7 @@ const getItemsKeys = async deviceId => {
     throw new TwoFasError(TwoFasError.internalErrors.getItemsKeysNotDefined, { additional: { func: 'getItemsKeys' } });
   }
 
-  const keyGenerated = keyEnv + `_${deviceId}`;
+  const keyGenerated = `${keyEnv}_${vaultId}_${deviceId}`;
   let i = 0;
   const itemsKeys = [];
   let storageKeys;
@@ -52,7 +53,6 @@ const getItemsKeys = async deviceId => {
   }
 
   const storageKeysSet = new Set(storageKeys);
-
   const uuid = await getUUIDforDeviceId(deviceId);
 
   if (!uuid || !isText(uuid)) {
@@ -104,11 +104,13 @@ const getItemsKeys = async deviceId => {
       batchResults = await Promise.all(
         batchIndices.map(async index => {
           const sKey = keyGenerated + '_' + index;
+
           const keySigned = await crypto.subtle.sign(
             { name: 'HMAC' },
             cryptoKeyImported,
             StringToArrayBuffer(sKey)
           );
+
           return {
             index,
             keySignedB64: ArrayBufferToBase64(keySigned)

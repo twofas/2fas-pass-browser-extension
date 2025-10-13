@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 class Tag {
-  static contentType = 'tag';
   static contentVersion = 1;
 
   constructor (tagData) {

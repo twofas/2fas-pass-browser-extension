@@ -9,7 +9,7 @@ import handleChallengeAction from '@/partials/WebSocket/handleChallengeAction';
 import handleCloseSignalAction from '@/partials/WebSocket/handleCloseSignalAction';
 import handleInitTransfer from '@/partials/WebSocket/handleInitTransfer';
 import handleSendVaultData from '@/partials/WebSocket/handleSendVaultData';
-import processVaultData from '@/partials/WebSocket/processVaultData';
+import processVaultsData from '@/partials/WebSocket/processVaultsData';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import TwoFasWebSocket from '@/partials/WebSocket';
 
@@ -74,7 +74,7 @@ const ConnectOnMessage = async (json, data) => {
         eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(60 + (arrayWithoutUndefined.length / data.totalChunks) * 30));
   
         if (arrayWithoutUndefined.length === data.totalChunks) {
-          await processVaultData(json, data.sha256GzipVaultDataEnc, data.chunks, data.encryptionDataKey, data.hkdfSalt, data.sessionKeyForHKDF, data.deviceId);
+          await processVaultsData(json, data.sha256GzipVaultDataEnc, data.chunks, data.encryptionDataKey, data.hkdfSalt, data.sessionKeyForHKDF, data.deviceId);
           eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(100));
         }
   

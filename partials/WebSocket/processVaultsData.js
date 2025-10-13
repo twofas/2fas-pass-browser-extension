@@ -5,8 +5,8 @@
 // See LICENSE file for full terms
 
 import generateEncryptionAESKey from './utils/generateEncryptionAESKey';
-import saveItems from './utils/saveItems';
-import saveTags from './utils/saveTags';
+import saveVaults from './utils/saveVaults';
+import decompress from '../gzip/decompress';
 import getKey from '@/partials/sessionStorage/getKey';
 import checkChecksum from './utils/checkChecksum';
 import TwoFasWebSocket from '@/partials/WebSocket';
@@ -23,7 +23,7 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @param {string} deviceId - The ID of the device.
 * @return {Promise<void>}
 */
-const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES, hkdfSaltAB, sessionKeyForHKDF, deviceId) => {
+const processVaultsData = async (json, checksum, chunksData, encryptionDataKeyAES, hkdfSaltAB, sessionKeyForHKDF, deviceId) => {
   let encGzipVaultData, internalChecksumAB, encryptionPassKeyAES_B64;
 
   try {
@@ -54,16 +54,15 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
   await storage.setItem(`session:${itemKey}`, encryptionPassKeyAES_B64);
 
   try {
-    const vaultDataDec_AB = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: encGzipVaultDataBytes.iv }, encryptionDataKeyAES, encGzipVaultDataBytes.data);
-    const vaultDataDec = ArrayBufferToString(vaultDataDec_AB);
+    const vaultDataDecGZIP_AB = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: encGzipVaultDataBytes.iv }, encryptionDataKeyAES, encGzipVaultDataBytes.data);
+    const vaultDataDec = await decompress(vaultDataDecGZIP_AB);
     const vaultDataDecJSON = JSON.parse(vaultDataDec);
 
-    if (!vaultDataDecJSON || !vaultDataDecJSON.items) { // @TODO: Wrong for now, there should be vaults
+    if (!vaultDataDecJSON || !Array.isArray(vaultDataDecJSON)) {
       throw new Error('Invalid vault data format');
     }
 
-    await saveItems(vaultDataDecJSON.items, deviceId);
-    await saveTags(vaultDataDecJSON.tags, deviceId);
+    await saveVaults(vaultDataDecJSON, deviceId);
   } catch (e) {
     throw new TwoFasError(TwoFasError.errors.decryptVaultData, { event: e });
   }
@@ -76,4 +75,4 @@ const processVaultData = async (json, checksum, chunksData, encryptionDataKeyAES
   });
 };
 
-export default processVaultData;
+export default processVaultsData;
