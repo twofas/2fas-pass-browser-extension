@@ -41,35 +41,46 @@ const getItems = async (filter = []) => {
     return [];
   }
 
-  const devicesIds = devices.map(device => device?.id).filter(id => id);
+  const devicesData = devices.map(device => {
+    return {
+      deviceId: device?.id,
+      vaultsIds: device.vaults.map(vault => vault.id).filter(id => id) || [],
+    };
+  });
 
-  if (devicesIds.length === 0) {
+  if (devicesData.length === 0) {
     return [];
   }
 
-  // Process all devices in parallel
-  const devicePromises = devicesIds.map(async deviceId => {
-    try {
-      const itemsKeys = await getItemsKeys(deviceId);
+  // Process all devices and their vaults in parallel
+  const devicePromises = devicesData.map(async ({ deviceId, vaultsIds }) => {
+    // For each device, process all its vaults
+    const vaultPromises = vaultsIds.map(async vaultId => {
+      try {
+        const itemsKeys = await getItemsKeys(vaultId, deviceId);
 
-      if (!Array.isArray(itemsKeys) || itemsKeys.length === 0) {
+        if (!Array.isArray(itemsKeys) || itemsKeys.length === 0) {
+          return null;
+        }
+
+        const chunks = await storage.getItems(itemsKeys);
+
+        if (!Array.isArray(chunks) || chunks.length === 0) {
+          return null;
+        }
+
+        return chunks.map(chunk => chunk?.value).filter(Boolean).join('');
+      } catch (e) {
+        await CatchError(e);
         return null;
       }
+    });
 
-      const chunks = await storage.getItems(itemsKeys);
-
-      if (!Array.isArray(chunks) || chunks.length === 0) {
-        return null;
-      }
-
-      return chunks.map(chunk => chunk?.value).filter(Boolean).join('');
-    } catch (e) {
-      await CatchError(e);
-      return null;
-    }
+    return await Promise.all(vaultPromises);
   });
 
-  const itemsB64 = (await Promise.all(devicePromises)).filter(Boolean);
+  const vaultResults = await Promise.all(devicePromises);
+  const itemsB64 = vaultResults.flat().filter(Boolean);
 
   if (itemsB64.length === 0) {
     return [];
