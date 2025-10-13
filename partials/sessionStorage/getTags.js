@@ -27,29 +27,40 @@ const getTags = async () => {
     return [];
   }
 
-  const devicesIds = devices.map(device => device.id).filter(id => id);
-
-  // Process all devices in parallel
-  const devicePromises = devicesIds.map(async deviceId => {
-    try {
-      const tagsKey = await getKey('tags', { deviceId });
-      const tags = await storage.getItem(`session:${tagsKey}`);
-
-      return { deviceId, tags };
-    } catch (e) {
-      await CatchError(e);
-      return null;
-    }
+  const devicesData = devices.map(device => {
+    return {
+      deviceId: device?.id,
+      vaultsIds: device.vaults.map(vault => vault.id).filter(id => id) || [],
+    };
   });
 
-  const tagsB64 = (await Promise.all(devicePromises)).filter(Boolean);
+  // Process all devices and their vaults in parallel
+  const devicePromises = devicesData.map(async ({ deviceId, vaultsIds }) => {
+    // For each device, process all its vaults
+    const vaultPromises = vaultsIds.map(async vaultId => {
+      try {
+        const tagsKey = await getKey('tags', { vaultId, deviceId });
+        const tags = await storage.getItem(`session:${tagsKey}`);
+
+        return { deviceId, vaultId, tags };
+      } catch (e) {
+        await CatchError(e);
+        return null;
+      }
+    });
+
+    return await Promise.all(vaultPromises);
+  });
+
+  const vaultResults = await Promise.all(devicePromises);
+  const tagsB64 = vaultResults.flat().filter(Boolean);
 
   if (tagsB64.length === 0) {
     return [];
   }
 
   // Process decompression and parsing in parallel
-  const processPromises = tagsB64.map(async ({ deviceId, tags }) => {
+  const processPromises = tagsB64.map(async ({ deviceId, vaultId, tags }) => {
     try {
       const tagsDeviceGZIP = Base64ToArrayBuffer(tags);
       const tagsDeviceStr = await decompress(tagsDeviceGZIP);
@@ -57,6 +68,7 @@ const getTags = async () => {
 
       return json.map(item => {
         item.deviceId = deviceId;
+        item.vaultId = vaultId;
         return item;
       });
     } catch (e) {

@@ -33,12 +33,28 @@ const getKey = async (key, data) => {
 
   switch (key) {
     case 'items': {
+      if (data?.vaultId) {
+        keyGenerated += `_${data.vaultId}`;
+      }
+
       if (data?.deviceId) {
         keyGenerated += `_${data.deviceId}`;
       }
 
       if (typeof data?.chunkIndex !== 'undefined') {
         keyGenerated += `_${data.chunkIndex}`;
+      }
+
+      break;
+    }
+
+    case 'tags': {
+      if (data?.vaultId) {
+        keyGenerated += `_${data.vaultId}`;
+      }
+
+      if (data?.deviceId) {
+        keyGenerated += `_${data.deviceId}`;
       }
 
       break;
