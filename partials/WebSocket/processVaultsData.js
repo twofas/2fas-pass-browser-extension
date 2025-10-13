@@ -50,8 +50,8 @@ const processVaultsData = async (json, checksum, chunksData, encryptionDataKeyAE
     throw new TwoFasError(TwoFasError.errors.exportEncryptionPassKey, { event: e });
   }
 
-  const itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3.sK, { deviceId });
-  await storage.setItem(`session:${itemKey}`, encryptionPassKeyAES_B64);
+  const encryptionT3Key = await getKey(ENCRYPTION_KEYS.ITEM_T3.sK, { deviceId });
+  await storage.setItem(`session:${encryptionT3Key}`, encryptionPassKeyAES_B64);
 
   try {
     const vaultDataDecGZIP_AB = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: encGzipVaultDataBytes.iv }, encryptionDataKeyAES, encGzipVaultDataBytes.data);
