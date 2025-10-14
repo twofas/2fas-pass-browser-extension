@@ -22,7 +22,7 @@ import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import PasswordInput from '@/entrypoints/popup/components/PasswordInput';
-import { PULL_REQUEST_TYPES } from '@/constants';
+import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import Login from '@/partials/models/Login';
 
 const additionalVariants = {
@@ -152,13 +152,12 @@ function LoginAddNewView () {
       }
     };
 
-    // @TODO: actions as constant
     if (data?.onMobile) {
-      formData.content.username = { value: '', action: 'generate' };
-      formData.content.password = { value: '', action: 'generate' };
+      formData.content.username = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
+      formData.content.password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
     } else {
-      formData.content.username = { value: e.username ? valueToNFKD(e.username) : '', action: 'set' };
-      formData.content.password = { value: e.password ? valueToNFKD(e.password) : '', action: 'set' };
+      formData.content.username = { value: e.username ? valueToNFKD(e.username) : '', action: REQUEST_STRING_ACTIONS.SET };
+      formData.content.password = { value: e.password ? valueToNFKD(e.password) : '', action: REQUEST_STRING_ACTIONS.SET };
     }
 
     return navigate('/fetch', {
