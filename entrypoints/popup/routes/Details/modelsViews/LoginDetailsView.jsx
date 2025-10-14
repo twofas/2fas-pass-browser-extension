@@ -13,6 +13,7 @@ import getEditableAmount from '../functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import { valueToNFKD } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
+import Login from '@/partials/models/Login';
 
 import URIMatcher from '@/partials/URIMatcher';
 import { PULL_REQUEST_TYPES } from '@/constants';
@@ -34,98 +35,103 @@ function LoginDetailsView (props) {
   const data = usePopupStateStore(state => state.data);
   const [inputError, setInputError] = useState(undefined);
 
+  const navigate = useNavigate();
+
   const validate = values => {
-    // const errors = {};
+    const errors = {};
 
-    // if (!values.name || values.name?.length <= 0) {
-    //   errors.name = browser.i18n.getMessage('details_name_required');
-    // } else if (values.name?.length > 255) {
-    //   errors.name = browser.i18n.getMessage('details_name_max_length');
-    // } else if (values.username?.length > 255) {
-    //   errors.username = browser.i18n.getMessage('details_username_max_length');
-    // }
+    if (!values.name || values.name?.length <= 0) {
+      errors.name = browser.i18n.getMessage('details_name_required');
+    } else if (values.name?.length > 255) {
+      errors.name = browser.i18n.getMessage('details_name_max_length');
+    } else if (values.username?.length > 255) {
+      errors.username = browser.i18n.getMessage('details_username_max_length');
+    }
 
-    // values.uris.forEach((uri, index) => {
-    //   if (uri?.text?.length > 2048) {
-    //     errors[`uris[${index}]`] = browser.i18n.getMessage('details_uri_max_length');
-    //   }
-    // });
+    values.uris.forEach((uri, index) => {
+      if (uri?.text?.length > 2048) {
+        errors[`uris[${index}]`] = browser.i18n.getMessage('details_uri_max_length');
+      }
+    });
 
-    // const errorKeys = Object.keys(errors);
+    const errorKeys = Object.keys(errors);
 
-    // if (errorKeys.length > 0) {
-    //   showToast(errors[errorKeys[0]], 'error');
-    //   setInputError(errorKeys[0]);
-    //   return false;
-    // }
+    if (errorKeys.length > 0) {
+      showToast(errors[errorKeys[0]], 'error');
+      setInputError(errorKeys[0]);
+      return false;
+    }
 
-    // return true;
+    return true;
   };
 
   const onSubmit = async e => {
-    // setInputError(undefined);
+    setInputError(undefined);
 
-    // if (!validate(e)) {
-    //   return false;
-    // }
+    if (!validate(e)) {
+      return false;
+    }
 
-    // e.uris = e.uris.map(uri => {
-    //   return {
-    //     text: uri?.text ? valueToNFKD(uri.text) : '',
-    //     matcher: uri?.matcher
-    //   };
-    // });
+    e.uris = e.uris.map(uri => {
+      return {
+        text: uri?.text ? valueToNFKD(uri.text) : '',
+        matcher: uri?.matcher
+      };
+    });
 
-    // const stateData = {
-    //   itemId: service.id ? valueToNFKD(service.id) : null,
-    //   deviceId: service?.deviceId
-    // };
+    const stateData = {
+      contentType: Login.contentType,
+      deviceId: e.deviceId,
+      content: {
+        id: e.id,
+        vaultId: e.vaultId,
+        securityType: e.securityType
+      }
+    };
 
-    // stateData.securityType = e?.securityType !== undefined ? (typeof e.securityType === 'number' ? e.securityType : e.securityType?.value) : (originalService || service)?.securityType;
+    if (data.nameEditable) {
+      stateData.content.name = e.name ? valueToNFKD(e.name) : '';
+    }
 
-    // if (nameEditable) {
-    //   stateData.name = e.name ? valueToNFKD(e.name) : '';
-    // }
+    // @TODO: actions in constants
+    if (data.usernameEditable) {
+      if (data.usernameMobile) {
+        stateData.content.username = { value: '', action: 'generate'};
+      } else {
+        stateData.content.username = { value: e.username ? valueToNFKD(e.username) : '', action: 'set' };
+      }
+    }
 
-    // if (usernameEditable) {
-    //   if (usernameMobile) {
-    //     stateData.usernameMobile = true;
-    //   } else {
-    //     stateData.username = e.username ? valueToNFKD(e.username) : '';
-    //     stateData.usernameMobile = false;
-    //   }
-    // }
+    // @TODO: actions in constants
+    if (data.passwordEditable) {
+      if (data.passwordMobile) {
+        stateData.content.password = { value: '', action: 'generate'};
+      } else {
+        stateData.content.password = { value: e.s_password ? valueToNFKD(e.s_password) : '', action: 'set' }; // @TODO: s_password?
+      }
+    }
 
-    // if (passwordEditable) {
-    //   if (passwordMobile) {
-    //     stateData.passwordMobile = true;
-    //   } else {
-    //     stateData.password = e.password ? valueToNFKD(e.password) : '';
-    //     stateData.passwordMobile = false;
-    //   }
-    // }
+    if (data.notesEditable) {
+      stateData.content.notes = e.notes ? valueToNFKD(e.notes) : '';
+    }
 
-    // if (notesEditable) {
-    //   stateData.notes = e.notes ? valueToNFKD(e.notes) : '';
-    // }
-
-    // const hasUriChanges = domainsEditable.some(e => e) || e.uris?.some(uri => uri._tempId) || (service.uris?.length !== e.uris?.length);
+    const hasUriChanges = (data?.domainsEditable && Array.isArray(data?.domainsEditable) && data.domainsEditable.some(e => e)) || e.uris?.some(uri => uri.new);
     
-    // if (hasUriChanges) {
-    //   stateData.uris = e.uris;
-    // }
+    if (hasUriChanges) {
+      stateData.content.uris = e.uris;
+    }
 
-    // if (tagsEditable) {
-    //   stateData.tags = e.tags || [];
-    // }
+    if (data.tagsEditable) {
+      stateData.content.tags = e.tags || [];
+    }
 
-    // return navigate('/fetch', {
-    //   state: {
-    //     action: PULL_REQUEST_TYPES.UPDATE_DATA,
-    //     from: 'details',
-    //     data: stateData
-    //   }
-    // });
+    return navigate('/fetch', {
+      state: {
+        action: PULL_REQUEST_TYPES.UPDATE_DATA,
+        from: 'details',
+        data: stateData
+      }
+    });
   };
 
   return (

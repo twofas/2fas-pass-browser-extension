@@ -49,7 +49,9 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       data = {
         type: PULL_REQUEST_TYPES.SIF_REQUEST,
         data: {
-          itemId: state.data.itemId
+          vaultId: state.data.vaultId,
+          itemId: state.data.itemId,
+          contentType: state.data.contentType
         }
       };
 
@@ -64,7 +66,9 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       data = {
         type: PULL_REQUEST_TYPES.DELETE_DATA,
         data: {
-          itemId: state.data.itemId
+          vaultId: state.data.vaultId,
+          itemId: state.data.itemId,
+          contentType: state.data.contentType
         }
       };
 
@@ -105,7 +109,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
     }
 
     case PULL_REQUEST_TYPES.UPDATE_DATA: {
-      if (!state?.data || !state?.data?.itemId || (!state?.data?.securityType && !Number.isInteger(state?.data?.securityType))) { // FUTURE - Check if one of the update fields is existing
+      if (!state?.data || !state?.data?.content || !state?.data?.content?.id) { // FUTURE - Check if one of the update fields is existing
         throw new TwoFasError(TwoFasError.errors.updateLoginWrongData);
       }
 
@@ -157,6 +161,15 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           }
         };
       }
+
+      break;
+    }
+
+    case PULL_REQUEST_TYPES.FULL_SYNC: { // @TODO
+      data = {
+        type: PULL_REQUEST_TYPES.FULL_SYNC,
+        data: {}
+      };
 
       break;
     }
