@@ -12,8 +12,6 @@ import getKey from '@/partials/sessionStorage/getKey';
 */
 class Item {
   constructor (data, internal = false, vaultId = null, deviceId = null) {
-    console.log('Item constructor', { data, internal, vaultId, deviceId });
-
     validate(data && typeof data === 'object', 'Invalid item data');
     validate(isValidUUID(data.id), 'Invalid or missing id: must be a valid UUID');
 

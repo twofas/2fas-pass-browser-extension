@@ -23,6 +23,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import PasswordInput from '@/entrypoints/popup/components/PasswordInput';
 import { PULL_REQUEST_TYPES } from '@/constants';
+import Login from '@/partials/models/Login';
 
 const additionalVariants = {
   hidden: { maxHeight: '0px' },
@@ -142,18 +143,22 @@ function LoginAddNewView () {
 
   const onSubmit = async e => {
     const formData = {
-      url: e.url ? valueToNFKD(e.url) : '',
-      passwordMinLength: e['password-minlength'] ? valueToNFKD(e['password-minlength']) : null,
-      passwordMaxLength: e['password-maxlength'] ? valueToNFKD(e['password-maxlength']) : null,
-      passwordPattern: e['password-pattern'] ? valueToNFKD(e['password-pattern']) : null
+      contentType: Login.contentType,
+      content: {
+        url: e.url ? valueToNFKD(e.url) : '',
+        passwordMinLength: e['password-minlength'] ? valueToNFKD(e['password-minlength']) : null,
+        passwordMaxLength: e['password-maxlength'] ? valueToNFKD(e['password-maxlength']) : null,
+        passwordPattern: e['password-pattern'] ? valueToNFKD(e['password-pattern']) : null
+      }
     };
 
+    // @TODO: actions as constant
     if (data?.onMobile) {
-      formData.usernamePasswordMobile = true;
+      formData.content.username = { value: '', action: 'generate' };
+      formData.content.password = { value: '', action: 'generate' };
     } else {
-      formData.usernamePasswordMobile = false;
-      formData.username = e.username ? valueToNFKD(e.username) : '';
-      formData.password = e.password ? valueToNFKD(e.password) : '';
+      formData.content.username = { value: e.username ? valueToNFKD(e.username) : '', action: 'set' };
+      formData.content.password = { value: e.password ? valueToNFKD(e.password) : '', action: 'set' };
     }
 
     return navigate('/fetch', {

@@ -10,6 +10,7 @@ import { Link } from 'react-router';
 import { useEffect, useState, lazy } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
+import Login from '@/partials/models/Login';
 
 const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 const ServicePasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));
@@ -118,7 +119,12 @@ const PasswordBtn = ({ login, more, setMore }) => {
         state={{
           action: PULL_REQUEST_TYPES.SIF_REQUEST,
           from: 'service',
-          data: { itemId: login.id, deviceId: login.deviceId }
+          data: {
+            itemId: login.id,
+            deviceId: login.deviceId,
+            vaultId: login.vaultId,
+            contentType: Login.contentType
+          }
         }}
         onClick={() => { if (more) { setMore(false); } }}
         title={browser.i18n.getMessage('this_tab_fetch_password')}
