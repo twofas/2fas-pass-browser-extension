@@ -9,8 +9,6 @@ class Tag {
 
   constructor (tagData, vaultId, deviceId) {
     validate(tagData && typeof tagData === 'object', 'Invalid tag data');
-    validate(isValidUUID(vaultId), 'Invalid or missing vaultId: must be a valid UUID');
-    validate(isValidUUID(deviceId), 'Invalid or missing deviceId: must be a valid UUID');
 
     validate(isValidUUID(tagData.id), 'Invalid or missing id: must be a valid UUID');
     validate(isValidInteger(tagData.updatedAt), 'Invalid or missing updatedAt: must be an integer');
@@ -19,8 +17,6 @@ class Tag {
     validateOptional(tagData.color, isValidHexColor, 'Invalid tagData.color: must be a hex color string (3 or 6 characters)');
 
     this.id = tagData.id;
-    this.vaultId = vaultId;
-    this.deviceId = deviceId;
     this.updatedAt = tagData.updatedAt;
     this.name = tagData.name;
     this.position = tagData.position;
