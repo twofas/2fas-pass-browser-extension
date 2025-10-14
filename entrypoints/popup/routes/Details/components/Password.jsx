@@ -76,7 +76,7 @@ function Password (props) {
     };
     
     checkChangePasswordSupport();
-  }, [data.item?.normalizedUris]);
+  }, []);
 
   const handleCopyPassword = async () => {
     try {
