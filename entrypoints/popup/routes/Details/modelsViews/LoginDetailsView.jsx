@@ -6,17 +6,15 @@
 
 import S from '../Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { useParams, useNavigate, useLocation } from 'react-router';
-import { useState, useEffect, lazy, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router';
+import { useState, lazy } from 'react';
 import generateURLs from '../functions/generateURLs';
 import getEditableAmount from '../functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import { valueToNFKD } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
 import Login from '@/partials/models/Login';
-
-import URIMatcher from '@/partials/URIMatcher';
-import { PULL_REQUEST_TYPES } from '@/constants';
+import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 
 const Name = lazy(() => import('../components/Name'));
 const Username = lazy(() => import('../components/Username'));
@@ -93,21 +91,19 @@ function LoginDetailsView (props) {
       stateData.content.name = e.name ? valueToNFKD(e.name) : '';
     }
 
-    // @TODO: actions in constants
     if (data.usernameEditable) {
       if (data.usernameMobile) {
-        stateData.content.username = { value: '', action: 'generate'};
+        stateData.content.username = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       } else {
-        stateData.content.username = { value: e.username ? valueToNFKD(e.username) : '', action: 'set' };
+        stateData.content.username = { value: e.username ? valueToNFKD(e.username) : '', action: REQUEST_STRING_ACTIONS.SET };
       }
     }
 
-    // @TODO: actions in constants
     if (data.passwordEditable) {
       if (data.passwordMobile) {
-        stateData.content.password = { value: '', action: 'generate'};
+        stateData.content.password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       } else {
-        stateData.content.password = { value: e.s_password ? valueToNFKD(e.s_password) : '', action: 'set' }; // @TODO: s_password?
+        stateData.content.password = { value: e.s_password ? valueToNFKD(e.s_password) : '', action: REQUEST_STRING_ACTIONS.SET }; // @TODO: s_password?
       }
     }
 
