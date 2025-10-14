@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 import getKey from '@/partials/sessionStorage/getKey';
-import decompress from '@/partials/gzip/decompress';
 import compress from '@/partials/gzip/compress';
 import Tag from '@/partials/models/Tag';
 
@@ -23,7 +22,7 @@ const saveTags = async (tagsData, vaultId, deviceId) => {
 
   for (const tagData of tagsData) {
     try {
-      const tag = new Tag(tagData);
+      const tag = new Tag(tagData, vaultId, deviceId);
       validTags.push(tag);
     } catch {}
   }
