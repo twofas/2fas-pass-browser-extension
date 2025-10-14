@@ -15,7 +15,7 @@ import usePopupStateStore from '../store/popupState';
  * Excludes specific routes from tracking: /fetch, /fetch/*, /connect, /blocked
  * @return {string} Current pathname from the location
  */
-const useHref = () => {
+const usePopupHref = () => {
   const location = useLocation();
   const setHref = usePopupStateStore(state => state.setHref);
   const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
@@ -43,7 +43,6 @@ const useHref = () => {
 
       if (shouldResetData) {
         setScrollPosition(0);
-
         usePopupStateStore.setState({ data: {} });
       }
     }
@@ -52,4 +51,4 @@ const useHref = () => {
   return location.pathname;
 };
 
-export default useHref;
+export default usePopupHref;
