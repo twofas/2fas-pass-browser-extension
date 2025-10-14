@@ -16,8 +16,8 @@ class SecureNote extends Item {
 
   #s_text;
 
-  constructor (secureNoteData, internal = false) {
-    super(secureNoteData, internal);
+  constructor (secureNoteData, internal = false, vaultId = null, deviceId = null) {
+    super(secureNoteData, internal, vaultId, deviceId);
 
     const content = internal
       ? secureNoteData
