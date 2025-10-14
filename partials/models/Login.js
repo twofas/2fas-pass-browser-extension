@@ -57,6 +57,7 @@ export default class Login extends Item {
     validateOptional(content.customImageUrl, isValidString, 'Invalid content.customImageUrl: must be a string');
     validateOptional(content.notes, isValidString, 'Invalid content.notes: must be a string');
 
+    this.contentType = Login.contentType;
     this.name = content.name;
     this.username = content.username;
     this.uris = this.#urisWidthTempIds(content.uris) || [];
