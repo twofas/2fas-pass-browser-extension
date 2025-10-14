@@ -8,7 +8,7 @@ import getKey from '@/partials/sessionStorage/getKey';
 import shuffleArray from '@/partials/functions/shuffleArray';
 import setStorageChunkSize from './setStorageChunkSize';
 import compress from '@/partials/gzip/compress';
-import filterModel from '@/partials/models/filterModel';
+import mapModel from '@/partials/models/mapModel';
 
 /** 
 * Saves the items in chunks in the session storage.
@@ -20,7 +20,8 @@ import filterModel from '@/partials/models/filterModel';
 */
 const saveItems = async (itemsData, vaultId, deviceId) => {
   // @TODO: Add ifs for non array etc.
-  const correctData = itemsData.filter(filterModel);
+  const correctData = itemsData.map(item => mapModel(item, vaultId, deviceId)).filter(item => item).map(item => item.mobileFormat);
+  console.log(correctData);
 
   const jsonString = JSON.stringify(correctData);
   const gzipDataAB = await compress(jsonString);

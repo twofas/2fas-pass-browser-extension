@@ -18,10 +18,8 @@ export default class Login extends Item {
 
   #s_password;
 
-  constructor (loginData, internal = false) {
-    super (loginData, internal);
-
-    validate(isValidUUID(loginData.deviceId), 'Invalid or missing deviceId: must be a valid UUID');
+  constructor (loginData, internal = false, vaultId = null, deviceId = null) {
+    super (loginData, internal, vaultId, deviceId);
 
     const content = internal
       ? loginData
@@ -59,7 +57,6 @@ export default class Login extends Item {
     validateOptional(content.customImageUrl, isValidString, 'Invalid content.customImageUrl: must be a string');
     validateOptional(content.notes, isValidString, 'Invalid content.notes: must be a string');
 
-    this.deviceId = loginData.deviceId;
     this.name = content.name;
     this.username = content.username;
     this.uris = this.#urisWidthTempIds(content.uris) || [];
@@ -70,6 +67,7 @@ export default class Login extends Item {
     this.labelColor = content.labelColor ?? null;
     this.customImageUrl = content.customImageUrl ?? null;
     this.notes = content.notes ?? null;
+
     if (internal && content.s_password !== undefined && content.s_password !== '******' && !isValidBase64(content.s_password)) {
       this.s_password = content.s_password;
     } else {
@@ -228,11 +226,12 @@ export default class Login extends Item {
 
     return {
       id: this.id,
+      vaultId: this.vaultId,
+      deviceId: this.deviceId,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       securityType: this.securityType,
       tags: this.tags,
-      deviceId: this.deviceId,
       contentType: Login.contentType,
       contentVersion: Login.contentVersion,
       content
