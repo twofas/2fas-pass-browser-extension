@@ -50,7 +50,7 @@ export default defineConfig({
         },
         mangle: {
           eval: false,
-          keep_classnames: false,
+          keep_classnames: true,
           keep_fnames: false,
         },
         format: {
