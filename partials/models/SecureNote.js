@@ -27,6 +27,7 @@ class SecureNote extends Item {
     validateOptional(content.name, isValidString, 'Invalid content.name: must be a string');
     validateOptional(content.s_text, isValidBase64, 'Invalid content.s_text: must be a base64 string');
 
+    this.contentType = SecureNote.contentType;
     this.name = content.name;
     // Secure Input Fields
     this.#s_text = content.s_text;
