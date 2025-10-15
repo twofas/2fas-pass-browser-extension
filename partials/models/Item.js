@@ -91,6 +91,13 @@ class Item {
     return this.#calculateLuminance(r, g, b);
   }
 
+  /** 
+  * Decrypts the secure item field (sif) using the appropriate encryption key.
+  * @async
+  * @param {string} secureItemValue - The base64 encoded secure item field to decrypt.
+  * @return {Promise<string>} The decrypted secure item value.
+  * @throws Will throw an error if decryption fails at any step.
+  */
   async decryptSif (secureItemValue) {
     if (!secureItemValue || typeof secureItemValue !== 'string') {
       throw new Error('Invalid secure item field');
@@ -181,6 +188,22 @@ class Item {
     decryptedSifAB = null;
 
     return result;
+  }
+
+  /**
+  * Removes the secure item fields (sif) from the item instance.
+  * @throws Will throw an error if the item is not of Highly Secret security tier.
+  */
+  async removeSif () {
+    if (this.securityType !== SECURITY_TIER.HIGHLY_SECRET) {
+      throw new Error('Item is not of Highly Secret security tier');
+    }
+
+    const s_keys = Object.keys(this).filter(key => key.startsWith('s_'));
+
+    for (const key of s_keys) {
+      this[key] = null;
+    }
   }
 
   /** 
