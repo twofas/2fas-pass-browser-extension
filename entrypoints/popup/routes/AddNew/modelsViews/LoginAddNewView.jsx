@@ -174,7 +174,7 @@ function LoginAddNewView () {
   }
 
   return (
-    <Form onSubmit={onSubmit} initialValues={{ minLength: data?.minLength || '', maxLength: data?.maxLength || '', pattern: data?.pattern || '', url: data?.url || '', username: data?.username || '', password: data?.password || '' }} render={({ handleSubmit, form, submitting }) => (
+    <Form onSubmit={onSubmit} initialValues={data} render={({ handleSubmit, form, submitting }) => (
       <form onSubmit={handleSubmit}>
         <Field name="password-minlength" value={data?.minLength || ''}>
           {({ input }) => <input type="hidden" {...input} id="password-minlength" />}
@@ -324,8 +324,7 @@ function LoginAddNewView () {
                       to='/password-generator'
                       className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
                       title={browser.i18n.getMessage('add_new_generate_password')}
-                      state={{ from: 'addNew', data: { ...form.getState().values, onMobile: data?.onMobile, additionalOverflow: data?.additionalOverflow, passwordVisible: data?.passwordVisible } }}
-                      prefetch='intent'
+                      state={{ from: 'addNew', data }}
                     >
                       <RefreshIcon />
                     </Link>

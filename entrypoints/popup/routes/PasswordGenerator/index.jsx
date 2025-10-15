@@ -7,7 +7,7 @@
 import S from './PasswordGenerator.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { Form, Field } from 'react-final-form';
 import copyValue from '@/partials/functions/copyValue';
@@ -23,28 +23,31 @@ function PasswordGenerator (props) {
   const navigate = useNavigate();
 
   const data = usePopupStateStore(state => state.data);
+  const popupHref = usePopupStateStore(state => state.href);
   const setData = usePopupStateStore(state => state.setData);
 
   const scrollableRef = useRef(null);
+  const initialPasswordRef = useRef(null);
 
   useScrollPosition(scrollableRef);
 
   const generatePassword = (length, useUppercase, useNumbers, useSpecialChars) => {
     let charset = 'abcdefghijklmnopqrstuvwxyz';
 
-    if (useUppercase) {
+    if (useUppercase !== undefined ? useUppercase : true) {
       charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     }
 
-    if (useNumbers) {
+    if (useNumbers !== undefined ? useNumbers : true) {
       charset += '0123456789';
     }
 
-    if (useSpecialChars) {
+    if (useSpecialChars !== undefined ? useSpecialChars : true) {
       charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
     }
 
     let password = '';
+    length = length !== undefined ? length : 16;
 
     for (let i = 0; i < length; i++) {
       const randomIndex = Math.floor(Math.random() * charset.length);
@@ -54,128 +57,46 @@ function PasswordGenerator (props) {
     return password;
   };
 
-  const getInitialValue = (key, fallback) => {
-    const fromState = location?.state?.data?.[key];
-    const fromStore = data?.[key];
+  const regeneratePassword = (form, chars, uppercase, numbers, special) => {
+    const length = chars !== undefined ? chars : data.characters;
+    const useUppercase = uppercase !== undefined ? uppercase : data.includeUppercase;
+    const useNumbers = numbers !== undefined ? numbers : data.includeNumbers;
+    const useSpecial = special !== undefined ? special : data.includeSpecialChars;
+    let newPassword = generatePassword(length, useUppercase, useNumbers, useSpecial);
 
-    if (fromState !== undefined) {
-      return fromState;
-    }
+    initialPasswordRef.current = newPassword;
+    setData('password', newPassword);
+    form.change('password', newPassword);
 
-    if (fromStore !== undefined && fromStore !== null) {
-      return fromStore;
-    }
-
-    return fallback;
+    newPassword = null;
   };
 
-  const characters = getInitialValue('characters', 16);
-  const includeUppercase = getInitialValue('includeUppercase', true);
-  const includeNumbers = getInitialValue('includeNumbers', true);
-  const includeSpecialChars = getInitialValue('includeSpecialChars', true);
-
-  const initialPasswordRef = useRef(null);
-
-  const storedPassword = usePopupStateStore.getState().data?.generatedPassword;
-
-  const [initialPassword, setInitialPassword] = useState(() => {
-    if (initialPasswordRef.current) {
-      return initialPasswordRef.current;
-    }
-
-    const fromState = location?.state?.data?.generatedPassword;
-
-    if (fromState) {
-      initialPasswordRef.current = fromState;
-      return fromState;
-    }
-
-    if (storedPassword) {
-      initialPasswordRef.current = storedPassword;
-      return storedPassword;
-    }
-
-    return null;
-  });
+  if (!initialPasswordRef.current && !data.password) {
+    initialPasswordRef.current = generatePassword(
+      data.characters,
+      data.includeUppercase,
+      data.includeNumbers,
+      data.includeSpecialChars
+    );
+  }
 
   useEffect(() => {
-    if (!initialPassword && data?.generatedPassword) {
-      initialPasswordRef.current = data.generatedPassword;
-      setInitialPassword(data.generatedPassword);
-    } else if (!initialPassword && !data?.generatedPassword) {
-      const newPassword = generatePassword(characters, includeUppercase, includeNumbers, includeSpecialChars);
-      
-      initialPasswordRef.current = newPassword;
-      setInitialPassword(newPassword);
-
-      setData('generatedPassword', newPassword);
-    }
-  }, [data?.generatedPassword, characters, includeUppercase, includeNumbers, includeSpecialChars, setData]);
+    setData('navigationContext', location.state);
+  }, [location.state, setData, popupHref]);
 
   useEffect(() => {
-    if (initialPassword && initialPasswordRef.current === initialPassword) {
-      setData('generatedPassword', initialPassword);
+    if (initialPasswordRef.current && !data.password) {
+      setData('password', initialPasswordRef.current);
     }
-  }, [initialPassword, setData]);
+  }, [data.password, setData, popupHref]);
 
   const initialValues = {
-    password: initialPassword || '',
-    characters,
-    includeUppercase,
-    includeNumbers,
-    includeSpecialChars
+    characters: data.characters,
+    includeUppercase: data.includeUppercase,
+    includeNumbers: data.includeNumbers,
+    includeSpecialChars: data.includeSpecialChars,
+    password: data.password || initialPasswordRef.current
   };
-
-  useEffect(() => {
-    const handleNavigationContext = () => {
-      const currentState = location?.state;
-      const storedNavigationContext = data?.navigationContext;
-
-      if (
-        !currentState ||
-        !currentState?.from ||
-        !currentState?.data ||
-        (currentState?.from !== 'addNew' && currentState?.from !== 'details')
-      ) {
-        if (!storedNavigationContext?.from) {
-          const doesAnyHistoryEntryExist = location.key !== 'default';
-
-          if (doesAnyHistoryEntryExist) {
-            navigate(-1);
-          } else {
-            navigate('/');
-          }
-        }
-      } else {
-        const stateData = currentState.data;
-
-        if (stateData.characters !== undefined) {
-          setData('characters', stateData.characters);
-        }
-
-        if (stateData.includeUppercase !== undefined) {
-          setData('includeUppercase', stateData.includeUppercase);
-        }
-
-        if (stateData.includeNumbers !== undefined) {
-          setData('includeNumbers', stateData.includeNumbers);
-        }
-
-        if (stateData.includeSpecialChars !== undefined) {
-          setData('includeSpecialChars', stateData.includeSpecialChars);
-        }
-
-        const contextToSave = {
-          from: currentState.from,
-          data: stateData
-        };
-
-        setData('navigationContext', contextToSave);
-      }
-    };
-
-    handleNavigationContext();
-  }, [location.state, location.key, navigate, setData, data?.navigationContext]);
 
   const onSubmit = async values => {
     const currentState = location?.state;
@@ -188,22 +109,18 @@ function PasswordGenerator (props) {
       return;
     }
 
-    const from = navigationContext.from;
-    const contextData = navigationContext.data;
-    const submissionData = { ...contextData, password: values.password };
-
-    if (from === 'addNew') {
+    if (navigationContext.from === 'addNew') {
       return navigate(`/add-new/Login`, {
         state: {
           from: 'passwordGenerator',
-          data: submissionData
+          data: { ...navigationContext.data, password: values.password }
         }
       });
-    } else if (from === 'details' && contextData?.service?.id) {
-      return navigate(`/details/${contextData.service.id}`, {
+    } else if (navigationContext.from === 'details' && navigationContext.data?.item?.id) {
+      return navigate(`/details/${navigationContext.data.item.id}`, {
         state: {
           from: 'passwordGenerator',
-          data: { ...submissionData, formValues: { ...submissionData.formValues, password: values.password } }
+          data: { ...navigationContext.data, item: { ...navigationContext.data.item, s_password: values.password } }
         }
       });
     } else {
@@ -212,55 +129,18 @@ function PasswordGenerator (props) {
     }
   };
 
-  if (!initialPassword) {
-    return (
-      <div className={`${props.className ? props.className : ''}`}>
-        <div ref={scrollableRef}>
-          <section className={S.passwordGenerator}>
-            <div className={S.passwordGeneratorContainer}>
-              <NavigationButton type='back' />
-              <h2>{browser.i18n.getMessage('password_generator_title')}</h2>
-              <div style={{ padding: '20px', textAlign: 'center' }}>
-                {browser.i18n.getMessage('loading') || 'Loading...'}
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={`${props.className ? props.className : ''}`}>
       <div ref={scrollableRef}>
         <section className={S.passwordGenerator}>
           <div className={S.passwordGeneratorContainer}>
             <NavigationButton type='back' />
-
             <h2>{browser.i18n.getMessage('password_generator_title')}</h2>
 
             <Form
               onSubmit={onSubmit}
               initialValues={initialValues}
-              key={initialPassword || 'waiting'} // Force remount when password changes
-              render={({ handleSubmit, form, values }) => {
-                const regeneratePassword = async (overrides = {}) => {
-                  const currentValues = { ...values, ...overrides };
-
-                  const newPassword = generatePassword(
-                    currentValues.characters,
-                    currentValues.includeUppercase,
-                    currentValues.includeNumbers,
-                    currentValues.includeSpecialChars
-                  );
-
-                  form.change('password', newPassword);
-                  setInitialPassword(newPassword);
-                  setData('generatedPassword', newPassword);
-
-                  initialPasswordRef.current = newPassword;
-                };
-
+              render={({ handleSubmit, form }) => {
                 return (
                   <form onSubmit={handleSubmit} className={S.passwordGeneratorForm}>
                     <Field name='password'>
@@ -275,11 +155,12 @@ function PasswordGenerator (props) {
                               showPassword={true}
                               isDecrypted={true}
                               disabled={true}
+                              disabledColors={true}
                             />
                             <div className={pI.passInputBottomButtons}>
                               <button
                                 type='button'
-                                onClick={regeneratePassword}
+                                onClick={() => regeneratePassword(form)}
                                 className={bS.btnIcon}
                                 title={browser.i18n.getMessage('password_generator_regenerate')}
                               >
@@ -342,7 +223,7 @@ function PasswordGenerator (props) {
                                   const newValue = parseInt(e.target.value);
                                   input.onChange(e);
                                   setData('characters', newValue);
-                                  regeneratePassword({ characters: newValue });
+                                  regeneratePassword(form, newValue, undefined, undefined, undefined);
                                 }}
                               />
                             </>
@@ -366,7 +247,7 @@ function PasswordGenerator (props) {
                                     const newValue = e.target.checked;
                                     input.onChange(e);
                                     setData('includeUppercase', newValue);
-                                    regeneratePassword({ includeUppercase: newValue });
+                                    regeneratePassword(form, undefined, newValue, undefined, undefined);
                                   }}
                                 />
                                 <label htmlFor='include-uppercase'>
@@ -393,7 +274,7 @@ function PasswordGenerator (props) {
                                     const newValue = e.target.checked;
                                     input.onChange(e);
                                     setData('includeNumbers', newValue);
-                                    regeneratePassword({ includeNumbers: newValue });
+                                    regeneratePassword(form, undefined, undefined, newValue, undefined);
                                   }}
                                 />
                                 <label htmlFor='include-numbers'>
@@ -420,7 +301,7 @@ function PasswordGenerator (props) {
                                     const newValue = e.target.checked;
                                     input.onChange(e);
                                     setData('includeSpecialChars', newValue);
-                                    regeneratePassword({ includeSpecialChars: newValue });
+                                    regeneratePassword(form, undefined, undefined, undefined, newValue);
                                   }}
                                 />
                                 <label htmlFor='include-special-chars'>
