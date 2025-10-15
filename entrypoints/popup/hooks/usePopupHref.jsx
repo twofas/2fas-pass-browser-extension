@@ -8,6 +8,16 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router';
 import usePopupStateStore from '../store/popupState';
 
+const defaultData = {
+  '/password-generator': {
+    characters: 16,
+    includeLowercase: true,
+    includeUppercase: true,
+    includeNumbers: true,
+    includeSpecialChars: true
+  }
+};
+
 /**
  * Custom hook for tracking and storing current pathname in popup state.
  * Automatically updates the href in the store when the location changes.
@@ -43,7 +53,9 @@ const usePopupHref = () => {
 
       if (shouldResetData) {
         setScrollPosition(0);
-        usePopupStateStore.setState({ data: {} });
+
+        const defaultDataForPath = defaultData[pathname] || {};
+        usePopupStateStore.setState({ data: { ...defaultDataForPath } });
       }
     }
   }, [location.pathname, setHref, setScrollPosition]);

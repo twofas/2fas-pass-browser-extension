@@ -7,7 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { lazy, useCallback } from 'react';
+import { lazy } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { Link } from 'react-router';
@@ -268,15 +268,7 @@ function Password (props) {
                   to='/password-generator'
                   className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${passwordDecryptError || !data?.passwordEditable || data?.passwordMobile ? pI.hiddenButton : ''}`}
                   title={browser.i18n.getMessage('details_generate_password')}
-                  state={{
-                    from: 'details',
-                    data: {
-                      // formValues: { ...form.getState().values, securityType: form.getFieldState('securityType')?.value?.value || service.securityType },
-                      // generatorData: { ...generatorData, passwordEditable, passwordVisible, passwordMobile },
-                      // service
-                    }
-                  }}
-                  prefetch='intent'
+                  state={{ from: 'details', data }}
                 >
                   <RefreshIcon />
                 </Link>
