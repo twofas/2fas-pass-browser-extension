@@ -145,7 +145,12 @@
 }
 
 .progress {
+  align-items: center;
   border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 56px - 40px); // 56px - top, 40px - bottom
+  justify-content: center;
   overflow: hidden;
 
   &-container {
