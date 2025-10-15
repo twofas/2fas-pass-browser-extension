@@ -18,19 +18,18 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @return {Promise<void>} A promise that resolves when the sif forget is complete.
 */
 const sifT2Reset = async itemId => {
+  // @TODO: getItem here?
   // Get items
   const items = await getItems();
 
   // Update password
   const item = items.find(item => item.id === itemId);
-  const deviceId = item.deviceId;
-  delete item.password;
+  console.log(item);
+  const { vaultId, deviceId } = item;
+  item.removeSif();
 
   // Get itemsKeys
-  const itemsKeys = await getItemsKeys(deviceId);
-
-  // Compress items
-  const itemsGZIP = await compressObject(items);
+  const itemsKeys = await getItemsKeys(vaultId, deviceId);
 
   // Remove encryptionItemT2Key in session storage for this itemId & deviceId
   const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, itemId });
@@ -40,7 +39,7 @@ const sifT2Reset = async itemId => {
   await storage.removeItems(itemsKeys);
 
   // saveItems
-  await saveItems(itemsGZIP, deviceId);
+  await saveItems(items, vaultId, deviceId, true);
 };
 
 export default sifT2Reset;

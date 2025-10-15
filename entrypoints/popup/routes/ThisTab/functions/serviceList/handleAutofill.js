@@ -8,6 +8,7 @@ import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveT
 import getItem from '@/partials/sessionStorage/getItem';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { PULL_REQUEST_TYPES } from '@/constants';
+import Login from '@/partials/models/Login';
 
 const showT2Toast = () => {
   showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
@@ -115,8 +116,10 @@ const handleAutofill = async (id, navigate, more, setMore) => {
               data: {
                 itemId: item.id,
                 deviceId: item.deviceId,
+                vaultId: item.vaultId,
                 tabId: tab.id,
-                cryptoAvailable: cryptoAvailableRes.cryptoAvailable
+                cryptoAvailable: cryptoAvailableRes.cryptoAvailable,
+                contentType: Login.contentType
               }
             }
           }

@@ -20,9 +20,10 @@ const models = new Map(
  * @param {Object} itemData - The item data to check
  * @param {string} vaultId - The ID of the vault
  * @param {string} deviceId - The device ID
+ * @param {boolean} [internal=false] - Whether the mapping is for internal use
  * @returns {boolean} True if contentType and contentVersion match a model and validation passes, false otherwise
  */
-const mapModel = (itemData, vaultId, deviceId) => {
+const mapModel = (itemData, vaultId, deviceId, internal = false) => {
   if (!itemData?.contentType) {
     return false;
   }
@@ -38,7 +39,7 @@ const mapModel = (itemData, vaultId, deviceId) => {
   }
 
   try {
-    return new Model(itemData, false, vaultId, deviceId);
+    return new Model(itemData, internal, vaultId, deviceId);
   } catch (e) {
     console.error('Model validation error:', e);
     // @TODO: log error?

@@ -16,11 +16,16 @@ import mapModel from '@/partials/models/mapModel';
 * @param {string} itemsData - The items array to be saved.
 * @param {string} vaultId - The ID of the vault.
 * @param {string} deviceId - The device ID.
+* @param {boolean} [internal=false] - Whether the mapping is for internal use.
 * @return {boolean} Returns true if the items are saved successfully, otherwise false.
 */
-const saveItems = async (itemsData, vaultId, deviceId) => {
+const saveItems = async (itemsData, vaultId, deviceId, internal = false) => {
+  console.log('saveItems itemsData', itemsData);
+
   // @TODO: Add ifs for non array etc.
-  const correctData = itemsData.map(item => mapModel(item, vaultId, deviceId)).filter(item => item).map(item => item.mobileFormat);
+  const correctData = itemsData.map(item => mapModel(item, vaultId, deviceId, internal)).filter(item => item).map(item => item.mobileFormat);
+
+  console.log('saveItems correctData', correctData);
 
   const jsonString = JSON.stringify(correctData);
   const gzipDataAB = await compress(jsonString);
