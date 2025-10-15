@@ -6,7 +6,7 @@
 
 import S from './Details.module.scss';
 import { LazyMotion } from 'motion/react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, useLocation } from 'react-router';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import getItem from '@/partials/sessionStorage/getItem';
 import usePopupStateStore from '../../store/popupState';
@@ -26,6 +26,7 @@ const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => 
 * @return {JSX.Element} The rendered component.
 */
 function Details (props) {
+  const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
 
@@ -36,6 +37,7 @@ function Details (props) {
   const scrollableRef = useRef(null);
 
   const data = usePopupStateStore(state => state.data);
+  const popupHref = usePopupStateStore(state => state.popupHref);
   const setData = usePopupStateStore(state => state.setData);
 
   useScrollPosition(scrollableRef, loading);
@@ -44,9 +46,12 @@ function Details (props) {
     try {
       let item;
 
-      try {
-        item = new Login(data?.item, true);
-      } catch {
+      // @TODO Fix Here!
+      if (location.state?.data) {
+        item = new Login(location.state.data.item, true);
+      } else if (data?.item) {
+        item = new Login(data.item, true);
+      } else if (params.id) {
         item = await getItem(params.id);
       }
 
@@ -62,7 +67,7 @@ function Details (props) {
       CatchError(e);
       navigate('/');
     }
-  }, [params.id, navigate, setData]);
+  }, [params.id, navigate, setData, location.state, popupHref]);
 
   useEffect(() => {
     getData();
