@@ -7,7 +7,7 @@
 class Tag {
   static contentVersion = 1;
 
-  constructor (tagData, vaultId, deviceId) {
+  constructor (tagData, vaultId = null, deviceId = null) {
     validate(tagData && typeof tagData === 'object', 'Invalid tag data');
 
     validate(isValidUUID(tagData.id), 'Invalid or missing id: must be a valid UUID');

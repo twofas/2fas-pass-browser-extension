@@ -24,8 +24,8 @@ const saveVaults = async (vaultsData, deviceId) => {
   for (const vault of correctVaultsData) {
     vaultsStorageData.push({ id: vault.id, name: vault.name });
 
-    await saveItems(vault.items, vault.id, deviceId);
-    await saveTags(vault.tags, vault.id, deviceId);
+    await saveItems(vault.items, vault.id, deviceId, false);
+    await saveTags(vault.tags, vault.id, deviceId, false);
   }
 
   const devices = await storage.getItem('local:devices') || [];

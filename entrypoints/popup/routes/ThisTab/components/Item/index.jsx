@@ -10,8 +10,8 @@ import { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import toggleMenu from './functions/toggleMenu';
 
 // Models
-import Login from './models/Login';
-import SecureNote from './models/SecureNote';
+import LoginItemView from './modelsViews/LoginItemView';
+import SecureNoteItemView from './modelsViews/SecureNoteItemView';
 
 /** 
 * Function to render the item.
@@ -104,9 +104,9 @@ function Item (props) {
   };
 
   if (constructorName === 'Login' || props.loading) {
-    modelComponent = <Login {...props} {...modelData} />;
+    modelComponent = <LoginItemView {...props} {...modelData} />;
   } else if (constructorName === 'SecureNote') {
-    modelComponent = <SecureNote {...props} {...modelData} />;
+    modelComponent = <SecureNoteItemView {...props} {...modelData} />;
   } else {
     return null;
   }

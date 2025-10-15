@@ -7,7 +7,7 @@
 import S from '../../../ThisTab.module.scss';
 import handlePassword from '../handlePassword';
 import { Link } from 'react-router';
-import { useEffect, useState, lazy } from 'react';
+import { useEffect, useState, useRef, lazy } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import Login from '@/partials/models/Login';
@@ -17,7 +17,7 @@ const ServicePasswordIcon = lazy(() => import('@/assets/popup-window/service-pas
 
 const maxTime = config.passwordResetDelay * 60 * 1000;
 
-/** 
+/**
 * Function to render the password button.
 * @param {Object} props - The component props.
 * @param {Object} props.login - The login object.
@@ -26,13 +26,12 @@ const maxTime = config.passwordResetDelay * 60 * 1000;
 * @return {JSX.Element} The rendered button element.
 */
 const PasswordBtn = ({ login, more, setMore }) => {
-  const [loaderProgress, setLoaderProgress] = useState(0);
   const [scheduledTime, setScheduledTime] = useState(false);
-
-  let intervalId = 0;
+  const loaderRef = useRef(null);
+  const intervalIdRef = useRef(0);
 
   const getLoginAlarm = async () => {
-    if (login?.securityType === SECURITY_TIER.HIGHLY_SECRET && login?.password && login?.password?.length > 0) {
+    if (login?.securityType === SECURITY_TIER.HIGHLY_SECRET && login?.sifExists) {
       let alarmTime;
 
       try {
@@ -54,16 +53,18 @@ const PasswordBtn = ({ login, more, setMore }) => {
   };
 
   const updateProgress = () => {
-    if (!scheduledTime) {
+    if (!scheduledTime || !loaderRef.current) {
       return;
     }
 
     const leftTime = maxTime - (scheduledTime - Date.now());
     const percentTime = Math.round((leftTime / maxTime) * 100);
-    setLoaderProgress(getLoaderProgress(100 - percentTime));
+    const progress = getLoaderProgress(100 - percentTime);
+
+    loaderRef.current.style.strokeDashoffset = progress;
 
     if (percentTime >= 100) {
-      clearInterval(intervalId);
+      clearInterval(intervalIdRef.current);
     }
   };
 
@@ -73,14 +74,14 @@ const PasswordBtn = ({ login, more, setMore }) => {
         if (ok) {
           updateProgress();
 
-          intervalId = setInterval(() => {
+          intervalIdRef.current = setInterval(() => {
             updateProgress();
           }, 1000);
         }
       });
 
     return () => {
-      clearInterval(intervalId);
+      clearInterval(intervalIdRef.current);
     };
   }, [login, scheduledTime]);
 
@@ -93,7 +94,7 @@ const PasswordBtn = ({ login, more, setMore }) => {
         <ServicePasswordIcon className={S.servicePassword} />
       </button>
     );
-  } else if (login?.securityType === SECURITY_TIER.HIGHLY_SECRET && login?.password && login?.password?.length > 0) {
+  } else if (login?.securityType === SECURITY_TIER.HIGHLY_SECRET && login?.sifExists) {
     return (
       <button
         onClick={async () => await handlePassword(login.id, more, setMore)}
@@ -101,10 +102,10 @@ const PasswordBtn = ({ login, more, setMore }) => {
         className={S.servicePasswordLoader}
       >
         <svg
+          ref={loaderRef}
           className={S.serviceLoader}
           viewBox="0 0 96 96"
           xmlns="http://www.w3.org/2000/svg"
-          style={{ strokeDashoffset: loaderProgress }}
         >
           <circle cx="48" cy="48" r="42" className={S.serviceLoaderBg} />
           <circle cx="48" cy="48" r="42" />

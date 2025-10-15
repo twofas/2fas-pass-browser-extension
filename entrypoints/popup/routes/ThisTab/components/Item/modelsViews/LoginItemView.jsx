@@ -18,7 +18,7 @@ const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButt
 const UsernameBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/UsernameBtn'));
 const CustomOption = lazy(() => import('../components/CustomOption'));
 
-function Login (props) {
+function LoginItemView (props) {
   const [faviconError, setFaviconError] = useState(false);
   const navigate = useNavigate();
 
@@ -76,4 +76,4 @@ function Login (props) {
   );
 }
 
-export default memo(Login);
+export default memo(LoginItemView);

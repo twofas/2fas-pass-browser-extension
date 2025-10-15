@@ -58,6 +58,7 @@ export default class Login extends Item {
     validateOptional(content.notes, isValidString, 'Invalid content.notes: must be a string');
 
     this.contentType = Login.contentType;
+    this.contentVersion = Login.contentVersion;
     this.name = content.name;
     this.username = content.username;
     this.uris = this.#urisWidthTempIds(content.uris) || [];
