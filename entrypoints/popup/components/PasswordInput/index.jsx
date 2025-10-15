@@ -19,6 +19,7 @@ function PasswordInput (props) {
     value = '',
     onChange,
     disabled = false,
+    disabledColors = false,
     showPassword = false,
     isDecrypted = false,
     passwordDecryptError = false,
@@ -233,7 +234,7 @@ function PasswordInput (props) {
   };
   
   return (
-    <div className={`${S.passwordInput} ${className} ${disabled ? S.disabled : ''}`}>
+    <div className={`${S.passwordInput} ${className} ${disabled ? (disabledColors ? S.disabledColors : S.disabled) : ''}`}>
       <div 
         ref={displayRef}
         className={`${S.passwordInputDisplay} ${isFocused ? S.passwordInputDisplayFocused : ''}`}
