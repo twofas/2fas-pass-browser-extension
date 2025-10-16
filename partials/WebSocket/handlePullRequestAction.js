@@ -110,6 +110,7 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
         case PULL_REQUEST_STATUSES.ADDED: {
           closeData = await addDataAdded(
             data,
+            state,
             hkdfSaltAB,
             sessionKeyForHKDF,
             json.id

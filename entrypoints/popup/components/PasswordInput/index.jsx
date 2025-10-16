@@ -55,14 +55,14 @@ function PasswordInput (props) {
 
     if (onChange) {
       onChange(e);
-    }
+    } else {
+      if (!data?.passwordEdited) {
+        setData('passwordEdited', true);
+      }
 
-    if (!data?.passwordEdited) {
-      setData('passwordEdited', true);
+      data.item.s_password = e.target.value;
+      setData('item', data.item);
     }
-
-    data.item.s_password = e.target.value;
-    setData('item', data.item);
 
     setTimeout(() => {
       isTypingRef.current = false;
