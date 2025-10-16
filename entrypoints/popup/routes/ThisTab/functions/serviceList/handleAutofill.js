@@ -81,7 +81,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
   });
 
   const hasPassword = item.sifExists;
-  const hasUsername = item?.username && item.username.length > 0;
+  const hasUsername = item?.content.username && item.content.username.length > 0;
   let passwordDecrypt = true;
 
   if (isHighlySecret) {
@@ -196,7 +196,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
 
   const actionData = {
     action: REQUEST_ACTIONS.AUTOFILL,
-    username: item.username,
+    username: item.content.username,
     target: REQUEST_TARGETS.CONTENT,
     cryptoAvailable: cryptoAvailableRes.cryptoAvailable
   };

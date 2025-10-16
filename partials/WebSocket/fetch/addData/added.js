@@ -34,13 +34,11 @@ const newDataAdded = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageI
       getItemsKeys(data.dataObj.vaultId, state.deviceId)
     ]);
 
-    const newItems = items.map(item => item.mobileFormat);
-
     // Add new data to items
     const newData = Object.assign({}, data.dataObj);
     newData.internalType = 'added';
-    const newItem = new Login(newData, false, data.dataObj.vaultId, state.deviceId).mobileFormat;
-    newItems.push(newItem);
+    const newItem = new Login(newData, data.dataObj.vaultId, state.deviceId);
+    items.push(newItem);
 
     if (data.dataObj.securityType === SECURITY_TIER.SECRET) {
       // generate encryptionItemT3Key
@@ -68,7 +66,7 @@ const newDataAdded = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageI
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(newItems, data.dataObj.vaultId, state.deviceId, false);
+    await saveItems(items, data.dataObj.vaultId, state.deviceId);
 
     // Set alarm for reset T2 SIF
     if (data.dataObj.securityType === SECURITY_TIER.HIGHLY_SECRET) {

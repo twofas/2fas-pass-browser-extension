@@ -21,31 +21,31 @@ const Skeleton = lazy(() => import('../../components/Skeleton'));
 * @param {boolean} loading - Indicates if the icon is loading.
 * @return {JSX.Element} The generated icon element.
 */
-const generateIcon = (login, faviconError, setFaviconError, loading) => {
+const generateIcon = (item, faviconError, setFaviconError, loading) => {
   const handleFaviconError = () => { setFaviconError(true); };
 
   if (loading) {
     return <Skeleton type='icon' />;
-  } else if ((!login?.iconType && login?.iconType !== 0) || login?.iconType === 1 || faviconError) {
+  } else if ((!item?.content?.iconType && item?.content?.iconType !== 0) || item?.content?.iconType === 1 || faviconError) {
     // Label
     const style = {};
 
-    if (login?.labelColor && HEX_REGEX.test(login.labelColor)) {
-      style.backgroundColor = login.labelColor;
+    if (item?.content?.labelColor && HEX_REGEX.test(item?.content?.labelColor)) {
+      style.backgroundColor = item.content.labelColor;
     }
 
     return (
       <span className={S.iconLabel} style={style}>
-        <span style={{ color: login.textColor }}>{login?.labelText?.toUpperCase() || login?.name?.substring(0, 2).toUpperCase() || ''}</span>
+        <span style={{ color: item.content.textColor }}>{item?.content?.labelText?.toUpperCase() || item?.content?.name?.substring(0, 2).toUpperCase() || ''}</span>
       </span>
     );
-  } else if (login?.iconType === 0) {
+  } else if (item?.content?.iconType === 0) {
     // Default favicon
     let iconDomain = '';
-    const iconUriIndex = login?.iconUriIndex || 0;
+    const iconUriIndex = item?.content?.iconUriIndex || 0;
 
     try {
-      iconDomain = getDomain(login?.uris[iconUriIndex]?.text);
+      iconDomain = getDomain(item?.content?.uris[iconUriIndex]?.text);
     } catch {
       handleFaviconError();
     }
@@ -73,7 +73,7 @@ const generateIcon = (login, faviconError, setFaviconError, loading) => {
       <span className={S.iconImage}>
         <img
           src={imageUrl}
-          alt={login?.name}
+          alt={item?.content?.name}
           onError={handleFaviconError}
           onLoad={el => { el.target.style.opacity = 1; }}
           loading="lazy"
@@ -85,8 +85,8 @@ const generateIcon = (login, faviconError, setFaviconError, loading) => {
     return (
       <span className={S.iconImage}>
         <img
-          src={login?.customImageUrl}
-          alt={login?.name}
+          src={item?.content?.customImageUrl}
+          alt={item?.content?.name}
           onError={handleFaviconError}
           onLoad={el => { el.target.style.opacity = 1; }}
           loading="lazy"

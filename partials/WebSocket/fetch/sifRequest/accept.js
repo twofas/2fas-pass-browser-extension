@@ -83,7 +83,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
         tabId,
         {
           action: REQUEST_ACTIONS.AUTOFILL,
-          username: item.username,
+          username: item.content.username,
           password: encryptedValueB64,
           target: REQUEST_TARGETS.CONTENT,
           cryptoAvailable: state?.data?.cryptoAvailable
@@ -117,7 +117,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
 
     // Update password
     const item = items.find(item => item.id === state.data.itemId);
-    item.s_password = data.dataObj.s_password;
+    item.content.s_password = data.dataObj.s_password;
 
     // generate encryptionItemT2Key
     const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
@@ -132,7 +132,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(items, state.data.vaultId, state.data.deviceId, true);
+    await saveItems(items, state.data.vaultId, state.data.deviceId);
 
     // Set alarm for reset T2 SIF
     const sifResetTime = data.expireInSeconds && data.expireInSeconds > 30 ? data.expireInSeconds / 60 : config.passwordResetDelay;

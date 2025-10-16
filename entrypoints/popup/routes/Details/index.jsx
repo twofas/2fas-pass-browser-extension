@@ -46,9 +46,9 @@ function Details (props) {
 
       // @TODO Fix Here!
       if (location.state?.data) {
-        item = new Login(location.state.data.item, true);
+        item = new Login(location.state.data.item);
       } else if (data?.item) {
-        item = new Login(data.item, true);
+        item = new Login(data.item);
       } else if (params.id) {
         item = await getItem(params.id);
       }

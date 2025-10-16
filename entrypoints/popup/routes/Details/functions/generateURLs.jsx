@@ -32,7 +32,7 @@ const generateURLs = props => {
   const handleAddUri = async () => {
     const newUri = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true, _tempId: uuidv4() };
     const newUris = [...data.item.uris, newUri];
-    const updatedItem = new Login({ ...data.item, uris: newUris }, true);
+    const updatedItem = new Login({ ...data.item, uris: newUris });
 
     setData('item', updatedItem);
 
@@ -48,8 +48,8 @@ const generateURLs = props => {
   return (
     <>
       <AnimatePresence mode='popLayout'>
-        {data.item.uris.length > 0 ? (
-          data.item.uris.map((uri, index) => {
+        {data?.item?.content?.uris?.length > 0 ? (
+          data.item.content.uris.map((uri, index) => {
             const key = `uri-${data.item.id}-${index}-${storageVersion}`;
 
             return (
@@ -76,7 +76,7 @@ const generateURLs = props => {
           onClick={handleAddUri}
         >
           <AddIcon />
-          <span>{data.item.uris.length > 0 ? browser.i18n.getMessage('details_add_another_domain') : browser.i18n.getMessage('details_add_domain')}</span>
+          <span>{data?.item?.content?.uris?.length > 0 ? browser.i18n.getMessage('details_add_another_domain') : browser.i18n.getMessage('details_add_domain')}</span>
         </button>
       </div>
     </>

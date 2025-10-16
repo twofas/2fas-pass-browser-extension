@@ -17,6 +17,8 @@ import saveItems from '@/partials/WebSocket/utils/saveItems';
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
 const deleteDataAccept = async (state, messageId) => {
+  // @TODO: Change to v2!
+
   try {
     const [items, itemsKeys] = await Promise.all([
       getItems(),
@@ -33,17 +35,17 @@ const deleteDataAccept = async (state, messageId) => {
     // Remove data from items
     const itemsFiltered = items.filter(item => item.id !== state.data.itemId);
 
-    // MobileFormat
-    const itemsMobileFormat = itemsFiltered.map(item => item.mobileFormat);
+    // // MobileFormat
+    // const itemsMobileFormat = itemsFiltered.map(item => item.mobileFormat);
 
     // Compress items
-    const itemsGZIP = await compressObject(itemsMobileFormat);
+    const itemsGZIP = await compressObject(itemsFiltered);
 
     // Remove items from session storage (by itemsKeys)
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(itemsGZIP, state.data.deviceId);
+    // await saveItems(itemsGZIP, state.data.deviceId);
 
     // Send response
     await sendPullRequestCompleted(messageId);

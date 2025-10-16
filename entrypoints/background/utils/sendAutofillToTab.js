@@ -53,7 +53,7 @@ const sendAutofillToTab = async (tabId, itemId) => {
     noPassword = true;
   }
 
-  if (!item?.username || item?.username?.length <= 0) {
+  if (!item?.content?.username || item?.content?.username?.length <= 0) {
     noUsername = true;
   }
 
@@ -127,7 +127,7 @@ const sendAutofillToTab = async (tabId, itemId) => {
       tabId,
       {
         action: REQUEST_ACTIONS.AUTOFILL,
-        username: item.username,
+        username: item.content.username,
         password: encryptedValueB64,
         target: REQUEST_TARGETS.CONTENT,
         noPassword,

@@ -48,7 +48,7 @@ function Username (props) {
   const handleUsernameEditable = async () => {
     if (data.usernameEditable) {
       let item = await getItem(data.item.id);
-      let login = new Login({ ...data.item, username: item.username }, true);
+      let login = new Login({ ...data.item, content: { ...data.item.content, username: item.content.username } });
       item = null;
 
       setData('usernameEditable', false);
@@ -63,7 +63,7 @@ function Username (props) {
   const handleUsernameMobile = async () => {
     if (!data.usernameMobile) {
       let item = await getItem(data.item.id);
-      const login = new Login(item, true);
+      const login = new Login(item);
       item = null;
 
       setData('item', login);
@@ -74,13 +74,13 @@ function Username (props) {
 
   const handleUsernameChange = useCallback(e => {
     const newUsername = e.target.value;
-    const updatedItem = new Login({ ...data.item, username: newUsername }, true);
+    const updatedItem = new Login({ ...data.item, content: { ...data.item.content, username: newUsername } });
 
     setData('item', updatedItem);
   }, [data.item, setData]);
 
   return (
-    <Field name="username">
+    <Field name="content.username">
       {({ input }) => (
         <div className={`${pI.passInput} ${data.usernameEditable && !data.usernameMobile ? '' : pI.disabled} ${inputError === 'username' ? pI.error : ''}`}>
           <div className={pI.passInputTop}>
@@ -88,9 +88,10 @@ function Username (props) {
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
-              onClick={handleUsernameEditable}>
-                {data.usernameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
-              </button>
+              onClick={handleUsernameEditable}
+            >
+              {data.usernameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+            </button>
           </div>
           <div className={pI.passInputBottom}>
             <input
