@@ -67,7 +67,7 @@ const useScrollPosition = (scrollableRef, loading = false) => {
       scrollElement.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeout);
     };
-  }, [scrollableRef, saveScrollPosition]);
+  }, [scrollableRef, saveScrollPosition, loading]);
 
   useEffect(() => {
     if (!loading && !hasRestoredRef.current && scrollableRef?.current && scrollPosition !== undefined && storedHref === location.pathname) {
