@@ -40,8 +40,6 @@ function Details (props) {
   const popupHref = usePopupStateStore(state => state.popupHref);
   const setData = usePopupStateStore(state => state.setData);
 
-  useScrollPosition(scrollableRef, loading);
-
   const getData = useCallback(async () => {
     try {
       let item;
@@ -102,6 +100,8 @@ function Details (props) {
 
     return null;
   }, [loading, data?.item, props]);
+
+  useScrollPosition(scrollableRef, loading);
 
   if (loading || !modelComponent) {
     return null;
