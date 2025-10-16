@@ -82,7 +82,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         throw new TwoFasError(TwoFasError.errors.newLoginNoData);
       }
 
-      if (!state?.data?.password) {
+      if (!state?.data?.content?.password?.value || state?.data?.content?.password?.value.length === 0) {
         data = {
           type: PULL_REQUEST_TYPES.ADD_DATA,
           data: state.data
@@ -92,17 +92,16 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           generateNonce(),
           generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_NEW.crypto, sessionKeyForHKDF, true)
         ]);
-        const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassNewKeyAES, StringToArrayBuffer(state.data.password));
+        const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassNewKeyAES, StringToArrayBuffer(state.data.content.password.value));
         const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
         const passwordEncBytesB64 = ArrayBufferToBase64(passwordEncBytes);
 
-        delete state.data.password;
+        state.data.content.password.value = passwordEncBytesB64;
 
         data = {
           type: PULL_REQUEST_TYPES.ADD_DATA,
           data: {
-            ...state.data,
-            passwordEnc: passwordEncBytesB64
+            ...state.data
           }
         };
       }
