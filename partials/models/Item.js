@@ -47,6 +47,7 @@ class Item {
     this.updatedAt = data.updatedAt;
     this.securityType = data.securityType;
     this.tags = data.tags || [];
+    this.internalType = data.internalType || null;
   }
 
   /** 

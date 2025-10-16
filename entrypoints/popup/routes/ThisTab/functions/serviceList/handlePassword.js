@@ -17,11 +17,11 @@ import { copyValue } from '@/partials/functions';
 */
 const handlePassword = async (id, more, setMore) => {
   let item;
-
+  
   if (more) {
     setMore(false);
   }
-
+  
   try {
     item = await getItem(id);
   } catch (e) {
