@@ -236,7 +236,8 @@ export default class Login extends Item {
       tags: this.tags,
       contentType: Login.contentType,
       contentVersion: Login.contentVersion,
-      content
+      content,
+      internalType: this.internalType
     };
   }
 }
