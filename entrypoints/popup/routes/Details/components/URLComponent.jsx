@@ -56,12 +56,12 @@ function URLComponent (props) {
   const { inputError, uri, index } = props;
 
   const handleCopyUri = useCallback(async index => {
-    const uri = data.item.uris && data.item.uris[index] ? data.item.uris[index].text : '';
+    const uri = data?.item?.content?.uris && data?.item?.content?.uris?.[index] ? data.item.content.uris[index].text : '';
     await copyValue(uri, data.item.id, `uri-${index}`);
     showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
   }, [data.item]);
 
-  const isNew = data.item.uris && data.item.uris[index] && data.item.uris[index].new;
+  const isNew = data.item.content.uris && data.item.content.uris[index] && data.item.content.uris[index].new;
 
   const handleUriEditable = async () => {
     if (!data?.domainsEditable) {
@@ -75,16 +75,15 @@ function URLComponent (props) {
       setData('domainsEditable', oldDomainsEditable);
     } else {
       const item = await getItem(data.item.id);
+      const newUris = [...data.item.content.uris];
 
-      const newUris = [...data.item.uris];
-
-      if (item.uris && item.uris[index]) {
-        newUris[index] = item.uris[index];
+      if (item.content.uris && item.content.uris[index]) {
+        newUris[index] = item.content.uris[index];
       } else {
         newUris[index] = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE };
       }
 
-      const updatedItem = new Login({ ...data.item, uris: newUris }, true);
+      const updatedItem = new Login({ ...data.item, content: { ...data.item.content, uris: newUris } });
       setData('item', updatedItem);
       
       data.domainsEditable[uri._tempId] = false;
@@ -93,7 +92,7 @@ function URLComponent (props) {
   };
 
   const handleRemoveUri = () => {
-    const newUris = [...data.item.uris];
+    const newUris = [...data.item.content.uris];
     const removedUri = newUris.find(u => u._tempId === uri._tempId);
 
     if (!removedUri) {
@@ -108,9 +107,9 @@ function URLComponent (props) {
 
     const updatedItem = new Login({
       ...data.item,
-      uris: newUris,
-      iconUriIndex: data.item.iconUriIndex > 0 ? data.item.iconUriIndex - 1 : 0
-    }, true);
+      content: { ...data.item.content, uris: newUris },
+      iconUriIndex: data.item.content.iconUriIndex > 0 ? data.item.content.iconUriIndex - 1 : 0
+    });
 
     setData('item', updatedItem);
 
@@ -130,7 +129,7 @@ function URLComponent (props) {
 
   const handleUriChange = useCallback(e => {
     const newUri = e.target.value;
-    const newUris = [...data.item.uris];
+    const newUris = [...data.item.content.uris];
 
     const uriToUpdate = newUris.find(u => u._tempId === uri._tempId);
 
@@ -144,13 +143,13 @@ function URLComponent (props) {
       newUris[uriIndex] = { ...uriToUpdate, text: newUri };
     }
 
-    const updatedItem = new Login({ ...data.item, uris: newUris }, true);
+    const updatedItem = new Login({ ...data.item, content: { ...data.item.content, uris: newUris } });
     setData('item', updatedItem);
   });
 
   return (
     <LazyMotion features={loadDomAnimation}>
-      <Field name={`uris[${index}].text`}>
+      <Field name={`content.uris[${index}].text`}>
         {({ input }) => (
           <m.div
             className={`${pI.passInput} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}

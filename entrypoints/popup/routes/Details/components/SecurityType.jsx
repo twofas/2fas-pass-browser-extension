@@ -31,7 +31,7 @@ function SecurityType () {
   const handleTierEditable = async () => {
     if (data.tierEditable) {
       let item = await getItem(data.item.id);
-      let login = new Login({ ...data.item, securityType: item.securityType }, true);
+      let login = new Login({ ...data.item, securityType: item.securityType });
       item = null;
 
       setData('tierEditable', false);
@@ -45,7 +45,7 @@ function SecurityType () {
 
   const handleSelectChange = useCallback(selectedOption => {
     const newValue = selectedOption ? selectedOption.value : null;
-    const updatedItem = new Login({ ...data.item, securityType: newValue }, true);
+    const updatedItem = new Login({ ...data.item, securityType: newValue });
 
     setData('item', updatedItem);
   }, [data.item, setData]);

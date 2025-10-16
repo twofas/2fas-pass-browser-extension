@@ -39,7 +39,8 @@ function Name (props) {
   const handleNameEditable = async () => {
     if (data.nameEditable) {
       let item = await getItem(data.item.id);
-      let login = new Login({ ...data.item, name: item.name }, true);
+      let login = new Login({ ...data.item, content: { ...item.content, name: item.content.name } });
+
       item = null;
 
       setData('nameEditable', false);
@@ -53,13 +54,13 @@ function Name (props) {
 
   const handleNameChange = useCallback(e => {
     const newName = e.target.value;
-    const updatedItem = new Login({ ...data.item, name: newName }, true);
+    const updatedItem = new Login({ ...data.item, content: { ...data.item.content, name: newName } });
 
     setData('item', updatedItem);
   }, [data.item, setData]);
 
   return (
-    <Field name="name">
+    <Field name="content.name">
       {({ input }) => (
         <div className={`${pI.passInput} ${data.nameEditable ? '' : pI.disabled} ${inputError === 'name' ? pI.error : ''}`}>
           <div className={pI.passInputTop}>

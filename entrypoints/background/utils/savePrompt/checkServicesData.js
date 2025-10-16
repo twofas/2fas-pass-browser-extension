@@ -55,7 +55,7 @@ const checkServicesData = async (details, values) => {
   }
 
   // Check username if exists
-  const matchedItemsMatchedUsername = matchedItems.filter(item => item.username === decryptedValues.username);
+  const matchedItemsMatchedUsername = matchedItems.filter(item => item?.content?.username === decryptedValues.username);
 
   if (!matchedItemsMatchedUsername || matchedItemsMatchedUsername.length <= 0) {
     return { type: 'newService' };
