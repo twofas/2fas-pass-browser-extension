@@ -57,7 +57,7 @@ function Password (props) {
 
   useEffect(() => {
     const checkChangePasswordSupport = async () => {
-      if (!data.item?.normalizedUris || data.item.normalizedUris.length === 0) {
+      if (!data.item?.internalData?.normalizedUris || data?.item?.internalData?.normalizedUris?.length === 0) {
         setChangePasswordUrl(null);
         return;
       }
@@ -65,7 +65,7 @@ function Password (props) {
       setCheckingUrl(true);
 
       try {
-        const url = await findPasswordChangeUrl(data.item.normalizedUris);
+        const url = await findPasswordChangeUrl(data.item.internalData.normalizedUris);
         setChangePasswordUrl(url);
       } catch (e) {
         setChangePasswordUrl(null);
@@ -81,8 +81,7 @@ function Password (props) {
   const handleCopyPassword = async () => {
     try {
       let passwordToCopy;
-      
-      const currentPassword = data.item.s_password;
+      const currentPassword = data.item.content.s_password;
       
       if (currentPassword && currentPassword !== '******') {
         passwordToCopy = currentPassword;
@@ -161,7 +160,7 @@ function Password (props) {
     if (data.item.sifExists) {
       try {
         let decryptedData = await data.item.decryptSif();
-        data.item.s_password = decryptedData.password;
+        data.item.content.s_password = decryptedData.password;
 
         form.change('s_password', decryptedData.password);
 
@@ -175,14 +174,14 @@ function Password (props) {
         return;
       }
     } else {
-      data.item.s_password = '';
+      data.item.content.s_password = '';
       setData('item', data.item);
       form.change('s_password', '');
     }
   };
 
   const encryptFormPassword = () => {
-    data.item.s_password = '******';
+    data.content.item.s_password = '******';
     setData('item', data.item);
     form.change('s_password', '******');
   };
@@ -232,7 +231,7 @@ function Password (props) {
 
   return (
     <LazyMotion features={loadDomAnimation}>
-      <Field name="s_password">
+      <Field name="content.s_password">
         {({ input }) => (
           <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile ? pI.disabled : ''}`}>
             <div className={pI.passInputTop}>
@@ -253,7 +252,7 @@ function Password (props) {
                 placeholder={!data?.passwordMobile && data.item.isT3orT2WithPassword || data?.passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
                 id='s_password'
                 showPassword={data?.passwordVisible}
-                isDecrypted={data.item.s_password !== '******'}
+                isDecrypted={data.item.content.s_password !== '******'} // @TODO: Check?
                 passwordDecryptError={passwordDecryptError}
                 state={passwordDecryptError || (!data?.passwordEditable && !data.item.isT3orT2WithPassword) ? 'hidden' : ''}
                 disabled={!data?.passwordEditable || data?.passwordMobile}

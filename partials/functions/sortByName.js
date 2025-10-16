@@ -13,9 +13,9 @@
 const sortByName = (data, sort = false) => {
   return data.sort((a, b) => {
     if (sort) {
-      return a?.name?.toLowerCase() < b?.name?.toLowerCase() ? 1 : -1;
+      return a?.content?.name?.toLowerCase() < b?.content?.name?.toLowerCase() ? 1 : -1;
     } else {
-      return a?.name?.toLowerCase() > b?.name?.toLowerCase() ? 1 : -1;
+      return a?.content?.name?.toLowerCase() > b?.content?.name?.toLowerCase() ? 1 : -1;
     }
   });
 };

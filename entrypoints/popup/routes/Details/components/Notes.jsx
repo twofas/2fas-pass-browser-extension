@@ -32,7 +32,7 @@ function Notes () {
   const handleNotesEditable = async () => {
     if (data.notesEditable) {
       let item = await getItem(data.item.id);
-      let login = new Login({ ...data.item, notes: item?.notes || '' }, true);
+      let login = new Login({ ...data.item, notes: item?.content?.notes || '' });
       item = null;
 
       setData('item', login);
@@ -46,7 +46,7 @@ function Notes () {
 
   const handleNotesChange = useCallback(e => {
     const newNotes = e.target.value;
-    const updatedItem = new Login({ ...data.item, notes: newNotes }, true);
+    const updatedItem = new Login({ ...data.item, notes: newNotes });
 
     setData('item', updatedItem);
   }, [data.item, setData]);

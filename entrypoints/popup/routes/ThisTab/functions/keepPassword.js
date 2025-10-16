@@ -19,6 +19,8 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @return {Promise<void>} A promise that resolves when the password is kept.
 */
 const keepPassword = async state => {
+  // @TODO: Change to v2!
+
   // Get items
   const items = await getItems();
 
@@ -51,7 +53,7 @@ const keepPassword = async state => {
   await storage.removeItems(itemsKeys);
 
   // saveItems
-  await saveItems(itemsGZIP, state.deviceId);
+  // await saveItems(itemsGZIP, state.deviceId);
   
   // Set alarm for reset T2 SIF
   await browser.alarms.create(`sifT2Reset-${state.itemId}`, { delayInMinutes: config.passwordResetDelay }); // @TODO: Check this case

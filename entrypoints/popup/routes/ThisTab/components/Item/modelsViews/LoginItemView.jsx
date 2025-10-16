@@ -50,8 +50,8 @@ function LoginItemView (props) {
       >
         {generateIcon(props.data, faviconError, setFaviconError, props.loading)}
         <span>
-          {props.loading ? <Skeleton /> : <span>{props.data.name || browser.i18n.getMessage('no_item_name')}</span>}
-          {props.loading ? <Skeleton /> : (props?.login?.username && props?.login?.username?.length > 0 ? <span>{props.data.username}</span> : null)}
+          {props.loading ? <Skeleton /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton /> : (props?.data?.content?.username && props?.data?.content?.username?.length > 0 ? <span>{props.data.content.username}</span> : null)}
         </span>
       </button>
       <div className={S.servicesListItemAdditionalButtons}>

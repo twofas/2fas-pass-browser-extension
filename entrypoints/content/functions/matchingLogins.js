@@ -62,14 +62,14 @@ const action = (n, sendResponse, id, deviceId) => {
 const generateLabel = (item, itemIcon) => {
   let backgroundColor = '';
 
-  if (item?.labelColor && HEX_REGEX.test(item.labelColor)) {
-    backgroundColor = item.labelColor;
+  if (item?.content?.labelColor && HEX_REGEX.test(item?.content?.labelColor)) {
+    backgroundColor = item.content.labelColor;
   }
 
   itemIcon.classList.add('icon-label');
   itemIcon.setAttribute('style', `background: ${backgroundColor} !important;`);
-  const itemLabelText = createTextElement('span', item?.labelText?.toUpperCase() || item?.name?.substring(0, 2).toUpperCase() || '');
-  itemLabelText.style.color = item.textColor;
+  const itemLabelText = createTextElement('span', item?.content?.labelText?.toUpperCase() || item?.content?.name?.substring(0, 2).toUpperCase() || '');
+  itemLabelText.style.color = item.content.textColor;
   itemIcon.appendChild(itemLabelText);
 };
 
@@ -179,17 +179,17 @@ const matchingLogins = (request, sendResponse, container) => {
 
     const itemIcon = createElement('span', 'twofas-pass-notification-matching-logins-item-icon');
 
-    if ((!item?.iconType && item?.iconType !== 0) || item?.iconType === 1) {
+    if ((!item?.content?.iconType && item?.content?.iconType !== 0) || item?.content?.iconType === 1) {
       // Label
       generateLabel(item, itemIcon);
-    } else if (item?.iconType === 0) {
+    } else if (item?.content?.iconType === 0) {
       // Default favicon
       let iconDomain = '';
       let parsedDomain = null;
-      const iconUriIndex = item?.iconUriIndex || 0;
+      const iconUriIndex = item?.content?.iconUriIndex || 0;
 
       try {
-        iconDomain = getDomain(item?.uris[iconUriIndex]?.text);
+        iconDomain = getDomain(item?.content.uris[iconUriIndex]?.text);
 
         try {
           parsedDomain = parseDomain(iconDomain);
@@ -211,7 +211,7 @@ const matchingLogins = (request, sendResponse, container) => {
         itemIcon.classList.add('icon-image');
         const iconImage = createElement('img');
         iconImage.src = imageUrl;
-        iconImage.alt = item.name;
+        iconImage.alt = item.content.name;
         itemIcon.appendChild(iconImage);
 
         iconImage.onerror = () => {
@@ -226,8 +226,8 @@ const matchingLogins = (request, sendResponse, container) => {
       // Custom
       itemIcon.classList.add('icon-image');
       const iconImage = createElement('img');
-      iconImage.src = `https://custom-icon.2fas.com/?url=${item?.customImageUrl}`;
-      iconImage.alt = item.name;
+      iconImage.src = `https://custom-icon.2fas.com/?url=${item?.content?.customImageUrl}`;
+      iconImage.alt = item.content.name;
       itemIcon.appendChild(iconImage);
 
       iconImage.onerror = () => {
@@ -238,12 +238,12 @@ const matchingLogins = (request, sendResponse, container) => {
     }
 
     const itemAccount = createElement('span');
-    const itemAccountName = createTextElement('span', item.name || browser.i18n.getMessage('no_item_name'));
+    const itemAccountName = createTextElement('span', item.content.name || browser.i18n.getMessage('no_item_name'));
 
     let itemAccountUsername;
 
-    if (item?.username && item?.username.length > 0) {
-      itemAccountUsername = createTextElement('span', item.username);
+    if (item?.content?.username && item?.content?.username.length > 0) {
+      itemAccountUsername = createTextElement('span', item.content.username);
     }
 
     const itemSecondaryBtnText = (item.securityType === SECURITY_TIER.SECRET || item.t2WithPassword === true) ? browser.i18n.getMessage('autofill') : browser.i18n.getMessage('fetch');
