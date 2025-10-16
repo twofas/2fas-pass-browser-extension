@@ -23,6 +23,8 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
 const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
+  // @TODO: Change to v2!
+
   if (!data || !data?.login || !data?.login?.deviceId || !data?.login?.id) {
     throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginUpdatedWrongData);
   }
@@ -78,7 +80,7 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(itemsGZIP, data.login.deviceId);
+    // await saveItems(itemsGZIP, data.login.deviceId);
 
     // Set alarm for reset T2 SIF
     if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {

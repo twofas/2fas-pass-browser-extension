@@ -66,7 +66,7 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
 
   if (search && search.length > 0) {
     itemsData = itemsData.filter(item => {
-      const urisTexts = item.uris.map(uri => uri.text);
+      const urisTexts = item.content.uris.map(uri => uri.text);
       
       let tagNamesMatch = false;
       if (item?.tags && Array.isArray(item?.tags) && tags && Array.isArray(tags)) {
@@ -76,8 +76,8 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
         });
       }
 
-      return item?.name?.toLowerCase().includes(search?.toLowerCase()) ||
-        item?.username?.toLowerCase().includes(search?.toLowerCase()) ||
+      return item?.content?.name?.toLowerCase().includes(search?.toLowerCase()) ||
+        item?.content?.username?.toLowerCase().includes(search?.toLowerCase()) ||
           urisTexts.some(uriText => uriText?.toLowerCase().includes(search?.toLowerCase())) ||
         tagNamesMatch;
     });

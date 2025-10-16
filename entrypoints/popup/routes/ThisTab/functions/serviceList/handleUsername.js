@@ -37,7 +37,7 @@ const handleUsername = async (id, more, setMore) => {
   }
 
   try {
-    const { username } = item;
+    const { username } = item.content;
     await copyValue(username, item.id, 'username');
     showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
   } catch (e) {

@@ -36,7 +36,7 @@ const sifT2Reset = async itemId => {
   await storage.removeItems(itemsKeys);
 
   // saveItems
-  await saveItems(items, vaultId, deviceId, true);
+  await saveItems(items, vaultId, deviceId);
 };
 
 export default sifT2Reset;

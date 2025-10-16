@@ -17,6 +17,8 @@ import saveItems from '@/partials/WebSocket/utils/saveItems';
 * @return {Promise<Object>}  Object containing returnUrl and returnToast.
 */
 const updateDataAddedInT1 = async (state, messageId) => {
+  // @TODO: Change to v2!
+
   try {
     const [items, itemsKeys] = await Promise.all([
       getItems(),
@@ -40,7 +42,7 @@ const updateDataAddedInT1 = async (state, messageId) => {
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(itemsGZIP, state.data.deviceId);
+    // await saveItems(itemsGZIP, state.data.deviceId);
 
     // Send response
     await sendPullRequestCompleted(messageId);

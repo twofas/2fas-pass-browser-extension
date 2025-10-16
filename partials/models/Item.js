@@ -11,7 +11,7 @@ import getKey from '@/partials/sessionStorage/getKey';
 * Class representing an item.
 */
 class Item {
-  constructor (data, internal = false, vaultId = null, deviceId = null) {
+  constructor (data, vaultId = null, deviceId = null) {
     validate(data && typeof data === 'object', 'Invalid item data');
     validate(isValidUUID(data.id), 'Invalid or missing id: must be a valid UUID');
 
@@ -222,6 +222,19 @@ class Item {
     } else {
       return '#fff';
     }
+  }
+
+  toJSON () {
+    return {
+      id: this.id,
+      vaultId: this.vaultId,
+      deviceId: this.deviceId,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      securityType: this.securityType,
+      tags: this.tags,
+      internalType: this.internalType
+    };
   }
 }
 

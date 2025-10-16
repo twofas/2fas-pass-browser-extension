@@ -109,7 +109,7 @@ function Tags () {
   const handleTagsEditable = async () => {
     if (data.tagsEditable) {
       let item = await getItem(data.item.id);
-      let login = new Login({ ...data.item, tags: item.tags }, true);
+      let login = new Login({ ...data.item, tags: item.tags });
       item = null;
 
       setData('tagsEditable', false);
@@ -124,13 +124,13 @@ function Tags () {
 
   const handleRemoveTag = tagId => {
     const newTagIds = data.item.tags.filter(id => id !== tagId);
-    setData('item', new Login({ ...data.item, tags: newTagIds }, true));
+    setData('item', new Login({ ...data.item, tags: newTagIds }));
   };
 
   const handleSelectChange = option => {
     if (option && option.tag) {
       const newTagIds = [...data.item.tags, option.tag.id];
-      setData('item', new Login({ ...data.item, tags: newTagIds }, true));
+      setData('item', new Login({ ...data.item, tags: newTagIds }));
     }
 
     setIsMenuOpen(false);

@@ -16,22 +16,18 @@ class SecureNote extends Item {
 
   #s_text;
 
-  constructor (secureNoteData, internal = false, vaultId = null, deviceId = null) {
-    super(secureNoteData, internal, vaultId, deviceId);
+  constructor (secureNoteData, vaultId = null, deviceId = null) {
+    super(secureNoteData, vaultId, deviceId);
 
-    const content = internal
-      ? secureNoteData
-      : (secureNoteData?.content ? JSON.parse(secureNoteData.content) : null);
-
-    validate(content && typeof content === 'object', 'Invalid secureNote content data');
-    validateOptional(content.name, isValidString, 'Invalid content.name: must be a string');
-    validateOptional(content.s_text, isValidBase64, 'Invalid content.s_text: must be a base64 string');
+    validate(secureNoteData.content && typeof secureNoteData.content === 'object', 'Invalid secureNote content data');
+    validateOptional(secureNoteData.content.name, isValidString, 'Invalid content.name: must be a string');
+    validateOptional(secureNoteData.content.s_text, isValidBase64, 'Invalid content.s_text: must be a base64 string');
 
     this.contentType = SecureNote.contentType;
     this.contentVersion = SecureNote.contentVersion;
-    this.name = content.name;
+    this.name = secureNoteData.content.name;
     // Secure Input Fields
-    this.#s_text = content.s_text;
+    this.#s_text = secureNoteData.content.s_text;
   }
 
   get dropdownList () {

@@ -18,70 +18,74 @@ export default class Login extends Item {
 
   #s_password;
 
-  constructor (loginData, internal = false, vaultId = null, deviceId = null) {
-    super (loginData, internal, vaultId, deviceId);
+  constructor (loginData, vaultId = null, deviceId = null) {
+    super (loginData, vaultId, deviceId);
 
-    const content = internal
-      ? loginData
-      : (loginData?.content ? loginData.content : null);
+    validate(loginData.content && typeof loginData.content === 'object', 'Invalid login data');
 
-    validate(content && typeof content === 'object', 'Invalid login content data');
-    validate(isValidInteger(content.iconType, 0, 2), 'Invalid or missing content.iconType: must be an integer between 0 and 2');
+    validate(isValidInteger(loginData.content.iconType, 0, 2), 'Invalid or missing loginData.iconType: must be an integer between 0 and 2');
 
-    validateOptional(content.name, isValidString, 'Invalid content.name: must be a string');
-    validateOptional(content.username, isValidString, 'Invalid content.username: must be a string');
+    validateOptional(loginData.content.name, isValidString, 'Invalid loginData.content.name: must be a string');
+    validateOptional(loginData.content.username, isValidString, 'Invalid loginData.content.username: must be a string');
 
-    if (!internal) {
-      validateOptional(content.s_password, isValidBase64, 'Invalid content.s_password: must be a base64 string');
-    }
+    validateOptional(loginData.content.s_password, isValidBase64, 'Invalid loginData.content.s_password: must be a base64 string');
 
-    if (content.uris !== undefined) {
-      validate(Array.isArray(content.uris), 'Invalid content.uris: must be an array');
+    if (loginData.content.uris !== undefined) {
+      validate(Array.isArray(loginData.content.uris), 'Invalid loginData.content.uris: must be an array');
 
-      if (content.uris.length > 0) {
-        content.uris.forEach((uri, index) => {
-          validate(uri && typeof uri === 'object', `Invalid content.uris[${index}]: must be an object`);
-          validate(typeof uri.text === 'string', `Invalid content.uris[${index}].text: must be a string`);
-          validate(isValidInteger(uri.matcher, URIMatcher.M_DOMAIN_TYPE, URIMatcher.M_EXACT_TYPE), `Invalid content.uris[${index}].matcher: must be an integer`);
+      if (loginData.content.uris.length > 0) {
+        loginData.content.uris.forEach((uri, index) => {
+          validate(uri && typeof uri === 'object', `Invalid loginData.content.uris[${index}]: must be an object`);
+          validate(typeof uri.text === 'string', `Invalid loginData.content.uris[${index}].text: must be a string`);
+          validate(isValidInteger(uri.matcher, URIMatcher.M_DOMAIN_TYPE, URIMatcher.M_EXACT_TYPE), `Invalid loginData.content.uris[${index}].matcher: must be an integer`);
         });
       }
     }
 
-    if (content.iconUriIndex !== undefined && content.iconUriIndex !== null) {
-      const urisLength = content.uris?.length && content.uris.length > 0 ? content.uris.length : 1;
-      validate(isValidInteger(content.iconUriIndex, -1, urisLength - 1), `Invalid content.iconUriIndex: must be an integer between 0 and ${urisLength - 1}`);
+    if (loginData.content.iconUriIndex !== undefined && loginData.content.iconUriIndex !== null) {
+      const urisLength = loginData.content.uris?.length && loginData.content.uris.length > 0 ? loginData.content.uris.length : 1;
+      validate(isValidInteger(loginData.content.iconUriIndex, -1, urisLength - 1), `Invalid loginData.content.iconUriIndex: must be an integer between 0 and ${urisLength - 1}`);
     }
 
-    validateOptional(content.labelText, isValidString, 'Invalid content.labelText: must be a string');
-    validateOptional(content.labelColor, isValidHexColor, 'Invalid content.labelColor: must be a hex color string (3 or 6 characters)');
-    validateOptional(content.customImageUrl, isValidString, 'Invalid content.customImageUrl: must be a string');
-    validateOptional(content.notes, isValidString, 'Invalid content.notes: must be a string');
+    validateOptional(loginData.content.labelText, isValidString, 'Invalid loginData.content.labelText: must be a string');
+    validateOptional(loginData.content.labelColor, isValidHexColor, 'Invalid loginData.content.labelColor: must be a hex color string (3 or 6 characters)');
+    validateOptional(loginData.content.customImageUrl, isValidString, 'Invalid loginData.content.customImageUrl: must be a string');
+    validateOptional(loginData.content.notes, isValidString, 'Invalid loginData.content.notes: must be a string');
 
     this.contentType = Login.contentType;
     this.contentVersion = Login.contentVersion;
-    this.name = content.name;
-    this.username = content.username;
-    this.uris = this.#urisWidthTempIds(content.uris) || [];
-    this.normalizedUris = internal ? (this.#urisWidthTempIds(content.uris) || []) : (this.#normalizeUris(content.uris) || []);
-    this.iconType = content.iconType;
-    this.iconUriIndex = content.iconUriIndex ?? null;
-    this.labelText = content.labelText ?? null;
-    this.labelColor = content.labelColor ?? null;
-    this.customImageUrl = content.customImageUrl ?? null;
-    this.notes = content.notes ?? null;
+    this.content = {
+      name: loginData.content.name,
+      username: loginData.content.username,
+      uris: loginData.content.uris,
+      iconType: loginData.content.iconType,
+      iconUriIndex: loginData.content.iconUriIndex ?? null,
+      labelText: loginData.content.labelText ?? null,
+      labelColor: loginData.content.labelColor ?? null,
+      customImageUrl: loginData.content.customImageUrl ?? null,
+      notes: loginData.content.notes ?? null
+    };
 
-    if (internal && content.s_password !== undefined && content.s_password !== '******' && !isValidBase64(content.s_password)) {
-      this.s_password = content.s_password;
-    } else {
-      this.s_password = this.securityType === SECURITY_TIER.SECRET ? '******' : null;
-    }
+    this.internalData = {
+      urisWithTempIds: this.#urisWidthTempIds(loginData.content.uris) || [],
+      normalizedUris: this.#normalizeUris(loginData.content.uris) || []
+    };
 
-    // Secure Input Fields
-    if (content.s_password && isValidBase64(content.s_password)) {
-      this.#s_password = content.s_password;
-    } else {
-      this.#s_password = null;
-    }
+    this.#s_password = loginData.content.s_password || null;
+    this.s_password = '******';
+
+    // if (internal && content.s_password !== undefined && content.s_password !== '******' && !isValidBase64(content.s_password)) {
+    //   this.s_password = content.s_password;
+    // } else {
+    //   this.s_password = this.securityType === SECURITY_TIER.SECRET ? '******' : null;
+    // }
+
+    // // Secure Input Fields
+    // if (content.s_password && isValidBase64(content.s_password)) {
+    //   this.#s_password = content.s_password;
+    // } else {
+    //   this.#s_password = null;
+    // }
   }
 
   #normalizeUris (uris) {
@@ -125,10 +129,10 @@ export default class Login extends Item {
       dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_password'), id: this.id, type: 'forget' });
     }
 
-    if (this.normalizedUris && this.normalizedUris.length > 0) {
+    if (this.internalData.normalizedUris && this.internalData.normalizedUris.length > 0) {
       dO.push({ value: 'uris:', label: `${browser.i18n.getMessage('this_tab_more_uris')}`, type: 'urisHeader' });
 
-      this.normalizedUris.forEach(uri => {
+      this.internalData.normalizedUris.forEach(uri => {
         dO.push({ value: uri.text, label: uri.text, itemId: this.id });
       });
     }
@@ -150,7 +154,7 @@ export default class Login extends Item {
     const documentUrlPatterns = new Set();
 
     try {
-      const recognizedURIs = URIMatcher.recognizeURIs(this.normalizedUris);
+      const recognizedURIs = URIMatcher.recognizeURIs(this.internalData.normalizedUris);
 
       if (recognizedURIs?.urls && recognizedURIs?.urls.length > 0) {
         recognizedURIs.urls.forEach(uri => {
@@ -169,12 +173,12 @@ export default class Login extends Item {
 
     if (
       this.securityType === SECURITY_TIER.SECRET ||
-      (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.s_password && this.s_password !== '')
+      (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists)
     ) {
       return {
         id: `2fas-pass-autofill-${this.id}`,
         enabled: true,
-        title: `${browser.i18n.getMessage('autofill')} ${this.username || this.name}`,
+        title: `${browser.i18n.getMessage('autofill')} ${this.content.username || this.content.name}`,
         type: 'normal',
         visible: true,
         parentId: '2fas-pass-configured',
@@ -182,8 +186,8 @@ export default class Login extends Item {
         contexts
       };
     } else if (
-      this.securityType === SECURITY_TIER.HIGHLY_SECRET && !this.s_password ||
-      this.s_password?.length <= 0
+      this.securityType === SECURITY_TIER.HIGHLY_SECRET && !this.sifExists ||
+      !this.sifExists
     ) {
       return {
         id: `2fas-pass-fetch-${this.id}|${this.deviceId}`,
@@ -209,35 +213,15 @@ export default class Login extends Item {
       || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
   }
 
-  get mobileFormat () {
-    const content = {
-      name: this.name,
-      username: this.username,
-      s_password: this.#s_password,
-      uris: this.uris.map(uri => ({
-        text: uri.text,
-        matcher: uri.matcher
-      })),
-      iconType: this.iconType,
-      iconUriIndex: this.iconUriIndex,
-      labelText: this.labelText,
-      labelColor: this.labelColor,
-      customImageUrl: this.customImageUrl,
-      notes: this.notes
-    };
-
+  toJSON () {
     return {
-      id: this.id,
-      vaultId: this.vaultId,
-      deviceId: this.deviceId,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-      securityType: this.securityType,
-      tags: this.tags,
+      ...super.toJSON(),
       contentType: Login.contentType,
       contentVersion: Login.contentVersion,
-      content,
-      internalType: this.internalType
+      content: {
+        ...this.content,
+        s_password: this.#s_password
+      }
     };
   }
 }
