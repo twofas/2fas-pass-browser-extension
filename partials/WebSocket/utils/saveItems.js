@@ -20,12 +20,8 @@ import mapModel from '@/partials/models/mapModel';
 * @return {boolean} Returns true if the items are saved successfully, otherwise false.
 */
 const saveItems = async (itemsData, vaultId, deviceId, internal = false) => {
-  console.log('saveItems itemsData', itemsData);
-
   // @TODO: Add ifs for non array etc.
   const correctData = itemsData.map(item => mapModel(item, vaultId, deviceId, internal)).filter(item => item).map(item => item.mobileFormat);
-
-  console.log('saveItems correctData', correctData);
 
   const jsonString = JSON.stringify(correctData);
   const gzipDataAB = await compress(jsonString);

@@ -14,7 +14,6 @@ const ENCRYPTION_KEYS = {
     sK: 'item_key_t3'
   },
   ITEM_T3_NEW: {
-    crypto: 'ItemT3New',
     sK: 'item_key_t3_new'
   },
   ITEM_T2: {

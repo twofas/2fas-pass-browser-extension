@@ -9,7 +9,6 @@ import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
-import compressObject from '@/partials/gzip/compressObject';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
 import { ENCRYPTION_KEYS } from '@/constants';
 import Login from '@/partials/models/Login';
@@ -39,10 +38,7 @@ const newDataAdded = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageI
     const newItem = new Login({ ...data.dataObj, internalType: 'added' }, false, data.dataObj.vaultId, state.deviceId);
     items.push(newItem);
 
-    // // Compress items
-    // const itemsGZIP = await compressObject(items);
-
-    if (data.dataObj.content.securityType === SECURITY_TIER.SECRET) {
+    if (data.dataObj.securityType === SECURITY_TIER.SECRET) {
       // generate encryptionItemT3Key
       const encryptionItemT3Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T3.crypto, sessionKeyForHKDF, true);
       const encryptionItemT3KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT3Key);
@@ -51,7 +47,7 @@ const newDataAdded = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageI
       // save encryptionItemT3Key in session storage
       const itemT3Key = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { deviceId: state.deviceId, itemId: data.dataObj.id });
       await storage.setItem(`session:${itemT3Key}`, encryptionItemT3KeyAES_B64);
-    } else if (data.login.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+    } else if (data.dataObj.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       // generate encryptionItemT2Key
       const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
       const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
@@ -71,7 +67,7 @@ const newDataAdded = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageI
     await saveItems(items, data.dataObj.vaultId, state.deviceId, true);
 
     // Set alarm for reset T2 SIF
-    if (data.dataObj.content.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+    if (data.dataObj.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       const sifResetTime = data.expireInSeconds && data.expireInSeconds > 30 ? data.expireInSeconds / 60 : config.passwordResetDelay;
       await browser.alarms.create(`sifT2Reset-${data.dataObj.id}`, { delayInMinutes: sifResetTime });
     }
