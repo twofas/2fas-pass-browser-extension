@@ -13,7 +13,7 @@ import getDomainInfo from '../functions/getDomainInfo';
 import { useEffect, useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import onMessage from '../events/onMessage';
-import { valueToNFKD, copyValue } from '@/partials/functions';
+import { valueToNFKD, copyValue, getCurrentDevice } from '@/partials/functions';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
 import usePopupStateStore from '../../../store/popupState';
@@ -142,6 +142,15 @@ function LoginAddNewView () {
   };
 
   const onSubmit = async e => {
+    // FUTURE - change to select device
+    const device = await getCurrentDevice();
+
+    if (!device) {
+      return showToast(browser.i18n.getMessage('error_no_current_device'), 'error');
+    }
+
+    const deviceId = device.id;
+
     const formData = {
       contentType: Login.contentType,
       content: {
@@ -164,7 +173,8 @@ function LoginAddNewView () {
       state: {
         action: PULL_REQUEST_TYPES.ADD_DATA,
         from: 'add-new',
-        data: formData
+        data: formData,
+        deviceId
       }
     });
   };

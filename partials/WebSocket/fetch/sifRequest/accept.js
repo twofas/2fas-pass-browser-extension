@@ -25,8 +25,6 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @return {Promise<Object>} Object containing returnUrl and returnToast or action for autofill.
 */
 const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
-  console.log('sifRequestAccept');
-
   try {
     // Autofill from handleAutofill
     if (state?.from === 'autofill') {
