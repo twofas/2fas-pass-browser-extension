@@ -18,13 +18,11 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @return {Promise<void>} A promise that resolves when the sif forget is complete.
 */
 const sifT2Reset = async itemId => {
-  // @TODO: getItem here?
   // Get items
   const items = await getItems();
 
   // Update password
   const item = items.find(item => item.id === itemId);
-  console.log(item);
   const { vaultId, deviceId } = item;
   item.removeSif();
 

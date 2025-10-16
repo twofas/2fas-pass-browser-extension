@@ -6,7 +6,6 @@
 
 import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
-import compressObject from '@/partials/gzip/compressObject';
 import getKey from '@/partials/sessionStorage/getKey';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
 import { ENCRYPTION_KEYS } from '@/constants';
@@ -31,14 +30,11 @@ const handleForgetPassword = async (e, itemId, toggleMenu) => {
 
   // Update password
   const item = items.find(item => item.id === itemId);
-  const deviceId = item.deviceId;
-  delete item.password;
+  const { vaultId, deviceId } = item;
+  item.removeSif();
 
   // Get itemsKeys
-  const itemsKeys = await getItemsKeys(deviceId);
-
-  // Compress items
-  const itemsGZIP = await compressObject(items);
+  const itemsKeys = await getItemsKeys(vaultId, deviceId);
 
   // Remove encryptionItemT2Key in session storage for this itemId & deviceId
   const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, itemId });
@@ -48,7 +44,7 @@ const handleForgetPassword = async (e, itemId, toggleMenu) => {
   await storage.removeItems(itemsKeys);
 
   // saveItems
-  await saveItems(itemsGZIP, deviceId);
+  await saveItems(items, vaultId, deviceId, true);
 };
 
 export default handleForgetPassword;
