@@ -46,7 +46,7 @@ const updateDataUpdated = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mes
     item = data.login;
 
     if (data.login.securityType === SECURITY_TIER.SECRET) {
-      item.internalType = 'added';
+      item.internalData.type = 'added';
     }
 
     items[itemIndex] = item;

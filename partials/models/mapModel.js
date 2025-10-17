@@ -37,6 +37,10 @@ const mapModel = (itemData, vaultId, deviceId) => {
     return false;
   }
 
+  if (Model?.name === itemData?.constructor?.name) {
+    return itemData;
+  }
+
   try {
     return new Model(itemData, vaultId, deviceId);
   } catch (e) {

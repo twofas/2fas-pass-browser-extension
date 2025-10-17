@@ -117,7 +117,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
 
     // Update password
     const item = items.find(item => item.id === state.data.itemId);
-    item.content.s_password = data.dataObj.s_password;
+    item.setPassword(data.dataObj.s_password);
 
     // generate encryptionItemT2Key
     const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);

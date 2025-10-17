@@ -162,7 +162,7 @@ function Password (props) {
         let decryptedData = await data.item.decryptSif();
         data.item.content.s_password = decryptedData.password;
 
-        form.change('s_password', decryptedData.password);
+        form.change('content.s_password', decryptedData.password);
 
         setData('item', data.item);
         setPasswordDecryptError(false);
@@ -176,14 +176,14 @@ function Password (props) {
     } else {
       data.item.content.s_password = '';
       setData('item', data.item);
-      form.change('s_password', '');
+      form.change('content.s_password', '');
     }
   };
 
   const encryptFormPassword = () => {
-    data.content.item.s_password = '******';
+    data.item.content.s_password = '******';
     setData('item', data.item);
-    form.change('s_password', '******');
+    form.change('content.s_password', '******');
   };
 
   const handleEditableClick = async () => {

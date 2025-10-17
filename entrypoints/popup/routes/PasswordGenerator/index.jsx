@@ -120,7 +120,7 @@ function PasswordGenerator (props) {
       return navigate(`/details/${navigationContext.data.item.id}`, {
         state: {
           from: 'passwordGenerator',
-          data: { ...navigationContext.data, item: { ...navigationContext.data.item, s_password: values.password } }
+          data: { ...navigationContext.data, item: { ...navigationContext.data.item, content: { ...navigationContext.data.item.content, s_password: values.password } } }
         }
       });
     } else {
