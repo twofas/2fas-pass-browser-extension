@@ -40,14 +40,12 @@ class Item {
     validate(isValidInteger(data.securityType, 0, 2), 'Invalid or missing securityType: must be an integer between 0 and 2');
 
     validateOptional(data.tags, tags => isValidArray(tags, tag => isValidString(tag)), 'Invalid tags: must be an array of strings');
-    validateOptional(data.internalType, internalType => isValidString(internalType) && ['added'].includes(internalType), 'Invalid internalType: must be string with "added" value');
 
     this.id = data.id;
     this.createdAt = data.createdAt;
     this.updatedAt = data.updatedAt;
     this.securityType = data.securityType;
     this.tags = data.tags || [];
-    this.internalType = data.internalType || null;
   }
 
   /** 
@@ -99,7 +97,7 @@ class Item {
   * @return {Promise<string>} The decrypted secure item value.
   * @throws Will throw an error if decryption fails at any step.
   */
-  async decryptSif (secureItemValue) {
+  async decryptSif (secureItemValue, internalType = null) {
     if (!secureItemValue || typeof secureItemValue !== 'string') {
       throw new Error('Invalid secure item field');
     }
@@ -117,7 +115,7 @@ class Item {
 
     try {
       if (this.securityType === SECURITY_TIER.SECRET) {
-        if (this?.internalType && this?.internalType === 'added') {
+        if (internalType && internalType === 'added') {
           itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { itemId: this.id, deviceId: this.deviceId });
         } else {
           itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3.sK, { deviceId: this.deviceId });
@@ -191,22 +189,6 @@ class Item {
     return result;
   }
 
-  /**
-  * Removes the secure item fields (sif) from the item instance.
-  * @throws Will throw an error if the item is not of Highly Secret security tier.
-  */
-  async removeSif () {
-    if (this.securityType !== SECURITY_TIER.HIGHLY_SECRET) {
-      throw new Error('Item is not of Highly Secret security tier');
-    }
-
-    const s_keys = Object.keys(this).filter(key => key.startsWith('s_'));
-
-    for (const key of s_keys) {
-      this[key] = null;
-    }
-  }
-
   /** 
   * Gets the text color based on the item label color.
   * @return {string} The text color (black or white) based on the label color.
@@ -232,8 +214,7 @@ class Item {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       securityType: this.securityType,
-      tags: this.tags,
-      internalType: this.internalType
+      tags: this.tags
     };
   }
 }

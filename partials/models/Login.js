@@ -25,15 +25,15 @@ export default class Login extends Item {
 
     validate(isValidInteger(loginData.content.iconType, 0, 2), 'Invalid or missing loginData.iconType: must be an integer between 0 and 2');
 
-    validateOptional(loginData.content.name, isValidString, 'Invalid loginData.content.name: must be a string');
-    validateOptional(loginData.content.username, isValidString, 'Invalid loginData.content.username: must be a string');
+    validateOptional(loginData?.content?.name, isValidString, 'Invalid loginData.content.name: must be a string');
+    validateOptional(loginData?.content?.username, isValidString, 'Invalid loginData.content.username: must be a string');
 
-    validateOptional(loginData.content.s_password, isValidBase64, 'Invalid loginData.content.s_password: must be a base64 string');
+    validateOptional(loginData?.content?.s_password, isValidBase64, 'Invalid loginData.content.s_password: must be a base64 string');
 
-    if (loginData.content.uris !== undefined) {
+    if (loginData?.content?.uris !== undefined) {
       validate(Array.isArray(loginData.content.uris), 'Invalid loginData.content.uris: must be an array');
 
-      if (loginData.content.uris.length > 0) {
+      if (loginData?.content?.uris?.length > 0) {
         loginData.content.uris.forEach((uri, index) => {
           validate(uri && typeof uri === 'object', `Invalid loginData.content.uris[${index}]: must be an object`);
           validate(typeof uri.text === 'string', `Invalid loginData.content.uris[${index}].text: must be a string`);
@@ -42,15 +42,18 @@ export default class Login extends Item {
       }
     }
 
-    if (loginData.content.iconUriIndex !== undefined && loginData.content.iconUriIndex !== null) {
-      const urisLength = loginData.content.uris?.length && loginData.content.uris.length > 0 ? loginData.content.uris.length : 1;
+    if (loginData?.content?.iconUriIndex !== undefined && loginData?.content?.iconUriIndex !== null) {
+      const urisLength = loginData?.content?.uris?.length && loginData.content.uris.length > 0 ? loginData.content.uris.length : 1;
       validate(isValidInteger(loginData.content.iconUriIndex, -1, urisLength - 1), `Invalid loginData.content.iconUriIndex: must be an integer between 0 and ${urisLength - 1}`);
     }
 
-    validateOptional(loginData.content.labelText, isValidString, 'Invalid loginData.content.labelText: must be a string');
-    validateOptional(loginData.content.labelColor, isValidHexColor, 'Invalid loginData.content.labelColor: must be a hex color string (3 or 6 characters)');
-    validateOptional(loginData.content.customImageUrl, isValidString, 'Invalid loginData.content.customImageUrl: must be a string');
-    validateOptional(loginData.content.notes, isValidString, 'Invalid loginData.content.notes: must be a string');
+    validateOptional(loginData?.content?.labelText, isValidString, 'Invalid loginData.content.labelText: must be a string');
+    validateOptional(loginData?.content?.labelColor, isValidHexColor, 'Invalid loginData.content.labelColor: must be a hex color string (3 or 6 characters)');
+    validateOptional(loginData?.content?.customImageUrl, isValidString, 'Invalid loginData.content.customImageUrl: must be a string');
+    validateOptional(loginData?.content?.notes, isValidString, 'Invalid loginData.content.notes: must be a string');
+
+    validateOptional(loginData?.internalData, data => typeof data === 'object', 'Invalid loginData.internalData: must be an object');
+    validateOptional(loginData?.internalData?.type, isValidString, 'Invalid loginData.internalData.type: must be a string');
 
     this.contentType = Login.contentType;
     this.contentVersion = Login.contentVersion;
@@ -63,16 +66,17 @@ export default class Login extends Item {
       labelText: loginData.content.labelText ?? null,
       labelColor: loginData.content.labelColor ?? null,
       customImageUrl: loginData.content.customImageUrl ?? null,
-      notes: loginData.content.notes ?? null
+      notes: loginData.content.notes ?? null,
+      s_password: '******'
     };
 
     this.internalData = {
       urisWithTempIds: this.#urisWidthTempIds(loginData.content.uris) || [],
-      normalizedUris: this.#normalizeUris(loginData.content.uris) || []
+      normalizedUris: this.#normalizeUris(loginData.content.uris) || [],
+      type: loginData.internalData?.type || null
     };
 
     this.#s_password = loginData.content.s_password || null;
-    this.s_password = '******';
 
     // if (internal && content.s_password !== undefined && content.s_password !== '******' && !isValidBase64(content.s_password)) {
     //   this.s_password = content.s_password;
@@ -114,10 +118,23 @@ export default class Login extends Item {
     return uris;
   }
 
+  removeSif () {
+    if (this.securityType !== SECURITY_TIER.HIGHLY_SECRET) {
+      throw new Error('Item is not of Highly Secret security tier');
+    }
+
+    this.#s_password = null;
+  }
+
   async decryptSif () {
     return {
-      password: await super.decryptSif(this.#s_password)
+      password: await super.decryptSif(this.#s_password, this?.internalData?.type)
     };
+  }
+
+  setPassword (newPassword) {
+    // @TODO: Validate password?
+    this.#s_password = newPassword;
   }
 
   get dropdownList () {
@@ -221,6 +238,9 @@ export default class Login extends Item {
       content: {
         ...this.content,
         s_password: this.#s_password
+      },
+      internalData: {
+        type: this.internalData.type
       }
     };
   }
