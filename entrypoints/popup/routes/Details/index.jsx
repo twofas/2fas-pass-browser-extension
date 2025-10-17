@@ -68,12 +68,18 @@ function Details (props) {
     getData();
   }, [getData]);
 
-  const modelComponent = useMemo(() => {
+  const constructorName = useMemo(() => {
     if (loading) {
       return null;
     }
 
-    const constructorName = data?.item?.constructor?.name;
+    return data?.item?.constructor?.name;
+  }, [loading, data?.item]);
+
+  const modelComponent = useMemo(() => {
+    if (loading) {
+      return null;
+    }
 
     const modelData = {};
 
@@ -86,7 +92,7 @@ function Details (props) {
     }
 
     return null;
-  }, [loading, data?.item, props]);
+  }, [loading, constructorName, props]);
 
   useScrollPosition(scrollableRef, loading);
 
@@ -101,7 +107,7 @@ function Details (props) {
           <section className={S.details}>
             <div className={S.detailsContainer}>
               <NavigationButton type='cancel' />
-              <h2>{browser.i18n.getMessage('details_header')}</h2>
+              <h2>{constructorName} {browser.i18n.getMessage('details_header')}</h2>
               {modelComponent}
             </div>
           </section>
