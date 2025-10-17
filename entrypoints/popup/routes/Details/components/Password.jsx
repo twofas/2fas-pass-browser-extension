@@ -160,7 +160,7 @@ function Password (props) {
     if (data.item.sifExists) {
       try {
         let decryptedData = await data.item.decryptSif();
-        data.item.content.s_password = decryptedData.password;
+        data.item.setPasswordDecrypted(decryptedData.password);
 
         form.change('content.s_password', decryptedData.password);
 
@@ -174,14 +174,14 @@ function Password (props) {
         return;
       }
     } else {
-      data.item.content.s_password = '';
+      data.item.setPasswordDecrypted('');
       setData('item', data.item);
       form.change('content.s_password', '');
     }
   };
 
   const encryptFormPassword = () => {
-    data.item.content.s_password = '******';
+    data.item.removePasswordDecrypted();
     setData('item', data.item);
     form.change('content.s_password', '******');
   };
@@ -252,7 +252,7 @@ function Password (props) {
                 placeholder={!data?.passwordMobile && data.item.isT3orT2WithPassword || data?.passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
                 id='s_password'
                 showPassword={data?.passwordVisible}
-                isDecrypted={data.item.content.s_password !== '******'} // @TODO: Check?
+                isDecrypted={data.item.isPasswordDecrypted}
                 passwordDecryptError={passwordDecryptError}
                 state={passwordDecryptError || (!data?.passwordEditable && !data.item.isT3orT2WithPassword) ? 'hidden' : ''}
                 disabled={!data?.passwordEditable || data?.passwordMobile}
