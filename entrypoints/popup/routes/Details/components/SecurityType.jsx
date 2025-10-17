@@ -12,7 +12,6 @@ import Select from 'react-select';
 import CustomTierOption from './CustomTierOption';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import Login from '@/partials/models/Login';
 
 const securityTiersOptions = [
   { value: SECURITY_TIER.SECRET, label: browser.i18n.getMessage('tier_2_name'), description: browser.i18n.getMessage('tier_2_description') },
@@ -22,22 +21,24 @@ const securityTiersOptions = [
 
 /**
 * Function to render the security type selection field.
+* @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function SecurityType () {
+function SecurityType (props) {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+
+  const { formData } = props;
+  const { form } = formData;
 
   const handleTierEditable = async () => {
     if (data.tierEditable) {
       let item = await getItem(data.item.id);
-      let login = new Login({ ...data.item, securityType: item.securityType });
+      data.item.content.securityType = item.securityType;
       item = null;
 
       setData('tierEditable', false);
-      setData('item', login);
-
-      login = null;
+      setData('item', data.item);
     } else {
       setData('tierEditable', true);
     }
@@ -45,9 +46,11 @@ function SecurityType () {
 
   const handleSelectChange = useCallback(selectedOption => {
     const newValue = selectedOption ? selectedOption.value : null;
-    const updatedItem = new Login({ ...data.item, securityType: newValue });
+    console.log('Selected security tier:', newValue);
+    data.item.content.securityType = newValue;
 
-    setData('item', updatedItem);
+    setData('item', data.item);
+    form.change('securityType', newValue);
   }, [data.item, setData]);
 
   return (

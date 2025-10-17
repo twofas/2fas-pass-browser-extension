@@ -31,10 +31,10 @@ const generateURLs = props => {
 
   const handleAddUri = async () => {
     const newUri = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true, _tempId: uuidv4() };
-    const newUris = [...data.item.uris, newUri];
-    const updatedItem = new Login({ ...data.item, uris: newUris });
+    data.item.content.uris = data.item.content.uris || [];
+    data.item.content.uris.push(newUri);
 
-    setData('item', updatedItem);
+    setData('item', data.item);
 
     if (!data?.domainsEditable) {
       data.domainsEditable = {};
