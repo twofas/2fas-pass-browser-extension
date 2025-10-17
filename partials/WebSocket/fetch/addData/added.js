@@ -21,41 +21,43 @@ import Login from '@/partials/models/Login';
 * @param {string} messageId - The message ID.
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
-const newDataAdded = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
-  if (!data || !data?.dataObj || !data?.dataObj?.content) { // @TODO: improve this
+const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
+  console.log(info);
+
+  if (!info || !info?.data || !info?.data?.content) { // @TODO: improve this
     throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongData);
   }
 
   try {
     const [items, itemsKeys] = await Promise.all([
       getItems(),
-      getItemsKeys(data.dataObj.vaultId, state.deviceId)
+      getItemsKeys(info.data.vaultId, state.deviceId)
     ]);
 
     // Add new data to items
-    const newData = Object.assign({}, data.dataObj);
+    const newData = Object.assign({}, info.data);
     newData.internalData = newData.internalData || {};
     newData.internalData.type = 'added';
     const newItem = new Login(newData, newData.vaultId, state.deviceId);
     items.push(newItem);
 
-    if (data.dataObj.securityType === SECURITY_TIER.SECRET) {
+    if (info.data.securityType === SECURITY_TIER.SECRET) {
       // generate encryptionItemT3Key
       const encryptionItemT3Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T3.crypto, sessionKeyForHKDF, true);
       const encryptionItemT3KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT3Key);
       const encryptionItemT3KeyAES_B64 = ArrayBufferToBase64(encryptionItemT3KeyAESRaw);
 
       // save encryptionItemT3Key in session storage
-      const itemT3Key = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { deviceId: state.deviceId, itemId: data.dataObj.id });
+      const itemT3Key = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { deviceId: state.deviceId, itemId: info.data.id });
       await storage.setItem(`session:${itemT3Key}`, encryptionItemT3KeyAES_B64);
-    } else if (data.dataObj.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+    } else if (info.data.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       // generate encryptionItemT2Key
       const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
       const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
       const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
 
       // save encryptionItemT2Key in session storage
-      const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.deviceId, itemId: data.dataObj.id });
+      const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.deviceId, itemId: info.dataObj.id });
       await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
     } else {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongSecurityType);
@@ -65,12 +67,12 @@ const newDataAdded = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageI
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(items, data.dataObj.vaultId, state.deviceId);
+    await saveItems(items, info.data.vaultId, state.deviceId);
 
     // Set alarm for reset T2 SIF
-    if (data.dataObj.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+    if (info.data.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       const sifResetTime = data.expireInSeconds && data.expireInSeconds > 30 ? data.expireInSeconds / 60 : config.passwordResetDelay;
-      await browser.alarms.create(`sifT2Reset-${data.dataObj.id}`, { delayInMinutes: sifResetTime });
+      await browser.alarms.create(`sifT2Reset-${info.data.id}`, { delayInMinutes: sifResetTime });
     }
 
     // Send response
