@@ -27,7 +27,7 @@ const generateURLs = props => {
   const setData = usePopupStateStore(state => state.setData);
 
   const { formData } = props;
-  const { inputError, storageVersion } = formData;
+  const { inputError } = formData;
 
   const handleAddUri = async () => {
     const newUri = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true, _tempId: uuidv4() };
@@ -50,7 +50,7 @@ const generateURLs = props => {
       <AnimatePresence mode='popLayout'>
         {data?.item?.content?.uris?.length > 0 ? (
           data.item.content.uris.map((uri, index) => {
-            const key = `uri-${data.item.id}-${index}-${storageVersion}`;
+            const key = `uri-${data.item.id}-${index}`;
 
             return (
               <URLComponent
