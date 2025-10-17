@@ -24,7 +24,9 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @param {string} messageId - The message ID.
 * @return {Promise<Object>} Object containing returnUrl and returnToast or action for autofill.
 */
-const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
+const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
+  console.log('sifRequestAccept called', info);
+
   try {
     // Autofill from handleAutofill
     if (state?.from === 'autofill') {
@@ -35,7 +37,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
       const item = items.find(item => item.id === state.data.itemId);
 
       // Decrypt password
-      const password = data.dataObj.s_password;
+      const password = info.data.s_password;
       const tabId = state.data.tabId;
       
       const passwordAB = Base64ToArrayBuffer(password);
@@ -117,7 +119,7 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
 
     // Update password
     const item = items.find(item => item.id === state.data.itemId);
-    item.setPassword(data.dataObj.s_password);
+    item.setPassword(info.data.s_password);
 
     // generate encryptionItemT2Key
     const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
@@ -135,14 +137,16 @@ const sifRequestAccept = async (data, state, hkdfSaltAB, sessionKeyForHKDF, mess
     await saveItems(items, state.data.vaultId, state.data.deviceId);
 
     // Set alarm for reset T2 SIF
-    const sifResetTime = data.expireInSeconds && data.expireInSeconds > 30 ? data.expireInSeconds / 60 : config.passwordResetDelay;
+    const sifResetTime = info.expireInSeconds && info.expireInSeconds > 30 ? info.expireInSeconds / 60 : config.passwordResetDelay;
     await browser.alarms.create(`sifT2Reset-${state.data.itemId}`, { delayInMinutes: sifResetTime });
 
     // Send response
     await sendPullRequestCompleted(messageId);
 
+    const returnUrl = state.from === 'details' ? '/details/' + state.data.itemId : '/';
+
     return {
-      returnUrl: '/',
+      returnUrl,
       returnToast: {
         text: browser.i18n.getMessage('fetch_password_request_accept_toast'),
         type: 'success'

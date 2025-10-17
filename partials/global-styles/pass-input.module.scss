@@ -12,6 +12,7 @@
   flex-direction: column;
   gap: 12px 0;
   margin-bottom: 24px;
+  position: relative;
   width: 100%;
 
   &.disabled {
@@ -48,6 +49,36 @@
     .pass-input-bottom {
       overflow: auto;
       resize: vertical;
+    }
+  }
+
+  &.non-fetched {
+    cursor: pointer;
+
+    &:hover {
+      .pass-input-tooltip {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .pass-input-tooltip {
+      background-color: v.$card-bg-light;
+      border: 1px solid v.$card-stroke-light;
+      bottom: calc(100% + 11px);
+      border-radius: 6px;
+      opacity: 0;
+      padding: 16px;
+      position: absolute;
+      transform: translateY(11px);
+      transition: opacity .3s ease-in-out, transform .3s ease-in-out;
+      user-select: none;
+      z-index: 9999;
+
+      @include m.darkMode {
+        background-color: v.$card-bg-dark;
+        border-color: v.$card-stroke-dark;
+      }
     }
   }
 
