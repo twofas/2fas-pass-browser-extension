@@ -108,19 +108,14 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
     }
 
     case PULL_REQUEST_TYPES.UPDATE_DATA: {
-      if (!state?.data || !state?.data?.content || !state?.data?.content?.id) { // FUTURE - Check if one of the update fields is existing
+      if (!state?.data || !state?.data?.content || !state?.data?.itemId) { // FUTURE - Check if one of the update fields is existing
         throw new TwoFasError(TwoFasError.errors.updateLoginWrongData);
       }
 
-      if (!state?.data?.password && (state?.data?.password !== '')) {
+      if (!state?.data?.content?.password?.value || state?.data?.content?.password?.value === '') {
         const stateData = structuredClone(state.data);
+        delete stateData?.deviceId;
         
-        delete stateData?.password;
-        delete stateData.deviceId;
-
-        stateData.id = stateData.itemId;
-        delete stateData.itemId;
-
         data = {
           type: PULL_REQUEST_TYPES.UPDATE_DATA,
           data: {
@@ -128,37 +123,38 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           }
         };
       } else {
-        const keyName = state.data.securityType === SECURITY_TIER.HIGHLY_SECRET ? ENCRYPTION_KEYS.ITEM_T2.crypto : state.data.securityType === SECURITY_TIER.SECRET ? ENCRYPTION_KEYS.ITEM_T3.crypto : null;
+        // // @TODO: USE OLD SECURITY TYPE TO SELECT KEY
+        // const keyName = state.data.securityType === SECURITY_TIER.HIGHLY_SECRET ? ENCRYPTION_KEYS.ITEM_T2.crypto : state.data.securityType === SECURITY_TIER.SECRET ? ENCRYPTION_KEYS.ITEM_T3.crypto : null;
 
-        if (!keyName) {
-          throw new TwoFasError(TwoFasError.errors.updateLoginWrongSecurityType);
-        }
+        // if (!keyName) {
+        //   throw new TwoFasError(TwoFasError.errors.updateLoginWrongSecurityType);
+        // }
 
-        const [nonceP, encryptionPassTierKeyAES] = await Promise.all([
-          generateNonce(),
-          generateEncryptionAESKey(hkdfSaltAB, keyName, sessionKeyForHKDF, true)
-        ]);
+        // const [nonceP, encryptionPassTierKeyAES] = await Promise.all([
+        //   generateNonce(),
+        //   generateEncryptionAESKey(hkdfSaltAB, keyName, sessionKeyForHKDF, true)
+        // ]);
 
-        const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassTierKeyAES, StringToArrayBuffer(state.data.password));
-        const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
-        const passwordEncBytesB64 = ArrayBufferToBase64(passwordEncBytes);
+        // const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassTierKeyAES, StringToArrayBuffer(state.data.password));
+        // const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
+        // const passwordEncBytesB64 = ArrayBufferToBase64(passwordEncBytes);
 
-        const stateData = structuredClone(state.data);
-        delete stateData?.deviceId;
+        // const stateData = structuredClone(state.data);
+        // delete stateData?.deviceId;
         
-        stateData.id = stateData.itemId;
-        delete stateData?.itemId;
+        // stateData.id = stateData.itemId;
+        // delete stateData?.itemId;
         
-        stateData.passwordEnc = passwordEncBytesB64;
-        delete state?.data?.password;
-        delete stateData?.password;
+        // stateData.passwordEnc = passwordEncBytesB64;
+        // delete state?.data?.password;
+        // delete stateData?.password;
 
-        data = {
-          type: PULL_REQUEST_TYPES.UPDATE_DATA,
-          data: {
-            ...stateData
-          }
-        };
+        // data = {
+        //   type: PULL_REQUEST_TYPES.UPDATE_DATA,
+        //   data: {
+        //     ...stateData
+        //   }
+        // };
       }
 
       break;
@@ -177,6 +173,8 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       throw new TwoFasError(TwoFasError.errors.pullRequestWrongAction);
     }
   }
+
+  console.log('Pull request data:', data);
 
   const dataEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceD.ArrayBuffer }, encryptionDataKeyAES, StringToArrayBuffer(JSON.stringify(data)));
   const encryptedBytes = EncryptBytes(nonceD.ArrayBuffer, dataEnc);

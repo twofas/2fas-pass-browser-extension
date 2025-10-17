@@ -17,6 +17,7 @@ export default class Login extends Item {
   static contentVersion = 1;
 
   #s_password;
+  #s_passwordDecrypted;
 
   constructor (loginData, vaultId = null, deviceId = null) {
     if (loginData.constructor.name === Login.name) {
@@ -81,6 +82,7 @@ export default class Login extends Item {
     };
 
     this.#s_password = loginData.content.s_password || null;
+    this.#s_passwordDecrypted = null;
 
     // if (internal && content.s_password !== undefined && content.s_password !== '******' && !isValidBase64(content.s_password)) {
     //   this.s_password = content.s_password;
@@ -139,6 +141,18 @@ export default class Login extends Item {
   setPassword (newPassword) {
     // @TODO: Validate password?
     this.#s_password = newPassword;
+  }
+
+  setPasswordDecrypted (decryptedPassword) {
+    this.#s_passwordDecrypted = decryptedPassword;
+  }
+
+  removePasswordDecrypted () {
+    this.#s_passwordDecrypted = null;
+  }
+
+  get isPasswordDecrypted () {
+    return this.#s_passwordDecrypted !== null;
   }
 
   get dropdownList () {
