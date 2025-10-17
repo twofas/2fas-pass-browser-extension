@@ -15,7 +15,6 @@ import getTags from '@/partials/sessionStorage/getTags';
 import Select from 'react-select';
 import usePopupStateStore from '../../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import Login from '@/partials/models/Login';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CloseIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
@@ -53,9 +52,12 @@ const getTagName = (tagID, availableTags) => {
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function Tags () {
+function Tags (props) {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+
+  const { formData } = props;
+  const { form } = formData;
   
   const [availableTags, setAvailableTags] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -109,14 +111,12 @@ function Tags () {
   const handleTagsEditable = async () => {
     if (data.tagsEditable) {
       let item = await getItem(data.item.id);
-      let login = new Login({ ...data.item, tags: item.tags });
+      data.item.tags = item.tags;
       item = null;
 
       setData('tagsEditable', false);
-      setData('item', login);
+      setData('item', data.item);
       setIsMenuOpen(false);
-
-      login = null;
     } else {
       setData('tagsEditable', true);
     }
@@ -124,13 +124,18 @@ function Tags () {
 
   const handleRemoveTag = tagId => {
     const newTagIds = data.item.tags.filter(id => id !== tagId);
-    setData('item', new Login({ ...data.item, tags: newTagIds }));
+    data.item.tags = newTagIds;
+
+    setData('item', data.item);
+    form.change('tags', newTagIds);
   };
 
   const handleSelectChange = option => {
     if (option && option.tag) {
       const newTagIds = [...data.item.tags, option.tag.id];
-      setData('item', new Login({ ...data.item, tags: newTagIds }));
+      data.item.tags = newTagIds;
+      setData('item', data.item);
+      form.change('tags', newTagIds);
     }
 
     setIsMenuOpen(false);

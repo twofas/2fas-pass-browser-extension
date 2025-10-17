@@ -64,6 +64,8 @@ function URLComponent (props) {
   const isNew = data.item.content.uris && data.item.content.uris[index] && data.item.content.uris[index].new;
 
   const handleUriEditable = async () => {
+    // @TODO: FIX!
+
     if (!data?.domainsEditable) {
       data.domainsEditable = {};
       setData('domainsEditable', data.domainsEditable);
@@ -105,13 +107,10 @@ function URLComponent (props) {
       newUris.splice(removedIndex, 1);
     }
 
-    const updatedItem = new Login({
-      ...data.item,
-      content: { ...data.item.content, uris: newUris },
-      iconUriIndex: data.item.content.iconUriIndex > 0 ? data.item.content.iconUriIndex - 1 : 0
-    });
+    data.item.content.uris = newUris;
+    data.item.content.iconUriIndex = data.item.content.iconUriIndex > 0 ? data.item.content.iconUriIndex - 1 : 0;
 
-    setData('item', updatedItem);
+    setData('item', data.item);
 
     if (data?.domainsEditable && data.domainsEditable[uri._tempId] !== undefined) {
       delete data.domainsEditable[uri._tempId];

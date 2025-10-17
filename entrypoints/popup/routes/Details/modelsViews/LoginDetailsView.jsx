@@ -15,6 +15,7 @@ import { valueToNFKD } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
 import Login from '@/partials/models/Login';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
+import getItem from '@/partials/sessionStorage/getItem';
 
 const Name = lazy(() => import('../components/Name'));
 const Username = lazy(() => import('../components/Username'));
@@ -26,10 +27,9 @@ const DangerZone = lazy(() => import('../components/DangerZone'));
 
 /** 
 * Function to render the details component.
-* @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function LoginDetailsView (props) {
+function LoginDetailsView () {
   const data = usePopupStateStore(state => state.data);
   const [inputError, setInputError] = useState(undefined);
 
@@ -38,15 +38,15 @@ function LoginDetailsView (props) {
   const validate = values => {
     const errors = {};
 
-    if (!values.name || values.name?.length <= 0) {
+    if (!values?.content?.name || values?.content?.name?.length <= 0) {
       errors.name = browser.i18n.getMessage('details_name_required');
-    } else if (values.name?.length > 255) {
+    } else if (values.content?.name?.length > 255) {
       errors.name = browser.i18n.getMessage('details_name_max_length');
-    } else if (values.username?.length > 255) {
+    } else if (values.content?.username?.length > 255) {
       errors.username = browser.i18n.getMessage('details_username_max_length');
     }
 
-    values.uris.forEach((uri, index) => {
+    values.content?.uris.forEach((uri, index) => {
       if (uri?.text?.length > 2048) {
         errors[`uris[${index}]`] = browser.i18n.getMessage('details_uri_max_length');
       }
@@ -70,32 +70,23 @@ function LoginDetailsView (props) {
       return false;
     }
 
-    e.uris = e.uris.map(uri => {
-      return {
-        text: uri?.text ? valueToNFKD(uri.text) : '',
-        matcher: uri?.matcher
-      };
-    });
-
     const stateData = {
       contentType: Login.contentType,
       deviceId: e.deviceId,
-      content: {
-        id: e.id,
-        vaultId: e.vaultId,
-        securityType: e.securityType
-      }
+      itemId: e.id,
+      vaultId: e.vaultId,
+      content: {}
     };
 
     if (data.nameEditable) {
-      stateData.content.name = e.name ? valueToNFKD(e.name) : '';
+      stateData.content.name = e?.content?.name ? valueToNFKD(e.content.name) : '';
     }
 
     if (data.usernameEditable) {
       if (data.usernameMobile) {
         stateData.content.username = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       } else {
-        stateData.content.username = { value: e.username ? valueToNFKD(e.username) : '', action: REQUEST_STRING_ACTIONS.SET };
+        stateData.content.username = { value: e?.content?.username ? valueToNFKD(e.content.username) : '', action: REQUEST_STRING_ACTIONS.SET };
       }
     }
 
@@ -103,22 +94,37 @@ function LoginDetailsView (props) {
       if (data.passwordMobile) {
         stateData.content.password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       } else {
-        stateData.content.password = { value: e.s_password ? valueToNFKD(e.s_password) : '', action: REQUEST_STRING_ACTIONS.SET }; // @TODO: s_password?
+        stateData.content.password = { value: e?.content?.s_password ? valueToNFKD(e.content.s_password) : '', action: REQUEST_STRING_ACTIONS.SET };
       }
     }
 
-    if (data.notesEditable) {
-      stateData.content.notes = e.notes ? valueToNFKD(e.notes) : '';
-    }
-
-    const hasUriChanges = (data?.domainsEditable && Array.isArray(data?.domainsEditable) && data.domainsEditable.some(e => e)) || e.uris?.some(uri => uri.new);
+    const hasUriChanges = (data?.domainsEditable && Array.isArray(data?.domainsEditable) && data.domainsEditable.some(e => e)) || e?.content?.uris?.some(uri => uri?.new);
     
     if (hasUriChanges) {
-      stateData.content.uris = e.uris;
+      e.content.uris = e.content.uris.map(uri => {
+        return {
+          text: uri?.text ? valueToNFKD(uri.text) : '',
+          matcher: uri?.matcher
+        };
+      });
+
+      stateData.content.uris = e.content.uris;
+    }
+
+    if (data.tierEditable) {
+      const originalItem = await getItem(data.item.id);
+      
+      if (originalItem.securityType !== e.securityType) {
+        stateData.securityType = e.securityType;
+      }
     }
 
     if (data.tagsEditable) {
-      stateData.content.tags = e.tags || [];
+      stateData.tags = e.tags || [];
+    }
+
+    if (data.notesEditable) {
+      stateData.content.notes = e?.content?.notes ? valueToNFKD(e.content.notes) : '';
     }
 
     return navigate('/fetch', {
@@ -149,9 +155,18 @@ function LoginDetailsView (props) {
             formData={{ form }}
           />
           {generateURLs({ formData: { inputError } })}
-          <SecurityType key={`security-type-${data.item.id}`} />
-          <Tags key={`tags-${data.item.id}`} />
-          <Notes key={`notes-${data.item.id}`} />
+          <SecurityType
+            key={`security-type-${data.item.id}`}
+            formData={{ form }}
+          />
+          <Tags
+            key={`tags-${data.item.id}`}
+            formData={{ form }}
+          />
+          <Notes
+            key={`notes-${data.item.id}`}
+            formData={{ form }}
+          />
           <div className={S.detailsButton}>
             <button
               type="submit"

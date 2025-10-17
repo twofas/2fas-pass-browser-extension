@@ -11,7 +11,6 @@ import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import Login from '@/partials/models/Login';
 import { useCallback } from 'react';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
@@ -23,22 +22,24 @@ const notesVariants = {
 
 /**
 * Function to render the notes input field.
+* @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function Notes () {
+function Notes (props) {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+
+  const { formData } = props;
+  const { form } = formData;
 
   const handleNotesEditable = async () => {
     if (data.notesEditable) {
       let item = await getItem(data.item.id);
-      let login = new Login({ ...data.item, notes: item?.content?.notes || '' });
+      data.item.content.notes = item?.content?.notes || '';
       item = null;
 
-      setData('item', login);
+      setData('item', data.item);
       setData('notesEditable', false);
-
-      login = null;
     } else {
       setData('notesEditable', true);
     }
@@ -46,13 +47,14 @@ function Notes () {
 
   const handleNotesChange = useCallback(e => {
     const newNotes = e.target.value;
-    const updatedItem = new Login({ ...data.item, notes: newNotes });
+    data.item.content.notes = newNotes;
 
-    setData('item', updatedItem);
+    setData('item', data.item);
+    form.change('content.notes', newNotes);
   }, [data.item, setData]);
 
   return (
-    <Field name="notes">
+    <Field name="content.notes">
       {({ input }) => (
         <div className={`${pI.passInput} ${data.notesEditable ? pI.resizable : pI.disabled}`}>
           <div className={pI.passInputTop}>
