@@ -71,7 +71,7 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
 
     // Set alarm for reset T2 SIF
     if (info.data.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      const sifResetTime = data.expireInSeconds && data.expireInSeconds > 30 ? data.expireInSeconds / 60 : config.passwordResetDelay;
+      const sifResetTime = info.expireInSeconds && info.expireInSeconds > 30 ? info.expireInSeconds / 60 : config.passwordResetDelay;
       await browser.alarms.create(`sifT2Reset-${info.data.id}`, { delayInMinutes: sifResetTime });
     }
 
