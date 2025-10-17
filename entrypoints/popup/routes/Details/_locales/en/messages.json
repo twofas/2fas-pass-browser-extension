@@ -1,7 +1,7 @@
 {
   "details_header": {
-    "message": "Item details",
-    "description": "Header for the item details section"
+    "message": "details",
+    "description": "Header for the details section"
   },
   "details_field": {
     "message": "field",
