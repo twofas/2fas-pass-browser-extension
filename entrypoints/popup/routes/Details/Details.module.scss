@@ -167,12 +167,86 @@
     }
   }
 
+  &-fetch {
+    align-items: center;
+    background-color: v.$hover-color-light;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 21px;
+    margin-left: -6px;
+    padding: 4px 9px 4px 12px;
+    width: calc(100% + 12px);
+
+    @include m.darkMode {
+      background-color: v.$hover-color-dark;
+    }
+
+    &.hidden {
+      display: none;
+    }
+
+    p {
+      color: v.$primary-text-light;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    a {
+      align-items: center;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: row;
+      gap: 0 5px;
+      padding: 3px 6px;
+      transition: background-color .3s ease-in-out;
+
+      &:hover {
+        background-color: v.$hover-on-hover-light;
+
+        @include m.darkMode {
+          background-color: v.$hover-on-hover-dark;
+        }
+      }
+
+      svg {
+        height: auto;
+        stroke: v.$primary-color-light;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5;
+        width: 24px;
+
+        @include m.darkMode {
+          stroke: v.$primary-color-dark;
+        }
+      }
+
+      span {
+        color: v.$primary-color-light;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1;
+
+        @include m.darkMode {
+          color: v.$primary-color-dark;
+        }
+      }
+    }
+  }
+
   h2 {
     color: v.$primary-text-light;
     font-size: 16px;
     font-weight: 600;
     line-height: 1.5;
-    margin-bottom: 34px;
+    margin-bottom: 16px;
     text-align: center;
 
     @include m.darkMode {
