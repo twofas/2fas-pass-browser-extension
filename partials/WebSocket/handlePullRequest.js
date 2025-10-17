@@ -42,8 +42,6 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
 
   switch (state.action) {
     case PULL_REQUEST_TYPES.SIF_REQUEST: {
-      console.log('PULL_REQUEST_TYPES.SIF_REQUEST', state.data);
-
       if (!state?.data || !state?.data?.itemId) {
         throw new TwoFasError(TwoFasError.errors.passwordRequestNoLoginId);
       }

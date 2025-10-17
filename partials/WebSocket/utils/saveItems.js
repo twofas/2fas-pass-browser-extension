@@ -21,7 +21,6 @@ import mapModel from '@/partials/models/mapModel';
 const saveItems = async (itemsData, vaultId, deviceId) => {
   // @TODO: Add ifs for non array etc.
   const correctData = itemsData.map(item => mapModel(item, vaultId, deviceId)).filter(Boolean);
-  console.log('Correct data:', correctData);
 
   const jsonString = JSON.stringify(correctData);
   const gzipDataAB = await compress(jsonString);

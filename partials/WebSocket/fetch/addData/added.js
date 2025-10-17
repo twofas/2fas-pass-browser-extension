@@ -22,8 +22,6 @@ import Login from '@/partials/models/Login';
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
 const newDataAdded = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
-  console.log('New data added', data);
-
   if (!data || !data?.dataObj || !data?.dataObj?.content) { // @TODO: improve this
     throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongData);
   }
@@ -36,8 +34,9 @@ const newDataAdded = async (data, state, hkdfSaltAB, sessionKeyForHKDF, messageI
 
     // Add new data to items
     const newData = Object.assign({}, data.dataObj);
-    newData.internalType = 'added';
-    const newItem = new Login(newData, data.dataObj.vaultId, state.deviceId);
+    newData.internalData = newData.internalData || {};
+    newData.internalData.type = 'added';
+    const newItem = new Login(newData, newData.vaultId, state.deviceId);
     items.push(newItem);
 
     if (data.dataObj.securityType === SECURITY_TIER.SECRET) {
