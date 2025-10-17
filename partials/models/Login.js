@@ -19,6 +19,10 @@ export default class Login extends Item {
   #s_password;
 
   constructor (loginData, vaultId = null, deviceId = null) {
+    if (loginData.constructor.name === Login.name) {
+      return loginData;
+    }
+
     super (loginData, vaultId, deviceId);
 
     validate(loginData.content && typeof loginData.content === 'object', 'Invalid login data');

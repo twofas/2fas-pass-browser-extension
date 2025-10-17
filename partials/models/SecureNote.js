@@ -17,6 +17,10 @@ class SecureNote extends Item {
   #s_text;
 
   constructor (secureNoteData, vaultId = null, deviceId = null) {
+    if (secureNoteData.constructor.name === SecureNote.name) {
+      return secureNoteData;
+    }
+
     super(secureNoteData, vaultId, deviceId);
 
     validate(secureNoteData.content && typeof secureNoteData.content === 'object', 'Invalid secureNote content data');
