@@ -6,19 +6,21 @@
 
 import S from './Details.module.scss';
 import { LazyMotion } from 'motion/react';
-import { useParams, useNavigate, useLocation } from 'react-router';
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useParams, useNavigate, useLocation, Link } from 'react-router';
+import { useState, useEffect, useCallback, useRef, useMemo, lazy } from 'react';
 import getItem from '@/partials/sessionStorage/getItem';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import Login from '@/partials/models/Login';
+import { PULL_REQUEST_TYPES } from '@/constants';
 
 // Model Views
 import LoginDetailsView from './modelsViews/LoginDetailsView';
 import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
+const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 
 /** 
 * Function to render the details component.
@@ -108,6 +110,28 @@ function Details (props) {
             <div className={S.detailsContainer}>
               <NavigationButton type='cancel' />
               <h2>{constructorName} {browser.i18n.getMessage('details_header')}</h2>
+
+              <div className={`${S.detailsFetch} ${data?.item?.securityType === SECURITY_TIER.HIGHLY_SECRET && !data?.item?.sifExists ? '' : S.hidden}`}>
+                <p>{browser.i18n.getMessage('details_fetch_text')}</p>
+                <Link
+                  to='/fetch'
+                  state={{
+                    action: PULL_REQUEST_TYPES.SIF_REQUEST,
+                    from: 'details',
+                    data: {
+                      itemId: data.item.id,
+                      deviceId: data.item.deviceId,
+                      vaultId: data.item.vaultId,
+                      contentType: data.item.constructor.contentType
+                    }
+                  }}
+                  title={browser.i18n.getMessage('details_fetch_title')}
+                >
+                  <ServiceFetchIcon />
+                  <span>{browser.i18n.getMessage('fetch')}</span>
+                </Link>
+              </div>
+
               {modelComponent}
             </div>
           </section>

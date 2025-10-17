@@ -723,6 +723,14 @@
     "message": "Generate password",
     "description": "Title for the button that opens password generator"
   },
+  "details_fetch_text": {
+    "message": "Some data is only on the mobile app.",
+    "description": "Text indicating that some data can be fetched from the mobile app"
+  },
+  "details_fetch_title": {
+    "message": "Fetch Highly Secret data",
+    "description": "Title for the fetch highly secret data link"
+  },
   "details_tags_label": {
     "message": "Tags",
     "description": "Label for the tags field in details view"
