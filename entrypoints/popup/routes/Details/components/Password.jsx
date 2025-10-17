@@ -24,11 +24,6 @@ const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react')
 const ExternalLinkIcon = lazy(() => import('@/assets/popup-window/new-tab.svg?react'));
 const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
 
-const passwordDescriptionVariants = {
-  hidden: { maxHeight: '0px' },
-  visible: { maxHeight: '31px' }
-};
-
 const passwordMobileVariants = {
   hidden: { maxHeight: '0px' },
   visible: { maxHeight: '18px' }
@@ -102,16 +97,15 @@ function Password (props) {
     }
   };
 
-  const generateSecurityTypeOverlay = item => {
+  const generateSecurityTypeTooltip = item => {
     if (item.isT3orT2WithPassword) {
       return null;
     }
 
     // FUTURE - move to separate component
     return (
-      <div className={`${pI.passInputBottomOverlay} ${data?.passwordEditable ? pI.hidden : ''}`}>
-        <InfoIcon />
-        <span>{browser.i18n.getMessage('details_password_overlay')}</span>
+      <div className={pI.passInputTooltip}>
+        <span>This information is only available on your mobile phone. Click the "Fetch" button at the top of this window to retrieve it.</span>
       </div>
     );
   };
@@ -127,24 +121,6 @@ function Password (props) {
         <InfoIcon />
         <span>{browser.i18n.getMessage('details_password_decrypt_error')}</span>
       </div>
-    );
-  };
-
-  const generateSecurityTypeDescription = item => {
-    if (item.isT3orT2WithPassword) {
-      return null;
-    }
-
-    return (
-      <m.div
-        className={`${pI.passInputDescription} ${data?.passwordEditable ? '' : pI.removeMarginTop}`}
-        variants={passwordDescriptionVariants}
-        initial='hidden'
-        transition={{ duration: 0.3 }}
-        animate={data?.passwordEditable ? 'visible' : 'hidden'}
-      >
-        <p>{browser.i18n.getMessage('details_password_description')}</p>
-      </m.div>
     );
   };
 
@@ -229,22 +205,23 @@ function Password (props) {
     await browser.tabs.create({ url: changePasswordUrl });
   };
 
+  console.log(data.item, passwordDecryptError);
+
   return (
     <LazyMotion features={loadDomAnimation}>
       <Field name="content.s_password">
         {({ input }) => (
-          <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile ? pI.disabled : ''}`}>
+          <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile ? pI.disabled : ''} ${!data.item.isT3orT2WithPassword ? pI.nonFetched : ''}`}>
             <div className={pI.passInputTop}>
               <label htmlFor="s_password">{browser.i18n.getMessage('password')}</label>
               <button
                 type='button'
-                className={`${bS.btn} ${bS.btnClear}`}
+                className={`${bS.btn} ${bS.btnClear} ${!data.item.isT3orT2WithPassword ? bS.btnHidden : ''}`}
                 onClick={handleEditableClick}
               >
                 {data?.passwordEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
               </button>
             </div>
-            {generateSecurityTypeDescription(data.item)}
             <div className={pI.passInputBottom}>
               <PasswordInput
                 {...input}
@@ -254,7 +231,7 @@ function Password (props) {
                 showPassword={data?.passwordVisible}
                 isDecrypted={data.item.isPasswordDecrypted}
                 passwordDecryptError={passwordDecryptError}
-                state={passwordDecryptError || (!data?.passwordEditable && !data.item.isT3orT2WithPassword) ? 'hidden' : ''}
+                state={passwordDecryptError ? 'hidden' : (!data.item.isT3orT2WithPassword ? 'nonFetched' : '')}
                 disabled={!data?.passwordEditable || data?.passwordMobile}
                 dir="ltr"
                 spellCheck="false"
@@ -291,7 +268,7 @@ function Password (props) {
                 )}
               </div>
 
-              {generateSecurityTypeOverlay(data.item)}
+              {generateSecurityTypeTooltip(data.item)}
               {generateErrorOverlay()}
             </div>
             <m.div
