@@ -19,7 +19,7 @@ const deleteDataAccept = async (state, messageId) => {
   try {
     const [items, itemsKeys] = await Promise.all([
       getItems(),
-      getItemsKeys(state.data.deviceId)
+      getItemsKeys(state.data.vaultId, state.data.deviceId)
     ]);
 
     // Clear alarm if exists
@@ -36,7 +36,7 @@ const deleteDataAccept = async (state, messageId) => {
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(itemsFiltered, state.data.deviceId);
+    await saveItems(itemsFiltered, state.data.vaultId, state.data.deviceId);
 
     // Send response
     await sendPullRequestCompleted(messageId);
