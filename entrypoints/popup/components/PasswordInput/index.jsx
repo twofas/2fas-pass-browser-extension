@@ -60,7 +60,7 @@ function PasswordInput (props) {
         setData('passwordEdited', true);
       }
 
-      data.item.s_password = e.target.value;
+      data.item.content.s_password = e.target.value;
       setData('item', data.item);
     }
 
