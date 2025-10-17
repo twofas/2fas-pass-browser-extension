@@ -137,21 +137,21 @@ function LoginDetailsView (props) {
       render={({ handleSubmit, form, submitting }) => ( // form, values
         <form onSubmit={handleSubmit}>
           <Name
-            key={`name-${data.item.id}-${props.storageVersion}`}
+            key={`name-${data.item.id}`}
             formData={{ inputError }}
           />
           <Username
-            key={`username-${data.item.id}-${props.storageVersion}`}
+            key={`username-${data.item.id}`}
             formData={{ inputError }}
           />
           <Password
-            key={`password-${data.item.id}-${props.storageVersion}`}
+            key={`password-${data.item.id}`}
             formData={{ form }}
           />
-          {generateURLs({ formData: { inputError, storageVersion: props.storageVersion } })}
-          <SecurityType key={`security-type-${data.item.id}-${props.storageVersion}`} />
-          <Tags key={`tags-${data.item.id}-${props.storageVersion}`} />
-          <Notes key={`notes-${data.item.id}-${props.storageVersion}`} />
+          {generateURLs({ formData: { inputError } })}
+          <SecurityType key={`security-type-${data.item.id}`} />
+          <Tags key={`tags-${data.item.id}`} />
+          <Notes key={`notes-${data.item.id}`} />
           <div className={S.detailsButton}>
             <button
               type="submit"
@@ -163,7 +163,7 @@ function LoginDetailsView (props) {
           </div>
 
           <DangerZone
-            key={`danger-zone-${data.item.id}-${props.storageVersion}`}
+            key={`danger-zone-${data.item.id}`}
             formData={{ submitting }}
           />
         </form>

@@ -15,8 +15,8 @@ import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import Login from '@/partials/models/Login';
 
 // Model Views
-import LoginView from './modelsViews/LoginDetailsView';
-import SecureNoteView from './modelsViews/SecureNoteDetailsView';
+import LoginDetailsView from './modelsViews/LoginDetailsView';
+import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
@@ -31,9 +31,6 @@ function Details (props) {
   const params = useParams();
 
   const [loading, setLoading] = useState(true);
-  const [storageVersion, setStorageVersion] = useState(null);
-
-  const unwatchStorageVersion = useRef(null);
   const scrollableRef = useRef(null);
 
   const data = usePopupStateStore(state => state.data);
@@ -69,15 +66,7 @@ function Details (props) {
 
   useEffect(() => {
     getData();
-
-    unwatchStorageVersion.current = storage.watch('session:storageVersion', setStorageVersion);
-
-    return () => {
-      if (unwatchStorageVersion.current) {
-        unwatchStorageVersion.current();
-      }
-    };
-  }, [getData, storageVersion]);
+  }, [getData]);
 
   const modelComponent = useMemo(() => {
     if (loading) {
@@ -86,16 +75,14 @@ function Details (props) {
 
     const constructorName = data?.item?.constructor?.name;
 
-    const modelData = {
-      storageVersion
-    };
+    const modelData = {};
 
     if (constructorName === 'Login') {
-      return <LoginView {...props} {...modelData} />;
+      return <LoginDetailsView {...props} {...modelData} />;
     }
 
     if (constructorName === 'SecureNote') {
-      return <SecureNoteView {...props} {...modelData} />;
+      return <SecureNoteDetailsView {...props} {...modelData} />;
     }
 
     return null;
