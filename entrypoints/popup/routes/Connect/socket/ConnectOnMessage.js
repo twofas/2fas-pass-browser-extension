@@ -32,6 +32,7 @@ const ConnectOnMessage = async (json, data) => {
       case SOCKET_ACTIONS.HELLO: {
         eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, true);
         eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(10));
+        eventBus.emit(eventBus.EVENTS.CONNECT.DEVICE_NAME, json?.payload?.deviceName || null);
         
         data.deviceId = await handleHelloAction(json, data.uuid);
         eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(25));
