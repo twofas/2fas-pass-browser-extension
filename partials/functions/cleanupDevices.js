@@ -24,8 +24,13 @@ const cleanupDevices = async () => {
   // Remove devices without id
   const filteredDevices = devices.filter(device => device.id);
 
+  // Remove devices without scheme or with smaller scheme version than 2
+  const schemeFilteredDevices = filteredDevices.filter(device => {
+    return device.scheme && device.scheme.version >= config.schemeThreshold;
+  });
+
   // Remove duplicates based on updatedAt
-  const uniqueDevices = filteredDevices.reduce((acc, device) => {
+  const uniqueDevices = schemeFilteredDevices.reduce((acc, device) => {
     const existingDevice = acc.find(d => d.id === device.id);
 
     if (!existingDevice) {
