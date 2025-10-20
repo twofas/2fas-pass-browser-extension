@@ -78,7 +78,7 @@ function LoginDetailsView () {
       content: {}
     };
 
-    if (data.item.securityType === SECURITY_TIER.HIGHLY_SECRET && data.item.sifExists) {
+    if (data.item.isT3orT2WithPassword) {
       stateData.sifFetched = true;
     }
 
