@@ -18,6 +18,7 @@ import InfoIcon from '@/assets/popup-window/info.svg?react';
 import DeviceQrIcon from '@/assets/popup-window/device-qr.svg?react';
 import QR from './components/QR';
 import NavigationButton from '../../components/NavigationButton';
+import { getNTPTime, sendPush } from '@/partials/functions';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
@@ -77,8 +78,10 @@ function Connect (props) {
     let sessionID, signature, qr, ephemeralData, socket;
 
     try {
+      // Always @TODO:
       await generateSessionKeysNonces();
       ephemeralData = await generateEphemeralKeys();
+      //
       sessionID = await generateSessionID();
       signature = await calculateSignature(ephemeralData.publicKey, sessionID);
       setHeaderText(i18n.connectHeader);
@@ -137,13 +140,47 @@ function Connect (props) {
     setHeaderText(i18n.connectHeader);
   }, [initConnection, i18n.connectHeader]);
 
+  const connectByPush = async device => {
+    console.log('connect by push', device);
+
+    let sessionId, timestamp, sigPush;
+
+    try {
+      sessionId = Base64ToHex(device?.sessionId).toLowerCase();
+
+      const timestampValue = await getNTPTime();
+      timestamp = timestampValue.toString();
+
+      sigPush = await calculateSignature(sessionId, device?.id, device?.uuid, timestamp);
+    } catch (e) {
+      console.error(e);
+    }
+
+    try {
+      const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
+
+      if (json?.error === 'UNREGISTERED') {
+        setSocketError(true);
+        setHeaderText(browser.i18n.getMessage('fetch_token_unregistered_header'));
+        return false;
+      }
+
+      const socket = new TwoFasWebSocket(sessionId);
+      socket.open();
+      socket.addEventListener('message', ConnectOnMessage, { uuid: device.uuid });
+      socket.addEventListener('close', ConnectOnClose);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     closeConnectionRef.current = () => {
       try {
         const socket = TwoFasWebSocket.getInstance();
 
         if (socket) {
-          socket.close(1000, 'Component unmounted');
+          socket.close(WEBSOCKET_STATES.NORMAL_CLOSURE, 'Component unmounted');
         }
       } catch (e) {
         if (e?.name !== 'TwoFasError' || e?.code !== 9040) {
@@ -192,6 +229,10 @@ function Connect (props) {
       eventBus.off(eventBus.EVENTS.CONNECT.HEADER_TEXT, setHeaderText);
       eventBus.off(eventBus.EVENTS.CONNECT.DEVICE_NAME, setDeviceName);
       eventBus.off(eventBus.EVENTS.CONNECT.LOGIN, login);
+
+      if (closeConnectionRef.current) {
+        closeConnectionRef.current();
+      }
     };
   }, [initConnection, getReadyDevices, login]);
 
@@ -262,6 +303,7 @@ function Connect (props) {
                         key={index}
                         className={S.deviceSelectContainerListItem}
                         title={device.name}
+                        onClick={() => connectByPush(device)}
                       >
                         <span>{device.name || 'Unnamed device'}</span>
                       </button>
