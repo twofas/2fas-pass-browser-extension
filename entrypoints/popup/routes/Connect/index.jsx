@@ -15,7 +15,9 @@ import ConnectOnMessage from './socket/ConnectOnMessage';
 import ConnectOnClose from './socket/ConnectOnClose';
 import TwoFasWebSocket from '@/partials/WebSocket';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
+import DeviceQrIcon from '@/assets/popup-window/device-qr.svg?react';
 import QR from './components/QR';
+import NavigationButton from '../../components/NavigationButton';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
@@ -44,6 +46,8 @@ function Connect (props) {
   const [socketError, setSocketError] = useState(false);
   const [connectingLoader, setConnectingLoader] = useState(264);
   const [deviceName, setDeviceName] = useState(null);
+  const [readyDevices, setReadyDevices] = useState([]);
+  const [qrView, setQrView] = useState(null);
 
   const { login } = useAuthActions();
   const closeConnectionRef = useRef(null);
@@ -57,7 +61,17 @@ function Connect (props) {
     connectDescription: browser.i18n.getMessage(i18nKeys.connectDescription)
   }), []);
 
-  const [headerText, setHeaderText] = useState(i18n.connectHeader);
+  const [headerText, setHeaderText] = useState(null);
+
+  const getReadyDevices = useCallback(async () => {
+    const devices = await storage.getItem('local:devices') || [];
+    const filteredDevices = devices.filter(device => {
+      return device.scheme && device.scheme >= config.schemeThreshold &&
+             device.platform && device.fcmToken && device.sessionId;
+    });
+
+    return filteredDevices;
+  }, []);
 
   const initConnection = useCallback(async () => {
     let sessionID, signature, qr, ephemeralData, socket;
@@ -67,8 +81,11 @@ function Connect (props) {
       ephemeralData = await generateEphemeralKeys();
       sessionID = await generateSessionID();
       signature = await calculateSignature(ephemeralData.publicKey, sessionID);
+      setHeaderText(i18n.connectHeader);
       qr = await generateQR(ephemeralData.publicKey, sessionID, signature);
     } catch (e) {
+      console.error('Error during connection init:', e);
+
       await CatchError(e, () => {
         setSocketError(true);
         setHeaderText(i18n.errorGeneral);
@@ -150,9 +167,23 @@ function Connect (props) {
     eventBus.on(eventBus.EVENTS.CONNECT.DEVICE_NAME, setDeviceName);
     eventBus.on(eventBus.EVENTS.CONNECT.LOGIN, login);
 
-    requestAnimationFrame(() => {
-      initConnection();
-    });
+    getReadyDevices()
+      .then(devices => {
+        console.log('Ready devices:', devices);
+
+        setReadyDevices(devices);
+
+        if (devices.length === 0) {
+          setQrView(true);
+          initConnection();
+        } else {
+          setQrView(false);
+          setHeaderText('Securely access your vault in the 2FAS Pass mobile app');
+        }
+      })
+      .catch(e => {
+        console.error('Error!', e);
+      });
 
     return () => {
       eventBus.off(eventBus.EVENTS.CONNECT.CONNECTING, setSocketConnecting);
@@ -162,7 +193,19 @@ function Connect (props) {
       eventBus.off(eventBus.EVENTS.CONNECT.DEVICE_NAME, setDeviceName);
       eventBus.off(eventBus.EVENTS.CONNECT.LOGIN, login);
     };
-  }, [initConnection, login]);
+  }, [initConnection, getReadyDevices, login]);
+
+  useEffect(() => {
+    if (qrView) {
+      initConnection();
+    } else {
+      closeConnectionRef.current();
+    }
+  }, [qrView]);
+
+  if (qrView === null) {
+    return null;
+  }
 
   return (
     <LazyMotion features={loadDomAnimation}>
@@ -171,12 +214,19 @@ function Connect (props) {
           <m.section
             className={S.connect}
             variants={viewVariants}
-            initial="visible"
+            initial="hidden"
             transition={{ duration: 0.3, type: 'tween' }}
-            animate={socketConnecting ? 'hidden' : 'visible'}
+            animate={(!qrView || socketConnecting) ? 'hidden' : 'visible'}
           >
             <div className={S.connectContainer}>
               <h1>{headerText}</h1>
+
+              {readyDevices.length > 0 && (
+                <NavigationButton
+                  type='cancel'
+                  onClick={() => { setQrView(false); }}
+                />
+              )}
 
               <div className={`${S.connectContainerQr} ${socketError ? S.error : ''}`}>
                 <div className={S.connectContainerQrErrorContent}>
@@ -189,6 +239,45 @@ function Connect (props) {
               <div className={S.connectDescription}>
                 <InfoIcon />
                 <p>{i18n.connectDescription}</p>
+              </div>
+            </div>
+          </m.section>
+          <m.section
+            className={S.deviceSelect}
+            variants={viewVariants}
+            initial="hidden"
+            transition={{ duration: 0.3, type: 'tween' }}
+            animate={(!qrView && !socketConnecting) ? 'visible' : 'hidden'}
+          >
+            <div className={S.deviceSelectContainer}>
+              <h1>{headerText}</h1>
+
+              <div className={S.deviceSelectContainerList}>
+                <div className={S.deviceSelectContainerListDevices}>
+                  <p>Select device:</p>
+
+                  <div className={S.deviceSelectContainerListDevicesButtons}>
+                    {readyDevices.map((device, index) => (
+                      <button
+                        key={index}
+                        className={S.deviceSelectContainerListItem}
+                        title={device.name}
+                      >
+                        <span>{device.name || 'Unnamed device'}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>                
+              </div>
+
+              <div className={S.deviceSelectContainerAdd}>
+                <button
+                  className={`${bS.btn} ${bS.btnClear}`}
+                  onClick={() => setQrView(true)}
+                >
+                  <span>Add another device</span>
+                  <DeviceQrIcon />
+                </button>
               </div>
             </div>
           </m.section>
