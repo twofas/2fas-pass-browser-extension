@@ -57,7 +57,7 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
       const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
 
       // save encryptionItemT2Key in session storage
-      const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.deviceId, itemId: info.dataObj.id });
+      const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.deviceId, itemId: info.data.id });
       await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
     } else {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongSecurityType);

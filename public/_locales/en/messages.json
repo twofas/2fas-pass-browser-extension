@@ -647,10 +647,6 @@
     "message": "Decrypting password error. Please reconnect with your mobile app.",
     "description": "Error message displayed when decrypting the password fails"
   },
-  "details_password_description": {
-    "message": "This password is only available in your Vault. \nEnter a new one here to update it.",
-    "description": "Explains that the password is stored in the Vault and can be updated here"
-  },
   "details_delete_header": {
     "message": "No longer need this Item?",
     "description": "Header for the delete login confirmation section"
