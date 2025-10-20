@@ -16,7 +16,7 @@
     "description": "Error message displayed when the FCM token is unregistered"
   },
   "fetch_connection_timeout_header": {
-    "message": "Timed out due to inactivity.",
+    "message": "Timed out \ndue to inactivity.",
     "description": "Error message displayed when the connection times out due to inactivity"
   },
   "fetch_continue_updating_header": {

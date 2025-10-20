@@ -238,4 +238,41 @@
       }
     }
   }
+
+  &-device-name {
+    background: v.$card-bg-light;
+    border: 1px solid v.$card-stroke-light;
+    border-radius: 8px;
+    margin-top: 24px;
+    opacity: 0;
+    padding: 9px 12px;
+    transition: opacity .3s ease-in-out;
+    width: auto;
+
+    @include m.darkMode {
+      background: v.$card-bg-dark;
+      border-color: v.$card-stroke-dark;
+    }
+
+    &.visible {
+      opacity: 1;
+    }
+
+    span {
+      color: v.$primary-text-light;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: auto;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+  }
 }

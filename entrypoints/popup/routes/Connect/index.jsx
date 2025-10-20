@@ -43,6 +43,7 @@ function Connect (props) {
   const [socketConnecting, setSocketConnecting] = useState(false);
   const [socketError, setSocketError] = useState(false);
   const [connectingLoader, setConnectingLoader] = useState(264);
+  const [deviceName, setDeviceName] = useState(null);
 
   const { login } = useAuthActions();
   const closeConnectionRef = useRef(null);
@@ -146,6 +147,7 @@ function Connect (props) {
     eventBus.on(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
     eventBus.on(eventBus.EVENTS.CONNECT.SOCKET_ERROR, setSocketError);
     eventBus.on(eventBus.EVENTS.CONNECT.HEADER_TEXT, setHeaderText);
+    eventBus.on(eventBus.EVENTS.CONNECT.DEVICE_NAME, setDeviceName);
     eventBus.on(eventBus.EVENTS.CONNECT.LOGIN, login);
 
     requestAnimationFrame(() => {
@@ -157,6 +159,7 @@ function Connect (props) {
       eventBus.off(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
       eventBus.off(eventBus.EVENTS.CONNECT.SOCKET_ERROR, setSocketError);
       eventBus.off(eventBus.EVENTS.CONNECT.HEADER_TEXT, setHeaderText);
+      eventBus.off(eventBus.EVENTS.CONNECT.DEVICE_NAME, setDeviceName);
       eventBus.off(eventBus.EVENTS.CONNECT.LOGIN, login);
     };
   }, [initConnection, login]);
@@ -208,6 +211,10 @@ function Connect (props) {
 
               <div className={S.progressDescription}>
                 <p>{i18n.connectionOpened}</p>
+              </div>
+
+              <div className={`${S.progressDeviceName} ${deviceName ? S.visible : ''}`}>
+                <span>{deviceName}</span>
               </div>
             </div>
           </m.section>
