@@ -7,9 +7,9 @@
 import PULL_REQUEST_TYPES from '@/constants/PULL_REQUEST_TYPES';
 import PULL_REQUEST_STATUSES from '@/entrypoints/popup/routes/Fetch/constants/PULL_REQUEST_STATUSES';
 import { deleteDataAccept, deleteDataCancel } from './fetch/deleteData';
-import { addDataAdded, addDataAddedInT1, addDataCancel } from './fetch/addData';
+import { addDataAdded, addDataAddedInAnotherVault, addDataAddedInT1, addDataCancel } from './fetch/addData';
 import { sifRequestAccept, sifRequestCancel } from './fetch/sifRequest';
-import { updateDataAddedInT1, updateDataCancel, updateDataUpdated } from './fetch/updateData';
+import { updateDataAddedInT1, updateDataAddedInAnotherVault, updateDataCancel, updateDataUpdated } from './fetch/updateData';
 import { fullSyncAccept, fullSyncCancel } from './fetch/fullSync';
 
 /** 
@@ -109,6 +109,11 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
           break;
         }
 
+        case PULL_REQUEST_STATUSES.ADDED_IN_ANOTHER_VAULT: {
+          closeData = await addDataAddedInAnotherVault(json.id);
+          break;
+        }
+
         case PULL_REQUEST_STATUSES.ADDED: {
           closeData = await addDataAdded(
             data,
@@ -137,6 +142,11 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
 
         case PULL_REQUEST_STATUSES.ADDED_IN_T1: {
           closeData = await updateDataAddedInT1(state, json.id);
+          break;
+        }
+
+        case PULL_REQUEST_STATUSES.ADDED_IN_ANOTHER_VAULT: {
+          closeData = await updateDataAddedInAnotherVault(state, json.id);
           break;
         }
 

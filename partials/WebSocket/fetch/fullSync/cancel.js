@@ -24,7 +24,7 @@ const fullSyncCancel = async (messageId) => {
       }
     };
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.pullRequestActionDeleteCancelError, { event: e });
+    throw new TwoFasError(TwoFasError.errors.pullRequestActionFullSyncCancelError, { event: e });
   }
 };
 
