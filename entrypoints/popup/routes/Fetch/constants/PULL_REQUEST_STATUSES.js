@@ -8,6 +8,7 @@ const PULL_REQUEST_ACTION_STATUSES = {
   CANCEL: 'cancel',
   ACCEPT: 'accept',
   ADDED_IN_T1: 'addedInT1',
+  ADDED_IN_ANOTHER_VAULT: 'addedInAnotherVault',
   ADDED: 'added',
   UPDATED: 'updated'
 };

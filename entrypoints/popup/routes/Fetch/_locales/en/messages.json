@@ -51,6 +51,10 @@
     "message": "New Item added in Tier 1 (only in the mobile app)",
     "description": "Toast shown when a new login is added in tier 1, available only in the mobile app"
   },
+  "fetch_new_login_added_in_another_vault_toast": {
+    "message": "New Item added in another Vault",
+    "description": "Toast shown when a new login is added in another vault"
+  },
   "fetch_new_login_cancel_toast": {
     "message": "User cancelled adding a new Item",
     "description": "Toast message displayed when the user cancels adding a new login item"
@@ -74,6 +78,10 @@
   "fetch_update_login_added_in_t1_toast": {
     "message": "Item updated in tier 1 (only in mobile app)",
     "description": "Toast shown when a login is updated in tier 1, available only in the mobile app"
+  },
+  "fetch_update_login_added_in_another_vault_toast": {
+    "message": "Item updated in another Vault",
+    "description": "Toast shown when a login is updated in another vault"
   },
   "fetch_full_sync_cancel_toast": {
     "message": "Full sync canceled",

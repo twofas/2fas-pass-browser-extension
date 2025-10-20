@@ -252,6 +252,10 @@ class TwoFasError extends Error {
       message: TwoFasError.defaultErrorMessage,
       code: 2385
     },
+    pullRequestActionNewLoginAddedInAnotherVaultError: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2386
+    },
     pullRequestActionUpdateLoginWrongStatus: {
       message: TwoFasError.defaultErrorMessage,
       code: 2390
@@ -275,6 +279,14 @@ class TwoFasError extends Error {
     pullRequestActionUpdateLoginUpdatedWrongData: {
       message: TwoFasError.defaultErrorMessage,
       code: 2395
+    },
+    pullRequestActionUpdateLoginAddedInAnotherVaultError: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2396
+    },
+    pullRequestActionFullSyncCancelError: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2400
     },
     userCancelled: {
       message: 'Browser extension has been closed',
