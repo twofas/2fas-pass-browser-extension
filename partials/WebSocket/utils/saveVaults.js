@@ -6,17 +6,14 @@
 
 import saveItems from './saveItems';
 import saveTags from './saveTags';
-import Vault from '@/partials/models/Vault';
+import filterVault from '@/partials/models/filterVault';
 
-const filterVault = vault => {
-  try {
-    new Vault(vault);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
+/** 
+* Saves vaults to storage.
+* @param {Array} vaultsData - Array of vault data to be saved.
+* @param {string} deviceId - The ID of the device associated with the vaults.
+* @return {Promise<boolean>} True if the vaults were saved successfully, false otherwise.
+*/
 const saveVaults = async (vaultsData, deviceId) => {
   const vaultsStorageData = [];
   const correctVaultsData = vaultsData.filter(filterVault);
@@ -29,7 +26,7 @@ const saveVaults = async (vaultsData, deviceId) => {
   }
 
   const devices = await storage.getItem('local:devices') || [];
-  const device = devices.find(d => d.id === deviceId);
+  const device = devices.find(d => d?.id === deviceId);
 
   if (device) {
     device.vaults = device.vaults || [];
