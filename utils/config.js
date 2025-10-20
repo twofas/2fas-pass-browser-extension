@@ -13,5 +13,6 @@ export const config = Object.freeze({
   devicesCleanupThreshold: 30,
   toastAutoClose: 5000,
   defaultStorageIdleLock: 15, // minutes
-  handleInputEventDebounce: 100 // milliseconds
+  handleInputEventDebounce: 100, // milliseconds
+  schemeThreshold: 2 // save devices with scheme version >= 2
 });
