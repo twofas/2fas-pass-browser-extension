@@ -117,9 +117,16 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
       getItemsKeys(state.data.vaultId, state.data.deviceId)
     ]);
 
-    // Update password
+    // Update sif (generic)
     const item = items.find(item => item.id === state.data.itemId);
-    item.setPassword(info.data.s_password);
+    const sifs = item.sifs || [];
+    const updateSifArr = [];
+
+    for (const sifKey of sifs) {
+      updateSifArr.push({ [sifKey]: info.data[sifKey] });
+    }
+
+    item.setSif(updateSifArr);
 
     // generate encryptionItemT2Key
     const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);

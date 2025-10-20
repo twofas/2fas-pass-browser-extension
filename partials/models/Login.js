@@ -138,9 +138,14 @@ export default class Login extends Item {
     };
   }
 
-  setPassword (newPassword) {
-    // @TODO: Validate password?
-    this.#s_password = newPassword;
+  setSif (arr) {
+    // @TODO: Validate password, arr?
+
+    arr.forEach(item => {
+      if (Object.prototype.hasOwnProperty.call(item, 's_password')) {
+        this.#s_password = item.s_password;
+      }
+    });
   }
 
   setPasswordDecrypted (decryptedPassword) {
@@ -237,6 +242,10 @@ export default class Login extends Item {
     } else {
       return {};
     }
+  }
+
+  get sifs () {
+    return ['s_password'];
   }
 
   get sifExists () {
