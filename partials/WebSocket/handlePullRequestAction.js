@@ -177,7 +177,7 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
         }
 
         case PULL_REQUEST_STATUSES.ACCEPT: {
-          closeData = await fullSyncAccept(
+          await fullSyncAccept(
             data,
             state,
             hkdfSaltAB,
