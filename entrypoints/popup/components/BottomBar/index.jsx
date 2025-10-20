@@ -182,7 +182,7 @@ function BottomBar () {
         <div className={`${S.bottombarFetch} ${fetchLinkClass}`}>
           <Link
             to='/fetch'
-            state={{ action: PULL_REQUEST_TYPES.FULL_SYNC, from: 'bottomBar' }}
+            state={{ action: PULL_REQUEST_TYPES.FULL_SYNC, from: 'bottomBar', data: {} }}
             title={browser.i18n.getMessage('sync_title')}
             prefetch='intent'
           >

@@ -162,7 +162,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       break;
     }
 
-    case PULL_REQUEST_TYPES.FULL_SYNC: { // @TODO
+    case PULL_REQUEST_TYPES.FULL_SYNC: {
       data = {
         type: PULL_REQUEST_TYPES.FULL_SYNC,
         data: {}

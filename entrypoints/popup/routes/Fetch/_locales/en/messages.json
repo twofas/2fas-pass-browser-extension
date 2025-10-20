@@ -74,5 +74,9 @@
   "fetch_update_login_added_in_t1_toast": {
     "message": "Item updated in tier 1 (only in mobile app)",
     "description": "Toast shown when a login is updated in tier 1, available only in the mobile app"
+  },
+  "fetch_full_sync_cancel_toast": {
+    "message": "Full sync canceled",
+    "description": "Toast message displayed when a full sync operation is canceled"
   }
 }
