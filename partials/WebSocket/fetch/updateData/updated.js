@@ -10,6 +10,7 @@ import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
+import saveTags from '@/partials/WebSocket/utils/saveTags';
 import { ENCRYPTION_KEYS } from '@/constants';
 import Login from '@/partials/models/Login';
 
@@ -80,6 +81,11 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
 
     // saveItems
     await saveItems(items, state.data.vaultId, state.data.deviceId);
+
+    // saveTags
+    const tagsKey = await getKey('tags', { vaultId: state.data.vaultId, deviceId: state.data.deviceId });
+    await storage.removeItem(`session:${tagsKey}`);
+    await saveTags(info.tags, state.data.vaultId, state.data.deviceId);
 
     // Set alarm for reset T2 SIF
     if (item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
