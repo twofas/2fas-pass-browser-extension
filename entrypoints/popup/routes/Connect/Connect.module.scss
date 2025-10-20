@@ -8,12 +8,32 @@
 @use "@/partials/global-styles/mixins" as m;
 
 .connect,
-.progress {
+.progress,
+.device-select {
   left: 12px;
   position: absolute;
   right: 12px;
   top: 12px;
   width: calc(100% - 24px);
+}
+
+.connect,
+.device-select {
+  h1 {
+    color: v.$primary-text-light;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 11px;
+    margin-top: 24px;
+    max-width: 220px;
+    text-align: center;
+    white-space: pre-wrap;
+
+    @include m.darkMode {
+      color: v.$primary-text-dark;
+    }
+  }
 }
 
 .connect {
@@ -124,22 +144,6 @@
       @include m.darkMode {
         stroke: v.$object-dark;
       }
-    }
-  }
-
-  h1 {
-    color: v.$primary-text-light;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.5;
-    margin-bottom: 11px;
-    margin-top: 24px;
-    max-width: 220px;
-    text-align: center;
-    white-space: pre-wrap;
-
-    @include m.darkMode {
-      color: v.$primary-text-dark;
     }
   }
 }
@@ -272,6 +276,168 @@
 
       @include m.darkMode {
         color: v.$primary-text-dark;
+      }
+    }
+  }
+}
+
+.device-select {
+  border: 1px solid v.$primary-box-stroke-light;
+  border-radius: 8px;
+  height: calc(100% - 56px - 40px);
+  overflow: hidden;
+  z-index: 2;
+
+  @include m.darkMode {
+    border-color: v.$primary-box-stroke-dark;
+  }
+
+  &-container {
+    align-items: center;
+    background-color: v.$primary-box-bg-light;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    @include m.darkMode {
+      background-color: v.$primary-box-bg-dark;
+    }
+
+    &-list {
+      align-items: center;
+      background-image: url( '@/assets/popup-window/device-select.svg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      height: 223px;
+      margin-top: 32px;
+      width: 254px;
+
+      &-devices {
+        text-align: left;
+        width: 200px;
+
+        &-buttons {
+          max-height: 144px;
+          overflow: auto;
+
+          button {
+            background-color: v.$card-bg-light;
+            border: 1px solid v.$card-stroke-light;
+            padding: 9px 12px;
+            text-align: left;
+            width: 100%;
+
+            @include m.darkMode {
+              background-color: v.$card-bg-dark;
+              border-color: v.$card-stroke-dark;
+            }
+
+            &:first-of-type {
+              border-top-left-radius: 8px;
+              border-top-right-radius: 8px;
+            }
+
+            &:last-of-type {
+              border-bottom-left-radius: 8px;
+              border-bottom-right-radius: 8px;
+            }
+
+            &:hover,
+            &:focus {
+              background-color: v.$hover-color-light;
+
+              @include m.darkMode {
+                background-color: v.$hover-color-dark;
+              }
+            }
+
+            &:active {
+              background-color: v.$hover-on-hover-light;
+
+              @include m.darkMode {
+                background-color: v.$hover-on-hover-dark;
+              }
+            }
+
+            span {
+              color: v.$primary-text-light;
+              display: inline-block;
+              font-size: 12px;
+              font-weight: 400;
+              line-height: 1;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              width: 100%;
+
+              @include m.darkMode {
+                color: v.$primary-text-dark;
+              }
+            }
+          }
+        }
+      }
+
+      p {
+        color: v.$primary-text-light;
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 2.18;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
+      }
+    }
+
+    &-add {
+      margin-top: 32px;
+
+      button {
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        gap: 0 4px;
+
+        &:hover,
+        &:focus {
+          svg {
+            stroke: v.$focus-light;
+  
+            @include m.darkMode {
+              stroke: v.$focus-dark;
+            }
+          }
+        }
+
+        &:active {
+          svg {
+            stroke: v.$pressed-light;
+  
+            @include m.darkMode {
+              stroke: v.$pressed-dark;
+            }
+          }
+        }
+
+        svg {
+          height: 22px;
+          stroke: v.$primary-color-light;
+          stroke-linecap: square;
+          stroke-linejoin: round;
+          stroke-width: 2;
+          transition: stroke .3s ease-in-out;
+          width: auto;
+
+          @include m.darkMode {
+            stroke: v.$primary-color-dark;
+          }
+        }
       }
     }
   }
