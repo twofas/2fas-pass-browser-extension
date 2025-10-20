@@ -30,7 +30,8 @@ const saveVaults = async (vaultsData, deviceId) => {
 
   if (device) {
     device.vaults = device.vaults || [];
-    device.vaults.push(...correctVaultsData.map(v => ({ id: v.id, name: v.name })));
+    device.vaults = correctVaultsData.map(v => ({ id: v.id, name: v.name }));
+
     await storage.setItem(`local:devices`, devices);
   }
 
