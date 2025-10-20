@@ -78,6 +78,10 @@ function LoginDetailsView () {
       content: {}
     };
 
+    if (data.item.securityType === SECURITY_TIER.HIGHLY_SECRET && data.item.sifExists) {
+      stateData.sifFetched = true;
+    }
+
     if (data.nameEditable) {
       stateData.content.name = e?.content?.name ? valueToNFKD(e.content.name) : '';
     }
