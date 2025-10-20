@@ -43,6 +43,8 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
     }
   };
 
+  console.log('HANDLE PULL REQUEST ACTION', state, data, json);
+
   if (!data?.status || !data?.type || !state?.action) {
     throw new TwoFasError(TwoFasError.errors.pullRequestActionWrongData);
   }
