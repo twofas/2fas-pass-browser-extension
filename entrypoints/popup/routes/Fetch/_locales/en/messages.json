@@ -86,5 +86,9 @@
   "fetch_full_sync_cancel_toast": {
     "message": "Full sync canceled",
     "description": "Toast message displayed when a full sync operation is canceled"
+  },
+  "fetch_full_sync_completed_toast": {
+    "message": "Full sync completed",
+    "description": "Toast message displayed when a full sync operation is completed successfully"
   }
 }
