@@ -9,6 +9,8 @@ import handleChallengeAction from '@/partials/WebSocket/handleChallengeAction';
 import handleCloseSignalPullRequestAction from '@/partials/WebSocket/handleCloseSignalPullRequestAction';
 import handlePullRequest from '@/partials/WebSocket/handlePullRequest';
 import handlePullRequestAction from '@/partials/WebSocket/handlePullRequestAction';
+import handleSendVaultData from '@/partials/WebSocket/handleSendVaultData';
+import processFullSyncVaultsData from '@/partials/WebSocket/processFullSyncVaultsData';
 import deletePush from '@/partials/functions/deletePush';
 import TwoFasWebSocket from '@/partials/WebSocket';
 import { FETCH_STATE } from '../constants';
@@ -53,6 +55,27 @@ const FetchOnMessage = async (json, data) => {
       case SOCKET_ACTIONS.PULL_REQUEST_ACTION: {
         const closeData = await handlePullRequestAction(json, data.hkdfSalt, data.sessionKeyForHKDF, data.encryptionDataKeyAES, data.state);
         data.closeData = closeData;
+        break;
+      }
+
+      case SOCKET_ACTIONS.TRANSFER_CHUNK: {
+        const res = await handleSendVaultData(json, data.state.totalChunks);
+
+        data.state.chunks[res.chunkIndex] = res.chunkData;
+        const arrayWithoutUndefined = data.state.chunks.filter(chunk => chunk !== undefined);
+
+        if (arrayWithoutUndefined.length === data.state.totalChunks) {
+          data.closeData = await processFullSyncVaultsData(
+            data.state.sha256GzipVaultDataEnc,
+            data.state.chunks,
+            data.encryptionDataKeyAES,
+            data.hkdfSalt,
+            data.sessionKeyForHKDF,
+            data.deviceId,
+            json.id
+          );
+        }
+
         break;
       }
   
