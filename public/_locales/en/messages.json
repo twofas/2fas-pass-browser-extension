@@ -100,7 +100,7 @@
     "description": "Error shown when the mobile device disconnects"
   },
   "error_timeout": {
-    "message": "Timed out due to inactivity.",
+    "message": "Timed out \ndue to inactivity.",
     "description": "Error message displayed when an operation times out due to inactivity"
   },
   "error_feature_wrong_data": {
@@ -768,7 +768,7 @@
     "description": "Error message displayed when the FCM token is unregistered"
   },
   "fetch_connection_timeout_header": {
-    "message": "Timed out due to inactivity.",
+    "message": "Timed out \ndue to inactivity.",
     "description": "Error message displayed when the connection times out due to inactivity"
   },
   "fetch_continue_updating_header": {
@@ -838,6 +838,10 @@
   "fetch_full_sync_cancel_toast": {
     "message": "Full sync canceled",
     "description": "Toast message displayed when a full sync operation is canceled"
+  },
+  "fetch_full_sync_completed_toast": {
+    "message": "Full sync completed",
+    "description": "Toast message displayed when a full sync operation is completed successfully"
   },
   "not_found_text": {
     "message": "Route not implemented yet ;)",

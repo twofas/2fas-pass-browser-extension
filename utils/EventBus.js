@@ -14,7 +14,8 @@ class EventBus {
       LOADER: 'connect_loader',
       SOCKET_ERROR: 'connect_socket_error',
       HEADER_TEXT: 'connect_header_text',
-      LOGIN: 'connect_login'
+      LOGIN: 'connect_login',
+      DEVICE_NAME: 'connect_device_name'
     },
     FETCH: {
       SET_FETCH_STATE: 'fetch_set_fetch_state',

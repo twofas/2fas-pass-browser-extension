@@ -100,7 +100,7 @@
     "description": "Error shown when the mobile device disconnects"
   },
   "error_timeout": {
-    "message": "Timed out due to inactivity.",
+    "message": "Timed out \ndue to inactivity.",
     "description": "Error message displayed when an operation times out due to inactivity"
   },
   "error_feature_wrong_data": {
