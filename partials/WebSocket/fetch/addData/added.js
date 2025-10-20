@@ -10,6 +10,7 @@ import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
+import saveTags from '@/partials/WebSocket/utils/saveTags';
 import { ENCRYPTION_KEYS } from '@/constants';
 import Login from '@/partials/models/Login';
 
@@ -22,8 +23,6 @@ import Login from '@/partials/models/Login';
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
 const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
-  console.log(info);
-
   if (!info || !info?.data || !info?.data?.content) { // @TODO: improve this
     throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongData);
   }
@@ -68,6 +67,11 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
 
     // saveItems
     await saveItems(items, info.data.vaultId, state.deviceId);
+
+    // saveTags
+    const tagsKey = await getKey('tags', { vaultId: info.data.vaultId, deviceId: state.deviceId });
+    await storage.removeItem(`session:${tagsKey}`);
+    await saveTags(info.tags, info.data.vaultId, state.deviceId);
 
     // Set alarm for reset T2 SIF
     if (info.data.securityType === SECURITY_TIER.HIGHLY_SECRET) {
