@@ -26,7 +26,7 @@ const cleanupDevices = async () => {
 
   // Remove devices without scheme or with smaller scheme version than 2
   const schemeFilteredDevices = filteredDevices.filter(device => {
-    return device.scheme && device.scheme.version >= config.schemeThreshold;
+    return device.scheme && device.scheme >= config.schemeThreshold;
   });
 
   // Remove duplicates based on updatedAt
