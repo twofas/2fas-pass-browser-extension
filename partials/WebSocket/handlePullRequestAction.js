@@ -160,13 +160,11 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
     case PULL_REQUEST_TYPES.FULL_SYNC: {
       switch (data.status) {
         case PULL_REQUEST_STATUSES.CANCEL: {
-          // @TODO
           closeData = await fullSyncCancel(json.id);
           break;
         }
 
         case PULL_REQUEST_STATUSES.ACCEPT: {
-          // @TODO
           closeData = await fullSyncAccept(
             data,
             state,

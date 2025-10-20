@@ -32,6 +32,8 @@ function Fetch (props) {
 
   const navigate = useNavigate();
 
+  console.log(state);
+
   let device;
 
   const [fetchState, setFetchState] = useState(FETCH_STATE.DEFAULT);
@@ -46,7 +48,8 @@ function Fetch (props) {
 
       case PULL_REQUEST_TYPES.ADD_DATA:
       case PULL_REQUEST_TYPES.SIF_REQUEST:
-      case PULL_REQUEST_TYPES.DELETE_DATA: {
+      case PULL_REQUEST_TYPES.DELETE_DATA:
+      case PULL_REQUEST_TYPES.FULL_SYNC: {
         setFetchState(FETCH_STATE.PUSH_NOTIFICATION);
         break;
       }
