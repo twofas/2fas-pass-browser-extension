@@ -96,9 +96,9 @@ function LoginDetailsView () {
 
     if (data.passwordEditable) {
       if (data.passwordMobile) {
-        stateData.content.password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
+        stateData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       } else {
-        stateData.content.password = { value: e?.content?.s_password ? valueToNFKD(e.content.s_password) : '', action: REQUEST_STRING_ACTIONS.SET };
+        stateData.content.s_password = { value: e?.content?.s_password ? valueToNFKD(e.content.s_password) : '', action: REQUEST_STRING_ACTIONS.SET };
       }
     }
 
