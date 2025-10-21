@@ -11,6 +11,8 @@ import handleInitTransfer from '@/partials/WebSocket/handleInitTransfer';
 import handleSendVaultData from '@/partials/WebSocket/handleSendVaultData';
 import processVaultsData from '@/partials/WebSocket/processVaultsData';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
+import handlePullRequest from '@/partials/WebSocket/handlePullRequest';
+import handlePullRequestAction from '@/partials/WebSocket/handlePullRequestAction';
 import TwoFasWebSocket from '@/partials/WebSocket';
 
 /** 
@@ -18,7 +20,6 @@ import TwoFasWebSocket from '@/partials/WebSocket';
 * @async
 * @param {Object} json - The JSON payload of the WebSocket message.
 * @param {Object} data - The data object containing relevant information.
-* @param {Object} actions - The actions object containing functions to update the UI state.
 * @return {Promise<void>} A promise that resolves when the message has been processed.
 */
 const ConnectOnMessage = async (json, data) => {
@@ -31,8 +32,12 @@ const ConnectOnMessage = async (json, data) => {
   
       case SOCKET_ACTIONS.HELLO: {
         console.log('HELLO received', json);
-        eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, true);
-        eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(10));
+
+        if (data.path === 'qr') {
+          eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, true);
+          eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(10));
+        }
+
         eventBus.emit(eventBus.EVENTS.CONNECT.DEVICE_NAME, json?.payload?.deviceName || null);
         
         data.deviceId = await handleHelloAction(json, data.uuid);
@@ -48,8 +53,31 @@ const ConnectOnMessage = async (json, data) => {
         data.PK_EPHE_MA_ECDH = res.pkEpheMa;
         data.sessionKeyForHKDF = res.sessionKeyForHKDF;
 
-        eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(40));
+        if (data.path === 'qr') {
+          eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(40));
+        }
 
+        break;
+      }
+
+      case SOCKET_ACTIONS.PULL_REQUEST: {
+        const res = await handlePullRequest(json, data.hkdfSalt, data.sessionKeyForHKDF, data);
+        data.newSessionId = res.newSessionId;
+        data.encryptionDataKeyAES = res.encryptionDataKeyAES;
+        break;
+      }
+
+      case SOCKET_ACTIONS.PULL_REQUEST_ACTION: {
+        console.log('PULL_REQUEST_ACTION received', json);
+
+        const closeData = await handlePullRequestAction(json, data.hkdfSalt, data.sessionKeyForHKDF, data.encryptionDataKeyAES, data);
+        data.closeData = closeData;
+
+        if (data.path === 'push' && !closeData?.returnUrl) {
+          eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, true);
+          eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(20));
+        }
+        
         break;
       }
   
@@ -58,13 +86,17 @@ const ConnectOnMessage = async (json, data) => {
         const res = await handleInitTransfer(json, data.hkdfSalt, data.sessionKeyForHKDF, data.uuid, data.deviceId);
         
         data.newSessionId = res.newSessionId;
-        data.encryptionDataKey = res.encryptionDataKey;
+        data.encryptionDataKeyAES = res.encryptionDataKey;
         data.sha256GzipVaultDataEnc = res.sha256GzipVaultDataEnc;
 
         data.totalChunks = res.totalChunks;
         data.chunks = new Array(res.totalChunks);
 
-        eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(60));
+        if (data.path === 'qr') {
+          eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(60));
+        } else if (data.path === 'push') {
+          eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(40));
+        }
 
         break;
       }
@@ -72,14 +104,25 @@ const ConnectOnMessage = async (json, data) => {
       case SOCKET_ACTIONS.TRANSFER_CHUNK: {
         console.log('TRANSFER_CHUNK received', json);
         const res = await handleSendVaultData(json, data.totalChunks);
+
+        if (!data.chunks) {
+          data.chunks = [];
+        }
         
         data.chunks[res.chunkIndex] = res.chunkData;
         const arrayWithoutUndefined = data.chunks.filter(chunk => chunk !== undefined);
+
+        console.log(`Received chunks: ${arrayWithoutUndefined.length} / ${data.totalChunks}`);
   
-        eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(60 + (arrayWithoutUndefined.length / data.totalChunks) * 30));
+        if (data.path === 'qr') {
+          eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(60 + (arrayWithoutUndefined.length / data.totalChunks) * 30));
+        } else if (data.path === 'push') {
+          eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(40 + (arrayWithoutUndefined.length / data.totalChunks) * 50));
+        }
   
         if (arrayWithoutUndefined.length === data.totalChunks) {
-          await processVaultsData(json, data.sha256GzipVaultDataEnc, data.chunks, data.encryptionDataKey, data.hkdfSalt, data.sessionKeyForHKDF, data.deviceId);
+          console.log('data', data);
+          await processVaultsData(json, data.sha256GzipVaultDataEnc, data.chunks, data.encryptionDataKeyAES, data.hkdfSalt, data.sessionKeyForHKDF, data.deviceId);
           eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(100));
         }
   
@@ -87,8 +130,8 @@ const ConnectOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.CLOSE_WITH_SUCCESS: {
-        console.log('CLOSE_WITH_SUCCESS received', json);
-        await handleCloseSignalAction(data.newSessionId, data.uuid);
+        console.log('CLOSE_WITH_SUCCESS received', json, data);
+        await handleCloseSignalAction(data.newSessionId, data.uuid, data.closeData);
         break;
       }
   
@@ -99,7 +142,7 @@ const ConnectOnMessage = async (json, data) => {
   } catch (e) {
     await CatchError(e, async errObj => {
       eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-      eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, errObj?.visibleErrorMessage || browser.i18n.getMessage('error_general'));
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, errObj?.visibleErrorMessage || browser.i18n.getMessage('error_general'));
       eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, false);
       eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, 264);
 

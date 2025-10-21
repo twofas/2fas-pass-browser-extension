@@ -14,7 +14,7 @@ const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-const PushNotification = ({ fetchState }) => {
+const PushNotification = ({ fetchState, description }) => {
   const [loaded, setLoaded] = useState(false);
   const PushNotificationComponent = useRef(null);
 
@@ -42,7 +42,7 @@ const PushNotification = ({ fetchState }) => {
       </div>
       <div className={S.fetchCaseDescription}>
         <InfoIcon />
-        <p>{browser.i18n.getMessage('fetch_continue_updating_description')}</p>
+        <p>{description || browser.i18n.getMessage('fetch_continue_updating_description')}</p>
       </div>
     </div>
   );

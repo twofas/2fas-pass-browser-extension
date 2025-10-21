@@ -13,14 +13,16 @@ class EventBus {
       CONNECTING: 'connect_connecting',
       LOADER: 'connect_loader',
       SOCKET_ERROR: 'connect_socket_error',
-      HEADER_TEXT: 'connect_header_text',
       LOGIN: 'connect_login',
-      DEVICE_NAME: 'connect_device_name'
+      DEVICE_NAME: 'connect_device_name',
+      SHOW_ERROR: 'connect_show_error',
+      CANCEL_ACTION: 'connect_cancel_action'
     },
     FETCH: {
       SET_FETCH_STATE: 'fetch_set_fetch_state',
       ERROR_TEXT: 'fetch_error_text',
-      NAVIGATE: 'fetch_navigate'
+      NAVIGATE: 'fetch_navigate',
+      DISCONNECT: 'fetch_disconnect'
     }
   };
 

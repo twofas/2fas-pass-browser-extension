@@ -88,19 +88,19 @@
     "description": "Error message displayed when the browser tab returns an unknown response"
   },
   "error_storage_capacity_exceeded": {
-    "message": "Data size exceeded. \nUse less data or try a different browser.",
+    "message": "Data size exceeded. Use less data or try a different browser.",
     "description": "Error shown when storage capacity exceeds the limit"
   },
   "error_scheme_mismatch": {
-    "message": "Please update \nthe 2FAS Pass mobile app.",
+    "message": "Please update the 2FAS Pass mobile app.",
     "description": "Error shown when there is a scheme mismatch between the extension and mobile app"
   },
   "error_mobile_disconnected": {
-    "message": "Mobile device disconnected\nPlease try again.",
+    "message": "Mobile device disconnected. Please try again.",
     "description": "Error shown when the mobile device disconnects"
   },
   "error_timeout": {
-    "message": "Timed out \ndue to inactivity.",
+    "message": "Timed out due to inactivity.",
     "description": "Error message displayed when an operation times out due to inactivity"
   },
   "error_feature_wrong_data": {
@@ -752,8 +752,8 @@
     "description": "Placeholder text for the tag selection dropdown"
   },
   "fetch_push_header": {
-    "message": "Check the 2FAS Pass push notification on your mobile phone.",
-    "description": "Header prompting the user to check their mobile phone for a push notification"
+    "message": "Check the 2FAS Pass push notification on your device.",
+    "description": "Header prompting the user to check their device for a push notification"
   },
   "fetch_push_waiting_for_mobile": {
     "message": "Waiting for mobile response...",
