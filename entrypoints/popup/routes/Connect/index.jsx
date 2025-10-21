@@ -52,6 +52,7 @@ function Connect (props) {
 
   const { login } = useAuthActions();
   const closeConnectionRef = useRef(null);
+  const ephemeralDataRef = useRef(null);
 
   const i18n = useMemo(() => ({
     connectHeader: browser.i18n.getMessage(i18nKeys.connectHeader),
@@ -75,17 +76,20 @@ function Connect (props) {
   }, []);
 
   const initConnection = useCallback(async () => {
-    let sessionID, signature, qr, ephemeralData, socket;
+    await generateSessionKeysNonces();
+    ephemeralDataRef.current = await generateEphemeralKeys();
+  }, []);
+
+  const initQRConnection = useCallback(async () => {
+    let sessionID, signature, qr, socket;
+
+    console.log(ephemeralDataRef);
 
     try {
-      // Always @TODO:
-      await generateSessionKeysNonces();
-      ephemeralData = await generateEphemeralKeys();
-      //
       sessionID = await generateSessionID();
-      signature = await calculateSignature(ephemeralData.publicKey, sessionID);
+      signature = await calculateSignature(ephemeralDataRef.current.publicKey, sessionID);
       setHeaderText(i18n.connectHeader);
-      qr = await generateQR(ephemeralData.publicKey, sessionID, signature);
+      qr = await generateQR(ephemeralDataRef.current.publicKey, sessionID, signature);
     } catch (e) {
       console.error('Error during connection init:', e);
 
@@ -128,7 +132,7 @@ function Connect (props) {
     }
 
     socket.open();
-    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralData.uuid });
+    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralDataRef.current.uuid });
     socket.addEventListener('close', ConnectOnClose);
 
     setQrCode(qr);
@@ -136,28 +140,38 @@ function Connect (props) {
 
   const handleSocketReload = useCallback(async () => {
     await initConnection();
+    await initQRConnection();
     setSocketError(false);
     setHeaderText(i18n.connectHeader);
-  }, [initConnection, i18n.connectHeader]);
+  }, [initConnection, initQRConnection, i18n.connectHeader]);
 
   const connectByPush = async device => {
     console.log('connect by push', device);
+
+    // add UUID from ephemeral data to device object
+    device.uuid = ephemeralDataRef.current.uuid;
 
     let sessionId, timestamp, sigPush;
 
     try {
       sessionId = Base64ToHex(device?.sessionId).toLowerCase();
+      console.log('Device Session ID HEX: ', sessionId);
 
       const timestampValue = await getNTPTime();
       timestamp = timestampValue.toString();
 
+      console.log('NTP Time:', timestamp);
+
       sigPush = await calculateSignature(sessionId, device?.id, device?.uuid, timestamp);
+      console.log('Signature for push:', sigPush);
     } catch (e) {
       console.error(e);
     }
 
     try {
       const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
+
+      console.log('Push response', json);
 
       if (json?.error === 'UNREGISTERED') {
         setSocketError(true);
@@ -204,7 +218,8 @@ function Connect (props) {
     eventBus.on(eventBus.EVENTS.CONNECT.DEVICE_NAME, setDeviceName);
     eventBus.on(eventBus.EVENTS.CONNECT.LOGIN, login);
 
-    getReadyDevices()
+    initConnection()
+      .then(getReadyDevices)
       .then(devices => {
         console.log('Ready devices:', devices);
 
@@ -212,7 +227,7 @@ function Connect (props) {
 
         if (devices.length === 0) {
           setQrView(true);
-          initConnection();
+          initQRConnection();
         } else {
           setQrView(false);
           setHeaderText('Securely access your vault in the 2FAS Pass mobile app');
@@ -234,7 +249,7 @@ function Connect (props) {
         closeConnectionRef.current();
       }
     };
-  }, [initConnection, getReadyDevices, login]);
+  }, [initConnection, initQRConnection, getReadyDevices, login]);
 
   useEffect(() => {
     if (qrView) {
@@ -315,7 +330,10 @@ function Connect (props) {
               <div className={S.deviceSelectContainerAdd}>
                 <button
                   className={`${bS.btn} ${bS.btnClear}`}
-                  onClick={() => setQrView(true)}
+                  onClick={() => {
+                    setQrView(true);
+                    initQRConnection();
+                  }}
                 >
                   <span>Add another device</span>
                   <DeviceQrIcon />
