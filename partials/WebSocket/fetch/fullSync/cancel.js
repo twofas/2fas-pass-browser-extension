@@ -12,7 +12,9 @@ import sendPullRequestCompleted from '../sendPullRequestCompleted';
 * @return {Promise<Object>} The result of the cancellation.
 */
 
-const fullSyncCancel = async (messageId) => {
+const fullSyncCancel = async messageId => {
+  console.log('FULL SYNC CANCEL', messageId);
+
   try {
     await sendPullRequestCompleted(messageId);
 

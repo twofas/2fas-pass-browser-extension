@@ -12,7 +12,7 @@ import FetchOnClose from './socket/FetchOnClose';
 import TwoFasWebSocket from '@/partials/WebSocket';
 import { FETCH_STATE } from './constants';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import calculateSignature from './functions/calculateSignature';
+import calculateFetchSignature from './functions/calculateFetchSignature';
 import { getCurrentDevice, sendPush, getNTPTime, deletePush } from '@/partials/functions';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
@@ -80,7 +80,7 @@ function Fetch (props) {
       sessionId = Base64ToHex(device?.sessionId).toLowerCase();
       const timestampValue = await getNTPTime();
       timestamp = timestampValue.toString();
-      sigPush = await calculateSignature(sessionId, device?.id, device?.uuid, timestamp);
+      sigPush = await calculateFetchSignature(sessionId, device?.id, device?.uuid, timestamp);
     } catch (e) {
       await CatchError(e, () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
     }
@@ -105,6 +105,9 @@ function Fetch (props) {
       }), () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
     }
 
+    console.log('state', state);
+    console.log('device', device);
+
     const socket = new TwoFasWebSocket(sessionId);
     socket.open();
     socket.addEventListener('message', FetchOnMessage, { state, device });
@@ -112,6 +115,8 @@ function Fetch (props) {
   };
 
   const closeConnection = async () => {
+    console.log('Close connection called');
+
     let socket;
 
     try {
@@ -121,15 +126,17 @@ function Fetch (props) {
     try {
       socket = TwoFasWebSocket.getInstance();
     } catch {}
+
+    console.log('Socket instance:', socket);
     
     if (socket) {
       try {
-        await socket.sendError(
-          new TwoFasError(TwoFasError.errors.userCancelled, {
-            apiLog: false,
-            consoleLog: false
-          })
-        );
+        // await socket.sendError(
+        //   new TwoFasError(TwoFasError.errors.userCancelled, {
+        //     apiLog: false,
+        //     consoleLog: false
+        //   })
+        // );
         socket.close();
       } catch {}
     }
@@ -168,6 +175,7 @@ function Fetch (props) {
     eventBus.on(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
     eventBus.on(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
     eventBus.on(eventBus.EVENTS.FETCH.NAVIGATE, navigate);
+    eventBus.on(eventBus.EVENTS.FETCH.DISCONNECT, closeConnection);
 
     initConnection();
 
@@ -175,6 +183,7 @@ function Fetch (props) {
       eventBus.off(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
       eventBus.off(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
       eventBus.off(eventBus.EVENTS.FETCH.NAVIGATE, navigate);
+      eventBus.off(eventBus.EVENTS.FETCH.DISCONNECT, closeConnection);
 
       closeConnection();
     };

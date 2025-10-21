@@ -6,11 +6,12 @@
 
 import S from './Connect.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
+import { useState, useEffect, useCallback, useRef, memo, lazy } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useAuthActions } from '@/hooks/useAuth';
-import { generateSessionKeysNonces, generateEphemeralKeys, generateSessionID, calculateSignature, generateQR } from './functions';
+import { generateSessionKeysNonces, generateEphemeralKeys, generateSessionID, calculateConnectSignature, generateQR } from './functions';
+import calculateFetchSignature from '../Fetch/functions/calculateFetchSignature';
 import ConnectOnMessage from './socket/ConnectOnMessage';
 import ConnectOnClose from './socket/ConnectOnClose';
 import TwoFasWebSocket from '@/partials/WebSocket';
@@ -19,21 +20,21 @@ import DeviceQrIcon from '@/assets/popup-window/device-qr.svg?react';
 import QR from './components/QR';
 import NavigationButton from '../../components/NavigationButton';
 import { getNTPTime, sendPush } from '@/partials/functions';
+import { PULL_REQUEST_TYPES } from '@/constants';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
+const PushNotification = lazy(() => import('../Fetch/components/PushNotification'));
 
 const viewVariants = {
   visible: { opacity: 1, borderWidth: '1px', pointerEvents: 'auto' },
   hidden: { opacity: 0, borderWidth: '0px', pointerEvents: 'none' }
 };
 
-const i18nKeys = {
-  connectHeader: 'connect_header',
-  errorGeneral: 'error_general',
-  reload: 'reload',
-  connecting: 'connect_connecting',
-  connectionOpened: 'connect_connection_opened',
-  connectDescription: 'connect_description'
+const ConnectViews = {
+  qrView: 'qrView',
+  progress: 'progress',
+  deviceSelect: 'deviceSelect',
+  push: 'push'
 };
 
 /** 
@@ -49,27 +50,18 @@ function Connect (props) {
   const [deviceName, setDeviceName] = useState(null);
   const [readyDevices, setReadyDevices] = useState([]);
   const [qrView, setQrView] = useState(null);
+  const [pushSent, setPushSent] = useState(false);
+  const [connectView, setConnectView] = useState(null);
 
   const { login } = useAuthActions();
   const closeConnectionRef = useRef(null);
   const ephemeralDataRef = useRef(null);
 
-  const i18n = useMemo(() => ({
-    connectHeader: browser.i18n.getMessage(i18nKeys.connectHeader),
-    errorGeneral: browser.i18n.getMessage(i18nKeys.errorGeneral),
-    reload: browser.i18n.getMessage(i18nKeys.reload),
-    connecting: browser.i18n.getMessage(i18nKeys.connecting),
-    connectionOpened: browser.i18n.getMessage(i18nKeys.connectionOpened),
-    connectDescription: browser.i18n.getMessage(i18nKeys.connectDescription)
-  }), []);
-
-  const [headerText, setHeaderText] = useState(null);
-
   const getReadyDevices = useCallback(async () => {
     const devices = await storage.getItem('local:devices') || [];
     const filteredDevices = devices.filter(device => {
       return device.scheme && device.scheme >= config.schemeThreshold &&
-             device.platform && device.fcmToken && device.sessionId;
+             device.platform && device.sessionId;
     });
 
     return filteredDevices;
@@ -83,19 +75,16 @@ function Connect (props) {
   const initQRConnection = useCallback(async () => {
     let sessionID, signature, qr, socket;
 
-    console.log(ephemeralDataRef);
-
     try {
       sessionID = await generateSessionID();
-      signature = await calculateSignature(ephemeralDataRef.current.publicKey, sessionID);
-      setHeaderText(i18n.connectHeader);
+      signature = await calculateConnectSignature(ephemeralDataRef.current.publicKey, sessionID);
       qr = await generateQR(ephemeralDataRef.current.publicKey, sessionID, signature);
     } catch (e) {
       console.error('Error during connection init:', e);
 
       await CatchError(e, () => {
         setSocketError(true);
-        setHeaderText(i18n.errorGeneral);
+        showError(browser.i18n.getMessage('error_general'));
         setSocketConnecting(false);
         setConnectingLoader(264);
       });
@@ -125,25 +114,24 @@ function Connect (props) {
 
     if (!socketCreated) {
       setSocketError(true);
-      setHeaderText(i18n.errorGeneral);
+      showError(browser.i18n.getMessage('error_general'));
       setSocketConnecting(false);
       setConnectingLoader(264);
       return;
     }
 
     socket.open();
-    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralDataRef.current.uuid });
+    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralDataRef.current.uuid, path: 'qr' }); // @TODO: const
     socket.addEventListener('close', ConnectOnClose);
 
     setQrCode(qr);
-  }, [i18n.errorGeneral]);
+  }, []);
 
   const handleSocketReload = useCallback(async () => {
     await initConnection();
     await initQRConnection();
     setSocketError(false);
-    setHeaderText(i18n.connectHeader);
-  }, [initConnection, initQRConnection, i18n.connectHeader]);
+  }, [initConnection, initQRConnection]);
 
   const connectByPush = async device => {
     console.log('connect by push', device);
@@ -155,15 +143,11 @@ function Connect (props) {
 
     try {
       sessionId = Base64ToHex(device?.sessionId).toLowerCase();
-      console.log('Device Session ID HEX: ', sessionId);
 
       const timestampValue = await getNTPTime();
       timestamp = timestampValue.toString();
 
-      console.log('NTP Time:', timestamp);
-
-      sigPush = await calculateSignature(sessionId, device?.id, device?.uuid, timestamp);
-      console.log('Signature for push:', sigPush);
+      sigPush = await calculateFetchSignature(sessionId, device?.id, device?.uuid, timestamp);
     } catch (e) {
       console.error(e);
     }
@@ -171,22 +155,39 @@ function Connect (props) {
     try {
       const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
 
-      console.log('Push response', json);
-
       if (json?.error === 'UNREGISTERED') {
         setSocketError(true);
-        setHeaderText(browser.i18n.getMessage('fetch_token_unregistered_header'));
+        showError(browser.i18n.getMessage('fetch_token_unregistered_header'));
         return false;
       }
 
+      setDeviceName(device.name || 'Unnamed device');
+      setPushSent(true);
+
       const socket = new TwoFasWebSocket(sessionId);
       socket.open();
-      socket.addEventListener('message', ConnectOnMessage, { uuid: device.uuid });
+      socket.addEventListener('message', ConnectOnMessage, { uuid: device.uuid, action: PULL_REQUEST_TYPES.FULL_SYNC, path: 'push' }); // @TODO: const
       socket.addEventListener('close', ConnectOnClose);
     } catch (e) {
+      // @TODO: handle error
       console.error(e);
     }
   };
+
+  const showError = useCallback(async errorMessage => {
+    showToast(errorMessage, 'error');
+  }, [showToast]);
+
+  const cancelAction = useCallback(async () => {
+    closeConnectionRef.current();
+    setSocketConnecting(false);
+    setSocketError(false);
+    setConnectingLoader(264);
+    setDeviceName(null);
+    setPushSent(false);
+    setQrView(false);
+    showToast('Action cancelled by user', 'info');
+  }, [showToast]);
 
   useEffect(() => {
     closeConnectionRef.current = () => {
@@ -208,13 +209,14 @@ function Connect (props) {
         closeConnectionRef.current();
       }
     };
-  }, []);
+  }, [TwoFasWebSocket.getInstance]);
 
   useEffect(() => {
     eventBus.on(eventBus.EVENTS.CONNECT.CONNECTING, setSocketConnecting);
     eventBus.on(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
     eventBus.on(eventBus.EVENTS.CONNECT.SOCKET_ERROR, setSocketError);
-    eventBus.on(eventBus.EVENTS.CONNECT.HEADER_TEXT, setHeaderText);
+    eventBus.on(eventBus.EVENTS.CONNECT.SHOW_ERROR, showError);
+    eventBus.on(eventBus.EVENTS.CONNECT.CANCEL_ACTION, cancelAction);
     eventBus.on(eventBus.EVENTS.CONNECT.DEVICE_NAME, setDeviceName);
     eventBus.on(eventBus.EVENTS.CONNECT.LOGIN, login);
 
@@ -230,7 +232,6 @@ function Connect (props) {
           initQRConnection();
         } else {
           setQrView(false);
-          setHeaderText('Securely access your vault in the 2FAS Pass mobile app');
         }
       })
       .catch(e => {
@@ -241,7 +242,8 @@ function Connect (props) {
       eventBus.off(eventBus.EVENTS.CONNECT.CONNECTING, setSocketConnecting);
       eventBus.off(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
       eventBus.off(eventBus.EVENTS.CONNECT.SOCKET_ERROR, setSocketError);
-      eventBus.off(eventBus.EVENTS.CONNECT.HEADER_TEXT, setHeaderText);
+      eventBus.off(eventBus.EVENTS.CONNECT.SHOW_ERROR, showError);
+      eventBus.off(eventBus.EVENTS.CONNECT.CANCEL_ACTION, cancelAction);
       eventBus.off(eventBus.EVENTS.CONNECT.DEVICE_NAME, setDeviceName);
       eventBus.off(eventBus.EVENTS.CONNECT.LOGIN, login);
 
@@ -275,18 +277,21 @@ function Connect (props) {
             animate={(!qrView || socketConnecting) ? 'hidden' : 'visible'}
           >
             <div className={S.connectContainer}>
-              <h1>{headerText}</h1>
+              <h1>{browser.i18n.getMessage('connect_header')}</h1>
 
               {readyDevices.length > 0 && (
                 <NavigationButton
                   type='cancel'
-                  onClick={() => { setQrView(false); }}
+                  onClick={() => { 
+                    closeConnectionRef.current();
+                    setQrView(false);
+                  }}
                 />
               )}
 
               <div className={`${S.connectContainerQr} ${socketError ? S.error : ''}`}>
                 <div className={S.connectContainerQrErrorContent}>
-                  <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnQrReload}`} onClick={handleSocketReload}>{i18n.reload}</button>
+                  <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnQrReload}`} onClick={handleSocketReload}>{browser.i18n.getMessage('reload')}</button>
                 </div>
 
                 <QR qrCode={qrCode} />
@@ -294,7 +299,7 @@ function Connect (props) {
 
               <div className={S.connectDescription}>
                 <InfoIcon />
-                <p>{i18n.connectDescription}</p>
+                <p>{browser.i18n.getMessage('connect_description')}</p>
               </div>
             </div>
           </m.section>
@@ -303,10 +308,10 @@ function Connect (props) {
             variants={viewVariants}
             initial="hidden"
             transition={{ duration: 0.3, type: 'tween' }}
-            animate={(!qrView && !socketConnecting) ? 'visible' : 'hidden'}
+            animate={(!qrView && !socketConnecting && !pushSent) ? 'visible' : 'hidden'}
           >
             <div className={S.deviceSelectContainer}>
-              <h1>{headerText}</h1>
+              <h1>{'Securely access your vault in the 2FAS Pass mobile app'}</h1> {/* i18n */}
 
               <div className={S.deviceSelectContainerList}>
                 <div className={S.deviceSelectContainerListDevices}>
@@ -320,6 +325,9 @@ function Connect (props) {
                         title={device.name}
                         onClick={() => connectByPush(device)}
                       >
+                        {!device?.fcmToken || device?.fcmToken?.length === 0 ? (
+                          <span className={S.deviceSelectContainerListItemWarning}>*</span>
+                        ) : null}
                         <span>{device.name || 'Unnamed device'}</span>
                       </button>
                     ))}
@@ -355,15 +363,61 @@ function Connect (props) {
                   <circle cx="48" cy="48" r="42" />
                 </svg>
 
-                <span>{i18n.connecting}</span>
+                <span>{browser.i18n.getMessage('connect_connecting')}</span>
               </div>
 
               <div className={S.progressDescription}>
-                <p>{i18n.connectionOpened}</p>
+                <p>{browser.i18n.getMessage('connect_connection_opened')}</p>
               </div>
 
               <div className={`${S.progressDeviceName} ${deviceName ? S.visible : ''}`}>
                 <span>{deviceName}</span>
+              </div>
+            </div>
+          </m.section>
+          <m.section
+            className={S.push}
+            variants={viewVariants}
+            initial="hidden"
+            transition={{ duration: 0.3, type: 'tween' }}
+            animate={(!qrView && pushSent && !socketConnecting) ? 'visible' : 'hidden'}
+          >
+            <div className={S.pushContainer}>
+              <NavigationButton
+                type='cancel'
+                onClick={() => {
+                  closeConnectionRef.current();
+                  setPushSent(false);
+                }}
+              />
+
+              <PushNotification description={'To finish connecting, \nplease approve the request on your device.'} />
+
+              <div className={`${S.pushDeviceName} ${deviceName ? S.visible : ''}`}>
+                <span>{deviceName}</span>
+              </div>
+
+              <div className={S.pushAdditional}>
+                <button className={`${bS.btn} ${bS.btnClear}`}>
+                  <span>Trouble connecting?</span>
+
+                  <div className={S.pushAdditionalTooltip}>
+                    <span>If push notification doesn't arrive in a few seconds, please check your mobile app</span>
+                    <span>or</span>
+                    <button
+                      className={`${bS.btn} ${bS.btnClear}`}
+                      onClick={async () => {
+                        setPushSent(false);
+                        closeConnectionRef.current();
+                        await initQRConnection();
+                        setQrView(true);
+                      }}
+                    >
+                      <span>Use QR</span>
+                      <DeviceQrIcon />
+                    </button>
+                  </div>
+                </button>
               </div>
             </div>
           </m.section>

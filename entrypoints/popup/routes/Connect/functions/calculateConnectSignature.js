@@ -7,13 +7,13 @@
 import compressPublicKey from '@/partials/functions/compressPublicKey';
 
 /** 
-* Function to calculate the signature.
+* Function to calculate the signature in QR Connect.
 * @async
 * @param {string} ephemeralPublicKey - The ephemeral public key.
 * @param {string} sessionID - The session ID.
 * @return {Promise<string>} A promise that resolves to the calculated signature.
 */
-const calculateSignature = async (ephemeralPublicKey, sessionID) => {
+const calculateConnectSignature = async (ephemeralPublicKey, sessionID) => {
   let storagePersistentPublicKeyHex, persistentPrivateKey, storageCompressedPublicKeyAB;
 
   try {
@@ -69,4 +69,4 @@ const calculateSignature = async (ephemeralPublicKey, sessionID) => {
   return signatureString;
 };
 
-export default calculateSignature;
+export default calculateConnectSignature;
