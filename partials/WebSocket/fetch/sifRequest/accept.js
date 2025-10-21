@@ -39,45 +39,48 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
       // Decrypt password
       const password = info.data.s_password;
       const tabId = state.data.tabId;
-      
-      const passwordAB = Base64ToArrayBuffer(password);
-      const passwordDecryptedBytes = DecryptBytes(passwordAB);
-
-      const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
-
-      const decryptedPasswordAB = await crypto.subtle.decrypt(
-        { name: 'AES-GCM', iv: passwordDecryptedBytes.iv },
-        encryptionItemT2Key,
-        passwordDecryptedBytes.data
-      );
-      const decryptedPassword = ArrayBufferToString(decryptedPasswordAB);
 
       let encryptedValueB64 = null;
 
-      if (state?.data?.cryptoAvailable) {
-        const [nonce, localKey] = await Promise.all([
-          generateNonce(),
-          storage.getItem('local:lKey')
-        ]);
+      if (password && password.length > 0) {
+        const passwordAB = Base64ToArrayBuffer(password);
+        const passwordDecryptedBytes = DecryptBytes(passwordAB);
 
-        const localKeyCrypto = await crypto.subtle.importKey(
-          'raw',
-          Base64ToArrayBuffer(localKey),
-          { name: 'AES-GCM' },
-          false,
-          ['encrypt']
+        const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
+
+        const decryptedPasswordAB = await crypto.subtle.decrypt(
+          { name: 'AES-GCM', iv: passwordDecryptedBytes.iv },
+          encryptionItemT2Key,
+          passwordDecryptedBytes.data
         );
+        const decryptedPassword = ArrayBufferToString(decryptedPasswordAB);
 
-        const value = await crypto.subtle.encrypt(
-          { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-          localKeyCrypto,
-          StringToArrayBuffer(decryptedPassword)
-        );
 
-        const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
-        encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
-      } else {
-        encryptedValueB64 = decryptedPassword;
+        if (state?.data?.cryptoAvailable) {
+          const [nonce, localKey] = await Promise.all([
+            generateNonce(),
+            storage.getItem('local:lKey')
+          ]);
+
+          const localKeyCrypto = await crypto.subtle.importKey(
+            'raw',
+            Base64ToArrayBuffer(localKey),
+            { name: 'AES-GCM' },
+            false,
+            ['encrypt']
+          );
+
+          const value = await crypto.subtle.encrypt(
+            { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+            localKeyCrypto,
+            StringToArrayBuffer(decryptedPassword)
+          );
+
+          const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
+          encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
+        } else {
+          encryptedValueB64 = decryptedPassword;
+        }
       }
 
       // Send autofill to tab
@@ -86,7 +89,7 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
         {
           action: REQUEST_ACTIONS.AUTOFILL,
           username: item.content.username,
-          password: encryptedValueB64,
+          password: encryptedValueB64 || '',
           target: REQUEST_TARGETS.CONTENT,
           cryptoAvailable: state?.data?.cryptoAvailable
         }
@@ -105,7 +108,7 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
           autofillRes,
           itemId: state.data.itemId,
           deviceId: state.data.deviceId,
-          password: password,
+          password,
           hkdfSaltAB,
           sessionKeyForHKDF
         };
