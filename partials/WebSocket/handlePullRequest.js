@@ -81,7 +81,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         throw new TwoFasError(TwoFasError.errors.newLoginNoData);
       }
 
-      if (!state?.data?.content?.password?.value || state?.data?.content?.password?.value.length === 0) {
+      if (!state?.data?.content?.s_password?.value || state?.data?.content?.s_password?.value.length === 0) {
         data = {
           type: PULL_REQUEST_TYPES.ADD_DATA,
           data: state.data
@@ -91,11 +91,11 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           generateNonce(),
           generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_NEW.crypto, sessionKeyForHKDF, true)
         ]);
-        const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassNewKeyAES, StringToArrayBuffer(state.data.content.password.value));
+        const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassNewKeyAES, StringToArrayBuffer(state.data.content.s_password.value));
         const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
         const passwordEncBytesB64 = ArrayBufferToBase64(passwordEncBytes);
 
-        state.data.content.password.value = passwordEncBytesB64;
+        state.data.content.s_password.value = passwordEncBytesB64;
 
         data = {
           type: PULL_REQUEST_TYPES.ADD_DATA,
@@ -113,7 +113,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         throw new TwoFasError(TwoFasError.errors.updateLoginWrongData);
       }
 
-      if (!state?.data?.content?.password?.value || state?.data?.content?.password?.value === '') {
+      if (!state?.data?.content?.s_password?.value || state?.data?.content?.s_password?.value === '') {
         const stateData = structuredClone(state.data);
         delete stateData?.deviceId;
         
@@ -124,7 +124,6 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           }
         };
       } else {
-        // @TODO: USE OLD SECURITY TYPE TO SELECT KEY
         const originalItem = await getItem(state.data.itemId);
 
         if (!originalItem) {
@@ -142,14 +141,14 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           generateEncryptionAESKey(hkdfSaltAB, keyName, sessionKeyForHKDF, true)
         ]);
 
-        const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassTierKeyAES, StringToArrayBuffer(state.data.content.password.value));
+        const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassTierKeyAES, StringToArrayBuffer(state.data.content.s_password.value));
         const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
         const passwordEncBytesB64 = ArrayBufferToBase64(passwordEncBytes);
 
         const stateData = structuredClone(state.data);
         delete stateData?.deviceId;
 
-        stateData.content.password.value = passwordEncBytesB64;
+        stateData.content.s_password.value = passwordEncBytesB64;
 
         data = {
           type: PULL_REQUEST_TYPES.UPDATE_DATA,
