@@ -12,8 +12,6 @@ import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfig
 * @return {Promise<void>} A promise that resolves when the close event has been processed.
 */
 const ConnectOnClose = async event => {
-  eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, false);
-
   switch (event.code) {
     case 1000: {
       let connected = false;
@@ -32,7 +30,7 @@ const ConnectOnClose = async event => {
       if (!connected) {
         eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, false);
         eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-        eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, browser.i18n.getMessage('error_general'));
+        eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, browser.i18n.getMessage('error_general'));
       }
 
       break;
@@ -43,26 +41,30 @@ const ConnectOnClose = async event => {
     case WEBSOCKET_STATES.CONNECTION_ALREADY_ESTABLISHED:
     case WEBSOCKET_STATES.BROWSER_EXTENSION_NOT_CONNECTED:
     case WEBSOCKET_STATES.INVALID_MESSAGE_ERROR: {
+      eventBus.emit(eventBus.EVENTS.CONNECT.CANCEL_ACTION);
       eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-      eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, browser.i18n.getMessage('error_general'));
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, browser.i18n.getMessage('error_general'));
       break;
     }
 
     case WEBSOCKET_STATES.INVALID_SCHEME: {
+      eventBus.emit(eventBus.EVENTS.CONNECT.CANCEL_ACTION);
       eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-      eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, browser.i18n.getMessage('error_scheme_mismatch'));
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, browser.i18n.getMessage('error_scheme_mismatch'));
       break;
     }
 
     case WEBSOCKET_STATES.CONNECTION_TIMEOUT: {
+      eventBus.emit(eventBus.EVENTS.CONNECT.CANCEL_ACTION);
       eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-      eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, browser.i18n.getMessage('error_timeout'));
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, browser.i18n.getMessage('error_timeout'));
       break;
     }
 
     case WEBSOCKET_STATES.MOBILE_DISCONNECTED: {
+      eventBus.emit(eventBus.EVENTS.CONNECT.CANCEL_ACTION);
       eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-      eventBus.emit(eventBus.EVENTS.CONNECT.HEADER_TEXT, browser.i18n.getMessage('error_mobile_disconnected'));
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, browser.i18n.getMessage('error_mobile_disconnected'));
       break;
     }
 

@@ -9,7 +9,8 @@
 
 .connect,
 .progress,
-.device-select {
+.device-select,
+.push {
   left: 12px;
   position: absolute;
   right: 12px;
@@ -18,7 +19,8 @@
 }
 
 .connect,
-.device-select {
+.device-select,
+.push {
   h1 {
     color: v.$primary-text-light;
     font-size: 16px;
@@ -32,6 +34,45 @@
 
     @include m.darkMode {
       color: v.$primary-text-dark;
+    }
+  }
+}
+
+.progress {
+  &-device-name {
+    background: v.$card-bg-light;
+    border: 1px solid v.$card-stroke-light;
+    border-radius: 8px;
+    margin-top: 24px;
+    opacity: 0;
+    padding: 9px 12px;
+    transition: opacity .3s ease-in-out;
+    width: auto;
+
+    @include m.darkMode {
+      background: v.$card-bg-dark;
+      border-color: v.$card-stroke-dark;
+    }
+
+    &.visible {
+      opacity: 1;
+    }
+
+    span {
+      color: v.$primary-text-light;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: auto;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
     }
   }
 }
@@ -150,7 +191,7 @@
 
 .progress {
   align-items: center;
-  border-radius: 4px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   height: calc(100% - 56px - 40px); // 56px - top, 40px - bottom
@@ -242,43 +283,6 @@
       }
     }
   }
-
-  &-device-name {
-    background: v.$card-bg-light;
-    border: 1px solid v.$card-stroke-light;
-    border-radius: 8px;
-    margin-top: 24px;
-    opacity: 0;
-    padding: 9px 12px;
-    transition: opacity .3s ease-in-out;
-    width: auto;
-
-    @include m.darkMode {
-      background: v.$card-bg-dark;
-      border-color: v.$card-stroke-dark;
-    }
-
-    &.visible {
-      opacity: 1;
-    }
-
-    span {
-      color: v.$primary-text-light;
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 400;
-      line-height: 1;
-      max-width: 300px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: auto;
-
-      @include m.darkMode {
-        color: v.$primary-text-dark;
-      }
-    }
-  }
 }
 
 .device-select {
@@ -313,6 +317,7 @@
       justify-content: flex-end;
       height: 223px;
       margin-top: 32px;
+      padding-bottom: 25px;
       width: 254px;
 
       &-devices {
@@ -320,12 +325,18 @@
         width: 200px;
 
         &-buttons {
-          max-height: 144px;
+          max-height: 106px;
           overflow: auto;
 
           button {
+            align-items: center;
             background-color: v.$card-bg-light;
-            border: 1px solid v.$card-stroke-light;
+            border-left: 1px solid v.$card-stroke-light;
+            border-right: 1px solid v.$card-stroke-light;
+            border-top: 1px solid v.$card-stroke-light;
+            display: flex;
+            flex-direction: row;
+            gap: 0 4px;
             padding: 9px 12px;
             text-align: left;
             width: 100%;
@@ -341,6 +352,7 @@
             }
 
             &:last-of-type {
+              border-bottom: 1px solid v.$card-stroke-light;
               border-bottom-left-radius: 8px;
               border-bottom-right-radius: 8px;
             }
@@ -371,7 +383,6 @@
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
-              width: 100%;
 
               @include m.darkMode {
                 color: v.$primary-text-dark;
@@ -438,6 +449,176 @@
             stroke: v.$primary-color-dark;
           }
         }
+      }
+    }
+  }
+}
+
+.push {
+  border: 1px solid v.$primary-box-stroke-light;
+  border-radius: 8px;
+  height: calc(100% - 56px - 40px); // 56px - top, 40px - bottom
+  overflow: hidden;
+  padding-top: 20px;
+
+  @include m.darkMode {
+    border-color: v.$primary-box-stroke-dark;
+  }
+
+  &-container {
+    align-items: center;
+    background-color: v.$primary-box-bg-light;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+
+    @include m.darkMode {
+      background-color: v.$primary-box-bg-dark;
+    }
+  }
+
+  &-additional {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px 0;
+    margin-top: auto;
+    padding: 0 60px 32px;
+    text-align: center;
+
+    button {
+      position: relative;
+
+      &:hover {
+        .push-additional-tooltip {
+          pointer-events: all;
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+
+      .push-additional-tooltip {
+        background-color: v.$card-bg-light;
+        border: 1px solid v.$card-stroke-light;
+        border-radius: 8px;
+        bottom: calc(100% + 10px);
+        cursor: default;
+        display: inline-flex;
+        flex-direction: column;
+        gap: 4px 0;
+        height: auto;
+        left: 50%;
+        padding: 12px;
+        pointer-events: none;
+        position: absolute;
+        opacity: 0;
+        transform: translateX(-50%) translateY(20px);
+        transition: opacity .3s ease-in-out, transform .3s ease-in-out;
+        width: 300px;
+
+        @include m.darkMode {
+          background-color: v.$card-bg-dark;
+          border-color: v.$card-stroke-dark;
+        }
+
+        &::after {
+          background-color: transparent;
+          content: '';
+          display: block;
+          height: 10px;
+          left: 0;
+          position: absolute;
+          top: 100%;
+          width: 100%;
+        }
+
+        > span {
+          color: v.$primary-text-light;
+          font-size: 12px;
+          font-weight: 400;
+          line-height: 1.3;
+
+          @include m.darkMode {
+            color: v.$primary-text-dark;
+          }
+        }
+
+        button {
+          align-items: center;
+          display: inline-flex;
+          flex-direction: row;
+          gap: 0 4px;
+          margin-left: auto;
+          margin-right: auto;
+
+          &:hover,
+          &:focus {
+            svg {
+              stroke: v.$focus-light;
+
+              @include m.darkMode {
+                stroke: v.$focus-dark;
+              }
+            }
+          }
+
+          &:active {
+            svg {
+              stroke: v.$pressed-light;
+
+              @include m.darkMode {
+                stroke: v.$pressed-dark;
+              }
+            }
+          }
+
+          span {
+            font-size: 11px;
+          }
+
+          svg {
+            height: 22px;
+            stroke: v.$primary-color-light;
+            stroke-linecap: square;
+            stroke-linejoin: round;
+            stroke-width: 2;
+            transition: stroke .3s ease-in-out;
+            width: auto;
+
+            @include m.darkMode {
+              stroke: v.$primary-color-dark;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &-device-name {
+    margin-top: 12px;
+    opacity: 0;
+    padding: 9px 12px;
+    width: auto;
+
+    &.visible {
+      opacity: 1;
+    }
+
+    span {
+      color: v.$primary-text-light;
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: auto;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
       }
     }
   }

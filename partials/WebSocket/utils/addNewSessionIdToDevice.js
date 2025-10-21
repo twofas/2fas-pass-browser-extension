@@ -15,6 +15,8 @@ const addNewSessionIdToDevice = async (uuid, newSessionId) => {
   const devices = await storage.getItem('local:devices') || [];
   const device = devices.find(d => d.uuid === uuid);
 
+  console.log(device);
+
   if (!device) {
     throw new TwoFasError(TwoFasError.internalErrors.deviceNotFound, { additional: { func: 'addNewSessionIdToDevice' } });
   }
@@ -23,6 +25,8 @@ const addNewSessionIdToDevice = async (uuid, newSessionId) => {
   device.updatedAt = Date.now();
 
   await storage.setItem('local:devices', devices);
+
+  console.log('New session ID added to device', { uuid, newSessionId });
 };
 
 export default addNewSessionIdToDevice;

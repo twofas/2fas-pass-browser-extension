@@ -13,12 +13,19 @@
 */
 const deviceUpdate = async (uuid, json) => {
   let devices = await storage.getItem('local:devices') || [];
-  const device = devices.find(d => d.uuid === uuid);
+
+  let device = devices.find(d => d.uuid === uuid);
+  const deviceById = devices.find(d => d.id === json?.payload?.deviceId);
   
-  if (!device) {
+  if (!device && !deviceById) {
     throw new TwoFasError(TwoFasError.internalErrors.deviceNotFound, { additional: { func: 'deviceUpdate' } });
   }
-  
+
+  if (deviceById) {
+    deviceById.uuid = uuid;
+    device = deviceById;
+  }
+
   device.name = json?.payload?.deviceName || '2FAS Pass Mobile App';
   device.id = json?.payload?.deviceId;
   device.scheme = json?.scheme || null;
@@ -26,7 +33,14 @@ const deviceUpdate = async (uuid, json) => {
   device.supportedFeatures = json?.payload?.supportedFeatures || [];
   device.updatedAt = Date.now();
 
-  devices = devices.filter(d => d?.id === json?.payload?.deviceId && d?.uuid === uuid); // Remove old devices with the same ID
+  // Remove devices without id
+  devices = devices.filter(d => d.id);
+
+  // Remove older devices with the same id
+  devices = devices.filter(d => (d.id !== device.id) || d === device);
+
+  // Remove devices without uuid
+  devices = devices.filter(d => d.uuid);
 
   await storage.setItem('local:devices', devices);
 
