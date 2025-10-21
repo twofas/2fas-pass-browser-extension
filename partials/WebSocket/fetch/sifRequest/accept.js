@@ -125,16 +125,31 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
     const sifs = item.sifs || [];
     const updateSifArr = [];
 
-    for (const sifKey of sifs) {
-      updateSifArr.push({ [sifKey]: info.data[sifKey] });
-    }
-
-    item.setSif(updateSifArr);
-
     // generate encryptionItemT2Key
     const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
     const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
     const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
+
+    for (const sifKey of sifs) {
+      if (info.data[sifKey] === undefined) {
+        const nonce = await generateNonce();
+        const encryptedEmpty = await crypto.subtle.encrypt(
+          { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+          encryptionItemT2Key,
+          StringToArrayBuffer('')
+        );
+        const encryptedEmptyBytes = EncryptBytes(nonce.ArrayBuffer, encryptedEmpty);
+        const encryptedEmptyB64 = ArrayBufferToBase64(encryptedEmptyBytes);
+
+        updateSifArr.push({ [sifKey]: encryptedEmptyB64 });
+      } else {
+        updateSifArr.push({ [sifKey]: info.data[sifKey] });
+      }
+    }
+
+    console.log('Updated SIF arr:', updateSifArr);
+
+    item.setSif(updateSifArr);
 
     // save encryptionItemT2Key in session storage
     const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.data.deviceId, itemId: state.data.itemId });
