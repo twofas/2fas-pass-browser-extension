@@ -30,6 +30,7 @@ const ConnectOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.HELLO: {
+        console.log('HELLO received', json);
         eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, true);
         eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(10));
         eventBus.emit(eventBus.EVENTS.CONNECT.DEVICE_NAME, json?.payload?.deviceName || null);
@@ -41,6 +42,7 @@ const ConnectOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.CHALLENGE: {
+        console.log('CHALLENGE received', json);
         const res = await handleChallengeAction(json, data.uuid);
         data.hkdfSalt = res.hkdfSalt;
         data.PK_EPHE_MA_ECDH = res.pkEpheMa;
@@ -52,6 +54,7 @@ const ConnectOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.INIT_TRANSFER: {
+        console.log('INIT_TRANSFER received', json);
         const res = await handleInitTransfer(json, data.hkdfSalt, data.sessionKeyForHKDF, data.uuid, data.deviceId);
         
         data.newSessionId = res.newSessionId;
@@ -67,6 +70,7 @@ const ConnectOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.TRANSFER_CHUNK: {
+        console.log('TRANSFER_CHUNK received', json);
         const res = await handleSendVaultData(json, data.totalChunks);
         
         data.chunks[res.chunkIndex] = res.chunkData;
@@ -83,6 +87,7 @@ const ConnectOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.CLOSE_WITH_SUCCESS: {
+        console.log('CLOSE_WITH_SUCCESS received', json);
         await handleCloseSignalAction(data.newSessionId, data.uuid);
         break;
       }
