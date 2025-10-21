@@ -70,7 +70,7 @@ function LoginAddNewView () {
         const fieldDefinitions = [
           { key: 'url', fallback: domainData.url, sanitize: true },
           { key: 'username', fallback: undefined, sanitize: true },
-          { key: 'password', fallback: undefined, sanitize: true },
+          { key: 's_password', fallback: undefined, sanitize: true },
           { key: 'minLength', fallback: domainData.minLength, sanitize: true },
           { key: 'maxLength', fallback: domainData.maxLength, sanitize: true },
           { key: 'pattern', fallback: domainData.pattern, sanitize: false },
@@ -110,7 +110,7 @@ function LoginAddNewView () {
 
   const handleCopyPassword = async form => {
     try {
-      const currentPassword = form.getFieldState('password').value;
+      const currentPassword = form.getFieldState('s_password').value;
       await copyValue(currentPassword, '00000000-0000-0000-0000-000000000000', 'password');
       showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
     } catch (e) {
@@ -163,10 +163,10 @@ function LoginAddNewView () {
 
     if (data?.onMobile) {
       formData.content.username = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
-      formData.content.password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
+      formData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
     } else {
       formData.content.username = { value: e.username ? valueToNFKD(e.username) : '', action: REQUEST_STRING_ACTIONS.SET };
-      formData.content.password = { value: e.password ? valueToNFKD(e.password) : '', action: REQUEST_STRING_ACTIONS.SET };
+      formData.content.s_password = { value: e.s_password ? valueToNFKD(e.s_password) : '', action: REQUEST_STRING_ACTIONS.SET };
     }
 
     return navigate('/fetch', {
@@ -304,18 +304,18 @@ function LoginAddNewView () {
               </div>
             )}
           </Field>
-          <Field name="password">
+          <Field name="s_password">
             {({ input }) => (
               <div className={`${pI.passInput} ${data?.onMobile ? pI.disabled : ''} ${S.passInput}`}>
                 <div className={pI.passInputTop}>
-                  <label htmlFor="password">{browser.i18n.getMessage('password')}</label>
+                  <label htmlFor="s_password">{browser.i18n.getMessage('password')}</label>
                 </div>
                 <div className={pI.passInputBottom}>
                   <PasswordInput
                     {...input}
                     type={data?.passwordVisible ? 'text' : 'password'}
                     placeholder={browser.i18n.getMessage('placeholder_password')}
-                    id="password"
+                    id="s_password"
                     showPassword={data?.passwordVisible}
                     isDecrypted={true}
                     disabled={data?.onMobile ? 'disabled' : ''}
@@ -326,7 +326,7 @@ function LoginAddNewView () {
                     autoCapitalize="off"
                     onChange={e => {
                       input.onChange(e);
-                      setData('password', e.target.value);
+                      setData('s_password', e.target.value);
                     }}
                   />
                   <div className={pI.passInputBottomButtons}>

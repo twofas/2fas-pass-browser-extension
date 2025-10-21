@@ -205,8 +205,6 @@ function Password (props) {
     await browser.tabs.create({ url: changePasswordUrl });
   };
 
-  console.log(data.item, passwordDecryptError);
-
   return (
     <LazyMotion features={loadDomAnimation}>
       <Field name="content.s_password">
