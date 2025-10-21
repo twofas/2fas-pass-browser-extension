@@ -8,7 +8,7 @@ import getKey from '@/partials/sessionStorage/getKey';
 import compressPublicKey from '@/partials/functions/compressPublicKey';
 
 /**
-* Function to calculate the signature for the given parameters.
+* Function to calculate the signature in fetch.
 * @async
 * @param {string} sessionId - The session ID.
 * @param {string} deviceId - The device ID.
@@ -16,7 +16,7 @@ import compressPublicKey from '@/partials/functions/compressPublicKey';
 * @param {string} timestamp - The timestamp.
 * @return {Promise<string>} The calculated signature.
 */
-const calculateSignature = async (sessionId, deviceId, deviceUUID, timestamp) => {
+const calculateFetchSignature = async (sessionId, deviceId, deviceUUID, timestamp) => {
   let ephemeralPublicKeyHex, persistentPrivateKey;
 
   try {
@@ -62,4 +62,4 @@ const calculateSignature = async (sessionId, deviceId, deviceUUID, timestamp) =>
   return signatureString;
 };
 
-export default calculateSignature;
+export default calculateFetchSignature;

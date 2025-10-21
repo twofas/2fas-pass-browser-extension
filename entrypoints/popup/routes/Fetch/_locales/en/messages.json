@@ -1,7 +1,7 @@
 {
   "fetch_push_header": {
-    "message": "Check the 2FAS Pass push notification on your mobile phone.",
-    "description": "Header prompting the user to check their mobile phone for a push notification"
+    "message": "Check the 2FAS Pass push notification on your device.",
+    "description": "Header prompting the user to check their device for a push notification"
   },
   "fetch_push_waiting_for_mobile": {
     "message": "Waiting for mobile response...",
