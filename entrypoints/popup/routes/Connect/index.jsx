@@ -398,7 +398,7 @@ function Connect (props) {
               </div>
 
               <div className={S.pushAdditional}>
-                <button className={`${bS.btn} ${bS.btnClear}`}>
+                <div className={`${S.pushAdditionalTrouble} ${bS.btn} ${bS.btnClear}`}>
                   <span>Trouble connecting?</span>
 
                   <div className={S.pushAdditionalTooltip}>
@@ -417,7 +417,7 @@ function Connect (props) {
                       <DeviceQrIcon />
                     </button>
                   </div>
-                </button>
+                </div>
               </div>
             </div>
           </m.section>
