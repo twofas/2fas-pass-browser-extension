@@ -10,13 +10,12 @@
 class EventBus {
   EVENTS = {
     CONNECT: {
-      CONNECTING: 'connect_connecting',
+      CHANGE_VIEW: 'connect_change_view',
       LOADER: 'connect_loader',
       SOCKET_ERROR: 'connect_socket_error',
       LOGIN: 'connect_login',
       DEVICE_NAME: 'connect_device_name',
-      SHOW_ERROR: 'connect_show_error',
-      CANCEL_ACTION: 'connect_cancel_action'
+      SHOW_TOAST: 'connect_show_toast'
     },
     FETCH: {
       SET_FETCH_STATE: 'fetch_set_fetch_state',

@@ -4,7 +4,7 @@
     "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
   },
   "connect_description": {
-    "message": "Required for every browser launch to ensure secure access to your Items.",
+    "message": "Do this when you first start the browser extension. This is necessary to securely link the extension to your mobile app.",
     "description": "Explains the need to scan the QR code for secure access during each browser launch"
   },
   "connect_connecting": {
@@ -14,5 +14,41 @@
   "connect_connection_opened": {
     "message": "Connection is opened.\nDon't close this window",
     "description": "Message displayed when the connection is successfully opened"
+  },
+  "connect_push_cancelled": {
+    "message": "Connection cancelled from mobile app.",
+    "description": "Message displayed when the connection is cancelled by the user from the mobile app"
+  },
+  "connect_device_select_header": {
+    "message": "Securely access your vault in the 2FAS Pass mobile app",
+    "description": "Header prompting the user to select their device"
+  },
+  "connect_device_select_list_header": {
+    "message": "Select device:",
+    "description": "Header for the device selection list"
+  },
+  "connect_device_select_add_another": {
+    "message": "Add another device",
+    "description": "Button text for adding another device"
+  },
+  "connect_push_animation_description": {
+    "message": "To finish connecting, \nplease approve the request on your device.",
+    "description": "Description for the push notification animation"
+  },
+  "connect_push_trouble": {
+    "message": "Trouble connecting?",
+    "description": "Text for link to QR code view if having trouble with push notification"
+  },
+  "connect_push_trouble_tooltip": {
+    "message": "If push notification doesn't arrive in a few seconds, please check your mobile app",
+    "description": "Tooltip text explaining what to do if the push notification does not arrive"
+  },
+  "connect_push_trouble_tooltip_or": {
+    "message": "or",
+    "description": "The word 'or' used between two options"
+  },
+  "connect_push_trouble_tooltip_use_qr": {
+    "message": "Use QR",
+    "description": "Instruction to use QR code as an alternative method"
   }
 }

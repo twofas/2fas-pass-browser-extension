@@ -5,13 +5,14 @@
 // See LICENSE file for full terms
 
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
+import { SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
 
 /** 
 * Function to handle the Connect close event.
 * @param {Object} event - The WebSocket close event.
 * @return {Promise<void>} A promise that resolves when the close event has been processed.
 */
-const ConnectOnClose = async event => {
+const ConnectOnClose = async (event, data) => {
   switch (event.code) {
     case 1000: {
       let connected = false;
@@ -28,9 +29,11 @@ const ConnectOnClose = async event => {
       }
   
       if (!connected) {
-        eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, false);
-        eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-        eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, browser.i18n.getMessage('error_general'));
+        if (data?.path === SOCKET_PATHS.CONNECT.QR) {
+          eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+        }
+
+        eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('error_general'), type: 'error' });
       }
 
       break;
@@ -41,30 +44,41 @@ const ConnectOnClose = async event => {
     case WEBSOCKET_STATES.CONNECTION_ALREADY_ESTABLISHED:
     case WEBSOCKET_STATES.BROWSER_EXTENSION_NOT_CONNECTED:
     case WEBSOCKET_STATES.INVALID_MESSAGE_ERROR: {
-      eventBus.emit(eventBus.EVENTS.CONNECT.CANCEL_ACTION);
-      eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, browser.i18n.getMessage('error_general'));
+      if (data?.path === SOCKET_PATHS.CONNECT.QR) {
+        eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+      }
+
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('error_general'), type: 'error' });
       break;
     }
 
     case WEBSOCKET_STATES.INVALID_SCHEME: {
-      eventBus.emit(eventBus.EVENTS.CONNECT.CANCEL_ACTION);
-      eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, browser.i18n.getMessage('error_scheme_mismatch'));
+      if (data?.path === SOCKET_PATHS.CONNECT.QR) {
+        eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+      }
+
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('error_scheme_mismatch'), type: 'error' });
       break;
     }
 
     case WEBSOCKET_STATES.CONNECTION_TIMEOUT: {
-      eventBus.emit(eventBus.EVENTS.CONNECT.CANCEL_ACTION);
-      eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, browser.i18n.getMessage('error_timeout'));
+      if (data?.path === SOCKET_PATHS.CONNECT.QR) {
+        eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+      }
+
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('error_timeout'), type: 'error' });
       break;
     }
 
     case WEBSOCKET_STATES.MOBILE_DISCONNECTED: {
-      eventBus.emit(eventBus.EVENTS.CONNECT.CANCEL_ACTION);
-      eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, browser.i18n.getMessage('error_mobile_disconnected'));
+      if (data?.path === SOCKET_PATHS.CONNECT.QR) {
+        eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+        eventBus.emit(eventBus.EVENTS.CONNECT.CHANGE_VIEW, CONNECT_VIEWS.QrView);
+      } else {
+        eventBus.emit(eventBus.EVENTS.CONNECT.CHANGE_VIEW, CONNECT_VIEWS.DeviceSelect);
+      }
+
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('error_mobile_disconnected'), type: 'error' });
       break;
     }
 

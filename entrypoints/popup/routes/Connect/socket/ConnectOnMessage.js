@@ -14,6 +14,7 @@ import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import handlePullRequest from '@/partials/WebSocket/handlePullRequest';
 import handlePullRequestAction from '@/partials/WebSocket/handlePullRequestAction';
 import TwoFasWebSocket from '@/partials/WebSocket';
+import { SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
 
 /** 
 * Function to handle incoming Connect messages.
@@ -26,15 +27,12 @@ const ConnectOnMessage = async (json, data) => {
   try {
     switch (json.action) {
       case SOCKET_ACTIONS.CLOSE_WITH_ERROR: {
-        console.log('CLOSE_WITH_ERROR received', json);
         throw new TwoFasError(TwoFasError.errors.closeWithErrorReceived);
       }
   
       case SOCKET_ACTIONS.HELLO: {
-        console.log('HELLO received', json);
-
-        if (data.path === 'qr') {
-          eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, true);
+        if (data.path === SOCKET_PATHS.CONNECT.QR) {
+          eventBus.emit(eventBus.EVENTS.CONNECT.CHANGE_VIEW, CONNECT_VIEWS.Progress);
           eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(10));
         }
 
@@ -47,13 +45,12 @@ const ConnectOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.CHALLENGE: {
-        console.log('CHALLENGE received', json);
         const res = await handleChallengeAction(json, data.uuid);
         data.hkdfSalt = res.hkdfSalt;
         data.PK_EPHE_MA_ECDH = res.pkEpheMa;
         data.sessionKeyForHKDF = res.sessionKeyForHKDF;
 
-        if (data.path === 'qr') {
+        if (data.path === SOCKET_PATHS.CONNECT.QR) {
           eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(40));
         }
 
@@ -68,13 +65,11 @@ const ConnectOnMessage = async (json, data) => {
       }
 
       case SOCKET_ACTIONS.PULL_REQUEST_ACTION: {
-        console.log('PULL_REQUEST_ACTION received', json);
-
         const closeData = await handlePullRequestAction(json, data.hkdfSalt, data.sessionKeyForHKDF, data.encryptionDataKeyAES, data);
         data.closeData = closeData;
 
-        if (data.path === 'push' && !closeData?.returnUrl) {
-          eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, true);
+        if (data.path === SOCKET_PATHS.CONNECT.PUSH && !closeData?.returnUrl) {
+          eventBus.emit(eventBus.EVENTS.CONNECT.CHANGE_VIEW, CONNECT_VIEWS.Progress);
           eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(20));
         }
         
@@ -82,7 +77,6 @@ const ConnectOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.INIT_TRANSFER: {
-        console.log('INIT_TRANSFER received', json);
         const res = await handleInitTransfer(json, data.hkdfSalt, data.sessionKeyForHKDF, data.uuid, data.deviceId);
         
         data.newSessionId = res.newSessionId;
@@ -92,9 +86,9 @@ const ConnectOnMessage = async (json, data) => {
         data.totalChunks = res.totalChunks;
         data.chunks = new Array(res.totalChunks);
 
-        if (data.path === 'qr') {
+        if (data.path === SOCKET_PATHS.CONNECT.QR) {
           eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(60));
-        } else if (data.path === 'push') {
+        } else if (data.path === SOCKET_PATHS.CONNECT.PUSH) {
           eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(40));
         }
 
@@ -102,7 +96,6 @@ const ConnectOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.TRANSFER_CHUNK: {
-        console.log('TRANSFER_CHUNK received', json);
         const res = await handleSendVaultData(json, data.totalChunks);
 
         if (!data.chunks) {
@@ -112,16 +105,13 @@ const ConnectOnMessage = async (json, data) => {
         data.chunks[res.chunkIndex] = res.chunkData;
         const arrayWithoutUndefined = data.chunks.filter(chunk => chunk !== undefined);
 
-        console.log(`Received chunks: ${arrayWithoutUndefined.length} / ${data.totalChunks}`);
-  
-        if (data.path === 'qr') {
+        if (data.path === SOCKET_PATHS.CONNECT.QR) {
           eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(60 + (arrayWithoutUndefined.length / data.totalChunks) * 30));
-        } else if (data.path === 'push') {
+        } else if (data.path === SOCKET_PATHS.CONNECT.PUSH) {
           eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(40 + (arrayWithoutUndefined.length / data.totalChunks) * 50));
         }
   
         if (arrayWithoutUndefined.length === data.totalChunks) {
-          console.log('data', data);
           await processVaultsData(json, data.sha256GzipVaultDataEnc, data.chunks, data.encryptionDataKeyAES, data.hkdfSalt, data.sessionKeyForHKDF, data.deviceId);
           eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, getLoaderProgress(100));
         }
@@ -130,7 +120,6 @@ const ConnectOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.CLOSE_WITH_SUCCESS: {
-        console.log('CLOSE_WITH_SUCCESS received', json, data);
         await handleCloseSignalAction(data.newSessionId, data.uuid, data.closeData);
         break;
       }
@@ -141,10 +130,15 @@ const ConnectOnMessage = async (json, data) => {
     }
   } catch (e) {
     await CatchError(e, async errObj => {
-      eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
-      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_ERROR, errObj?.visibleErrorMessage || browser.i18n.getMessage('error_general'));
-      eventBus.emit(eventBus.EVENTS.CONNECT.CONNECTING, false);
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: errObj?.visibleErrorMessage || browser.i18n.getMessage('error_general'), type: 'error' });
       eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, 264);
+
+      if (data?.path === SOCKET_PATHS.CONNECT.QR) {
+        eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+        eventBus.emit(eventBus.EVENTS.CONNECT.CHANGE_VIEW, CONNECT_VIEWS.QrView);
+      } else if (data?.path === SOCKET_PATHS.CONNECT.PUSH) {
+        eventBus.emit(eventBus.EVENTS.CONNECT.CHANGE_VIEW, CONNECT_VIEWS.DeviceSelect);
+      }
 
       if (errObj?.code !== TwoFasError.errors.closeWithErrorReceived.code) {
         try {
