@@ -24,7 +24,6 @@ import Login from '@/partials/models/Login';
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
 const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
-  // @TODO: Change to v2!
   console.log(info, state.data);
 
   if (!info || !info?.data) { // @TODO: Fix in future
@@ -34,7 +33,7 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
   try {
     const [items, itemsKeys] = await Promise.all([
       getItems(),
-      getItemsKeys(state.data.vaultId, state.data.deviceId)
+      getItemsKeys(info.data.vaultId, state.data.deviceId)
     ]);
 
     // Update login & clear alarm if exists
@@ -45,7 +44,7 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
       await browser.alarms.clear(`sifT2Reset-${state.data.itemId}`);
     }
 
-    const item = new Login(info.data, state.data.vaultId, state.data.deviceId);
+    const item = new Login(info.data, info.data.vaultId, state.data.deviceId);
     console.log('ITEM:', item);
 
     if (item.securityType === SECURITY_TIER.SECRET) {
@@ -80,12 +79,12 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(items, state.data.vaultId, state.data.deviceId);
+    await saveItems(items, info.data.vaultId, state.data.deviceId);
 
     // saveTags
-    const tagsKey = await getKey('tags', { vaultId: state.data.vaultId, deviceId: state.data.deviceId });
+    const tagsKey = await getKey('tags', { vaultId: info.data.vaultId, deviceId: state.data.deviceId });
     await storage.removeItem(`session:${tagsKey}`);
-    await saveTags(info.tags, state.data.vaultId, state.data.deviceId);
+    await saveTags(info.tags, info.data.vaultId, state.data.deviceId);
 
     // Set alarm for reset T2 SIF
     if (item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
