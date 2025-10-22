@@ -147,9 +147,11 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
       }
     }
 
-    console.log('Updated SIF arr:', updateSifArr);
-
     item.setSif(updateSifArr);
+
+    // Save sifTime in item's internalData
+    const sifResetTime = info.expireInSeconds && info.expireInSeconds > 30 ? info.expireInSeconds / 60 : config.passwordResetDelay;
+    item.internalData.sifResetTime = sifResetTime;
 
     // save encryptionItemT2Key in session storage
     const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.data.deviceId, itemId: state.data.itemId });
@@ -162,7 +164,6 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
     await saveItems(items, state.data.vaultId, state.data.deviceId);
 
     // Set alarm for reset T2 SIF
-    const sifResetTime = info.expireInSeconds && info.expireInSeconds > 30 ? info.expireInSeconds / 60 : config.passwordResetDelay;
     await browser.alarms.create(`sifT2Reset-${state.data.itemId}|${state.data.vaultId}`, { delayInMinutes: sifResetTime });
 
     // Send response

@@ -51,6 +51,12 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
       item.internalData.type = 'added';
     }
 
+    const sifResetTime = info.expireInSeconds && info.expireInSeconds > 30 ? info.expireInSeconds / 60 : config.passwordResetDelay;
+
+    if (item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+      item.internalData.sifResetTime = sifResetTime;
+    }
+
     items[itemIndex] = item;
 
     if (item.securityType === SECURITY_TIER.SECRET) {
@@ -88,7 +94,6 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
 
     // Set alarm for reset T2 SIF
     if (item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      const sifResetTime = info.expireInSeconds && info.expireInSeconds > 30 ? info.expireInSeconds / 60 : config.passwordResetDelay;
       await browser.alarms.create(`sifT2Reset-${state.data.itemId}|${info.data.vaultId}`, { delayInMinutes: sifResetTime });
     }
 
