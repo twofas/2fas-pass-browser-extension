@@ -55,7 +55,7 @@ function LoginItemView (props) {
         </span>
       </button>
       <div className={S.servicesListItemAdditionalButtons}>
-        <PasswordBtn login={props.data} more={props.more} setMore={toggleMenuCallback} />
+        <PasswordBtn item={props.data} more={props.more} setMore={toggleMenuCallback} />
         <UsernameBtn itemId={props.data.id} more={props.more} setMore={toggleMenuCallback} />
         <MoreBtn more={props.more} setMore={toggleMenuCallback} />
       </div>

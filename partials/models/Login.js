@@ -78,7 +78,8 @@ export default class Login extends Item {
     this.internalData = {
       urisWithTempIds: this.#urisWidthTempIds(loginData.content.uris) || [],
       normalizedUris: this.#normalizeUris(loginData.content.uris) || [],
-      type: loginData.internalData?.type || null
+      type: loginData.internalData?.type || null,
+      sifResetTime: loginData.internalData?.sifResetTime || null
     };
 
     this.#s_password = loginData.content.s_password || null;
@@ -267,7 +268,8 @@ export default class Login extends Item {
         s_password: this.#s_password
       },
       internalData: {
-        type: this.internalData.type
+        type: this.internalData.type,
+        sifResetTime: this.internalData.sifResetTime
       }
     };
   }

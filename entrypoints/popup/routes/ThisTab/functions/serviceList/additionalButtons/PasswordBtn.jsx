@@ -7,7 +7,7 @@
 import S from '../../../ThisTab.module.scss';
 import handlePassword from '../handlePassword';
 import { Link } from 'react-router';
-import { useEffect, useState, useRef, lazy } from 'react';
+import { useState, useRef, lazy, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import Login from '@/partials/models/Login';
@@ -15,27 +15,25 @@ import Login from '@/partials/models/Login';
 const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 const ServicePasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));
 
-const maxTime = config.passwordResetDelay * 60 * 1000;
-
 /**
 * Function to render the password button.
 * @param {Object} props - The component props.
-* @param {Object} props.login - The login object.
+* @param {Object} props.item - The item object.
 * @param {boolean} props.more - Indicates if more actions are available.
 * @param {function} props.setMore - Function to update the more state.
 * @return {JSX.Element} The rendered button element.
 */
-const PasswordBtn = ({ login, more, setMore }) => {
+const PasswordBtn = ({ item, more, setMore }) => {
   const [scheduledTime, setScheduledTime] = useState(false);
   const loaderRef = useRef(null);
   const intervalIdRef = useRef(0);
 
-  const getLoginAlarm = async () => {
-    if (login?.securityType === SECURITY_TIER.HIGHLY_SECRET && login?.sifExists) {
+  const getItemAlarm = async () => {
+    if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
       let alarmTime;
 
       try {
-        alarmTime = await browser.alarms.get(`sifT2Reset-${login.id}|${login.vaultId}`);
+        alarmTime = await browser.alarms.get(`sifT2Reset-${item.id}|${item.vaultId}`);
       } catch {
         return false;
       }
@@ -57,6 +55,7 @@ const PasswordBtn = ({ login, more, setMore }) => {
       return;
     }
 
+    const maxTime = item.internalData.sifResetTime ? item.internalData.sifResetTime * 60 * 1000 : config.passwordResetDelay * 60 * 1000;
     const leftTime = maxTime - (scheduledTime - Date.now());
     const percentTime = Math.round((leftTime / maxTime) * 100);
     const progress = getLoaderProgress(100 - percentTime);
@@ -68,8 +67,8 @@ const PasswordBtn = ({ login, more, setMore }) => {
     }
   };
 
-  useEffect(() => {
-    getLoginAlarm()
+  useLayoutEffect(() => {
+    getItemAlarm()
       .then(ok => {
         if (ok) {
           updateProgress();
@@ -83,21 +82,21 @@ const PasswordBtn = ({ login, more, setMore }) => {
     return () => {
       clearInterval(intervalIdRef.current);
     };
-  }, [login, scheduledTime]);
+  }, [item, scheduledTime]);
 
-  if (login?.securityType === SECURITY_TIER.SECRET) {
+  if (item?.securityType === SECURITY_TIER.SECRET) {
     return (
       <button
-        onClick={async () => await handlePassword(login.id, more, setMore)}
+        onClick={async () => await handlePassword(item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_password')}
       >
         <ServicePasswordIcon className={S.servicePassword} />
       </button>
     );
-  } else if (login?.securityType === SECURITY_TIER.HIGHLY_SECRET && login?.sifExists) {
+  } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
     return (
       <button
-        onClick={async () => await handlePassword(login.id, more, setMore)}
+        onClick={async () => await handlePassword(item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_password')}
         className={S.servicePasswordLoader}
       >
@@ -121,9 +120,9 @@ const PasswordBtn = ({ login, more, setMore }) => {
           action: PULL_REQUEST_TYPES.SIF_REQUEST,
           from: 'service',
           data: {
-            itemId: login.id,
-            deviceId: login.deviceId,
-            vaultId: login.vaultId,
+            itemId: item.id,
+            deviceId: item.deviceId,
+            vaultId: item.vaultId,
             contentType: Login.contentType
           }
         }}
