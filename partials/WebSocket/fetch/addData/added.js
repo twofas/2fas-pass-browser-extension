@@ -37,6 +37,13 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
     const newData = Object.assign({}, info.data);
     newData.internalData = newData.internalData || {};
     newData.internalData.type = 'added';
+
+    const sifResetTime = info.expireInSeconds && info.expireInSeconds > 30 ? info.expireInSeconds / 60 : config.passwordResetDelay;
+
+    if (newData.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+      newData.internalData.sifResetTime = sifResetTime;
+    }
+
     const newItem = new Login(newData, newData.vaultId, state.deviceId);
     items.push(newItem);
 
@@ -75,7 +82,6 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
 
     // Set alarm for reset T2 SIF
     if (info.data.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      const sifResetTime = info.expireInSeconds && info.expireInSeconds > 30 ? info.expireInSeconds / 60 : config.passwordResetDelay;
       await browser.alarms.create(`sifT2Reset-${info.data.id}|${info.data.vaultId}`, { delayInMinutes: sifResetTime });
     }
 
