@@ -6,6 +6,7 @@
 
 import addNewSessionIdToDevice from './utils/addNewSessionIdToDevice';
 import TwoFasWebSocket from '@/partials/WebSocket';
+import { CONNECT_VIEWS } from '@/constants';
 
 /** 
 * Handles the close signal action.
@@ -19,7 +20,8 @@ const handleCloseSignalAction = async (newSessionId, uuid, closeData) => {
   await addNewSessionIdToDevice(uuid, newSessionId); // FUTURE - Change to deviceId instead of uuid?
 
   if (closeData?.returnUrl === '/') {
-    eventBus.emit(eventBus.EVENTS.CONNECT.CANCEL_ACTION);
+    eventBus.emit(eventBus.EVENTS.CONNECT.CHANGE_VIEW, CONNECT_VIEWS.DeviceSelect);
+    eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('connect_push_cancelled'), type: 'info' });
   }
 
   try {

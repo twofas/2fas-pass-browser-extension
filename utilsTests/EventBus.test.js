@@ -54,10 +54,9 @@ describe('EventBus', () => {
   it('should have predefined EVENTS constants', () => {
     expect(eventBus.EVENTS).toBeDefined();
     expect(eventBus.EVENTS.CONNECT).toBeDefined();
-    expect(eventBus.EVENTS.CONNECT.CONNECTING).toBe('connect_connecting');
     expect(eventBus.EVENTS.CONNECT.LOADER).toBe('connect_loader');
     expect(eventBus.EVENTS.CONNECT.SOCKET_ERROR).toBe('connect_socket_error');
-    expect(eventBus.EVENTS.CONNECT.SHOW_ERROR).toBe('connect_show_error');
+    expect(eventBus.EVENTS.CONNECT.SHOW_TOAST).toBe('connect_show_toast');
     expect(eventBus.EVENTS.FETCH).toBeDefined();
   });
 
