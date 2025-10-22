@@ -145,6 +145,7 @@ class TwoFasWebSocket {
     } else if (event === 'close') {
       this.socket.addEventListener('close', e => {
         this.#clearTimeout();
+        TwoFasWebSocket.#notifyStateChange(false);
         this.#clearInstance();
         return callback(e, data);
       });
@@ -170,11 +171,11 @@ class TwoFasWebSocket {
           this.socket.close();
         }
       } catch {}
+    } else {
+      this.#clearTimeout();
+      TwoFasWebSocket.#notifyStateChange(false);
+      this.#clearInstance();
     }
-
-    this.#clearTimeout();
-    TwoFasWebSocket.#notifyStateChange(false);
-    this.#clearInstance();
   };
 
   sendMessage = async data => {
