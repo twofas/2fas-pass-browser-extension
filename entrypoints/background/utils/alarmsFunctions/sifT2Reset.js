@@ -14,15 +14,16 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * Function to forget the sif for a specific item ID.
 * @async
 * @param {string} itemId - The ID of the item for which the sif should be forgotten.
+* @param {string} vaultId - The ID of the vault containing the item.
 * @return {Promise<void>} A promise that resolves when the sif forget is complete.
 */
-const sifT2Reset = async itemId => {
+const sifT2Reset = async (itemId, vaultId) => {
   // Get items
   const items = await getItems();
 
   // Update password
   const item = items.find(item => item.id === itemId);
-  const { vaultId, deviceId } = item;
+  const { deviceId } = item;
   item.removeSif();
 
   // Get itemsKeys
