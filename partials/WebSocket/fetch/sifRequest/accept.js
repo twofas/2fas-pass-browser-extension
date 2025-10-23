@@ -169,7 +169,7 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
     // Send response
     await sendPullRequestCompleted(messageId);
 
-    const returnUrl = state.from === 'details' ? '/details/' + state.data.itemId : '/';
+    const returnUrl = state.from === 'details' ? `/details/${state.data.deviceId}/${state.data.vaultId}/${state.data.itemId}` : '/';
 
     return {
       returnUrl,
