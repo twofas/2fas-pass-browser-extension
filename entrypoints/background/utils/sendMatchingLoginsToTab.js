@@ -18,39 +18,14 @@ const sendMatchingLoginsToTab = async (tabID, data) => {
 
   try {
     const theme = await storage.getItem('local:theme');
+    const sendData = data.map(item => ({
+      ...item,
+      content: {
+        ...item.content,
+        s_password: undefined
+      }}
+    ));
 
-    const sendData = data.map(login => {
-      const {
-        id,
-        deviceId,
-        name,
-        username,
-        securityType,
-        uris,
-        iconType,
-        iconUriIndex,
-        labelText,
-        labelColor,
-        customImageUrl,
-        t2WithPassword
-      } = login;
-
-      return {
-        id,
-        deviceId,
-        name,
-        username,
-        securityType,
-        uris,
-        iconType,
-        iconUriIndex,
-        labelText,
-        labelColor,
-        customImageUrl,
-        t2WithPassword
-      };
-    });
-  
     res = await sendMessageToAllFrames(tabID, {
       action: REQUEST_ACTIONS.MATCHING_LOGINS,
       data: sendData,

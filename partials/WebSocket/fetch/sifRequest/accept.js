@@ -28,8 +28,8 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
   console.log('sifRequestAccept called', info);
 
   try {
-    // Autofill from handleAutofill
-    if (state?.from === 'autofill') {
+    // Autofill from handleAutofill or shortcut autofill
+    if (state?.from === 'autofill' || state?.from === 'shortcut') {
       // Get items
       const items = await getItems();
 
