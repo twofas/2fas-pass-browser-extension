@@ -33,7 +33,7 @@ const PasswordBtn = ({ item, more, setMore }) => {
       let alarmTime;
 
       try {
-        alarmTime = await browser.alarms.get(`sifT2Reset-${item.id}|${item.vaultId}`);
+        alarmTime = await browser.alarms.get(`sifT2Reset-${item.deviceId}|${item.vaultId}|${item.id}`);
       } catch {
         return false;
       }

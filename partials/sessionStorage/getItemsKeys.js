@@ -14,11 +14,11 @@ const SESSION_PREFIX = 'session:';
 /**
 * Gets the items keys for a device ID from session storage.
 * @async
-* @param {string} vaultId - The vault ID to look up.
 * @param {string} deviceId - The device ID to look up.
+* @param {string} vaultId - The vault ID to look up.
 * @return {string[]} The array of items keys for the device ID.
 */
-const getItemsKeys = async (vaultId, deviceId) => {
+const getItemsKeys = async (deviceId, vaultId) => {
   const MAX_ITEMS = 10000;
   const BATCH_SIZE = 20;
 

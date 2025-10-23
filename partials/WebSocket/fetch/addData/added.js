@@ -30,7 +30,7 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
   try {
     const [items, itemsKeys] = await Promise.all([
       getItems(),
-      getItemsKeys(info.data.vaultId, state.deviceId)
+      getItemsKeys(state.deviceId, info.data.vaultId)
     ]);
 
     // Add new data to items
@@ -73,16 +73,16 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(items, info.data.vaultId, state.deviceId);
+    await saveItems(items, state.deviceId, info.data.vaultId);
 
     // saveTags
     const tagsKey = await getKey('tags', { vaultId: info.data.vaultId, deviceId: state.deviceId });
     await storage.removeItem(`session:${tagsKey}`);
-    await saveTags(info.tags, info.data.vaultId, state.deviceId);
+    await saveTags(info.tags, state.deviceId, info.data.vaultId);
 
     // Set alarm for reset T2 SIF
     if (info.data.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await browser.alarms.create(`sifT2Reset-${info.data.id}|${info.data.vaultId}`, { delayInMinutes: sifResetTime });
+      await browser.alarms.create(`sifT2Reset-${info.data.deviceId}|${info.data.vaultId}|${info.data.id}`, { delayInMinutes: sifResetTime });
     }
 
     // Send response

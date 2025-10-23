@@ -117,7 +117,7 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
 
     const [items, itemsKeys] = await Promise.all([
       getItems(),
-      getItemsKeys(state.data.vaultId, state.data.deviceId)
+      getItemsKeys(state.data.deviceId, state.data.vaultId)
     ]);
 
     // Update sif (generic)
@@ -161,10 +161,10 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(items, state.data.vaultId, state.data.deviceId);
+    await saveItems(items, state.data.deviceId, state.data.vaultId);
 
     // Set alarm for reset T2 SIF
-    await browser.alarms.create(`sifT2Reset-${state.data.itemId}|${state.data.vaultId}`, { delayInMinutes: sifResetTime });
+    await browser.alarms.create(`sifT2Reset-${state.data.deviceId}|${state.data.vaultId}|${state.data.itemId}`, { delayInMinutes: sifResetTime });
 
     // Send response
     await sendPullRequestCompleted(messageId);
