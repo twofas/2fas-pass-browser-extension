@@ -11,7 +11,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import S from '../Details.module.scss';
 import { AnimatePresence } from 'motion/react';
 import usePopupStateStore from '../../../store/popupState';
-import Login from '@/partials/models/Login';
+import Login from '@/partials/models/itemModels/Login';
 import URIMatcher from '@/partials/URIMatcher';
 import { v4 as uuidv4 } from 'uuid';
 

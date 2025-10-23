@@ -12,7 +12,7 @@ import getKey from '@/partials/sessionStorage/getKey';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
 import saveTags from '@/partials/WebSocket/utils/saveTags';
 import { ENCRYPTION_KEYS } from '@/constants';
-import Login from '@/partials/models/Login';
+import Login from '@/partials/models/itemModels/Login';
 
 /** 
 * Handles the addition of a new item.

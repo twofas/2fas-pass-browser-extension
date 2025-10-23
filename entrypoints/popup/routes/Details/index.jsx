@@ -12,7 +12,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import Login from '@/partials/models/Login';
+import Login from '@/partials/models/itemModels/Login';
 import { PULL_REQUEST_TYPES } from '@/constants';
 
 // Model Views
