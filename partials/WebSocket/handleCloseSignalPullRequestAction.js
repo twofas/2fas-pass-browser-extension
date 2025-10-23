@@ -55,27 +55,31 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
       if (separateWindow || (!window || typeof window?.close !== 'function' || import.meta.env.BROWSER === 'safari')) {
         showToast(browser.i18n.getMessage('this_tab_autofill_success'), 'success');
-        eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, '/');
+        eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
       }
     } else {
       const toastId = showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
 
-      eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, '/', {
-        state: {
-          action: 'autofillT2Failed', // Non-fetch action here
-          itemId: closeData.itemId,
-          deviceId: closeData.deviceId,
-          password: closeData.password,
-          hkdfSaltAB: closeData.hkdfSaltAB,
-          sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-          toastId
+      eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, {
+        path: '/',
+        options: {
+          state: {
+            action: 'autofillT2Failed', // Non-fetch action here
+            vaultId: closeData.vaultId,
+            deviceId: closeData.deviceId,
+            itemId: closeData.itemId,
+            s_password: closeData.password,
+            hkdfSaltAB: closeData.hkdfSaltAB,
+            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+            toastId
+          }
         }
       });
     }
   }
 
   if (closeData?.returnUrl) {
-    eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, closeData.returnUrl);
+    eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: closeData.returnUrl });
   }
 
   if (closeData?.returnToast) {
