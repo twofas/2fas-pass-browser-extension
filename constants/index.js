@@ -30,7 +30,7 @@ export { default as userNameWords } from './userNameWords.js';
 // Re-export all named exports from regex.js
 export {
   HEX_REGEX,
-  SERVICE_REGEX,
+  AUTOFILL_REGEX,
   FETCH_REGEX,
   SIF_T2_RESET_REGEX,
   AUTO_CLEAR_CLIPBOARD_REGEX,

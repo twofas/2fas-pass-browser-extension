@@ -71,7 +71,7 @@ const processFullSyncVaultsData = async (checksum, chunksData, encryptionDataKey
     const vaultIds = vaults.map(v => v.id);
 
     for (const vaultId of vaultIds) {
-      const existingItemsKeys = await getItemsKeys(vaultId, deviceId);
+      const existingItemsKeys = await getItemsKeys(deviceId, vaultId);
       await storage.removeItems(existingItemsKeys);
     }
 
