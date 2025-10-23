@@ -8,8 +8,8 @@ import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
-import compressObject from '@/partials/gzip/compressObject';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
+import { generateNonce } from '@/partials/functions';
 import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
@@ -19,20 +19,15 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @return {Promise<void>} A promise that resolves when the password is kept.
 */
 const keepPassword = async state => {
-  // @TODO: Change to v2!
+  const [items, itemsKeys] = await Promise.all([
+    getItems(),
+    getItemsKeys(state.vaultId, state.deviceId)
+  ]);
 
-  // Get items
-  const items = await getItems();
-
-  // Get itemsKeys
-  const itemsKeys = await getItemsKeys(state.deviceId);
-
-  // Update password
+  // Update sif (generic)
   const item = items.find(item => item.id === state.itemId);
-  item.password = state.password;
-
-  // Compress items
-  const itemsGZIP = await compressObject(items);
+  const sifs = item.sifs || {};
+  const updateSifArr = [];
 
   // generate encryptionItemT2Key
   const encryptionItemT2Key = await generateEncryptionAESKey(state.hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, state.sessionKeyForHKDF, true);
@@ -45,6 +40,29 @@ const keepPassword = async state => {
     throw new TwoFasError(TwoFasError.internalErrors.keepPasswordExportKeyError, { event: e });
   }
 
+  for (const sifKey of sifs) {
+    if (state[sifKey] === undefined) {
+      const nonce = await generateNonce();
+      const encryptedEmpty = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+        encryptionItemT2Key,
+        StringToArrayBuffer('')
+      );
+      const encryptedEmptyBytes = EncryptBytes(nonce.ArrayBuffer, encryptedEmpty);
+      const encryptedEmptyB64 = ArrayBufferToBase64(encryptedEmptyBytes);
+
+      updateSifArr.push({ [sifKey]: encryptedEmptyB64 });
+    } else {
+      updateSifArr.push({ [sifKey]: state[sifKey] });
+    }
+  }
+
+  item.setSif(updateSifArr);
+
+  // Save sifTime in item's internalData
+  const sifResetTime = state.expireInSeconds && state.expireInSeconds > 30 ? state.expireInSeconds / 60 : config.passwordResetDelay;
+  item.internalData.sifResetTime = sifResetTime;
+
   // save encryptionItemT2Key in session storage
   const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.deviceId, itemId: state.itemId });
   await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
@@ -53,10 +71,10 @@ const keepPassword = async state => {
   await storage.removeItems(itemsKeys);
 
   // saveItems
-  // await saveItems(itemsGZIP, state.deviceId);
+  await saveItems(items, state.vaultId, state.deviceId);
   
   // Set alarm for reset T2 SIF
-  await browser.alarms.create(`sifT2Reset-${state.itemId}|${state.vaultId}`, { delayInMinutes: config.passwordResetDelay }); // @TODO: Check this case
+  await browser.alarms.create(`sifT2Reset-${state.itemId}|${state.vaultId}`, { delayInMinutes: sifResetTime });
 };
 
 export default keepPassword;
