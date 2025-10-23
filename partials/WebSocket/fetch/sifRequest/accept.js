@@ -55,7 +55,6 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
         );
         const decryptedPassword = ArrayBufferToString(decryptedPasswordAB);
 
-
         if (state?.data?.cryptoAvailable) {
           const [nonce, localKey] = await Promise.all([
             generateNonce(),
@@ -106,8 +105,9 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
         return {
           action: 'autofill', // non-fetch action here
           autofillRes,
-          itemId: state.data.itemId,
           deviceId: state.data.deviceId,
+          vaultId: state.data.vaultId,
+          itemId: state.data.itemId,
           password,
           hkdfSaltAB,
           sessionKeyForHKDF

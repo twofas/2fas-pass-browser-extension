@@ -170,11 +170,16 @@ function Fetch (props) {
     }
   };
 
+  // FUTURE - Refactor (useCallback?)
+  const handleNavigate = ({ path, options = {}}) => {
+    return navigate(path, options);
+  };
+
   useEffect(() => {
     // FUTURE - add value validation
     eventBus.on(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
     eventBus.on(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
-    eventBus.on(eventBus.EVENTS.FETCH.NAVIGATE, navigate);
+    eventBus.on(eventBus.EVENTS.FETCH.NAVIGATE, handleNavigate);
     eventBus.on(eventBus.EVENTS.FETCH.DISCONNECT, closeConnection);
 
     initConnection();
@@ -182,7 +187,7 @@ function Fetch (props) {
     return () => {
       eventBus.off(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
       eventBus.off(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
-      eventBus.off(eventBus.EVENTS.FETCH.NAVIGATE, navigate);
+      eventBus.off(eventBus.EVENTS.FETCH.NAVIGATE, handleNavigate);
       eventBus.off(eventBus.EVENTS.FETCH.DISCONNECT, closeConnection);
 
       closeConnection();
