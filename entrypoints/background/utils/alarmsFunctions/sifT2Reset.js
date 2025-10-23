@@ -28,7 +28,7 @@ const sifT2Reset = async (deviceId, vaultId, itemId) => {
   // Get itemsKeys
   const itemsKeys = await getItemsKeys(deviceId, vaultId);
 
-  // Remove encryptionItemT2Key in session storage for this itemId & deviceId
+  // Remove encryptionItemT2Key in session storage for this deviceId + itemId
   const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, itemId });
   await storage.removeItem(`session:${itemT2Key}`);
 

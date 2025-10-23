@@ -116,12 +116,12 @@ class Item {
     try {
       if (this.securityType === SECURITY_TIER.SECRET) {
         if (internalType && internalType === 'added') {
-          itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { itemId: this.id, deviceId: this.deviceId });
+          itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { deviceId: this.deviceId, itemId: this.id });
         } else {
           itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3.sK, { deviceId: this.deviceId });
         }
       } else {
-        itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { itemId: this.id, deviceId: this.deviceId });
+        itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: this.deviceId, itemId: this.id });
       }
     } catch (e) {
       sifDecryptedBytes = null;
