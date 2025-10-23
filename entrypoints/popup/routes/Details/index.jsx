@@ -49,7 +49,7 @@ function Details (props) {
       } else if (data?.item) {
         item = new Login(data.item);
       } else if (params.id) {
-        item = await getItem(params.id);
+        item = await getItem(params.deviceId, params.vaultId, params.id); // @TODO Fix Here!
       }
 
       if (!item) {

@@ -110,7 +110,7 @@ function Tags (props) {
 
   const handleTagsEditable = async () => {
     if (data.tagsEditable) {
-      let item = await getItem(data.item.id);
+      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       data.item.tags = item.tags;
       item = null;
 

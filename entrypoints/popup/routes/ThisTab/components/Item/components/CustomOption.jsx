@@ -26,7 +26,7 @@ const CustomOption = option => {
       return (
         <div className='react-select-dropdown__option details'>
           <Link
-            to={`/details/${option.data.id}`}
+            to={`/details/${option.data.deviceId}/${option.data.vaultId}/${option.data.id}`}
             className='react-select-dropdown__option--uri details'
             prefetch='intent'
           >

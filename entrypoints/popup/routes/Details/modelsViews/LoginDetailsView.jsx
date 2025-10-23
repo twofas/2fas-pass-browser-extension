@@ -116,7 +116,7 @@ function LoginDetailsView () {
     }
 
     if (data.tierEditable) {
-      const originalItem = await getItem(data.item.id);
+      const originalItem = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       
       if (originalItem.securityType !== e.securityType) {
         stateData.securityType = e.securityType;

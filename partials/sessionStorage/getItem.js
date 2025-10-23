@@ -9,11 +9,13 @@ import getItems from './getItems';
 /**
  * Gets a single item from session storage by ID.
  * @async
- * @param {string} id - The ID of the item to retrieve
+ * @param {string} deviceId - The device ID
+ * @param {string} vaultId - The ID of the vault
+ * @param {string} itemId - The ID of the item to retrieve
  * @return {Object|undefined} The item if found, undefined otherwise
  */
-const getItem = async id => {
-  if (!id) {
+const getItem = async (deviceId, vaultId, itemId) => {
+  if (!deviceId || !vaultId || !itemId) {
     return undefined;
   }
 
@@ -27,7 +29,7 @@ const getItem = async id => {
       return undefined;
     }
 
-    const foundItem = items.find(item => item?.id === id);
+    const foundItem = items.find(item => item?.deviceId === deviceId && item?.vaultId === vaultId && item?.id === itemId) || undefined;
 
     items = null;
 
