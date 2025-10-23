@@ -11,9 +11,9 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import S from '../Details.module.scss';
 import { AnimatePresence } from 'motion/react';
 import usePopupStateStore from '../../../store/popupState';
-import Login from '@/partials/models/itemModels/Login';
 import URIMatcher from '@/partials/URIMatcher';
 import { v4 as uuidv4 } from 'uuid';
+import Login from '@/partials/models/itemModels/Login';
 
 const AddIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
 
@@ -30,31 +30,48 @@ const generateURLs = props => {
   const { inputError } = formData;
 
   const handleAddUri = async () => {
-    const newUri = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true, _tempId: uuidv4() };
-    data.item.content.uris = data.item.content.uris || [];
-    data.item.content.uris.push(newUri);
+    const newUriWithTempId = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true, _tempId: uuidv4() };
+    const newContentUri = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true };
 
-    setData('item', data.item);
+    const currentUrisWithTempIds = data.item.internalData.urisWithTempIds || [];
+    const currentContentUris = data.item.content.uris || [];
 
-    if (!data?.domainsEditable) {
-      data.domainsEditable = {};
-      setData('domainsEditable', data.domainsEditable);
-    }
+    const newUrisWithTempIds = [...currentUrisWithTempIds, newUriWithTempId];
+    const newContentUris = [...currentContentUris, newContentUri];
 
-    data.domainsEditable[newUri._tempId] = true;
-    setData('domainsEditable', data.domainsEditable);
+    const updatedItem = new Login({
+      ...data.item,
+      content: {
+        ...data.item.content,
+        uris: newContentUris
+      },
+      internalData: {
+        ...data.item.internalData,
+        urisWithTempIds: newUrisWithTempIds
+      }
+    });
+
+    updatedItem.internalData.urisWithTempIds = newUrisWithTempIds;
+
+    setData('item', updatedItem);
+
+    const currentDomainsEditable = data?.domainsEditable || {};
+    setData('domainsEditable', {
+      ...currentDomainsEditable,
+      [newUriWithTempId._tempId]: true
+    });
   };
   
   return (
     <>
       <AnimatePresence mode='popLayout'>
-        {data?.item?.content?.uris?.length > 0 ? (
-          data.item.content.uris.map((uri, index) => {
-            const key = `uri-${data.item.id}-${index}`;
+        {data?.item?.internalData?.urisWithTempIds?.length > 0 ? (
+          data.item.internalData.urisWithTempIds.map((uri, index) => {
+            const key = `uri-${data.item.id}-${uri._tempId}`;
 
             return (
               <URLComponent
-                key={key} 
+                key={key}
                 index={index}
                 inputError={inputError}
                 uri={uri}
@@ -76,7 +93,7 @@ const generateURLs = props => {
           onClick={handleAddUri}
         >
           <AddIcon />
-          <span>{data?.item?.content?.uris?.length > 0 ? browser.i18n.getMessage('details_add_another_domain') : browser.i18n.getMessage('details_add_domain')}</span>
+          <span>{data?.item?.internalData?.urisWithTempIds?.length > 0 ? browser.i18n.getMessage('details_add_another_domain') : browser.i18n.getMessage('details_add_domain')}</span>
         </button>
       </div>
     </>

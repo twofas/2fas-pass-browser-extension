@@ -55,6 +55,9 @@ function URLComponent (props) {
 
   const { inputError, uri, index } = props;
 
+  const isEditable = data?.domainsEditable?.[uri._tempId];
+  const buttonText = isEditable === true ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit');
+
   const handleCopyUri = useCallback(async index => {
     const uri = data?.item?.content?.uris && data?.item?.content?.uris?.[index] ? data.item.content.uris[index].text : '';
     await copyValue(uri, data.item.id, `uri-${index}`);
@@ -64,85 +67,143 @@ function URLComponent (props) {
   const isNew = data.item.content.uris && data.item.content.uris[index] && data.item.content.uris[index].new;
 
   const handleUriEditable = async () => {
-    // @TODO: FIX!
+    const currentDomainsEditable = data?.domainsEditable || {};
 
-    if (!data?.domainsEditable) {
-      data.domainsEditable = {};
-      setData('domainsEditable', data.domainsEditable);
-    }
-
-    if (!data?.domainsEditable[uri._tempId]) {
-      const oldDomainsEditable = data?.domainsEditable;
-      oldDomainsEditable[uri._tempId] = true;
-      setData('domainsEditable', oldDomainsEditable);
+    if (!currentDomainsEditable[uri._tempId]) {
+      const newDomainsEditable = {
+        ...currentDomainsEditable,
+        [uri._tempId]: true
+      };
+      setData('domainsEditable', newDomainsEditable);
     } else {
       const item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      const newUris = [...data.item.content.uris];
 
-      if (item.content.uris && item.content.uris[index]) {
-        newUris[index] = item.content.uris[index];
+      const newUrisWithTempIds = [...data.item.internalData.urisWithTempIds];
+      const newContentUris = [...data.item.content.uris];
+      const currentUri = newUrisWithTempIds[index];
+
+      if (item.internalData.urisWithTempIds && item.internalData.urisWithTempIds[index]) {
+        newUrisWithTempIds[index] = {
+          text: item.internalData.urisWithTempIds[index].text,
+          matcher: item.internalData.urisWithTempIds[index].matcher,
+          _tempId: currentUri._tempId
+        };
+        newContentUris[index] = {
+          text: item.internalData.urisWithTempIds[index].text,
+          matcher: item.internalData.urisWithTempIds[index].matcher
+        };
       } else {
-        newUris[index] = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE };
+        newUrisWithTempIds[index] = {
+          text: '',
+          matcher: URIMatcher.M_DOMAIN_TYPE,
+          _tempId: currentUri._tempId
+        };
+        newContentUris[index] = {
+          text: '',
+          matcher: URIMatcher.M_DOMAIN_TYPE
+        };
       }
 
-      const updatedItem = new Login({ ...data.item, content: { ...data.item.content, uris: newUris } });
+      const updatedItem = new Login({
+        ...data.item,
+        content: {
+          ...data.item.content,
+          uris: newContentUris
+        },
+        internalData: {
+          ...data.item.internalData,
+          urisWithTempIds: newUrisWithTempIds
+        }
+      });
+
+      updatedItem.internalData.urisWithTempIds = newUrisWithTempIds;
+
       setData('item', updatedItem);
-      
-      data.domainsEditable[uri._tempId] = false;
-      setData('domainsEditable', data.domainsEditable);
+
+      const newDomainsEditable = {
+        ...currentDomainsEditable,
+        [uri._tempId]: false
+      };
+      setData('domainsEditable', newDomainsEditable);
     }
   };
 
   const handleRemoveUri = () => {
-    const newUris = [...data.item.content.uris];
-    const removedUri = newUris.find(u => u._tempId === uri._tempId);
+    const newUrisWithTempIds = [...data.item.internalData.urisWithTempIds];
+    const newContentUris = [...data.item.content.uris];
+    const removedUri = newUrisWithTempIds.find(u => u._tempId === uri._tempId);
 
     if (!removedUri) {
       return;
     }
 
-    const removedIndex = newUris.indexOf(removedUri);
+    const removedIndex = newUrisWithTempIds.indexOf(removedUri);
 
     if (removedIndex > -1) {
-      newUris.splice(removedIndex, 1);
+      newUrisWithTempIds.splice(removedIndex, 1);
+      newContentUris.splice(removedIndex, 1);
     }
 
-    data.item.content.uris = newUris;
-    data.item.content.iconUriIndex = data.item.content.iconUriIndex > 0 ? data.item.content.iconUriIndex - 1 : 0;
+    const newIconUriIndex = data.item.content.iconUriIndex > 0 ? data.item.content.iconUriIndex - 1 : 0;
+    const updatedItem = new Login({
+      ...data.item,
+      content: {
+        ...data.item.content,
+        uris: newContentUris,
+        iconUriIndex: newIconUriIndex
+      },
+      internalData: {
+        ...data.item.internalData,
+        urisWithTempIds: newUrisWithTempIds
+      }
+    });
 
-    setData('item', data.item);
+    updatedItem.internalData.urisWithTempIds = newUrisWithTempIds;
+
+    setData('item', updatedItem);
 
     if (data?.domainsEditable && data.domainsEditable[uri._tempId] !== undefined) {
-      delete data.domainsEditable[uri._tempId];
-      setData('domainsEditable', data.domainsEditable);
+      // eslint-disable-next-line no-unused-vars
+      const { [uri._tempId]: _, ...remainingDomainsEditable } = data.domainsEditable;
+      setData('domainsEditable', remainingDomainsEditable);
     }
 
-    if (!data?.urisRemoved) {
-      data.urisRemoved = 0;
-      setData('urisRemoved', data.urisRemoved);
-    }
-
-    data.urisRemoved++;
-    setData('urisRemoved', data.urisRemoved);
+    const currentUrisRemoved = data?.urisRemoved || 0;
+    setData('urisRemoved', currentUrisRemoved + 1);
   };
 
   const handleUriChange = useCallback(e => {
     const newUri = e.target.value;
-    const newUris = [...data.item.content.uris];
+    const newUrisWithTempIds = [...data.item.internalData.urisWithTempIds];
+    const newContentUris = [...data.item.content.uris];
 
-    const uriToUpdate = newUris.find(u => u._tempId === uri._tempId);
+    const uriToUpdate = newUrisWithTempIds.find(u => u._tempId === uri._tempId);
 
     if (!uriToUpdate) {
       return;
     }
 
-    const uriIndex = newUris.indexOf(uriToUpdate);
+    const uriIndex = newUrisWithTempIds.indexOf(uriToUpdate);
 
     if (uriIndex > -1) {
-      newUris[uriIndex] = { ...uriToUpdate, text: newUri };
+      newUrisWithTempIds[uriIndex] = { ...uriToUpdate, text: newUri };
+      newContentUris[uriIndex] = { text: newUri, matcher: uriToUpdate.matcher };
     }
 
-    const updatedItem = new Login({ ...data.item, content: { ...data.item.content, uris: newUris } });
+    const updatedItem = new Login({
+      ...data.item,
+      content: {
+        ...data.item.content,
+        uris: newContentUris
+      },
+      internalData: {
+        ...data.item.internalData,
+        urisWithTempIds: newUrisWithTempIds
+      }
+    });
+
+    updatedItem.internalData.urisWithTempIds = newUrisWithTempIds;
+
     setData('item', updatedItem);
   });
 
@@ -152,16 +213,14 @@ function URLComponent (props) {
         {({ input }) => (
           <m.div
             className={`${pI.passInput} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
-            key={index}
             variants={urlVariants}
-            initial={isNew ? "hidden" : "visible"}
-            animate="visible"
+            initial={isNew ? "hidden" : false}
+            animate={isNew ? "visible" : false}
             exit="hidden"
-            layout
           >
             <div className={pI.passInputTop}>
               <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
-              <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={handleUriEditable}>{data?.domainsEditable?.[uri._tempId] === true ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}</button>
+              <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={handleUriEditable}>{buttonText}</button>
             </div>
             <div className={pI.passInputBottom}>
               <input
