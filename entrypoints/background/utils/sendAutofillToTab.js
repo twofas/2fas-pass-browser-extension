@@ -13,10 +13,12 @@ import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready'
 * Function to send autofill data to a specific tab.
 * @async
 * @param {number} tabId - The ID of the tab to which the autofill data should be sent.
+* @param {string} deviceId - The ID of the device to use for the autofill data.
+* @param {string} vaultId - The ID of the vault to use for the autofill data.
 * @param {string} itemId - The ID of the item to use for the autofill data.
 * @return {Promise<void>} A promise that resolves when the autofill data is sent.
 */
-const sendAutofillToTab = async (tabId, itemId) => {
+const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   const injectedCS = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
 
   if (!injectedCS) {
@@ -29,7 +31,7 @@ const sendAutofillToTab = async (tabId, itemId) => {
   let item;
 
   try {
-    item = await getItem(itemId);
+    item = await getItem(deviceId, vaultId, itemId);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabToTabService, {
       event: e,

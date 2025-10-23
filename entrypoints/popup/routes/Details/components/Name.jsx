@@ -37,7 +37,7 @@ function Name (props) {
 
   const handleNameEditable = async () => {
     if (data.nameEditable) {
-      let item = await getItem(data.item.id);
+      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       data.item.content.name = item.content.name;
       item = null;
 

@@ -21,11 +21,11 @@ function SmallLoginItem (props) {
   const ref = useRef(null);
 
   const getItemData = async () => {
-    if (!props?.itemId) {
+    if (!props?.deviceId || !props?.vaultId || !props?.itemId) {
       return false;
     }
 
-    const item = await getItem(props.itemId);
+    const item = await getItem(props.deviceId, props.vaultId, props.itemId);
     setItem(item);
   };
 

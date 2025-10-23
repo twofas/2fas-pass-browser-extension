@@ -47,7 +47,7 @@ function Username (props) {
 
   const handleUsernameEditable = async () => {
     if (data.usernameEditable) {
-      let item = await getItem(data.item.id);
+      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       data.item.content.username = item.content.username;
       item = null;
 
@@ -60,7 +60,7 @@ function Username (props) {
 
   const handleUsernameMobile = async () => {
     if (!data.usernameMobile) {
-      let item = await getItem(data.item.id);
+      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       data.item.content.username = item.content.username;
       item = null;
 

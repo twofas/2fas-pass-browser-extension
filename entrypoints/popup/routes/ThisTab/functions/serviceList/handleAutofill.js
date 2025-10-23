@@ -21,13 +21,15 @@ const showGenericToast = () => {
 /**
 * Function to handle the autofill action.
 * @async
-* @param {number} id - The ID of the item.
+* @param {number} deviceId - The ID of the device.
+* @param {number} vaultId - The ID of the vault.
+* @param {number} itemId - The ID of the item.
 * @param {function} navigate - The navigate function.
 * @param {boolean} more - Indicates if more actions are available.
 * @param {function} setMore - Function to update the more state.
 * @return {Promise<void>}
 */
-const handleAutofill = async (id, navigate, more, setMore) => {
+const handleAutofill = async (deviceId, vaultId, itemId, navigate, more, setMore) => {
   if (more) {
     setMore(false);
   }
@@ -35,7 +37,7 @@ const handleAutofill = async (id, navigate, more, setMore) => {
   let item;
 
   try {
-    item = await getItem(id);
+    item = await getItem(deviceId, vaultId, itemId);
   } catch (e) {
     showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
     await CatchError(e);
