@@ -30,8 +30,8 @@ const generateMatchingItemsList = (items, loading) => {
     );
   }
 
-  let fetchedLogins = items.filter(item => item.securityType === SECURITY_TIER.HIGHLY_SECRET && item.password && item.password.length > 0);
-  let restLogins = items.filter(item => item.securityType !== SECURITY_TIER.HIGHLY_SECRET || (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.password));
+  let fetchedLogins = items.filter(item => item.securityType === SECURITY_TIER.HIGHLY_SECRET && item.sifExists);
+  let restLogins = items.filter(item => item.securityType !== SECURITY_TIER.HIGHLY_SECRET || (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.sifExists));
 
   fetchedLogins = sortByName(fetchedLogins);
   restLogins = sortByName(restLogins);
