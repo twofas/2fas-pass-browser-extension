@@ -10,7 +10,7 @@ import { Link } from 'react-router';
 import { useState, useRef, lazy, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import Login from '@/partials/models/Login';
+import Login from '@/partials/models/itemModels/Login';
 
 const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 const ServicePasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));

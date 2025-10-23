@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import URIMatcher from '../URIMatcher';
+import URIMatcher from '../../URIMatcher';
 import Item from './Item';
 import { v4 as uuidv4 } from 'uuid';
 

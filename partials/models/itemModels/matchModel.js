@@ -4,8 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import Login from '@/partials/models/Login.js';
-import SecureNote from '@/partials/models/SecureNote.js';
+import Login from './Login.js';
+import SecureNote from './SecureNote.js';
 
 const modelClasses = [Login, SecureNote];
 const models = new Map(
@@ -18,36 +18,29 @@ const models = new Map(
  * Checks if the itemData has a contentType and contentVersion that match any of the available models
  * and validates that the model constructor doesn't throw errors
  * @param {Object} itemData - The item data to check
- * @param {string} vaultId - The ID of the vault
- * @param {string} deviceId - The device ID
  * @returns {boolean} True if contentType and contentVersion match a model and validation passes, false otherwise
  */
-const mapModel = (itemData, vaultId, deviceId) => {
+const matchModel = itemData => {
   if (!itemData?.contentType) {
-    return false;
+    return null;
   }
 
   const Model = models.get(itemData.contentType);
 
   if (!Model) {
-    return false;
+    return null;
   }
 
   if (Model.contentVersion !== itemData.contentVersion) {
-    return false;
-  }
-
-  if (Model?.name === itemData?.constructor?.name) {
-    return itemData;
+    return null;
   }
 
   try {
-    return new Model(itemData, vaultId, deviceId);
-  } catch (e) {
-    console.error('Model validation error:', e);
+    return new Model(itemData);
+  } catch {
     // @TODO: log error?
-    return false;
+    return null;
   }
 };
 
-export default mapModel;
+export default matchModel;

@@ -14,7 +14,7 @@ import * as m from 'motion/react-m';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import Login from '@/partials/models/Login';
+import Login from '@/partials/models/itemModels/Login';
 import URIMatcher from '@/partials/URIMatcher';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
