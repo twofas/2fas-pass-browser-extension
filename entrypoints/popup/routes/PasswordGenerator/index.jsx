@@ -117,7 +117,7 @@ function PasswordGenerator (props) {
         }
       });
     } else if (navigationContext.from === 'details' && navigationContext.data?.item?.id) {
-      return navigate(`/details/${navigationContext.data.item.id}`, {
+      return navigate(`/details/${navigationContext.data.item.deviceId}/${navigationContext.data.item.vaultId}/${navigationContext.data.item.id}`, {
         state: {
           from: 'passwordGenerator',
           data: { ...navigationContext.data, item: { ...navigationContext.data.item, content: { ...navigationContext.data.item.content, s_password: values.password } } }
