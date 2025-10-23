@@ -51,7 +51,6 @@ function ThisTab (props) {
   const location = useLocation();
   const { state } = location;
   const { changeMatchingLoginsLength } = useMatchingLogins();
-  
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('Unknown');
   const [url, setUrl] = useState('Unknown');
@@ -322,6 +321,8 @@ function ThisTab (props) {
                 <h2>Password for the following service successfully fetched.</h2>
                 <div className={S.thisTabAutofillPopupBoxLoginItem}>
                   <SmallLoginItem
+                    deviceId={state?.deviceId}
+                    vaultId={state?.vaultId}
                     itemId={state?.itemId}
                     state={state}
                     setAutofillFailed={setAutofillFailed}
