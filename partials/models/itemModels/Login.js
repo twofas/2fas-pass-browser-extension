@@ -33,7 +33,9 @@ export default class Login extends Item {
     validateOptional(loginData?.content?.name, isValidString, 'Invalid loginData.content.name: must be a string');
     validateOptional(loginData?.content?.username, isValidString, 'Invalid loginData.content.username: must be a string');
 
-    validateOptional(loginData?.content?.s_password, isValidBase64, 'Invalid loginData.content.s_password: must be a base64 string');
+    if (loginData?.content?.s_password && loginData.content.s_password !== '******') {
+      validateOptional(loginData?.content?.s_password, isValidBase64, 'Invalid loginData.content.s_password: must be a base64 string');
+    }
 
     if (loginData?.content?.uris !== undefined) {
       validate(Array.isArray(loginData.content.uris), 'Invalid loginData.content.uris: must be an array');
