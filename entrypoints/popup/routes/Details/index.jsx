@@ -43,13 +43,18 @@ function Details (props) {
     try {
       let item;
 
-      // @TODO Fix Here!
       if (location.state?.data) {
         item = new Login(location.state.data.item);
       } else if (data?.item) {
-        item = new Login(data.item);
+        try {
+          item = new Login(data.item);
+        } catch (validationError) {
+          if (params.id) {
+            item = await getItem(params.deviceId, params.vaultId, params.id);
+          }
+        }
       } else if (params.id) {
-        item = await getItem(params.deviceId, params.vaultId, params.id); // @TODO Fix Here!
+        item = await getItem(params.deviceId, params.vaultId, params.id);
       }
 
       if (!item) {
@@ -64,7 +69,7 @@ function Details (props) {
       CatchError(e);
       navigate('/');
     }
-  }, [params.id, navigate, setData, location.state, popupHref]);
+  }, [params.deviceId, params.vaultId, params.id, navigate, setData, location.state]);
 
   useEffect(() => {
     getData();

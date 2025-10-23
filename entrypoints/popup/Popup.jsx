@@ -85,15 +85,32 @@ const AuthRoutes = memo(({ blocked, configured }) => {
   const location = useLocation();
   const storedHref = usePopupStateStore(state => state.href);
   const [initialCheckDone, setInitialCheckDone] = useState(false);
+  const [hydrationComplete, setHydrationComplete] = useState(false);
   const hasNavigated = useRef(false);
-
-  usePopupHref();
 
   useEffect(() => {
     addToNavigationHistory(location.pathname);
   }, [location.pathname]);
 
   useEffect(() => {
+    const unsubHydrate = usePopupStateStore.persist.onFinishHydration(() => {
+      setHydrationComplete(true);
+    });
+
+    if (usePopupStateStore.persist.hasHydrated()) {
+      setHydrationComplete(true);
+    }
+
+    return unsubHydrate;
+  }, []);
+
+  usePopupHref(hydrationComplete);
+
+  useEffect(() => {
+    if (!hydrationComplete) {
+      return;
+    }
+
     if (hasNavigated.current || !configured) {
       setInitialCheckDone(true);
       return;
@@ -109,7 +126,7 @@ const AuthRoutes = memo(({ blocked, configured }) => {
     }
 
     setInitialCheckDone(true);
-  }, [navigate, storedHref, location.pathname, configured]);
+  }, [navigate, storedHref, location.pathname, configured, hydrationComplete]);
 
   const routeElements = useMemo(() => {
     return routeConfig.map(route => {

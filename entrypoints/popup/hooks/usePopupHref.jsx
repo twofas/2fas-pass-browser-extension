@@ -23,9 +23,10 @@ const defaultData = {
  * Automatically updates the href in the store when the location changes.
  * Resets data and scrollPosition when navigating to a different route.
  * Excludes specific routes from tracking: /fetch, /fetch/*, /connect, /blocked
+ * @param {boolean} hydrationComplete - Whether Zustand hydration is complete
  * @return {string} Current pathname from the location
  */
-const usePopupHref = () => {
+const usePopupHref = (hydrationComplete = false) => {
   const location = useLocation();
   const setHref = usePopupStateStore(state => state.setHref);
   const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
@@ -33,32 +34,45 @@ const usePopupHref = () => {
   const changeCountRef = useRef(0);
 
   useEffect(() => {
-    const pathname = location.pathname;
+    if (!hydrationComplete) {
+      return;
+    }
 
+    const pathname = location.pathname;
     const excludedPaths = ['/fetch', '/blocked'];
     const isExcluded = excludedPaths.includes(pathname) || pathname.startsWith('/fetch/');
 
     if (isExcluded) {
       setHref('/');
+      setScrollPosition(0);
+
+      const defaultDataForPath = defaultData['/'] || {};
+      usePopupStateStore.setState({ data: { ...defaultDataForPath } });
+
       return;
     }
 
     if (pathname !== lastPathnameRef.current) {
       changeCountRef.current += 1;
 
-      const shouldResetData = changeCountRef.current > 2;
+      const isNavigatingToRoot = pathname === '/';
+      const isNavigatingFromRoot = lastPathnameRef.current === '/';
+      const shouldResetData = changeCountRef.current > 2 && !isNavigatingToRoot && !isNavigatingFromRoot;
+      const isUserNavigation = changeCountRef.current > 2;
 
       lastPathnameRef.current = pathname;
       setHref(pathname);
 
-      if (shouldResetData) {
+      if (isUserNavigation) {
         setScrollPosition(0);
+      }
 
+      if (shouldResetData) {
         const defaultDataForPath = defaultData[pathname] || {};
         usePopupStateStore.setState({ data: { ...defaultDataForPath } });
       }
     }
-  }, [location.pathname, setHref, setScrollPosition]);
+  }, [location.pathname, setHref, setScrollPosition, hydrationComplete]);
 
   return location.pathname;
 };
