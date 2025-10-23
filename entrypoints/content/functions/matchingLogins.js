@@ -44,13 +44,15 @@ const cancel = (n, sendResponse) => {
 * Function to perform an action.
 * @param {Object} n - The notification object.
 * @param {Function} sendResponse - The function to send the response back.
-* @param {string} id - The ID of the item.
+* @param {string} vaultId - The vault ID of the item.
 * @param {string} deviceId - The device ID of the item.
+* @param {string} id - The ID of the item.
+* @param {string} contentType - The content type of the item.
 * @return {void}
 */
-const action = (n, sendResponse, id, deviceId) => {
+const action = (n, sendResponse, vaultId, deviceId, id, contentType) => {
   closeNotification(n);
-  return sendResponse({ status: 'action', id, deviceId });
+  return sendResponse({ status: 'action', vaultId, deviceId, id, contentType });
 };
 
 /** 
@@ -175,7 +177,7 @@ const matchingLogins = (request, sendResponse, container) => {
     const itemEl = createElement('div', 'twofas-pass-notification-matching-logins-item');
 
     const itemBtn = createElement('button', 'twofas-pass-notification-matching-logins-item-btn');
-    itemBtn.addEventListener('click', () => action(n, sendResponse, item.id, item.deviceId ));
+    itemBtn.addEventListener('click', () => action(n, sendResponse, item.vaultId, item.deviceId, item.id, item.contentType));
 
     const itemIcon = createElement('span', 'twofas-pass-notification-matching-logins-item-icon');
 

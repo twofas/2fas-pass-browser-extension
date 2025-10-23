@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { sendMessageToAllFrames, sendMessageToTab, generateNonce } from '@/partials/functions';
-import getItems from '@/partials/sessionStorage/getItems';
+import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 
@@ -26,15 +26,14 @@ const sendAutofillToTab = async (tabId, itemId) => {
     }, tabId, true);
   }
 
-  let items, item;
+  let item;
 
   try {
-    items = await getItems();
-    item = items.find(item => item.id === itemId);
+    item = await getItem(itemId);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabToTabService, {
       event: e,
-      additional: { func: 'sendAutofillToTab - getItems' }
+      additional: { func: 'sendAutofillToTab - getItem' }
     });
   }
 
@@ -49,7 +48,7 @@ const sendAutofillToTab = async (tabId, itemId) => {
   let noUsername = false;
   let decryptedPassword, encryptedValueB64;
 
-  if (!item?.password || item?.password?.length <= 0) {
+  if (!item?.sifExists) {
     noPassword = true;
   }
 

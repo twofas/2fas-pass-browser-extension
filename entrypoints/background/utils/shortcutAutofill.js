@@ -32,6 +32,7 @@ const shortcutAutofill = async () => {
   if (!configured) {
     return openPopup();
   }
+
   let tabs;
 
   try {
@@ -71,7 +72,18 @@ const shortcutAutofill = async () => {
 
   if (matchingLogins.length === 1) {
     if (!matchingLogins[0].isT3orT2WithPassword) {
-      const data = encodeURIComponent(JSON.stringify({ action: PULL_REQUEST_TYPES.SIF_REQUEST, from: 'shortcut', data: { itemId: matchingLogins[0].id, deviceId: matchingLogins[0].deviceId, tabId: tab.id }}));
+      const data = encodeURIComponent(JSON.stringify({
+        action: PULL_REQUEST_TYPES.SIF_REQUEST,
+        from: 'shortcut',
+        data: {
+          contentType: matchingLogins[0].contentType,
+          vaultId: matchingLogins[0].vaultId,
+          itemId: matchingLogins[0].id,
+          deviceId: matchingLogins[0].deviceId,
+          tabId: tab.id
+        }
+      }));
+      
       return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
     }
 
@@ -94,7 +106,18 @@ const shortcutAutofill = async () => {
     const item = items.filter(item => item.id === matchingLoginsAction.id)[0];
 
     if (item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      const data = encodeURIComponent(JSON.stringify({ action: PULL_REQUEST_TYPES.SIF_REQUEST, from: 'shortcut', data: { itemId: matchingLoginsAction.id, deviceId: matchingLoginsAction.deviceId, tabId: tab.id }}));
+      const data = encodeURIComponent(JSON.stringify({
+        action: PULL_REQUEST_TYPES.SIF_REQUEST,
+        from: 'shortcut',
+        data: {
+          vaultId: matchingLoginsAction.vaultId,
+          deviceId: matchingLoginsAction.deviceId,
+          itemId: matchingLoginsAction.id,
+          contentType: matchingLoginsAction.contentType,
+          tabId: tab.id
+        }
+      }));
+
       return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
     }
 
