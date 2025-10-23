@@ -8,7 +8,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getLastActiveTab } from '@/partials/functions';
 
-/** 
+/**
 * Store for popup state management using Zustand with persistence.
 * This store manages various sections of the popup state, including tabs, details, settings, and password generator.
 * The state is persisted in session storage, scoped by the active browser tab.
@@ -26,15 +26,14 @@ const usePopupStateStore = create(
     }),
     {
       name: 'popupState',
+      skipHydration: false,
       storage: {
         async getItem (name) {
           let newStructure = false;
 
-          // Tab
           const activeTab = await getLastActiveTab();
           const tabId = activeTab?.id || 'default';
 
-          // Storage
           let storageValue = await storage.getItem('session:popupState');
 
           if (!storageValue) {
@@ -54,11 +53,9 @@ const usePopupStateStore = create(
           return storageValue?.[tabId]?.[name] || null;
         },
         async setItem (name, storageValue) {
-          // Tab
           const activeTab = await getLastActiveTab();
           const tabId = activeTab?.id || 'default';
 
-          // Storage
           const currentStorage = await storage.getItem('session:popupState') || {};
 
           if (!currentStorage?.[tabId]) {
@@ -66,6 +63,7 @@ const usePopupStateStore = create(
           }
 
           currentStorage[tabId][name] = storageValue;
+
           return storage.setItem('session:popupState', currentStorage);
         },
         async removeItem (name) {
