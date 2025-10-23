@@ -23,7 +23,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import PasswordInput from '@/entrypoints/popup/components/PasswordInput';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
-import Login from '@/partials/models/Login';
+import Login from '@/partials/models/itemModels/Login';
 
 const additionalVariants = {
   hidden: { maxHeight: '0px' },

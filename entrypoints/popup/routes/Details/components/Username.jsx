@@ -13,7 +13,7 @@ import { lazy, useCallback } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import Login from '@/partials/models/Login';
+import Login from '@/partials/models/itemModels/Login';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
