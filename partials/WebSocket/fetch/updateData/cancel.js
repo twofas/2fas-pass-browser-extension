@@ -8,16 +8,18 @@ import sendPullRequestCompleted from '../sendPullRequestCompleted';
 
 /** 
 * Handles the cancellation of a item update request.
-* @param {string} itemId - The ID of the item session.
+* @param {string} deviceId - The ID of the item session.
+* @param {string} vaultId - The ID of the vault containing the item.
+* @param {string} itemId - The ID of the item being updated.
 * @param {string} messageId - The ID of the message to be sent.
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
-const updateDataCancel = async (itemId, messageId) => {
+const updateDataCancel = async (deviceId, vaultId, itemId, messageId) => {
   try {
     await sendPullRequestCompleted(messageId);
 
     return {
-      returnUrl: `/details/${itemId}`,
+      returnUrl: `/details/${deviceId}/${vaultId}/${itemId}`,
       returnToast: {
         text: browser.i18n.getMessage('fetch_update_login_cancel_toast'),
         type: 'info'
