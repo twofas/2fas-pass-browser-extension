@@ -36,19 +36,21 @@ function Details (props) {
   const scrollableRef = useRef(null);
 
   const data = usePopupStateStore(state => state.data);
-  const popupHref = usePopupStateStore(state => state.popupHref);
   const setData = usePopupStateStore(state => state.setData);
 
   const getData = useCallback(async () => {
     try {
       let item;
+      let preservedUrisWithTempIds;
 
       if (location.state?.data) {
+        preservedUrisWithTempIds = location.state.data.item?.internalData?.urisWithTempIds;
         item = new Login(location.state.data.item);
       } else if (data?.item) {
         try {
+          preservedUrisWithTempIds = data.item?.internalData?.urisWithTempIds;
           item = new Login(data.item);
-        } catch (validationError) {
+        } catch {
           if (params.id) {
             item = await getItem(params.deviceId, params.vaultId, params.id);
           }
@@ -63,13 +65,17 @@ function Details (props) {
         return;
       }
 
+      if (preservedUrisWithTempIds) {
+        item.internalData.urisWithTempIds = preservedUrisWithTempIds;
+      }
+
       setData('item', item);
       setLoading(false);
     } catch (e) {
       CatchError(e);
       navigate('/');
     }
-  }, [params.deviceId, params.vaultId, params.id, navigate, setData, location.state]);
+  }, [params.deviceId, params.vaultId, params.id, navigate, setData, location.state, data?.item]);
 
   useEffect(() => {
     getData();
