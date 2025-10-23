@@ -21,8 +21,8 @@ const defaultData = {
 /**
  * Custom hook for tracking and storing current pathname in popup state.
  * Automatically updates the href in the store when the location changes.
- * Resets data and scrollPosition when navigating to a different route.
- * Excludes specific routes from tracking: /fetch, /fetch/*, /connect, /blocked
+ * Resets data to defaults and scrollPosition to 0 on every route change after hydration.
+ * Excludes specific routes from tracking: /fetch, /fetch/*, /blocked
  * @param {boolean} hydrationComplete - Whether Zustand hydration is complete
  * @return {string} Current pathname from the location
  */
@@ -55,9 +55,6 @@ const usePopupHref = (hydrationComplete = false) => {
     if (pathname !== lastPathnameRef.current) {
       changeCountRef.current += 1;
 
-      const isNavigatingToRoot = pathname === '/';
-      const isNavigatingFromRoot = lastPathnameRef.current === '/';
-      const shouldResetData = changeCountRef.current > 2 && !isNavigatingToRoot && !isNavigatingFromRoot;
       const isUserNavigation = changeCountRef.current > 2;
 
       lastPathnameRef.current = pathname;
@@ -65,9 +62,7 @@ const usePopupHref = (hydrationComplete = false) => {
 
       if (isUserNavigation) {
         setScrollPosition(0);
-      }
 
-      if (shouldResetData) {
         const defaultDataForPath = defaultData[pathname] || {};
         usePopupStateStore.setState({ data: { ...defaultDataForPath } });
       }

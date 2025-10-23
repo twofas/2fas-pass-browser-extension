@@ -84,7 +84,7 @@ export default class Login extends Item {
       sifResetTime: loginData.internalData?.sifResetTime || null
     };
 
-    this.#s_password = loginData.content.s_password || null;
+    this.#s_password = (loginData.content.s_password && loginData.content.s_password !== '******') ? loginData.content.s_password : null;
     this.#s_passwordDecrypted = null;
 
     // if (internal && content.s_password !== undefined && content.s_password !== '******' && !isValidBase64(content.s_password)) {
