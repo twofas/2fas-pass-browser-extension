@@ -10,12 +10,14 @@ import copyValue from '@/partials/functions/copyValue';
 /** 
 * Function to handle the username action.
 * @async
-* @param {number} id - The ID of the item.
+* @param {number} deviceId - The ID of the device.
+* @param {number} vaultId - The ID of the vault.
+* @param {number} itemId - The ID of the item.
 * @param {boolean} more - Indicates if more actions are available.
 * @param {function} setMore - Function to update the more state.
 * @return {Promise<void>} 
 */
-const handleUsername = async (id, more, setMore) => {
+const handleUsername = async (deviceId, vaultId, itemId, more, setMore) => {
   let item;
 
   if (more) {
@@ -23,7 +25,7 @@ const handleUsername = async (id, more, setMore) => {
   }
 
   try {
-    item = await getItem(id);
+    item = await getItem(deviceId, vaultId, itemId);
   } catch (e) {
     showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
     await CatchError(e);

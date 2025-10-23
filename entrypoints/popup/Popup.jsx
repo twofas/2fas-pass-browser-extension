@@ -51,7 +51,7 @@ const routeConfig = [
   { path: '/settings/preferences/save-login-excluded-domains', component: SettingsSaveLoginExcludedDomains, isProtectedRoute: false },
   { path: '/fetch', component: Fetch, isProtectedRoute: true },
   { path: '/fetch/:data', component: FetchExternal, noClassName: true, isProtectedRoute: true },
-  { path: '/details/:id', component: Details, isProtectedRoute: true },
+  { path: '/details/:deviceId/:vaultId/:id', component: Details, isProtectedRoute: true },
   { path: '/password-generator', component: PasswordGenerator, isProtectedRoute: true },
   { path: '/blocked', component: Blocked },
   { path: '*', component: NotFound }

@@ -87,11 +87,11 @@ const shortcutAutofill = async () => {
       return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
     }
 
-    return sendAutofillToTab(tab.id, matchingLogins[0].id); // FUTURE - Case with full data, no id?
+    return sendAutofillToTab(tab.id, matchingLogins[0].deviceId, matchingLogins[0].vaultId, matchingLogins[0].id); // FUTURE - Case with full data, no id?
   }
 
   matchingLogins = matchingLogins.map(item => {
-    if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.password && item?.password?.length > 0) {
+    if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
       item.t2WithPassword = true;
     }
 
@@ -103,7 +103,11 @@ const shortcutAutofill = async () => {
   if (matchingLoginsAction && matchingLoginsAction?.status === 'cancel') {
     return;
   } else if (matchingLoginsAction && matchingLoginsAction?.status === 'action') {
-    const item = items.filter(item => item.id === matchingLoginsAction.id)[0];
+    const item = items.filter(item =>
+      item.deviceId === matchingLoginsAction.deviceId &&
+      item.vaultId === matchingLoginsAction.vaultId &&
+      item.id === matchingLoginsAction.id
+    )[0];
 
     if (item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       const data = encodeURIComponent(JSON.stringify({
@@ -121,7 +125,7 @@ const shortcutAutofill = async () => {
       return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
     }
 
-    return sendAutofillToTab(tab.id, matchingLoginsAction.id);
+    return sendAutofillToTab(tab.id, matchingLoginsAction.deviceId, matchingLoginsAction.vaultId, matchingLoginsAction.id);
   }
 };
 

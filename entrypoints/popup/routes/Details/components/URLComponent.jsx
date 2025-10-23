@@ -76,7 +76,7 @@ function URLComponent (props) {
       oldDomainsEditable[uri._tempId] = true;
       setData('domainsEditable', oldDomainsEditable);
     } else {
-      const item = await getItem(data.item.id);
+      const item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       const newUris = [...data.item.content.uris];
 
       if (item.content.uris && item.content.uris[index]) {

@@ -34,7 +34,7 @@ function Notes (props) {
 
   const handleNotesEditable = async () => {
     if (data.notesEditable) {
-      let item = await getItem(data.item.id);
+      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       data.item.content.notes = item?.content?.notes || '';
       item = null;
 
