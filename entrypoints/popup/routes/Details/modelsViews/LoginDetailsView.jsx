@@ -13,7 +13,7 @@ import getEditableAmount from '../functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import { valueToNFKD } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
-import Login from '@/partials/models/Login';
+import Login from '@/partials/models/itemModels/Login';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import getItem from '@/partials/sessionStorage/getItem';
 

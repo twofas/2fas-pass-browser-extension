@@ -8,7 +8,7 @@ import getKey from '@/partials/sessionStorage/getKey';
 import shuffleArray from '@/partials/functions/shuffleArray';
 import setStorageChunkSize from './setStorageChunkSize';
 import compress from '@/partials/gzip/compress';
-import mapModel from '@/partials/models/mapModel';
+import mapModel from '@/partials/models/itemModels/mapModel';
 
 /** 
 * Saves the items in chunks in the session storage.

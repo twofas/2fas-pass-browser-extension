@@ -8,7 +8,7 @@ import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveT
 import getItem from '@/partials/sessionStorage/getItem';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import Login from '@/partials/models/Login';
+import Login from '@/partials/models/itemModels/Login';
 
 const showT2Toast = () => {
   showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
