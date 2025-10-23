@@ -6,7 +6,7 @@
 
 import S from './Fetch.module.scss';
 import { useLocation, useNavigate } from 'react-router';
-import { useState, useEffect, lazy } from 'react';
+import { useState, useEffect, useRef, lazy } from 'react';
 import FetchOnMessage from './socket/FetchOnMessage';
 import FetchOnClose from './socket/FetchOnClose';
 import TwoFasWebSocket from '@/partials/WebSocket';
@@ -38,8 +38,13 @@ function Fetch (props) {
 
   const [fetchState, setFetchState] = useState(FETCH_STATE.DEFAULT);
   const [errorText, setErrorText] = useState(browser.i18n.getMessage('fetch_connection_error_header'));
+  const abortControllerRef = useRef(null);
 
-  const initConnection = async () => {
+  const initConnection = async abortSignal => {
+    if (abortSignal?.aborted) {
+      return false;
+    }
+
     switch (state?.action) {
       case PULL_REQUEST_TYPES.UPDATE_DATA: {
         setFetchState(FETCH_STATE.CONTINUE_UPDATE);
@@ -66,10 +71,18 @@ function Fetch (props) {
       }
     }
 
+    if (abortSignal?.aborted) {
+      return false;
+    }
+
     let sessionId, timestamp, sigPush;
 
     try {
       device = await getCurrentDevice(state?.data?.deviceId || null);
+
+      if (abortSignal?.aborted) {
+        return false;
+      }
 
       if (!device?.sessionId || !device?.id || !device?.uuid) {
         setFetchState(FETCH_STATE.CONNECTION_ERROR);
@@ -84,9 +97,17 @@ function Fetch (props) {
     } catch (e) {
       await CatchError(e, () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
     }
-    
+
+    if (abortSignal?.aborted) {
+      return false;
+    }
+
     try {
       const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
+
+      if (abortSignal?.aborted) {
+        return false;
+      }
 
       if (json?.error === 'UNREGISTERED') {
         setFetchState(FETCH_STATE.CONNECTION_ERROR);
@@ -103,6 +124,10 @@ function Fetch (props) {
           func: 'Fetch - initConnection'
         }
       }), () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
+    }
+
+    if (abortSignal?.aborted) {
+      return false;
     }
 
     console.log('state', state);
@@ -143,7 +168,12 @@ function Fetch (props) {
   };
 
   const tryAgainHandle = async () => {
-    await initConnection();
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    abortControllerRef.current = new AbortController();
+    await initConnection(abortControllerRef.current.signal);
   };
 
   // FUTURE - Refactor (useCallback?)
@@ -176,15 +206,21 @@ function Fetch (props) {
   };
 
   useEffect(() => {
+    abortControllerRef.current = new AbortController();
+
     // FUTURE - add value validation
     eventBus.on(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
     eventBus.on(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
     eventBus.on(eventBus.EVENTS.FETCH.NAVIGATE, handleNavigate);
     eventBus.on(eventBus.EVENTS.FETCH.DISCONNECT, closeConnection);
 
-    initConnection();
+    initConnection(abortControllerRef.current.signal);
 
     return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
       eventBus.off(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
       eventBus.off(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
       eventBus.off(eventBus.EVENTS.FETCH.NAVIGATE, handleNavigate);
