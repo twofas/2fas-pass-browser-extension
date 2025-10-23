@@ -12,11 +12,11 @@ import Tag from '@/partials/models/Tag';
 * Saves the tags in the session storage.
 * @async
 * @param {string} tagsData - The tags array to be saved.
-* @param {string} vaultId - The ID of the vault.
 * @param {string} deviceId - The device ID.
+* @param {string} vaultId - The ID of the vault.
 * @return {boolean} Returns true if the tags are saved successfully, otherwise false.
 */
-const saveTags = async (tagsData, vaultId, deviceId) => {
+const saveTags = async (tagsData, deviceId, vaultId) => {
   // @TODO: Add ifs for non array etc.
   const validTags = [];
 

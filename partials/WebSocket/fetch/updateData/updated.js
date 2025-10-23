@@ -33,7 +33,7 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
   try {
     const [items, itemsKeys] = await Promise.all([
       getItems(),
-      getItemsKeys(info.data.vaultId, state.data.deviceId)
+      getItemsKeys(state.data.deviceId, info.data.vaultId)
     ]);
 
     // Update login & clear alarm if exists
@@ -41,7 +41,7 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
     const originalItem = items.find(item => item.id === state.data.itemId);
 
     if (originalItem && originalItem.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await browser.alarms.clear(`sifT2Reset-${state.data.itemId}|${state.data.vaultId}`);
+      await browser.alarms.clear(`sifT2Reset-${state.data.deviceId}|${state.data.vaultId}|${state.data.itemId}`);
     }
 
     const item = new Login(info.data, info.data.vaultId, state.data.deviceId);
@@ -85,16 +85,16 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(items, info.data.vaultId, state.data.deviceId);
+    await saveItems(items, state.data.deviceId, info.data.vaultId);
 
     // saveTags
     const tagsKey = await getKey('tags', { vaultId: info.data.vaultId, deviceId: state.data.deviceId });
     await storage.removeItem(`session:${tagsKey}`);
-    await saveTags(info.tags, info.data.vaultId, state.data.deviceId);
+    await saveTags(info.tags, state.data.deviceId, info.data.vaultId);
 
     // Set alarm for reset T2 SIF
     if (item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await browser.alarms.create(`sifT2Reset-${state.data.itemId}|${info.data.vaultId}`, { delayInMinutes: sifResetTime });
+      await browser.alarms.create(`sifT2Reset-${state.data.deviceId}|${info.data.vaultId}|${state.data.itemId}`, { delayInMinutes: sifResetTime });
     }
 
     await sendPullRequestCompleted(messageId);

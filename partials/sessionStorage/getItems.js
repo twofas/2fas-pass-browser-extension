@@ -57,7 +57,7 @@ const getItems = async (filter = []) => {
     // For each device, process all its vaults
     const vaultPromises = vaultsIds.map(async vaultId => {
       try {
-        const itemsKeys = await getItemsKeys(vaultId, deviceId);
+        const itemsKeys = await getItemsKeys(deviceId, vaultId);
 
         if (!Array.isArray(itemsKeys) || itemsKeys.length === 0) {
           return null;

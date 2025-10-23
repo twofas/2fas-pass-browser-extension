@@ -19,14 +19,14 @@ const deleteDataAccept = async (state, messageId) => {
   try {
     const [items, itemsKeys] = await Promise.all([
       getItems(),
-      getItemsKeys(state.data.vaultId, state.data.deviceId)
+      getItemsKeys(state.data.deviceId, state.data.vaultId)
     ]);
 
     // Clear alarm if exists
     const item = items.find(item => item.id === state.data.itemId);
 
     if (item && item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await browser.alarms.clear(`sifT2Reset-${state.data.itemId}||${state.data.deviceId}`);
+      await browser.alarms.clear(`sifT2Reset-${state.data.deviceId}|${state.data.vaultId}|${state.data.itemId}`);
     }
 
     // Remove data from items
@@ -36,7 +36,7 @@ const deleteDataAccept = async (state, messageId) => {
     await storage.removeItems(itemsKeys);
 
     // saveItems
-    await saveItems(itemsFiltered, state.data.vaultId, state.data.deviceId);
+    await saveItems(itemsFiltered, state.data.deviceId, state.data.vaultId);
 
     // Send response
     await sendPullRequestCompleted(messageId);

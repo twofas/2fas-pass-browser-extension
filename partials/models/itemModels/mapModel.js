@@ -18,11 +18,11 @@ const models = new Map(
  * Checks if the itemData has a contentType and contentVersion that match any of the available models
  * and validates that the model constructor doesn't throw errors
  * @param {Object} itemData - The item data to check
- * @param {string} vaultId - The ID of the vault
  * @param {string} deviceId - The device ID
+ * @param {string} vaultId - The ID of the vault
  * @returns {boolean} True if contentType and contentVersion match a model and validation passes, false otherwise
  */
-const mapModel = (itemData, vaultId, deviceId) => {
+const mapModel = (itemData, deviceId, vaultId) => {
   if (!itemData?.contentType) {
     return false;
   }

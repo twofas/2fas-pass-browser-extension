@@ -21,7 +21,7 @@ import { ENCRYPTION_KEYS } from '@/constants';
 const keepPassword = async state => {
   const [items, itemsKeys] = await Promise.all([
     getItems(),
-    getItemsKeys(state.vaultId, state.deviceId)
+    getItemsKeys(state.deviceId, state.vaultId)
   ]);
 
   // Update sif (generic)
@@ -71,10 +71,10 @@ const keepPassword = async state => {
   await storage.removeItems(itemsKeys);
 
   // saveItems
-  await saveItems(items, state.vaultId, state.deviceId);
+  await saveItems(items, state.deviceId, state.vaultId);
   
   // Set alarm for reset T2 SIF
-  await browser.alarms.create(`sifT2Reset-${state.itemId}|${state.vaultId}`, { delayInMinutes: sifResetTime });
+  await browser.alarms.create(`sifT2Reset-${state.deviceId}|${state.vaultId}|${state.itemId}`, { delayInMinutes: sifResetTime });
 };
 
 export default keepPassword;
