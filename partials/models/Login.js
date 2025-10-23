@@ -217,7 +217,7 @@ export default class Login extends Item {
       (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists)
     ) {
       return {
-        id: `2fas-pass-autofill-${this.id}`,
+        id: `2fas-pass-autofill-${this.vaultId}|${this.deviceId}|${this.id}`,
         enabled: true,
         title: `${browser.i18n.getMessage('autofill')} ${this.content.username || this.content.name}`,
         type: 'normal',
@@ -231,9 +231,9 @@ export default class Login extends Item {
       !this.sifExists
     ) {
       return {
-        id: `2fas-pass-fetch-${this.id}|${this.deviceId}`,
+        id: `2fas-pass-fetch-${this.vaultId}|${this.deviceId}|${this.id}`,
         enabled: true,
-        title: `${browser.i18n.getMessage('fetch')} ${this.username || this.name}...`,
+        title: `${browser.i18n.getMessage('fetch')} ${this.content.username || this.content.name}...`,
         type: 'normal',
         visible: true,
         parentId: '2fas-pass-configured',
