@@ -14,13 +14,13 @@ import mapModel from '@/partials/models/itemModels/mapModel';
 * Saves the items in chunks in the session storage.
 * @async
 * @param {string} itemsData - The items array to be saved.
-* @param {string} vaultId - The ID of the vault.
 * @param {string} deviceId - The device ID.
+* @param {string} vaultId - The ID of the vault.
 * @return {boolean} Returns true if the items are saved successfully, otherwise false.
 */
-const saveItems = async (itemsData, vaultId, deviceId) => {
+const saveItems = async (itemsData, deviceId, vaultId) => {
   // @TODO: Add ifs for non array etc.
-  const correctData = itemsData.map(item => mapModel(item, vaultId, deviceId)).filter(Boolean);
+  const correctData = itemsData.map(item => mapModel(item, deviceId, vaultId)).filter(Boolean);
 
   const jsonString = JSON.stringify(correctData);
   const gzipDataAB = await compress(jsonString);

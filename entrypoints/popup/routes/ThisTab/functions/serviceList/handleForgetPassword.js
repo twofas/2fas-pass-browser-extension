@@ -34,7 +34,7 @@ const handleForgetPassword = async (e, itemId, toggleMenu) => {
   item.removeSif();
 
   // Get itemsKeys
-  const itemsKeys = await getItemsKeys(vaultId, deviceId);
+  const itemsKeys = await getItemsKeys(deviceId, vaultId);
 
   // Remove encryptionItemT2Key in session storage for this itemId & deviceId
   const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, itemId });
@@ -44,7 +44,7 @@ const handleForgetPassword = async (e, itemId, toggleMenu) => {
   await storage.removeItems(itemsKeys);
 
   // saveItems
-  await saveItems(items, vaultId, deviceId);
+  await saveItems(items, deviceId, vaultId);
 };
 
 export default handleForgetPassword;

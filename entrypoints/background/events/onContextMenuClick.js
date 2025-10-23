@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { openPopupWindowInNewWindow, sendAutofillToTab } from '../utils';
-import { SERVICE_REGEX, FETCH_REGEX, PULL_REQUEST_TYPES } from '@/constants';
+import { AUTOFILL_REGEX, FETCH_REGEX, PULL_REQUEST_TYPES } from '@/constants';
 
 /** 
 * Function to handle context menu click events.
@@ -16,7 +16,7 @@ import { SERVICE_REGEX, FETCH_REGEX, PULL_REQUEST_TYPES } from '@/constants';
 */
 const onContextMenuClick = async (info, tab) => {
   const { menuItemId } = info;
-  const serviceRegexTest = SERVICE_REGEX.exec(menuItemId);
+  const serviceRegexTest = AUTOFILL_REGEX.exec(menuItemId);
 
   try {
     if (serviceRegexTest) {
@@ -28,10 +28,12 @@ const onContextMenuClick = async (info, tab) => {
     const fetchRegexTest = FETCH_REGEX.exec(menuItemId);
   
     if (fetchRegexTest) {
-      const itemId = fetchRegexTest[1];
-      const deviceId = fetchRegexTest[2];
-
-      const data = encodeURIComponent(JSON.stringify({ action: PULL_REQUEST_TYPES.SIF_REQUEST, from: 'contextMenu', data: { itemId, deviceId } }));
+      const [, vaultId, deviceId, itemId] = fetchRegexTest;
+      const data = encodeURIComponent(JSON.stringify({
+        action: PULL_REQUEST_TYPES.SIF_REQUEST,
+        from: 'contextMenu',
+        data: { vaultId, deviceId, itemId }
+      }));
       await openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
       return true;
     }
