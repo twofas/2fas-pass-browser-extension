@@ -34,8 +34,8 @@ function LoginItemView (props) {
       return;
     }
 
-    await handleAutofill(props.data.id, navigate, props.more, value => toggleMenu(value, { ref: props.ref, selectRef: props.selectRef }, { setMore: props.setMore }));
-  }, [props.data?.id, navigate, props.more]);
+    await handleAutofill(props.data.deviceId, props.data.vaultId, props.data.id, navigate, props.more, value => toggleMenu(value, { ref: props.ref, selectRef: props.selectRef }, { setMore: props.setMore }));
+  }, [props?.data?.deviceId, props?.data?.vaultId, props?.data?.id, navigate, props.more]);
 
   const toggleMenuCallback = useCallback(value => {
     toggleMenu(value, { ref: props.ref, selectRef: props.selectRef }, { setMore: props.setMore });
@@ -56,7 +56,7 @@ function LoginItemView (props) {
       </button>
       <div className={S.servicesListItemAdditionalButtons}>
         <PasswordBtn item={props.data} more={props.more} setMore={toggleMenuCallback} />
-        <UsernameBtn itemId={props.data.id} more={props.more} setMore={toggleMenuCallback} />
+        <UsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={toggleMenuCallback} />
         <MoreBtn more={props.more} setMore={toggleMenuCallback} />
       </div>
       <Select

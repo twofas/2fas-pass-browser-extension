@@ -13,15 +13,17 @@ const ServiceUsernameIcon = lazy(() => import('@/assets/popup-window/service-use
 /** 
 * Function to render the username button.
 * @param {Object} props - The component props.
+* @param {string} props.deviceId - The ID of the device.
+* @param {string} props.vaultId - The ID of the vault.
 * @param {number} props.itemId - The ID of the item.
 * @param {boolean} props.more - Indicates if more actions are available.
 * @param {function} props.setMore - Function to update the more state.
 * @return {JSX.Element} The rendered button element.
 */
-const UsernameBtn = ({ itemId, more, setMore }) => {
+const UsernameBtn = ({ deviceId, vaultId, itemId, more, setMore }) => {
   return (
     <button
-      onClick={async () => await handleUsername(itemId, more, setMore)}
+      onClick={async () => await handleUsername(deviceId, vaultId, itemId, more, setMore)}
       title={browser.i18n.getMessage('this_tab_copy_username')}
     >
       <ServiceUsernameIcon className={S.serviceUsername} />

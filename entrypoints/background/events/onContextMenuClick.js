@@ -20,21 +20,24 @@ const onContextMenuClick = async (info, tab) => {
 
   try {
     if (serviceRegexTest) {
-      const serviceID = serviceRegexTest[1];
-      await sendAutofillToTab(tab.id, serviceID);
+      const [, deviceId, vaultId, itemId] = serviceRegexTest;
+      await sendAutofillToTab(tab.id, deviceId, vaultId, itemId);
       return true;
     }
   
     const fetchRegexTest = FETCH_REGEX.exec(menuItemId);
+    console.log('fetchRegexTest', fetchRegexTest);
   
     if (fetchRegexTest) {
-      const [, vaultId, deviceId, itemId] = fetchRegexTest;
+      const [, deviceId, vaultId, itemId, contentType] = fetchRegexTest;
       const data = encodeURIComponent(JSON.stringify({
         action: PULL_REQUEST_TYPES.SIF_REQUEST,
         from: 'contextMenu',
-        data: { vaultId, deviceId, itemId }
+        data: { deviceId, vaultId, itemId, contentType }
       }));
+
       await openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
+
       return true;
     }
   

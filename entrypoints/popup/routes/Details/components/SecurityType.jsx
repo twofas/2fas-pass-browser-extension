@@ -33,7 +33,7 @@ function SecurityType (props) {
 
   const handleTierEditable = async () => {
     if (data.tierEditable) {
-      let item = await getItem(data.item.id);
+      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       data.item.content.securityType = item.securityType;
       item = null;
 
