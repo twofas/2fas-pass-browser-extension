@@ -47,7 +47,12 @@ const usePopupHref = (hydrationComplete = false) => {
       setScrollPosition(0);
 
       const defaultDataForPath = defaultData['/'] || {};
-      usePopupStateStore.setState({ data: { ...defaultDataForPath } });
+
+      usePopupStateStore.setState({
+        data: {
+          ...defaultDataForPath
+        }
+      });
 
       return;
     }
@@ -64,7 +69,12 @@ const usePopupHref = (hydrationComplete = false) => {
         setScrollPosition(0);
 
         const defaultDataForPath = defaultData[pathname] || {};
-        usePopupStateStore.setState({ data: { ...defaultDataForPath } });
+
+        usePopupStateStore.setState({
+          data: {
+            ...defaultDataForPath
+          }
+        });
       }
     }
   }, [location.pathname, setHref, setScrollPosition, hydrationComplete]);

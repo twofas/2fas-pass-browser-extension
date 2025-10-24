@@ -81,7 +81,19 @@ function PasswordGenerator (props) {
   }
 
   useEffect(() => {
-    setData('navigationContext', location.state);
+    if (location.state) {
+      const stateData = location.state.data || {};
+
+      Object.entries(stateData).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && key !== 'navigationContext') {
+          setData(key, value);
+        }
+      });
+
+      if (location.state.from) {
+        setData('returnTo', location.state.from);
+      }
+    }
   }, [location.state, setData, popupHref]);
 
   useEffect(() => {
@@ -99,28 +111,44 @@ function PasswordGenerator (props) {
   };
 
   const onSubmit = async values => {
-    const currentState = location?.state;
-    const storedContext = data?.navigationContext;
+    const returnTo = data?.returnTo || location?.state?.from;
 
-    const navigationContext = currentState || storedContext;
-
-    if (!navigationContext || !navigationContext.from || !navigationContext.data) {
+    if (!returnTo) {
       showToast(browser.i18n.getMessage('password_generator_data_error'));
       return;
     }
 
-    if (navigationContext.from === 'addNew') {
+    if (returnTo === 'addNew') {
+      const navigationData = {
+        url: data.url,
+        username: data.username,
+        s_password: values.password,
+        minLength: data.minLength,
+        maxLength: data.maxLength,
+        pattern: data.pattern,
+        onMobile: data.onMobile,
+        additionalOverflow: data.additionalOverflow,
+        passwordVisible: data.passwordVisible
+      };
+
       return navigate(`/add-new/Login`, {
         state: {
           from: 'passwordGenerator',
-          data: { ...navigationContext.data, password: values.password }
+          data: navigationData
         }
       });
-    } else if (navigationContext.from === 'details' && navigationContext.data?.item?.id) {
-      return navigate(`/details/${navigationContext.data.item.deviceId}/${navigationContext.data.item.vaultId}/${navigationContext.data.item.id}`, {
+    } else if (returnTo === 'details') {
+      const item = data.item;
+
+      if (!item?.id) {
+        showToast(browser.i18n.getMessage('password_generator_data_error'));
+        return;
+      }
+
+      return navigate(`/details/${item.deviceId}/${item.vaultId}/${item.id}`, {
         state: {
           from: 'passwordGenerator',
-          data: { ...navigationContext.data, item: { ...navigationContext.data.item, content: { ...navigationContext.data.item.content, s_password: values.password } } }
+          data: { item, generatedPassword: values.password }
         }
       });
     } else {
