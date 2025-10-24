@@ -44,7 +44,7 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
       newData.internalData.sifResetTime = sifResetTime;
     }
 
-    const newItem = new Login(newData, newData.vaultId, state.deviceId);
+    const newItem = new Login(newData, state.deviceId, newData.vaultId);
     items.push(newItem);
 
     if (info.data.securityType === SECURITY_TIER.SECRET) {

@@ -11,19 +11,9 @@ import getKey from '@/partials/sessionStorage/getKey';
 * Class representing an item.
 */
 class Item {
-  constructor (data, vaultId = null, deviceId = null) {
+  constructor (data, deviceId = null, vaultId = null) {
     validate(data && typeof data === 'object', 'Invalid item data');
     validate(isValidUUID(data.id), 'Invalid or missing id: must be a valid UUID');
-
-    if (vaultId) {
-      validate(isValidUUID(vaultId), 'Invalid or missing vaultId: must be a valid UUID');
-      this.vaultId = vaultId;
-    } else if (data.vaultId) {
-      validate(isValidUUID(data.vaultId), 'Invalid or missing vaultId: must be a valid UUID');
-      this.vaultId = data.vaultId;
-    } else {
-      throw new Error('Missing vaultId');
-    }
 
     if (deviceId) {
       validate(isValidUUID(deviceId), 'Invalid or missing deviceId: must be a valid UUID');
@@ -33,6 +23,16 @@ class Item {
       this.deviceId = data.deviceId;
     } else {
       throw new Error('Missing deviceId');
+    }
+
+    if (vaultId) {
+      validate(isValidUUID(vaultId), 'Invalid or missing vaultId: must be a valid UUID');
+      this.vaultId = vaultId;
+    } else if (data.vaultId) {
+      validate(isValidUUID(data.vaultId), 'Invalid or missing vaultId: must be a valid UUID');
+      this.vaultId = data.vaultId;
+    } else {
+      throw new Error('Missing vaultId');
     }
 
     validate(isValidInteger(data.createdAt), 'Invalid or missing createdAt: must be an integer');

@@ -11,12 +11,35 @@ class Tag {
     validate(tagData && typeof tagData === 'object', 'Invalid tag data');
 
     validate(isValidUUID(tagData.id), 'Invalid or missing id: must be a valid UUID');
+
+    if (vaultId) {
+      validate(isValidUUID(vaultId), 'Invalid or missing vaultId: must be a valid UUID');
+      this.vaultId = vaultId;
+    } else if (tagData.vaultId) {
+      validate(isValidUUID(tagData.vaultId), 'Invalid or missing vaultId: must be a valid UUID');
+      this.vaultId = tagData.vaultId;
+    } else {
+      throw new Error('Missing vaultId');
+    }
+
+    if (deviceId) {
+      validate(isValidUUID(deviceId), 'Invalid or missing deviceId: must be a valid UUID');
+      this.deviceId = deviceId;
+    } else if (tagData.deviceId) {
+      validate(isValidUUID(tagData.deviceId), 'Invalid or missing deviceId: must be a valid UUID');
+      this.deviceId = tagData.deviceId;
+    } else {
+      throw new Error('Missing deviceId');
+    }
+
     validate(isValidInteger(tagData.updatedAt), 'Invalid or missing updatedAt: must be an integer');
     validate(typeof tagData.name === 'string', `Invalid tagData.name must be a string`);
     validate(isValidInteger(tagData.position, 0, 999), 'Invalid or missing tagData.position: must be an integer between 0 and 999');
     validateOptional(tagData.color, isValidHexColor, 'Invalid tagData.color: must be a hex color string (3 or 6 characters)');
 
     this.id = tagData.id;
+    this.deviceId = tagData.deviceId;
+    this.vaultId = tagData.vaultId;
     this.updatedAt = tagData.updatedAt;
     this.name = tagData.name;
     this.position = tagData.position;
