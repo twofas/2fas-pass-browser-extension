@@ -22,7 +22,7 @@ const saveTags = async (tagsData, deviceId, vaultId) => {
 
   for (const tagData of tagsData) {
     try {
-      const tag = new Tag(tagData, vaultId, deviceId);
+      const tag = new Tag(tagData, deviceId, vaultId);
       validTags.push(tag);
     } catch {}
   }
@@ -31,7 +31,7 @@ const saveTags = async (tagsData, deviceId, vaultId) => {
   const gzipDataAB = await compress(jsonString);
   const gzipData = ArrayBufferToBase64(gzipDataAB);
 
-  const tagsKey = await getKey('tags', { vaultId, deviceId });
+  const tagsKey = await getKey('tags', { deviceId, vaultId });
   await storage.setItem(`session:${tagsKey}`, gzipData);
 
   let storageVersion = await storage.getItem('session:storageVersion');

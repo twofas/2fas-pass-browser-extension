@@ -19,12 +19,12 @@ export default class Login extends Item {
   #s_password;
   #s_passwordDecrypted;
 
-  constructor (loginData, vaultId = null, deviceId = null) {
+  constructor (loginData, deviceId = null, vaultId = null) {
     if (loginData.constructor.name === Login.name) {
       return loginData;
     }
 
-    super (loginData, vaultId, deviceId);
+    super (loginData, deviceId, vaultId);
 
     validate(loginData.content && typeof loginData.content === 'object', 'Invalid login data');
 
@@ -84,21 +84,9 @@ export default class Login extends Item {
       sifResetTime: loginData.internalData?.sifResetTime || null
     };
 
+    // Secure Input Fields
     this.#s_password = (loginData.content.s_password && loginData.content.s_password !== '******') ? loginData.content.s_password : null;
     this.#s_passwordDecrypted = null;
-
-    // if (internal && content.s_password !== undefined && content.s_password !== '******' && !isValidBase64(content.s_password)) {
-    //   this.s_password = content.s_password;
-    // } else {
-    //   this.s_password = this.securityType === SECURITY_TIER.SECRET ? '******' : null;
-    // }
-
-    // // Secure Input Fields
-    // if (content.s_password && isValidBase64(content.s_password)) {
-    //   this.#s_password = content.s_password;
-    // } else {
-    //   this.#s_password = null;
-    // }
   }
 
   #normalizeUris (uris) {
