@@ -46,6 +46,7 @@ function Connect (props) {
   const { login } = useAuthActions();
   const closeConnectionRef = useRef(null);
   const ephemeralDataRef = useRef(null);
+  const abortControllerRef = useRef(null);
 
   const getReadyDevices = useCallback(async () => {
     const devices = await storage.getItem('local:devices') || [];
@@ -121,9 +122,20 @@ function Connect (props) {
     setSocketError(false);
   }, [initEphemeralKeys, initQRConnection]);
 
-  const connectByPush = async device => {
+  const connectByPush = async (device, abortSignal) => {
+    if (abortSignal?.aborted) {
+      return false;
+    }
+
+    setDeviceName(device?.name);
+    setConnectView(CONNECT_VIEWS.PushSent);
+
     // add UUID from ephemeral data to device object
     device.uuid = ephemeralDataRef.current.uuid;
+
+    if (abortSignal?.aborted) {
+      return false;
+    }
 
     let sessionId, timestamp, sigPush;
 
@@ -138,17 +150,22 @@ function Connect (props) {
       await CatchError(e);
     }
 
+    if (abortSignal?.aborted) {
+      return false;
+    }
+
     try {
       const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
+
+      if (abortSignal?.aborted) {
+        return false;
+      }
 
       if (json?.error === 'UNREGISTERED') {
         setSocketError(true);
         showConnectToast({ message: browser.i18n.getMessage('fetch_token_unregistered_header'), type: 'error' });
         return false;
       }
-
-      setDeviceName(device?.name);
-      setConnectView(CONNECT_VIEWS.PushSent);
 
       const socket = new TwoFasWebSocket(sessionId);
       socket.open();
@@ -204,6 +221,8 @@ function Connect (props) {
   }, []);
 
   useEffect(() => {
+    abortControllerRef.current = new AbortController();
+
     eventBus.on(eventBus.EVENTS.CONNECT.CHANGE_VIEW, setConnectView);
     eventBus.on(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
     eventBus.on(eventBus.EVENTS.CONNECT.SOCKET_ERROR, handleSocketError);
@@ -223,6 +242,10 @@ function Connect (props) {
       .catch(CatchError);
 
     return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
       eventBus.off(eventBus.EVENTS.CONNECT.CHANGE_VIEW, setConnectView);
       eventBus.off(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
       eventBus.off(eventBus.EVENTS.CONNECT.SOCKET_ERROR, handleSocketError);
@@ -326,7 +349,7 @@ function Connect (props) {
                         key={index}
                         className={S.deviceSelectContainerListItem}
                         title={device?.name}
-                        onClick={() => connectByPush(device)}
+                        onClick={() => connectByPush(device, abortControllerRef.current?.signal)}
                       >
                         {!device?.fcmToken || device?.fcmToken?.length === 0 ? (
                           <span className={S.deviceSelectContainerListItemWarning}>*</span>
