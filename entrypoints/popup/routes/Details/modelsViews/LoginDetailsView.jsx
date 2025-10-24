@@ -102,8 +102,10 @@ function LoginDetailsView () {
       }
     }
 
-    const hasUriChanges = (data?.domainsEditable && Array.isArray(data?.domainsEditable) && data.domainsEditable.some(e => e)) || e?.content?.uris?.some(uri => uri?.new);
-    
+    const hasEditedUris = data?.domainsEditable ? Object.values(data.domainsEditable).some(v => v === true) : false;
+    const hasNewUris = e?.content?.uris?.some(uri => uri?.new);
+    const hasUriChanges = hasEditedUris || hasNewUris;
+
     if (hasUriChanges) {
       e.content.uris = e.content.uris.map(uri => {
         return {

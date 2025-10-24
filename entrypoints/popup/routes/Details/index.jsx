@@ -41,14 +41,11 @@ function Details (props) {
   const getData = useCallback(async () => {
     try {
       let item;
-      let preservedUrisWithTempIds;
 
       if (location.state?.data) {
-        preservedUrisWithTempIds = location.state.data.item?.internalData?.urisWithTempIds;
         item = new Login(location.state.data.item);
       } else if (data?.item) {
         try {
-          preservedUrisWithTempIds = data.item?.internalData?.urisWithTempIds;
           item = new Login(data.item);
         } catch {
           if (params.id) {
@@ -63,10 +60,6 @@ function Details (props) {
         showToast(browser.i18n.getMessage('details_item_not_found'), 'error');
         navigate('/');
         return;
-      }
-
-      if (preservedUrisWithTempIds) {
-        item.internalData.urisWithTempIds = preservedUrisWithTempIds;
       }
 
       setData('item', item);
