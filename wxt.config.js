@@ -85,9 +85,6 @@ export default defineConfig({
       content_security_policy: {
         "extension_pages": "script-src 'self'; object-src 'self'"
       },
-      // host_permissions: [
-      //   "*://*.2fas.com/*"
-      // ],
       optional_permissions: [
         "clipboardRead"
       ]
