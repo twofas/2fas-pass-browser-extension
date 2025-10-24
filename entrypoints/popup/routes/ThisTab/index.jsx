@@ -420,7 +420,7 @@ function ThisTab (props) {
                       autoCapitalize="off"
                       maxLength="2048"
                       onChange={handleSearchChange}
-                      value={thisTabPopupState.searchValue}
+                      value={thisTabPopupState.searchValue || ''}
                     />
         
                     <button
