@@ -116,6 +116,11 @@ const AuthRoutes = memo(({ blocked, configured }) => {
       return;
     }
 
+    if (initialCheckDone) {
+      hasNavigated.current = true;
+      return;
+    }
+
     const excludedRoutes = ['/connect', '/', '/fetch', '/blocked'];
 
     if (storedHref && location.pathname === '/' && !excludedRoutes.includes(storedHref)) {
@@ -126,7 +131,7 @@ const AuthRoutes = memo(({ blocked, configured }) => {
     }
 
     setInitialCheckDone(true);
-  }, [navigate, storedHref, location.pathname, configured, hydrationComplete]);
+  }, [navigate, storedHref, location.pathname, configured, hydrationComplete, initialCheckDone]);
 
   const routeElements = useMemo(() => {
     return routeConfig.map(route => {
