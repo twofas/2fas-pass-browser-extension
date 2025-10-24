@@ -72,7 +72,17 @@ function Username (props) {
 
   const handleUsernameChange = useCallback(e => {
     const newUsername = e.target.value;
-    const updatedItem = new Login({ ...data.item, content: { ...data.item.content, username: newUsername } });
+
+    const updatedItem = new Login({
+      ...data.item,
+      content: {
+        ...data.item.content,
+        username: newUsername
+      },
+      internalData: {
+        ...data.item.internalData
+      }
+    });
 
     setData('item', updatedItem);
   }, [data.item, setData]);
