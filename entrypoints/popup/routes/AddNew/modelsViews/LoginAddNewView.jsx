@@ -8,7 +8,7 @@ import S from '../AddNew.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import * as m from 'motion/react-m';
-import { useNavigate, Link, useLocation } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import getDomainInfo from '../functions/getDomainInfo';
 import { useEffect, useState } from 'react';
 import { Form, Field } from 'react-final-form';
@@ -52,19 +52,36 @@ function LoginAddNewView () {
         const stateData = location?.state?.data || {};
         const storeData = data || {};
         const domainData = await getDomainInfo();
+        const isReturningFromPasswordGenerator = location?.state?.from === 'passwordGenerator';
 
-        const sanitizeValue = value => typeof value === 'string' ? filterXSS(value) : value;
+        const getValueWithPriority = (key, stateValue, storeValue, fallback, shouldSanitize = false) => {
+          let selectedValue;
 
-        const getValueWithPriority = (stateValue, storeValue, fallback, shouldSanitize = false) => {
-          if (stateValue !== undefined) {
-            return shouldSanitize ? sanitizeValue(stateValue) : stateValue;
+          if (isReturningFromPasswordGenerator) {
+            if (key === 's_password' && stateValue !== undefined) {
+              selectedValue = stateValue;
+            } else if (storeValue !== undefined && storeValue !== null) {
+              selectedValue = storeValue;
+            } else if (stateValue !== undefined) {
+              selectedValue = stateValue;
+            } else {
+              selectedValue = fallback;
+            }
+          } else {
+            if (stateValue !== undefined) {
+              selectedValue = stateValue;
+            } else if (storeValue !== undefined && storeValue !== null) {
+              selectedValue = storeValue;
+            } else {
+              selectedValue = fallback;
+            }
           }
 
-          if (storeValue !== undefined && storeValue !== null) {
+          if (selectedValue === undefined) {
             return null;
           }
 
-          return fallback !== undefined ? (shouldSanitize ? sanitizeValue(fallback) : fallback) : null;
+          return shouldSanitize && typeof selectedValue === 'string' ? filterXSS(selectedValue) : selectedValue;
         };
 
         const fieldDefinitions = [
@@ -75,20 +92,17 @@ function LoginAddNewView () {
           { key: 'maxLength', fallback: domainData.maxLength, sanitize: true },
           { key: 'pattern', fallback: domainData.pattern, sanitize: false },
           { key: 'onMobile', fallback: true, sanitize: false },
-          { key: 'additionalOverflow', fallback: true, sanitize: false }
+          { key: 'additionalOverflow', fallback: true, sanitize: false },
+          { key: 'passwordVisible', fallback: undefined, sanitize: false }
         ];
 
         fieldDefinitions.forEach(({ key, fallback, sanitize }) => {
-          const value = getValueWithPriority(stateData[key], storeData[key], fallback, sanitize);
+          const value = getValueWithPriority(key, stateData[key], storeData[key], fallback, sanitize);
 
           if (value !== null) {
             setData(key, value);
           }
         });
-
-        if (stateData.passwordVisible !== undefined) {
-          setData('passwordVisible', stateData.passwordVisible);
-        }
 
         setLoading(false);
       } catch (e) {
@@ -139,6 +153,36 @@ function LoginAddNewView () {
       showToast(browser.i18n.getMessage('error_username_copy_failed'), 'error');
       await CatchError(e);
     }
+  };
+
+  const handleGeneratePassword = form => {
+    const formState = form.getState();
+    const currentValues = formState.values;
+
+    const navigationData = {
+      url: currentValues.url || data.url,
+      username: currentValues.username || data.username,
+      s_password: currentValues.s_password || data.s_password,
+      minLength: currentValues['password-minlength'] || data.minLength,
+      maxLength: currentValues['password-maxlength'] || data.maxLength,
+      pattern: currentValues['password-pattern'] || data.pattern,
+      onMobile: currentValues.onMobile !== undefined ? currentValues.onMobile : data.onMobile,
+      additionalOverflow: data.additionalOverflow,
+      passwordVisible: data.passwordVisible
+    };
+
+    Object.entries(navigationData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        setData(key, value);
+      }
+    });
+
+    navigate('/password-generator', {
+      state: {
+        from: 'addNew',
+        data: navigationData
+      }
+    });
   };
 
   const onSubmit = async e => {
@@ -330,14 +374,14 @@ function LoginAddNewView () {
                     }}
                   />
                   <div className={pI.passInputBottomButtons}>
-                    <Link
-                      to='/password-generator'
+                    <button
+                      type='button'
                       className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
+                      onClick={() => handleGeneratePassword(form)}
                       title={browser.i18n.getMessage('add_new_generate_password')}
-                      state={{ from: 'addNew', data }}
                     >
                       <RefreshIcon />
-                    </Link>
+                    </button>
                     <button
                       type="button"
                       onClick={handlePasswordVisibleClick}
