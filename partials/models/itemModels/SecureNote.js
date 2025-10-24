@@ -16,12 +16,12 @@ class SecureNote extends Item {
 
   #s_text;
 
-  constructor (secureNoteData, vaultId = null, deviceId = null) {
+  constructor (secureNoteData, deviceId = null, vaultId = null) {
     if (secureNoteData.constructor.name === SecureNote.name) {
       return secureNoteData;
     }
 
-    super(secureNoteData, vaultId, deviceId);
+    super(secureNoteData, deviceId, vaultId);
 
     validate(secureNoteData.content && typeof secureNoteData.content === 'object', 'Invalid secureNote content data');
     validateOptional(secureNoteData.content.name, isValidString, 'Invalid content.name: must be a string');
@@ -30,6 +30,7 @@ class SecureNote extends Item {
     this.contentType = SecureNote.contentType;
     this.contentVersion = SecureNote.contentVersion;
     this.name = secureNoteData.content.name;
+    
     // Secure Input Fields
     this.#s_text = secureNoteData.content.s_text;
   }

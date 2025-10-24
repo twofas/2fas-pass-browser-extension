@@ -42,7 +42,7 @@ const mapModel = (itemData, deviceId, vaultId) => {
   }
 
   try {
-    return new Model(itemData, vaultId, deviceId);
+    return new Model(itemData, deviceId, vaultId);
   } catch (e) {
     console.error('Model validation error:', e);
     // @TODO: log error?

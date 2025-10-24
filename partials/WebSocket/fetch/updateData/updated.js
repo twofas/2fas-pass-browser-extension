@@ -44,7 +44,7 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
       await browser.alarms.clear(`sifT2Reset-${state.data.deviceId}|${state.data.vaultId}|${state.data.itemId}`);
     }
 
-    const item = new Login(info.data, info.data.vaultId, state.data.deviceId);
+    const item = new Login(info.data, state.data.deviceId, info.data.vaultId);
     console.log('ITEM:', item);
 
     if (item.securityType === SECURITY_TIER.SECRET) {
