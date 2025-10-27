@@ -57,6 +57,10 @@ function SecurityType (props) {
       updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
     }
 
+    if (data.item.internalData.editedPassword !== null) {
+      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
+    }
+
     setData('item', updatedItem);
     form.change('securityType', newValue);
   }, [data.item, setData, form]);

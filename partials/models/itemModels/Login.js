@@ -79,7 +79,8 @@ export default class Login extends Item {
       urisWithTempIds: loginData.internalData?.urisWithTempIds || this.#urisWidthTempIds(loginData.content.uris) || [],
       normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || [],
       type: loginData.internalData?.type || null,
-      sifResetTime: loginData.internalData?.sifResetTime || null
+      sifResetTime: loginData.internalData?.sifResetTime || null,
+      editedPassword: loginData.internalData?.editedPassword ?? null
     };
 
     // Secure Input Fields
@@ -139,12 +140,10 @@ export default class Login extends Item {
 
   setPasswordDecrypted (decryptedPassword) {
     this.#s_passwordDecrypted = decryptedPassword;
-    this.content.s_password = decryptedPassword;
   }
 
   removePasswordDecrypted () {
     this.#s_passwordDecrypted = null;
-    this.content.s_password = null;
   }
 
   get passwordDecrypted () {
@@ -263,7 +262,8 @@ export default class Login extends Item {
       },
       internalData: {
         type: this.internalData.type,
-        sifResetTime: this.internalData.sifResetTime
+        sifResetTime: this.internalData.sifResetTime,
+        editedPassword: this.internalData.editedPassword
       }
     };
   }
