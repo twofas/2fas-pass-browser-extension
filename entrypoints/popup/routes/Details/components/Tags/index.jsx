@@ -15,7 +15,6 @@ import getTags from '@/partials/sessionStorage/getTags';
 import Select from 'react-select';
 import usePopupStateStore from '../../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import Login from '@/partials/models/itemModels/Login';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CloseIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
@@ -112,7 +111,9 @@ function Tags (props) {
   const handleTagsEditable = async () => {
     if (data.tagsEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      const updatedItem = new Login({ ...data.item, tags: item.tags });
+      const itemData = data.item.toJSON();
+      itemData.tags = item.tags;
+      const updatedItem = new (data.item.constructor)(itemData);
       item = null;
 
       setData('tagsEditable', false);
@@ -125,7 +126,14 @@ function Tags (props) {
 
   const handleRemoveTag = tagId => {
     const newTagIds = data.item.tags.filter(id => id !== tagId);
-    const updatedItem = new Login({ ...data.item, tags: newTagIds });
+    const itemData = data.item.toJSON();
+    itemData.tags = newTagIds;
+    itemData.internalData = { ...data.item.internalData };
+    const updatedItem = new (data.item.constructor)(itemData);
+
+    if (data.item.isPasswordDecrypted) {
+      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    }
 
     setData('item', updatedItem);
     form.change('tags', newTagIds);
@@ -134,7 +142,15 @@ function Tags (props) {
   const handleSelectChange = option => {
     if (option && option.tag) {
       const newTagIds = [...data.item.tags, option.tag.id];
-      const updatedItem = new Login({ ...data.item, tags: newTagIds });
+      const itemData = data.item.toJSON();
+      itemData.tags = newTagIds;
+      itemData.internalData = { ...data.item.internalData };
+      const updatedItem = new (data.item.constructor)(itemData);
+
+      if (data.item.isPasswordDecrypted) {
+        updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+      }
+
       setData('item', updatedItem);
       form.change('tags', newTagIds);
     }
