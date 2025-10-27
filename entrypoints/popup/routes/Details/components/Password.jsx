@@ -15,6 +15,7 @@ import { copyValue } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect } from 'react';
 import usePopupStateStore from '../../../store/popupState';
+import Login from '@/partials/models/itemModels/Login';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
@@ -136,11 +137,12 @@ function Password (props) {
     if (data.item.sifExists) {
       try {
         let decryptedData = await data.item.decryptSif();
-        data.item.setPasswordDecrypted(decryptedData.password);
+        const updatedItem = new Login({ ...data.item });
+        updatedItem.setPasswordDecrypted(decryptedData.password);
 
         form.change('content.s_password', decryptedData.password);
 
-        setData('item', data.item);
+        setData('item', updatedItem);
         setPasswordDecryptError(false);
 
         decryptedData = null;
@@ -150,15 +152,17 @@ function Password (props) {
         return;
       }
     } else {
-      data.item.setPasswordDecrypted('');
-      setData('item', data.item);
+      const updatedItem = new Login({ ...data.item });
+      updatedItem.setPasswordDecrypted('');
+      setData('item', updatedItem);
       form.change('content.s_password', '');
     }
   };
 
   const encryptFormPassword = () => {
-    data.item.removePasswordDecrypted();
-    setData('item', data.item);
+    const updatedItem = new Login({ ...data.item });
+    updatedItem.removePasswordDecrypted();
+    setData('item', updatedItem);
     form.change('content.s_password', '******');
   };
 
@@ -205,6 +209,13 @@ function Password (props) {
     await browser.tabs.create({ url: changePasswordUrl });
   };
 
+  const handlePasswordChange = e => {
+    const newValue = e.target.value;
+    const updatedItem = new Login({ ...data.item, content: { ...data.item.content, s_password: newValue } });
+    setData('item', updatedItem);
+    form.change('content.s_password', newValue);
+  };
+
   return (
     <LazyMotion features={loadDomAnimation}>
       <Field name="content.s_password">
@@ -226,6 +237,7 @@ function Password (props) {
                 type={data?.passwordVisible ? 'text' : 'password'}
                 placeholder={!data?.passwordMobile && data.item.isT3orT2WithPassword || data?.passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
                 id='s_password'
+                onChange={handlePasswordChange}
                 showPassword={data?.passwordVisible}
                 isDecrypted={data.item.isPasswordDecrypted}
                 passwordDecryptError={passwordDecryptError}
