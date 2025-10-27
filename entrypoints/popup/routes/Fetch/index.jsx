@@ -32,8 +32,6 @@ function Fetch (props) {
 
   const navigate = useNavigate();
 
-  console.log(state);
-
   let device;
 
   const [fetchState, setFetchState] = useState(FETCH_STATE.DEFAULT);
@@ -130,9 +128,6 @@ function Fetch (props) {
       return false;
     }
 
-    console.log('state', state);
-    console.log('device', device);
-
     const socket = new TwoFasWebSocket(sessionId);
     socket.open();
     socket.addEventListener('message', FetchOnMessage, { state, device });
@@ -140,8 +135,6 @@ function Fetch (props) {
   };
 
   const closeConnection = async () => {
-    console.log('Close connection called');
-
     let socket;
 
     try {
@@ -152,8 +145,6 @@ function Fetch (props) {
       socket = TwoFasWebSocket.getInstance();
     } catch {}
 
-    console.log('Socket instance:', socket);
-    
     if (socket) {
       try {
         // await socket.sendError(
