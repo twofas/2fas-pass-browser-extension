@@ -12,7 +12,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import Login from '@/partials/models/itemModels/Login';
+import matchModel from '@/partials/models/itemModels/matchModel';
 import { PULL_REQUEST_TYPES } from '@/constants';
 
 // Model Views
@@ -44,10 +44,10 @@ function Details (props) {
       let item;
 
       if (location.state?.data) {
-        item = new Login(location.state.data.item);
+        item = matchModel(location.state.data.item);
       } else if (data?.item) {
         try {
-          item = new Login(data.item);
+          item = matchModel(data.item);
         } catch {
           if (params.id) {
             item = await getItem(params.deviceId, params.vaultId, params.id);
