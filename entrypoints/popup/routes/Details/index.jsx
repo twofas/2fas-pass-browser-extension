@@ -33,6 +33,7 @@ function Details (props) {
   const params = useParams();
 
   const [loading, setLoading] = useState(true);
+  const [originalItem, setOriginalItem] = useState(null);
   const scrollableRef = useRef(null);
 
   const data = usePopupStateStore(state => state.data);
@@ -70,9 +71,14 @@ function Details (props) {
     }
   }, [params.deviceId, params.vaultId, params.id, navigate, setData, location.state, data?.item]);
 
+  const getOriginalItem = useCallback(async () => {
+    const originalItemData = await getItem(params.deviceId, params.vaultId, params.id);
+    setOriginalItem(originalItemData);
+  }, [params.deviceId, params.vaultId, params.id]);
+
   useEffect(() => {
-    getData();
-  }, [getData]);
+    getData().then(getOriginalItem);
+  }, [getData, getOriginalItem]);
 
   const constructorName = useMemo(() => {
     if (loading) {
@@ -115,7 +121,7 @@ function Details (props) {
               <NavigationButton type='cancel' />
               <h2>{constructorName} {browser.i18n.getMessage('details_header')}</h2>
 
-              <div className={`${S.detailsFetch} ${data?.item?.securityType === SECURITY_TIER.HIGHLY_SECRET && !data?.item?.sifExists ? '' : S.hidden}`}>
+              <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
                 <p>{browser.i18n.getMessage('details_fetch_text')}</p>
                 <Link
                   to='/fetch'
