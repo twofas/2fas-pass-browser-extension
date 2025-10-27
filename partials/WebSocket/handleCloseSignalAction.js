@@ -16,7 +16,6 @@ import { CONNECT_VIEWS } from '@/constants';
 * @return {Promise<void>}
 */
 const handleCloseSignalAction = async (newSessionId, uuid, closeData) => {
-  console.log('Handling close signal action', { newSessionId, uuid, closeData });
   await addNewSessionIdToDevice(uuid, newSessionId); // FUTURE - Change to deviceId instead of uuid?
 
   if (closeData?.returnUrl === '/') {
@@ -26,7 +25,6 @@ const handleCloseSignalAction = async (newSessionId, uuid, closeData) => {
 
   try {
     const socket = TwoFasWebSocket.getInstance();
-    console.log('Closing WebSocket connection');
     socket.close();
   } catch {}
 
