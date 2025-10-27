@@ -64,7 +64,17 @@ function Username (props) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       const itemData = data.item.toJSON();
       itemData.content.username = item.content.username;
+      itemData.internalData = { ...data.item.internalData };
       const updatedItem = new (data.item.constructor)(itemData);
+
+      if (data.item.isPasswordDecrypted) {
+        updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+      }
+
+      if (data.item.internalData.editedPassword !== null) {
+        updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
+      }
+
       item = null;
 
       setData('item', updatedItem);
@@ -82,6 +92,10 @@ function Username (props) {
 
     if (data.item.isPasswordDecrypted) {
       updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    }
+
+    if (data.item.internalData.editedPassword !== null) {
+      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
     }
 
     setData('item', updatedItem);

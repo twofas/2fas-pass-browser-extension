@@ -115,6 +115,10 @@ function URLComponent (props) {
         updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
       }
 
+      if (data.item.internalData.editedPassword !== null) {
+        updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
+      }
+
       setData('item', updatedItem);
 
       const newDomainsEditable = {
@@ -153,6 +157,10 @@ function URLComponent (props) {
 
     if (data.item.isPasswordDecrypted) {
       updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    }
+
+    if (data.item.internalData.editedPassword !== null) {
+      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
     }
 
     setData('item', updatedItem);
@@ -195,6 +203,10 @@ function URLComponent (props) {
 
     if (data.item.isPasswordDecrypted) {
       updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    }
+
+    if (data.item.internalData.editedPassword !== null) {
+      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
     }
 
     setData('item', updatedItem);

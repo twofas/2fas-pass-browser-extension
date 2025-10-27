@@ -13,7 +13,7 @@ import * as m from 'motion/react-m';
 import { Link } from 'react-router';
 import { copyValue } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import usePopupStateStore from '../../../store/popupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
@@ -40,13 +40,36 @@ const changePasswordVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Password (props) {
-  const { passwordDecryptError } = props;
+  const { passwordDecryptError, formData } = props;
+  const { form } = formData;
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
 
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
+  const previousPasswordValueRef = useRef(null);
+
+  const getPasswordValue = () => {
+    if (data.item.internalData.editedPassword !== null) {
+      return data.item.internalData.editedPassword;
+    }
+
+    if (data.item.isPasswordDecrypted) {
+      return data.item.passwordDecrypted;
+    }
+
+    return '';
+  };
+
+  useEffect(() => {
+    const currentPasswordValue = getPasswordValue();
+
+    if (currentPasswordValue !== previousPasswordValueRef.current) {
+      form.change('editedPassword', currentPasswordValue);
+      previousPasswordValueRef.current = currentPasswordValue;
+    }
+  }, [data.item.internalData.editedPassword, data.item.passwordDecrypted, form]);
 
   const generateErrorOverlay = () => {
     if (!passwordDecryptError) {
@@ -88,7 +111,9 @@ function Password (props) {
     try {
       let passwordToCopy;
 
-      if (data.item.isPasswordDecrypted) {
+      if (data.item.internalData.editedPassword !== null) {
+        passwordToCopy = data.item.internalData.editedPassword;
+      } else if (data.item.isPasswordDecrypted) {
         passwordToCopy = data.item.passwordDecrypted;
       } else if (data.item.sifExists) {
         let decryptedData = await data.item.decryptSif();
@@ -126,8 +151,20 @@ function Password (props) {
 
   const handleEditableClick = () => {
     if (data?.passwordEditable) {
+      const itemData = data.item.toJSON();
+      itemData.internalData = { ...data.item.internalData };
+      const updatedItem = new (data.item.constructor)(itemData);
+
+      if (data.item.isPasswordDecrypted) {
+        updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+      }
+
+      updatedItem.internalData.editedPassword = null;
+
+      setData('item', updatedItem);
       setData('passwordEdited', false);
       setData('passwordEditable', false);
+      form.change('editedPassword', data.item.isPasswordDecrypted ? data.item.passwordDecrypted : '');
     } else {
       setData('passwordEditable', true);
     }
@@ -153,18 +190,24 @@ function Password (props) {
     const itemData = data.item.toJSON();
     itemData.internalData = { ...data.item.internalData };
     const updatedItem = new (data.item.constructor)(itemData);
-    updatedItem.setPasswordDecrypted(newValue);
+
+    if (data.item.isPasswordDecrypted) {
+      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    }
+
+    updatedItem.internalData.editedPassword = newValue;
 
     setData('item', updatedItem);
+    form.change('editedPassword', newValue);
   };
 
   return (
     <LazyMotion features={loadDomAnimation}>
-      <Field name="content.s_password">
+      <Field name="editedPassword">
         {({ input }) => (
           <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile ? pI.disabled : ''} ${!data.item.isT3orT2WithPassword ? pI.nonFetched : ''}`}>
             <div className={pI.passInputTop}>
-              <label htmlFor="s_password">{browser.i18n.getMessage('password')}</label>
+              <label htmlFor="editedPassword">{browser.i18n.getMessage('password')}</label>
               <button
                 type='button'
                 className={`${bS.btn} ${bS.btnClear} ${!data.item.isT3orT2WithPassword ? bS.btnHidden : ''}`}
@@ -175,13 +218,13 @@ function Password (props) {
             </div>
             <div className={pI.passInputBottom}>
               <PasswordInput
-                {...input}
+                value={getPasswordValue()}
                 type={data?.passwordVisible ? 'text' : 'password'}
                 placeholder={!data?.passwordMobile && data.item.isT3orT2WithPassword || data?.passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
-                id='s_password'
+                id='editedPassword'
                 onChange={handlePasswordChange}
                 showPassword={data?.passwordVisible}
-                isDecrypted={data.item.isPasswordDecrypted}
+                isDecrypted={data.item.isPasswordDecrypted || data.item.internalData.editedPassword !== null}
                 state={!data.item.isT3orT2WithPassword ? 'nonFetched' : ''}
                 disabled={!data?.passwordEditable || data?.passwordMobile}
                 dir="ltr"
@@ -230,7 +273,7 @@ function Password (props) {
               animate={data?.passwordEditable ? 'visible' : 'hidden'}
             >
               <div className={`${bS.passToggle} ${bS.loaded}`}>
-                <input type="checkbox" name="password-mobile" id="password-mobile" onChange={handlePasswordOnMobileChange} />
+                <input type="checkbox" name="password-mobile" id="password-mobile" checked={data?.passwordMobile || false} onChange={handlePasswordOnMobileChange} />
                 <label htmlFor="password-mobile">
                   <span className={bS.passToggleBox}>
                     <span className={bS.passToggleBoxCircle}></span>
