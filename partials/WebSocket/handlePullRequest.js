@@ -130,7 +130,6 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           // @TODO: Handle error
         }
 
-        console.log('Original item for update:', originalItem);
         const keyName = originalItem.securityType === SECURITY_TIER.HIGHLY_SECRET ? ENCRYPTION_KEYS.ITEM_T2.crypto : originalItem.securityType === SECURITY_TIER.SECRET ? ENCRYPTION_KEYS.ITEM_T3.crypto : null;
 
         if (!keyName) {
@@ -175,8 +174,6 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       throw new TwoFasError(TwoFasError.errors.pullRequestWrongAction);
     }
   }
-
-  console.log('Pull request data:', data);
 
   const dataEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceD.ArrayBuffer }, encryptionDataKeyAES, StringToArrayBuffer(JSON.stringify(data)));
   const encryptedBytes = EncryptBytes(nonceD.ArrayBuffer, dataEnc);
