@@ -148,7 +148,19 @@ function PasswordGenerator (props) {
       return navigate(`/details/${item.deviceId}/${item.vaultId}/${item.id}`, {
         state: {
           from: 'passwordGenerator',
-          data: { item, generatedPassword: values.password }
+          generatedPassword: values.password,
+          data: {
+            nameEditable: data.nameEditable,
+            usernameEditable: data.usernameEditable,
+            passwordEditable: data.passwordEditable,
+            domainsEditable: data.domainsEditable,
+            tierEditable: data.tierEditable,
+            tagsEditable: data.tagsEditable,
+            notesEditable: data.notesEditable,
+            usernameMobile: data.usernameMobile,
+            passwordMobile: data.passwordMobile,
+            passwordEdited: data.passwordEdited
+          }
         }
       });
     } else {

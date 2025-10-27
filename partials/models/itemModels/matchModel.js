@@ -16,13 +16,18 @@ const models = new Map(
 
 /**
  * Checks if the itemData has a contentType and contentVersion that match any of the available models
- * and validates that the model constructor doesn't throw errors
- * @param {Object} itemData - The item data to check
- * @returns {boolean} True if contentType and contentVersion match a model and validation passes, false otherwise
+ * and validates that the model constructor doesn't throw errors.
+ * If itemData is already a model instance (Login, SecureNote, etc.), returns it directly.
+ * @param {Object|Login|SecureNote} itemData - The item data to check or an existing model instance
+ * @returns {Login|SecureNote|null} Model instance if valid, null otherwise
  */
 const matchModel = itemData => {
   if (!itemData?.contentType) {
     return null;
+  }
+
+  if (itemData?.constructor?.name === 'Login' || itemData?.constructor?.name === 'SecureNote') {
+    return itemData;
   }
 
   const Model = models.get(itemData.contentType);
@@ -38,7 +43,6 @@ const matchModel = itemData => {
   try {
     return new Model(itemData);
   } catch {
-    // @TODO: log error?
     return null;
   }
 };
