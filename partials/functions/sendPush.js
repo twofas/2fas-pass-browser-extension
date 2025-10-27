@@ -52,8 +52,6 @@ const sendPush = async (device, data = {}) => {
     }
   };
 
-  console.log('sendPush body', body);
-
   if (device?.fcmToken && device?.fcmToken?.length > 0 && device?.platform && device?.platform?.length > 0) {
     body.fcmToken = Base64ToString(device.fcmToken);
     body.fcmTargetType = device.platform;

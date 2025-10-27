@@ -26,7 +26,6 @@ const onContextMenuClick = async (info, tab) => {
     }
   
     const fetchRegexTest = FETCH_REGEX.exec(menuItemId);
-    console.log('fetchRegexTest', fetchRegexTest);
   
     if (fetchRegexTest) {
       const [, deviceId, vaultId, itemId, contentType] = fetchRegexTest;
