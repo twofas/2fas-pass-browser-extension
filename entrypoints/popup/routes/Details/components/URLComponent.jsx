@@ -116,8 +116,6 @@ function URLComponent (props) {
         }
       });
 
-      updatedItem.internalData.urisWithTempIds = newUrisWithTempIds;
-
       setData('item', updatedItem);
 
       const newDomainsEditable = {
@@ -157,8 +155,6 @@ function URLComponent (props) {
         urisWithTempIds: newUrisWithTempIds
       }
     });
-
-    updatedItem.internalData.urisWithTempIds = newUrisWithTempIds;
 
     setData('item', updatedItem);
 
@@ -201,8 +197,6 @@ function URLComponent (props) {
         urisWithTempIds: newUrisWithTempIds
       }
     });
-
-    updatedItem.internalData.urisWithTempIds = newUrisWithTempIds;
 
     setData('item', updatedItem);
   });

@@ -12,6 +12,7 @@ import Select from 'react-select';
 import CustomTierOption from './CustomTierOption';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
+import Login from '@/partials/models/itemModels/Login';
 
 const securityTiersOptions = [
   { value: SECURITY_TIER.SECRET, label: browser.i18n.getMessage('tier_2_name'), description: browser.i18n.getMessage('tier_2_description') },
@@ -34,11 +35,11 @@ function SecurityType (props) {
   const handleTierEditable = async () => {
     if (data.tierEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      data.item.content.securityType = item.securityType;
+      const updatedItem = new Login({ ...data.item, securityType: item.securityType });
       item = null;
 
       setData('tierEditable', false);
-      setData('item', data.item);
+      setData('item', updatedItem);
     } else {
       setData('tierEditable', true);
     }
@@ -46,10 +47,9 @@ function SecurityType (props) {
 
   const handleSelectChange = useCallback(selectedOption => {
     const newValue = selectedOption ? selectedOption.value : null;
-    console.log('Selected security tier:', newValue);
-    data.item.content.securityType = newValue;
+    const updatedItem = new Login({ ...data.item, securityType: newValue });
 
-    setData('item', data.item);
+    setData('item', updatedItem);
     form.change('securityType', newValue);
   }, [data.item, setData]);
 

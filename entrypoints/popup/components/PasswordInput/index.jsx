@@ -30,8 +30,7 @@ function PasswordInput (props) {
   } = props;
 
   const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  
+
   const [isFocused, setIsFocused] = useState(false);
   const [selection, setSelection] = useState({ start: 0, end: 0 });
   const inputRef = useRef(null);
@@ -55,13 +54,6 @@ function PasswordInput (props) {
 
     if (onChange) {
       onChange(e);
-    } else {
-      if (!data?.passwordEdited) {
-        setData('passwordEdited', true);
-      }
-
-      data.item.content.s_password = e.target.value;
-      setData('item', data.item);
     }
 
     setTimeout(() => {

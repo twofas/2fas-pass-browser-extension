@@ -15,6 +15,7 @@ import getTags from '@/partials/sessionStorage/getTags';
 import Select from 'react-select';
 import usePopupStateStore from '../../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
+import Login from '@/partials/models/itemModels/Login';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CloseIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
@@ -111,11 +112,11 @@ function Tags (props) {
   const handleTagsEditable = async () => {
     if (data.tagsEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      data.item.tags = item.tags;
+      const updatedItem = new Login({ ...data.item, tags: item.tags });
       item = null;
 
       setData('tagsEditable', false);
-      setData('item', data.item);
+      setData('item', updatedItem);
       setIsMenuOpen(false);
     } else {
       setData('tagsEditable', true);
@@ -124,17 +125,17 @@ function Tags (props) {
 
   const handleRemoveTag = tagId => {
     const newTagIds = data.item.tags.filter(id => id !== tagId);
-    data.item.tags = newTagIds;
+    const updatedItem = new Login({ ...data.item, tags: newTagIds });
 
-    setData('item', data.item);
+    setData('item', updatedItem);
     form.change('tags', newTagIds);
   };
 
   const handleSelectChange = option => {
     if (option && option.tag) {
       const newTagIds = [...data.item.tags, option.tag.id];
-      data.item.tags = newTagIds;
-      setData('item', data.item);
+      const updatedItem = new Login({ ...data.item, tags: newTagIds });
+      setData('item', updatedItem);
       form.change('tags', newTagIds);
     }
 

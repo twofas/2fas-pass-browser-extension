@@ -48,11 +48,12 @@ function Username (props) {
   const handleUsernameEditable = async () => {
     if (data.usernameEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      data.item.content.username = item.content.username;
+      const updatedItem = new Login({ ...data.item, content: { ...data.item.content, username: item.content.username } });
+      setData('item', updatedItem);
       item = null;
 
       setData('usernameEditable', false);
-      setData('item', data.item);
+      setData('item', updatedItem);
     } else {
       setData('usernameEditable', true);
     }
@@ -61,10 +62,10 @@ function Username (props) {
   const handleUsernameMobile = async () => {
     if (!data.usernameMobile) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      data.item.content.username = item.content.username;
+      const updatedItem = new Login({ ...data.item, content: { ...data.item.content, username: item.content.username } });
       item = null;
 
-      setData('item', data.item);
+      setData('item', updatedItem);
     }
 
     setData('usernameMobile', !data.usernameMobile);

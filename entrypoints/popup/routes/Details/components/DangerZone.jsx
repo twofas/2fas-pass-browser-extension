@@ -56,9 +56,9 @@ function DangerZone (props) {
             action: PULL_REQUEST_TYPES.DELETE_DATA,
             from: 'details',
             data: {
-              itemId: data.item.id,
-              vaultId: data.item.vaultId,
               deviceId: data.item.deviceId,
+              vaultId: data.item.vaultId,
+              itemId: data.item.id,
               contentType: data.item.contentType
             }
           }}
