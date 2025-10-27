@@ -43,7 +43,7 @@ function Details (props) {
     try {
       let item;
 
-      if (location.state?.data) {
+      if (location.state?.data?.item) {
         item = matchModel(location.state.data.item);
       } else if (data?.item) {
         try {
@@ -74,13 +74,49 @@ function Details (props) {
         }
       }
 
+      if (location.state?.data) {
+        const stateData = location.state.data;
+        const fieldsToSync = [
+          'nameEditable',
+          'usernameEditable',
+          'domainsEditable',
+          'tierEditable',
+          'tagsEditable',
+          'notesEditable',
+          'usernameMobile',
+          'passwordMobile'
+        ];
+
+        fieldsToSync.forEach(field => {
+          if (stateData[field] !== undefined) {
+            setData(field, stateData[field]);
+          }
+        });
+
+        if (!location.state?.generatedPassword) {
+          if (stateData.passwordEditable !== undefined) {
+            setData('passwordEditable', stateData.passwordEditable);
+          }
+
+          if (stateData.passwordEdited !== undefined) {
+            setData('passwordEdited', stateData.passwordEdited);
+          }
+        }
+      }
+
+      if (location.state?.generatedPassword) {
+        item.internalData.editedPassword = location.state.generatedPassword;
+        setData('passwordEditable', true);
+        setData('passwordEdited', true);
+      }
+
       setData('item', item);
       setLoading(false);
     } catch (e) {
       CatchError(e);
       navigate('/');
     }
-  }, [params.deviceId, params.vaultId, params.id, navigate, setData, location.state, data?.item]);
+  }, [params.deviceId, params.vaultId, params.id, navigate, setData, location.state]);
 
   const getOriginalItem = useCallback(async () => {
     const originalItemData = await getItem(params.deviceId, params.vaultId, params.id);

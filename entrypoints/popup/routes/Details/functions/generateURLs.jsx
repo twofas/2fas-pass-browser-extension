@@ -50,6 +50,10 @@ const generateURLs = props => {
       updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
     }
 
+    if (data.item.internalData.editedPassword !== null) {
+      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
+    }
+
     setData('item', updatedItem);
 
     const currentDomainsEditable = data?.domainsEditable || {};

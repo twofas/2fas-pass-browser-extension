@@ -58,6 +58,10 @@ function Notes (props) {
       updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
     }
 
+    if (data.item.internalData.editedPassword !== null) {
+      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
+    }
+
     setData('item', updatedItem);
     form.change('content.notes', newNotes);
   }, [data.item, setData, form]);
