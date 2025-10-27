@@ -13,7 +13,6 @@ import { AnimatePresence } from 'motion/react';
 import usePopupStateStore from '../../../store/popupState';
 import URIMatcher from '@/partials/URIMatcher';
 import { v4 as uuidv4 } from 'uuid';
-import Login from '@/partials/models/itemModels/Login';
 
 const AddIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
 
@@ -39,19 +38,17 @@ const generateURLs = props => {
     const newUrisWithTempIds = [...currentUrisWithTempIds, newUriWithTempId];
     const newContentUris = [...currentContentUris, newContentUri];
 
-    const updatedItem = new Login({
-      ...data.item,
-      content: {
-        ...data.item.content,
-        uris: newContentUris
-      },
-      internalData: {
-        ...data.item.internalData,
-        urisWithTempIds: newUrisWithTempIds
-      }
-    });
+    const itemData = data.item.toJSON();
+    itemData.content.uris = newContentUris;
+    itemData.internalData = {
+      ...data.item.internalData,
+      urisWithTempIds: newUrisWithTempIds
+    };
+    const updatedItem = new (data.item.constructor)(itemData);
 
-    updatedItem.internalData.urisWithTempIds = newUrisWithTempIds;
+    if (data.item.isPasswordDecrypted) {
+      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    }
 
     setData('item', updatedItem);
 

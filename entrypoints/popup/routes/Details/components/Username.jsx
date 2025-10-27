@@ -13,7 +13,6 @@ import { lazy, useCallback } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import Login from '@/partials/models/itemModels/Login';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
@@ -48,8 +47,9 @@ function Username (props) {
   const handleUsernameEditable = async () => {
     if (data.usernameEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      const updatedItem = new Login({ ...data.item, content: { ...data.item.content, username: item.content.username } });
-      setData('item', updatedItem);
+      const itemData = data.item.toJSON();
+      itemData.content.username = item.content.username;
+      const updatedItem = new (data.item.constructor)(itemData);
       item = null;
 
       setData('usernameEditable', false);
@@ -62,7 +62,9 @@ function Username (props) {
   const handleUsernameMobile = async () => {
     if (!data.usernameMobile) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      const updatedItem = new Login({ ...data.item, content: { ...data.item.content, username: item.content.username } });
+      const itemData = data.item.toJSON();
+      itemData.content.username = item.content.username;
+      const updatedItem = new (data.item.constructor)(itemData);
       item = null;
 
       setData('item', updatedItem);
@@ -73,17 +75,14 @@ function Username (props) {
 
   const handleUsernameChange = useCallback(e => {
     const newUsername = e.target.value;
+    const itemData = data.item.toJSON();
+    itemData.content.username = newUsername;
+    itemData.internalData = { ...data.item.internalData };
+    const updatedItem = new (data.item.constructor)(itemData);
 
-    const updatedItem = new Login({
-      ...data.item,
-      content: {
-        ...data.item.content,
-        username: newUsername
-      },
-      internalData: {
-        ...data.item.internalData
-      }
-    });
+    if (data.item.isPasswordDecrypted) {
+      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    }
 
     setData('item', updatedItem);
   }, [data.item, setData]);

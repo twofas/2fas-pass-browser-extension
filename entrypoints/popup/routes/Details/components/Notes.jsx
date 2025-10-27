@@ -12,8 +12,6 @@ import * as m from 'motion/react-m';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import { useCallback } from 'react';
-import Login from '@/partials/models/itemModels/Login';
-
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const notesVariants = {
@@ -37,7 +35,9 @@ function Notes (props) {
     if (data.notesEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       const newValue = item?.content?.notes || '';
-      const updatedItem = new Login({ ...data.item, content: { ...data.item.content, notes: newValue } });
+      const itemData = data.item.toJSON();
+      itemData.content.notes = newValue;
+      const updatedItem = new (data.item.constructor)(itemData);
       item = null;
 
       setData('item', updatedItem);
@@ -49,11 +49,18 @@ function Notes (props) {
 
   const handleNotesChange = useCallback(e => {
     const newNotes = e.target.value;
-    const updatedItem = new Login({ ...data.item, content: { ...data.item.content, notes: newNotes } });
-    
+    const itemData = data.item.toJSON();
+    itemData.content.notes = newNotes;
+    itemData.internalData = { ...data.item.internalData };
+    const updatedItem = new (data.item.constructor)(itemData);
+
+    if (data.item.isPasswordDecrypted) {
+      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    }
+
     setData('item', updatedItem);
     form.change('content.notes', newNotes);
-  }, [data.item, setData]);
+  }, [data.item, setData, form]);
 
   return (
     <Field name="content.notes">

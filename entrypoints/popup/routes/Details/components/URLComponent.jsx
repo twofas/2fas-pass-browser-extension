@@ -14,7 +14,6 @@ import * as m from 'motion/react-m';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import Login from '@/partials/models/itemModels/Login';
 import URIMatcher from '@/partials/URIMatcher';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
@@ -104,17 +103,17 @@ function URLComponent (props) {
         };
       }
 
-      const updatedItem = new Login({
-        ...data.item,
-        content: {
-          ...data.item.content,
-          uris: newContentUris
-        },
-        internalData: {
-          ...data.item.internalData,
-          urisWithTempIds: newUrisWithTempIds
-        }
-      });
+      const itemData = data.item.toJSON();
+      itemData.content.uris = newContentUris;
+      itemData.internalData = {
+        ...data.item.internalData,
+        urisWithTempIds: newUrisWithTempIds
+      };
+      const updatedItem = new (data.item.constructor)(itemData);
+
+      if (data.item.isPasswordDecrypted) {
+        updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+      }
 
       setData('item', updatedItem);
 
@@ -143,18 +142,18 @@ function URLComponent (props) {
     }
 
     const newIconUriIndex = data.item.content.iconUriIndex > 0 ? data.item.content.iconUriIndex - 1 : 0;
-    const updatedItem = new Login({
-      ...data.item,
-      content: {
-        ...data.item.content,
-        uris: newContentUris,
-        iconUriIndex: newIconUriIndex
-      },
-      internalData: {
-        ...data.item.internalData,
-        urisWithTempIds: newUrisWithTempIds
-      }
-    });
+    const itemData = data.item.toJSON();
+    itemData.content.uris = newContentUris;
+    itemData.content.iconUriIndex = newIconUriIndex;
+    itemData.internalData = {
+      ...data.item.internalData,
+      urisWithTempIds: newUrisWithTempIds
+    };
+    const updatedItem = new (data.item.constructor)(itemData);
+
+    if (data.item.isPasswordDecrypted) {
+      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    }
 
     setData('item', updatedItem);
 
@@ -186,17 +185,17 @@ function URLComponent (props) {
       newContentUris[uriIndex] = { text: newUri, matcher: uriToUpdate.matcher };
     }
 
-    const updatedItem = new Login({
-      ...data.item,
-      content: {
-        ...data.item.content,
-        uris: newContentUris
-      },
-      internalData: {
-        ...data.item.internalData,
-        urisWithTempIds: newUrisWithTempIds
-      }
-    });
+    const itemData = data.item.toJSON();
+    itemData.content.uris = newContentUris;
+    itemData.internalData = {
+      ...data.item.internalData,
+      urisWithTempIds: newUrisWithTempIds
+    };
+    const updatedItem = new (data.item.constructor)(itemData);
+
+    if (data.item.isPasswordDecrypted) {
+      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    }
 
     setData('item', updatedItem);
   });

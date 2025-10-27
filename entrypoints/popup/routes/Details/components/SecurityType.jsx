@@ -12,7 +12,6 @@ import Select from 'react-select';
 import CustomTierOption from './CustomTierOption';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import Login from '@/partials/models/itemModels/Login';
 
 const securityTiersOptions = [
   { value: SECURITY_TIER.SECRET, label: browser.i18n.getMessage('tier_2_name'), description: browser.i18n.getMessage('tier_2_description') },
@@ -35,7 +34,9 @@ function SecurityType (props) {
   const handleTierEditable = async () => {
     if (data.tierEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      const updatedItem = new Login({ ...data.item, securityType: item.securityType });
+      const itemData = data.item.toJSON();
+      itemData.securityType = item.securityType;
+      const updatedItem = new (data.item.constructor)(itemData);
       item = null;
 
       setData('tierEditable', false);
@@ -47,11 +48,18 @@ function SecurityType (props) {
 
   const handleSelectChange = useCallback(selectedOption => {
     const newValue = selectedOption ? selectedOption.value : null;
-    const updatedItem = new Login({ ...data.item, securityType: newValue });
+    const itemData = data.item.toJSON();
+    itemData.securityType = newValue;
+    itemData.internalData = { ...data.item.internalData };
+    const updatedItem = new (data.item.constructor)(itemData);
+
+    if (data.item.isPasswordDecrypted) {
+      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    }
 
     setData('item', updatedItem);
     form.change('securityType', newValue);
-  }, [data.item, setData]);
+  }, [data.item, setData, form]);
 
   return (
     <Field name="securityType">
