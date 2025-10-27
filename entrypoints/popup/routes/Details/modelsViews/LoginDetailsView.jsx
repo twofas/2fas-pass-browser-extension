@@ -159,6 +159,7 @@ function LoginDetailsView () {
           <Password
             key={`password-${data.item.id}`}
             formData={{ form }}
+            passwordDecryptError={data.passwordDecryptError}
           />
           {generateURLs({ formData: { inputError } })}
           <SecurityType

@@ -33,9 +33,7 @@ export default class Login extends Item {
     validateOptional(loginData?.content?.name, isValidString, 'Invalid loginData.content.name: must be a string');
     validateOptional(loginData?.content?.username, isValidString, 'Invalid loginData.content.username: must be a string');
 
-    if (loginData?.content?.s_password && loginData.content.s_password !== '******') {
-      validateOptional(loginData?.content?.s_password, isValidBase64, 'Invalid loginData.content.s_password: must be a base64 string');
-    }
+    validateOptional(loginData?.content?.s_password, isValidBase64, 'Invalid loginData.content.s_password: must be a base64 string');
 
     if (loginData?.content?.uris !== undefined) {
       validate(Array.isArray(loginData.content.uris), 'Invalid loginData.content.uris: must be an array');
@@ -74,7 +72,7 @@ export default class Login extends Item {
       labelColor: loginData.content.labelColor ?? null,
       customImageUrl: loginData.content.customImageUrl ?? null,
       notes: loginData.content.notes ?? null,
-      s_password: '******'
+      s_password: loginData.content.s_password ?? null
     };
 
     this.internalData = {
@@ -85,7 +83,7 @@ export default class Login extends Item {
     };
 
     // Secure Input Fields
-    this.#s_password = (loginData.content.s_password && loginData.content.s_password !== '******') ? loginData.content.s_password : null;
+    this.#s_password = loginData.content.s_password ?? null;
     this.#s_passwordDecrypted = null;
   }
 
@@ -141,10 +139,16 @@ export default class Login extends Item {
 
   setPasswordDecrypted (decryptedPassword) {
     this.#s_passwordDecrypted = decryptedPassword;
+    this.content.s_password = decryptedPassword;
   }
 
   removePasswordDecrypted () {
     this.#s_passwordDecrypted = null;
+    this.content.s_password = null;
+  }
+
+  get passwordDecrypted () {
+    return this.#s_passwordDecrypted;
   }
 
   get isPasswordDecrypted () {

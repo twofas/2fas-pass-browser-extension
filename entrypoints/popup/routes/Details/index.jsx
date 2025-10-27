@@ -63,6 +63,17 @@ function Details (props) {
         return;
       }
 
+      if (item.constructor.name === 'Login' && item.sifExists && !item.isPasswordDecrypted) {
+        try {
+          const decryptedData = await item.decryptSif();
+          item.setPasswordDecrypted(decryptedData.password);
+          setData('passwordDecryptError', false);
+        } catch (e) {
+          setData('passwordDecryptError', true);
+          CatchError(e);
+        }
+      }
+
       setData('item', item);
       setLoading(false);
     } catch (e) {
