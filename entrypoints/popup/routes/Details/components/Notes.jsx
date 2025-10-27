@@ -12,6 +12,7 @@ import * as m from 'motion/react-m';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import { useCallback } from 'react';
+import Login from '@/partials/models/itemModels/Login';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
@@ -35,10 +36,11 @@ function Notes (props) {
   const handleNotesEditable = async () => {
     if (data.notesEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      data.item.content.notes = item?.content?.notes || '';
+      const newValue = item?.content?.notes || '';
+      const updatedItem = new Login({ ...data.item, content: { ...data.item.content, notes: newValue } });
       item = null;
 
-      setData('item', data.item);
+      setData('item', updatedItem);
       setData('notesEditable', false);
     } else {
       setData('notesEditable', true);
@@ -47,9 +49,9 @@ function Notes (props) {
 
   const handleNotesChange = useCallback(e => {
     const newNotes = e.target.value;
-    data.item.content.notes = newNotes;
-
-    setData('item', data.item);
+    const updatedItem = new Login({ ...data.item, content: { ...data.item.content, notes: newNotes } });
+    
+    setData('item', updatedItem);
     form.change('content.notes', newNotes);
   }, [data.item, setData]);
 
