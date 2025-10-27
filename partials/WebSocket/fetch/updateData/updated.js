@@ -12,7 +12,7 @@ import getKey from '@/partials/sessionStorage/getKey';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
 import saveTags from '@/partials/WebSocket/utils/saveTags';
 import { ENCRYPTION_KEYS } from '@/constants';
-import Login from '@/partials/models/itemModels/Login';
+import matchModel from '@/partials/models/itemModels/matchModel';
 
 /** 
 * Handles the update of a item after it has been modified.
@@ -36,7 +36,7 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
       getItemsKeys(state.data.deviceId, info.data.vaultId)
     ]);
 
-    // Update login & clear alarm if exists
+    // Update item & clear alarm if exists
     const itemIndex = items.findIndex(item => item.id === state.data.itemId);
     const originalItem = items.find(item => item.id === state.data.itemId);
 
@@ -44,8 +44,15 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
       await browser.alarms.clear(`sifT2Reset-${state.data.deviceId}|${state.data.vaultId}|${state.data.itemId}`);
     }
 
-    const item = new Login(info.data, state.data.deviceId, info.data.vaultId);
+    const itemData = Object.assign({}, info.data);
+    itemData.deviceId = state.data.deviceId;
+
+    const item = matchModel(itemData);
     console.log('ITEM:', item);
+
+    if (!item) {
+      throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginUpdatedWrongData);
+    }
 
     if (item.securityType === SECURITY_TIER.SECRET) {
       item.internalData.type = 'added';
