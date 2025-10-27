@@ -16,8 +16,8 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @return {string|null} The value for the key, or null if not found.
 */
 const getKey = async (key, data) => {
-  const persistentKeys = new Set(['configured', 'configured_nonce', 'ephe_public_key', 'ephe_private_key']);
-  const ephemeralKeys = new Set(['items', 'tags', ENCRYPTION_KEYS.DATA.sK, ENCRYPTION_KEYS.ITEM_T2.sK, ENCRYPTION_KEYS.ITEM_T3.sK, ENCRYPTION_KEYS.ITEM_T3_NEW.sK, 'popup_state']);
+  const persistentKeys = new Set(['configured', 'configured_nonce', 'ephe_public_key', 'ephe_private_key', 'popup_state']);
+  const ephemeralKeys = new Set(['items', 'tags', ENCRYPTION_KEYS.DATA.sK, ENCRYPTION_KEYS.ITEM_T2.sK, ENCRYPTION_KEYS.ITEM_T3.sK, ENCRYPTION_KEYS.ITEM_T3_NEW.sK]);
 
   const keyEnvName = `VITE_STORAGE_SESSION_${key.toUpperCase()}`;
   const keyEnv = import.meta.env[keyEnvName];
