@@ -11,6 +11,7 @@ import { lazy, useCallback } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
+import Login from '@/partials/models/itemModels/Login';
 
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 
@@ -38,11 +39,11 @@ function Name (props) {
   const handleNameEditable = async () => {
     if (data.nameEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      data.item.content.name = item.content.name;
+      const updatedItem = new Login({ ...data.item, content: { ...data.item.content, name: item.content.name } });
       item = null;
 
       setData('nameEditable', false);
-      setData('item', data.item);
+      setData('item', updatedItem);
     } else {
       setData('nameEditable', true);
     }
@@ -50,9 +51,8 @@ function Name (props) {
 
   const handleNameChange = useCallback(e => {
     const newName = e.target.value;
-    data.item.content.name = newName;
-
-    setData('item', data.item);
+    const updatedItem = new Login({ ...data.item, content: { ...data.item.content, name: newName } });
+    setData('item', updatedItem);
   }, [data.item, setData]);
 
   return (
