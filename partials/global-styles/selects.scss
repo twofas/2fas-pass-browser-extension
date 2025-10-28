@@ -1219,6 +1219,12 @@
   }
 }
 
+.react-select-save-prompt-container {
+  .react-select__menu-list {
+    max-height: 150px;
+  }
+}
+
 .react-select__single-value {
   margin-left: 0 !important;
 }
