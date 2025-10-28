@@ -251,7 +251,6 @@ function ThisTab (props) {
   const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
   const allLoginsClass = `${S.thisTabAllLogins} ${!hasLogins && !loading ? S.hidden : ''}`;
   const searchClass = `${S.thisTabAllLoginsSearch} ${thisTabPopupState?.searchActive ? S.active : ''}`;
-  const clearButtonClass = `${S.thisTabAllLoginsSearchClear} ${thisTabPopupState?.searchValue?.length <= 0 ? S.hidden : ''}`;
 
   const memoizedMatchingItemsList = useMemo(() => generateMatchingItemsList(matchingLogins, loading), [matchingLogins, loading]);
   const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag), [items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag]);
@@ -424,7 +423,7 @@ function ThisTab (props) {
                     />
         
                     <button
-                      className={clearButtonClass}
+                      className={`${S.thisTabAllLoginsSearchClear} ${!thisTabPopupState?.searchValue || thisTabPopupState?.searchValue?.length <= 0 ? S.hidden : ''}`}
                       onClick={handleSearchClear}
                     >
                       <ClearIcon />
