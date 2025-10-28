@@ -15,6 +15,7 @@ import getTags from '@/partials/sessionStorage/getTags';
 import Select from 'react-select';
 import usePopupStateStore from '../../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
+import updateItem from '../../functions/updateItem';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CloseIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
@@ -49,16 +50,12 @@ const getTagName = (tagID, availableTags) => {
 
 /**
 * Function to render the tags input field.
-* @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function Tags (props) {
+function Tags () {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
 
-  const { formData } = props;
-  const { form } = formData;
-  
   const [availableTags, setAvailableTags] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const selectRef = useRef(null);
@@ -111,9 +108,12 @@ function Tags (props) {
   const handleTagsEditable = async () => {
     if (data.tagsEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      const itemData = data.item.toJSON();
-      itemData.tags = item.tags;
-      const updatedItem = new (data.item.constructor)(itemData);
+
+      const updatedItem = updateItem(data.item, {
+        tags: item.tags,
+        internalData: { ...data.item.internalData }
+      });
+
       item = null;
 
       setData('tagsEditable', false);
@@ -126,41 +126,25 @@ function Tags (props) {
 
   const handleRemoveTag = tagId => {
     const newTagIds = data.item.tags.filter(id => id !== tagId);
-    const itemData = data.item.toJSON();
-    itemData.tags = newTagIds;
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isPasswordDecrypted) {
-      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
-    }
-
-    if (data.item.internalData.editedPassword !== null) {
-      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
-    }
+    const updatedItem = updateItem(data.item, {
+      tags: newTagIds,
+      internalData: { ...data.item.internalData }
+    });
 
     setData('item', updatedItem);
-    form.change('tags', newTagIds);
   };
 
   const handleSelectChange = option => {
     if (option && option.tag) {
       const newTagIds = [...data.item.tags, option.tag.id];
-      const itemData = data.item.toJSON();
-      itemData.tags = newTagIds;
-      itemData.internalData = { ...data.item.internalData };
-      const updatedItem = new (data.item.constructor)(itemData);
 
-      if (data.item.isPasswordDecrypted) {
-        updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
-      }
-
-      if (data.item.internalData.editedPassword !== null) {
-        updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
-      }
+      const updatedItem = updateItem(data.item, {
+        tags: newTagIds,
+        internalData: { ...data.item.internalData }
+      });
 
       setData('item', updatedItem);
-      form.change('tags', newTagIds);
     }
 
     setIsMenuOpen(false);
