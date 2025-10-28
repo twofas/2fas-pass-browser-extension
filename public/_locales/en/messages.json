@@ -900,15 +900,15 @@
     "description": "Title for the regenerate password button"
   },
   "password_generator_uppercase": {
-    "message": "A-Z",
+    "message": "Uppercase characters",
     "description": "Checkbox label for including uppercase letters"
   },
   "password_generator_numbers": {
-    "message": "0-9",
+    "message": "Digits",
     "description": "Checkbox label for including numbers"
   },
   "password_generator_special_chars": {
-    "message": "!@#$%&^",
+    "message": "Special characters",
     "description": "Checkbox label for including special characters"
   },
   "password_generator_use_password": {
