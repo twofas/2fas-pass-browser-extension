@@ -680,7 +680,7 @@
     "description": "Message indicating that the password is stored only in the user's Vault"
   },
   "details_password_decrypt_error": {
-    "message": "Decrypting password error. Please reconnect with your mobile app.",
+    "message": "Decrypting password error. Please resync with your mobile app.",
     "description": "Error message displayed when decrypting the password fails"
   },
   "details_delete_header": {
@@ -708,7 +708,7 @@
     "description": "Validation message indicating the maximum length for the URL field"
   },
   "details_item_not_found": {
-    "message": "Something went wrong. Item not found. Lock the Browser Extension and reconnect.",
+    "message": "Something went wrong. Item not found. Sync your mobile app and try again.",
     "description": "Error shown when the requested item is not found, suggesting reconnection"
   },
   "details_security_type": {

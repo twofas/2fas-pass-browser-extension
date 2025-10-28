@@ -62,7 +62,11 @@ const processFullSyncVaultsData = async (checksum, chunksData, encryptionDataKey
       throw new Error('Invalid vault data format');
     }
 
-    // Remove any existing encryption keys @TODO:
+    // Remove any existing encryption keys
+    const encryptionKeysToRemove = Object.values(ENCRYPTION_KEYS).map(key => key.sK).filter(Boolean);
+    const storageKeysToRemove = await Promise.all(encryptionKeysToRemove.map(async sK => getKey(sK, { deviceId })));
+    const storageSessionKeysToRemove = storageKeysToRemove.map(sK => `session:${sK}`);
+    await storage.removeItems(storageSessionKeysToRemove);
 
     // Remove any existing session storage items
     const devices = await storage.getItem('local:devices');
@@ -76,7 +80,7 @@ const processFullSyncVaultsData = async (checksum, chunksData, encryptionDataKey
     }
 
     // Remove any existing alarms
-    await browser.alarms.clearAll(); // @TODO: Safari!
+    await browser.alarms.clearAll();
 
     // Remove any existing context menu items
     await browser.contextMenus.removeAll();

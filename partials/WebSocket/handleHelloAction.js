@@ -34,7 +34,6 @@ const handleHelloAction = async (json, uuid) => {
   
     return deviceId;
   } catch (e) {
-    // @TODO: Test if closeWithError is sent
     throw new TwoFasError(TwoFasError.errors.helloAction, { event: e });
   }
 };

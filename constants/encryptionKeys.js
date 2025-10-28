@@ -21,8 +21,7 @@ const ENCRYPTION_KEYS = {
     sK: 'item_key_t2'
   },
   ITEM_NEW: {
-    crypto: 'ItemNew',
-    sK: 'item_key_new'
+    crypto: 'ItemNew'
   }
 };
 
