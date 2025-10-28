@@ -22,6 +22,11 @@ import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 
+const DetailsViews = {
+  'Login': LoginDetailsView,
+  'SecureNote': SecureNoteDetailsView
+};
+
 /** 
 * Function to render the details component.
 * @param {Object} props - The component props.
@@ -123,10 +128,6 @@ function Details (props) {
     setOriginalItem(originalItemData);
   }, [params.deviceId, params.vaultId, params.id]);
 
-  useEffect(() => {
-    getData().then(getOriginalItem);
-  }, [getData, getOriginalItem]);
-
   const constructorName = useMemo(() => {
     if (loading) {
       return null;
@@ -142,16 +143,24 @@ function Details (props) {
 
     const modelData = {};
 
-    if (constructorName === 'Login') {
-      return <LoginDetailsView {...props} {...modelData} />;
-    }
-
-    if (constructorName === 'SecureNote') {
-      return <SecureNoteDetailsView {...props} {...modelData} />;
+    if (DetailsViews[constructorName]) {
+      const ModelViewComponent = DetailsViews[constructorName];
+      return <ModelViewComponent {...props} {...modelData} />;
     }
 
     return null;
   }, [loading, constructorName, props]);
+
+  useEffect(() => {
+    getData().then(getOriginalItem);
+  }, [getData, getOriginalItem]);
+
+  useEffect(() => {
+    if (!loading && constructorName && !DetailsViews[constructorName]) {
+      showToast(browser.i18n.getMessage('details_item_not_found'), 'error');
+      navigate('/');
+    }
+  }, [loading, constructorName, navigate]);
 
   useScrollPosition(scrollableRef, loading);
 
