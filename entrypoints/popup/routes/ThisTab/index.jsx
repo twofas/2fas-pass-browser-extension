@@ -66,7 +66,6 @@ function ThisTab (props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
-  const thisTabPopupState = data || {};
 
   // Refs
   const boxAnimationRef = useRef(null);
@@ -243,17 +242,17 @@ function ThisTab (props) {
   const hasMatchingLogins = useMemo(() => isItemsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
   const hasLogins = useMemo(() => isItemsCorrect(items) && items?.length > 0, [items]);
   const searchPlaceholder = useMemo(() => {
-    const amount = thisTabPopupState?.selectedTag ? (thisTabPopupState.selectedTag.amount || 0) : (items?.length || 0);
+    const amount = data?.selectedTag ? (data.selectedTag.amount || 0) : (items?.length || 0);
     return browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', amount);
-  }, [thisTabPopupState?.selectedTag, items?.length]);
+  }, [data?.selectedTag, items?.length]);
 
   const autofillPopupClass = `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`;
   const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
   const allLoginsClass = `${S.thisTabAllLogins} ${!hasLogins && !loading ? S.hidden : ''}`;
-  const searchClass = `${S.thisTabAllLoginsSearch} ${thisTabPopupState?.searchActive ? S.active : ''}`;
+  const searchClass = `${S.thisTabAllLoginsSearch} ${data?.searchActive ? S.active : ''}`;
 
   const memoizedMatchingItemsList = useMemo(() => generateMatchingItemsList(matchingLogins, loading), [matchingLogins, loading]);
-  const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag), [items, sort, thisTabPopupState.searchValue, loading, tags, thisTabPopupState.selectedTag]);
+  const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, sort, data?.searchValue, loading, tags, data?.selectedTag), [items, sort, data?.searchValue, loading, tags, data?.selectedTag]);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
@@ -350,7 +349,7 @@ function ThisTab (props) {
                 className={S.thisTabTop}
                 variants={thisTabTopVariants}
                 initial="visible"
-                animate={thisTabPopupState?.searchActive || thisTabPopupState?.selectedTag ? 'hidden' : 'visible'}
+                animate={data?.searchActive || data?.selectedTag ? 'hidden' : 'visible'}
                 onAnimationComplete={e => {
                   if (e === 'visible') {
                     thisTabTopRef.current.style.overflow = 'visible';
@@ -359,7 +358,7 @@ function ThisTab (props) {
                   }
                 }}
                 onUpdate={() => {
-                  if (thisTabPopupState?.searchActive || thisTabPopupState?.selectedTag) {
+                  if (data?.searchActive || data?.selectedTag) {
                     scrollableRef.current.scrollTo(0, 0);
                   }
                 }}
@@ -419,11 +418,11 @@ function ThisTab (props) {
                       autoCapitalize="off"
                       maxLength="2048"
                       onChange={handleSearchChange}
-                      value={thisTabPopupState.searchValue || ''}
+                      value={data.searchValue || ''}
                     />
         
                     <button
-                      className={`${S.thisTabAllLoginsSearchClear} ${!thisTabPopupState?.searchValue || thisTabPopupState?.searchValue?.length <= 0 ? S.hidden : ''}`}
+                      className={`${S.thisTabAllLoginsSearchClear} ${!data?.searchValue || data?.searchValue?.length <= 0 ? S.hidden : ''}`}
                       onClick={handleSearchClear}
                     >
                       <ClearIcon />
@@ -431,18 +430,18 @@ function ThisTab (props) {
                   </div>
                   <Filters
                     tags={tags}
-                    selectedTag={thisTabPopupState.selectedTag}
+                    selectedTag={data.selectedTag}
                     onTagChange={handleTagChange}
                     forceClose={forceCloseFilters}
                   />
                 </div>
 
-                <div className={`${S.thisTabAllLoginsTagsInfo} ${thisTabPopupState.lastSelectedTagInfo && thisTabPopupState.selectedTag ? S.active : ''}`}>
+                <div className={`${S.thisTabAllLoginsTagsInfo} ${data.lastSelectedTagInfo && data.selectedTag ? S.active : ''}`}>
                   <div 
                     className={S.thisTabAllLoginsTagsInfoBox}
-                    title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', thisTabPopupState.lastSelectedTagInfo?.amount || '').replace('TAG_NAME', thisTabPopupState.lastSelectedTagInfo?.name || '')}
+                    title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', data.lastSelectedTagInfo?.amount || '').replace('TAG_NAME', data.lastSelectedTagInfo?.name || '')}
                   >
-                    <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', thisTabPopupState.lastSelectedTagInfo?.amount || '').replace('TAG_NAME', thisTabPopupState.lastSelectedTagInfo?.name || '')}</p>
+                    <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', data.lastSelectedTagInfo?.amount || '').replace('TAG_NAME', data.lastSelectedTagInfo?.name || '')}</p>
                     <button
                       onClick={() => setData('selectedTag', null)}
                       title={browser.i18n.getMessage('this_tab_clear_tag_filter')}
