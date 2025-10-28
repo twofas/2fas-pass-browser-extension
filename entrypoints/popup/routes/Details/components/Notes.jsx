@@ -12,6 +12,8 @@ import * as m from 'motion/react-m';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import { useCallback } from 'react';
+import updateItem from '../functions/updateItem';
+
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const notesVariants = {
@@ -21,23 +23,21 @@ const notesVariants = {
 
 /**
 * Function to render the notes input field.
-* @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function Notes (props) {
+function Notes () {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
-
-  const { formData } = props;
-  const { form } = formData;
 
   const handleNotesEditable = async () => {
     if (data.notesEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      const newValue = item?.content?.notes || '';
-      const itemData = data.item.toJSON();
-      itemData.content.notes = newValue;
-      const updatedItem = new (data.item.constructor)(itemData);
+      
+      const updatedItem = updateItem(data.item, {
+        content: { notes: item.content.notes || '' },
+        internalData: { ...data.item.internalData }
+      });
+
       item = null;
 
       setData('item', updatedItem);
@@ -49,22 +49,14 @@ function Notes (props) {
 
   const handleNotesChange = useCallback(e => {
     const newNotes = e.target.value;
-    const itemData = data.item.toJSON();
-    itemData.content.notes = newNotes;
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isPasswordDecrypted) {
-      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
-    }
-
-    if (data.item.internalData.editedPassword !== null) {
-      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
-    }
+    const updatedItem = updateItem(data.item, {
+      content: { notes: newNotes },
+      internalData: { ...data.item.internalData }
+    });
 
     setData('item', updatedItem);
-    form.change('content.notes', newNotes);
-  }, [data.item, setData, form]);
+  }, [data.item, setData]);
 
   return (
     <Field name="content.notes">

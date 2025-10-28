@@ -15,6 +15,7 @@ import copyValue from '@/partials/functions/copyValue';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import URIMatcher from '@/partials/URIMatcher';
+import updateItem from '../functions/updateItem';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
@@ -56,14 +57,13 @@ function URLComponent (props) {
 
   const isEditable = data?.domainsEditable?.[uri._tempId];
   const buttonText = isEditable === true ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit');
+  const isNew = data.item.content.uris && data.item.content.uris[index] && data.item.content.uris[index].new;
 
   const handleCopyUri = useCallback(async index => {
     const uri = data?.item?.content?.uris && data?.item?.content?.uris?.[index] ? data.item.content.uris[index].text : '';
     await copyValue(uri, data.item.id, `uri-${index}`);
     showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
   }, [data.item]);
-
-  const isNew = data.item.content.uris && data.item.content.uris[index] && data.item.content.uris[index].new;
 
   const handleUriEditable = async () => {
     const currentDomainsEditable = data?.domainsEditable || {};
@@ -73,9 +73,10 @@ function URLComponent (props) {
         ...currentDomainsEditable,
         [uri._tempId]: true
       };
+
       setData('domainsEditable', newDomainsEditable);
     } else {
-      const item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
+      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
       const newUrisWithTempIds = [...data.item.internalData.urisWithTempIds];
       const newContentUris = [...data.item.content.uris];
@@ -103,21 +104,12 @@ function URLComponent (props) {
         };
       }
 
-      const itemData = data.item.toJSON();
-      itemData.content.uris = newContentUris;
-      itemData.internalData = {
-        ...data.item.internalData,
-        urisWithTempIds: newUrisWithTempIds
-      };
-      const updatedItem = new (data.item.constructor)(itemData);
+      const updatedItem = updateItem(data.item, {
+        content: { uris: newContentUris },
+        internalData: { ...data.item.internalData, urisWithTempIds: newUrisWithTempIds }
+      });
 
-      if (data.item.isPasswordDecrypted) {
-        updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
-      }
-
-      if (data.item.internalData.editedPassword !== null) {
-        updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
-      }
+      item = null;
 
       setData('item', updatedItem);
 
@@ -125,6 +117,7 @@ function URLComponent (props) {
         ...currentDomainsEditable,
         [uri._tempId]: false
       };
+
       setData('domainsEditable', newDomainsEditable);
     }
   };
@@ -146,22 +139,17 @@ function URLComponent (props) {
     }
 
     const newIconUriIndex = data.item.content.iconUriIndex > 0 ? data.item.content.iconUriIndex - 1 : 0;
-    const itemData = data.item.toJSON();
-    itemData.content.uris = newContentUris;
-    itemData.content.iconUriIndex = newIconUriIndex;
-    itemData.internalData = {
-      ...data.item.internalData,
-      urisWithTempIds: newUrisWithTempIds
-    };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isPasswordDecrypted) {
-      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
-    }
-
-    if (data.item.internalData.editedPassword !== null) {
-      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
-    }
+    const updatedItem = updateItem(data.item, {
+      content: {
+        uris: newContentUris,
+        iconUriIndex: newIconUriIndex
+      },
+      internalData: {
+        ...data.item.internalData,
+        urisWithTempIds: newUrisWithTempIds
+      }
+    });
 
     setData('item', updatedItem);
 
@@ -193,21 +181,10 @@ function URLComponent (props) {
       newContentUris[uriIndex] = { text: newUri, matcher: uriToUpdate.matcher };
     }
 
-    const itemData = data.item.toJSON();
-    itemData.content.uris = newContentUris;
-    itemData.internalData = {
-      ...data.item.internalData,
-      urisWithTempIds: newUrisWithTempIds
-    };
-    const updatedItem = new (data.item.constructor)(itemData);
-
-    if (data.item.isPasswordDecrypted) {
-      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
-    }
-
-    if (data.item.internalData.editedPassword !== null) {
-      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
-    }
+    const updatedItem = updateItem(data.item, {
+      content: { uris: newContentUris },
+      internalData: { ...data.item.internalData, urisWithTempIds: newUrisWithTempIds }
+    });
 
     setData('item', updatedItem);
   });
@@ -219,9 +196,9 @@ function URLComponent (props) {
           <m.div
             className={`${pI.passInput} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
             variants={urlVariants}
-            initial={isNew ? "hidden" : false}
-            animate={isNew ? "visible" : false}
-            exit="hidden"
+            initial={isNew ? 'hidden' : false}
+            animate={isNew ? 'visible' : false}
+            exit='hidden'
           >
             <div className={pI.passInputTop}>
               <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>

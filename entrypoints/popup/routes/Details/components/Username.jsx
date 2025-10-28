@@ -13,6 +13,7 @@ import { lazy, useCallback } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
+import updateItem from '../functions/updateItem';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
@@ -47,9 +48,12 @@ function Username (props) {
   const handleUsernameEditable = async () => {
     if (data.usernameEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      const itemData = data.item.toJSON();
-      itemData.content.username = item.content.username;
-      const updatedItem = new (data.item.constructor)(itemData);
+
+      const updatedItem = updateItem(data.item, {
+        content: { username: item.content.username },
+        internalData: { ...data.item.internalData }
+      });
+
       item = null;
 
       setData('usernameEditable', false);
@@ -62,18 +66,11 @@ function Username (props) {
   const handleUsernameMobile = async () => {
     if (!data.usernameMobile) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      const itemData = data.item.toJSON();
-      itemData.content.username = item.content.username;
-      itemData.internalData = { ...data.item.internalData };
-      const updatedItem = new (data.item.constructor)(itemData);
 
-      if (data.item.isPasswordDecrypted) {
-        updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
-      }
-
-      if (data.item.internalData.editedPassword !== null) {
-        updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
-      }
+      const updatedItem = updateItem(data.item, {
+        content: { username: item.content.username },
+        internalData: { ...data.item.internalData }
+      });
 
       item = null;
 
@@ -85,18 +82,11 @@ function Username (props) {
 
   const handleUsernameChange = useCallback(e => {
     const newUsername = e.target.value;
-    const itemData = data.item.toJSON();
-    itemData.content.username = newUsername;
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isPasswordDecrypted) {
-      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
-    }
-
-    if (data.item.internalData.editedPassword !== null) {
-      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
-    }
+    const updatedItem = updateItem(data.item, {
+      content: { username: newUsername },
+      internalData: { ...data.item.internalData }
+    });
 
     setData('item', updatedItem);
   }, [data.item, setData]);

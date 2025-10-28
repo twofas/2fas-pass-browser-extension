@@ -12,6 +12,7 @@ import Select from 'react-select';
 import CustomTierOption from './CustomTierOption';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
+import updateItem from '../functions/updateItem';
 
 const securityTiersOptions = [
   { value: SECURITY_TIER.SECRET, label: browser.i18n.getMessage('tier_2_name'), description: browser.i18n.getMessage('tier_2_description') },
@@ -21,22 +22,21 @@ const securityTiersOptions = [
 
 /**
 * Function to render the security type selection field.
-* @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function SecurityType (props) {
+function SecurityType () {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
-
-  const { formData } = props;
-  const { form } = formData;
 
   const handleTierEditable = async () => {
     if (data.tierEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      const itemData = data.item.toJSON();
-      itemData.securityType = item.securityType;
-      const updatedItem = new (data.item.constructor)(itemData);
+
+      const updatedItem = updateItem(data.item, {
+        securityType: item.securityType,
+        internalData: { ...data.item.internalData }
+      });
+
       item = null;
 
       setData('tierEditable', false);
@@ -48,22 +48,14 @@ function SecurityType (props) {
 
   const handleSelectChange = useCallback(selectedOption => {
     const newValue = selectedOption ? selectedOption.value : null;
-    const itemData = data.item.toJSON();
-    itemData.securityType = newValue;
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isPasswordDecrypted) {
-      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
-    }
-
-    if (data.item.internalData.editedPassword !== null) {
-      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
-    }
+    const updatedItem = updateItem(data.item, {
+      securityType: newValue,
+      internalData: { ...data.item.internalData }
+    });
 
     setData('item', updatedItem);
-    form.change('securityType', newValue);
-  }, [data.item, setData, form]);
+  }, [data.item, setData]);
 
   return (
     <Field name="securityType">

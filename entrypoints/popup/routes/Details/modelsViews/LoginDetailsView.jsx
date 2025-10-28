@@ -162,18 +162,9 @@ function LoginDetailsView () {
             passwordDecryptError={data.passwordDecryptError}
           />
           {generateURLs({ formData: { inputError } })}
-          <SecurityType
-            key={`security-type-${data.item.id}`}
-            formData={{ form }}
-          />
-          <Tags
-            key={`tags-${data.item.id}`}
-            formData={{ form }}
-          />
-          <Notes
-            key={`notes-${data.item.id}`}
-            formData={{ form }}
-          />
+          <SecurityType key={`security-type-${data.item.id}`} />
+          <Tags key={`tags-${data.item.id}`} />
+          <Notes key={`notes-${data.item.id}`} />
           <div className={S.detailsButton}>
             <button
               type="submit"
