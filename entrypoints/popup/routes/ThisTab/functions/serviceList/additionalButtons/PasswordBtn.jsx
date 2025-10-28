@@ -96,7 +96,7 @@ const PasswordBtn = ({ item, more, setMore }) => {
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
     return (
       <button
-        onClick={async () => await handlePassword(item.id, more, setMore)}
+        onClick={async () => await handlePassword(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_password')}
         className={S.servicePasswordLoader}
       >
