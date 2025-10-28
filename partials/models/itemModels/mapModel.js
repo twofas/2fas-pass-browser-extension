@@ -44,8 +44,7 @@ const mapModel = (itemData, deviceId, vaultId) => {
   try {
     return new Model(itemData, deviceId, vaultId);
   } catch (e) {
-    console.error('Model validation error:', e);
-    // @TODO: log error?
+    CatchError(e);
     return false;
   }
 };

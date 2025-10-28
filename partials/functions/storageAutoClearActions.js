@@ -70,7 +70,7 @@ const storageAutoClearActions = async () => {
   if (action.itemType === 'password') {
     try {
       const decryptedSif = await item.decryptSif();
-      itemValue = decryptedSif.password; // @TODO: Change for other models
+      itemValue = decryptedSif.password;
     } catch {
       await storage.setItem('session:autoClearActions', []);
       return;

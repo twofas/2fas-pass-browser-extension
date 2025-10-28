@@ -128,10 +128,12 @@ export default class Login extends Item {
     };
   }
 
-  setSif (arr) {
-    // @TODO: Validate password, arr?
+  setSif (sifData) {
+    if (!Array.isArray(sifData)) {
+      throw new Error('Invalid SIF data: must be an array');
+    }
 
-    arr.forEach(item => {
+    sifData.forEach(item => {
       if (Object.prototype.hasOwnProperty.call(item, 's_password')) {
         this.#s_password = item.s_password;
       }
