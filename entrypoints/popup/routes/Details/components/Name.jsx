@@ -11,6 +11,7 @@ import { lazy, useCallback } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
+import updateItem from '../functions/updateItem';
 
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 
@@ -38,9 +39,12 @@ function Name (props) {
   const handleNameEditable = async () => {
     if (data.nameEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      const itemData = data.item.toJSON();
-      itemData.content.name = item.content.name;
-      const updatedItem = new (data.item.constructor)(itemData);
+
+      const updatedItem = updateItem(data.item, {
+        content: { name: item.content.name },
+        internalData: { ...data.item.internalData }
+      });
+
       item = null;
 
       setData('nameEditable', false);
@@ -52,18 +56,11 @@ function Name (props) {
 
   const handleNameChange = useCallback(e => {
     const newName = e.target.value;
-    const itemData = data.item.toJSON();
-    itemData.content.name = newName;
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isPasswordDecrypted) {
-      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
-    }
-
-    if (data.item.internalData.editedPassword !== null) {
-      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
-    }
+    const updatedItem = updateItem(data.item, {
+      content: { name: newName },
+      internalData: { ...data.item.internalData }
+    });
 
     setData('item', updatedItem);
   }, [data.item, setData]);
