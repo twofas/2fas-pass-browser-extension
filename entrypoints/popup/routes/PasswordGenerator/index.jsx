@@ -32,29 +32,56 @@ function PasswordGenerator (props) {
   useScrollPosition(scrollableRef);
 
   const generatePassword = (length, useUppercase, useNumbers, useSpecialChars) => {
-    let charset = 'abcdefghijklmnopqrstuvwxyz';
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    const specialChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
 
-    if (useUppercase !== undefined ? useUppercase : true) {
-      charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    }
+    const shouldUseUppercase = useUppercase !== undefined ? useUppercase : true;
+    const shouldUseNumbers = useNumbers !== undefined ? useNumbers : true;
+    const shouldUseSpecialChars = useSpecialChars !== undefined ? useSpecialChars : true;
 
-    if (useNumbers !== undefined ? useNumbers : true) {
-      charset += '0123456789';
-    }
-
-    if (useSpecialChars !== undefined ? useSpecialChars : true) {
-      charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
-    }
-
+    let charset = lowercase;
     let password = '';
-    length = length !== undefined ? length : 16;
+    const requiredChars = [];
 
-    for (let i = 0; i < length; i++) {
+    const randomIndexLowecase = Math.floor(Math.random() * lowercase.length);
+    requiredChars.push(lowercase.charAt(randomIndexLowecase));
+
+    if (shouldUseUppercase) {
+      charset += uppercase;
+      const randomIndex = Math.floor(Math.random() * uppercase.length);
+      requiredChars.push(uppercase.charAt(randomIndex));
+    }
+
+    if (shouldUseNumbers) {
+      charset += numbers;
+      const randomIndex = Math.floor(Math.random() * numbers.length);
+      requiredChars.push(numbers.charAt(randomIndex));
+    }
+
+    if (shouldUseSpecialChars) {
+      charset += specialChars;
+      const randomIndex = Math.floor(Math.random() * specialChars.length);
+      requiredChars.push(specialChars.charAt(randomIndex));
+    }
+
+    length = length !== undefined ? length : 16;
+    const remainingLength = length - requiredChars.length;
+
+    for (let i = 0; i < remainingLength; i++) {
       const randomIndex = Math.floor(Math.random() * charset.length);
       password += charset.charAt(randomIndex);
     }
 
-    return password;
+    const allChars = password.split('').concat(requiredChars);
+
+    for (let i = allChars.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allChars[i], allChars[j]] = [allChars[j], allChars[i]];
+    }
+
+    return allChars.join('');
   };
 
   const regeneratePassword = (form, chars, uppercase, numbers, special) => {
