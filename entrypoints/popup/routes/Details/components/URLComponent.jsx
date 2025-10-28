@@ -122,7 +122,7 @@ function URLComponent (props) {
     }
   };
 
-  const handleRemoveUri = () => {
+  const handleRemoveUri = useCallback(() => {
     const newUrisWithTempIds = [...data.item.internalData.urisWithTempIds];
     const newContentUris = [...data.item.content.uris];
     const removedUri = newUrisWithTempIds.find(u => u._tempId === uri._tempId);
@@ -161,7 +161,7 @@ function URLComponent (props) {
 
     const currentUrisRemoved = data?.urisRemoved || 0;
     setData('urisRemoved', currentUrisRemoved + 1);
-  };
+  }, [data, uri._tempId, setData]);
 
   const handleUriChange = useCallback(e => {
     const newUri = e.target.value;
@@ -208,6 +208,7 @@ function URLComponent (props) {
               <input
                 type="text"
                 {...input}
+                value={uri.text}
                 onChange={e => {
                   input.onChange(e);
                   handleUriChange(e);
