@@ -24,7 +24,7 @@ import matchModel from '@/partials/models/itemModels/matchModel';
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
 const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
-  if (!info || !info?.data) { // @TODO: Fix in future
+  if (!info || !info?.data) {
     throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginUpdatedWrongData);
   }
 

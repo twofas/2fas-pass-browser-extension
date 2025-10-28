@@ -127,7 +127,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         const originalItem = await getItem(state.data.deviceId, state.data.vaultId, state.data.itemId);
 
         if (!originalItem) {
-          // @TODO: Handle error
+          throw new TwoFasError(TwoFasError.errors.pullRequestNoOriginalItem);
         }
 
         const keyName = originalItem.securityType === SECURITY_TIER.HIGHLY_SECRET ? ENCRYPTION_KEYS.ITEM_T2.crypto : originalItem.securityType === SECURITY_TIER.SECRET ? ENCRYPTION_KEYS.ITEM_T3.crypto : null;

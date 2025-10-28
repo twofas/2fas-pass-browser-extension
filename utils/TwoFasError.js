@@ -172,6 +172,10 @@ class TwoFasError extends Error {
       message: TwoFasError.defaultErrorMessage,
       code: 2301
     },
+    pullRequestNoOriginalItem: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2302
+    },
     passwordRequestNoLoginId: {
       message: TwoFasError.defaultErrorMessage,
       code: 2310
