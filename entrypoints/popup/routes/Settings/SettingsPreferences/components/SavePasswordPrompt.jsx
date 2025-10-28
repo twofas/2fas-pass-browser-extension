@@ -88,7 +88,7 @@ function SavePasswordPrompt () {
 
       <form action="#" className={S.settingsSavePasswordPromptForm}>
         <Select
-          className='react-select-container'
+          className='react-select-container react-select-save-prompt-container'
           classNamePrefix='react-select'
           isSearchable={false}
           options={promptOptions}
