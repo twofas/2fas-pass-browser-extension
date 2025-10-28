@@ -45,8 +45,8 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
 
   let itemsData;
 
-  let fetchedItems = items.filter(item => item.securityType === SECURITY_TIER.HIGHLY_SECRET && item.sifExists);
-  let restItems = items.filter(item => item.securityType !== SECURITY_TIER.HIGHLY_SECRET || (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.sifExists));
+  let fetchedItems = items.filter(item => item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists);
+  let restItems = items.filter(item => item?.securityType !== SECURITY_TIER.HIGHLY_SECRET || (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && !item?.sifExists));
 
   fetchedItems = sortByName(fetchedItems, sort);
   restItems = sortByName(restItems, sort);
@@ -66,9 +66,14 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
 
   if (search && search.length > 0) {
     itemsData = itemsData.filter(item => {
-      const urisTexts = item.content.uris.map(uri => uri.text);
-      
+      let urisTexts = [];
+
+      if (item?.content && item?.content?.uris && Array.isArray(item?.content?.uris)) {
+        urisTexts = item.content.uris.map(uri => uri?.text).filter(Boolean);
+      }
+
       let tagNamesMatch = false;
+
       if (item?.tags && Array.isArray(item?.tags) && tags && Array.isArray(tags)) {
         tagNamesMatch = item.tags.some(tagId => {
           const tag = tags.find(t => t.id === tagId);
@@ -78,7 +83,7 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
 
       return item?.content?.name?.toLowerCase().includes(search?.toLowerCase()) ||
         item?.content?.username?.toLowerCase().includes(search?.toLowerCase()) ||
-          urisTexts.some(uriText => uriText?.toLowerCase().includes(search?.toLowerCase())) ||
+        urisTexts.some(uriText => uriText?.toLowerCase().includes(search?.toLowerCase())) ||
         tagNamesMatch;
     });
   }
@@ -97,7 +102,7 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
   return (
     <div className={S.thisTabAllLoginsList}>
       <ViewportList items={itemsData} overscan={5}>
-        {item => <Item data={item} key={item.id} />}
+        {item => <Item data={item} key={item.id} loading={loading} />}
       </ViewportList>
     </div>
   );
