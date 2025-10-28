@@ -64,7 +64,6 @@ function BottomBar () {
   }, []);
 
   const handleNewWindow = useCallback(async () => {
-    // @TODO: Current data
     setNewWindowDisabled(true);
     const { state } = location;
 

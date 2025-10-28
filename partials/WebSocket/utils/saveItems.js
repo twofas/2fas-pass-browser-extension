@@ -19,7 +19,18 @@ import mapModel from '@/partials/models/itemModels/mapModel';
 * @return {boolean} Returns true if the items are saved successfully, otherwise false.
 */
 const saveItems = async (itemsData, deviceId, vaultId) => {
-  // @TODO: Add ifs for non array etc.
+  if (!Array.isArray(itemsData)) {
+    throw new Error('Invalid items data: must be an array');
+  }
+
+  if (!deviceId) {
+    throw new Error('Invalid deviceId: must be provided');
+  }
+
+  if (!vaultId) {
+    throw new Error('Invalid vaultId: must be provided');
+  }
+
   const correctData = itemsData.map(item => mapModel(item, deviceId, vaultId)).filter(Boolean);
 
   const jsonString = JSON.stringify(correctData);

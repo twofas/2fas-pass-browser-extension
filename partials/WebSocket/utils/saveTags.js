@@ -17,7 +17,18 @@ import Tag from '@/partials/models/Tag';
 * @return {boolean} Returns true if the tags are saved successfully, otherwise false.
 */
 const saveTags = async (tagsData, deviceId, vaultId) => {
-  // @TODO: Add ifs for non array etc.
+  if (!Array.isArray(tagsData)) {
+    throw new Error('Invalid tags data: must be an array');
+  }
+
+  if (!deviceId) {
+    throw new Error('Invalid deviceId: must be provided');
+  }
+
+  if (!vaultId) {
+    throw new Error('Invalid vaultId: must be provided');
+  }
+
   const validTags = [];
 
   for (const tagData of tagsData) {

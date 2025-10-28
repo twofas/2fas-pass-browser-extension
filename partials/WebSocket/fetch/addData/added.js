@@ -23,7 +23,7 @@ import matchModel from '@/partials/models/itemModels/matchModel';
 * @return {Promise<Object>} Object containing returnUrl and returnToast.
 */
 const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageId) => {
-  if (!info || !info?.data || !info?.data?.content) { // @TODO: improve this
+  if (!info || !info?.data || !info?.data?.content) {
     throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongData);
   }
 
