@@ -43,9 +43,14 @@ function Details (props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
 
   const getData = useCallback(async () => {
     try {
+      if (location.state?.from === 'thisTab') {
+        setScrollPosition(0);
+      }
+
       let item;
 
       if (location.state?.data?.item) {
@@ -79,6 +84,10 @@ function Details (props) {
         }
       }
 
+      if (location.state?.scrollPosition !== undefined) {
+        setData('thisTabScrollPosition', location.state.scrollPosition);
+      }
+
       if (location.state?.data) {
         const stateData = location.state.data;
         const fieldsToSync = [
@@ -89,7 +98,11 @@ function Details (props) {
           'tagsEditable',
           'notesEditable',
           'usernameMobile',
-          'passwordMobile'
+          'passwordMobile',
+          'lastSelectedTagInfo',
+          'searchActive',
+          'searchValue',
+          'selectedTag'
         ];
 
         fieldsToSync.forEach(field => {
@@ -121,7 +134,7 @@ function Details (props) {
       CatchError(e);
       navigate('/');
     }
-  }, [params.deviceId, params.vaultId, params.id, navigate, setData, location.state]);
+  }, [params.deviceId, params.vaultId, params.id, navigate, setData, setScrollPosition, location.state]);
 
   const getOriginalItem = useCallback(async () => {
     const originalItemData = await getItem(params.deviceId, params.vaultId, params.id);
@@ -174,7 +187,19 @@ function Details (props) {
         <div ref={scrollableRef}>
           <section className={S.details}>
             <div className={S.detailsContainer}>
-              <NavigationButton type='cancel' />
+              <NavigationButton
+                type='cancel'
+                state={{
+                  from: 'details',
+                  data: {
+                    lastSelectedTagInfo: data?.lastSelectedTagInfo,
+                    searchActive: data?.searchActive,
+                    searchValue: data?.searchValue,
+                    selectedTag: data?.selectedTag
+                  },
+                  scrollPosition: data?.thisTabScrollPosition
+                }}
+              />
               <h2>{constructorName} {browser.i18n.getMessage('details_header')}</h2>
 
               <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
