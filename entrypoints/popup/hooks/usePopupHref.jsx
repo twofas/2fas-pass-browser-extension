@@ -77,7 +77,7 @@ const usePopupHref = (hydrationComplete = false) => {
         });
       }
     }
-  }, [location.pathname, setHref, setScrollPosition, hydrationComplete]);
+  }, [location.pathname, location.state, setHref, setScrollPosition, hydrationComplete]);
 
   return location.pathname;
 };
