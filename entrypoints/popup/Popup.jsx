@@ -335,6 +335,10 @@ const PopupMain = memo(() => {
     document.addEventListener('contextmenu', lockRMB);
     window.addEventListener('focus', storageAutoClearActions);
 
+    try {
+      storageAutoClearActions();
+    } catch {}
+
     if (import.meta.env.BROWSER === 'safari') {
       document.addEventListener('click', safariBlankLinks);
     }

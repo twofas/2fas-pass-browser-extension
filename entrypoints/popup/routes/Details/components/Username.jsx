@@ -37,9 +37,9 @@ function Username (props) {
 
   const handleCopyUsername = useCallback(async username => {
     if (!username) {
-      await copyValue('', data.item.id, 'username');
+      await copyValue('', data.item.deviceId, data.item.vaultId, data.item.id, 'username');
     } else {
-      await copyValue(username, data.item.id, 'username');
+      await copyValue(username, data.item.deviceId, data.item.vaultId, data.item.id, 'username');
     }
 
     showToast(browser.i18n.getMessage('notification_username_copied'), 'success');

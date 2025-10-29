@@ -123,7 +123,7 @@ function Password (props) {
         passwordToCopy = '';
       }
 
-      await copyValue(passwordToCopy, data.item.id, 'password');
+      await copyValue(passwordToCopy, data.item.deviceId, data.item.vaultId, data.item.id, 'password');
       showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
