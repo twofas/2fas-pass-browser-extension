@@ -45,9 +45,7 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
       const device = await getCurrentDevice();
 
       if (!device) {
-        // @TODO: Handle error
-        console.error('No device found. Cannot proceed with saving new login.');
-        return;
+        throw new Error('No device found. Cannot proceed with saving new login.');
       }
 
       const data = JSON.stringify({

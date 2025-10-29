@@ -25,7 +25,7 @@ const contextMenuConfigured = async (items = null) => {
     const contexts = ['page', 'editable'];
 
     if (import.meta.env.BROWSER !== 'safari')  {
-      contexts.push('page_action'); // @TODO: Check this with latest Safari
+      contexts.push('page_action');
     }
 
     let contextMenuSetting;
