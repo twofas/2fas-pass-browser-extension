@@ -62,14 +62,13 @@ const newLogin = (n, sendResponse) => {
 /** 
 * Function to update a login.
 * @param {Object} n - The notification object.
-* @param {string} itemId - The ID of the login to update.
-* @param {string} securityType - The security type of the login.
+* @param {Object} itemData - The data related to the item to update.
 * @param {Function} sendResponse - The function to send the response back.
 * @return {void}
 */
-const updateLogin = (n, itemId, securityType, sendResponse) => {
+const updateLogin = (n, itemData, sendResponse) => {
   closeNotification(n);
-  return sendResponse({ status: SAVE_PROMPT_ACTIONS.UPDATE_LOGIN, itemId, securityType });
+  return sendResponse({ status: SAVE_PROMPT_ACTIONS.UPDATE_LOGIN, ...itemData });
 };
 
 /** 
@@ -181,13 +180,12 @@ const savePrompt = (request, sendResponse, container) => {
     if (request?.serviceTypeData?.type === 'newService') {
       return newLogin(n, sendResponse);
     } else {
-      return updateLogin(n, request?.serviceTypeData?.itemId, request?.serviceTypeData?.securityType, sendResponse);
+      return updateLogin(n, request?.serviceTypeData, sendResponse);
     }
   });
+
   n.buttons.appendChild(addLoginButton);
-
   n.item.appendChild(n.buttons);
-
   n.container.appendChild(n.item);
 
   setTimeout(() => n.item.classList.add('twofas-pass-visible'), 300);
