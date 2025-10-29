@@ -15,6 +15,7 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 import calculateFetchSignature from './functions/calculateFetchSignature';
 import { getCurrentDevice, sendPush, getNTPTime, deletePush } from '@/partials/functions';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
+import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 
 const PushNotification = lazy(() => import('./components/PushNotification'));
 const ConnectionError = lazy(() => import('./components/ConnectionError'));
@@ -173,13 +174,9 @@ function Fetch (props) {
     await closeConnection();
 
     if (state?.from === 'contextMenu' || state?.from === 'shortcut' || state?.from === 'savePrompt') {
-      if (
-        window &&
-        typeof window?.close === 'function' &&
-        import.meta.env.BROWSER !== 'safari'
-      ) {
-        window.close();
-      } else {
+      const windowCloseTest = await tryWindowClose();
+
+      if (windowCloseTest) {
         navigate('/');
       }
     } else {

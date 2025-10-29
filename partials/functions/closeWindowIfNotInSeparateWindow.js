@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
+import tryWindowClose from '../browserInfo/tryWindowClose';
 
 /** 
 * Closes the window if it is not in a separate window.
@@ -17,13 +18,8 @@ const closeWindowIfNotInSeparateWindow = async separateWindow => {
     separateWindow = await popupIsInSeparateWindow();
   }
 
-  if (
-    window &&
-    typeof window?.close === 'function' &&
-    import.meta.env.BROWSER !== 'safari' &&
-    !separateWindow
-  ) {
-    window.close();
+  if (!separateWindow) {
+    await tryWindowClose();
   }
 };
 
