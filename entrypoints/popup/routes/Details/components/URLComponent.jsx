@@ -61,7 +61,7 @@ function URLComponent (props) {
 
   const handleCopyUri = useCallback(async index => {
     const uri = data?.item?.content?.uris && data?.item?.content?.uris?.[index] ? data.item.content.uris[index].text : '';
-    await copyValue(uri, data.item.id, `uri-${index}`);
+    await copyValue(uri, data.item.deviceId, data.item.vaultId, data.item.id, `uri-${index}`);
     showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
   }, [data.item]);
 

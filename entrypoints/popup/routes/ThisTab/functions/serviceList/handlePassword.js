@@ -46,7 +46,7 @@ const handlePassword = async (deviceId, vaultId, itemId, more, setMore) => {
 
   try {
     const decryptedData = await item.decryptSif();
-    await copyValue(decryptedData.password, item.id, 'password');
+    await copyValue(decryptedData.password, deviceId, vaultId, item.id, 'password');
     showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
   } catch (e) {
     showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
