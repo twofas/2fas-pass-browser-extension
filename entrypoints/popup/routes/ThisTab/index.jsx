@@ -39,7 +39,7 @@ const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => 
 
 const thisTabTopVariants = {
   visible: { height: 'auto', transition: { duration: 0.3 } },
-  hidden: { height: '0', marginBottom: '-24px', transition: { duration: 0 } }
+  hidden: { height: '0', marginBottom: '-10px', borderWidth: '0', transition: { duration: 0 } }
 };
 
 /** 
@@ -66,6 +66,8 @@ function ThisTab (props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
+  const setHref = usePopupStateStore(state => state.setHref);
 
   // Refs
   const boxAnimationRef = useRef(null);
@@ -75,6 +77,50 @@ function ThisTab (props) {
   const thisTabTopRef = useRef(null);
 
   useScrollPosition(scrollableRef, loading);
+
+  const syncState = useCallback(() => {
+    if (!location.state?.from) {
+      return;
+    }
+
+    if (location.state?.data) {
+      const fieldsToSync = [
+        'lastSelectedTagInfo',
+        'searchActive',
+        'searchValue',
+        'selectedTag'
+      ];
+
+      const updates = {};
+      let hasChanges = false;
+
+      fieldsToSync.forEach(field => {
+        if (Object.prototype.hasOwnProperty.call(location.state.data, field)) {
+          updates[field] = location.state.data[field];
+          hasChanges = true;
+        }
+      });
+
+      if (hasChanges) {
+        const currentData = usePopupStateStore.getState().data;
+
+        usePopupStateStore.setState({
+          data: {
+            ...currentData,
+            ...updates
+          }
+        });
+      }
+    }
+
+    if (location.state?.scrollPosition !== undefined) {
+      setScrollPosition(location.state.scrollPosition);
+    }
+
+    if (location.state?.from === 'details') {
+      setHref(location.pathname);
+    }
+  }, [location.state, location.pathname, setScrollPosition, setHref]);
 
   const handleSortClick = useCallback(async () => {
     setSortDisabled(true);
@@ -302,12 +348,18 @@ function ThisTab (props) {
   }, [storageVersion]);
 
   useEffect(() => {
-    if (state?.action === 'autofillT2Failed') {
+    if (location?.state?.action === 'autofillT2Failed') {
       setAutofillFailed(true);
     } else {
       setAutofillFailed(false);
     }
-  }, [state]);
+
+    if (location.state?.from === 'details') {
+      setTimeout(() => {
+        syncState();
+      }, 0);
+    }
+  }, [location?.state, syncState]);
 
   return (
     <LazyMotion features={loadDomAnimation}>
