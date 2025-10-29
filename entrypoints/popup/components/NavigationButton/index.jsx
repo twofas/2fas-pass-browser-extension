@@ -24,6 +24,7 @@ function NavigationButton (props) {
     <Link
       className={`${props.type} ${props.className || ''}`}
       to={props?.type === 'cancel' ? '/' : '..'}
+      state={props.state}
       onClick={e => {
         if (props?.type === 'back') {
           e.preventDefault();
@@ -40,9 +41,9 @@ function NavigationButton (props) {
                   if (currentSegments.length > 0) {
                     currentSegments.pop();
                     const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
-                    navigate(parentPath);
+                    navigate(parentPath, { state: props.state });
                   } else {
-                    navigate('/');
+                    navigate('/', { state: props.state });
                   }
                   return;
                 }
@@ -53,13 +54,13 @@ function NavigationButton (props) {
               if (currentSegments.length > 0) {
                 currentSegments.pop();
                 const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
-                navigate(parentPath);
+                navigate(parentPath, { state: props.state });
               } else {
-                navigate('/');
+                navigate('/', { state: props.state });
               }
             }
           } catch {
-            navigate('/');
+            navigate('/', { state: props.state });
           }
         } else {
           if (props?.onClick && typeof props?.onClick === 'function') {
