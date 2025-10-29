@@ -125,7 +125,7 @@ function LoginAddNewView () {
   const handleCopyPassword = async form => {
     try {
       const currentPassword = form.getFieldState('s_password').value;
-      await copyValue(currentPassword, '00000000-0000-0000-0000-000000000000', 'password');
+      await copyValue(currentPassword, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'password');
       showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
@@ -136,7 +136,7 @@ function LoginAddNewView () {
   const handleCopyUrl = async form => {
     try {
       const currentUrl = form.getFieldState('url').value;
-      await copyValue(currentUrl, '00000000-0000-0000-0000-000000000000', 'uri');
+      await copyValue(currentUrl, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'uri');
       showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_uri_copy_failed'), 'error');
@@ -147,7 +147,7 @@ function LoginAddNewView () {
   const handleCopyUsername = async form => {
     try {
       const currentUsername = form.getFieldState('username').value;
-      await copyValue(currentUsername, '00000000-0000-0000-0000-000000000000', 'username');
+      await copyValue(currentUsername, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'username');
       showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_username_copy_failed'), 'error');

@@ -10,10 +10,14 @@ import addAutoClearAction from './addAutoClearAction';
 /** 
 * Function to automatically clear the clipboard.
 * @async
+* @param {string} deviceId - The ID of the device.
+* @param {string} vaultId - The ID of the vault.
+* @param {string} itemId - The ID of the item to clear.
+* @param {string} itemType - The type of the item to clear.
 * @return {Promise<void>} A promise that resolves when the clipboard is cleared.
 */
-const autoClearClipboard = async (itemId, itemType) => {
-  await addAutoClearAction(itemId, itemType);
+const autoClearClipboard = async (deviceId, vaultId, itemId, itemType) => {
+  await addAutoClearAction(deviceId, vaultId, itemId, itemType);
 
   const data = { action: REQUEST_ACTIONS.FOCUS_CHECK };
   const allTabs = await browser.tabs.query({});

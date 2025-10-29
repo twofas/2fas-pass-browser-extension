@@ -25,8 +25,8 @@ const onAlarm = async alarm => {
       await sifT2Reset(deviceId, vaultId, itemId);
       return true;
     } else if (autoClearClipboardRegexTest) {
-      const [, itemId, itemType] = autoClearClipboardRegexTest;
-      await autoClearClipboard(itemId, itemType);
+      const [, deviceId, vaultId, itemId, itemType] = autoClearClipboardRegexTest;
+      await autoClearClipboard(deviceId, vaultId, itemId, itemType);
     } else {
       return false;
     }

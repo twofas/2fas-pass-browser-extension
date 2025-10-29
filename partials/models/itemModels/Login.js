@@ -169,7 +169,7 @@ export default class Login extends Item {
       dO.push({ value: 'uris:', label: `${browser.i18n.getMessage('this_tab_more_uris')}`, type: 'urisHeader' });
 
       this.internalData.normalizedUris.forEach(uri => {
-        dO.push({ value: uri.text, label: uri.text, itemId: this.id });
+        dO.push({ value: uri.text, label: uri.text, deviceId: this.deviceId, vaultId: this.vaultId, itemId: this.id });
       });
     }
 
