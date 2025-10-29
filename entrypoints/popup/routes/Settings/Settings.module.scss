@@ -270,6 +270,12 @@
     margin-bottom: 32px;
   }
 
+  &-clear-clipboard {
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+
   &-advanced {
     margin-bottom: 32px;
 
