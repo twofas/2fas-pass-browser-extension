@@ -9,6 +9,7 @@ import { lazy } from 'react';
 import handleUriCopyClick from '../../../functions/serviceList/handleUriCopyClick';
 import handleUriClick from '../../../functions/serviceList/handleUriClick';
 import handleForgetPassword from '../../../functions/serviceList/handleForgetPassword';
+import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 const DetailsIcon = lazy(() => import('@/assets/popup-window/details.svg?react'));
@@ -21,12 +22,20 @@ const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
 * @return {JSX.Element} The rendered custom option.
 */
 const CustomOption = option => {
+  const data = usePopupStateStore(state => state.data);
+  const scrollPosition = usePopupStateStore(state => state.scrollPosition);
+
   switch (option?.data?.type) {
     case 'details': {
       return (
         <div className='react-select-dropdown__option details'>
           <Link
             to={`/details/${option.data.deviceId}/${option.data.vaultId}/${option.data.id}`}
+            state={{
+              from: 'thisTab',
+              data: { ...data },
+              scrollPosition
+            }}
             className='react-select-dropdown__option--uri details'
             prefetch='intent'
           >
