@@ -10,6 +10,7 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import { useAuthState } from '@/hooks/useAuth';
+import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 
 const NewWindowIcon = lazy(() => import('@/assets/popup-window/new-window.svg?react'));
 const SettingsIcon = lazy(() => import('@/assets/popup-window/settings.svg?react'));
@@ -90,10 +91,10 @@ function BottomBar () {
           showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
         }
       }
-  
-      if (window && typeof window?.close === 'function' && import.meta.env.BROWSER !== 'safari') {
-        window.close();
-      } else {
+
+      const windowCloseTest = tryWindowClose();
+
+      if (!windowCloseTest) {
         navigate('/blocked', { replace: true });
       }
     } catch (e) {

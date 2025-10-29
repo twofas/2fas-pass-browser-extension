@@ -41,7 +41,7 @@ const getBrowserInfo = () => {
     Firefox: /(firefox|fxios)\/([\d.]+)/i,
     Chrome: /(chrome|crios)\/([\d.]+)/i,
     Brave: /(chrome|crios)\/([\d.]+)/i,
-    Safari: /(safari)\/([\d.]+)/i,
+    Safari: /(version)\/([\d.]+) safari/i,
     Opera: /(opera|opr)\/([\d.]+)/i,
     Vivaldi: /(vivaldi)\/([\d.]+)/i
   };
