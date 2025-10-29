@@ -67,7 +67,7 @@ const checkServicesData = async (details, values) => {
   for (const item of matchedItemsMatchedUsername) {
     let decryptedPassword;
 
-    if (!item || !item.password) {
+    if (!item || !item.sifExists) {
       continue; // Skip if item or password is not defined
     }
 
@@ -91,8 +91,10 @@ const checkServicesData = async (details, values) => {
     // FUTURE - ask user which service to update if there is more than one
     return {
       type: 'updateService',
-      itemId: matchedItemsMatchedUsername[0].id,
-      securityType: matchedItemsMatchedUsername[0].securityType
+      contentType: matchedItemsMatchedUsername[0].contentType,
+      deviceId: matchedItemsMatchedUsername[0].deviceId,
+      vaultId: matchedItemsMatchedUsername[0].vaultId,
+      itemId: matchedItemsMatchedUsername[0].id
     };
   } else {
     return false;

@@ -87,11 +87,13 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
         action: PULL_REQUEST_TYPES.UPDATE_DATA,
         from: 'savePrompt',
         data: {
-          url,
+          contentType: res.contentType,
+          deviceId: res.deviceId,
+          vaultId: res.vaultId,
           itemId: res.itemId,
-          securityType: res.securityType,
-          username: decryptedValues.username,
-          password: decryptedValues.password
+          content: {
+            s_password: { value: decryptedValues.password, action: REQUEST_STRING_ACTIONS.SET }
+          }
         }
       });
 
