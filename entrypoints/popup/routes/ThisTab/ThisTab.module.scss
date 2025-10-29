@@ -527,7 +527,10 @@
       max-height: 0;
       overflow: hidden;
       padding: 0 12px;
+      position: sticky;
+      top: 90px;
       width: 100%;
+      z-index: 9999;
       
       &.active {
         max-height: 34px;
