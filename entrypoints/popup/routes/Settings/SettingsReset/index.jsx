@@ -10,6 +10,7 @@ import { Link, useNavigate } from 'react-router';
 import { lazy, useRef } from 'react';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
+import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 
 const WarningIconLight = lazy(() => import('@/assets/popup-window/warning-light.svg?react'));
 const WarningIconDark = lazy(() => import('@/assets/popup-window/warning-dark.svg?react'));
@@ -29,10 +30,7 @@ const resetExtension = async () => {
     showToast(browser.i18n.getMessage('error_general'), 'error');
   }
 
-  if (window && typeof window?.close === 'function' && import.meta.env.BROWSER !== 'safari') {
-    window.close();
-    return;
-  }
+  await tryWindowClose();
 };
 
 /** 

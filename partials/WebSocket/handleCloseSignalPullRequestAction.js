@@ -9,6 +9,7 @@ import TwoFasWebSocket from '@/partials/WebSocket';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import closeWindowIfNotInSeparateWindow from '../functions/closeWindowIfNotInSeparateWindow';
 import sendMessageToAllFrames from '../functions/sendMessageToAllFrames';
+import tryWindowClose from '../browserInfo/tryWindowClose';
 
 /** 
 * Handles the close signal for the pull request action.
@@ -26,8 +27,8 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     socket.close();
   } catch {}
 
-  if (closeData?.windowClose && window && typeof window?.close === 'function' && import.meta.env.BROWSER !== 'safari') {
-    return window.close();
+  if (closeData?.windowClose) {
+    await tryWindowClose();
   }
 
   if (closeData?.action === 'autofill') {

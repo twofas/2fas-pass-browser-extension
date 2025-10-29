@@ -8,6 +8,7 @@ import S from './Blocked.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useEffect } from 'react';
 import focusPopupWindow from '@/partials/functions/focusPopupWindow';
+import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 
 /** 
 * Function to focus the popup window in a separate window.
@@ -15,10 +16,8 @@ import focusPopupWindow from '@/partials/functions/focusPopupWindow';
 * @return {void}
 */
 const focusPopupInSeparateWindow = async () => {
-  if (window && typeof window?.close === 'function' && import.meta.env.BROWSER !== 'safari') {
-    await focusPopupWindow();
-    window.close();
-  }
+  await focusPopupWindow();
+  await tryWindowClose();
 };
 
 /** 
