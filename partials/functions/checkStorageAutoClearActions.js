@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getItems from '../sessionStorage/getItems';
+import getItem from '../sessionStorage/getItem';
 import URIMatcher from '../URIMatcher';
 
 /** 
@@ -28,31 +28,28 @@ const checkStorageAutoClearActions = async () => {
     return action.timestamp > latest.timestamp ? action : latest;
   }, storageClearActions[0]);
 
-  if (!action || !action?.itemId || !action?.itemType) {
+  if (!action || !action.deviceId || !action.vaultId || !action?.itemId || !action?.itemType) {
     await storage.setItem('session:autoClearActions', []);
     return false;
   }
 
   let itemValue;
 
-  if (action?.itemId === '00000000-0000-0000-0000-000000000000') {
+  if (
+    action?.deviceId === '00000000-0000-0000-0000-000000000000' ||
+    action?.vaultId === '00000000-0000-0000-0000-000000000000' ||
+    action?.itemId === '00000000-0000-0000-0000-000000000000'
+  ) {
     return 'addNew';
   }
 
-  let items;
+  let item;
 
   try {
-    items = await getItems();
+    item = await getItem(action.deviceId, action.vaultId, action.itemId);
   } catch {
     return false;
   }
-
-  if (!items || items.length === 0) {
-    await storage.setItem('session:autoClearActions', []);
-    return false;
-  }
-
-  const item = items.find(s => s?.id === action?.itemId);
 
   if (!item) {
     await storage.setItem('session:autoClearActions', []);
@@ -68,7 +65,7 @@ const checkStorageAutoClearActions = async () => {
       return;
     }
   } else if (action.itemType === 'uri') {
-    const uris = item.uris || [];
+    const uris = item.content.uris || [];
     
     if (!uris || uris.length === 0) {
       await storage.setItem('session:autoClearActions', []);
@@ -98,10 +95,8 @@ const checkStorageAutoClearActions = async () => {
     itemValue = [...new Set(itemValue)]; // unique values
     itemValue = JSON.stringify(itemValue);
   } else {
-    itemValue = item[action.itemType];
+    itemValue = item.content[action.itemType];
   }
-
-  await storage.setItem('session:autoClearActions', []);
 
   return itemValue;
 };

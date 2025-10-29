@@ -32,7 +32,7 @@ function Name (props) {
       return;
     }
 
-    await copyValue(name, data.item.id, 'name');
+    await copyValue(name, data.item.deviceId, data.item.vaultId, data.item.id, 'name');
     showToast(browser.i18n.getMessage('details_name_copied'), 'success');
   }, [data.item.id]);
 

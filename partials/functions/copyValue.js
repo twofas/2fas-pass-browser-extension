@@ -20,11 +20,13 @@ const deleteExistingClearClipboardAlarms = async () => {
 * Function to copy a value to the clipboard.
 * @async
 * @param {string} value - The value to copy.
+* @param {string} deviceId - The ID of the device.
+* @param {string} vaultId - The ID of the vault.
 * @param {string} itemId - The ID of the item being copied.
 * @param {string} itemType - The type of the item being copied ('password', 'username', 'uri).
 * @return {Promise<void>} 
 */
-const copyValue = async (value, itemId, itemType) => {
+const copyValue = async (value, deviceId, vaultId, itemId, itemType) => {
   if (!value || typeof value !== 'string') {
     value = '';
   }
@@ -57,7 +59,7 @@ const copyValue = async (value, itemId, itemType) => {
     } catch {}
     
     try {
-      await browser.alarms.create(`autoClearClipboard.${itemId}.${itemType}`, { delayInMinutes: autoClearMinutes });
+      await browser.alarms.create(`autoClearClipboard-${deviceId}|${vaultId}|${itemId}|${itemType}`, { delayInMinutes: autoClearMinutes });
     } catch {}
 
     return true;

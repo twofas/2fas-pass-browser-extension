@@ -66,8 +66,14 @@ const sendAutoClearAction = async (value, cryptoAvailable, sender) => {
     }
   }
 
-  await sendMessageToTab(sender.tab.id, { ...data, target: REQUEST_TARGETS.FOCUS_CONTENT });
-  await sendMessageToTab(sender.tab.id, { ...data, target: REQUEST_TARGETS.POPUP });
+  const res = await Promise.all([
+    sendMessageToTab(sender.tab.id, { ...data, target: REQUEST_TARGETS.FOCUS_CONTENT }),
+    sendMessageToTab(sender.tab.id, { ...data, target: REQUEST_TARGETS.POPUP })
+  ]);
+
+  if (res && res.some(r => r?.status === 'ok')) {
+    await storage.setItem('session:autoClearActions', []);
+  }
 };
 
 export default sendAutoClearAction;

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getItems from '../sessionStorage/getItems';
+import getItem from '../sessionStorage/getItem';
 import URIMatcher from '../URIMatcher';
 
 /** 
@@ -23,14 +23,18 @@ const storageAutoClearActions = async () => {
     return action.timestamp > latest.timestamp ? action : latest;
   }, storageClearActions[0]);
 
-  if (!action || !action?.itemId || !action?.itemType) {
+  if (!action || !action.deviceId || !action.vaultId || !action?.itemId || !action?.itemType) {
     await storage.setItem('session:autoClearActions', []);
     return;
   }
 
   let clipboardValue;
 
-  if (action?.itemId === '00000000-0000-0000-0000-000000000000') {
+  if (
+    action?.deviceId === '00000000-0000-0000-0000-000000000000' ||
+    action?.vaultId === '00000000-0000-0000-0000-000000000000' ||
+    action?.itemId === '00000000-0000-0000-0000-000000000000'
+  ) {
     try {
       clipboardValue = await navigator.clipboard.readText();
     } catch {
@@ -45,20 +49,13 @@ const storageAutoClearActions = async () => {
     }
   }
 
-  let items;
+  let item;
 
   try {
-    items = await getItems();
+    item = await getItem(action.deviceId, action.vaultId, action.itemId);
   } catch {
     return;
   }
-
-  if (!items || items.length === 0) {
-    await storage.setItem('session:autoClearActions', []);
-    return;
-  }
-
-  const item = items.find(s => s.id === action.itemId);
 
   if (!item) {
     await storage.setItem('session:autoClearActions', []);
@@ -76,9 +73,9 @@ const storageAutoClearActions = async () => {
       return;
     }
   } else if (action.itemType === 'uri') {
-    itemValue = item.uris || [];
+    itemValue = item.content.uris || [];
   } else {
-    itemValue = item[action.itemType];
+    itemValue = item.content[action.itemType];
   }
 
   try {

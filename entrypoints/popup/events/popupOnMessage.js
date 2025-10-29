@@ -22,7 +22,7 @@ const popupOnMessage = (request, sender, sendResponse) => {
     switch (request.action) {
       case REQUEST_ACTIONS.AUTO_CLEAR_ACTION: {
         if (import.meta.env.BROWSER !== 'safari') {
-          autoClearAction(request).finally(sendResponse({ status: 'ok' }));
+          autoClearAction(request).finally(sendResponse);
         } else {
           sendResponse({ status: 'ok' });
         }
