@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import eventBus from '../utils/EventBus';
+import eventBus from '../utils/eventBus.js';
 import { beforeEach, expect, describe, it, vi } from 'vitest';
 
 describe('EventBus', () => {

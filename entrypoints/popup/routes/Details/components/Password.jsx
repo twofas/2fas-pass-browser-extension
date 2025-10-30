@@ -204,7 +204,7 @@ function Password (props) {
   return (
     <LazyMotion features={loadDomAnimation}>
       <Field name="editedPassword">
-        {({ input }) => (
+        {() => (
           <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile ? pI.disabled : ''} ${!data.item.isT3orT2WithPassword ? pI.nonFetched : ''}`}>
             <div className={pI.passInputTop}>
               <label htmlFor="editedPassword">{browser.i18n.getMessage('password')}</label>
