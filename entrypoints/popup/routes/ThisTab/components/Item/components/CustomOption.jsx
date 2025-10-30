@@ -89,6 +89,7 @@ const CustomOption = option => {
             className={`react-select-dropdown__option--copy ${option.data.value === 'details' || option.data.value === 'uris:' ? 'hidden' : ''}`}
             onClick={() => handleUriCopyClick(option)}
             title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+            type='button'
           >
             <CopyIcon />
           </button>
