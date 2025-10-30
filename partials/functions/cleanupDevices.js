@@ -17,9 +17,7 @@ const cleanupDevices = async () => {
   }
   
   // Remove uuid from devices
-  devices.forEach(device => {
-    delete device.uuid;
-  });
+  devices.forEach(device => { delete device.uuid; });
 
   // Remove devices without id
   const filteredDevices = devices.filter(device => device.id);
