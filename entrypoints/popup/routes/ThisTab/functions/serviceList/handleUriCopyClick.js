@@ -13,7 +13,9 @@ import copyValue from '@/partials/functions/copyValue';
 * @return {Promise<void>}
 */
 const handleUriCopyClick = async props => {
-  props.toggleMenu(!props.more);
+  if (props?.toggleMenu) {
+    props.toggleMenu(false);
+  }
 
   try {
     await copyValue(props.data.value, props.data.deviceId, props.data.vaultId, props.data.itemId, 'uri');
