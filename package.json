@@ -24,7 +24,7 @@
     "build:firefox:dev": "yarn generate-enc-keys-dev && wxt build -b firefox --mode development --mv3",
     "build:edge": "yarn generate-enc-keys-prod && wxt build -b edge --mv3",
     "build:edge:dev": "yarn generate-enc-keys-dev && wxt build -b edge --mode development --mv3",
-    "build:safari": "yarn generate-enc-keys-prod && wxt build -b safari --mv3",
+    "build:safari": "yarn lint && yarn generate-enc-keys-prod && wxt build -b safari --mv3",
     "build:safari:dev": "yarn generate-enc-keys-dev && wxt build -b safari --mode development --mv3",
     "zip": "yarn generate-enc-keys-prod && wxt zip --mv3",
     "zip:dev": "yarn generate-enc-keys-dev && wxt zip --mode development --mv3",
