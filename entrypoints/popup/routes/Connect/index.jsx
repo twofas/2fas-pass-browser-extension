@@ -351,9 +351,9 @@ function Connect (props) {
                         title={device?.name}
                         onClick={() => connectByPush(device, abortControllerRef.current?.signal)}
                       >
-                        {!device?.fcmToken || device?.fcmToken?.length === 0 ? (
+                        {/* {!device?.fcmToken || device?.fcmToken?.length === 0 ? (
                           <span className={S.deviceSelectContainerListItemWarning}>*</span>
-                        ) : null}
+                        ) : null} */}
                         <span>{device?.name}</span>
                       </button>
                     ))}
