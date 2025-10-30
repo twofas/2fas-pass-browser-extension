@@ -39,9 +39,6 @@ const deviceUpdate = async (uuid, json) => {
   // Remove older devices with the same id
   devices = devices.filter(d => (d.id !== device.id) || d === device);
 
-  // Remove devices without uuid
-  devices = devices.filter(d => d.uuid);
-
   await storage.setItem('local:devices', devices);
 
   return device.id;
