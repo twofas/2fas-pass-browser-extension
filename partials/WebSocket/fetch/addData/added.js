@@ -89,7 +89,7 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
 
     // Set alarm for reset T2 SIF
     if (info.data.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await browser.alarms.create(`sifT2Reset-${info.data.deviceId}|${info.data.vaultId}|${info.data.id}`, { delayInMinutes: sifResetTime });
+      await browser.alarms.create(`sifT2Reset-${state.deviceId}|${info.data.vaultId}|${info.data.id}`, { delayInMinutes: sifResetTime });
     }
 
     // Send response
