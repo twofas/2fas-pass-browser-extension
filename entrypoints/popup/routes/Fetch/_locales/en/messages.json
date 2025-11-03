@@ -84,7 +84,7 @@
     "description": "Toast shown when a login is updated in another vault"
   },
   "fetch_full_sync_cancel_toast": {
-    "message": "Full sync canceled",
+    "message": "Full sync cancelled",
     "description": "Toast message displayed when a full sync operation is canceled"
   },
   "fetch_full_sync_completed_toast": {
