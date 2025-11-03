@@ -1,6 +1,6 @@
 {
   "filters_no_tags": {
-    "message": "No tags available",
+    "message": "No Tags available",
     "description": "Message shown in the tag filter dropdown when there are no tags created yet"
   },
   "filters_button_title": {
