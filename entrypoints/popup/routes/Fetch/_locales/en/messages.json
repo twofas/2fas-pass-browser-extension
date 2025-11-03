@@ -1,6 +1,6 @@
 {
   "fetch_push_header": {
-    "message": "Check the 2FAS Pass push notification on your device.",
+    "message": "Check the 2FAS Pass push notification on your mobile device.",
     "description": "Header prompting the user to check their device for a push notification"
   },
   "fetch_push_waiting_for_mobile": {
@@ -84,11 +84,11 @@
     "description": "Toast shown when a login is updated in another vault"
   },
   "fetch_full_sync_cancel_toast": {
-    "message": "Full sync cancelled",
+    "message": "Synchronization cancelled",
     "description": "Toast message displayed when a full sync operation is canceled"
   },
   "fetch_full_sync_completed_toast": {
-    "message": "Full sync completed",
+    "message": "Synchronization completed",
     "description": "Toast message displayed when a full sync operation is completed successfully"
   }
 }

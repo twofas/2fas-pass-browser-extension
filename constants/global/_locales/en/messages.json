@@ -188,7 +188,7 @@
     "description": "Label for the sync functionality"
   },
   "sync_title": {
-    "message": "Full Sync Data with 2FAS Pass Mobile App",
+    "message": "Sync with your 2FAS Pass mobile app",
     "description": "Title for the sync data section"
   }
 }

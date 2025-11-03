@@ -44,7 +44,7 @@
     "description": "Validation message indicating the maximum length for the URL field"
   },
   "details_item_not_found": {
-    "message": "Something went wrong. Item not found. Sync your mobile app and try again.",
+    "message": "Something went wrong. Item not found. Sync with your mobile app and try again.",
     "description": "Error shown when the requested item is not found, suggesting reconnection"
   },
   "details_security_type": {
@@ -92,7 +92,7 @@
     "description": "Title for the button that opens password generator"
   },
   "details_fetch_text": {
-    "message": "Some data is only on the mobile app.",
+    "message": "Some data is available only in the mobile app.",
     "description": "Text indicating that some data can be fetched from the mobile app"
   },
   "details_fetch_title": {

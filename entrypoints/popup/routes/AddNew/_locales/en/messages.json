@@ -12,7 +12,7 @@
     "description": "Validation message displayed when the Domain (URI) entered is invalid"
   },
   "add_new_header": {
-    "message": "Adding a new item to \n2FAS Pass",
+    "message": "Adding a new Item to \n2FAS Pass",
     "description": "Header for the section to add a new item"
   },
   "add_new_subheader": {
