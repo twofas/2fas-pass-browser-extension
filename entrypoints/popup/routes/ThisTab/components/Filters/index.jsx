@@ -132,8 +132,8 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
 
   return (
     <>
-      <div className={S.thisTabAllLoginsSearchContainerTags} style={{ position: 'relative' }}>
-        <button 
+      <div ref={containerRef} className={S.thisTabAllLoginsSearchContainerTags} style={{ position: 'relative' }}>
+        <button
           ref={buttonRef}
           className={`${bS.btn} ${bS.btnFilter} ${isMenuOpen ? bS.btnFilterActive : ''}`}
           onClick={handleButtonClick}
