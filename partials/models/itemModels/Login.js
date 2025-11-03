@@ -20,8 +20,6 @@ export default class Login extends Item {
   #s_passwordDecrypted;
 
   constructor (loginData, deviceId = null, vaultId = null) {
-    console.log('Login data', loginData);
-
     if (loginData.constructor.name === Login.name) {
       return loginData;
     }
