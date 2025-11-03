@@ -24,32 +24,40 @@ const toggleMenu = (value, data, actions) => {
     return;
   }
 
-  return new Promise(resolve => resolve(setMore(true)))
-    .then(() => {
-      let rect, selectRect;
+  setMore(true);
 
-      if (ref?.current === null) {
+  return new Promise(resolve => {
+    const checkAndPosition = attempts => {
+      if (attempts > 10) {
+        resolve();
         return;
-      } else {
-        rect = ref.current.getBoundingClientRect();
       }
 
-      if (selectRef?.current?.menuListRef?.parentElement === null) {
+      if (!ref?.current) {
+        resolve();
         return;
-      } else {
-        selectRect = selectRef.current.menuListRef.parentElement.getBoundingClientRect();
       }
-      
+
+      if (!selectRef?.current?.menuListRef?.parentElement) {
+        requestAnimationFrame(() => checkAndPosition(attempts + 1));
+        return;
+      }
+
+      const rect = ref.current.getBoundingClientRect();
+      const selectRect = selectRef.current.menuListRef.parentElement.getBoundingClientRect();
       const selectBottom = rect.top + rect.height / 2 + selectRect.height + 40 + 40 + 16;
 
-      if (selectBottom > window.innerHeight) { // 40 footer, 40 padding bottom, 16 padding bottom of list
-        // TOP
+      if (selectBottom > window.innerHeight) {
         selectRef.current.menuListRef.parentElement.style = `width: 240px; left: ${rect.left + rect.width - 251}px; top: ${rect.top - selectRect.height + 14 + 17}px`;
       } else {
-        // BOTTOM
         selectRef.current.menuListRef.parentElement.style = `width: 240px; left: ${rect.left + rect.width - 251}px; top: ${rect.top + rect.height - 17}px`;
       }
-    });
+
+      resolve();
+    };
+
+    requestAnimationFrame(() => checkAndPosition(1));
+  });
 };
 
 export default toggleMenu;
