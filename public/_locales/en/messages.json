@@ -296,7 +296,7 @@
     "description": "Label for the sync functionality"
   },
   "sync_title": {
-    "message": "Full Sync Data with 2FAS Pass Mobile App",
+    "message": "Sync with your 2FAS Pass mobile app",
     "description": "Title for the sync data section"
   },
   "notification_send_autofill_to_tab_lack_of_service_title": {
@@ -584,7 +584,7 @@
     "description": "Validation message displayed when the Domain (URI) entered is invalid"
   },
   "add_new_header": {
-    "message": "Adding a new item to \n2FAS Pass",
+    "message": "Adding a new Item to \n2FAS Pass",
     "description": "Header for the section to add a new item"
   },
   "add_new_subheader": {
@@ -612,11 +612,11 @@
     "description": "Button label to open the external popup."
   },
   "connect_header": {
-    "message": "Scan this QR Code with your 2FAS Pass Mobile App",
+    "message": "Scan this QR Code with your 2FAS Pass mobile app",
     "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
   },
   "connect_description": {
-    "message": "Do this when you first start the browser extension. This is necessary to securely link the extension to your mobile app.",
+    "message": "Do this when you first launch the browser extension to securely connect it with your mobile app.",
     "description": "Explains the need to scan the QR code for secure access during each browser launch"
   },
   "connect_connecting": {
@@ -628,11 +628,11 @@
     "description": "Message displayed when the connection is successfully opened"
   },
   "connect_push_cancelled": {
-    "message": "Connection cancelled from mobile app.",
+    "message": "Connection cancelled in the mobile app.",
     "description": "Message displayed when the connection is cancelled by the user from the mobile app"
   },
   "connect_device_select_header": {
-    "message": "Securely access your vault in the 2FAS Pass mobile app",
+    "message": "Securely access your Vault in the 2FAS Pass mobile app",
     "description": "Header prompting the user to select their device"
   },
   "connect_device_select_list_header": {
@@ -652,7 +652,7 @@
     "description": "Text for link to QR code view if having trouble with push notification"
   },
   "connect_push_trouble_tooltip": {
-    "message": "If push notification doesn't arrive in a few seconds, please check your mobile app",
+    "message": "If the push notification doesn't arrive in a few seconds, please check your mobile app",
     "description": "Tooltip text explaining what to do if the push notification does not arrive"
   },
   "connect_push_trouble_tooltip_or": {
@@ -660,7 +660,7 @@
     "description": "The word 'or' used between two options"
   },
   "connect_push_trouble_tooltip_use_qr": {
-    "message": "Use QR",
+    "message": "Use QR code",
     "description": "Instruction to use QR code as an alternative method"
   },
   "details_header": {
@@ -708,7 +708,7 @@
     "description": "Validation message indicating the maximum length for the URL field"
   },
   "details_item_not_found": {
-    "message": "Something went wrong. Item not found. Sync your mobile app and try again.",
+    "message": "Something went wrong. Item not found. Sync with your mobile app and try again.",
     "description": "Error shown when the requested item is not found, suggesting reconnection"
   },
   "details_security_type": {
@@ -756,7 +756,7 @@
     "description": "Title for the button that opens password generator"
   },
   "details_fetch_text": {
-    "message": "Some data is only on the mobile app.",
+    "message": "Some data is available only in the mobile app.",
     "description": "Text indicating that some data can be fetched from the mobile app"
   },
   "details_fetch_title": {
@@ -788,7 +788,7 @@
     "description": "Placeholder text for the tag selection dropdown"
   },
   "fetch_push_header": {
-    "message": "Check the 2FAS Pass push notification on your device.",
+    "message": "Check the 2FAS Pass push notification on your mobile device.",
     "description": "Header prompting the user to check their device for a push notification"
   },
   "fetch_push_waiting_for_mobile": {
@@ -872,11 +872,11 @@
     "description": "Toast shown when a login is updated in another vault"
   },
   "fetch_full_sync_cancel_toast": {
-    "message": "Full sync canceled",
+    "message": "Synchronization cancelled",
     "description": "Toast message displayed when a full sync operation is canceled"
   },
   "fetch_full_sync_completed_toast": {
-    "message": "Full sync completed",
+    "message": "Synchronization completed",
     "description": "Toast message displayed when a full sync operation is completed successfully"
   },
   "not_found_text": {
@@ -1352,7 +1352,7 @@
     "description": "Error message when automatic update is not available"
   },
   "filters_no_tags": {
-    "message": "No tags available",
+    "message": "No Tags available",
     "description": "Message shown in the tag filter dropdown when there are no tags created yet"
   },
   "filters_button_title": {
