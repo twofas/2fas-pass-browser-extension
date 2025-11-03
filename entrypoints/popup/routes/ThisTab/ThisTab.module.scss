@@ -389,7 +389,7 @@
       position: sticky;
       width: 100%;
       top: 44px;
-      z-index: 9999;
+      z-index: 3;
 
       @include m.darkMode {
         background-color: v.$primary-box-bg-dark;
@@ -524,16 +524,22 @@
     }
 
     &-tags-info {
+      background-color: v.$primary-box-bg-light;
       max-height: 0;
       overflow: hidden;
-      padding: 0 12px;
+      padding: 0 12px 0;
       position: sticky;
       top: 90px;
       width: 100%;
-      z-index: 9998;
+      z-index: 2;
+
+      @include m.darkMode {
+        background-color: v.$primary-box-bg-dark;
+      }
       
       &.active {
-        max-height: 34px;
+        max-height: 42px;
+        padding: 0 12px 8px;
       }
       
       &-box {
