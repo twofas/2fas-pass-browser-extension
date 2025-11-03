@@ -389,7 +389,7 @@
       position: sticky;
       width: 100%;
       top: 44px;
-      z-index: 2;
+      z-index: 9999;
 
       @include m.darkMode {
         background-color: v.$primary-box-bg-dark;
@@ -530,7 +530,7 @@
       position: sticky;
       top: 90px;
       width: 100%;
-      z-index: 9999;
+      z-index: 9998;
       
       &.active {
         max-height: 34px;
