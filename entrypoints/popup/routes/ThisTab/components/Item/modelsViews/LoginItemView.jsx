@@ -39,7 +39,7 @@ function LoginItemView (props) {
 
   const toggleMenuCallback = useCallback(value => {
     toggleMenu(value, { ref: props.ref, selectRef: props.selectRef }, { setMore: props.setMore });
-  }, []);
+  }, [props.setMore]);
 
   return (
     <>
@@ -64,7 +64,7 @@ function LoginItemView (props) {
         classNamePrefix='react-select-dropdown'
         isSearchable={false}
         options={dropdownOptions}
-        menuIsOpen={true}
+        menuIsOpen={props.more === true}
         menuPlacement='bottom'
         menuPosition='fixed'
         ref={props.selectRef}
