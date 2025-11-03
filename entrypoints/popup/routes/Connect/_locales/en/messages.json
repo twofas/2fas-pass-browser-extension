@@ -1,10 +1,10 @@
 {
   "connect_header": {
-    "message": "Scan this QR Code with your 2FAS Pass Mobile App",
+    "message": "Scan this QR Code with your 2FAS Pass mobile app",
     "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
   },
   "connect_description": {
-    "message": "Do this when you first start the browser extension. This is necessary to securely link the extension to your mobile app.",
+    "message": "Do this when you first launch the browser extension to securely connect it with your mobile app.",
     "description": "Explains the need to scan the QR code for secure access during each browser launch"
   },
   "connect_connecting": {
@@ -16,11 +16,11 @@
     "description": "Message displayed when the connection is successfully opened"
   },
   "connect_push_cancelled": {
-    "message": "Connection cancelled from mobile app.",
+    "message": "Connection cancelled in the mobile app.",
     "description": "Message displayed when the connection is cancelled by the user from the mobile app"
   },
   "connect_device_select_header": {
-    "message": "Securely access your vault in the 2FAS Pass mobile app",
+    "message": "Securely access your Vault in the 2FAS Pass mobile app",
     "description": "Header prompting the user to select their device"
   },
   "connect_device_select_list_header": {
@@ -40,7 +40,7 @@
     "description": "Text for link to QR code view if having trouble with push notification"
   },
   "connect_push_trouble_tooltip": {
-    "message": "If push notification doesn't arrive in a few seconds, please check your mobile app",
+    "message": "If the push notification doesn't arrive in a few seconds, please check your mobile app",
     "description": "Tooltip text explaining what to do if the push notification does not arrive"
   },
   "connect_push_trouble_tooltip_or": {
@@ -48,7 +48,7 @@
     "description": "The word 'or' used between two options"
   },
   "connect_push_trouble_tooltip_use_qr": {
-    "message": "Use QR",
+    "message": "Use QR code",
     "description": "Instruction to use QR code as an alternative method"
   }
 }
