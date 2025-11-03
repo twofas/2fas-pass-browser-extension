@@ -19,19 +19,51 @@ import SecureNoteItemView from './modelsViews/SecureNoteItemView';
 * @return {JSX.Element} The rendered component.
 */
 function Item (props) {
-  const [more, setMore] = useState(false);
+  const [more, setMoreState] = useState(false);
 
   const ref = useRef(null);
   const selectRef = useRef(null);
   const autofillBtnRef = useRef(null);
   const isHoveredRef = useRef(false);
+  const isClosingRef = useRef(false);
+  const moreRef = useRef(false);
 
-  const setMoreFalse = useCallback(() => setMore(false), []);
+  const setMore = useCallback(value => {
+    moreRef.current = value;
+    setMoreState(value);
+  }, []);
+
+  const handleScroll = useCallback(event => {
+    if (!more || isClosingRef.current) {
+      return;
+    }
+
+    const selectMenuListElement = document.querySelector('.react-select-dropdown__menu-list');
+
+    if (selectMenuListElement && (event.target === selectMenuListElement || selectMenuListElement.contains(event.target))) {
+      return;
+    }
+
+    isClosingRef.current = true;
+    setMore(false);
+  }, [more]);
 
   const handleClickOutside = useCallback(event => {
-    if (ref.current && !ref.current.contains(event.target)) {
-      toggleMenu(false, { ref, selectRef }, { setMore });
+    if (ref.current && ref.current.contains(event.target)) {
+      return;
     }
+
+    if (!moreRef.current) {
+      return;
+    }
+
+    const selectMenu = document.querySelector('.react-select-dropdown__menu');
+
+    if (selectMenu && selectMenu.contains(event.target)) {
+      return;
+    }
+
+    toggleMenu(false, { ref, selectRef }, { setMore });
   }, []);
 
   const handleMouseEnter = useCallback(() => {
@@ -66,6 +98,10 @@ function Item (props) {
   );
 
   useEffect(() => {
+    if (more) {
+      isClosingRef.current = false;
+    }
+
     if (!more && !isHoveredRef.current) {
       if (ref.current) {
         ref.current.classList.remove(S.hover);
@@ -78,14 +114,14 @@ function Item (props) {
   }, [more]);
 
   useEffect(() => {
-    window.addEventListener('scroll', setMoreFalse, true);
-    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('scroll', handleScroll, true);
+    document.addEventListener('mousedown', handleClickOutside, true);
 
     return () => {
-      window.removeEventListener('scroll', setMoreFalse, true);
-      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScroll, true);
+      document.removeEventListener('mousedown', handleClickOutside, true);
     };
-  }, [setMoreFalse, handleClickOutside]);
+  }, [handleScroll, handleClickOutside]);
 
   if (!props.data) {
     return null;
