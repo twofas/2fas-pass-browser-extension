@@ -20,6 +20,8 @@ export default class Login extends Item {
   #s_passwordDecrypted;
 
   constructor (loginData, deviceId = null, vaultId = null) {
+    console.log('Login data', loginData);
+
     if (loginData.constructor.name === Login.name) {
       return loginData;
     }
@@ -76,7 +78,7 @@ export default class Login extends Item {
     };
 
     this.internalData = {
-      urisWithTempIds: loginData.internalData?.urisWithTempIds || this.#urisWidthTempIds(loginData.content.uris) || [],
+      urisWithTempIds: loginData.internalData?.urisWithTempIds || this.#urisWithTempIds(loginData.content.uris) || [],
       normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || [],
       type: loginData.internalData?.type || null,
       sifResetTime: loginData.internalData?.sifResetTime || null,
@@ -90,17 +92,19 @@ export default class Login extends Item {
 
   #normalizeUris (uris) {
     if (uris && uris.length > 0) {
-      uris = uris.filter(uri => uri && uri?.text && uri.text !== '' && URIMatcher.isText(uri.text) && URIMatcher.isUrl(uri.text, true));
-      uris.forEach(uri => {
-        uri.text = URIMatcher.normalizeUrl(uri.text, true);
-        uri._tempId = uuidv4();
-      });
+      const filteredUris = uris.filter(uri => uri && uri?.text && uri.text !== '' && URIMatcher.isText(uri.text) && URIMatcher.isUrl(uri.text, true));
+
+      return filteredUris.map(uri => ({
+        text: URIMatcher.normalizeUrl(uri.text, true),
+        matcher: uri.matcher,
+        _tempId: uuidv4()
+      }));
     }
 
     return uris;
   }
 
-  #urisWidthTempIds (uris) {
+  #urisWithTempIds (uris) {
     if (uris && uris.length > 0) {
       uris = uris.map(uri => {
         return {
