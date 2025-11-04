@@ -609,6 +609,7 @@
     gap: 0 8px;
     letter-spacing: 0;
     text-transform: none;
+    user-select: none;
 
     .pass-toggle-box {
       border-radius: 9px;
@@ -618,6 +619,7 @@
       height: 18px;
       position: relative;
       transition: background-color .3s ease-in-out;
+      user-select: none;
       width: 32px;
 
       @include m.darkMode {
