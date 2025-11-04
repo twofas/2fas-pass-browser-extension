@@ -9,7 +9,7 @@ import { openInstallPage, updateBadge } from '../utils';
 import runMigrations from '../migrations';
 import setIdleInterval from '@/partials/functions/setIdleInterval';
 
-/** 
+/**
 * Function to handle the installation and update of the extension.
 * @async
 * @param {Object} details - The details of the installation or update event.
@@ -24,7 +24,15 @@ const onInstalled = async (details, migrations) => {
   }
 
   if (details?.reason === 'install' || details?.reason === 'update') {
-    await runMigrations().then(() => { migrations.state = true; });
+    migrations.state = 'running';
+
+    try {
+      await runMigrations();
+      migrations.state = true;
+    } catch (e) {
+      await CatchError(e);
+      migrations.state = true;
+    }
   } else {
     migrations.state = true;
   }
