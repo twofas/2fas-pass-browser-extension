@@ -32,6 +32,10 @@ function PasswordInput (props) {
   const [isFocused, setIsFocused] = useState(false);
   const [selection, setSelection] = useState({ start: 0, end: 0 });
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [selectionStartIndex, setSelectionStartIndex] = useState(null);
+  const [selectionAnchor, setSelectionAnchor] = useState(null); // For Shift+Arrow selection
+  const [forceRenderKey, setForceRenderKey] = useState(0); // Force re-render when selection clears
   const inputRef = useRef(null);
   const displayRef = useRef(null);
   const textWrapperRef = useRef(null);
@@ -79,51 +83,81 @@ function PasswordInput (props) {
       }, 200);
     }, 100);
   }, [onChange, value]);
-  
-  const updateSelection = useCallback(() => {
-    if (inputRef.current) {
-      const start = Math.min(inputRef.current.selectionStart || 0, value.length);
-      const end = Math.min(inputRef.current.selectionEnd || 0, value.length);
-
-      // Always update selection if it has changed, regardless of focus
-      // This ensures mouse clicks update the cursor immediately
-      if (start !== selection.start || end !== selection.end) {
-        setSelection({ start, end });
-      }
-    }
-  }, [value, selection]);
 
   const handleKeyDown = useCallback((e) => {
-    // Handle regular typing - pass it to the hidden input
+    // Handle regular typing
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && inputRef.current) {
       e.preventDefault();
 
-      // Simulate the key press on the hidden input
+      // Stop any ongoing mouse selection when typing
+      setIsSelecting(false);
+      setSelectionStartIndex(null);
+
+      // Clear selection anchor when typing
+      setSelectionAnchor(null);
+
+      // Use the selection from React state since that's what's being displayed
       const start = selection.start;
       const end = selection.end;
+
+      // Replace selected text (or insert at cursor if no selection)
       const newValue = value.substring(0, start) + e.key + value.substring(end);
+      const newCursorPos = start + 1;
+
+      // Clear the selection before calling onChange
+      inputRef.current.value = newValue;
+      inputRef.current.setSelectionRange(newCursorPos, newCursorPos);
+
+      // Force a complete re-render by updating selection and incrementing the key
+      setSelection({ start: newCursorPos, end: newCursorPos });
+      setForceRenderKey(prev => prev + 1);
 
       // Create a synthetic event for onChange
       const syntheticEvent = {
         target: {
           value: newValue,
-          selectionStart: start + 1,
-          selectionEnd: start + 1
+          selectionStart: newCursorPos,
+          selectionEnd: newCursorPos
         }
       };
 
       handleChange(syntheticEvent);
-      inputRef.current.value = newValue;
-      inputRef.current.setSelectionRange(start + 1, start + 1);
-      setSelection({ start: start + 1, end: start + 1 });
-
       return;
+    }
+
+    // Clear selection on any non-Shift key press if there's a selection
+    // But don't clear for Ctrl+A/Cmd+A as it's meant to select all
+    if (!e.shiftKey && selection.start !== selection.end && !(e.key === 'a' && (e.ctrlKey || e.metaKey))) {
+      // Keys that we handle explicitly below
+      const handledKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'Backspace', 'Delete'];
+
+      // For any key not explicitly handled, just clear the selection
+      if (!handledKeys.includes(e.key)) {
+        // Stop any ongoing mouse selection
+        setIsSelecting(false);
+        setSelectionStartIndex(null);
+        setSelectionAnchor(null);
+
+        const pos = selection.end;
+        if (inputRef.current) {
+          inputRef.current.setSelectionRange(pos, pos);
+          setSelection({ start: pos, end: pos });
+        }
+      }
     }
 
     // Handle backspace
     if (e.key === 'Backspace' && inputRef.current) {
       e.preventDefault();
 
+      // Stop any ongoing mouse selection
+      setIsSelecting(false);
+      setSelectionStartIndex(null);
+      
+      // Clear selection anchor when deleting
+      setSelectionAnchor(null);
+
+      // Use the selection from React state since that's what's being displayed
       const start = selection.start;
       const end = selection.end;
       let newValue, newPos;
@@ -140,6 +174,12 @@ function PasswordInput (props) {
         return; // Nothing to delete
       }
 
+      // Update input and selection BEFORE calling onChange
+      inputRef.current.value = newValue;
+      inputRef.current.setSelectionRange(newPos, newPos);
+      setSelection({ start: newPos, end: newPos });
+      setForceRenderKey(prev => prev + 1); // Force re-render when selection clears
+
       const syntheticEvent = {
         target: {
           value: newValue,
@@ -149,9 +189,6 @@ function PasswordInput (props) {
       };
 
       handleChange(syntheticEvent);
-      inputRef.current.value = newValue;
-      inputRef.current.setSelectionRange(newPos, newPos);
-      setSelection({ start: newPos, end: newPos });
 
       return;
     }
@@ -160,6 +197,14 @@ function PasswordInput (props) {
     if (e.key === 'Delete' && inputRef.current) {
       e.preventDefault();
 
+      // Stop any ongoing mouse selection
+      setIsSelecting(false);
+      setSelectionStartIndex(null);
+      
+      // Clear selection anchor when deleting
+      setSelectionAnchor(null);
+
+      // Use the selection from React state since that's what's being displayed
       const start = selection.start;
       const end = selection.end;
       let newValue;
@@ -174,6 +219,12 @@ function PasswordInput (props) {
         return; // Nothing to delete
       }
 
+      // Update input and selection BEFORE calling onChange
+      inputRef.current.value = newValue;
+      inputRef.current.setSelectionRange(start, start);
+      setSelection({ start: start, end: start });
+      setForceRenderKey(prev => prev + 1); // Force re-render when selection clears
+
       const syntheticEvent = {
         target: {
           value: newValue,
@@ -183,9 +234,6 @@ function PasswordInput (props) {
       };
 
       handleChange(syntheticEvent);
-      inputRef.current.value = newValue;
-      inputRef.current.setSelectionRange(start, start);
-      setSelection({ start, end: start });
 
       return;
     }
@@ -203,9 +251,21 @@ function PasswordInput (props) {
     if (e.key === 'End' || ((e.ctrlKey || e.metaKey) && e.key === 'ArrowRight')) {
       e.preventDefault();
       if (inputRef.current && displayRef.current && textWrapperRef.current) {
-        const endPos = value.length;
-        inputRef.current.setSelectionRange(endPos, endPos);
-        setSelection({ start: endPos, end: endPos });
+        if (e.shiftKey) {
+          // Select from current position to end
+          const anchor = selectionAnchor !== null ? selectionAnchor : selection.start;
+          if (selectionAnchor === null) {
+            setSelectionAnchor(selection.start);
+          }
+          inputRef.current.setSelectionRange(anchor, value.length);
+          setSelection({ start: anchor, end: value.length });
+        } else {
+          // Just move cursor to end
+          setSelectionAnchor(null);
+          const endPos = value.length;
+          inputRef.current.setSelectionRange(endPos, endPos);
+          setSelection({ start: endPos, end: endPos });
+        }
 
         // Scroll to show the end
         const displayWidth = displayRef.current.clientWidth;
@@ -224,8 +284,20 @@ function PasswordInput (props) {
     if (e.key === 'Home' || ((e.ctrlKey || e.metaKey) && e.key === 'ArrowLeft')) {
       e.preventDefault();
       if (inputRef.current && displayRef.current) {
-        inputRef.current.setSelectionRange(0, 0);
-        setSelection({ start: 0, end: 0 });
+        if (e.shiftKey) {
+          // Select from current position to beginning
+          const anchor = selectionAnchor !== null ? selectionAnchor : selection.end;
+          if (selectionAnchor === null) {
+            setSelectionAnchor(selection.end);
+          }
+          inputRef.current.setSelectionRange(0, anchor);
+          setSelection({ start: 0, end: anchor });
+        } else {
+          // Just move cursor to beginning
+          setSelectionAnchor(null);
+          inputRef.current.setSelectionRange(0, 0);
+          setSelection({ start: 0, end: 0 });
+        }
 
         // Scroll to beginning
         displayRef.current.scrollLeft = 0;
@@ -236,12 +308,41 @@ function PasswordInput (props) {
       return;
     }
 
-    // Handle arrow keys
+    // Handle arrow keys with Shift for selection
     if (e.key === 'ArrowLeft' && inputRef.current) {
       e.preventDefault();
-      const newPos = Math.max(0, selection.start - 1);
-      inputRef.current.setSelectionRange(newPos, newPos);
-      setSelection({ start: newPos, end: newPos });
+
+      if (e.shiftKey) {
+        // Set anchor if not already set
+        const anchor = selectionAnchor !== null ? selectionAnchor : selection.start;
+        if (selectionAnchor === null) {
+          setSelectionAnchor(selection.start);
+        }
+
+        // Move the focus point left
+        let newFocus;
+        if (selection.start === anchor) {
+          // Moving left from the anchor
+          newFocus = Math.max(0, selection.end - 1);
+        } else {
+          // Already left of anchor, keep moving left
+          newFocus = Math.max(0, selection.start - 1);
+        }
+
+        const newStart = Math.min(anchor, newFocus);
+        const newEnd = Math.max(anchor, newFocus);
+
+        inputRef.current.setSelectionRange(newStart, newEnd);
+        setSelection({ start: newStart, end: newEnd });
+      } else {
+        // Clear anchor when not using Shift
+        setSelectionAnchor(null);
+        // If there's a selection, collapse it to the start
+        const hasSelection = selection.start !== selection.end;
+        const newPos = hasSelection ? selection.start : Math.max(0, selection.start - 1);
+        inputRef.current.setSelectionRange(newPos, newPos);
+        setSelection({ start: newPos, end: newPos });
+      }
       lastInteractionRef.current = 'keyboard';
 
       return;
@@ -249,14 +350,43 @@ function PasswordInput (props) {
 
     if (e.key === 'ArrowRight' && inputRef.current) {
       e.preventDefault();
-      const newPos = Math.min(value.length, selection.end + 1);
-      inputRef.current.setSelectionRange(newPos, newPos);
-      setSelection({ start: newPos, end: newPos });
+
+      if (e.shiftKey) {
+        // Set anchor if not already set
+        const anchor = selectionAnchor !== null ? selectionAnchor : selection.end;
+        if (selectionAnchor === null) {
+          setSelectionAnchor(selection.end);
+        }
+
+        // Move the focus point right
+        let newFocus;
+        if (selection.end === anchor) {
+          // Moving right from the anchor
+          newFocus = Math.min(value.length, selection.start + 1);
+        } else {
+          // Already right of anchor, keep moving right
+          newFocus = Math.min(value.length, selection.end + 1);
+        }
+
+        const newStart = Math.min(anchor, newFocus);
+        const newEnd = Math.max(anchor, newFocus);
+
+        inputRef.current.setSelectionRange(newStart, newEnd);
+        setSelection({ start: newStart, end: newEnd });
+      } else {
+        // Clear anchor when not using Shift
+        setSelectionAnchor(null);
+        // If there's a selection, collapse it to the end
+        const hasSelection = selection.start !== selection.end;
+        const newPos = hasSelection ? selection.end : Math.min(value.length, selection.end + 1);
+        inputRef.current.setSelectionRange(newPos, newPos);
+        setSelection({ start: newPos, end: newPos });
+      }
       lastInteractionRef.current = 'keyboard';
 
       return;
     }
-  }, [value, selection, handleChange]);
+  }, [value, selection, selectionAnchor, handleChange, setIsSelecting, setSelectionStartIndex, setForceRenderKey]);
 
   const handleWheel = useCallback((e) => {
     if (displayRef.current && e.deltaX !== 0) {
@@ -283,118 +413,96 @@ function PasswordInput (props) {
     }
   }, []);
 
+  const getCharacterIndexFromMousePosition = useCallback((e) => {
+    if (!displayRef.current || !textWrapperRef.current) {
+      return null;
+    }
+
+    const displayRect = displayRef.current.getBoundingClientRect();
+    const currentScroll = displayRef.current.scrollLeft;
+    const clickXInViewport = e.clientX - displayRect.left;
+    const clickX = clickXInViewport + currentScroll;
+
+    const spans = textWrapperRef.current.querySelectorAll(`span[class*="${S.passwordInputCharacter}"]`);
+
+    if (spans.length === 0) {
+      return 0;
+    }
+
+    const lastSpan = spans[spans.length - 1];
+    const lastSpanEnd = lastSpan.offsetLeft + lastSpan.offsetWidth;
+
+    if (clickX >= lastSpanEnd) {
+      return value.length;
+    }
+
+    for (let i = 0; i < spans.length; i++) {
+      const span = spans[i];
+      const spanLeft = span.offsetLeft;
+      const spanRight = spanLeft + span.offsetWidth;
+
+      if (clickX >= spanLeft && clickX <= spanRight) {
+        const spanMid = spanLeft + span.offsetWidth / 2;
+        return clickX < spanMid ? i : i + 1;
+      } else if (clickX < spanLeft) {
+        return i;
+      }
+    }
+
+    return value.length;
+  }, [value, S.passwordInputCharacter]);
+
   const handleMouseDown = useCallback((e) => {
     lastInteractionRef.current = 'mouse';
 
-    // Get click position relative to the display div
-    if (displayRef.current && textWrapperRef.current) {
-      const displayRect = displayRef.current.getBoundingClientRect();
-      const currentScroll = displayRef.current.scrollLeft;
+    // Clear selection anchor when starting new selection with mouse
+    setSelectionAnchor(null);
 
-      // Update scrollLeftRef to ensure cursor position is correct
-      scrollLeftRef.current = currentScroll;
+    const clickedIndex = getCharacterIndexFromMousePosition(e);
 
-      const displayWidth = displayRef.current.clientWidth;
-      const clickXInViewport = e.clientX - displayRect.left;
-      const clickX = clickXInViewport + currentScroll;
+    if (clickedIndex !== null && inputRef.current) {
+      // Start selection
+      setIsSelecting(true);
+      setSelectionStartIndex(clickedIndex);
 
-      // Find which character was clicked
-      const spans = textWrapperRef.current.querySelectorAll(`span[class*="${S.passwordInputCharacter}"]`);
-      let clickedIndex = value.length; // Default to end
+      // Set initial cursor position
+      inputRef.current.setSelectionRange(clickedIndex, clickedIndex);
+      setSelection({ start: clickedIndex, end: clickedIndex });
 
-      // Check if clicked beyond visible area (trying to scroll)
-      if (clickXInViewport >= displayWidth - 10) {
-        // Clicked at the right edge - place cursor at end and scroll to end
-        clickedIndex = value.length;
-
-        // Scroll to show the end
-        const maxScroll = textWrapperRef.current.scrollWidth - displayWidth;
-        if (maxScroll > 0 && currentScroll < maxScroll) {
-          displayRef.current.scrollLeft = maxScroll;
-          scrollLeftRef.current = maxScroll;
-          setScrollLeft(maxScroll);
-        }
-      } else if (spans.length > 0) {
-        const lastSpan = spans[spans.length - 1];
-        const lastSpanEnd = lastSpan.offsetLeft + lastSpan.offsetWidth;
-
-        if (clickX >= lastSpanEnd) {
-          // Clicked beyond the last character - place cursor at end
-          clickedIndex = value.length;
-        } else {
-          // Find the clicked character
-          for (let i = 0; i < spans.length; i++) {
-            const span = spans[i];
-            const spanLeft = span.offsetLeft;
-            const spanRight = spanLeft + span.offsetWidth;
-
-            if (clickX >= spanLeft && clickX <= spanRight) {
-              // Clicked on this character - determine if left or right half
-              const spanMid = spanLeft + span.offsetWidth / 2;
-              clickedIndex = clickX < spanMid ? i : i + 1;
-              break;
-            } else if (clickX < spanLeft) {
-              // Clicked before this character
-              clickedIndex = i;
-              break;
-            }
-          }
-        }
-      }
-
-      // Set cursor position immediately
-      if (clickedIndex !== undefined && inputRef.current) {
-        // Update both the hidden input's selection (for keyboard events to work)
-        // and our internal selection state (for display)
-        inputRef.current.setSelectionRange(clickedIndex, clickedIndex);
-        setSelection({ start: clickedIndex, end: clickedIndex });
-
-        // Also update scroll state to trigger re-render with correct cursor position
+      if (displayRef.current) {
+        const currentScroll = displayRef.current.scrollLeft;
+        scrollLeftRef.current = currentScroll;
         setScrollLeft(currentScroll);
       }
     }
+  }, [getCharacterIndexFromMousePosition]);
 
-    // No need for timeout - selection is updated immediately above
-  }, [updateSelection, value, S.passwordInputCharacter]);
-  
   const handleMouseMove = useCallback((e) => {
-    if (e.buttons === 1) {
-      updateSelection();
-    }
-  }, [updateSelection]);
-  
-  useEffect(() => {
-    const input = inputRef.current;
-    if (!input) {
+    if (!isSelecting || selectionStartIndex === null) {
       return;
     }
 
-    const handleSelectionChange = () => updateSelection();
-    const handleMouseUp = () => {
-      setTimeout(updateSelection, 0);
-    };
+    const currentIndex = getCharacterIndexFromMousePosition(e);
 
-    document.addEventListener('selectionchange', handleSelectionChange);
-    input.addEventListener('select', handleSelectionChange);
-    input.addEventListener('mouseup', handleMouseUp);
-    input.addEventListener('keyup', handleSelectionChange);
+    if (currentIndex !== null && inputRef.current) {
+      // Update selection range
+      const start = Math.min(selectionStartIndex, currentIndex);
+      const end = Math.max(selectionStartIndex, currentIndex);
 
-    return () => {
-      document.removeEventListener('selectionchange', handleSelectionChange);
-      input.removeEventListener('select', handleSelectionChange);
-      input.removeEventListener('mouseup', handleMouseUp);
-      input.removeEventListener('keyup', handleSelectionChange);
-    };
-  }, [updateSelection]);
+      inputRef.current.setSelectionRange(start, end);
+      setSelection({ start, end });
+    }
+  }, [isSelecting, selectionStartIndex, getCharacterIndexFromMousePosition]);
 
-  // Add wheel event listener with passive: false to allow preventDefault
+  const handleMouseUp = useCallback(() => {
+    setIsSelecting(false);
+  }, []);
   useEffect(() => {
     const display = displayRef.current;
     if (!display) {
       return;
     }
 
-    // Add the wheel listener with passive: false
     display.addEventListener('wheel', handleWheel, { passive: false });
 
     return () => {
@@ -602,9 +710,12 @@ function PasswordInput (props) {
       const isPassword = !showPassword;
       const isSelected = hasSelection && index >= minSelection && index < maxSelection;
 
+      // Include forceRenderKey in the key to ensure React re-renders when selection changes
+      const uniqueKey = `${index}-${forceRenderKey}-${isSelected}`;
+
       return (
         <span
-          key={index}
+          key={uniqueKey}
           className={`${S.passwordInputCharacter} ${shouldColorize ? S[`passwordInputCharacter${charType.charAt(0).toUpperCase() + charType.slice(1)}`] : ''} ${isSelected ? S.passwordInputCharacterSelected : ''}`}
           data-index={index}
         >
@@ -622,7 +733,7 @@ function PasswordInput (props) {
         onScroll={handleDisplayScroll}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
-        onMouseUp={updateSelection}
+        onMouseUp={handleMouseUp}
         onClick={() => setIsFocused(true)}
         tabIndex={0}
         onFocus={() => setIsFocused(true)}
