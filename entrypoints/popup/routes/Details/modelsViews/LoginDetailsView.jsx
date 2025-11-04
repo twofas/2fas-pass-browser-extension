@@ -27,9 +27,10 @@ const DangerZone = lazy(() => import('../components/DangerZone'));
 
 /** 
 * Function to render the details component.
+* @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function LoginDetailsView () {
+function LoginDetailsView (props) {
   const data = usePopupStateStore(state => state.data);
   const [inputError, setInputError] = useState(undefined);
 
@@ -158,7 +159,7 @@ function LoginDetailsView () {
           />
           <Password
             key={`password-${data.item.id}`}
-            formData={{ form }}
+            formData={{ form, originalItem: props.originalItem }}
             passwordDecryptError={data.passwordDecryptError}
           />
           {generateURLs({ formData: { inputError } })}
