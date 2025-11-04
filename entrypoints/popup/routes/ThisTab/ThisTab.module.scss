@@ -611,7 +611,14 @@
     }
 
     &-list {
+      -webkit-overflow-scrolling: touch;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
       position: relative;
+
+      &::-webkit-scrollbar {
+        -webkit-appearance: none;
+      }
 
       &.no-data {
         border: 0 !important;
@@ -744,6 +751,7 @@
       border-radius: 6px;
       display: flex;
       flex-direction: row;
+      height: 58px;
       justify-content: flex-start;
       margin: 0;
       padding: 12px 12px;
@@ -864,6 +872,7 @@
               color: v.$primary-text-light;
               font-size: 14px;
               font-weight: 500;
+              height: 16px;
               line-height: .86;
               padding-bottom: 3px;
 
@@ -880,6 +889,7 @@
               color: v.$secondary-text-light;
               font-size: 12px;
               font-weight: 400;
+              height: 13px;
               line-height: .83;
               padding-bottom: 3px;
 
