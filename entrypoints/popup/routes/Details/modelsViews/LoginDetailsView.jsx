@@ -105,17 +105,26 @@ function LoginDetailsView (props) {
 
     const hasEditedUris = data?.domainsEditable ? Object.values(data.domainsEditable).some(v => v === true) : false;
     const hasNewUris = e?.content?.uris?.some(uri => uri?.new);
-    const hasUriChanges = hasEditedUris || hasNewUris;
+    const hasRemovedUris = (data?.urisRemoved || 0) > 0;
+
+    // Check if original item had URIs but current doesn't, or if current URI count is different
+    const originalUrisCount = props.originalItem?.content?.uris?.length || 0;
+    const currentUrisCount = e?.content?.uris?.length || 0;
+    const urisCountChanged = originalUrisCount !== currentUrisCount;
+
+    const hasUriChanges = hasEditedUris || hasNewUris || hasRemovedUris || urisCountChanged;
 
     if (hasUriChanges) {
-      e.content.uris = e.content.uris.map(uri => {
+      // Process current URIs (may be empty array if all were removed)
+      const processedUris = (e.content.uris || []).map(uri => {
         return {
           text: uri?.text ? valueToNFKD(uri.text) : '',
           matcher: uri?.matcher
         };
       });
 
-      stateData.content.uris = e.content.uris;
+      e.content.uris = processedUris;
+      stateData.content.uris = processedUris;
     }
 
     if (data.tierEditable) {
@@ -133,6 +142,8 @@ function LoginDetailsView (props) {
     if (data.notesEditable) {
       stateData.content.notes = e?.content?.notes ? valueToNFKD(e.content.notes) : '';
     }
+
+    console.log(stateData);
 
     return navigate('/fetch', {
       state: {
