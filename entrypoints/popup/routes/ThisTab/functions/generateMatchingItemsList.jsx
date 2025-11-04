@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import LoginItem from '../components/Item';
-import { ViewportList } from 'react-viewport-list';
+import SafariViewportList from '@/entrypoints/popup/components/SafariViewportList';
 import sortByName from '@/partials/functions/sortByName';
 import isItemsCorrect from './isItemsCorrect';
 
@@ -24,9 +24,9 @@ const generateMatchingItemsList = (items, loading) => {
     const itemsEmpty = [{ id: 0, item: [] }];
 
     return (
-      <ViewportList items={itemsEmpty}>
+      <SafariViewportList items={itemsEmpty} overscan={2}>
         {item => <LoginItem item={item} key={item.id} loading={loading} />}
-      </ViewportList>
+      </SafariViewportList>
     );
   }
 
@@ -39,9 +39,9 @@ const generateMatchingItemsList = (items, loading) => {
   const itemsData = fetchedLogins.concat(restLogins);
 
   return (
-    <ViewportList items={itemsData} overscan={2}>
+    <SafariViewportList items={itemsData} overscan={5}>
       {item => <LoginItem data={item} key={item.id} />}
-    </ViewportList>
+    </SafariViewportList>
   );
 };
 
