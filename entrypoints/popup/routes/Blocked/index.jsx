@@ -17,7 +17,7 @@ import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 */
 const focusPopupInSeparateWindow = async () => {
   await focusPopupWindow();
-  await tryWindowClose();
+  tryWindowClose();
 };
 
 /** 
@@ -39,6 +39,8 @@ const handleOpenPopupButton = async () => {
       showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
     }
   }
+
+  tryWindowClose();
 };
 
 /** 
@@ -48,7 +50,9 @@ const handleOpenPopupButton = async () => {
 */
 function Blocked (props) {
   useEffect(() => {
-    focusPopupInSeparateWindow();
+    if (import.meta.env.BROWSER !== 'safari') {
+      focusPopupInSeparateWindow();
+    }
   }, []);
 
   return (
