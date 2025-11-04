@@ -41,7 +41,7 @@ const changePasswordVariants = {
 */
 function Password (props) {
   const { passwordDecryptError, formData } = props;
-  const { form } = formData;
+  const { form, originalItem } = formData;
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
@@ -133,7 +133,7 @@ function Password (props) {
   };
 
   const generateSecurityTypeTooltip = item => {
-    if (item.isT3orT2WithPassword) {
+    if (item?.isT3orT2WithPassword) {
       return null;
     }
 
@@ -205,12 +205,12 @@ function Password (props) {
     <LazyMotion features={loadDomAnimation}>
       <Field name="editedPassword">
         {() => (
-          <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile ? pI.disabled : ''} ${!data.item.isT3orT2WithPassword ? pI.nonFetched : ''}`}>
+          <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile ? pI.disabled : ''} ${!originalItem?.isT3orT2WithPassword ? pI.nonFetched : ''}`}>
             <div className={pI.passInputTop}>
               <label htmlFor="editedPassword">{browser.i18n.getMessage('password')}</label>
               <button
                 type='button'
-                className={`${bS.btn} ${bS.btnClear} ${!data.item.isT3orT2WithPassword ? bS.btnHidden : ''}`}
+                className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithPassword ? bS.btnHidden : ''}`}
                 onClick={handleEditableClick}
               >
                 {data?.passwordEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
@@ -220,12 +220,12 @@ function Password (props) {
               <PasswordInput
                 value={getPasswordValue()}
                 type={data?.passwordVisible ? 'text' : 'password'}
-                placeholder={!data?.passwordMobile && data.item.isT3orT2WithPassword || data?.passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
+                placeholder={!data?.passwordMobile && originalItem?.isT3orT2WithPassword || data?.passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
                 id='editedPassword'
                 onChange={handlePasswordChange}
                 showPassword={data?.passwordVisible}
                 isDecrypted={data.item.isPasswordDecrypted || data.item.internalData.editedPassword !== null}
-                state={!data.item.isT3orT2WithPassword ? 'nonFetched' : ''}
+                state={!originalItem?.isT3orT2WithPassword ? 'nonFetched' : ''}
                 disabled={!data?.passwordEditable || data?.passwordMobile}
                 dir="ltr"
                 spellCheck="false"
@@ -245,12 +245,12 @@ function Password (props) {
                 <button
                   type="button"
                   onClick={handlePasswordVisibleClick}
-                  className={`${pI.iconButton} ${pI.visibleButton} ${!(data.item.isT3orT2WithPassword || data?.passwordEditable) ? pI.hidden : ''}`}
+                  className={`${pI.iconButton} ${pI.visibleButton} ${!(originalItem?.isT3orT2WithPassword || data?.passwordEditable) ? pI.hidden : ''}`}
                   title={browser.i18n.getMessage('details_toggle_password_visibility')}
                 >
                   <VisibleIcon />
                 </button>
-                {(data.item.securityType === SECURITY_TIER.SECRET || (data.item.passwordEncrypted && data.item.passwordEncrypted.length > 0)) && (
+                {(originalItem?.securityType === SECURITY_TIER.SECRET || (data.item.passwordEncrypted && data.item.passwordEncrypted.length > 0)) && (
                   <button
                     type='button'
                     className={`${bS.btn} ${pI.iconButton}`}
@@ -262,7 +262,7 @@ function Password (props) {
                 )}
               </div>
 
-              {generateSecurityTypeTooltip(data.item)}
+              {generateSecurityTypeTooltip(originalItem)}
               {generateErrorOverlay()}
             </div>
             <m.div
