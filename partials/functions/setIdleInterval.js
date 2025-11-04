@@ -10,6 +10,10 @@
 * @return {Promise<void>} A promise that resolves when the idle interval is set.
 */
 const setIdleInterval = idleLockValue => {
+  if (import.meta.env.BROWSER === 'safari') {
+    return;
+  }
+  
   if (idleLockValue === 'default') {
     browser.idle.setDetectionInterval(config.defaultStorageIdleLock * 60);
   } else {
