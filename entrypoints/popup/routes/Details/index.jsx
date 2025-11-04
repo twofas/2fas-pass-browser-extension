@@ -137,8 +137,13 @@ function Details (props) {
   }, [params.deviceId, params.vaultId, params.id, navigate, setData, setScrollPosition, location.state]);
 
   const getOriginalItem = useCallback(async () => {
-    const originalItemData = await getItem(params.deviceId, params.vaultId, params.id);
-    setOriginalItem(originalItemData);
+    try {
+      const originalItemData = await getItem(params.deviceId, params.vaultId, params.id);
+      setOriginalItem(originalItemData);
+    } catch (e) {
+      CatchError(e);
+      setOriginalItem(null);
+    }
   }, [params.deviceId, params.vaultId, params.id]);
 
   const constructorName = useMemo(() => {
@@ -154,7 +159,9 @@ function Details (props) {
       return null;
     }
 
-    const modelData = {};
+    const modelData = {
+      originalItem
+    };
 
     if (DetailsViews[constructorName]) {
       const ModelViewComponent = DetailsViews[constructorName];
@@ -162,10 +169,10 @@ function Details (props) {
     }
 
     return null;
-  }, [loading, constructorName, props]);
+  }, [loading, constructorName, props, originalItem]);
 
   useEffect(() => {
-    getData().then(getOriginalItem);
+    getData().then(() => getOriginalItem());
   }, [getData, getOriginalItem]);
 
   useEffect(() => {
