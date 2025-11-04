@@ -55,7 +55,8 @@ const onMessage = (request, sender, sendResponse, migrations) => {
       }
 
       case REQUEST_ACTIONS.RESET_EXTENSION: {
-        migrations.state = false;
+        // Set to 'running' instead of false to prevent race conditions
+        migrations.state = 'running';
 
         browser.storage.local.clear()
           .then(async () => { await browser.storage.session.clear(); })
@@ -63,7 +64,11 @@ const onMessage = (request, sender, sendResponse, migrations) => {
           .then(() => { migrations.state = true; })
           .then(async () => { await openInstallPage(); })
           .then(() => { sendResponse({ status: 'ok' }); })
-          .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+          .catch(e => {
+            // Ensure migrations.state is set even on error
+            migrations.state = true;
+            sendResponse({ status: 'error', message: e.message });
+          });
 
         break;
       }
