@@ -10,7 +10,7 @@ import nonSafariBackground from './nonSafariBackground';
 import firefoxBackground from './firefoxBackground';
 
 export default defineBackground({
-  /** 
+  /**
   * Main function that initializes the background script.
   * @return {void}
   */
@@ -20,10 +20,18 @@ export default defineBackground({
     const savePromptActions = [];
     const migrations = { state: false };
 
+    // Fallback: Set migrations to true after a short delay if not set by onInstalled/onStartup
+    // This handles edge cases where neither event fires (e.g., extension reload during development)
+    setTimeout(() => {
+      if (!migrations.state) {
+        migrations.state = true;
+      }
+    }, 1000);
+
     browser.runtime.onInstalled.addListener(async details => await onInstalled(details, migrations));
     browser.runtime.onMessage.addListener((request, sender, sendResponse) => onMessage(request, sender, sendResponse, migrations));
     browser.runtime.onMessage.addListener((r, s, sR) => onPromptMessage(r, s, sR, tabsInputData));
-    browser.runtime.onStartup.addListener(onStartup);
+    browser.runtime.onStartup.addListener(() => onStartup(migrations));
 
     browser.commands.onCommand.addListener(onCommand);
     
