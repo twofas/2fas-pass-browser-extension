@@ -46,6 +46,7 @@
     position: absolute;
     transform: translateX(-50%);
     transition: opacity .3s ease-in-out, border-color .3s ease-in-out, border-width .3s ease-in-out;
+    user-select: none;
     width: 64px;
     z-index: 3;
 
