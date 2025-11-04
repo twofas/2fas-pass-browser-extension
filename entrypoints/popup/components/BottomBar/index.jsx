@@ -80,6 +80,16 @@ function BottomBar () {
         if (res.status === 'error') {
           showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
         }
+      } else if (location.pathname === '/blocked') {
+        const res = await browser.runtime.sendMessage({
+          action: REQUEST_ACTIONS.OPEN_POPUP_WINDOW_IN_NEW_WINDOW,
+          target: REQUEST_TARGETS.BACKGROUND,
+          pathname: '/'
+        });
+
+        if (res.status === 'error') {
+          showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
+        }
       } else {
         const res = await browser.runtime.sendMessage({
           action: REQUEST_ACTIONS.OPEN_POPUP_WINDOW_IN_NEW_WINDOW,
