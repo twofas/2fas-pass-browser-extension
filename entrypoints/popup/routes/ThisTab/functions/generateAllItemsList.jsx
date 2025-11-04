@@ -6,7 +6,7 @@
 
 import S from '../ThisTab.module.scss';
 import Item from '../components/Item';
-import { ViewportList } from 'react-viewport-list';
+import SafariViewportList from '@/entrypoints/popup/components/SafariViewportList';
 import { lazy } from 'react';
 import sortByName from '@/partials/functions/sortByName';
 import isItemsCorrect from './isItemsCorrect';
@@ -36,9 +36,9 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
 
     return (
       <div className={S.thisTabAllLoginsList}>
-        <ViewportList items={itemsEmpty}>
+        <SafariViewportList items={itemsEmpty} overscan={3}>
           {item => <Item data={item} key={item.id} loading={loading} />}
-        </ViewportList>
+        </SafariViewportList>
       </div>
     );
   }
@@ -101,9 +101,9 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
 
   return (
     <div className={S.thisTabAllLoginsList}>
-      <ViewportList items={itemsData} overscan={5}>
+      <SafariViewportList items={itemsData} overscan={10}>
         {item => <Item data={item} key={item.id} loading={loading} />}
-      </ViewportList>
+      </SafariViewportList>
     </div>
   );
 };
