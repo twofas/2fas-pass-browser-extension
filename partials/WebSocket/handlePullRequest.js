@@ -9,6 +9,7 @@ import generateEncryptionAESKey from './utils/generateEncryptionAESKey';
 import TwoFasWebSocket from '@/partials/WebSocket';
 import { ENCRYPTION_KEYS, PULL_REQUEST_TYPES } from '@/constants';
 import getItem from '../sessionStorage/getItem';
+import isText from '@/partials/functions/isText';
 
 /** 
 * Handles the pull request action.
@@ -81,7 +82,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         throw new TwoFasError(TwoFasError.errors.newLoginNoData);
       }
 
-      if (!state?.data?.content?.s_password?.value || state?.data?.content?.s_password?.value.length === 0) {
+      if (!isText(state?.data?.content?.s_password?.value)) {
         data = {
           type: PULL_REQUEST_TYPES.ADD_DATA,
           data: state.data
@@ -113,7 +114,7 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         throw new TwoFasError(TwoFasError.errors.updateLoginWrongData);
       }
 
-      if (!state?.data?.content?.s_password?.value || state?.data?.content?.s_password?.value === '') {
+      if (!isText(state?.data?.content?.s_password?.value)) {
         const stateData = structuredClone(state.data);
         delete stateData?.deviceId;
         
