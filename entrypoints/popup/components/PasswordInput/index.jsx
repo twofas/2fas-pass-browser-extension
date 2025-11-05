@@ -55,6 +55,11 @@ function PasswordInput (props) {
   }, []);
   
   const handleChange = useCallback((e) => {
+    // Don't process changes when disabled
+    if (disabled) {
+      return;
+    }
+
     const oldLength = value?.length || 0;
     const newLength = e.target.value?.length || 0;
 
@@ -82,9 +87,14 @@ function PasswordInput (props) {
         }
       }, 200);
     }, 100);
-  }, [onChange, value]);
+  }, [onChange, value, disabled]);
 
   const handleKeyDown = useCallback((e) => {
+    // Don't process any keyboard events if input is disabled
+    if (disabled) {
+      return;
+    }
+
     // Handle regular typing
     if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && inputRef.current) {
       e.preventDefault();
@@ -386,9 +396,14 @@ function PasswordInput (props) {
 
       return;
     }
-  }, [value, selection, selectionAnchor, handleChange, setIsSelecting, setSelectionStartIndex, setForceRenderKey]);
+  }, [value, selection, selectionAnchor, handleChange, setIsSelecting, setSelectionStartIndex, setForceRenderKey, disabled]);
 
   const handleWheel = useCallback((e) => {
+    // Don't allow scrolling when disabled
+    if (disabled) {
+      return;
+    }
+
     if (displayRef.current && e.deltaX !== 0) {
       // Only handle horizontal scrolling (deltaX)
       // Do NOT convert vertical scrolling to horizontal
@@ -401,17 +416,19 @@ function PasswordInput (props) {
       setScrollLeft(actualScroll);
       lastInteractionRef.current = 'wheel';
     }
-  }, []);
+  }, [disabled]);
 
   const handleDisplayScroll = useCallback(() => {
-    if (displayRef.current) {
-      const newScrollLeft = displayRef.current.scrollLeft;
-
-      scrollLeftRef.current = newScrollLeft;
-      setScrollLeft(newScrollLeft);
-      lastInteractionRef.current = 'scroll';
+    // Don't process scroll when disabled
+    if (disabled || !displayRef.current) {
+      return;
     }
-  }, []);
+
+    const newScrollLeft = displayRef.current.scrollLeft;
+    scrollLeftRef.current = newScrollLeft;
+    setScrollLeft(newScrollLeft);
+    lastInteractionRef.current = 'scroll';
+  }, [disabled]);
 
   const getCharacterIndexFromMousePosition = useCallback((e) => {
     if (!displayRef.current || !textWrapperRef.current) {
@@ -453,6 +470,12 @@ function PasswordInput (props) {
   }, [value, S.passwordInputCharacter]);
 
   const handleMouseDown = useCallback((e) => {
+    // Don't allow mouse interactions when disabled
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
+
     lastInteractionRef.current = 'mouse';
 
     // Clear selection anchor when starting new selection with mouse
@@ -475,10 +498,11 @@ function PasswordInput (props) {
         setScrollLeft(currentScroll);
       }
     }
-  }, [getCharacterIndexFromMousePosition]);
+  }, [getCharacterIndexFromMousePosition, disabled]);
 
   const handleMouseMove = useCallback((e) => {
-    if (!isSelecting || selectionStartIndex === null) {
+    // Don't allow mouse interactions when disabled
+    if (disabled || !isSelecting || selectionStartIndex === null) {
       return;
     }
 
@@ -492,7 +516,7 @@ function PasswordInput (props) {
       inputRef.current.setSelectionRange(start, end);
       setSelection({ start, end });
     }
-  }, [isSelecting, selectionStartIndex, getCharacterIndexFromMousePosition]);
+  }, [isSelecting, selectionStartIndex, getCharacterIndexFromMousePosition, disabled]);
 
   const handleMouseUp = useCallback(() => {
     setIsSelecting(false);
@@ -734,9 +758,9 @@ function PasswordInput (props) {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onClick={() => setIsFocused(true)}
-        tabIndex={0}
-        onFocus={() => setIsFocused(true)}
+        onClick={() => !disabled && setIsFocused(true)}
+        tabIndex={disabled ? -1 : 0}
+        onFocus={() => !disabled && setIsFocused(true)}
         onBlur={() => {
           setIsFocused(false);
           setSelection({ start: 0, end: 0 });
