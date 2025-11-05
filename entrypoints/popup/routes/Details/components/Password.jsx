@@ -51,6 +51,10 @@ function Password (props) {
   const previousPasswordValueRef = useRef(null);
 
   const getPasswordValue = () => {
+    if (passwordDecryptError) {
+      return '';
+    }
+
     if (data.item.internalData.editedPassword !== null) {
       return data.item.internalData.editedPassword;
     }
@@ -205,12 +209,12 @@ function Password (props) {
     <LazyMotion features={loadDomAnimation}>
       <Field name="editedPassword">
         {() => (
-          <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile ? pI.disabled : ''} ${!originalItem?.isT3orT2WithPassword ? pI.nonFetched : ''}`}>
+          <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile || passwordDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithPassword ? pI.nonFetched : ''}`}>
             <div className={pI.passInputTop}>
               <label htmlFor="editedPassword">{browser.i18n.getMessage('password')}</label>
               <button
                 type='button'
-                className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithPassword ? bS.btnHidden : ''}`}
+                className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithPassword || passwordDecryptError ? bS.btnHidden : ''}`}
                 onClick={handleEditableClick}
               >
                 {data?.passwordEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
@@ -220,13 +224,13 @@ function Password (props) {
               <PasswordInput
                 value={getPasswordValue()}
                 type={data?.passwordVisible ? 'text' : 'password'}
-                placeholder={!data?.passwordMobile && originalItem?.isT3orT2WithPassword || data?.passwordEditable ? browser.i18n.getMessage('placeholder_password') : ''}
+                placeholder={!passwordDecryptError && (!data?.passwordMobile && originalItem?.isT3orT2WithPassword || data?.passwordEditable) ? browser.i18n.getMessage('placeholder_password') : ''}
                 id='editedPassword'
                 onChange={handlePasswordChange}
                 showPassword={data?.passwordVisible}
                 isDecrypted={data.item.isPasswordDecrypted || data.item.internalData.editedPassword !== null}
                 state={!originalItem?.isT3orT2WithPassword ? 'nonFetched' : ''}
-                disabled={!data?.passwordEditable || data?.passwordMobile}
+                disabled={!data?.passwordEditable || data?.passwordMobile || passwordDecryptError}
                 dir="ltr"
                 spellCheck="false"
                 autoCorrect="off"
@@ -236,7 +240,7 @@ function Password (props) {
               <div className={pI.passInputBottomButtons}>
                 <Link
                   to='/password-generator'
-                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${!data?.passwordEditable || data?.passwordMobile ? pI.hiddenButton : ''}`}
+                  className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${!data?.passwordEditable || data?.passwordMobile || passwordDecryptError ? pI.hiddenButton : ''}`}
                   title={browser.i18n.getMessage('details_generate_password')}
                   state={{ from: 'details', data }}
                 >
@@ -245,12 +249,12 @@ function Password (props) {
                 <button
                   type="button"
                   onClick={handlePasswordVisibleClick}
-                  className={`${pI.iconButton} ${pI.visibleButton} ${!(originalItem?.isT3orT2WithPassword || data?.passwordEditable) ? pI.hidden : ''}`}
+                  className={`${pI.iconButton} ${pI.visibleButton} ${!(originalItem?.isT3orT2WithPassword || data?.passwordEditable) || passwordDecryptError ? pI.hidden : ''}`}
                   title={browser.i18n.getMessage('details_toggle_password_visibility')}
                 >
                   <VisibleIcon />
                 </button>
-                {(originalItem?.securityType === SECURITY_TIER.SECRET || (data.item.passwordEncrypted && data.item.passwordEncrypted.length > 0)) && (
+                {((originalItem?.securityType === SECURITY_TIER.SECRET || (data.item.passwordEncrypted && data.item.passwordEncrypted.length > 0)) && !passwordDecryptError) && (
                   <button
                     type='button'
                     className={`${bS.btn} ${pI.iconButton}`}
