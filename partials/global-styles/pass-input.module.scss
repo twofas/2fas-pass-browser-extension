@@ -58,6 +58,7 @@
     &:hover {
       .pass-input-tooltip {
         opacity: 1;
+        pointer-events: all;
         transform: translateY(0);
       }
     }
@@ -69,6 +70,7 @@
       border-radius: 6px;
       opacity: 0;
       padding: 16px;
+      pointer-events: none;
       position: absolute;
       transform: translateY(11px);
       transition: opacity .3s ease-in-out, transform .3s ease-in-out;
@@ -78,6 +80,10 @@
       @include m.darkMode {
         background-color: v.$card-bg-dark;
         border-color: v.$card-stroke-dark;
+      }
+
+      span {
+        font-size: 12px;
       }
     }
   }
