@@ -108,11 +108,11 @@
     "description": "Error message displayed when there is an issue with the shortcut settings"
   },
   "error_no_network_connection": {
-    "message": "No network connection. Please check your internet connection and try again.",
+    "message": "No Internet connection. Please check your connection and try again.",
     "description": "Error message displayed when there is no network connection"
   },
   "error_connection_error": {
-    "message": "Connection error. Check your internet connection and try again.",
+    "message": "Connection error. Please check your Internet connection and try again.",
     "description": "Error message displayed when a connection error occurs"
   }
 }
