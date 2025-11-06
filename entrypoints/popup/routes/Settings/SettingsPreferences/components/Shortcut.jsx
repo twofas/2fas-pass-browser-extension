@@ -127,6 +127,10 @@ function Shortcut () {
   };
 
   const onEditShortcut = useCallback(async () => {
+    if (import.meta.env.BROWSER === 'safari') {
+      return false;
+    }
+
     if (shortcutLink === 'firefox') {
       if (openShortcutSettingsAvailable()) {
         return browser.commands.openShortcutSettings();
