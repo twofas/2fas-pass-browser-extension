@@ -6,6 +6,10 @@
 
 import getBrowserInfo from './getBrowserInfo';
 
+/** 
+* Function to attempt closing the current browser window.
+* @return {boolean} Returns always false. If the window close attempt is made, it will not be possible to confirm success.
+*/
 const tryWindowClose = () => {
   if (
     !window ||
@@ -23,18 +27,20 @@ const tryWindowClose = () => {
       if (majorVersion >= 26) {
         try {
           window.close();
-          return true;
+          return false;
         } catch {
           return false;
         }
       } else {
         return false;
       }
+    } else {
+      return false;
     }
   } else {
     try {
       window.close();
-      return true;
+      return false;
     } catch {
       return false;
     }
