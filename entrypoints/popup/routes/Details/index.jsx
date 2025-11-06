@@ -45,19 +45,22 @@ function Details (props) {
   const setData = usePopupStateStore(state => state.setData);
   const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
 
-  const getData = useCallback(async () => {
+  const getData = useCallback(async originalItem => {
     try {
       if (location.state?.from === 'thisTab') {
         setScrollPosition(0);
       }
 
       let item;
+      let editedSecurityType;
 
       if (location.state?.data?.item) {
-        item = matchModel(location.state.data.item);
+        editedSecurityType = location.state.data.item.securityType;
+        item = matchModel({ ...location.state.data.item, securityType: originalItem?.securityType });
       } else if (data?.item) {
         try {
-          item = matchModel(data.item);
+          editedSecurityType = data.item.securityType;
+          item = matchModel({ ...data.item, securityType: originalItem?.securityType });
         } catch {
           if (params.id) {
             item = await getItem(params.deviceId, params.vaultId, params.id);
@@ -82,6 +85,10 @@ function Details (props) {
           setData('passwordDecryptError', true);
           CatchError(e);
         }
+      }
+
+      if (editedSecurityType !== undefined && item.securityType !== editedSecurityType) {
+        item.securityType = editedSecurityType;
       }
 
       if (location.state?.scrollPosition !== undefined) {
@@ -140,9 +147,11 @@ function Details (props) {
     try {
       const originalItemData = await getItem(params.deviceId, params.vaultId, params.id);
       setOriginalItem(originalItemData);
+      return originalItemData;
     } catch (e) {
       CatchError(e);
       setOriginalItem(null);
+      return null;
     }
   }, [params.deviceId, params.vaultId, params.id]);
 
@@ -172,7 +181,7 @@ function Details (props) {
   }, [loading, constructorName, props, originalItem]);
 
   useEffect(() => {
-    getData().then(() => getOriginalItem());
+    getOriginalItem().then(getData);
   }, [getData, getOriginalItem]);
 
   useEffect(() => {
