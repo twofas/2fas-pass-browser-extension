@@ -37,6 +37,11 @@ function NavigationButton (props) {
               if (previousPath && previousPath !== currentPath) {
                 const previousSegments = previousPath.split('/').filter(segment => segment);
 
+                if (previousSegments[0] === 'details' || previousSegments[0] === 'add-new') {
+                  navigate(previousPath, { state: props.state });
+                  return;
+                }
+
                 if (previousSegments.length > currentSegments.length) {
                   if (currentSegments.length > 0) {
                     currentSegments.pop();
@@ -45,11 +50,12 @@ function NavigationButton (props) {
                   } else {
                     navigate('/', { state: props.state });
                   }
+
                   return;
                 }
               }
 
-              navigate(-1);
+              navigate(-1, { state: props.state });
             } else {
               if (currentSegments.length > 0) {
                 currentSegments.pop();
