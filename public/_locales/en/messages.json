@@ -108,11 +108,11 @@
     "description": "Error message displayed when there is an issue with the shortcut settings"
   },
   "error_no_network_connection": {
-    "message": "No network connection. Please check your internet connection and try again.",
+    "message": "No Internet connection. Please check your connection and try again.",
     "description": "Error message displayed when there is no network connection"
   },
   "error_connection_error": {
-    "message": "Connection error. Check your internet connection and try again.",
+    "message": "Connection error. Please check your Internet connection and try again.",
     "description": "Error message displayed when a connection error occurs"
   },
   "appDesc": {
@@ -764,7 +764,7 @@
     "description": "Title for the button that opens password generator"
   },
   "details_fetch_text": {
-    "message": "Some data is available only in the mobile app.",
+    "message": "Data available only in the mobile app.",
     "description": "Text indicating that some data can be fetched from the mobile app"
   },
   "details_fetch_title": {
@@ -852,7 +852,7 @@
     "description": "Toast shown when a new login is added in another vault"
   },
   "fetch_new_login_cancel_toast": {
-    "message": "User cancelled adding a new Item",
+    "message": "Item adding canceled",
     "description": "Toast message displayed when the user cancels adding a new login item"
   },
   "fetch_password_request_accept_toast": {
@@ -880,7 +880,7 @@
     "description": "Toast shown when a login is updated in another vault"
   },
   "fetch_full_sync_cancel_toast": {
-    "message": "Synchronization cancelled",
+    "message": "Synchronization canceled",
     "description": "Toast message displayed when a full sync operation is canceled"
   },
   "fetch_full_sync_completed_toast": {
@@ -1064,7 +1064,7 @@
     "description": "Description for configuring idle lock behavior"
   },
   "settings_idle_lock_tooltip_1": {
-    "message": "Automatically lock browser extensions when idle",
+    "message": "Autolock browser extensions when idle",
     "description": "Tooltip explaining that the idle lock setting applies only to the extension"
   },
   "settings_idle_lock_tooltip_2": {
@@ -1136,7 +1136,7 @@
     "description": "Header for the notifications settings"
   },
   "settings_notifications_description": {
-    "message": "Choose a notification mechanism that will prompt you about communication between the 2FAS Pass Bobile App and this Browser Extension.",
+    "message": "Choose a notification mechanism that will prompt you about communication between the 2FAS Pass mobile app and this browser extension.",
     "description": "Explains how to configure notifications for communication between the mobile app and extension"
   },
   "settings_notifications_send_test": {
