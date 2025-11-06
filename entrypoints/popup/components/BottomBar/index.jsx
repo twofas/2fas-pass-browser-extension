@@ -133,8 +133,8 @@ function BottomBar () {
   }, [location.pathname, connectView]);
 
   const newWindowButtonClass = useMemo(() =>
-    separateWindow ? S.hiddenPermanent : '',
-    [separateWindow]
+    separateWindow || location.pathname === '/blocked' ? S.hiddenPermanent : '',
+    [separateWindow, location.pathname]
   );
 
   const settingsLinkClass = useMemo(() => {
