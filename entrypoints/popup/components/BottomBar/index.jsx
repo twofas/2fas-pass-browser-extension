@@ -67,7 +67,6 @@ function BottomBar () {
   }, []);
 
   const handleNewWindow = useCallback(async () => {
-    setNewWindowDisabled(true);
     const { state } = location;
 
     try {
@@ -186,7 +185,10 @@ function BottomBar () {
         <div className={staticButtonsClass}>
           <button
             className={newWindowButtonClass}
-            onClick={handleNewWindow}
+            onClick={async () => {
+              setNewWindowDisabled(true);
+              await handleNewWindow();
+            }}
             title={newWindowTitle}
             disabled={newWindowDisabled}
           >
