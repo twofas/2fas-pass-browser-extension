@@ -196,6 +196,15 @@
     gap: 0 4px;
     height: 100%;
 
+    &.disabled {
+      cursor: not-allowed;
+
+      a,
+      button {
+        pointer-events: none !important;
+      }
+    }
+
     button {
       align-items: center;
       background-color: rgba(v.$hover-color-light, 0);
@@ -303,6 +312,14 @@
       opacity: 1;
       pointer-events: auto;
       user-select: auto;
+    }
+
+    &.disabled {
+      cursor: not-allowed;
+
+      a {
+        pointer-events: none;
+      }
     }
 
     a {

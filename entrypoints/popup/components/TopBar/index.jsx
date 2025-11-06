@@ -69,10 +69,23 @@ function TopBar () {
     return (parseInt(matchingLoginsLength, 10) || 0) <= 0 ? S.highlighted : S.active;
   }, [configured, matchingLoginsLength]);
 
-  const addNewBtnClass = useMemo(() =>
-    `${S.topbarAddNewBtn} ${location.pathname === '/add-new/Login' || !configured ? S.disabled : ''}`,
-    [configured, location.pathname]
-  );
+  const addNewBtnClass = useMemo(() => {
+    const path = location.pathname;
+    let returnClass = S.topbarAddNewBtn;
+
+    if (
+      path === '/add-new/Login' ||
+      path === '/fetch' ||
+      path.startsWith('/fetch/') ||
+      path === '/fetch-external' ||
+      path.startsWith('/fetch-external/') ||
+      !configured
+    ) {
+      returnClass += ` ${S.disabled}`;
+    }
+
+    return returnClass;
+  }, [configured, location.pathname]);
 
   const homePageTitle = useMemo(() => browser.i18n.getMessage('go_to_home_page'), []);
   const lockedText = useMemo(() => browser.i18n.getMessage('top_bar_locked'), []);

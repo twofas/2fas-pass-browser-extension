@@ -10,6 +10,7 @@ import { useState, useEffect, useCallback, useRef, memo, lazy } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useAuthActions } from '@/hooks/useAuth';
+import useConnectView from '../../hooks/useConnectView';
 import { generateSessionKeysNonces, generateEphemeralKeys, generateSessionID, calculateConnectSignature, generateQR } from './functions';
 import calculateFetchSignature from '../Fetch/functions/calculateFetchSignature';
 import ConnectOnMessage from './socket/ConnectOnMessage';
@@ -41,8 +42,8 @@ function Connect (props) {
   const [connectingLoader, setConnectingLoader] = useState(264);
   const [deviceName, setDeviceName] = useState(null);
   const [readyDevices, setReadyDevices] = useState([]);
-  const [connectView, setConnectView] = useState(null);
 
+  const { connectView, setConnectView } = useConnectView();
   const { login } = useAuthActions();
   const closeConnectionRef = useRef(null);
   const ephemeralDataRef = useRef(null);
