@@ -132,7 +132,7 @@
     "description": "Description for configuring idle lock behavior"
   },
   "settings_idle_lock_tooltip_1": {
-    "message": "Automatically lock browser extensions when idle",
+    "message": "Autolock browser extensions when idle",
     "description": "Tooltip explaining that the idle lock setting applies only to the extension"
   },
   "settings_idle_lock_tooltip_2": {
@@ -204,7 +204,7 @@
     "description": "Header for the notifications settings"
   },
   "settings_notifications_description": {
-    "message": "Choose a notification mechanism that will prompt you about communication between the 2FAS Pass Bobile App and this Browser Extension.",
+    "message": "Choose a notification mechanism that will prompt you about communication between the 2FAS Pass mobile app and this browser extension.",
     "description": "Explains how to configure notifications for communication between the mobile app and extension"
   },
   "settings_notifications_send_test": {
