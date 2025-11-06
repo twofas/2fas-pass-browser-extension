@@ -20,7 +20,7 @@ import InfoIcon from '@/assets/popup-window/info.svg?react';
 import DeviceQrIcon from '@/assets/popup-window/device-qr.svg?react';
 import QR from './components/QR';
 import NavigationButton from '../../components/NavigationButton';
-import { getNTPTime, sendPush } from '@/partials/functions';
+import { getNTPTime, sendPush, networkTest } from '@/partials/functions';
 import { PULL_REQUEST_TYPES, SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
@@ -113,7 +113,7 @@ function Connect (props) {
     socket.open();
     socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralDataRef.current.uuid, path: SOCKET_PATHS.CONNECT.QR });
     socket.addEventListener('close', ConnectOnClose, { path: SOCKET_PATHS.CONNECT.QR });
-
+    
     setQrCode(qr);
   }, []);
 
@@ -123,7 +123,11 @@ function Connect (props) {
     setSocketError(false);
   }, [initEphemeralKeys, initQRConnection]);
 
-  const connectByPush = async (device, abortSignal) => {
+  const showConnectToast = useCallback(({ message, type }) => {
+    showToast(message, type);
+  }, []);
+
+  const connectByPush = useCallback(async (device, abortSignal) => {
     if (abortSignal?.aborted) {
       return false;
     }
@@ -173,17 +177,44 @@ function Connect (props) {
       socket.addEventListener('message', ConnectOnMessage, { uuid: device.uuid, action: PULL_REQUEST_TYPES.FULL_SYNC, path: SOCKET_PATHS.CONNECT.PUSH });
       socket.addEventListener('close', ConnectOnClose, { path: SOCKET_PATHS.CONNECT.PUSH });
     } catch (e) {
+      setConnectView(CONNECT_VIEWS.DeviceSelect);
+      const toastMessage = await networkTest('error_general');
+      showConnectToast({ message: browser.i18n.getMessage(toastMessage), type: 'error' });
       await CatchError(e);
     }
-  };
-
-  const showConnectToast = useCallback(async ({ message, type }) => {
-    showToast(message, type);
-  }, [showToast]);
+  }, [showConnectToast]);
 
   const handleSocketError = useCallback(value => {
     setSocketError(value);
   }, []);
+
+  const handleViewSwitch = useCallback(async () => {
+    switch (connectView) {
+      case CONNECT_VIEWS.QrView: {
+        if (closeConnectionRef.current) {
+          await closeConnectionRef.current().catch();
+        }
+
+        if (!socketError) {
+          await initQRConnection();
+        }
+
+        break;
+      }
+
+      case CONNECT_VIEWS.DeviceSelect: {
+        if (closeConnectionRef.current) {
+          await closeConnectionRef.current().catch();
+        }
+
+        await getReadyDevices();
+
+        break;
+      }
+
+      default: break;
+    }
+  }, [connectView, socketError, initQRConnection, getReadyDevices]);
 
   useEffect(() => {
     closeConnectionRef.current = async () => {
@@ -191,7 +222,9 @@ function Connect (props) {
         const socket = TwoFasWebSocket.getInstance();
 
         if (socket && socket.socket.readyState !== WebSocket.CLOSED) {
-          socket.close(WEBSOCKET_STATES.NORMAL_CLOSURE, 'Component unmounted');
+          try {
+            socket.close(WEBSOCKET_STATES.NORMAL_CLOSURE, 'Component unmounted');
+          } catch {}
 
           await new Promise(resolve => {
             const checkClosed = setInterval(() => {
@@ -261,36 +294,8 @@ function Connect (props) {
   }, []);
 
   useEffect(() => {
-    const handleViewSwitch = async () => {
-      switch (connectView) {
-        case CONNECT_VIEWS.QrView: {
-          if (closeConnectionRef.current) {
-            await closeConnectionRef.current();
-          }
-
-          if (!socketError) {
-            initQRConnection();
-          }
-
-          break;
-        }
-
-        case CONNECT_VIEWS.DeviceSelect: {
-          if (closeConnectionRef.current) {
-            await closeConnectionRef.current();
-          }
-
-          getReadyDevices();
-
-          break;
-        }
-
-        default: break;
-      }
-    };
-
     handleViewSwitch();
-  }, [connectView]);
+  }, [handleViewSwitch]);
 
   return (
     <LazyMotion features={loadDomAnimation}>
