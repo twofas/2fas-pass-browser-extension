@@ -8,8 +8,9 @@ import S from './BottomBar.module.scss';
 import { useState, useEffect, lazy, useCallback, useMemo, memo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
-import { PULL_REQUEST_TYPES } from '@/constants';
+import { PULL_REQUEST_TYPES, CONNECT_VIEWS } from '@/constants';
 import { useAuthState } from '@/hooks/useAuth';
+import useConnectView from '../../hooks/useConnectView';
 import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 
 const NewWindowIcon = lazy(() => import('@/assets/popup-window/new-window.svg?react'));
@@ -50,6 +51,7 @@ function BottomBar () {
   const navigate = useNavigate();
   const { wsActive } = useWS();
   const { configured } = useAuthState();
+  const { connectView } = useConnectView();
 
   const setSecIcon = useCallback(async () => {
     const svgContent = await getSecIcon();
@@ -114,6 +116,22 @@ function BottomBar () {
     }
   }, [location, navigate]);
 
+  const staticButtonsClass = useMemo(() => {
+    const path = location?.pathname;
+
+    if (
+      path === '/fetch' ||
+      path.startsWith('/fetch/') ||
+      path === '/fetch-external' ||
+      path.startsWith('/fetch-external/') ||
+      path === '/connect' && (connectView === CONNECT_VIEWS.Progress || connectView === CONNECT_VIEWS.PushSent)
+    ) {
+      return `${S.bottombarStatic} ${S.disabled}`;
+    }
+
+    return S.bottombarStatic;
+  }, [location.pathname, connectView]);
+
   const newWindowButtonClass = useMemo(() =>
     separateWindow ? S.hiddenPermanent : '',
     [separateWindow]
@@ -134,6 +152,10 @@ function BottomBar () {
 
     if (!configured || path === '/blocked') {
       return '';
+    }
+
+    if (path === '/fetch' || path.startsWith('/fetch/') || path === '/fetch-external' || path.startsWith('/fetch-external/')) {
+      return `${S.visible} ${S.disabled}`;
     }
 
     return S.visible;
@@ -161,7 +183,7 @@ function BottomBar () {
   return (
     <>
       <footer className={S.bottombar}>
-        <div className={S.bottombarStatic}>
+        <div className={staticButtonsClass}>
           <button
             className={newWindowButtonClass}
             onClick={handleNewWindow}
