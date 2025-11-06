@@ -56,7 +56,7 @@
     "description": "Toast shown when a new login is added in another vault"
   },
   "fetch_new_login_cancel_toast": {
-    "message": "User cancelled adding a new Item",
+    "message": "Item adding canceled",
     "description": "Toast message displayed when the user cancels adding a new login item"
   },
   "fetch_password_request_accept_toast": {
@@ -84,7 +84,7 @@
     "description": "Toast shown when a login is updated in another vault"
   },
   "fetch_full_sync_cancel_toast": {
-    "message": "Synchronization cancelled",
+    "message": "Synchronization canceled",
     "description": "Toast message displayed when a full sync operation is canceled"
   },
   "fetch_full_sync_completed_toast": {
