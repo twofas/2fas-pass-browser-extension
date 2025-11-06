@@ -196,12 +196,54 @@ function PasswordGenerator (props) {
     }
   };
 
+  const returnState = () => {
+    switch (data.returnTo) {
+      case 'addNew': {
+        return {
+          data: {
+            url: data.url,
+            username: data.username,
+            minLength: data.minLength,
+            maxLength: data.maxLength,
+            pattern: data.pattern,
+            onMobile: data.onMobile,
+            additionalOverflow: data.additionalOverflow,
+            passwordVisible: data.passwordVisible
+          }
+        };
+      }
+
+      case 'details': {
+        return {
+          data: {
+            nameEditable: data.nameEditable,
+            usernameEditable: data.usernameEditable,
+            passwordEditable: data.passwordEditable,
+            domainsEditable: data.domainsEditable,
+            tierEditable: data.tierEditable,
+            tagsEditable: data.tagsEditable,
+            notesEditable: data.notesEditable,
+            usernameMobile: data.usernameMobile,
+            passwordMobile: data.passwordMobile,
+            passwordEdited: data.passwordEdited
+          }
+        };
+      }
+
+      default:
+        return {};
+    }
+  };
+
   return (
     <div className={`${props.className ? props.className : ''}`}>
       <div ref={scrollableRef}>
         <section className={S.passwordGenerator}>
           <div className={S.passwordGeneratorContainer}>
-            <NavigationButton type='back' />
+            <NavigationButton
+              type='back'
+              state={returnState()}
+            />
             <h2>{browser.i18n.getMessage('password_generator_title')}</h2>
 
             <Form
