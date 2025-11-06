@@ -155,7 +155,7 @@ class TwoFasWebSocket {
         return callback(e, data);
       });  
     }
-  };;
+  };
 
   close (codeOrTimeout = false, reason = '') {
     this.socket.removeEventListener('open', this.#openListener);
