@@ -196,6 +196,10 @@ function Connect (props) {
         }
 
         if (!socketError) {
+          if (!ephemeralDataRef?.current?.publicKey) {
+            await initEphemeralKeys();
+          }
+
           await initQRConnection();
         }
 
