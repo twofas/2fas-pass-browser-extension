@@ -62,6 +62,12 @@ function Settings (props) {
                   </Link>
                 </li>
                 <li>
+                  <Link to='/settings/devices' prefetch='intent'>
+                    <span>{browser.i18n.getMessage('settings_devices')}</span>
+                    <MenuArrowIcon />
+                  </Link>
+                </li>
+                <li>
                   <Link to='/settings/about' prefetch='intent'>
                     <span>{browser.i18n.getMessage('settings_about')}</span>
                     <MenuArrowIcon />
