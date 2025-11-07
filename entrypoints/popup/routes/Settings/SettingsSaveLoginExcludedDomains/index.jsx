@@ -163,98 +163,100 @@ function SettingsSaveLoginExcludedDomains (props) {
   }
 
   return (
-    <div className={`${props.className ? props.className : ''}`}>
-      <div>
-        <section className={S.settings}>
-          <NavigationButton type='back' />
-          <NavigationButton type='cancel' />
+    <>
+      <div className={`${props.className ? props.className : ''}`}>
+        <div>
+          <section className={S.settings}>
+            <NavigationButton type='back' />
+            <NavigationButton type='cancel' />
 
-          <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
-            <div className={S.settingsSubmenu}>
-              <div className={S.settingsSubmenuHeader}>
-                <h3>{browser.i18n.getMessage('settings_excluded_domains')}</h3>
-              </div>
-
-              <div className={`${S.settingsSubmenuBody} ${S.smallMargin}`}>
-                <div className={S.settingsExcludedDomains}>
-                  {generateExcludedDomains()}
+            <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
+              <div className={S.settingsSubmenu}>
+                <div className={S.settingsSubmenuHeader}>
+                  <h3>{browser.i18n.getMessage('settings_excluded_domains')}</h3>
                 </div>
 
-                <div className={`${S.settingsExcludedDomainsAdd} ${data?.newDomainForm ? S.hidden : ''} ${excludedDomains.length > 0 ? S.settingsExcludedDomainsAddAnother : ''}`}>
-                  <button className={S.settingsExcludedDomainsAddButton} onClick={() => {
-                    setData('newDomainForm', true);
-                  }}>
-                    <AddNewIcon />
-                    <span>{excludedDomains.length > 0 ? browser.i18n.getMessage('settings_excluded_domains_add_another_domain_text') : browser.i18n.getMessage('settings_excluded_domains_add_domain_text')}</span>
-                  </button>
-                </div>
-                
-                <div className={`${S.settingsExcludedDomainsNew} ${data?.newDomainForm ? '' : S.hidden}`}>
-                  <Form onSubmit={onSubmit} initialValues={{ 'ignored-domain': data?.inputValue }} render={({ handleSubmit, submitting, form }) => ( // form, pristine, values
-                      <form className={S.settingsExcludedDomainsNewForm} onSubmit={handleSubmit} onChange={() => {
-                        const values = form.getState().values;
-                        setData('inputValue', values['ignored-domain'] || '');
-                      }}>
-                        <Field name='ignored-domain'>
-                          {({ input }) => (
-                            <div className={`${pI.passInput} ${pI.withoutMargin}`}>
-                              <div className={pI.passInputBottom}>
-                                <input
-                                  type='text'
-                                  {...input}
-                                  id='ignored-domain'
-                                  placeholder={browser.i18n.getMessage('settings_excluded_domains_add_input_placeholder')}
-                                  dir='ltr'
-                                  spellCheck='true'
-                                  autoCorrect='on'
-                                  autoComplete='on'
-                                />
-                                <div className={pI.passInputBottomButtons}>
-                                  <button
-                                    className={pI.iconButton}
-                                    disabled={submitting ? 'disabled' : ''}
-                                    type='submit'
-                                    title={browser.i18n.getMessage('settings_excluded_domains_add_submit_title')}
-                                  >
-                                    <AddNewIcon className={S.iconNew} />
-                                  </button>
-                                  <button
-                                    className={pI.iconButton}
-                                    disabled={submitting ? 'disabled' : ''}
-                                    type='button'
-                                    title={browser.i18n.getMessage('settings_excluded_domains_add_cancel_title')}
-                                    onClick={() => {
-                                      setData('newDomainForm', false);
-                                      setData('inputValue', '');
-                                      form.reset();
-                                    }}
-                                  >
-                                    <CancelIcon className={S.iconCancel} />
-                                  </button>
+                <div className={`${S.settingsSubmenuBody} ${S.smallMargin}`}>
+                  <div className={S.settingsExcludedDomains}>
+                    {generateExcludedDomains()}
+                  </div>
+
+                  <div className={`${S.settingsExcludedDomainsAdd} ${data?.newDomainForm ? S.hidden : ''} ${excludedDomains.length > 0 ? S.settingsExcludedDomainsAddAnother : ''}`}>
+                    <button className={S.settingsExcludedDomainsAddButton} onClick={() => {
+                      setData('newDomainForm', true);
+                    }}>
+                      <AddNewIcon />
+                      <span>{excludedDomains.length > 0 ? browser.i18n.getMessage('settings_excluded_domains_add_another_domain_text') : browser.i18n.getMessage('settings_excluded_domains_add_domain_text')}</span>
+                    </button>
+                  </div>
+                  
+                  <div className={`${S.settingsExcludedDomainsNew} ${data?.newDomainForm ? '' : S.hidden}`}>
+                    <Form onSubmit={onSubmit} initialValues={{ 'ignored-domain': data?.inputValue }} render={({ handleSubmit, submitting, form }) => ( // form, pristine, values
+                        <form className={S.settingsExcludedDomainsNewForm} onSubmit={handleSubmit} onChange={() => {
+                          const values = form.getState().values;
+                          setData('inputValue', values['ignored-domain'] || '');
+                        }}>
+                          <Field name='ignored-domain'>
+                            {({ input }) => (
+                              <div className={`${pI.passInput} ${pI.withoutMargin}`}>
+                                <div className={pI.passInputBottom}>
+                                  <input
+                                    type='text'
+                                    {...input}
+                                    id='ignored-domain'
+                                    placeholder={browser.i18n.getMessage('settings_excluded_domains_add_input_placeholder')}
+                                    dir='ltr'
+                                    spellCheck='true'
+                                    autoCorrect='on'
+                                    autoComplete='on'
+                                  />
+                                  <div className={pI.passInputBottomButtons}>
+                                    <button
+                                      className={pI.iconButton}
+                                      disabled={submitting ? 'disabled' : ''}
+                                      type='submit'
+                                      title={browser.i18n.getMessage('settings_excluded_domains_add_submit_title')}
+                                    >
+                                      <AddNewIcon className={S.iconNew} />
+                                    </button>
+                                    <button
+                                      className={pI.iconButton}
+                                      disabled={submitting ? 'disabled' : ''}
+                                      type='button'
+                                      title={browser.i18n.getMessage('settings_excluded_domains_add_cancel_title')}
+                                      onClick={() => {
+                                        setData('newDomainForm', false);
+                                        setData('inputValue', '');
+                                        form.reset();
+                                      }}
+                                    >
+                                      <CancelIcon className={S.iconCancel} />
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          )}
-                        </Field>
-                      </form>
-                    )}
-                  />
+                            )}
+                          </Field>
+                        </form>
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
-
-              <ConfirmDialog
-                open={dialogOpen}
-                message={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_message').replace('DOMAIN', domainToRemove || browser.i18n.getMessage('settings_excluded_domains_remove_dialog_message_replace_fallback'))}
-                cancelText={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_cancel_text')}
-                confirmText={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_confirm_text')}
-                onCancel={handleDialogCancel}
-                onConfirm={handleDialogConfirm}
-              />
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
-    </div>
+
+      <ConfirmDialog
+        open={dialogOpen}
+        message={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_message').replace('DOMAIN', domainToRemove || browser.i18n.getMessage('settings_excluded_domains_remove_dialog_message_replace_fallback'))}
+        cancelText={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_cancel_text')}
+        confirmText={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_confirm_text')}
+        onCancel={handleDialogCancel}
+        onConfirm={handleDialogConfirm}
+      />
+    </>
   );
 }
 
