@@ -1,0 +1,108 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.confirm-dialog {
+  animation: fade-out .3s ease-out;
+  background-color: v.$primary-box-bg-light;
+  border: 1px solid v.$primary-box-stroke-light;
+  border-radius: 8px;
+  left: 0;
+  opacity: 0;
+  padding: 12px 20px;
+  position: fixed;
+  text-align: center;
+  top: 0;
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out,
+    overlay 0.3s ease-out allow-discrete,
+    display 0.3s ease-out allow-discrete;
+  user-select: none;
+  width: 80%;
+  z-index: 9999;
+
+  @include m.darkMode {
+    background-color: v.$primary-box-bg-dark;
+    border: 1px solid v.$primary-box-stroke-dark;
+  }
+
+  &:open {
+    animation: fade-in 0.3s ease-out;
+    opacity: 1;
+
+    &::backdrop {
+      background-color: black;
+      animation: backdrop-fade-in 0.3s ease-out forwards;
+    }
+  }
+
+  &-actions {
+    display: inline-flex;
+    flex-direction: row;
+    gap: 0 12px;
+    margin-top: 24px;
+  }
+
+  h2 {
+    color: v.$primary-text-light;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 4px;
+  }
+
+  p {
+    color: v.$secondary-text-light;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.33;
+  }
+}
+
+@starting-style {
+  .confirm-dialog {
+    &:open {
+      opacity: 0;
+    }
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    display: none;
+  }
+
+  100% {
+    opacity: 1;
+    display: block;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+    display: block;
+  }
+
+  100% {
+    opacity: 0;
+    display: block;
+  }
+}
+
+@keyframes backdrop-fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0.5;
+  }
+}
