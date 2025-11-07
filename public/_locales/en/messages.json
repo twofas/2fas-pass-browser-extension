@@ -944,7 +944,7 @@
     "description": "Label for the security section in settings"
   },
   "settings_devices": {
-    "message": "Trusted Devices",
+    "message": "Connected Devices",
     "description": "Label for the trusted devices section in settings"
   },
   "settings_about": {
@@ -1272,11 +1272,11 @@
     "description": "Button label to cancel the reset action"
   },
   "settings_devices_header": {
-    "message": "Trusted Devices",
+    "message": "Connected Devices",
     "description": "Header for the trusted devices section in settings"
   },
   "settings_devices_description": {
-    "message": "List of Trusted Devices that have been connected with this Browser Extension. Disconnect them from here if you no longer use or recognize them.",
+    "message": "List of devices connected with this Browser Extension. Disconnect them from here if you no longer use them.",
     "description": "Description for managing trusted devices"
   },
   "settings_devices_unknown_platform": {
@@ -1284,7 +1284,7 @@
     "description": "Label for devices with an unknown platform"
   },
   "settings_devices_no_devices": {
-    "message": "No trusted devices found.",
+    "message": "No devices found.",
     "description": "Message displayed when there are no trusted devices found"
   },
   "settings_devices_current_device_title": {
@@ -1304,11 +1304,11 @@
     "description": "Label for the last connected column in the trusted devices list"
   },
   "settings_devices_disconnect_title": {
-    "message": "Disconnect this trusted device",
+    "message": "Disconnect this device",
     "description": "Title for the disconnect trusted device button"
   },
   "settings_devices_dialog_message": {
-    "message": "Are you sure you want to disconnect this trusted device?",
+    "message": "Are you sure you want to disconnect this device?",
     "description": "Confirmation message when disconnecting a trusted device"
   },
   "settings_devices_dialog_submessage_current_device": {
