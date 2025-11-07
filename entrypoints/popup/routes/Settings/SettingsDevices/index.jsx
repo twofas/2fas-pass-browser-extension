@@ -118,41 +118,43 @@ function SettingsDevices (props) {
   }
 
   return (
-    <div className={`${props.className ? props.className : ''}`}>
-      <div ref={scrollableRef}>
-        <section className={S.settings}>
-          <NavigationButton type='back' />
-          <NavigationButton type='cancel' />
+    <>
+      <div className={`${props.className ? props.className : ''}`}>
+        <div ref={scrollableRef}>
+          <section className={S.settings}>
+            <NavigationButton type='back' />
+            <NavigationButton type='cancel' />
 
-          <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
-            <div className={S.settingsSubmenu}>
-              <div className={S.settingsSubmenuHeader}>
-                <h3>{browser.i18n.getMessage('settings_devices_header')}</h3>
-              </div>
-    
-              <div className={S.settingsSubmenuBody}>
-                <div className={S.settingsDevices}>
-                  <h4>{browser.i18n.getMessage('settings_devices_description')}</h4>
-                  <div className={S.settingsDevicesList}>
-                    {generateDevicesList()}
+            <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
+              <div className={S.settingsSubmenu}>
+                <div className={S.settingsSubmenuHeader}>
+                  <h3>{browser.i18n.getMessage('settings_devices_header')}</h3>
+                </div>
+      
+                <div className={S.settingsSubmenuBody}>
+                  <div className={S.settingsDevices}>
+                    <h4>{browser.i18n.getMessage('settings_devices_description')}</h4>
+                    <div className={S.settingsDevicesList}>
+                      {generateDevicesList()}
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <ConfirmDialog 
-                open={dialogOpen}
-                message={browser.i18n.getMessage('settings_devices_dialog_message')}
-                subMessage={currentDevice?.id === chosenDeviceId ? browser.i18n.getMessage('settings_devices_dialog_submessage_current_device') : null}
-                cancelText={browser.i18n.getMessage('settings_devices_dialog_cancel_text')}
-                confirmText={browser.i18n.getMessage('settings_devices_dialog_confirm_text')}
-                onCancel={handleDialogCancel}
-                onConfirm={handleDialogConfirm}
-              />
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
-    </div>
+
+      <ConfirmDialog 
+        open={dialogOpen}
+        message={browser.i18n.getMessage('settings_devices_dialog_message')}
+        subMessage={currentDevice?.id === chosenDeviceId ? browser.i18n.getMessage('settings_devices_dialog_submessage_current_device') : null}
+        cancelText={browser.i18n.getMessage('settings_devices_dialog_cancel_text')}
+        confirmText={browser.i18n.getMessage('settings_devices_dialog_confirm_text')}
+        onCancel={handleDialogCancel}
+        onConfirm={handleDialogConfirm}
+      />
+    </>
   );
 }
 
