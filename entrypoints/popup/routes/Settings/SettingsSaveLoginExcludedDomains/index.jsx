@@ -12,6 +12,7 @@ import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
 import usePopupStateStore from '../../../store/popupState';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
+import ConfirmDialog from '@/entrypoints/popup/components/ConfirmDialog';
 
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
 const AddNewIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
@@ -25,32 +26,11 @@ const CancelIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
 function SettingsSaveLoginExcludedDomains (props) {
   const [loading, setLoading] = useState(true);
   const [excludedDomains, setExcludedDomains] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [domainToRemove, setDomainToRemove] = useState(null);
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
-
-  useEffect(() => {
-    const getExcludedDomains = async () => {
-      {
-        let storageExcludedDomains = await storage.getItem('local:savePromptIgnoreDomains');
-
-        if (!storageExcludedDomains) {
-          storageExcludedDomains = [];
-          await storage.setItem('local:savePromptIgnoreDomains', storageExcludedDomains);
-        }
-
-        setExcludedDomains(storageExcludedDomains);
-      }
-
-      setLoading(false);
-    };
-
-    try {
-      getExcludedDomains();
-    } catch (e) {
-      CatchError(e);
-    }
-  }, []);
 
   const removeExcludedDomain = async domain => {
     const updatedDomains = excludedDomains.filter((d) => d !== domain);
@@ -73,9 +53,15 @@ function SettingsSaveLoginExcludedDomains (props) {
 
           {excludedDomains.map((domain, index) => {
             return (
-              <div key={index} className={S.settingsExcludedDomainsItem}>
+              <div
+                key={index}
+                className={S.settingsExcludedDomainsItem}
+              >
                 <p>{domain}</p>
-                <button title={browser.i18n.getMessage('settings_excluded_domains_remove')} onClick={() => removeExcludedDomain(domain)}>
+                <button
+                  title={browser.i18n.getMessage('settings_excluded_domains_remove')}
+                  onClick={() => showConfirmDialog(domain)}
+                >
                   <TrashIcon />
                 </button>
               </div>
@@ -84,6 +70,25 @@ function SettingsSaveLoginExcludedDomains (props) {
         </div>
       );
     }
+  };
+
+  const showConfirmDialog = domain => {
+    setDomainToRemove(domain);
+    setDialogOpen(true);
+  };
+
+  const handleDialogCancel = () => {
+    setDialogOpen(false);
+    setTimeout(() => { setDomainToRemove(null); }, 301);
+  };
+
+  const handleDialogConfirm = async () => {
+    if (domainToRemove) {
+      await removeExcludedDomain(domainToRemove);
+    }
+
+    setDialogOpen(false);
+    setTimeout(() => { setDomainToRemove(null); }, 301);
   };
 
   const validate = values => {
@@ -129,6 +134,29 @@ function SettingsSaveLoginExcludedDomains (props) {
     form.reset();
     showToast(browser.i18n.getMessage('settings_excluded_domains_add_success'), 'success');
   };
+
+  useEffect(() => {
+    const getExcludedDomains = async () => {
+      {
+        let storageExcludedDomains = await storage.getItem('local:savePromptIgnoreDomains');
+
+        if (!storageExcludedDomains) {
+          storageExcludedDomains = [];
+          await storage.setItem('local:savePromptIgnoreDomains', storageExcludedDomains);
+        }
+
+        setExcludedDomains(storageExcludedDomains);
+      }
+
+      setLoading(false);
+    };
+
+    try {
+      getExcludedDomains();
+    } catch (e) {
+      CatchError(e);
+    }
+  }, []);
 
   if (loading) {
     return null;
@@ -213,6 +241,15 @@ function SettingsSaveLoginExcludedDomains (props) {
                   />
                 </div>
               </div>
+
+              <ConfirmDialog
+                open={dialogOpen}
+                message={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_message').replace('DOMAIN', domainToRemove || browser.i18n.getMessage('settings_excluded_domains_remove_dialog_message_replace_fallback'))}
+                cancelText={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_cancel_text')}
+                confirmText={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_confirm_text')}
+                onCancel={handleDialogCancel}
+                onConfirm={handleDialogConfirm}
+              />
             </div>
           </div>
         </section>
