@@ -70,6 +70,50 @@
     }
   }
 
+  &.btn-danger {
+    background-color: v.$error-light;
+    border-radius: 6px;
+    color: v.$tertiary-text-light;
+    font-weight: 500;
+
+    @include m.darkMode {
+      background-color: v.$error-dark;
+      color: v.$tertiary-text-dark;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: rgba(v.$error-light, 0.8);
+      color: v.$tertiary-text-light;
+
+      @include m.darkMode {
+        background-color: rgba(v.$error-dark, 0.8);
+        color: v.$tertiary-text-dark;
+      }
+    }
+
+    &:active {
+      background-color: rgba(v.$error-light, 0.7);
+      color: v.$tertiary-text-light;
+
+      @include m.darkMode {
+        background-color: rgba(v.$error-dark, 0.7);
+        color: v.$tertiary-text-dark;
+      }
+    }
+
+    &[disabled],
+    &.disabled {
+      background-color: v.$object-light;
+      color: v.$tertiary-text-light;
+
+      @include m.darkMode {
+        background-color: v.$object-dark;
+        color: v.$tertiary-text-dark;
+      }
+    }
+  }
+
   &.btn-clear {
     color: v.$primary-color-light;
     font-size: 14px;
@@ -380,7 +424,7 @@
       }
     }
   }
-  
+
   // INSTALL PAGE
   &.btn-install-page {
     border-radius: 32px;
