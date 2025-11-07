@@ -6,7 +6,6 @@
 
 import S from './ConfirmDialog.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { useRef, useEffect } from 'react';
 
 /** 
 * Function to render the Popup Dialog component.
@@ -14,39 +13,29 @@ import { useRef, useEffect } from 'react';
 * @return {JSX.Element} The rendered component.
 */
 function ConfirmDialog (props) {
-  const dialogRef = useRef(null);
-
-  useEffect(() => {
-    if (props.open) {
-      dialogRef.current.showModal();
-    } else {
-      dialogRef.current.close();
-    }
-  }, [props.open]);
-
   return (
-    <dialog
-      className={S.confirmDialog}
-      ref={dialogRef}
-    >
-      <h2>{props.message}</h2>
-      {props.subMessage && <p>{props.subMessage}</p>}
+    <div className={`${S.confirmDialog} ${props.open ? S.open : ''}`}>
+      <div className={S.confirmDialogBackdrop} onClick={props.onCancel} />
+      <div className={S.confirmDialogBox}>
+        <h2>{props.message}</h2>
+        {props.subMessage && <p>{props.subMessage}</p>}
 
-      <div className={S.confirmDialogActions}>
-        <button
-          className={`${bS.btn} ${bS.btnClear}`}
-          onClick={props.onCancel}
-        >
-          {props.cancelText}
-        </button>
-        <button
-          className={`${bS.btn} ${bS.btnSimpleAction} ${bS.btnDanger} ${bS.btnCancel}`}
-          onClick={props.onConfirm}
-        >
-          {props.confirmText}
-        </button>
+        <div className={S.confirmDialogActions}>
+          <button
+            className={`${bS.btn} ${bS.btnClear}`}
+            onClick={props.onCancel}
+          >
+            {props.cancelText}
+          </button>
+          <button
+            className={`${bS.btn} ${bS.btnSimpleAction} ${bS.btnDanger} ${bS.btnCancel}`}
+            onClick={props.onConfirm}
+          >
+            {props.confirmText}
+          </button>
+        </div>
       </div>
-    </dialog>
+    </div>
   );
 }
 
