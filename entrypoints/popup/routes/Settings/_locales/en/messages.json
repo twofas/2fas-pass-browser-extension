@@ -344,7 +344,7 @@
     "description": "Header for the trusted devices section in settings"
   },
   "settings_devices_description": {
-    "message": "List of Trusted Devices that have been connected with this Browser Extension. Disconnect it from here if you no longer use it or recognize it.",
+    "message": "List of Trusted Devices that have been connected with this Browser Extension. Disconnect them from here if you no longer use or recognize them.",
     "description": "Description for managing trusted devices"
   },
   "settings_devices_unknown_platform": {
@@ -380,7 +380,7 @@
     "description": "Confirmation message when disconnecting a trusted device"
   },
   "settings_devices_dialog_submessage_current_device": {
-    "message": "This is your current device! Disconnecting it will block any future actions like fetching password etc.",
+    "message": "This is your current device! Disconnecting it will block any future actions, such as fetching passwords",
     "description": "Warning sub-message when disconnecting the current trusted device"
   },
   "settings_devices_dialog_cancel_text": {
