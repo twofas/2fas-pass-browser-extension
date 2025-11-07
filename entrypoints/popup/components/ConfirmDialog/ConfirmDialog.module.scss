@@ -8,37 +8,81 @@
 @use "@/partials/global-styles/mixins" as m;
 
 .confirm-dialog {
-  animation: fade-out .3s ease-out;
-  background-color: v.$primary-box-bg-light;
-  border: 1px solid v.$primary-box-stroke-light;
-  border-radius: 8px;
+  align-items: center;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
   left: 0;
   opacity: 0;
-  padding: 12px 20px;
+  pointer-events: none;
   position: fixed;
   text-align: center;
   top: 0;
-  transition:
-    opacity 0.3s ease-out,
-    transform 0.3s ease-out,
-    overlay 0.3s ease-out allow-discrete,
-    display 0.3s ease-out allow-discrete;
+  transition: opacity .3s ease-in-out;
   user-select: none;
-  width: 80%;
+  width: 100vw;
   z-index: 9999;
 
-  @include m.darkMode {
-    background-color: v.$primary-box-bg-dark;
-    border: 1px solid v.$primary-box-stroke-dark;
+  &.open {
+    opacity: 1;
+    pointer-events: all;
+
+    .confirm-dialog-box {
+      transform: translateY(0);
+    }
   }
 
-  &:open {
-    animation: fade-in 0.3s ease-out;
-    opacity: 1;
+  &-backdrop {
+    background-color: rgba(v.$object-light, 0.5);
+    backdrop-filter: blur(1px);
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: -1;
 
-    &::backdrop {
-      background-color: black;
-      animation: backdrop-fade-in 0.3s ease-out forwards;
+    @include m.darkMode {
+      background-color: rgba(v.$primary-bg-dark, 0.7);
+    }
+  }
+
+  &-box {
+    background-color: v.$primary-box-bg-light;
+    border: 1px solid v.$primary-box-stroke-light;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .1);
+    padding: 12px 20px;
+    transform: translateY(20px);
+    transition: transform .3s ease-in-out;
+    width: 80vw;
+
+    @include m.darkMode {
+      background-color: v.$primary-box-bg-dark;
+      border: 1px solid v.$primary-box-stroke-dark;
+    }
+
+    h2 {
+      color: v.$primary-text-light;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 4px;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    p {
+      color: v.$secondary-text-light;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.33;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
     }
   }
 
@@ -47,62 +91,5 @@
     flex-direction: row;
     gap: 0 12px;
     margin-top: 24px;
-  }
-
-  h2 {
-    color: v.$primary-text-light;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.5;
-    margin-bottom: 4px;
-  }
-
-  p {
-    color: v.$secondary-text-light;
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 1.33;
-  }
-}
-
-@starting-style {
-  .confirm-dialog {
-    &:open {
-      opacity: 0;
-    }
-  }
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-    display: none;
-  }
-
-  100% {
-    opacity: 1;
-    display: block;
-  }
-}
-
-@keyframes fade-out {
-  0% {
-    opacity: 1;
-    display: block;
-  }
-
-  100% {
-    opacity: 0;
-    display: block;
-  }
-}
-
-@keyframes backdrop-fade-in {
-  0% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 0.5;
   }
 }
