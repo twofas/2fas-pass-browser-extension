@@ -299,6 +299,22 @@
     "message": "Cancel ignoring this domain",
     "description": "Title for the button to cancel ignoring a new domain to the ignored list"
   },
+  "settings_excluded_domains_remove_dialog_message": {
+    "message": "Are you sure you want to remove DOMAIN from the ignored domains list?",
+    "description": "Confirmation message when removing a domain from the ignored list"
+  },
+  "settings_excluded_domains_remove_dialog_message_replace_fallback": {
+    "message": "this domain",
+    "description": "Fallback text for the domain placeholder in the remove domain confirmation dialog"
+  },
+  "settings_excluded_domains_remove_dialog_cancel_text": {
+    "message": "Cancel",
+    "description": "Cancel button text in the remove domain confirmation dialog"
+  },
+  "settings_excluded_domains_remove_dialog_confirm_text": {
+    "message": "Remove",
+    "description": "Confirm button text in the remove domain confirmation dialog"
+  },
   "settings_danger_zone": {
     "message": "Danger Zone",
     "description": "Label for the danger zone section in settings"
