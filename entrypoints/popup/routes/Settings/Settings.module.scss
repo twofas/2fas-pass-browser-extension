@@ -889,6 +889,123 @@
     }
   }
 
+  &-devices {
+    &-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px 0;
+
+      &-item {
+        align-items: center;
+        background-color: v.$primary-bg-light;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 12px;
+
+        @include m.darkMode {
+          background-color: v.$primary-bg-dark;
+        }
+
+        &.current-device {
+          .settings-devices-list-item-content {
+            h5 {
+              color: v.$primary-color-light;
+
+              @include m.darkMode {
+                color: v.$primary-color-dark;
+              }
+            }
+          }
+        }
+
+        &-content {
+          h5 {
+            color: v.$primary-text-light;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1;
+            margin-bottom: 3px;
+
+            @include m.darkMode {
+              color: v.$primary-text-dark;
+            }
+          }
+
+          h6,
+          p {
+            color: v.$secondary-text-light;
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 1;
+            margin-bottom: 1px;
+
+            @include m.darkMode {
+              color: v.$secondary-text-dark;
+            }
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+
+        &-actions {
+          &-remove {
+            cursor: pointer;
+
+            &:hover {
+              svg {
+                stroke: rgba(v.$error-light, .7);
+
+                @include m.darkMode {
+                  stroke: rgba(v.$error-dark, .7);
+                }
+              }
+            }
+
+            svg {
+              height: 20px;
+              stroke: v.$error-light;
+              stroke-linecap: round;
+              stroke-linejoin: round;
+              stroke-width: 1.5;
+              transition: stroke .3s ease-in-out;
+              width: auto;
+
+              @include m.darkMode {
+                stroke: v.$error-dark;
+              }
+            }
+          }
+        }
+      }
+
+      &-empty {
+        color: v.$primary-text-light;
+        margin-top: 12px;
+        text-align: center;
+
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
+      }
+    }
+
+    h4 {
+      color: v.$secondary-text-light;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 12px;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+  }
+
   h2 {
     color: v.$primary-text-light;
     font-size: 16px;
