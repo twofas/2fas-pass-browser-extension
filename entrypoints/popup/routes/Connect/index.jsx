@@ -22,9 +22,20 @@ import QR from './components/QR';
 import NavigationButton from '../../components/NavigationButton';
 import { getNTPTime, sendPush, networkTest } from '@/partials/functions';
 import { PULL_REQUEST_TYPES, SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
+import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
+import usePopupStateStore from '../../store/popupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const PushNotification = lazy(() => import('../Fetch/components/PushNotification'));
+const IphoneIconLight = lazy(() => import('@/assets/popup-window/device-select/device-iphone-light.svg?react'));
+const IphoneIconDark = lazy(() => import('@/assets/popup-window/device-select/device-iphone-dark.svg?react'));
+const AndroidIconLight = lazy(() => import('@/assets/popup-window/device-select/device-android-light.svg?react'));
+const AndroidIconDark = lazy(() => import('@/assets/popup-window/device-select/device-android-dark.svg?react'));
+const IpadIconLight = lazy(() => import('@/assets/popup-window/device-select/device-ipad-light.svg?react'));
+const IpadIconDark = lazy(() => import('@/assets/popup-window/device-select/device-ipad-dark.svg?react'));
+const AndroidTabletIconLight = lazy(() => import('@/assets/popup-window/device-select/device-android-tablet-light.svg?react'));
+const AndroidTabletIconDark = lazy(() => import('@/assets/popup-window/device-select/device-android-tablet-dark.svg?react'));
+const ChevronIcon = lazy(() => import('@/assets/popup-window/chevron2.svg?react'));
 
 const viewVariants = {
   visible: { opacity: 1, borderWidth: '1px', pointerEvents: 'auto' },
@@ -48,6 +59,10 @@ function Connect (props) {
   const closeConnectionRef = useRef(null);
   const ephemeralDataRef = useRef(null);
   const abortControllerRef = useRef(null);
+  const sliderRef = useRef(null);
+
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
 
   const getReadyDevices = useCallback(async () => {
     const devices = await storage.getItem('local:devices') || [];
@@ -220,6 +235,77 @@ function Connect (props) {
     }
   }, [connectView, socketError, initQRConnection, getReadyDevices]);
 
+  const generateDeviceIcon = device => {
+    const platform = device?.platform || 'unknown';
+    const deviceType = device?.deviceType || 'unknown';
+
+    switch (platform) {
+      case 'ios': {
+        if (deviceType === 'tablet') {
+          return (
+            <>
+              <IpadIconLight className={`${S.deviceIcon} theme-light`} />
+              <IpadIconDark className={`${S.deviceIcon} theme-dark`} />
+            </>
+          );
+        }
+
+        return (
+          <>
+            <IphoneIconLight className={`${S.deviceIcon} theme-light`} />
+            <IphoneIconDark className={`${S.deviceIcon} theme-dark`} />
+          </>
+        );
+      }
+
+      case 'android': {
+        if (deviceType === 'tablet') {
+          return (
+            <>
+              <AndroidTabletIconLight className={`${S.deviceIcon} theme-light`} />
+              <AndroidTabletIconDark className={`${S.deviceIcon} theme-dark`} />
+            </>
+          );
+        }
+
+        return (
+          <>
+            <AndroidIconLight className={`${S.deviceIcon} theme-light`} />
+            <AndroidIconDark className={`${S.deviceIcon} theme-dark`} />
+          </>
+        );
+      }
+
+      default: {
+        return null;
+      }
+    }
+  };
+
+  const generatePagination = () => {
+    if (readyDevices.length <= 1) {
+      return null;
+    }
+
+    return (
+      <ul
+        className={S.deviceSelectContainerListPagination}
+        role='tablist'
+      >
+        {readyDevices.map((_, index) => (
+          <li key={index} role="presentation">
+            <button
+              className={`splide__pagination__page ${(data.connectSliderIndex ?? 0) === index ? 'is-active' : ''}`}
+              type='button'
+              role='tab'
+              onClick={() => sliderRef.current.go(index)}
+            ></button>
+          </li>
+        ))}
+      </ul>
+    );
+  };
+
   useEffect(() => {
     closeConnectionRef.current = async () => {
       try {
@@ -298,8 +384,48 @@ function Connect (props) {
   }, []);
 
   useEffect(() => {
+    if (data?.connectSliderIndex === undefined) {
+      setData('connectSliderIndex', 0);
+    }
+  }, []);
+
+  useEffect(() => {
     handleViewSwitch();
   }, [handleViewSwitch]);
+
+  useEffect(() => {
+    if (sliderRef?.current && sliderRef.current.splide) {
+      const splide = sliderRef.current.splide;
+
+      if (splide.on) {
+        splide.on('move', newIndex => {
+          setData('connectSliderIndex', newIndex);
+        });
+      }
+
+      const savedIndex = data.connectSliderIndex || 0;
+
+      if (savedIndex > 0 && savedIndex < readyDevices.length && splide.index !== savedIndex) {
+        const originalSpeed = splide.options.speed;
+
+        splide.options.speed = 0;
+
+        requestAnimationFrame(() => {
+          splide.go(savedIndex);
+        });
+
+        requestAnimationFrame(() => {
+          splide.options.speed = originalSpeed;
+        });
+      }
+    }
+
+    return () => {
+      if (sliderRef?.current && sliderRef.current.splide && sliderRef.current.splide.off) {
+        sliderRef.current.splide.off('move');
+      }
+    };
+  }, [readyDevices]);
 
   return (
     <LazyMotion features={loadDomAnimation}>
@@ -348,27 +474,65 @@ function Connect (props) {
           >
             <div className={S.deviceSelectContainer}>
               <h1>{browser.i18n.getMessage('connect_device_select_header')}</h1>
+              <h2>{browser.i18n.getMessage('connect_device_select_list_header')}</h2>
 
               <div className={S.deviceSelectContainerList}>
-                <div className={S.deviceSelectContainerListDevices}>
-                  <p>{browser.i18n.getMessage('connect_device_select_list_header')}</p>
+                <button
+                  className={`${S.deviceSelectContainerListPrev} ${readyDevices?.length > 1 && (data?.connectSliderIndex ?? 0) !== 0 ? S.visible : ''}`}
+                  onClick={() => sliderRef.current.go('-1')}
+                >
+                  <span>
+                    <ChevronIcon />
+                  </span>
+                </button>
 
-                  <div className={S.deviceSelectContainerListDevicesButtons}>
+                <Splide
+                  className={S.deviceSelectContainerListSlider}
+                  hasTrack={false}
+                  options={{
+                    type: 'slide',
+                    width: '184px',
+                    arrows: false,
+                    pagination: false,
+                    keyboard: 'global',
+                    updateOnMove: true
+                  }}
+                  ref={sliderRef}
+                >
+                  <SplideTrack className={S.deviceSelectContainerListSliderTrack}>
                     {readyDevices.map((device, index) => (
-                      <button
+                      <SplideSlide
+                        className={S.deviceSelectContainerListSliderSlide}
                         key={index}
-                        className={S.deviceSelectContainerListItem}
-                        title={device?.name}
-                        onClick={() => connectByPush(device, abortControllerRef.current?.signal)}
                       >
-                        {/* {!device?.fcmToken || device?.fcmToken?.length === 0 ? (
-                          <span className={S.deviceSelectContainerListItemWarning}>*</span>
-                        ) : null} */}
-                        <span>{device?.name}</span>
-                      </button>
+                        <button
+                          key={index}
+                          className={S.deviceSelectContainerListItem}
+                          title={device?.name}
+                          onClick={() => connectByPush(device, abortControllerRef.current?.signal)}
+                        >
+                          {generateDeviceIcon(device)}
+                          <span className={S.deviceSelectContainerListItemName}>{device?.name}</span>
+                          <span className={`${S.deviceSelectContainerListItemPlatform} ${device?.platform === 'ios' ? S.ios : ''} ${device?.platform === 'android' ? S.android : ''}`}>
+                            {device?.platform === 'ios' ? 'iOS' : ''}
+                            {device?.platform === 'android' ? 'Android' : ''}
+                          </span>
+                        </button>
+                      </SplideSlide>
                     ))}
-                  </div>
-                </div>                
+                  </SplideTrack>
+                </Splide>
+
+                {generatePagination()}
+
+                <button
+                  className={`${S.deviceSelectContainerListNext} ${readyDevices?.length > 1 && (data?.connectSliderIndex ?? 0) !== readyDevices.length - 1 ? S.visible : ''}`}
+                  onClick={() => sliderRef.current.go('+1')}
+                >
+                  <span>
+                    <ChevronIcon />
+                  </span>
+                </button>
               </div>
 
               <div className={S.deviceSelectContainerAdd}>
