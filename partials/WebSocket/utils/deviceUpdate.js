@@ -32,6 +32,7 @@ const deviceUpdate = async (uuid, json) => {
   device.platform = json?.payload?.deviceOs || '';
   device.supportedFeatures = json?.payload?.supportedFeatures || [];
   device.updatedAt = Date.now();
+  device.type = json?.payload?.deviceType || 'mobile';
 
   // Remove devices without id
   devices = devices.filter(d => d.id);
