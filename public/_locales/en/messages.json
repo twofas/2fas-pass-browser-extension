@@ -684,11 +684,11 @@
     "description": "Message displayed when the connection is cancelled by the user from the mobile app"
   },
   "connect_device_select_header": {
-    "message": "Securely access your Vault in the 2FAS Pass mobile app",
+    "message": "Your Devices",
     "description": "Header prompting the user to select their device"
   },
   "connect_device_select_list_header": {
-    "message": "Select device:",
+    "message": "Select the device you want to connect with:",
     "description": "Header for the device selection list"
   },
   "connect_device_select_add_another": {
