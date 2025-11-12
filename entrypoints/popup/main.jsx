@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import 'react-toastify/dist/ReactToastify.css';
+import '@splidejs/react-splide/css/core';
 import '@/partials/global-styles/global.scss';
 import '@/partials/global-styles/toasts.scss';
 import '@/partials/global-styles/selects.scss';
