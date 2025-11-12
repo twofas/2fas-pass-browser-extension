@@ -237,7 +237,7 @@ function Connect (props) {
 
   const generateDeviceIcon = device => {
     const platform = device?.platform || 'unknown';
-    const deviceType = device?.deviceType || 'unknown';
+    const deviceType = device?.type || 'unknown';
 
     switch (platform) {
       case 'ios': {
