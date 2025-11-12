@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 @use "variables" as v;
-@use "mixins" as m;
 
 .react-select-container,
 .react-select-idle-container,
@@ -1228,4 +1227,225 @@
 
 .react-select__single-value {
   margin-left: 0 !important;
+}
+
+.react-select-add-new-container {
+  .react-select-add-new__control {
+    display: none;
+  }
+
+  .react-select-add-new__menu {
+    background: transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    position: absolute;
+    top: 16px;
+    right: 0;
+    width: 200px;
+    z-index: 9999;
+
+    &-list {
+      background: transparent;
+      border-radius: 8px;
+      padding: 0;
+    }
+  }
+
+  .react-select-add-new__option {
+    overflow: hidden;
+
+    &:first-of-type {
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+
+      a {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+      }
+    }
+
+    &:last-of-type {
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+
+      a {
+        border-bottom: 0 !important;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+    }
+
+    a {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      gap: 0 6px;
+      padding: 9px 12px;
+      transition: background-color .3s ease-in-out;
+      width: 100%;
+
+      body.theme-light & {
+        background-color: v.$card-bg-light;
+        border-bottom: 1px solid v.$card-stroke-light;
+      }
+
+      body.theme-dark & {
+        background-color: v.$card-bg-dark;
+        border-bottom: 1px solid v.$card-stroke-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          background-color: v.$card-bg-light;
+          border-bottom: 1px solid v.$card-stroke-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          background-color: v.$card-bg-dark;
+          border-bottom: 1px solid v.$card-stroke-dark;
+        }
+      }
+
+      &:hover {
+        body.theme-light & {
+          background-color: v.$hover-color-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$hover-color-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$hover-color-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$hover-color-dark;
+          }
+        }
+      }
+
+      .react-select-add-new__option-icon {
+        border-radius: 4px;
+        align-items: center;
+        display: flex;
+        height: 16px;
+        justify-content: center;
+        width: 16px;
+
+        &.icon-item-login {
+          body.theme-light & {
+            background-color: v.$login-item-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$login-item-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$login-item-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$login-item-dark;
+            }
+          }
+        }
+
+        &.icon-item-credit-card {
+          body.theme-light & {
+            background-color: v.$credit-card-item-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$credit-card-item-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$credit-card-item-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$credit-card-item-dark;
+            }
+          }
+        }
+
+        &.icon-item-secure-note {
+          body.theme-light & {
+            background-color: v.$secure-note-item-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$secure-note-item-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$secure-note-item-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$secure-note-item-dark;
+            }
+          }
+        }
+
+        &.icon-item-ssh-key {
+          body.theme-light & {
+            background-color: v.$ssh-key-item-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$ssh-key-item-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$ssh-key-item-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$ssh-key-item-dark;
+            }
+          }
+        }
+
+        svg {
+          height: 10px;
+          stroke: #fff;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          width: auto;
+        }
+      }
+
+      .react-select-add-new__option-label {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1;
+
+        body.theme-light & {
+          color: v.$primary-text-light;
+        }
+
+        body.theme-dark & {
+          color: v.$primary-text-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            color: v.$primary-text-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            color: v.$primary-text-dark;
+          }
+        }
+      }
+    }
+  }
 }
