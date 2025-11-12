@@ -53,6 +53,7 @@
   },
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.6.0",
+    "@splidejs/react-splide": "^0.7.12",
     "final-form": "^5.0.0",
     "motion": "^12.23.24",
     "parse-domain": "^8.2.2",
