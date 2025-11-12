@@ -319,9 +319,33 @@
     "message": "Secure Note",
     "description": "Label for the secure note functionality"
   },
+  "secure_note_placeholder": {
+    "message": "Add the note",
+    "description": "Placeholder text for the secure note input field"
+  },
+  "secure_note_title": {
+    "message": "Title (Required)",
+    "description": "Placeholder text for the secure note title input field"
+  },
+  "secure_note_title_placeholder": {
+    "message": "Secure Note's title",
+    "description": "Placeholder text for the secure note title input field"
+  },
+  "secure_note_title_required": {
+    "message": "Secure Note title is required.",
+    "description": "Validation message indicating that the secure note title is required"
+  },
+  "secure_note_title_max_length": {
+    "message": "Secure Note title must be less than 256 characters.",
+    "description": "Validation message indicating that the secure note title exceeds the maximum length"
+  },
   "ssh_key": {
     "message": "SSH Key",
     "description": "Label for the SSH key functionality"
+  },
+  "item": {
+    "message": "Item",
+    "description": "Generic label for an item"
   },
   "notification_send_autofill_to_tab_lack_of_service_title": {
     "message": "Error",
@@ -612,7 +636,7 @@
     "description": "Validation message displayed when the Domain (URI) entered is invalid"
   },
   "add_new_header": {
-    "message": "Adding a new Item to \n2FAS Pass",
+    "message": "Adding a new ITEM to \n2FAS Pass",
     "description": "Header for the section to add a new item"
   },
   "add_new_subheader": {
