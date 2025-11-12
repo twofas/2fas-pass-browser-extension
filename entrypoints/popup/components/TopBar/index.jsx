@@ -7,10 +7,13 @@
 import S from './TopBar.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useLocation } from 'react-router';
-import { useEffect, useRef, lazy, useCallback, useMemo, memo } from 'react';
+import { useEffect, useRef, useState, lazy, useCallback, useMemo, memo } from 'react';
 import { useAuthActions, useAuthState } from '@/hooks/useAuth';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
+import Select from 'react-select';
+import AddNewCustomOption from './components/AddNewCustomOption';
+import { addNewOptions } from '@/constants';
 
 const Logo = lazy(() => import('@/assets/logo.svg?react'));
 const LogoDark = lazy(() => import('@/assets/logo-dark.svg?react'));
@@ -28,6 +31,8 @@ function TopBar () {
   const { configured } = useAuthState();
   const { matchingLoginsLength } = useMatchingLogins();
   const unwatchConfigured = useRef(null);
+  const addNewContainerRef = useRef(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const watchConfigured = useCallback(async () => {
     const configuredKey = await getKey('configured');
@@ -74,7 +79,6 @@ function TopBar () {
     let returnClass = S.topbarAddNewBtn;
 
     if (
-      path === '/add-new/Login' ||
       path === '/fetch' ||
       path.startsWith('/fetch/') ||
       path === '/fetch-external' ||
@@ -87,16 +91,11 @@ function TopBar () {
     return returnClass;
   }, [configured, location.pathname]);
 
-  const homePageTitle = useMemo(() => browser.i18n.getMessage('go_to_home_page'), []);
-  const lockedText = useMemo(() => browser.i18n.getMessage('top_bar_locked'), []);
-  const lockText = useMemo(() => browser.i18n.getMessage('top_bar_lock'), []);
-  const addNewText = useMemo(() => browser.i18n.getMessage('top_bar_add_new'), []);
-
   useEffect(() => {
     watchConfigured().then(unwatch => {
       unwatchConfigured.current = unwatch;
     });
-    
+
     return () => {
       if (unwatchConfigured.current) {
         unwatchConfigured.current();
@@ -104,13 +103,29 @@ function TopBar () {
     };
   }, [watchConfigured]);
 
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (isMenuOpen && addNewContainerRef.current && !addNewContainerRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
   return (
     <>
       <header className={S.topbar}>
         <div className={logoClass}>
           <Link
             to='/'
-            title={homePageTitle}
+            title={browser.i18n.getMessage('go_to_home_page')}
             prefetch='render'
           >
             <Logo className="theme-light" />
@@ -125,26 +140,42 @@ function TopBar () {
             onClick={handleLockClick}
           >
             <span className={bS.btnLockedDisabled}>
-              <span>{lockedText}</span>
+              <span>{browser.i18n.getMessage('top_bar_locked')}</span>
               <LockedIcon />
             </span>
-            
+
             <span className={bS.btnLockedActive}>
-              <span>{lockText}</span>
+              <span>{browser.i18n.getMessage('top_bar_lock')}</span>
               <LockIcon />
             </span>
           </button>
         </div>
 
-        <div className={`${S.topbarAddNew} ${addNewClass}`}>
-          <Link
-            to='/add-new/Login'
+        <div className={`${S.topbarAddNew} ${addNewClass}`} ref={addNewContainerRef}>
+          <button
             className={addNewBtnClass}
-            prefetch='intent'
+            type='button'
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <span>{addNewText}</span>
+            <span>{browser.i18n.getMessage('top_bar_add_new')}</span>
             <AddNewIcon />
-          </Link>
+          </button>
+
+          <Select
+            options={addNewOptions}
+            value={null}
+            menuIsOpen={isMenuOpen}
+            onMenuClose={() => setIsMenuOpen(false)}
+            onMenuOpen={() => setIsMenuOpen(true)}
+            className='react-select-add-new-container'
+            classNamePrefix='react-select-add-new'
+            isClearable={false}
+            isSearchable={false}
+            noOptionsMessage={() => null}
+            components={{
+              Option: props => <AddNewCustomOption {...props} setIsMenuOpen={setIsMenuOpen} />
+            }}
+          />
         </div>
       </header>
     </>

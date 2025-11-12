@@ -307,6 +307,22 @@
     "message": "Sync with your 2FAS Pass mobile app",
     "description": "Title for the sync data section"
   },
+  "login": {
+    "message": "Login",
+    "description": "Label for the login functionality"
+  },
+  "credit_card": {
+    "message": "Credit Card",
+    "description": "Label for the credit card functionality"
+  },
+  "secure_note": {
+    "message": "Secure Note",
+    "description": "Label for the secure note functionality"
+  },
+  "ssh_key": {
+    "message": "SSH Key",
+    "description": "Label for the SSH key functionality"
+  },
   "notification_send_autofill_to_tab_lack_of_service_title": {
     "message": "Error",
     "description": "Title for the notification when the autofill service is not found"
@@ -578,6 +594,10 @@
   "top_bar_add_new": {
     "message": "Add new",
     "description": "Button to add a new item"
+  },
+  "top_bar_create_new": {
+    "message": "Create new",
+    "description": "Link to create a new item of a specific type"
   },
   "add_new_validate_require": {
     "message": "Please enter the Domain (URI)",
