@@ -23,26 +23,79 @@ class SecureNote extends Item {
 
     super(secureNoteData, deviceId, vaultId);
 
-    validate(secureNoteData.content && typeof secureNoteData.content === 'object', 'Invalid secureNote content data');
-    validateOptional(secureNoteData.content.name, isValidString, 'Invalid content.name: must be a string');
-    validateOptional(secureNoteData.content.s_text, isValidBase64, 'Invalid content.s_text: must be a base64 string');
+    validate(secureNoteData.content && typeof secureNoteData.content === 'object', 'Invalid secureNote data');
+    validate(secureNoteData?.content?.name, isValidString, 'Invalid content.name: must be a string');
+    validateOptional(secureNoteData?.content?.s_text, isValidBase64, 'Invalid content.s_text: must be a base64 string');
 
     this.contentType = SecureNote.contentType;
     this.contentVersion = SecureNote.contentVersion;
-    this.name = secureNoteData.content.name;
+    this.content = {
+      name: secureNoteData.content.name,
+      s_text: secureNoteData.content.s_text
+    };
     
     // Secure Input Fields
     this.#s_text = secureNoteData.content.s_text;
   }
 
+  removeSif () {
+
+  }
+
+  async decryptSif () {
+
+  }
+
+  setSif () {
+
+  }
+
+  setTextDecrypted () {
+
+  }
+
+  removeTextDecrypted () {
+
+  }
+
+  get textDecrypted () {
+
+  }
+
+  get isTextDecrypted () {
+
+  }
+
   get dropdownList () {
-    return [
-      { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), id: this.id, type: 'details' }
-    ];
+    return [];
+  }
+
+  get contextMenuItem () {
+    return {};
+  }
+
+  get sifs () {
+    return ['s_text'];
   }
 
   get sifExists () {
     return this.#s_text && this.#s_text.length > 0;
+  }
+
+  get isT3orT2WithPassword () {
+
+  }
+
+  toJSON () {
+    return {
+      ...super.toJSON(),
+      contentType: SecureNote.contentType,
+      contentVersion: SecureNote.contentVersion,
+      content: {
+        name: this.content.name,
+        s_text: this.#s_text
+      }
+    };
   }
 }
 
