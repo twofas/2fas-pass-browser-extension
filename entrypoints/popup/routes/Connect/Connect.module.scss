@@ -293,6 +293,7 @@
     background-color: v.$primary-box-bg-light;
     display: flex;
     flex-direction: column;
+    height: 100%;
     width: 100%;
 
     @include m.darkMode {
@@ -300,108 +301,195 @@
     }
 
     &-list {
-      align-items: center;
-      background-image: url( '@/assets/popup-window/device-select.svg');
-      background-repeat: no-repeat;
-      background-size: cover;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      height: 223px;
-      margin-top: 32px;
-      padding-bottom: 25px;
-      width: 254px;
+      margin-top: 64px;
+      position: relative;
 
-      &-devices {
-        text-align: left;
-        width: 200px;
+      &-prev,
+      &-next {
+        align-items: center;
+        display: inline-flex;
+        height: 100%;
+        opacity: 0;
+        padding: 0;
+        pointer-events: none;
+        position: absolute;
+        width: calc((100vw - 184px) / 2);
+        top: 50%;
+        transition: opacity .3s ease-in-out;
+        transform: translateY(-50%);
+        z-index: 9999;
 
-        &-buttons {
-          max-height: 106px;
-          overflow: auto;
+        &.visible {
+          opacity: 1;
+          pointer-events: all;
+        }
 
-          button {
-            align-items: center;
-            background-color: v.$card-bg-light;
-            border-left: 1px solid v.$card-stroke-light;
-            border-right: 1px solid v.$card-stroke-light;
-            border-top: 1px solid v.$card-stroke-light;
-            display: flex;
-            flex-direction: row;
-            gap: 0 4px;
-            padding: 9px 12px;
-            text-align: left;
-            width: 100%;
+        span {
+          align-items: center;
+          background-color: v.$primary-color-light;
+          border-radius: 50%;
+          display: inline-flex;
+          height: 32px;
+          justify-content: center;
+          width: 32px;
+        }
 
-            @include m.darkMode {
-              background-color: v.$card-bg-dark;
-              border-color: v.$card-stroke-dark;
-            }
+        svg {
+          height: 16px;
+          stroke: white;
+          stroke-width: 1.5;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          width: auto;
+        }
+      }
 
-            &:first-of-type {
-              border-top-left-radius: 8px;
-              border-top-right-radius: 8px;
-            }
+      &-prev {
+        justify-content: flex-start;
+        left: -83px;
+      }
 
-            &:last-of-type {
-              border-bottom: 1px solid v.$card-stroke-light;
-              border-bottom-left-radius: 8px;
-              border-bottom-right-radius: 8px;
-            }
+      &-next {
+        justify-content: flex-end;
+        right: -83px;
 
-            &:hover,
-            &:focus {
-              background-color: v.$hover-color-light;
+        svg {
+          transform: rotate(180deg);
+        }
+      }
 
-              @include m.darkMode {
-                background-color: v.$hover-color-dark;
-              }
-            }
+      &-slider {
+        width: 184px;
 
-            &:active {
-              background-color: v.$hover-on-hover-light;
+        &-track {
+          overflow: visible;
 
-              @include m.darkMode {
-                background-color: v.$hover-on-hover-dark;
-              }
-            }
+          :global(.splide__slide) {
+            &:global(.is-active) {
+              .device-select-container-list-item {
+                opacity: 1;
+                background-color: v.$primary-bg-light;
+                border: 1.5px solid v.$card-stroke-light;
 
-            span {
-              color: v.$primary-text-light;
-              display: inline-block;
-              font-size: 12px;
-              font-weight: 400;
-              line-height: 1;
-              margin-bottom: -2px;
-              overflow: hidden;
-              padding-bottom: 2px;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-
-              @include m.darkMode {
-                color: v.$primary-text-dark;
+                @include m.darkMode {
+                  background-color: v.$hover-color-dark;
+                  border-color: v.$primary-color-dark;
+                }
               }
             }
           }
         }
       }
 
-      p {
-        color: v.$primary-text-light;
-        font-size: 11px;
-        font-weight: 500;
-        line-height: 2.18;
-        margin-bottom: 4px;
-        text-transform: uppercase;
+      &-pagination {
+        align-items: center;
+        display: flex !important;
+        gap: 0 8px;
+        justify-content: center;
+        margin-top: 12px;
+        padding-left: 0 !important;
+        width: 100%;
 
-        @include m.darkMode {
-          color: v.$primary-text-dark;
+        li {
+          display: block;
+          height: 6px !important;
+          list-style: none;
+          width: 6px !important;
+
+          button {
+            background: v.$hover-on-hover-light;
+            border-radius: 50%;
+            display: block;
+            height: 6px !important;
+            padding: 0 !important;
+            width: 6px !important;
+
+            @include m.darkMode {
+              background: v.$hover-on-hover-dark;
+            }
+
+            &:global(.is-active) {
+              background: v.$primary-color-light;
+
+              @include m.darkMode {
+                background: v.$primary-color-dark;
+              }
+            }
+          }
+        }
+      }
+
+      &-item {
+        align-items: center;
+        background-color: transparent;
+        border: 1.5px solid transparent;
+        border-radius: 6px;
+        display: flex;
+        flex-direction: column;
+        height: 174px;
+        opacity: .2;
+        padding: 16px;
+        position: relative;
+        text-align: center;
+        transition: background-color .3s ease-in-out, border .3s ease-in-out;
+        user-select: none;
+        width: 184px;
+
+        &:hover {
+          background-color: v.$hover-color-light;
+          border: 1.5px solid v.$primary-color-light;
+
+          @include m.darkMode {
+            background-color: v.$hover-color-dark;
+          }
+        }
+
+        svg {
+          margin-bottom: 24px;
+        }
+
+        &-name {
+          color: v.$primary-color-light;
+          display: inline-block;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1.3;
+          margin-bottom: -3px;
+          padding-bottom: 3px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 100%;
+
+          @include m.darkMode {
+            color: v.$primary-color-dark;
+          }
+        }
+
+        &-platform {
+          color: v.$secondary-text-light;
+          display: inline-block;
+          font-size: 11px;
+          font-weight: 300;
+          line-height: 1.2;
+          margin-bottom: -3px;
+          margin-top: 4px;
+          overflow: hidden;
+          padding-bottom: 3px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 100%;
+
+          @include m.darkMode {
+            color: v.$secondary-text-dark;
+          }
         }
       }
     }
 
     &-add {
-      margin-top: 32px;
+      margin-top: auto;
+      padding-bottom: 21px;
 
       button {
         align-items: center;
@@ -430,8 +518,13 @@
           }
         }
 
+        span {
+          font-size: 12px;
+          font-weight: 500;
+        }
+
         svg {
-          height: 22px;
+          height: 20px;
           stroke: v.$primary-color-light;
           stroke-linecap: square;
           stroke-linejoin: round;
@@ -443,6 +536,23 @@
             stroke: v.$primary-color-dark;
           }
         }
+      }
+    }
+
+    h1 {
+      margin-bottom: 0;
+    }
+
+    h2 {
+      color: v.$secondary-text-light;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.5;
+      margin: 0;
+      text-align: center;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
       }
     }
   }
