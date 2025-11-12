@@ -8,8 +8,6 @@ import { itemsUiData } from '@/entrypoints/popup/constants';
 import { Link } from 'react-router';
 
 const AddNewCustomOption = option => {
-  console.log(option);
-
   return (
     <div className='react-select-add-new__option'>
       <Link

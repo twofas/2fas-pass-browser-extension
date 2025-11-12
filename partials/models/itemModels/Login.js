@@ -24,7 +24,7 @@ export default class Login extends Item {
       return loginData;
     }
 
-    super (loginData, deviceId, vaultId);
+    super(loginData, deviceId, vaultId);
 
     validate(loginData.content && typeof loginData.content === 'object', 'Invalid login data');
 
