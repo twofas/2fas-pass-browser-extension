@@ -203,8 +203,32 @@
     "message": "Secure Note",
     "description": "Label for the secure note functionality"
   },
+  "secure_note_placeholder": {
+    "message": "Add the note",
+    "description": "Placeholder text for the secure note input field"
+  },
+  "secure_note_title": {
+    "message": "Title",
+    "description": "Placeholder text for the secure note title input field"
+  },
+  "secure_note_title_placeholder": {
+    "message": "Secure Note's title",
+    "description": "Placeholder text for the secure note title input field"
+  },
+  "secure_note_title_required": {
+    "message": "Secure Note title is required.",
+    "description": "Validation message indicating that the secure note title is required"
+  },
+  "secure_note_title_max_length": {
+    "message": "Secure Note title must be less than 256 characters.",
+    "description": "Validation message indicating that the secure note title exceeds the maximum length"
+  },
   "ssh_key": {
     "message": "SSH Key",
     "description": "Label for the SSH key functionality"
+  },
+  "item": {
+    "message": "Item",
+    "description": "Generic label for an item"
   }
 }
