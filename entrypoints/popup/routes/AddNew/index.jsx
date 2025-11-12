@@ -11,6 +11,7 @@ import { useParams } from 'react-router';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
+import { itemsUiData } from '../../constants';
 
 // Model Views
 import LoginView from './modelsViews/LoginAddNewView';
@@ -44,7 +45,7 @@ function AddNew (props) {
     }
 
     return null;
-  }, [data?.item, props]);
+  }, [params.model, data?.item, props]);
 
   if (!modelComponent) {
     return null;
@@ -58,7 +59,7 @@ function AddNew (props) {
             <div className={S.addNewContainer}>
               <NavigationButton type='cancel' />
               
-              <h2>{browser.i18n.getMessage('add_new_header')}</h2>
+              <h2>{browser.i18n.getMessage('add_new_header').replace('ITEM', itemsUiData[params.model]?.label || browser.i18n.getMessage('item'))}</h2>
               <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
 
               {modelComponent}

@@ -13,18 +13,22 @@ const SSHKeyIcon = lazy(() => import('@/assets/popup-window/items/ssh-key.svg?re
 
 const itemsUiData = {
   Login: {
+    label: browser.i18n.getMessage('login'),
     selectClassName: 'icon-item-login',
     svg: <LoginIcon />
   },
   CreditCard: {
+    label: browser.i18n.getMessage('credit_card'),
     selectClassName: 'icon-item-credit-card',
     svg: <CreditCardIcon />
   },
   SecureNote: {
+    label: browser.i18n.getMessage('secure_note'),
     selectClassName: 'icon-item-secure-note',
     svg: <SecureNoteIcon />
   },
   SSHKey: {
+    label: browser.i18n.getMessage('ssh_key'),
     selectClassName: 'icon-item-ssh-key',
     svg: <SSHKeyIcon />
   }

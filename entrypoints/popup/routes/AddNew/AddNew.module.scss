@@ -30,6 +30,13 @@
     width: 100%;
   }
 
+  &-secure-note {
+    &-textarea {
+      min-height: 90px;
+      resize: vertical !important;
+    }
+  }
+
   h2 {
     color: v.$primary-text-light;
     font-size: 16px;
