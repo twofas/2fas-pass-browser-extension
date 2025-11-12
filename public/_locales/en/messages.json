@@ -324,7 +324,7 @@
     "description": "Placeholder text for the secure note input field"
   },
   "secure_note_title": {
-    "message": "Title (Required)",
+    "message": "Title",
     "description": "Placeholder text for the secure note title input field"
   },
   "secure_note_title_placeholder": {

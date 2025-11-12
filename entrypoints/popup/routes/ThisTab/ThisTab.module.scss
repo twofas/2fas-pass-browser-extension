@@ -775,7 +775,8 @@
             &.service-url,
             &.service-username,
             &.service-more,
-            &.service-fetch {
+            &.service-fetch,
+            &.service-details {
               stroke: v.$primary-color-light;
   
               @include m.darkMode {
@@ -847,6 +848,26 @@
 
               @include m.darkMode {
                 background-color: v.$primary-box-bg-dark;
+              }
+            }
+          }
+
+          &.icon-secure-note {
+            background-color: v.$secure-note-bg-light;
+            border: 1px solid v.$secure-note-bg-light;
+
+            @include m.darkMode {
+              background-color: v.$secure-note-bg-dark;
+              border-color: v.$secure-note-bg-dark;
+            }
+
+            svg {
+              fill: v.$secure-note-item-light;
+              height: 12px;
+              width: auto;
+
+              @include m.darkMode {
+                fill: v.$secure-note-item-dark;
               }
             }
           }
@@ -981,6 +1002,10 @@
           }
         }
 
+        &.service-details-btn {
+          opacity: 1;
+        }
+
         &.service-password-loader {
           border: 2px solid v.$hover-color-light;
           border-radius: 50%;
@@ -1027,7 +1052,8 @@
 
           &.service-more,
           &.service-fetch,
-          &.service-username {
+          &.service-username,
+          &.service-details {
             stroke: v.$object-light;
             stroke-width: 1.5;
             stroke-linecap: round;
@@ -1057,6 +1083,10 @@
 
           &.service-fetch {
             width: 24px;
+          }
+
+          &.service-details {
+            width: 14px;
           }
         }
       }
