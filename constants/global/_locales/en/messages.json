@@ -190,5 +190,21 @@
   "sync_title": {
     "message": "Sync with your 2FAS Pass mobile app",
     "description": "Title for the sync data section"
+  },
+  "login": {
+    "message": "Login",
+    "description": "Label for the login functionality"
+  },
+  "credit_card": {
+    "message": "Credit Card",
+    "description": "Label for the credit card functionality"
+  },
+  "secure_note": {
+    "message": "Secure Note",
+    "description": "Label for the secure note functionality"
+  },
+  "ssh_key": {
+    "message": "SSH Key",
+    "description": "Label for the SSH key functionality"
   }
 }

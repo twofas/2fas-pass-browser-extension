@@ -67,6 +67,8 @@
   }
 
   &-add-new {
+    position: relative;
+    
     &.active {
       .topbar-add-new-btn {
         border-color: v.$primary-color-light;
