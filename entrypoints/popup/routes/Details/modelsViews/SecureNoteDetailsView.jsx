@@ -110,7 +110,7 @@ function SecureNoteDetailsView (props) {
           <SecureNoteText
             key={`secure-note-text-${data.item.id}`}
             formData={{ form, originalItem: props.originalItem }}
-            decryptError={data.decryptError}
+            sifDecryptError={data.sifDecryptError}
           />
           <SecurityType key={`security-type-${data.item.id}`} />
           <Tags key={`tags-${data.item.id}`} />
