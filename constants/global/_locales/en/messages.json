@@ -223,6 +223,10 @@
     "message": "Secure Note title must be less than 256 characters.",
     "description": "Validation message indicating that the secure note title exceeds the maximum length"
   },
+  "secure_note_text_max_length": {
+    "message": "Secure Note text must be less than 16384 characters.",
+    "description": "Validation message indicating that the secure note text exceeds the maximum length"
+  },
   "ssh_key": {
     "message": "SSH Key",
     "description": "Label for the SSH key functionality"

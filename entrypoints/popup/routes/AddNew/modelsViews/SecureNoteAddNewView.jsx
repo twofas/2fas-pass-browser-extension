@@ -7,7 +7,7 @@
 import S from '../AddNew.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import usePopupStateStore from '../../../store/popupState';
 import { Form, Field } from 'react-final-form';
 import { valueToNFKD, getCurrentDevice } from '@/partials/functions';
@@ -22,10 +22,40 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 function SecureNoteAddNewView () {
   const navigate = useNavigate();
 
+  const [inputError, setInputError] = useState(undefined);
+
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
 
+  const validate = values => {
+    const errors = {};
+
+    if (!values?.name || values?.name?.length <= 0) {
+      errors.name = browser.i18n.getMessage('secure_note_name_required');
+    } else if (values.name?.length > 255) {
+      errors.name = browser.i18n.getMessage('secure_note_name_max_length');
+    } else if (values.text?.length > 16384) {
+      errors.text = browser.i18n.getMessage('secure_note_text_max_length');
+    }
+
+    const errorKeys = Object.keys(errors);
+
+    if (errorKeys.length > 0) {
+      showToast(errors[errorKeys[0]], 'error');
+      setInputError(errorKeys[0]);
+      return false;
+    }
+
+    return true;
+  };
+
   const onSubmit = async e => {
+    setInputError(undefined);
+
+    if (!validate(e)) {
+      return false;
+    }
+
     // FUTURE - change to select device
     const device = await getCurrentDevice();
 
@@ -39,7 +69,7 @@ function SecureNoteAddNewView () {
       contentType: SecureNote.contentType,
       content: {
         name: e.name ? valueToNFKD(e.name) : '',
-        s_text: e.note ? valueToNFKD(e.note) : ''
+        s_text: e.text ? valueToNFKD(e.text) : ''
       }
     };
 
@@ -58,7 +88,7 @@ function SecureNoteAddNewView () {
       <form onSubmit={handleSubmit}>
         <Field name='name'>
           {({ input }) => (
-            <div className={`${pI.passInput}`}>
+            <div className={`${pI.passInput} ${inputError === 'name' ? pI.error : ''}`}>
               <div className={pI.passInputTop}>
                 <label htmlFor='add-new-name'>{browser.i18n.getMessage('secure_note_name')}</label>
               </div>
@@ -82,18 +112,18 @@ function SecureNoteAddNewView () {
             </div>
           )}
         </Field>
-        <Field name='note'>
+        <Field name='text'>
           {({ input }) => (
-            <div className={`${pI.passInput}`}>
+            <div className={`${pI.passInput} ${inputError === 'text' ? pI.error : ''}`}>
               <div className={pI.passInputTop}>
-                <label htmlFor='add-new-note'>{browser.i18n.getMessage('secure_note')}</label>
+                <label htmlFor='add-new-text'>{browser.i18n.getMessage('secure_note')}</label>
               </div>
               <div className={pI.passInputBottom}>
                 <textarea
                   {...input}
                   className={S.addNewSecureNoteTextarea}
                   placeholder={browser.i18n.getMessage('secure_note_placeholder')}
-                  id='add-new-note'
+                  id='add-new-text'
                   dir='ltr'
                   spellCheck='false'
                   autoCorrect='off'
@@ -101,7 +131,7 @@ function SecureNoteAddNewView () {
                   autoCapitalize='off'
                   onChange={e => {
                     input.onChange(e);
-                    setData('note', e.target.value);
+                    setData('text', e.target.value);
                   }}
                 />
               </div>
