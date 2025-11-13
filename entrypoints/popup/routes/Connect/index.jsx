@@ -424,7 +424,6 @@ function Connect (props) {
     };
   }, [handleKeyboardEnterClick]);
 
-
   useEffect(() => {
     handleViewSwitch();
   }, [handleViewSwitch]);
