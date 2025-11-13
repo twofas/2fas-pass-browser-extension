@@ -216,7 +216,7 @@ function Details (props) {
                   scrollPosition: data?.thisTabScrollPosition
                 }}
               />
-              <h2>{constructorName} {browser.i18n.getMessage('details_header')}</h2>
+              <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
 
               <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
                 <p>{browser.i18n.getMessage('details_fetch_text')}</p>
