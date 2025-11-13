@@ -722,6 +722,11 @@ class TwoFasError extends Error {
     tagIndexError: {
       message: 'Tag not found in tags list',
       code: 9420
+    },
+    // HANDLE NAME
+    handleNameNoService: {
+      message: 'handleName: secure note not found',
+      code: 9430
     }
   };
 }

@@ -63,6 +63,10 @@
     "message": "Something went wrong. Item not found.",
     "description": "Error message displayed when the requested login item is not found"
   },
+  "error_secure_note_not_found": {
+    "message": "Something went wrong. Secure note not found.",
+    "description": "Error message displayed when the requested secure note is not found"
+  },
   "error_username_copy_failed": {
     "message": "Failed to copy username to clipboard.",
     "description": "Error message displayed when copying the username to the clipboard fails"
@@ -78,6 +82,10 @@
   "error_autofill_failed": {
     "message": "Failed to autofill. Please try again.",
     "description": "Error message displayed when the autofill operation fails"
+  },
+  "error_secure_note_name_copy_failed": {
+    "message": "Failed to copy secure note name to clipboard.",
+    "description": "Error message displayed when copying the secure note name to the clipboard fails"
   },
   "error_no_response_from_tab": {
     "message": "No response from tab",

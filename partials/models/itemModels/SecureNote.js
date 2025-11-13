@@ -43,7 +43,9 @@ class SecureNote extends Item {
   }
 
   async decryptSif () {
-
+    return {
+      text: await super.decryptSif(this.#s_text, this?.internalData?.type)
+    };
   }
 
   setSif () {

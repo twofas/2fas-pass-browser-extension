@@ -11,10 +11,10 @@ import generateIcon from '../../../functions/serviceList/generateIcon';
 
 const Skeleton = lazy(() => import('../../Skeleton'));
 const DetailsIcon = lazy(() => import('@/assets/popup-window/details.svg?react'));
+const CopyNameBtn = lazy(() => import('../components/CopyNameBtn'));
+const CopySecureNoteBtn = lazy(() => import('../components/CopySecureNoteBtn'));
 
 function SecureNoteItemView (props) {
-  console.log(props);
-
   return (
     <>
       <div
@@ -27,9 +27,8 @@ function SecureNoteItemView (props) {
         </span>
       </div>
       <div className={S.servicesListItemAdditionalButtons}>
-        {/* <PasswordBtn item={props.data} more={props.more} setMore={toggleMenuCallback} />
-        <UsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={toggleMenuCallback} />
-        <MoreBtn more={props.more} setMore={toggleMenuCallback} /> */}
+        <CopySecureNoteBtn item={props.data} />
+        <CopyNameBtn item={props.data} />
 
         <Link
           to={`/details/${props.data.deviceId}/${props.data.vaultId}/${props.data.id}`}
@@ -37,7 +36,7 @@ function SecureNoteItemView (props) {
           state={{
             from: 'thisTab',
             data: { ...props.data },
-            // scrollPosition
+            // scrollPosition @TODO: implement scroll position saving
           }}
           prefetch='intent'
           title={browser.i18n.getMessage('this_tab_more_details')}
