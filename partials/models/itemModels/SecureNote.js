@@ -15,6 +15,7 @@ class SecureNote extends Item {
   static contentVersion = 1;
 
   #s_text;
+  #s_textDecrypted;
 
   constructor (secureNoteData, deviceId = null, vaultId = null) {
     if (secureNoteData.constructor.name === SecureNote.name) {
@@ -47,10 +48,15 @@ class SecureNote extends Item {
     
     // Secure Input Fields
     this.#s_text = secureNoteData.content.s_text;
+    this.#s_textDecrypted = null;
   }
 
   removeSif () {
+    if (this.securityType !== SECURITY_TIER.HIGHLY_SECRET) {
+      throw new Error('Item is not of Highly Secret security tier');
+    }
 
+    this.#s_text = null;
   }
 
   async decryptSif () {
@@ -59,24 +65,32 @@ class SecureNote extends Item {
     };
   }
 
-  setSif () {
+  setSif (sifData) {
+    if (!Array.isArray(sifData)) {
+      throw new Error('Invalid SIF data: must be an array');
+    }
 
+    sifData.forEach(item => {
+      if (Object.prototype.hasOwnProperty.call(item, 's_text')) {
+        this.#s_text = item.s_text;
+      }
+    });
   }
 
-  setTextDecrypted () {
-
+  setTextDecrypted (decryptedText) {
+    this.#s_textDecrypted = decryptedText;
   }
 
   removeTextDecrypted () {
-
+    this.#s_textDecrypted = null;
   }
 
   get textDecrypted () {
-
+    return this.#s_textDecrypted;
   }
 
   get isTextDecrypted () {
-
+    return this.#s_textDecrypted !== null;
   }
 
   get dropdownList () {
@@ -95,8 +109,9 @@ class SecureNote extends Item {
     return this.#s_text && this.#s_text.length > 0;
   }
 
-  get isT3orT2WithPassword () {
-    // Needed!
+  get isT3orT2WithSif () {
+    return this.securityType === SECURITY_TIER.SECRET
+      || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
   }
 
   toJSON () {
