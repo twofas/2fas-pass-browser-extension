@@ -52,7 +52,7 @@ function TopBar () {
   }, [logout]);
 
   const logoClass = useMemo(() => 
-    `${S.topbarLogo} ${(location.pathname === '/blocked' || location.pathname === '/') ? S.disabled : ''}`,
+    `${S.topbarLogo} ${(location.pathname === '/blocked' || location.pathname === '/' || location.pathname === '/connect') ? S.disabled : ''}`,
     [location.pathname]
   );
 
