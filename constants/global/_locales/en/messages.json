@@ -207,19 +207,19 @@
     "message": "Add the note",
     "description": "Placeholder text for the secure note input field"
   },
-  "secure_note_title": {
-    "message": "Title",
-    "description": "Placeholder text for the secure note title input field"
+  "secure_note_name": {
+    "message": "Name",
+    "description": "Placeholder text for the secure note name input field"
   },
-  "secure_note_title_placeholder": {
-    "message": "Secure Note's title",
-    "description": "Placeholder text for the secure note title input field"
+  "secure_note_name_placeholder": {
+    "message": "Secure Note's name",
+    "description": "Placeholder text for the secure note name input field"
   },
-  "secure_note_title_required": {
-    "message": "Secure Note title is required.",
-    "description": "Validation message indicating that the secure note title is required"
+  "secure_note_name_required": {
+    "message": "Secure Note name is required.",
+    "description": "Validation message indicating that the secure note name is required"
   },
-  "secure_note_title_max_length": {
+  "secure_note_name_max_length": {
     "message": "Secure Note title must be less than 256 characters.",
     "description": "Validation message indicating that the secure note title exceeds the maximum length"
   },
