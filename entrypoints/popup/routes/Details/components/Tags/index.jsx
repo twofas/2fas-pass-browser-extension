@@ -120,6 +120,11 @@ function Tags () {
       setData('item', updatedItem);
       setIsMenuOpen(false);
     } else {
+      if (availableTags.length === 0) {
+        showToast(browser.i18n.getMessage('details_tags_no_available'), 'info');
+        return;
+      }
+
       setData('tagsEditable', true);
     }
   };
