@@ -79,7 +79,7 @@ function LoginDetailsView (props) {
       content: {}
     };
 
-    if (data.item.isT3orT2WithPassword) {
+    if (data.item.isT3orT2WithSif) {
       stateData.sifFetched = true;
     }
 
