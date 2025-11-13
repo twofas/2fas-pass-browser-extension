@@ -26,7 +26,7 @@ const Notes = lazy(() => import('../components/Notes'));
 const DangerZone = lazy(() => import('../components/DangerZone'));
 
 /** 
-* Function to render the details component.
+* Function to render the details component for Login.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
