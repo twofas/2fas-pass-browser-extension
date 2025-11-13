@@ -50,8 +50,8 @@ const generateURLs = props => {
       updatedItem.setSifDecrypted(data.item.sifDecrypted);
     }
 
-    if (data.item.internalData.editedPassword !== null) {
-      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
+    if (data.item.internalData.editedSif !== null) {
+      updatedItem.internalData.editedSif = data.item.internalData.editedSif;
     }
 
     setData('item', updatedItem);
