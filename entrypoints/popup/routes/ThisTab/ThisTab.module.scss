@@ -179,7 +179,9 @@
         }
       }
 
-      &.service-password {
+      &.service-password,
+      &.service-name,
+      &.service-copy-2 {
         fill: v.$object-light;
         transition: fill .3s ease-in-out;
 
@@ -784,7 +786,9 @@
               }
             }
   
-            &.service-password {
+            &.service-password,
+            &.service-name,
+            &.service-copy-2 {
               fill: v.$primary-color-light;
   
               @include m.darkMode {
@@ -971,7 +975,9 @@
               }
             }
 
-            &.service-password {
+            &.service-password,
+            &.service-name,
+            &.service-copy-2 {
               fill: v.$primary-color-light;
               transition: fill .3s ease-in-out;
 
@@ -1087,6 +1093,24 @@
 
           &.service-details {
             width: 14px;
+          }
+
+          &.service-name {
+            fill: v.$object-light;
+            width: 14px;
+
+            @include m.darkMode {
+              fill: v.$object-dark;
+            }
+          }
+
+          &.service-copy-2 {
+            fill: v.$object-light;
+            width: 13px;
+
+            @include m.darkMode {
+              fill: v.$object-dark;
+            }
           }
         }
       }
