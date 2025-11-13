@@ -76,6 +76,7 @@ function Details (props) {
         return;
       }
 
+      // @TODO: Change START
       if (item.constructor.name === 'Login' && item.sifExists && !item.isSifDecrypted) {
         try {
           const decryptedData = await item.decryptSif();
@@ -86,6 +87,7 @@ function Details (props) {
           CatchError(e);
         }
       }
+      // @TODO: Change END
 
       if (editedSecurityType !== undefined && item.securityType !== editedSecurityType) {
         item.securityType = editedSecurityType;
@@ -130,7 +132,7 @@ function Details (props) {
       }
 
       if (location.state?.generatedPassword) {
-        item.internalData.editedPassword = location.state.generatedPassword;
+        item.internalData.editedSif = location.state.generatedPassword;
         setData('passwordEditable', true);
         setData('passwordEdited', true);
       }
