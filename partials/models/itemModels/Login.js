@@ -252,7 +252,7 @@ export default class Login extends Item {
     return this.#s_password && this.#s_password !== '';
   }
 
-  get isT3orT2WithPassword () {
+  get isT3orT2WithSif () {
     return this.securityType === SECURITY_TIER.SECRET
       || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
   }
