@@ -38,7 +38,7 @@ function SecureNoteAddNewView () {
     const formData = {
       contentType: SecureNote.contentType,
       content: {
-        name: e.title ? valueToNFKD(e.title) : '',
+        name: e.name ? valueToNFKD(e.name) : '',
         s_text: e.note ? valueToNFKD(e.note) : ''
       }
     };
@@ -56,18 +56,18 @@ function SecureNoteAddNewView () {
   return (
     <Form onSubmit={onSubmit} initialValues={data} render={({ handleSubmit, submitting }) => ( // form
       <form onSubmit={handleSubmit}>
-        <Field name='title'>
+        <Field name='name'>
           {({ input }) => (
             <div className={`${pI.passInput}`}>
               <div className={pI.passInputTop}>
-                <label htmlFor='add-new-title'>{browser.i18n.getMessage('secure_note_title')}</label>
+                <label htmlFor='add-new-name'>{browser.i18n.getMessage('secure_note_name')}</label>
               </div>
               <div className={pI.passInputBottom}>
                 <input
                   type='text'
                   {...input}
-                  placeholder={browser.i18n.getMessage('secure_note_title_placeholder')}
-                  id='add-new-title'
+                  placeholder={browser.i18n.getMessage('secure_note_name_placeholder')}
+                  id='add-new-name'
                   dir='ltr'
                   spellCheck='false'
                   autoCorrect='off'
@@ -75,7 +75,7 @@ function SecureNoteAddNewView () {
                   autoCapitalize='off'
                   onChange={e => {
                     input.onChange(e);
-                    setData('title', e.target.value);
+                    setData('name', e.target.value);
                   }}
                 />
               </div>
@@ -112,7 +112,7 @@ function SecureNoteAddNewView () {
           <button
             type='submit'
             className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-            disabled={submitting || !data?.title || data?.title?.length === 0 ? 'disabled' : ''}
+            disabled={submitting || !data?.name || data?.name?.length === 0 ? 'disabled' : ''}
           >
             {browser.i18n.getMessage('continue')}
           </button>
