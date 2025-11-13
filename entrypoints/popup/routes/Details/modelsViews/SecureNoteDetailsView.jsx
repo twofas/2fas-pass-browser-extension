@@ -17,6 +17,7 @@ import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import getItem from '@/partials/sessionStorage/getItem';
 
 const Name = lazy(() => import('../components/Name'));
+const SecureNoteText = lazy(() => import('../components/SecureNoteText'));
 const SecurityType = lazy(() => import('../components/SecurityType'));
 const Tags = lazy(() => import('../components/Tags'));
 const DangerZone = lazy(() => import('../components/DangerZone'));
@@ -105,6 +106,11 @@ function SecureNoteDetailsView (props) {
           <Name
             key={`name-${data.item.id}`}
             formData={{ inputError }}
+          />
+          <SecureNoteText
+            key={`secure-note-text-${data.item.id}`}
+            formData={{ form, originalItem: props.originalItem }}
+            decryptError={data.decryptError}
           />
           <SecurityType key={`security-type-${data.item.id}`} />
           <Tags key={`tags-${data.item.id}`} />

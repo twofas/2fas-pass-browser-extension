@@ -167,7 +167,7 @@ function LoginDetailsView (props) {
           <Password
             key={`password-${data.item.id}`}
             formData={{ form, originalItem: props.originalItem }}
-            passwordDecryptError={data.passwordDecryptError}
+            sifDecryptError={data.sifDecryptError}
           />
           {generateURLs({ formData: { inputError } })}
           <SecurityType key={`security-type-${data.item.id}`} />

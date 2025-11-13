@@ -63,6 +63,10 @@
     "message": "Something went wrong. Item not found.",
     "description": "Error message displayed when the requested login item is not found"
   },
+  "error_secure_note_not_found": {
+    "message": "Something went wrong. Secure note not found.",
+    "description": "Error message displayed when the requested secure note is not found"
+  },
   "error_username_copy_failed": {
     "message": "Failed to copy username to clipboard.",
     "description": "Error message displayed when copying the username to the clipboard fails"
@@ -78,6 +82,10 @@
   "error_autofill_failed": {
     "message": "Failed to autofill. Please try again.",
     "description": "Error message displayed when the autofill operation fails"
+  },
+  "error_secure_note_name_copy_failed": {
+    "message": "Failed to copy secure note name to clipboard.",
+    "description": "Error message displayed when copying the secure note name to the clipboard fails"
   },
   "error_no_response_from_tab": {
     "message": "No response from tab",
@@ -323,19 +331,19 @@
     "message": "Add the note",
     "description": "Placeholder text for the secure note input field"
   },
-  "secure_note_title": {
-    "message": "Title",
-    "description": "Placeholder text for the secure note title input field"
+  "secure_note_name": {
+    "message": "Name",
+    "description": "Placeholder text for the secure note name input field"
   },
-  "secure_note_title_placeholder": {
-    "message": "Secure Note's title",
-    "description": "Placeholder text for the secure note title input field"
+  "secure_note_name_placeholder": {
+    "message": "Secure Note's name",
+    "description": "Placeholder text for the secure note name input field"
   },
-  "secure_note_title_required": {
-    "message": "Secure Note title is required.",
-    "description": "Validation message indicating that the secure note title is required"
+  "secure_note_name_required": {
+    "message": "Secure Note name is required.",
+    "description": "Validation message indicating that the secure note name is required"
   },
-  "secure_note_title_max_length": {
+  "secure_note_name_max_length": {
     "message": "Secure Note title must be less than 256 characters.",
     "description": "Validation message indicating that the secure note title exceeds the maximum length"
   },
@@ -446,6 +454,14 @@
   "notification_password_copied": {
     "message": "Password copied to clipboard",
     "description": "Notification message when the password is successfully copied to the clipboard"
+  },
+  "notification_secure_note_name_copied": {
+    "message": "Secure note name copied to clipboard",
+    "description": "Notification message when the secure note name is successfully copied to the clipboard"
+  },
+  "notification_secure_note_text_copied": {
+    "message": "Secure note text copied to clipboard",
+    "description": "Notification message when the secure note text is successfully copied to the clipboard"
   },
   "placeholder_domain_uri": {
     "message": "e.g., https://2fas.com",
@@ -1446,6 +1462,14 @@
   "this_tab_copy_username": {
     "message": "Copy username",
     "description": "Button label to copy the username to the clipboard"
+  },
+  "this_tab_copy_text": {
+    "message": "Copy text",
+    "description": "Button label to copy text from a secure note to the clipboard"
+  },
+  "this_tab_fetch_text": {
+    "message": "Fetch text",
+    "description": "Button label to fetch the text from the mobile app"
   },
   "this_tab_more_actions": {
     "message": "More actions",
