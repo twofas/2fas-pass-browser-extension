@@ -17,7 +17,7 @@ export default class Login extends Item {
   static contentVersion = 1;
 
   #s_password;
-  #s_passwordDecrypted;
+  #s_sifDecrypted;
 
   constructor (loginData, deviceId = null, vaultId = null) {
     if (loginData.constructor.name === Login.name) {
@@ -87,7 +87,7 @@ export default class Login extends Item {
 
     // Secure Input Fields
     this.#s_password = loginData.content.s_password ?? null;
-    this.#s_passwordDecrypted = null;
+    this.#s_sifDecrypted = null;
   }
 
   #normalizeUris (uris) {
@@ -144,20 +144,20 @@ export default class Login extends Item {
     });
   }
 
-  setPasswordDecrypted (decryptedPassword) {
-    this.#s_passwordDecrypted = decryptedPassword;
+  setSifDecrypted (decryptedSif) {
+    this.#s_sifDecrypted = decryptedSif;
   }
 
-  removePasswordDecrypted () {
-    this.#s_passwordDecrypted = null;
+  removeSifDecrypted () {
+    this.#s_sifDecrypted = null;
   }
 
-  get passwordDecrypted () {
-    return this.#s_passwordDecrypted;
+  get sifDecrypted () {
+    return this.#s_sifDecrypted;
   }
 
-  get isPasswordDecrypted () {
-    return this.#s_passwordDecrypted !== null;
+  get isSifDecrypted () {
+    return this.#s_sifDecrypted !== null;
   }
 
   get dropdownList () {
