@@ -302,7 +302,10 @@
 
     &-list {
       margin-top: 64px;
-      position: relative;
+
+      &-container {
+        position: relative;
+      }
 
       &-prev,
       &-next {
@@ -311,7 +314,6 @@
         height: 100%;
         opacity: 0;
         padding: 0;
-        pointer-events: none;
         position: absolute;
         width: calc((100vw - 184px) / 2);
         top: 50%;
@@ -321,7 +323,6 @@
 
         &.visible {
           opacity: 1;
-          pointer-events: all;
         }
 
         span {
@@ -346,12 +347,14 @@
 
       &-prev {
         justify-content: flex-start;
-        left: -83px;
+        left: -95px;
+        padding-left: 12px;
       }
 
       &-next {
         justify-content: flex-end;
-        right: -83px;
+        right: -95px;
+        padding-right: 12px;
 
         svg {
           transform: rotate(180deg);
