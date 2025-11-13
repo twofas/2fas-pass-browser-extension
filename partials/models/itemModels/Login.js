@@ -62,6 +62,7 @@ export default class Login extends Item {
 
     this.contentType = Login.contentType;
     this.contentVersion = Login.contentVersion;
+
     this.content = {
       name: loginData.content.name,
       username: loginData.content.username,
@@ -76,6 +77,7 @@ export default class Login extends Item {
     };
 
     this.internalData = {
+      uiName: 'Login',
       urisWithTempIds: loginData.internalData?.urisWithTempIds || this.#urisWithTempIds(loginData.content.uris) || [],
       normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || [],
       type: loginData.internalData?.type || null,
@@ -265,6 +267,7 @@ export default class Login extends Item {
         s_password: this.#s_password
       },
       internalData: {
+        uiName: this.internalData.uiName,
         type: this.internalData.type,
         sifResetTime: this.internalData.sifResetTime,
         editedPassword: this.internalData.editedPassword
