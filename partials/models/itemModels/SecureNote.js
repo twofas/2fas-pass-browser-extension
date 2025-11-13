@@ -27,11 +27,22 @@ class SecureNote extends Item {
     validate(secureNoteData?.content?.name, isValidString, 'Invalid content.name: must be a string');
     validateOptional(secureNoteData?.content?.s_text, isValidBase64, 'Invalid content.s_text: must be a base64 string');
 
+    validateOptional(secureNoteData?.internalData, data => typeof data === 'object', 'Invalid secureNoteData.internalData: must be an object');
+    validateOptional(secureNoteData?.internalData?.type, isValidString, 'Invalid secureNoteData.internalData.type: must be a string');
+
     this.contentType = SecureNote.contentType;
     this.contentVersion = SecureNote.contentVersion;
+
     this.content = {
       name: secureNoteData.content.name,
       s_text: secureNoteData.content.s_text
+    };
+
+    this.internalData = {
+      uiName: 'Secure Note',
+      type: secureNoteData.internalData?.type || null,
+      sifResetTime: secureNoteData.internalData?.sifResetTime || null,
+      editedText: secureNoteData.internalData?.editedText ?? null
     };
     
     // Secure Input Fields
@@ -85,7 +96,7 @@ class SecureNote extends Item {
   }
 
   get isT3orT2WithPassword () {
-
+    // Needed!
   }
 
   toJSON () {
@@ -96,6 +107,12 @@ class SecureNote extends Item {
       content: {
         name: this.content.name,
         s_text: this.#s_text
+      },
+      internalData: {
+        uiName: this.internalData.uiName,
+        type: this.internalData.type,
+        sifResetTime: this.internalData.sifResetTime,
+        editedText: this.internalData.editedText
       }
     };
   }
