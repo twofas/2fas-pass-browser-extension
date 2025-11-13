@@ -1,0 +1,51 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+import getItem from '@/partials/sessionStorage/getItem';
+import { copyValue } from '@/partials/functions';
+
+/** 
+* Function to handle copying the text from a secure note item.
+* @async
+* @param {number} deviceId - The ID of the device.
+* @param {number} vaultId - The ID of the vault.
+* @param {number} itemId - The ID of the item.
+* @return {Promise<void>}
+*/
+const handleSecureNoteText = async (deviceId, vaultId, itemId) => {
+  let item;
+  
+  try {
+    item = await getItem(deviceId, vaultId, itemId);
+  } catch (e) {
+    showToast(browser.i18n.getMessage('error_secure_note_not_found'), 'error');
+    await CatchError(e);
+    return;
+  }
+
+  if (!item) {
+    showToast(browser.i18n.getMessage('error_secure_note_not_found'), 'error');
+    await CatchError(new TwoFasError(TwoFasError.internalErrors.handlePasswordNoService, { additional: { func: 'handlePassword' } }));
+    return;
+  }
+
+  if (!item.sifExists) {
+    navigator.clipboard.writeText('');
+    showToast(browser.i18n.getMessage('notification_secure_note_text_copied'), 'success');
+    return;
+  }
+
+  try {
+    const decryptedData = await item.decryptSif();
+    await copyValue(decryptedData.text, deviceId, vaultId, item.id, 'text');
+    showToast(browser.i18n.getMessage('notification_secure_note_text_copied'), 'success');
+  } catch (e) {
+    showToast(browser.i18n.getMessage('error_secure_note_name_copy_failed'), 'error');
+    await CatchError(e);
+  }
+};
+
+export default handleSecureNoteText;
