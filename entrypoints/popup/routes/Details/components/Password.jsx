@@ -55,8 +55,8 @@ function Password (props) {
       return '';
     }
 
-    if (data.item.internalData.editedPassword !== null) {
-      return data.item.internalData.editedPassword;
+    if (data.item.internalData.editedSif !== null) {
+      return data.item.internalData.editedSif;
     }
 
     if (data.item.isSifDecrypted) {
@@ -70,10 +70,10 @@ function Password (props) {
     const currentPasswordValue = getPasswordValue();
 
     if (currentPasswordValue !== previousPasswordValueRef.current) {
-      form.change('editedPassword', currentPasswordValue);
+      form.change('editedSif', currentPasswordValue);
       previousPasswordValueRef.current = currentPasswordValue;
     }
-  }, [data.item.internalData.editedPassword, data.item.sifDecrypted, form]);
+  }, [data.item.internalData.editedSif, data.item.sifDecrypted, form]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -115,8 +115,8 @@ function Password (props) {
     try {
       let passwordToCopy;
 
-      if (data.item.internalData.editedPassword !== null) {
-        passwordToCopy = data.item.internalData.editedPassword;
+      if (data.item.internalData.editedSif !== null) {
+        passwordToCopy = data.item.internalData.editedSif;
       } else if (data.item.isSifDecrypted) {
         passwordToCopy = data.item.sifDecrypted;
       } else if (data.item.sifExists) {
@@ -163,12 +163,12 @@ function Password (props) {
         updatedItem.setSifDecrypted(data.item.sifDecrypted);
       }
 
-      updatedItem.internalData.editedPassword = null;
+      updatedItem.internalData.editedSif = null;
 
       setData('item', updatedItem);
       setData('passwordEdited', false);
       setData('passwordEditable', false);
-      form.change('editedPassword', data.item.isSifDecrypted ? data.item.sifDecrypted : '');
+      form.change('editedSif', data.item.isSifDecrypted ? data.item.sifDecrypted : '');
     } else {
       setData('passwordEditable', true);
     }
@@ -199,19 +199,19 @@ function Password (props) {
       updatedItem.setSifDecrypted(data.item.sifDecrypted);
     }
 
-    updatedItem.internalData.editedPassword = newValue;
+    updatedItem.internalData.editedSif = newValue;
 
     setData('item', updatedItem);
-    form.change('editedPassword', newValue);
+    form.change('editedSif', newValue);
   };
 
   return (
     <LazyMotion features={loadDomAnimation}>
-      <Field name="editedPassword">
+      <Field name="editedSif">
         {() => (
           <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''}`}>
             <div className={pI.passInputTop}>
-              <label htmlFor="editedPassword">{browser.i18n.getMessage('password')}</label>
+              <label htmlFor='editedSif'>{browser.i18n.getMessage('password')}</label>
               <button
                 type='button'
                 className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
@@ -225,10 +225,10 @@ function Password (props) {
                 value={getPasswordValue()}
                 type={data?.passwordVisible ? 'text' : 'password'}
                 placeholder={!sifDecryptError && (!data?.passwordMobile && originalItem?.isT3orT2WithSif || data?.passwordEditable) ? browser.i18n.getMessage('placeholder_password') : ''}
-                id='editedPassword'
+                id='editedSif'
                 onChange={handlePasswordChange}
                 showPassword={data?.passwordVisible}
-                isDecrypted={data.item.isSifDecrypted || data.item.internalData.editedPassword !== null}
+                isDecrypted={data.item.isSifDecrypted || data.item.internalData.editedSif !== null}
                 state={!originalItem?.isT3orT2WithSif ? 'nonFetched' : ''}
                 disabled={!data?.passwordEditable || data?.passwordMobile || sifDecryptError}
                 dir="ltr"

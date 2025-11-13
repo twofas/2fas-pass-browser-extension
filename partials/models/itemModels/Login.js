@@ -82,7 +82,7 @@ export default class Login extends Item {
       normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || [],
       type: loginData.internalData?.type || null,
       sifResetTime: loginData.internalData?.sifResetTime || null,
-      editedPassword: loginData.internalData?.editedPassword ?? null
+      editedSif: loginData.internalData?.editedSif ?? null
     };
 
     // Secure Input Fields
@@ -270,7 +270,7 @@ export default class Login extends Item {
         uiName: this.internalData.uiName,
         type: this.internalData.type,
         sifResetTime: this.internalData.sifResetTime,
-        editedPassword: this.internalData.editedPassword
+        editedSif: this.internalData.editedSif
       }
     };
   }
