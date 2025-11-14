@@ -5,11 +5,11 @@
 // See LICENSE file for full terms
 
 import S from '../../Settings.module.scss';
-import Select from 'react-select';
 import { useEffect, useState, lazy } from 'react';
 import isPaidDeviceConnected from '@/partials/functions/isPaidDeviceConnected';
 import PremiumLockIcon from '@/assets/popup-window/premium-lock.svg?react';
 import setIdleInterval from '@/partials/functions/setIdleInterval';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
 
@@ -95,7 +95,7 @@ function IdleLock () {
       <p>{browser.i18n.getMessage('settings_idle_lock_description')}</p>
     
       <form action="#" className={S.settingsIdleLockForm}>
-        <Select
+        <AdvancedSelect
           className='react-select-idle-container'
           classNamePrefix='react-select'
           isSearchable={false}
