@@ -11,7 +11,7 @@ import { useEffect, useRef, useState, lazy, useCallback, useMemo, memo } from 'r
 import { useAuthActions, useAuthState } from '@/hooks/useAuth';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import Select from 'react-select';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import AddNewCustomOption from './components/AddNewCustomOption';
 import { addNewOptions } from '@/constants';
 
@@ -103,22 +103,6 @@ function TopBar () {
     };
   }, [watchConfigured]);
 
-  useEffect(() => {
-    const handleClickOutside = event => {
-      if (isMenuOpen && addNewContainerRef.current && !addNewContainerRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    if (isMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isMenuOpen]);
-
   return (
     <>
       <header className={S.topbar}>
@@ -161,7 +145,7 @@ function TopBar () {
             <AddNewIcon />
           </button>
 
-          <Select
+          <AdvancedSelect
             options={addNewOptions}
             value={null}
             menuIsOpen={isMenuOpen}

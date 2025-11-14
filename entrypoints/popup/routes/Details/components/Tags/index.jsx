@@ -12,7 +12,7 @@ import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useState, useEffect, useRef, useCallback, useMemo, lazy } from 'react';
 import getTags from '@/partials/sessionStorage/getTags';
-import Select from 'react-select';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import usePopupStateStore from '../../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../../functions/updateItem';
@@ -85,25 +85,6 @@ function Tags () {
       tag: tag
     }));
   }, [availableTags, data.item.tags]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target)
-      ) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    if (isMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isMenuOpen]);
 
   const handleTagsEditable = async () => {
     if (data.tagsEditable) {
@@ -232,7 +213,7 @@ function Tags () {
                       <span>{browser.i18n.getMessage('details_tags_add')}</span>
                     </button>
                     
-                    <Select
+                    <AdvancedSelect
                       ref={selectRef}
                       options={options}
                       value={null}

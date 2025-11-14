@@ -32,6 +32,7 @@ import ClearIcon from '@/assets/popup-window/clear.svg?react';
 import SortUpIcon from '@/assets/popup-window/sort-up.svg?react';
 import SortDownIcon from '@/assets/popup-window/sort-down.svg?react';
 import NoMatch from './components/NoMatch';
+import ModelFilter from './components/ModelFilter';
 import Filters from './components/Filters';
 import UpdateComponent from './components/UpdateComponent';
 
@@ -444,7 +445,7 @@ function ThisTab (props) {
 
               <div className={allLoginsClass}>
                 <div className={S.thisTabAllLoginsHeader}>
-                  <h3>{browser.i18n.getMessage('this_tab_all_logins_header')}</h3>
+                  <ModelFilter />
 
                   <div className={S.thisTabAllLoginsHeaderSort}>
                     <span>{browser.i18n.getMessage('this_tab_sort')}:</span>

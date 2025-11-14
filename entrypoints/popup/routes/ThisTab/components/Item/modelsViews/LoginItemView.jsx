@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import handleAutofill from '../../../functions/serviceList/handleAutofill';
 import toggleMenu from '../functions/toggleMenu';
-import Select from 'react-select';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 const Skeleton = lazy(() => import('../../Skeleton'));
 const PasswordBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/PasswordBtn'));
@@ -59,7 +59,7 @@ function LoginItemView (props) {
         <UsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={toggleMenuCallback} />
         <MoreBtn more={props.more} setMore={toggleMenuCallback} />
       </div>
-      <Select
+      <AdvancedSelect
         className='react-select-dropdown-container'
         classNamePrefix='react-select-dropdown'
         isSearchable={false}
