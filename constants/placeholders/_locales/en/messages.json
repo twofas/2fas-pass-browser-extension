@@ -14,5 +14,9 @@
   "placeholder_name": {
     "message": "Type your Item name",
     "description": "Placeholder text for the name input field"
+  },
+  "placeholder_secure_note": {
+    "message": "Type your Secure Note",
+    "description": "Placeholder text for the Secure Note text input field"
   }
 }

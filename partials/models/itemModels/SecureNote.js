@@ -15,7 +15,7 @@ class SecureNote extends Item {
   static contentVersion = 1;
 
   #s_text;
-  #s_textDecrypted;
+  #s_sifDecrypted;
 
   constructor (secureNoteData, deviceId = null, vaultId = null) {
     if (secureNoteData.constructor.name === SecureNote.name) {
@@ -48,7 +48,7 @@ class SecureNote extends Item {
     
     // Secure Input Fields
     this.#s_text = secureNoteData.content.s_text;
-    this.#s_textDecrypted = null;
+    this.#s_sifDecrypted = null;
   }
 
   removeSif () {
@@ -77,20 +77,20 @@ class SecureNote extends Item {
     });
   }
 
-  setTextDecrypted (decryptedText) {
-    this.#s_textDecrypted = decryptedText;
+  setSifDecrypted (decryptedSif) {
+    this.#s_sifDecrypted = decryptedSif;
   }
 
-  removeTextDecrypted () {
-    this.#s_textDecrypted = null;
+  removeSifDecrypted () {
+    this.#s_sifDecrypted = null;
   }
 
-  get textDecrypted () {
-    return this.#s_textDecrypted;
+  get sifDecrypted () {
+    return this.#s_sifDecrypted;
   }
 
-  get isTextDecrypted () {
-    return this.#s_textDecrypted !== null;
+  get isSifDecrypted () {
+    return this.#s_sifDecrypted !== null;
   }
 
   get dropdownList () {
