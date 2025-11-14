@@ -7,7 +7,7 @@
 import S from '../../ThisTab.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { lazy, useState, useRef, useEffect, useMemo } from 'react';
-import Select from 'react-select';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 const FiltersIcon = lazy(() => import('@/assets/popup-window/filters.svg?react'));
 
@@ -58,7 +58,6 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const selectRef = useRef(null);
   const buttonRef = useRef(null);
-  const containerRef = useRef(null);
 
   const options = useMemo(() => {
     if (!tags || !Array.isArray(tags) || tags.length === 0) {
@@ -106,25 +105,6 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
   }, [selectedTag, options]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target)
-      ) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    if (isMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isMenuOpen]);
-
-  useEffect(() => {
     if (forceClose) {
       setIsMenuOpen(false);
     }
@@ -132,7 +112,7 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
 
   return (
     <>
-      <div ref={containerRef} className={S.thisTabAllLoginsSearchContainerTags} style={{ position: 'relative' }}>
+      <div className={S.thisTabAllLoginsSearchContainerTags} style={{ position: 'relative' }}>
         <button
           ref={buttonRef}
           className={`${bS.btn} ${bS.btnFilter} ${isMenuOpen ? bS.btnFilterActive : ''}`}
@@ -141,7 +121,8 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
         >
           <FiltersIcon />
         </button>
-        <Select
+        
+        <AdvancedSelect
           ref={selectRef}
           options={options}
           value={selectedOption}

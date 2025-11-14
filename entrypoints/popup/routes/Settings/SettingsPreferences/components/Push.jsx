@@ -7,9 +7,9 @@
 import '@/partials/TwofasNotification/TwofasNotification.scss';
 import S from '../../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import Select from 'react-select';
 import { useEffect, useState, useCallback } from 'react';
 import TwofasNotification from '@/partials/TwofasNotification';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 /**
 * Function to render the Push component.
@@ -83,7 +83,7 @@ function Push () {
       <p>{browser.i18n.getMessage('settings_notifications_description')}</p>
 
       <form action="#" className={S.settingsPushForm}>
-        <Select
+        <AdvancedSelect
           className='react-select-container'
           classNamePrefix='react-select'
           isSearchable={false}
