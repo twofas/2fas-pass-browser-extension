@@ -19,6 +19,10 @@
     "message": "Decrypting password error. Please resync with your mobile app.",
     "description": "Error message displayed when decrypting the password fails"
   },
+  "details_secure_note_decrypt_error": {
+    "message": "Decrypting secure note error. Please resync with your mobile app.",
+    "description": "Error message displayed when decrypting the secure note fails"
+  },
   "details_delete_header": {
     "message": "No longer need this Item?",
     "description": "Header for the delete login confirmation section"
@@ -98,5 +102,13 @@
   "details_fetch_title": {
     "message": "Fetch Highly Secret data",
     "description": "Title for the fetch highly secret data link"
+  },
+  "details_sif_not_fetched": {
+    "message": "This information is only available on your mobile phone. Click the \"Fetch\" button at the top of this window to retrieve it.",
+    "description": "Message indicating that the highly secret data has not been fetched yet"
+  },
+  "details_reveal_secure_note": {
+    "message": "Reveal Secure Note",
+    "description": "Button label to reveal the secure note content"
   }
 }

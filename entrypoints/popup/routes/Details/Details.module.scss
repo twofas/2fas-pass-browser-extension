@@ -241,6 +241,11 @@
     }
   }
 
+  &-details-secure-note-textarea {
+    overflow: hidden;
+    transition: none;
+  }
+
   h2 {
     color: v.$primary-text-light;
     font-size: 16px;

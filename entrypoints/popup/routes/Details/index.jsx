@@ -76,18 +76,23 @@ function Details (props) {
         return;
       }
 
-      // @TODO: Change START
-      if (item.constructor.name === 'Login' && item.sifExists && !item.isSifDecrypted) {
+      if (item.sifExists && !item.isSifDecrypted) {
         try {
           const decryptedData = await item.decryptSif();
-          item.setSifDecrypted(decryptedData.password);
+
+          // @TODO: Refactor this
+          if (item.constructor.name === 'Login') {
+            item.setSifDecrypted(decryptedData.password);
+          } else if (item.constructor.name === 'SecureNote') {
+            item.setSifDecrypted(decryptedData.text);
+          }
+
           setData('sifDecryptError', false);
         } catch (e) {
           setData('sifDecryptError', true);
           CatchError(e);
         }
       }
-      // @TODO: Change END
 
       if (editedSecurityType !== undefined && item.securityType !== editedSecurityType) {
         item.securityType = editedSecurityType;

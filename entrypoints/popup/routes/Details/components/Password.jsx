@@ -55,7 +55,7 @@ function Password (props) {
       return '';
     }
 
-    if (data.item.internalData.editedSif !== null) {
+    if (data.item.internalData.editedSif !== null && data.item.internalData.editedSif !== undefined) { // @TODO: isText?
       return data.item.internalData.editedSif;
     }
 
@@ -144,7 +144,7 @@ function Password (props) {
     // FUTURE - move to separate component
     return (
       <div className={pI.passInputTooltip}>
-        <span>This information is only available on your mobile phone. Click the "Fetch" button at the top of this window to retrieve it.</span>
+        <span>{browser.i18n.getMessage('details_sif_not_fetched')}</span>
       </div>
     );
   };
