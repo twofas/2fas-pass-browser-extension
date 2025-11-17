@@ -4,30 +4,33 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../Details.module.scss';
+import S from '../../Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useNavigate } from 'react-router';
 import { useState, lazy } from 'react';
-import getEditableAmount from '../functions/getEditableAmount';
+import generateURLs from '../../functions/generateURLs';
+import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import { valueToNFKD } from '@/partials/functions';
-import usePopupStateStore from '../../../store/popupState';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
+import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import Login from '@/partials/models/itemModels/Login';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import getItem from '@/partials/sessionStorage/getItem';
 
-const Name = lazy(() => import('../components/Name'));
-const SecureNoteText = lazy(() => import('../components/SecureNoteText'));
-const SecurityType = lazy(() => import('../components/SecurityType'));
-const Tags = lazy(() => import('../components/Tags'));
-const DangerZone = lazy(() => import('../components/DangerZone'));
+const Name = lazy(() => import('../../components/Name'));
+const Username = lazy(() => import('../../components/Username'));
+const Password = lazy(() => import('../../components/Password'));
+const SecurityType = lazy(() => import('../../components/SecurityType'));
+const Tags = lazy(() => import('../../components/Tags'));
+const Notes = lazy(() => import('../../components/Notes'));
+const DangerZone = lazy(() => import('../../components/DangerZone'));
 
 /** 
-* Function to render the details component for Secure Note.
+* Function to render the details component for Login.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function SecureNoteDetailsView (props) {
+function LoginDetailsView (props) {
   const data = usePopupStateStore(state => state.data);
   const [inputError, setInputError] = useState(undefined);
 
@@ -40,7 +43,15 @@ function SecureNoteDetailsView (props) {
       errors.name = browser.i18n.getMessage('details_name_required');
     } else if (values.content?.name?.length > 255) {
       errors.name = browser.i18n.getMessage('details_name_max_length');
+    } else if (values.content?.username?.length > 255) {
+      errors.username = browser.i18n.getMessage('details_username_max_length');
     }
+
+    values.content?.uris.forEach((uri, index) => {
+      if (uri?.text?.length > 2048) {
+        errors[`uris[${index}]`] = browser.i18n.getMessage('details_uri_max_length');
+      }
+    });
 
     const errorKeys = Object.keys(errors);
 
@@ -61,7 +72,7 @@ function SecureNoteDetailsView (props) {
     }
 
     const stateData = {
-      contentType: SecureNote.contentType,
+      contentType: Login.contentType,
       deviceId: e.deviceId,
       itemId: e.id,
       vaultId: e.vaultId,
@@ -76,6 +87,47 @@ function SecureNoteDetailsView (props) {
       stateData.content.name = e?.content?.name ? valueToNFKD(e.content.name) : '';
     }
 
+    if (data.usernameEditable) {
+      if (data.usernameMobile) {
+        stateData.content.username = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
+      } else {
+        stateData.content.username = { value: e?.content?.username ? valueToNFKD(e.content.username) : '', action: REQUEST_STRING_ACTIONS.SET };
+      }
+    }
+
+    if (data.passwordEditable) {
+      if (data.passwordMobile) {
+        stateData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
+      } else {
+        stateData.content.s_password = {
+          value: data?.item?.internalData?.editedSif ? valueToNFKD(data.item.internalData.editedSif) : (data?.item?.sifDecrypted ? valueToNFKD(data.item.sifDecrypted) : ''),
+          action: REQUEST_STRING_ACTIONS.SET
+        };
+      }
+    }
+
+    const hasEditedUris = data?.domainsEditable ? Object.values(data.domainsEditable).some(v => v === true) : false;
+    const hasNewUris = e?.content?.uris?.some(uri => uri?.new);
+    const hasRemovedUris = (data?.urisRemoved || 0) > 0;
+
+    const originalUrisCount = props.originalItem?.content?.uris?.length || 0;
+    const currentUrisCount = e?.content?.uris?.length || 0;
+    const urisCountChanged = originalUrisCount !== currentUrisCount;
+
+    const hasUriChanges = hasEditedUris || hasNewUris || hasRemovedUris || urisCountChanged;
+
+    if (hasUriChanges) {
+      const processedUris = (e.content.uris || []).map(uri => {
+        return {
+          text: uri?.text ? valueToNFKD(uri.text) : '',
+          matcher: uri?.matcher
+        };
+      });
+
+      e.content.uris = processedUris;
+      stateData.content.uris = processedUris;
+    }
+
     if (data.tierEditable) {
       const originalItem = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       
@@ -86,6 +138,10 @@ function SecureNoteDetailsView (props) {
 
     if (data.tagsEditable) {
       stateData.tags = e.tags || [];
+    }
+
+    if (data.notesEditable) {
+      stateData.content.notes = e?.content?.notes ? valueToNFKD(e.content.notes) : '';
     }
 
     return navigate('/fetch', {
@@ -107,13 +163,19 @@ function SecureNoteDetailsView (props) {
             key={`name-${data.item.id}`}
             formData={{ inputError }}
           />
-          <SecureNoteText
-            key={`secure-note-text-${data.item.id}`}
+          <Username
+            key={`username-${data.item.id}`}
+            formData={{ inputError }}
+          />
+          <Password
+            key={`password-${data.item.id}`}
             formData={{ form, originalItem: props.originalItem }}
             sifDecryptError={data.sifDecryptError}
           />
+          {generateURLs({ formData: { inputError } })}
           <SecurityType key={`security-type-${data.item.id}`} />
           <Tags key={`tags-${data.item.id}`} />
+          <Notes key={`notes-${data.item.id}`} />
           <div className={S.detailsButton}>
             <button
               type="submit"
@@ -134,4 +196,4 @@ function SecureNoteDetailsView (props) {
   );
 }
 
-export default SecureNoteDetailsView;
+export default LoginDetailsView;

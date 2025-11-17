@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import usePopupStateStore from '../../../store/popupState';
+import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 
 /**
 * Function to get the editable amount.
