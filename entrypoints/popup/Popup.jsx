@@ -5,31 +5,31 @@
 // See LICENSE file for full terms
 
 import S from './Popup.module.scss';
-import { Route, Routes, Navigate, useLocation } from 'react-router';
-import { useEffect, lazy, useState, useMemo, useCallback, memo } from 'react';
-import { AuthProvider } from '@/hooks/useAuth';
-import { MatchingLoginsProvider } from '@/hooks/useMatchingLogins';
-import { WSProvider } from '@/hooks/useWS';
-import { PopupStateProvider } from '@/hooks/usePopupState';
+import { HashRouter, Route, Routes, Navigate, useNavigate, useLocation } from 'react-router';
+import { useEffect, useState, useMemo, memo, useRef, lazy } from 'react';
+import { AuthProvider, useAuthState } from '@/hooks/useAuth';
 import popupOnMessage from './events/popupOnMessage';
-import Blocked from './routes/Blocked';
-import safariBlankLinks from '@/partials/functions/safariBlankLinks';
 import lockShortcuts from './utils/lockShortcuts';
 import lockRMB from './utils/lockRMB';
 import setTheme from './utils/setTheme';
 import isPopupInSeparateWindowExists from './utils/isPopupInSeparateWindowExists';
-import storageAutoClearActions from '@/partials/functions/storageAutoClearActions';
-import { getInitialRoute } from './utils/getInitialRoute';
+import { safariBlankLinks, storageAutoClearActions } from '@/partials/functions';
+import ToastsContent from './components/ToastsContent';
+import TopBar from './components/TopBar';
+import BottomBar from './components/BottomBar';
+import usePopupStateStore from './store/popupState';
+import usePopupHref from './hooks/usePopupHref';
+import { addToNavigationHistory } from './utils/navigationHistory';
+import Blocked from './routes/Blocked';
+import ThisTab from './routes/ThisTab';
+import Connect from './routes/Connect';
 
-const TopBar = lazy(() => import('./components/TopBar'));
-const BottomBar = lazy(() => import('./components/BottomBar'));
-const ThisTab = lazy(() => import('./routes/ThisTab'));
-const Connect = lazy(() => import('./routes/Connect'));
 const AddNew = lazy(() => import('./routes/AddNew'));
 const Settings = lazy(() => import('./routes/Settings'));
 const SettingsAbout = lazy(() => import('./routes/Settings/SettingsAbout'));
 const SettingsPreferences = lazy(() => import('./routes/Settings/SettingsPreferences'));
 const SettingsSecurity = lazy(() => import('./routes/Settings/SettingsSecurity'));
+const SettingsDevices = lazy(() => import('./routes/Settings/SettingsDevices'));
 const SettingsReset = lazy(() => import('./routes/Settings/SettingsReset'));
 const SettingsSaveLoginExcludedDomains = lazy(() => import('./routes/Settings/SettingsSaveLoginExcludedDomains'));
 const Fetch = lazy(() => import('./routes/Fetch'));
@@ -37,180 +37,182 @@ const FetchExternal = lazy(() => import('./routes/FetchExternal'));
 const Details = lazy(() => import('./routes/Details'));
 const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
-const ToastsContent = lazy(() => import('./components/ToastsContent'));
-const InitialRouter = lazy(() => import('./components/InitialRouter'));
 
 const emptyFunc = () => {};
 
-/** 
-* ProtectedRoute component to handle access control based on authentication status.
+const routeConfig = [
+  { path: '/connect', component: Connect },
+  { path: '/', component: ThisTab, isProtectedRoute: true },
+  { path: '/add-new/:model', component: AddNew, isProtectedRoute: true },
+  { path: '/settings', component: Settings, isProtectedRoute: false },
+  { path: '/settings/about', component: SettingsAbout, isProtectedRoute: false },
+  { path: '/settings/preferences', component: SettingsPreferences, isProtectedRoute: false },
+  { path: '/settings/security', component: SettingsSecurity, isProtectedRoute: false },
+  { path: '/settings/devices', component: SettingsDevices, isProtectedRoute: false },
+  { path: '/settings/preferences/reset', component: SettingsReset, isProtectedRoute: false },
+  { path: '/settings/preferences/save-login-excluded-domains', component: SettingsSaveLoginExcludedDomains, isProtectedRoute: false },
+  { path: '/fetch', component: Fetch, isProtectedRoute: true },
+  { path: '/fetch/:data', component: FetchExternal, noClassName: true, isProtectedRoute: true },
+  { path: '/details/:deviceId/:vaultId/:id', component: Details, isProtectedRoute: true },
+  { path: '/password-generator', component: PasswordGenerator, isProtectedRoute: true },
+  { path: '/blocked', component: Blocked },
+  { path: '*', component: NotFound }
+];
+
+/**
+* RouteGuard component to handle access control based on authentication and block status.
 * @param {Object} props - The component props.
 * @return {JSX.Element|null} The rendered component or null.
 */
-const ProtectedRoute = memo(props => {
-  const { blockedRoute, children } = props;
-  const { configured } = useAuth();
-
-  if (configured === null || configured === undefined) {
-    return null;
+const RouteGuard = memo(({ configured, blocked, isProtectedRoute, children }) => {
+  if (blocked) {
+    return <Navigate replace to='/blocked' />;
   }
 
-  if (blockedRoute) {
-    return <Navigate to='/blocked' />;
+  if (isProtectedRoute) {
+    return configured ? children : <Navigate replace to='/connect' />;
   }
 
-  if (configured === false) {
-    return <Navigate to='/connect' />;
-  }
-
-  return children;
+  return configured ? <Navigate replace to='/' /> : children;
 });
 
-/** 
-* ConnectProtectedRoute component to handle access control for the Connect route.
+/**
+* AuthRoutes component that provides configured state to all routes.
+* Handles initial navigation based on stored href before rendering routes.
 * @param {Object} props - The component props.
-* @return {JSX.Element|null} The rendered component or null.
+* @return {JSX.Element} The rendered routes.
 */
-const ConnectProtectedRoute = memo(props => {
-  const { blockedRoute, children } = props;
-  const { configured } = useAuth();
-
-  if (configured === null || configured === undefined) {
-    return null;
-  }
-
-  if (blockedRoute) {
-    return <Navigate to='/blocked' />;
-  }
-
-  if (configured === true) {
-    return <Navigate to='/' />;
-  }
-
-  return children;
-});
-
-/** 
-* Popup component to render the main popup UI.
-* @return {JSX.Element|null} The rendered component or null.
-*/
-function Popup () {
-  const [blockedRoute, setBlockedRoute] = useState(false);
-  const [separateWindow, setSeparateWindow] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [initialRoute, setInitialRoute] = useState(null);
-
+const AuthRoutes = memo(({ blocked, configured }) => {
+  const navigate = useNavigate();
   const location = useLocation();
-
-  const isThisPopupIsInSeparateWindow = useCallback(async () => {
-    let tab;
-
-    try {
-      tab = await browser?.tabs?.getCurrent();
-    } catch {}
-
-    if (!tab) {
-      setSeparateWindow(false);
-      return false;
-    } else {
-      const extUrl = browser.runtime.getURL('/popup.html');
-
-      if (tab?.url?.includes(extUrl)) {
-        setSeparateWindow(true);
-        return true;
-      } else {
-        setSeparateWindow(false);
-        return false;
-      }
-    }
-  }, []);
-
-  const checkBlockedRoute = useCallback(async () => {
-    const popupInNewWindow = await isPopupInSeparateWindowExists();
-
-    if (popupInNewWindow) {
-      const thisPopupInNewWindow = await isThisPopupIsInSeparateWindow();
-
-      if (thisPopupInNewWindow) {
-        return setBlockedRoute(false);
-      } else {
-        return setBlockedRoute(true);
-      }
-    } else {
-      return setBlockedRoute(false);
-    }
-  }, [isThisPopupIsInSeparateWindow]);
-
-  const blockedSectionClassName = useMemo(() => 
-    `${S.pass} ${S.passBlocked} ${!separateWindow ? S.passNonSeparateWindow: ''} ${import.meta.env.BROWSER}`,
-    [separateWindow]
-  );
-
-  const mainSectionClassName = useMemo(() => 
-    `${S.pass} ${!separateWindow ? S.passNonSeparateWindow: ''} ${import.meta.env.BROWSER}`,
-    [separateWindow]
-  );
+  const storedHref = usePopupStateStore(state => state.href);
+  const [initialCheckDone, setInitialCheckDone] = useState(false);
+  const [hydrationComplete, setHydrationComplete] = useState(false);
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
-    if (blockedRoute) {
+    addToNavigationHistory(location.pathname);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const unsubHydrate = usePopupStateStore.persist.onFinishHydration(() => {
+      setHydrationComplete(true);
+    });
+
+    if (usePopupStateStore.persist.hasHydrated()) {
+      setHydrationComplete(true);
+    }
+
+    return unsubHydrate;
+  }, []);
+
+  usePopupHref(hydrationComplete);
+
+  useEffect(() => {
+    if (!hydrationComplete) {
       return;
     }
 
-    if (history?.scrollRestoration && history.scrollRestoration !== 'manual') {
-      history.scrollRestoration = 'manual';
+    if (hasNavigated.current || !configured) {
+      setInitialCheckDone(true);
+      return;
     }
 
-    Promise.all([
-      setTheme(),
-      checkBlockedRoute(),
-      getInitialRoute()
-    ]).then(([, , route]) => {
-      setInitialRoute(route || '/');
-      setLoaded(true);
-      
-      browser.runtime.onMessage.addListener(popupOnMessage);
+    if (initialCheckDone) {
+      hasNavigated.current = true;
+      return;
+    }
 
-      document.addEventListener('keydown', lockShortcuts);
-      document.addEventListener('contextmenu', lockRMB);
+    const excludedRoutes = ['/connect', '/', '/fetch', '/blocked'];
 
-      window.addEventListener('error', emptyFunc);
-      window.addEventListener('unhandledrejection', emptyFunc);
-
-      if (import.meta.env.BROWSER === 'safari') {
-        document.addEventListener('click', safariBlankLinks);
+    if (storedHref && location.pathname === '/' && !excludedRoutes.includes(storedHref)) {
+      if (!storedHref.startsWith('/fetch/')) {
+        hasNavigated.current = true;
+        navigate(storedHref, { replace: true });
       }
-    }).catch(e => {
-      CatchError(e);
-      setInitialRoute('/');
-      setLoaded(true);
+    }
+
+    setInitialCheckDone(true);
+  }, [navigate, storedHref, location.pathname, configured, hydrationComplete, initialCheckDone]);
+
+  const routeElements = useMemo(() => {
+    return routeConfig.map(route => {
+      const Component = route.component;
+
+      const element = route.isProtectedRoute ? (
+        <RouteGuard
+          configured={configured}
+          blocked={blocked}
+          isProtectedRoute={route.isProtectedRoute}
+        >
+          {route.noClassName ? <Component /> : <Component className={S.passScreen} />}
+        </RouteGuard>
+      ) : (
+        <Component className={S.passScreen} />
+      );
+
+      return (
+        <Route
+          key={route.path}
+          path={route.path}
+          element={element}
+        />
+      );
     });
+  }, [configured, blocked]);
 
-    return () => {
-      browser.runtime.onMessage.removeListener(popupOnMessage);
-
-      document.removeEventListener('keydown', lockShortcuts);
-      document.removeEventListener('contextmenu', lockRMB);
-
-      window.removeEventListener('error', emptyFunc);
-      window.removeEventListener('unhandledrejection', emptyFunc);
-
-      if (import.meta.env.BROWSER === 'safari') {
-        document.removeEventListener('click', safariBlankLinks);
-      }
-    };
-  }, [checkBlockedRoute]);
-
-  useEffect(() => {
-    window.addEventListener('focus', storageAutoClearActions);
-
-    return () => {
-      window.removeEventListener('focus', storageAutoClearActions);
-    };
-  }, []);
-
-  if (!loaded || !initialRoute) {
+  if (!initialCheckDone) {
     return null;
-  } else if (blockedRoute || location.pathname === '/blocked') {
+  }
+
+  return (
+    <Routes>
+      {routeElements}
+    </Routes>
+  );
+});
+
+/**
+* AppContent component that contains the main app UI.
+* @param {Object} props - The component props.
+* @return {JSX.Element} The rendered content.
+*/
+const AppContent = memo(({ blocked }) => {
+  const { configured } = useAuthState();
+
+  return (
+    <>
+      <TopBar />
+      <AuthRoutes blocked={blocked} configured={configured} />
+      <BottomBar />
+    </>
+  );
+});
+
+/**
+* Main app content - without AuthProvider since it's now in main.jsx
+* @param {Object} props - The component props.
+* @return {JSX.Element} The rendered app.
+*/
+const MainApp = memo(({ blockedValue, mainSectionClassName }) => {
+  return (
+    <section className={mainSectionClassName}>
+      <AppContent blocked={blockedValue} />
+      <ToastsContent />
+    </section>
+  );
+});
+
+/**
+* PopupContent wrapper that handles blocking logic
+* @return {JSX.Element} The rendered component.
+*/
+const PopupContent = memo(({ loaded, blocked, blockedSectionClassName, mainSectionClassName }) => {
+  if (!loaded) {
+    return null;
+  }
+
+  if (blocked) {
     return (
       <section className={blockedSectionClassName}>
         <Blocked className={S.passScreen} />
@@ -218,41 +220,172 @@ function Popup () {
     );
   }
 
+  return <MainApp blockedValue={blocked} mainSectionClassName={mainSectionClassName} />;
+});
+
+let initializationPromise = null;
+let initializationResult = null;
+
+const initializePopupOnce = async () => {
+  if (initializationResult) {
+    return initializationResult;
+  }
+
+  if (initializationPromise) {
+    return initializationPromise;
+  }
+
+  initializationPromise = (async () => {
+    try {
+      const [tab, otherPopupExists, ] = await Promise.all([
+        browser?.tabs?.getCurrent().catch(() => null),
+        isPopupInSeparateWindowExists(),
+        setTheme()
+      ]);
+
+      const extUrl = browser.runtime.getURL('/popup.html');
+      const isSeparateWindow = tab?.url?.includes(extUrl) || false;
+      const blocked = !isSeparateWindow && otherPopupExists;
+
+      initializationResult = {
+        loaded: true,
+        blocked,
+        isSeparateWindow
+      };
+
+      return initializationResult;
+    } catch (e) {
+      CatchError(e);
+      initializationResult = {
+        loaded: true,
+        blocked: false,
+        isSeparateWindow: false
+      };
+      return initializationResult;
+    }
+  })();
+
+  return initializationPromise;
+};
+
+/**
+* PopupMain component that handles initialization and state
+* @return {JSX.Element|null} The rendered component.
+*/
+const PopupMain = memo(() => {
+  const [state, setState] = useState(() => {
+    if (initializationResult) {
+      return {
+        loaded: initializationResult.loaded,
+        blocked: initializationResult.blocked,
+        isSeparateWindow: initializationResult.isSeparateWindow
+      };
+    }
+
+    return {
+      loaded: false,
+      blocked: false,
+      isSeparateWindow: false
+    };
+  });
+
+  const initialized = useRef(false);
+  const stateUpdated = useRef(false);
+
+  const classNames = useMemo(() => {
+    const baseClass = `${S.pass} ${!state.isSeparateWindow ? S.passNonSeparateWindow: ''} ${import.meta.env.BROWSER}`;
+    return {
+      blocked: `${baseClass} ${S.passBlocked}`,
+      main: baseClass
+    };
+  }, [state.isSeparateWindow]);
+
+  useEffect(() => {
+    if (initialized.current) {
+      return;
+    }
+
+    initialized.current = true;
+
+    if (history?.scrollRestoration && history.scrollRestoration !== 'manual') {
+      history.scrollRestoration = 'manual';
+    }
+
+    if (!initializationResult && !stateUpdated.current) {
+      initializePopupOnce().then(result => {
+        if (!stateUpdated.current) {
+          stateUpdated.current = true;
+          setState(prev => {
+            if (prev.loaded === result.loaded &&
+                prev.blocked === result.blocked &&
+                prev.isSeparateWindow === result.isSeparateWindow) {
+              return prev;
+            }
+
+            return {
+              loaded: result.loaded,
+              blocked: result.blocked,
+              isSeparateWindow: result.isSeparateWindow
+            };
+          });
+        }
+      });
+    }
+
+    browser.runtime.onMessage.addListener(popupOnMessage);
+    document.addEventListener('keydown', lockShortcuts);
+    document.addEventListener('contextmenu', lockRMB);
+    window.addEventListener('focus', storageAutoClearActions);
+
+    try {
+      storageAutoClearActions();
+    } catch {}
+
+    if (import.meta.env.BROWSER === 'safari') {
+      document.addEventListener('click', safariBlankLinks);
+    }
+
+    requestAnimationFrame(() => {
+      window.addEventListener('error', emptyFunc);
+      window.addEventListener('unhandledrejection', emptyFunc);
+    });
+
+    return () => {
+      browser.runtime.onMessage.removeListener(popupOnMessage);
+      document.removeEventListener('keydown', lockShortcuts);
+      document.removeEventListener('contextmenu', lockRMB);
+      window.removeEventListener('error', emptyFunc);
+      window.removeEventListener('unhandledrejection', emptyFunc);
+      window.removeEventListener('focus', storageAutoClearActions);
+
+      if (import.meta.env.BROWSER === 'safari') {
+        document.removeEventListener('click', safariBlankLinks);
+      }
+    };
+  }, []);
+
   return (
-    <section className={mainSectionClassName}>
-      <PopupStateProvider>
-        <AuthProvider>
-          <WSProvider>
-            <MatchingLoginsProvider>
-              <InitialRouter initialRoute={initialRoute}>
-                <TopBar />
-                <Routes>
-                <Route path='/connect' element={<ConnectProtectedRoute blockedRoute={blockedRoute}><Connect className={S.passScreen} /></ConnectProtectedRoute>} />
-                <Route path='/' element={<ProtectedRoute blockedRoute={blockedRoute}><ThisTab className={S.passScreen} /></ProtectedRoute>} />
-                <Route path='/add-new' element={<ProtectedRoute blockedRoute={blockedRoute}><AddNew className={S.passScreen} /></ProtectedRoute>} />
-                <Route path='/settings' element={<ProtectedRoute blockedRoute={blockedRoute}><Settings className={S.passScreen} /></ProtectedRoute>} />
-                <Route path='/settings-about' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsAbout className={S.passScreen} /></ProtectedRoute>} />
-                <Route path='/settings-preferences' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsPreferences className={S.passScreen} /></ProtectedRoute>} />
-                <Route path='/settings-security' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsSecurity className={S.passScreen} /></ProtectedRoute>} />
-                <Route path='/settings-reset' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsReset className={S.passScreen} /></ProtectedRoute>} />
-                <Route path='/settings-save-login-excluded-domains' element={<ProtectedRoute blockedRoute={blockedRoute}><SettingsSaveLoginExcludedDomains className={S.passScreen} /></ProtectedRoute>} />
-                <Route path='/fetch' element={<ProtectedRoute blockedRoute={blockedRoute}><Fetch className={S.passScreen} /></ProtectedRoute>} />
-                <Route path='/fetch/:data' element={<ProtectedRoute blockedRoute={blockedRoute}><FetchExternal /></ProtectedRoute>} />
-                <Route path='/details/:id' element={<ProtectedRoute blockedRoute={blockedRoute}><Details className={S.passScreen} /></ProtectedRoute>} />
-                <Route path='/password-generator' element={<ProtectedRoute blockedRoute={blockedRoute}><PasswordGenerator className={S.passScreen} /></ProtectedRoute>} />
-                <Route path='/blocked' element={<Blocked className={S.passScreen} />} />
-                <Route path='*' element={<ProtectedRoute blockedRoute={blockedRoute}><NotFound className={S.passScreen} /></ProtectedRoute>} />
-              </Routes>
-              </InitialRouter>
-            </MatchingLoginsProvider>
-            <BottomBar />
-          </WSProvider>
-        </AuthProvider>
-      </PopupStateProvider>
-      
-      <ToastsContent />
-    </section>
+    <PopupContent
+      loaded={state.loaded}
+      blocked={state.blocked}
+      blockedSectionClassName={classNames.blocked}
+      mainSectionClassName={classNames.main}
+    />
+  );
+});
+
+/**
+* Popup component to render the main popup UI with HashRouter.
+* @return {JSX.Element} The rendered component.
+*/
+function Popup () {
+  return (
+    <HashRouter>
+      <AuthProvider>
+        <PopupMain />
+      </AuthProvider>
+    </HashRouter>
   );
 }
 
-export default memo(Popup);
+export default Popup;

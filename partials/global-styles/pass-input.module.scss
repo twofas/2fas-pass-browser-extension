@@ -12,6 +12,7 @@
   flex-direction: column;
   gap: 12px 0;
   margin-bottom: 24px;
+  position: relative;
   width: 100%;
 
   &.disabled {
@@ -48,6 +49,42 @@
     .pass-input-bottom {
       overflow: auto;
       resize: vertical;
+    }
+  }
+
+  &.non-fetched {
+    cursor: pointer;
+
+    &:hover {
+      .pass-input-tooltip {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateY(0);
+      }
+    }
+
+    .pass-input-tooltip {
+      background-color: v.$card-bg-light;
+      border: 1px solid v.$card-stroke-light;
+      bottom: calc(100% + 11px);
+      border-radius: 6px;
+      opacity: 0;
+      padding: 16px;
+      pointer-events: none;
+      position: absolute;
+      transform: translateY(11px);
+      transition: opacity .3s ease-in-out, transform .3s ease-in-out;
+      user-select: none;
+      z-index: 9999;
+
+      @include m.darkMode {
+        background-color: v.$card-bg-dark;
+        border-color: v.$card-stroke-dark;
+      }
+
+      span {
+        font-size: 12px;
+      }
     }
   }
 
@@ -121,6 +158,7 @@
     flex-direction: row;
     gap: 0 6px;
     justify-content: stretch;
+    min-height: 39px;
     padding: 9px 12px;
     position: relative;
     transition: border-color .3s ease-in-out, background-color .3s ease-in-out;
@@ -362,7 +400,7 @@
       }
 
       &.hidden-value {
-        opacity: 0;
+        opacity: 0 !important;
       }
 
       &:-webkit-autofill,
@@ -565,6 +603,7 @@
         height: 100%;
         justify-content: center;
         line-height: 1;
+        min-height: 36px;
         padding: 11px 12px;
 
         @include m.darkMode {

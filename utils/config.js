@@ -5,12 +5,14 @@
 // See LICENSE file for full terms
 
 export const config = Object.freeze({
-  scheme: 1,
+  scheme: 2,
+  supportedFeatures: [],
   webSocketInternalTimeout: 2,
   passwordResetDelay: 3,
   storageMargin: 0.95, // 95%
   devicesCleanupThreshold: 30,
   toastAutoClose: 5000,
   defaultStorageIdleLock: 15, // minutes
-  handleInputEventDebounce: 100 // milliseconds
+  handleInputEventDebounce: 100, // milliseconds
+  schemeThreshold: 2 // save devices with scheme version >= 2
 });

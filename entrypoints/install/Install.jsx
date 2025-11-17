@@ -20,8 +20,7 @@ import Video1Dark from '@/assets/videos/install_video_1_dark.mp4?url';
 import Video2Light from '@/assets/videos/install_video_2_light.mp4?url';
 import Video2Dark from '@/assets/videos/install_video_2_dark.mp4?url';
 import VideoPoster from '@/assets/install-page/video-poster.png?url';
-import openPopup from '@/partials/functions/openPopup';
-import safariBlankLinks from '@/partials/functions/safariBlankLinks';
+import { openPopup, safariBlankLinks } from '@/partials/functions';
 import detectDefaultTheme from './functions/detectDefaultTheme';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);

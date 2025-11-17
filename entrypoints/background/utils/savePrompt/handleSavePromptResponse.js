@@ -7,7 +7,9 @@
 import removeSavePromptAction from './removeSavePromptAction';
 import decryptValues from './decryptValues';
 import openPopupWindowInNewWindow from '../openPopupWindowInNewWindow';
-import { SAVE_PROMPT_ACTIONS } from '@/constants/savePromptActions';
+import { SAVE_PROMPT_ACTIONS, PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
+import { valueToNFKD, getCurrentDevice } from '@/partials/functions';
+import Login from '@/partials/models/itemModels/Login';
 
 // FUTURE - actions should be moved to a separate files
 /** 
@@ -40,14 +42,24 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
         };
       }
 
+      const device = await getCurrentDevice();
+
+      if (!device) {
+        throw new Error('No device found. Cannot proceed with saving new login.');
+      }
+
       const data = JSON.stringify({
-        action: 'newLogin',
+        action: PULL_REQUEST_TYPES.ADD_DATA,
         from: 'savePrompt',
         data: {
-          url,
-          username: decryptedValues.username,
-          password: decryptedValues.password
-        }
+          contentType: Login.contentType,
+          content: {
+            url: valueToNFKD(url),
+            username: { value: valueToNFKD(decryptedValues.username), action: REQUEST_STRING_ACTIONS.SET },
+            s_password: { value: valueToNFKD(decryptedValues.password), action: REQUEST_STRING_ACTIONS.SET }
+          }
+        },
+        deviceId: device.id
       });
   
       await openPopupWindowInNewWindow({ pathname: `/fetch/${encodeURIComponent(data)}` });
@@ -70,14 +82,16 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
       }
 
       const data = JSON.stringify({
-        action: 'updateLogin',
+        action: PULL_REQUEST_TYPES.UPDATE_DATA,
         from: 'savePrompt',
         data: {
-          url,
-          loginId: res.loginId,
-          securityType: res.securityType,
-          username: decryptedValues.username,
-          password: decryptedValues.password
+          contentType: res.contentType,
+          deviceId: res.deviceId,
+          vaultId: res.vaultId,
+          itemId: res.itemId,
+          content: {
+            s_password: { value: decryptedValues.password, action: REQUEST_STRING_ACTIONS.SET }
+          }
         }
       });
 

@@ -6,13 +6,14 @@
 
 import S from '../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { Link, useNavigate, useLocation } from 'react-router';
-import { lazy, useEffect } from 'react';
-import { usePopupState } from '@/hooks/usePopupState';
+import { Link, useNavigate } from 'react-router';
+import { lazy, useRef } from 'react';
+import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
+import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 
 const WarningIconLight = lazy(() => import('@/assets/popup-window/warning-light.svg?react'));
 const WarningIconDark = lazy(() => import('@/assets/popup-window/warning-dark.svg?react'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to reset the extension.
@@ -29,10 +30,7 @@ const resetExtension = async () => {
     showToast(browser.i18n.getMessage('error_general'), 'error');
   }
 
-  if (window && typeof window?.close === 'function' && import.meta.env.BROWSER !== 'safari') {
-    window.close();
-    return;
-  }
+  await tryWindowClose();
 };
 
 /** 
@@ -42,22 +40,13 @@ const resetExtension = async () => {
 */
 function SettingsReset (props) {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
 
-  useEffect(() => {
-    setHref(location.pathname);
-  }, [location.pathname, setHref]);
-
-  useEffect(() => {
-    if (shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
-      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
-    }
-  }, [shouldRestoreScroll, popupStateData, scrollElementRef]);
+  const scrollableRef = useRef(null);
+  useScrollPosition(scrollableRef, false);
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => { setScrollElementRef(el); }}>
+      <div ref={scrollableRef}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />

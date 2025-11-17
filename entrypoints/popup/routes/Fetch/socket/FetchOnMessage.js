@@ -9,17 +9,19 @@ import handleChallengeAction from '@/partials/WebSocket/handleChallengeAction';
 import handleCloseSignalPullRequestAction from '@/partials/WebSocket/handleCloseSignalPullRequestAction';
 import handlePullRequest from '@/partials/WebSocket/handlePullRequest';
 import handlePullRequestAction from '@/partials/WebSocket/handlePullRequestAction';
+import handleSendVaultData from '@/partials/WebSocket/handleSendVaultData';
+import processFullSyncVaultsData from '@/partials/WebSocket/processFullSyncVaultsData';
 import deletePush from '@/partials/functions/deletePush';
 import TwoFasWebSocket from '@/partials/WebSocket';
+import { FETCH_STATE } from '../constants';
 
 /**
 * Function to handle incoming Fetch messages.
 * @param {Object} json - The incoming message data.
 * @param {Object} data - The current state data.
-* @param {Object} actions - The actions to perform.
 * @return {Promise<void>} A promise that resolves when the message is handled.
 */
-const FetchOnMessage = async (json, data, actions) => {
+const FetchOnMessage = async (json, data) => {
   try {
     switch (json.action) {
       case SOCKET_ACTIONS.CLOSE_WITH_ERROR: {
@@ -55,9 +57,30 @@ const FetchOnMessage = async (json, data, actions) => {
         data.closeData = closeData;
         break;
       }
+
+      case SOCKET_ACTIONS.TRANSFER_CHUNK: {
+        const res = await handleSendVaultData(json, data.state.totalChunks);
+
+        data.state.chunks[res.chunkIndex] = res.chunkData;
+        const arrayWithoutUndefined = data.state.chunks.filter(chunk => chunk !== undefined);
+
+        if (arrayWithoutUndefined.length === data.state.totalChunks) {
+          data.closeData = await processFullSyncVaultsData(
+            data.state.sha256GzipVaultDataEnc,
+            data.state.chunks,
+            data.encryptionDataKeyAES,
+            data.hkdfSalt,
+            data.sessionKeyForHKDF,
+            data.deviceId,
+            json.id
+          );
+        }
+
+        break;
+      }
   
       case SOCKET_ACTIONS.CLOSE_WITH_SUCCESS: {
-        await handleCloseSignalPullRequestAction(data.newSessionId, data.device.uuid, data.closeData, actions.navigate, data.state);
+        await handleCloseSignalPullRequestAction(data.newSessionId, data.device.uuid, data.closeData, data.state);
         break;
       }
   
@@ -67,10 +90,8 @@ const FetchOnMessage = async (json, data, actions) => {
     }
   } catch (e) {
     await CatchError(e, async errObj => {
-      actions.wsDeactivate();
-      actions.setFetchState(1);
-      // FUTURE - Base on error code
-      actions.setErrorText(errObj?.additional?.errorMessage || browser.i18n.getMessage('error_general'));
+      eventBus.emit(eventBus.EVENTS.FETCH.SET_FETCH_STATE, FETCH_STATE.CONNECTION_ERROR);
+      eventBus.emit(eventBus.EVENTS.FETCH.ERROR_TEXT, errObj?.additional?.errorMessage || browser.i18n.getMessage('error_general')); // FUTURE - Base on error code
 
       if (data?.state?.deviceId && data?.state?.notificationId) {
         await deletePush(data.state.deviceId, data.state.notificationId);

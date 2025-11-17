@@ -1,22 +1,10 @@
 {
-  "connect_qr_placeholder_1": {
-    "message": "2FAS Pass is the best! Check our website for more info!",
-    "description": "Placeholder text for the QR code section promoting the 2FAS Pass website"
-  },
-  "connect_qr_placeholder_2": {
-    "message": "If you are searching for a secure 2FA solution, check out our 2FAS Auth app!",
-    "description": "Placeholder text for the QR code section promoting the 2FAS Auth app"
-  },
-  "connect_qr_placeholder_3": {
-    "message": "2FAS Auth is the best 2FA app on the market! 2FAS Pass is the best password manager!",
-    "description": "Placeholder promoting both 2FAS Auth and 2FAS Pass as top solutions for 2FA and password management"
-  },
   "connect_header": {
-    "message": "Scan this QR Code with your 2FAS Pass Mobile App",
+    "message": "Scan this QR Code with your 2FAS Pass mobile app",
     "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
   },
   "connect_description": {
-    "message": "Required for every browser launch to ensure secure access to your Items.",
+    "message": "Do this when you first launch the browser extension to securely connect it with your mobile app.",
     "description": "Explains the need to scan the QR code for secure access during each browser launch"
   },
   "connect_connecting": {
@@ -26,5 +14,41 @@
   "connect_connection_opened": {
     "message": "Connection is opened.\nDon't close this window",
     "description": "Message displayed when the connection is successfully opened"
+  },
+  "connect_push_cancelled": {
+    "message": "Connection cancelled in the mobile app.",
+    "description": "Message displayed when the connection is cancelled by the user from the mobile app"
+  },
+  "connect_device_select_header": {
+    "message": "Your Devices",
+    "description": "Header prompting the user to select their device"
+  },
+  "connect_device_select_list_header": {
+    "message": "Select the device you want to connect with:",
+    "description": "Header for the device selection list"
+  },
+  "connect_device_select_add_another": {
+    "message": "Add another device",
+    "description": "Button text for adding another device"
+  },
+  "connect_push_animation_description": {
+    "message": "To finish connecting, \nplease approve the request on your device.",
+    "description": "Description for the push notification animation"
+  },
+  "connect_push_trouble": {
+    "message": "Trouble connecting?",
+    "description": "Text for link to QR code view if having trouble with push notification"
+  },
+  "connect_push_trouble_tooltip": {
+    "message": "If the push notification doesn't arrive in a few seconds, please check your mobile app",
+    "description": "Tooltip text explaining what to do if the push notification does not arrive"
+  },
+  "connect_push_trouble_tooltip_or": {
+    "message": "or",
+    "description": "The word 'or' used between two options"
+  },
+  "connect_push_trouble_tooltip_use_qr": {
+    "message": "Use QR code",
+    "description": "Instruction to use QR code as an alternative method"
   }
 }

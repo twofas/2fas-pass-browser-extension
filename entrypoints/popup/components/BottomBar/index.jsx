@@ -8,9 +8,14 @@ import S from './BottomBar.module.scss';
 import { useState, useEffect, lazy, useCallback, useMemo, memo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
+import { PULL_REQUEST_TYPES, CONNECT_VIEWS } from '@/constants';
+import { useAuthState } from '@/hooks/useAuth';
+import useConnectView from '../../hooks/useConnectView';
+import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 
 const NewWindowIcon = lazy(() => import('@/assets/popup-window/new-window.svg?react'));
 const SettingsIcon = lazy(() => import('@/assets/popup-window/settings.svg?react'));
+const FullSyncIcon = lazy(() => import('@/assets/popup-window/full-sync.svg?react'));
 
 /** 
 * Function to get the security icon.
@@ -45,6 +50,8 @@ function BottomBar () {
   const location = useLocation();
   const navigate = useNavigate();
   const { wsActive } = useWS();
+  const { configured } = useAuthState();
+  const { connectView } = useConnectView();
 
   const setSecIcon = useCallback(async () => {
     const svgContent = await getSecIcon();
@@ -60,8 +67,6 @@ function BottomBar () {
   }, []);
 
   const handleNewWindow = useCallback(async () => {
-    // @TODO: Current data
-    setNewWindowDisabled(true);
     const { state } = location;
 
     try {
@@ -71,6 +76,16 @@ function BottomBar () {
           action: REQUEST_ACTIONS.OPEN_POPUP_WINDOW_IN_NEW_WINDOW,
           target: REQUEST_TARGETS.BACKGROUND,
           pathname: `/fetch/${data}`
+        });
+
+        if (res.status === 'error') {
+          showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
+        }
+      } else if (location.pathname === '/blocked') {
+        const res = await browser.runtime.sendMessage({
+          action: REQUEST_ACTIONS.OPEN_POPUP_WINDOW_IN_NEW_WINDOW,
+          target: REQUEST_TARGETS.BACKGROUND,
+          pathname: '/'
         });
 
         if (res.status === 'error') {
@@ -87,10 +102,10 @@ function BottomBar () {
           showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
         }
       }
-  
-      if (window && typeof window?.close === 'function' && import.meta.env.BROWSER !== 'safari') {
-        window.close();
-      } else {
+
+      const windowCloseTest = tryWindowClose();
+
+      if (!windowCloseTest) {
         navigate('/blocked', { replace: true });
       }
     } catch (e) {
@@ -100,20 +115,52 @@ function BottomBar () {
     }
   }, [location, navigate]);
 
-  const newWindowButtonClass = useMemo(() => 
-    separateWindow ? S.hiddenPermanent : '',
-    [separateWindow]
+  const staticButtonsClass = useMemo(() => {
+    const path = location?.pathname;
+
+    if (
+      path === '/fetch' ||
+      path.startsWith('/fetch/') ||
+      path === '/fetch-external' ||
+      path.startsWith('/fetch-external/') ||
+      path === '/connect' && (connectView === CONNECT_VIEWS.Progress || connectView === CONNECT_VIEWS.PushSent)
+    ) {
+      return `${S.bottombarStatic} ${S.disabled}`;
+    }
+
+    return S.bottombarStatic;
+  }, [location.pathname, connectView]);
+
+  const newWindowButtonClass = useMemo(() =>
+    separateWindow || location.pathname === '/blocked' ? S.hiddenPermanent : '',
+    [separateWindow, location.pathname]
   );
 
   const settingsLinkClass = useMemo(() => {
-    if (location.pathname === '/connect' || location.pathname === '/blocked') {
-      return S.hidden;
+    const path = location?.pathname;
+
+    if (!path || path === '/blocked') {
+      return '';
     }
-    
-    return location.pathname === '/settings' ? S.disabled : '';
+
+    return path === '/settings' ? `${S.visible} ${S.disabled}` : S.visible;
   }, [location.pathname]);
 
-  const secIconClass = useMemo(() => 
+  const fetchLinkClass = useMemo(() => {
+    const path = location?.pathname;
+
+    if (!configured || path === '/blocked') {
+      return '';
+    }
+
+    if (path === '/fetch' || path.startsWith('/fetch/') || path === '/fetch-external' || path.startsWith('/fetch-external/')) {
+      return `${S.visible} ${S.disabled}`;
+    }
+
+    return S.visible;
+  }, [configured, location.pathname]);
+
+  const secIconClass = useMemo(() =>
     `${S.bottombarSecIcon} ${securityIcon ? S.active : ''} ${wsActive ? S.wsActive : ''}`,
     [securityIcon, wsActive]
   );
@@ -135,10 +182,13 @@ function BottomBar () {
   return (
     <>
       <footer className={S.bottombar}>
-        <div className={S.bottombarStatic}>
+        <div className={staticButtonsClass}>
           <button
             className={newWindowButtonClass}
-            onClick={handleNewWindow}
+            onClick={async () => {
+              setNewWindowDisabled(true);
+              await handleNewWindow();
+            }}
             title={newWindowTitle}
             disabled={newWindowDisabled}
           >
@@ -157,10 +207,23 @@ function BottomBar () {
         <div className={secIconClass}>
           <div className={S.bottombarSecIconContent} dangerouslySetInnerHTML={{ __html: securityIcon }} />
         </div>
+
         <p className={S.bottombarSecIconTooltip}>
           <span>{tooltipHeader}</span>
           <span>{tooltipText}</span>
         </p>
+
+        <div className={`${S.bottombarFetch} ${fetchLinkClass}`}>
+          <Link
+            to='/fetch'
+            state={{ action: PULL_REQUEST_TYPES.FULL_SYNC, from: 'bottomBar', data: {} }}
+            title={browser.i18n.getMessage('sync_title')}
+            prefetch='intent'
+          >
+            <FullSyncIcon />
+            <span>{browser.i18n.getMessage('sync')}</span>
+          </Link>
+        </div>
       </footer>
     </>
   );

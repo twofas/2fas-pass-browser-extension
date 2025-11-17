@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '../sessionStorage/getServices';
-import decryptPassword from './decryptPassword';
+import getItem from '../sessionStorage/getItem';
 import URIMatcher from '../URIMatcher';
 
 /** 
@@ -24,51 +23,49 @@ const checkStorageAutoClearActions = async () => {
     return false;
   }
   
-  // Get service with latest timestamp
+  // Get item with latest timestamp
   const action = storageClearActions.reduce((latest, action) => {
     return action.timestamp > latest.timestamp ? action : latest;
   }, storageClearActions[0]);
 
-  if (!action || !action?.itemId || !action?.itemType) {
+  if (!action || !action.deviceId || !action.vaultId || !action?.itemId || !action?.itemType) {
     await storage.setItem('session:autoClearActions', []);
     return false;
   }
 
-  let serviceValue;
+  let itemValue;
 
-  if (action?.itemId === '00000000-0000-0000-0000-000000000000') {
+  if (
+    action?.deviceId === '00000000-0000-0000-0000-000000000000' ||
+    action?.vaultId === '00000000-0000-0000-0000-000000000000' ||
+    action?.itemId === '00000000-0000-0000-0000-000000000000'
+  ) {
     return 'addNew';
   }
 
-  let services;
+  let item;
 
   try {
-    services = await getServices();
+    item = await getItem(action.deviceId, action.vaultId, action.itemId);
   } catch {
     return false;
   }
 
-  if (!services || services.length === 0) {
-    await storage.setItem('session:autoClearActions', []);
-    return false;
-  }
-
-  const service = services.find(s => s?.id === action?.itemId);
-
-  if (!service) {
+  if (!item) {
     await storage.setItem('session:autoClearActions', []);
     return false;
   }
 
   if (action.itemType === 'password') {
     try {
-      serviceValue = await decryptPassword(service);
+      const decryptedSif = await item.decryptSif();
+      itemValue = decryptedSif.password;
     } catch {
       await storage.setItem('session:autoClearActions', []);
       return;
     }
   } else if (action.itemType === 'uri') {
-    const uris = service.uris || [];
+    const uris = item.content.uris || [];
     
     if (!uris || uris.length === 0) {
       await storage.setItem('session:autoClearActions', []);
@@ -82,28 +79,26 @@ const checkStorageAutoClearActions = async () => {
       return false;
     }
     
-    serviceValue = [];
+    itemValue = [];
     uriTexts.forEach(text => {
-      serviceValue.push(text);
+      itemValue.push(text);
 
       try {
         const normalized = URIMatcher.normalizeUrl(text, true);
 
         if (normalized !== text) {
-          serviceValue.push(normalized);
+          itemValue.push(normalized);
         }
       } catch {}
     });
 
-    serviceValue = [...new Set(serviceValue)]; // unique values
-    serviceValue = JSON.stringify(serviceValue);
+    itemValue = [...new Set(itemValue)]; // unique values
+    itemValue = JSON.stringify(itemValue);
   } else {
-    serviceValue = service[action.itemType];
+    itemValue = item.content[action.itemType];
   }
 
-  await storage.setItem('session:autoClearActions', []);
-
-  return serviceValue;
+  return itemValue;
 };
 
 export default checkStorageAutoClearActions;

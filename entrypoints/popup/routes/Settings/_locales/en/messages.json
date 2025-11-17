@@ -11,6 +11,10 @@
     "message": "Security",
     "description": "Label for the security section in settings"
   },
+  "settings_devices": {
+    "message": "Connected Devices",
+    "description": "Label for the trusted devices section in settings"
+  },
   "settings_about": {
     "message": "About 2FAS Pass",
     "description": "Label for the about section in settings"
@@ -132,7 +136,7 @@
     "description": "Description for configuring idle lock behavior"
   },
   "settings_idle_lock_tooltip_1": {
-    "message": "Automatically lock browser extensions when idle",
+    "message": "Autolock browser extensions when idle",
     "description": "Tooltip explaining that the idle lock setting applies only to the extension"
   },
   "settings_idle_lock_tooltip_2": {
@@ -183,6 +187,10 @@
     "message": "To set or change this shortcut, go to your browser settings, extensions, then click on the gear icon and select “Manage Extension Shortcuts.”",
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
+  "settings_shortcut_safari_tooltip": {
+    "message": "To set or change this shortcut, go to your browser settings, extensions, 2FAS Pass Browser Extension, then change the shortcut in the provided field.",
+    "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
+  },
   "settings_push_native": {
     "message": "Native Browser's Notifications",
     "description": "Option to use the browser's native notification system"
@@ -200,7 +208,7 @@
     "description": "Header for the notifications settings"
   },
   "settings_notifications_description": {
-    "message": "Choose a notification mechanism that will prompt you about communication between the 2FAS Pass Bobile App and this Browser Extension.",
+    "message": "Choose a notification mechanism that will prompt you about communication between the 2FAS Pass mobile app and this browser extension.",
     "description": "Explains how to configure notifications for communication between the mobile app and extension"
   },
   "settings_notifications_send_test": {
@@ -291,6 +299,22 @@
     "message": "Cancel ignoring this domain",
     "description": "Title for the button to cancel ignoring a new domain to the ignored list"
   },
+  "settings_excluded_domains_remove_dialog_message": {
+    "message": "Are you sure you want to remove DOMAIN from the ignored domains list?",
+    "description": "Confirmation message when removing a domain from the ignored list"
+  },
+  "settings_excluded_domains_remove_dialog_message_replace_fallback": {
+    "message": "this domain",
+    "description": "Fallback text for the domain placeholder in the remove domain confirmation dialog"
+  },
+  "settings_excluded_domains_remove_dialog_cancel_text": {
+    "message": "Cancel",
+    "description": "Cancel button text in the remove domain confirmation dialog"
+  },
+  "settings_excluded_domains_remove_dialog_confirm_text": {
+    "message": "Remove",
+    "description": "Confirm button text in the remove domain confirmation dialog"
+  },
   "settings_danger_zone": {
     "message": "Danger Zone",
     "description": "Label for the danger zone section in settings"
@@ -314,5 +338,57 @@
   "settings_reset_action_cancel_button": {
     "message": "Cancel",
     "description": "Button label to cancel the reset action"
+  },
+  "settings_devices_header": {
+    "message": "Connected Devices",
+    "description": "Header for the trusted devices section in settings"
+  },
+  "settings_devices_description": {
+    "message": "List of devices connected with this Browser Extension. Disconnect them from here if you no longer use them.",
+    "description": "Description for managing trusted devices"
+  },
+  "settings_devices_unknown_platform": {
+    "message": "Unknown",
+    "description": "Label for devices with an unknown platform"
+  },
+  "settings_devices_no_devices": {
+    "message": "No devices found.",
+    "description": "Message displayed when there are no trusted devices found"
+  },
+  "settings_devices_current_device_title": {
+    "message": "This is your current device. You cannot disconnect it here.",
+    "description": "Warning message when disconnecting the current trusted device"
+  },
+  "settings_devices_name_header": {
+    "message": "Name",
+    "description": "Label for the device name column in the trusted devices list"
+  },
+  "settings_devices_platform_header": {
+    "message": "Platform",
+    "description": "Label for the device platform column in the trusted devices list"
+  },
+  "settings_devices_last_connected_header": {
+    "message": "Last connected",
+    "description": "Label for the last connected column in the trusted devices list"
+  },
+  "settings_devices_disconnect_title": {
+    "message": "Disconnect this device",
+    "description": "Title for the disconnect trusted device button"
+  },
+  "settings_devices_dialog_message": {
+    "message": "Are you sure you want to disconnect this device?",
+    "description": "Confirmation message when disconnecting a trusted device"
+  },
+  "settings_devices_dialog_submessage_current_device": {
+    "message": "This is your current device! Disconnecting it will block any future actions, such as fetching passwords",
+    "description": "Warning sub-message when disconnecting the current trusted device"
+  },
+  "settings_devices_dialog_cancel_text": {
+    "message": "Cancel",
+    "description": "Cancel button text in the disconnect trusted device confirmation dialog"
+  },
+  "settings_devices_dialog_confirm_text": {
+    "message": "Disconnect",
+    "description": "Confirm button text in the disconnect trusted device confirmation dialog"
   }
 }

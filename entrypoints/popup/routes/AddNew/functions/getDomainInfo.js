@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
-import getLastActiveTab from '@/partials/functions/getLastActiveTab';
+import { sendMessageToAllFrames, getLastActiveTab } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 
 /** 

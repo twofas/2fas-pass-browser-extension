@@ -6,6 +6,7 @@
 
 import { Link, useNavigate, useLocation } from 'react-router';
 import { lazy } from 'react';
+import { getPreviousPath } from '../../utils/navigationHistory';
 
 const BackIcon = lazy(() => import('@/assets/popup-window/back.svg?react'));
 const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
@@ -17,34 +18,66 @@ const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
 function NavigationButton (props) {
   const navigate = useNavigate();
   const location = useLocation();
+  const previousPath = getPreviousPath();
 
   return (
     <Link
       className={`${props.type} ${props.className || ''}`}
-      to={props.type === 'cancel' ? '/' : '..'}
+      to={props?.type === 'cancel' ? '/' : '..'}
+      state={props.state}
       onClick={e => {
-        if (props.type === 'back') {
+        if (props?.type === 'back') {
           e.preventDefault();
 
           try {
+            const currentPath = location.pathname;
+            const currentSegments = currentPath.split('/').filter(segment => segment);
+
             if (window.history.length > 1 && location.key !== 'default') {
-              navigate(-1);
+              if (previousPath && previousPath !== currentPath) {
+                const previousSegments = previousPath.split('/').filter(segment => segment);
+
+                if (previousSegments[0] === 'details' || previousSegments[0] === 'add-new') {
+                  navigate(previousPath, { state: props.state });
+                  return;
+                }
+
+                if (previousSegments.length > currentSegments.length) {
+                  if (currentSegments.length > 0) {
+                    currentSegments.pop();
+                    const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
+                    navigate(parentPath, { state: props.state });
+                  } else {
+                    navigate('/', { state: props.state });
+                  }
+
+                  return;
+                }
+              }
+
+              navigate(-1, { state: props.state });
             } else {
-              navigate('/');
+              if (currentSegments.length > 0) {
+                currentSegments.pop();
+                const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
+                navigate(parentPath, { state: props.state });
+              } else {
+                navigate('/', { state: props.state });
+              }
             }
           } catch {
-            navigate('/');
+            navigate('/', { state: props.state });
           }
         } else {
-          if (props.onClick && typeof props.onClick === 'function') {
+          if (props?.onClick && typeof props?.onClick === 'function') {
             props.onClick(e);
           }
         }
       }}
-      title={browser.i18n.getMessage(props.type)}
+      title={props?.type ? browser.i18n.getMessage(props.type) : ''}
       prefetch='intent'
     >
-      {props.type === 'cancel' ? <CancelIcon /> : <BackIcon />}
+      {props?.type === 'cancel' ? <CancelIcon /> : <BackIcon />}
     </Link>
   );
 }

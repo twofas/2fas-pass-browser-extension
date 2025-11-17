@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import ignoredTypes from '@/constants/ignoredTypes';
-import passwordSelectors from '@/constants/passwordSelectors';
+import { ignoredTypes, passwordSelectors } from '@/constants';
 import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
