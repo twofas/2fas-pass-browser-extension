@@ -33,6 +33,8 @@ function SecureNoteText (props) {
   const [showTextarea, setShowTextarea] = useState(false);
 
   const getTextValue = () => {
+    console.log(data.item);
+
     if (sifDecryptError) {
       return '';
     }
@@ -224,8 +226,15 @@ function SecureNoteText (props) {
               {generateErrorOverlay()}
             </div>
             <div className={`${pI.passInputAdditional}`}>
-              <div className={`${bS.passToggle} ${bS.loaded}`}>
-                <input type="checkbox" name="reveal-secure-note" id="reveal-secure-note" checked={data?.revealSecureNote || false} onChange={handleRevealToggle} />
+              <div className={`${bS.passToggle} ${bS.loaded} ${sifDecryptError || data?.sifEditable ? bS.disabledSameColor : ''}`}>
+                <input
+                  type="checkbox"
+                  name="reveal-secure-note"
+                  id="reveal-secure-note"
+                  checked={data?.revealSecureNote || false}
+                  disabled={data?.sifEditable || sifDecryptError}
+                  onChange={handleRevealToggle}
+                />
                 <label htmlFor="reveal-secure-note">
                   <span className={bS.passToggleBox}>
                     <span className={bS.passToggleBoxCircle}></span>

@@ -579,6 +579,7 @@
             cursor: not-allowed !important;
 
             .pass-toggle-box {
+              cursor: not-allowed !important;
               background-color: v.$primary-color-light !important;
 
               @include m.darkMode {
@@ -587,6 +588,8 @@
             }
 
             .pass-toggle-text {
+              cursor: not-allowed !important;
+              
               > span {
                 color: v.$secondary-text-light !important;
 
@@ -626,6 +629,7 @@
 
         .pass-toggle-box {
           background-color: v.$secondary-text-light !important;
+          cursor: not-allowed !important;
 
           @include m.darkMode {
             background-color: v.$secondary-text-dark !important;
@@ -633,6 +637,8 @@
         }
 
         .pass-toggle-text {
+          cursor: not-allowed !important;
+          
           > span {
             color: v.$secondary-text-light !important;
 
