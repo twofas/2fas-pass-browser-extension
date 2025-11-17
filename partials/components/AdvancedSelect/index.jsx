@@ -7,7 +7,7 @@
 import Select from 'react-select';
 import { useRef, useCallback, useEffect } from 'react';
 
-/** 
+/**
 * Function component for an advanced select dropdown that closes when clicking outside.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.

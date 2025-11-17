@@ -262,7 +262,7 @@
 
     &-header {
       background-color: v.$primary-box-bg-light;
-      padding: 24px 8px 16px;
+      padding: 20px 8px 16px;
       position: sticky;
       text-align: center;
       top: -20px;
@@ -272,9 +272,70 @@
         background-color: v.$primary-box-bg-dark;
       }
 
+      &-model-filter {
+        align-items: center;
+        border-radius: 6px;
+        display: inline-flex;
+        gap: 0 8px;
+        padding: 8px 10px;
+        z-index: 9999;
+
+        &:hover {
+          background-color: v.$hover-color-light;
+
+          @include m.darkMode {
+            background-color: v.$hover-color-dark;
+          }
+        }
+
+        &-icon {
+          align-items: center;
+          background-color: v.$primary-color-light;
+          border-radius: 6px;
+          display: inline-flex;
+          height: 24px;
+          justify-content: center;
+          width: 24px;
+
+          @include m.darkMode {
+            background-color: v.$primary-color-dark;
+          }
+
+          svg {
+            height: 16px;
+            width: auto;
+
+            &.model-all-icon {
+              stroke: v.$primary-box-bg-light;
+              stroke-linecap: round;
+              stroke-linejoin: round;
+              stroke-width: 1.5;
+
+              @include m.darkMode {
+                stroke: v.$primary-box-bg-dark;
+              }
+            }
+          }
+        }
+
+        &-chevron {
+          fill: v.$object-light;
+          height: 7px;
+          margin-left: -2px;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 1.5;
+          width: auto;
+
+          @include m.darkMode {
+            fill: v.$object-dark;
+          }
+        }
+      }
+
       &-sort {
         align-items: center;
-        bottom: 16px;
+        bottom: 24px;
         display: flex;
         gap: 0 6px;
         position: absolute;
@@ -370,6 +431,7 @@
         }
       }
 
+      &-model-filter-text,
       h3 {
         color: v.$primary-text-light;
         font-size: 16px;
