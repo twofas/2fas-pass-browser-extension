@@ -43,7 +43,7 @@ class SecureNote extends Item {
       uiName: 'Secure Note',
       type: secureNoteData.internalData?.type || null,
       sifResetTime: secureNoteData.internalData?.sifResetTime || null,
-      editedText: secureNoteData.internalData?.editedText ?? null
+      editedSif: secureNoteData.internalData?.editedSif ?? null
     };
     
     // Secure Input Fields
@@ -127,7 +127,7 @@ class SecureNote extends Item {
         uiName: this.internalData.uiName,
         type: this.internalData.type,
         sifResetTime: this.internalData.sifResetTime,
-        editedText: this.internalData.editedText
+        editedSif: this.internalData.editedSif
       }
     };
   }
