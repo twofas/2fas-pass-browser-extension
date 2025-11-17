@@ -5,16 +5,16 @@
 // See LICENSE file for full terms
 
 import 'react-toastify/dist/ReactToastify.css';
+import '@splidejs/react-splide/css/core';
 import '@/partials/global-styles/global.scss';
 import '@/partials/global-styles/toasts.scss';
 import '@/partials/global-styles/selects.scss';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Popup from './Popup.jsx';
-import { HashRouter } from 'react-router';
+import { preloadInterFontAsync } from '@/partials/functions/preloadFonts.js';
 
-createRoot(document.getElementById('root')).render(
-  <HashRouter>
-    <Popup />
-  </HashRouter>
-);
+// Preload only Inter font for popup
+preloadInterFontAsync();
+
+createRoot(document.getElementById('root')).render(<Popup />);

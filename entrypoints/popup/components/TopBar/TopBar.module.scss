@@ -213,8 +213,18 @@
         color: v.$secondary-text-light;
         pointer-events: none;
 
+        @include m.darkMode {
+          background-color: v.$additional-dark;
+          border-color: v.$object-stroke-dark;
+          color: v.$secondary-text-dark;
+        }
+
         svg {
           stroke: v.$secondary-text-light;
+
+          @include m.darkMode {
+            stroke: v.$secondary-text-dark;
+          }
         }
       }
 

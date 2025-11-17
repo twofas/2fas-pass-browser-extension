@@ -6,7 +6,7 @@
 
 import { createElement, createSVGElement, createTextElement } from '@/partials/DOMElements';
 import iconSrc from '@/assets/notification-logo.svg?raw';
-import S from '@/constants/selectors';
+import { selectors as S } from '@/constants';
 
 /** 
 * Function to create a notification.

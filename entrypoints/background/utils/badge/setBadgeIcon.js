@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import badgeIcons from '@/constants/badgeIcons';
+import { badgeIcons } from '@/constants';
 import getAllTabsIds from '../../tabs/getAllTabsIds';
 
 /** 

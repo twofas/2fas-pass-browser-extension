@@ -4,17 +4,16 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
+import { tabIsInternal, openPopup } from '@/partials/functions';
+import { PULL_REQUEST_TYPES } from '@/constants';
+import getItems from '@/partials/sessionStorage/getItems';
 import URIMatcher from '@/partials/URIMatcher';
 import sendAutofillToTab from './sendAutofillToTab';
 import openPopupWindowInNewWindow from './openPopupWindowInNewWindow';
 import TwofasNotification from '@/partials/TwofasNotification';
-import tabIsInternal from '@/partials/functions/tabIsInternal';
 import sendMatchingLoginsToTab from './sendMatchingLoginsToTab';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import openPopup from '@/partials/functions/openPopup';
-import isT3orT2WithPassword from '@/partials/functions/isT3orT2WithPassword';
 
 /** 
 * Function to handle the autofill shortcut action.
@@ -33,6 +32,7 @@ const shortcutAutofill = async () => {
   if (!configured) {
     return openPopup();
   }
+
   let tabs;
 
   try {
@@ -58,12 +58,12 @@ const shortcutAutofill = async () => {
 
   await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
 
-  let services = [];
+  let items = [];
   let matchingLogins = [];
 
   try {
-    services = await getServices();
-    matchingLogins = URIMatcher.getMatchedAccounts(services, tab.url);
+    items = await getItems();
+    matchingLogins = URIMatcher.getMatchedAccounts(items, tab.url);
   } catch {}
 
   if (matchingLogins.length === 0) {
@@ -71,16 +71,27 @@ const shortcutAutofill = async () => {
   }
 
   if (matchingLogins.length === 1) {
-    if (!isT3orT2WithPassword(matchingLogins[0])) {
-      const data = encodeURIComponent(JSON.stringify({ action: 'passwordRequest', from: 'shortcut', data: { loginId: matchingLogins[0].id, deviceId: matchingLogins[0].deviceId, tabId: tab.id }}));
+    if (!matchingLogins[0].isT3orT2WithPassword) {
+      const data = encodeURIComponent(JSON.stringify({
+        action: PULL_REQUEST_TYPES.SIF_REQUEST,
+        from: 'shortcut',
+        data: {
+          contentType: matchingLogins[0].contentType,
+          vaultId: matchingLogins[0].vaultId,
+          itemId: matchingLogins[0].id,
+          deviceId: matchingLogins[0].deviceId,
+          tabId: tab.id
+        }
+      }));
+      
       return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
     }
 
-    return sendAutofillToTab(tab.id, matchingLogins[0].id); // FUTURE - Case with full data, no id?
+    return sendAutofillToTab(tab.id, matchingLogins[0].deviceId, matchingLogins[0].vaultId, matchingLogins[0].id); // FUTURE - Case with full data, no id?
   }
 
   matchingLogins = matchingLogins.map(item => {
-    if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.password && item?.password?.length > 0) {
+    if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
       item.t2WithPassword = true;
     }
 
@@ -92,14 +103,29 @@ const shortcutAutofill = async () => {
   if (matchingLoginsAction && matchingLoginsAction?.status === 'cancel') {
     return;
   } else if (matchingLoginsAction && matchingLoginsAction?.status === 'action') {
-    const service = services.filter(service => service.id === matchingLoginsAction.id)[0];
+    const item = items.filter(item =>
+      item.deviceId === matchingLoginsAction.deviceId &&
+      item.vaultId === matchingLoginsAction.vaultId &&
+      item.id === matchingLoginsAction.id
+    )[0];
 
-    if (service.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      const data = encodeURIComponent(JSON.stringify({ action: 'passwordRequest', from: 'shortcut', data: { loginId: matchingLoginsAction.id, deviceId: matchingLoginsAction.deviceId, tabId: tab.id }}));
+    if (item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+      const data = encodeURIComponent(JSON.stringify({
+        action: PULL_REQUEST_TYPES.SIF_REQUEST,
+        from: 'shortcut',
+        data: {
+          vaultId: matchingLoginsAction.vaultId,
+          deviceId: matchingLoginsAction.deviceId,
+          itemId: matchingLoginsAction.id,
+          contentType: matchingLoginsAction.contentType,
+          tabId: tab.id
+        }
+      }));
+
       return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
     }
 
-    return sendAutofillToTab(tab.id, matchingLoginsAction.id);
+    return sendAutofillToTab(tab.id, matchingLoginsAction.deviceId, matchingLoginsAction.vaultId, matchingLoginsAction.id);
   }
 };
 

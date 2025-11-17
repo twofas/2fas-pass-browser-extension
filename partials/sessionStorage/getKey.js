@@ -6,6 +6,7 @@
 
 import getUUIDforDeviceId from './getUUIDforDeviceId';
 import isText from '../functions/isText';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
 * Gets a encrypted key for session storage.
@@ -15,8 +16,8 @@ import isText from '../functions/isText';
 * @return {string|null} The value for the key, or null if not found.
 */
 const getKey = async (key, data) => {
-  const persistentKeys = new Set(['configured', 'configured_nonce', 'ephe_public_key', 'ephe_private_key']);
-  const ephemeralKeys = new Set(['services', 'tags', 'data_key', 'pass_key_t2', 'pass_key_t3', 'pass_key_t3_new', 'popup_state']);
+  const persistentKeys = new Set(['configured', 'configured_nonce', 'ephe_public_key', 'ephe_private_key', 'popup_state']);
+  const ephemeralKeys = new Set(['items', 'tags', ENCRYPTION_KEYS.DATA.sK, ENCRYPTION_KEYS.ITEM_T2.sK, ENCRYPTION_KEYS.ITEM_T3.sK, ENCRYPTION_KEYS.ITEM_T3_NEW.sK]);
 
   const keyEnvName = `VITE_STORAGE_SESSION_${key.toUpperCase()}`;
   const keyEnv = import.meta.env[keyEnvName];
@@ -31,7 +32,11 @@ const getKey = async (key, data) => {
   }
 
   switch (key) {
-    case 'services': {
+    case 'items': {
+      if (data?.vaultId) {
+        keyGenerated += `_${data.vaultId}`;
+      }
+
       if (data?.deviceId) {
         keyGenerated += `_${data.deviceId}`;
       }
@@ -43,8 +48,11 @@ const getKey = async (key, data) => {
       break;
     }
 
-    case 'data_key':
-    case 'pass_key_t3': {
+    case 'tags': {
+      if (data?.vaultId) {
+        keyGenerated += `_${data.vaultId}`;
+      }
+
       if (data?.deviceId) {
         keyGenerated += `_${data.deviceId}`;
       }
@@ -52,10 +60,19 @@ const getKey = async (key, data) => {
       break;
     }
 
-    case 'pass_key_t2':
-    case 'pass_key_t3_new': {
-      if (data?.loginId) {
-        keyGenerated += `_${data.loginId}`;
+    case ENCRYPTION_KEYS.DATA.sK:
+    case ENCRYPTION_KEYS.ITEM_T3.sK: {
+      if (data?.deviceId) {
+        keyGenerated += `_${data.deviceId}`;
+      }
+
+      break;
+    }
+
+    case ENCRYPTION_KEYS.ITEM_T2.sK:
+    case ENCRYPTION_KEYS.ITEM_T3_NEW.sK: {
+      if (data?.itemId) {
+        keyGenerated += `_${data.itemId}`;
       }
 
       break;

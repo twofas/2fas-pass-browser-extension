@@ -17,10 +17,20 @@ const ServiceMoreIcon = lazy(() => import('@/assets/popup-window/service-more.sv
 * @return {JSX.Element} The rendered button element.
 */
 const MoreBtn = ({ more, setMore }) => {
+  const handleClick = event => {
+    event.stopPropagation();
+    setMore(!more);
+  };
+
+  const handleMouseDown = event => {
+    event.stopPropagation();
+  };
+
   return (
     <button
       className={`${S.serviceMoreBtn} ${more ? S.active : ''}`}
-      onClick={() => setMore(!more)}
+      onClick={handleClick}
+      onMouseDown={handleMouseDown}
       title={browser.i18n.getMessage('this_tab_more_actions')}
     >
       <ServiceMoreIcon className={S.serviceMore} />

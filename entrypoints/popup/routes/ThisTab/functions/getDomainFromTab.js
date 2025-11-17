@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import getLastActiveTab from '@/partials/functions/getLastActiveTab';
-import correctProtocols from '@/constants/correctProtocols';
+import { correctProtocols } from '@/constants';
 
 /** 
 * Function to get the domain from the active tab.

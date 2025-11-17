@@ -4,18 +4,17 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
-import URIMatcher from '@/partials/URIMatcher';
+import getItems from '@/partials/sessionStorage/getItems';
 
 let isContextMenuConfiguring = false;
 
 /** 
 * Function to configure the context menu for the 2FAS Pass Browser Extension.
 * @async
-* @param {Array} services - An array of services to configure the context menu for.
+* @param {Array} items - An array of items to configure the context menu for.
 * @return {void}
 */
-const contextMenuConfigured = async (services = null) => {
+const contextMenuConfigured = async (items = null) => {
   if (isContextMenuConfiguring) {
     return;
   }
@@ -42,8 +41,8 @@ const contextMenuConfigured = async (services = null) => {
     }
 
     try {
-      if (!services) {
-        services = await getServices();
+      if (!items) {
+        items = await getItems(['Login']);
       }
     } catch (e) {
       await CatchError(e);
@@ -65,67 +64,17 @@ const contextMenuConfigured = async (services = null) => {
       await CatchError(e);
     }
 
-    for (const service of services) {
-      if (service.securityType !== SECURITY_TIER.HIGHLY_SECRET && service.securityType !== SECURITY_TIER.SECRET) {
-        return;
-      }
+    for (const item of items) {
+      const contextMenuItem = item?.contextMenuItem;
 
-      let documentUrlPatterns = [];
-
-      try {
-        const recognizedURIs = URIMatcher.recognizeURIs(service.uris);
-
-        if (recognizedURIs?.urls && recognizedURIs?.urls.length > 0) {
-          documentUrlPatterns = recognizedURIs.urls.flatMap(uri => URIMatcher.generateDocumentUrlPatterns(uri));
-        }
-      } catch {}
-
-      if (!documentUrlPatterns || documentUrlPatterns.length <= 0) {
+      if (!contextMenuItem || Object.keys(contextMenuItem).length === 0) {
         continue;
       }
 
-      if (
-        service?.securityType === SECURITY_TIER.SECRET ||
-        (service?.securityType === SECURITY_TIER.HIGHLY_SECRET && service?.password && service?.password?.length > 0)
-      ) {
-        try {
-          browser.contextMenus.create({
-            id: `2fas-pass-autofill-${service.id}`,
-            enabled: true,
-            title: `${browser.i18n.getMessage('autofill')} ${service.username || service.name}`,
-            type: 'normal',
-            visible: true,
-            parentId: '2fas-pass-configured',
-            documentUrlPatterns,
-            contexts
-          });
-        } catch (e) {
-          await CatchError(e);
-          continue;
-        }
-      } else if (service?.securityType === SECURITY_TIER.HIGHLY_SECRET && !service?.password || service?.password?.length <= 0) {
-        try {
-          browser.contextMenus.create({
-            id: `2fas-pass-fetch-${service.id}|${service.deviceId}`,
-            enabled: true,
-            title: `${browser.i18n.getMessage('fetch')} ${service.username || service.name}...`,
-            type: 'normal',
-            visible: true,
-            parentId: '2fas-pass-configured',
-            documentUrlPatterns,
-            contexts
-          });
-        } catch (e) {
-          await CatchError(e);
-          continue;
-        }
-      } else {
-        throw new TwoFasError(TwoFasError.internalErrors.wrongSecurityType, {
-          additional: {
-            securityType: service.securityType,
-            func: 'contextMenuConfigured'
-          }
-        });
+      try {
+        browser.contextMenus.create(contextMenuItem);
+      } catch (e) {
+        await CatchError(e);
       }
     }
 

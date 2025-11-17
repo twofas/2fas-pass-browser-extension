@@ -1,7 +1,7 @@
 {
   "name": "2fas-pass-browser-extension",
   "description": "This is the official 2FAS Pass Browser Extension project.",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "type": "module",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
     "build:firefox:dev": "yarn generate-enc-keys-dev && wxt build -b firefox --mode development --mv3",
     "build:edge": "yarn generate-enc-keys-prod && wxt build -b edge --mv3",
     "build:edge:dev": "yarn generate-enc-keys-dev && wxt build -b edge --mode development --mv3",
-    "build:safari": "yarn generate-enc-keys-prod && wxt build -b safari --mv3",
+    "build:safari": "yarn lint && yarn generate-enc-keys-prod && wxt build -b safari --mv3",
     "build:safari:dev": "yarn generate-enc-keys-dev && wxt build -b safari --mode development --mv3",
     "zip": "yarn generate-enc-keys-prod && wxt zip --mv3",
     "zip:dev": "yarn generate-enc-keys-dev && wxt zip --mode development --mv3",
@@ -53,30 +53,32 @@
   },
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.6.0",
+    "@splidejs/react-splide": "^0.7.12",
     "final-form": "^5.0.0",
-    "motion": "^12.23.12",
+    "motion": "^12.23.24",
     "parse-domain": "^8.2.2",
     "qrcode": "^1.5.4",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-final-form": "^7.0.0",
-    "react-router": "^7.9.1",
+    "react-router": "^7.9.5",
     "react-select": "^5.10.2",
     "react-toastify": "^11.0.5",
     "react-viewport-list": "^7.1.2",
     "universal-base64url": "^1.1.0",
     "uuid": "^13.0.0",
     "vite-plugin-svgr": "^4.5.0",
-    "xss": "^1.0.15"
+    "xss": "^1.0.15",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@wxt-dev/module-react": "^1.1.5",
-    "dotenv": "^17.2.2",
-    "eslint": "^9.35.0",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.39.1",
     "eslint-plugin-react": "^7.37.5",
-    "sass-embedded": "1.92.1",
-    "terser": "^5.44.0",
-    "vitest": "^3.2.4",
+    "sass-embedded": "1.93.3",
+    "terser": "^5.44.1",
+    "vitest": "^4.0.7",
     "wxt": "^0.20.11"
   }
 }

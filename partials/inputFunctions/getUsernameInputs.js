@@ -4,11 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import ignoredTypes from '@/constants/ignoredTypes';
-import userNameSelectors from '@/constants/userNameSelectors';
-import userNameAttributes from '@/constants/userNameAttributes';
-import userNameWords from '@/constants/userNameWords';
-import userNameDeniedKeywords from '@/constants/userNameDeniedKeywords';
+import { ignoredTypes, userNameSelectors, userNameAttributes, userNameWords, userNameDeniedKeywords } from '@/constants';
 import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';

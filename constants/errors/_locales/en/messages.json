@@ -88,11 +88,15 @@
     "description": "Error message displayed when the browser tab returns an unknown response"
   },
   "error_storage_capacity_exceeded": {
-    "message": "Data size exceeded. \nUse less data or try a different browser.",
+    "message": "Data size exceeded. Use less data or try a different browser.",
     "description": "Error shown when storage capacity exceeds the limit"
   },
+  "error_scheme_mismatch": {
+    "message": "Please update the 2FAS Pass mobile app.",
+    "description": "Error shown when there is a scheme mismatch between the extension and mobile app"
+  },
   "error_mobile_disconnected": {
-    "message": "Mobile device disconnected\nPlease try again.",
+    "message": "Mobile device disconnected. Please try again.",
     "description": "Error shown when the mobile device disconnects"
   },
   "error_timeout": {
@@ -102,5 +106,13 @@
   "error_feature_wrong_data": {
     "message": "Something went wrong. Our developer team is already working on it.",
     "description": "Error message displayed when there is an issue with the shortcut settings"
+  },
+  "error_no_network_connection": {
+    "message": "No Internet connection. Please check your connection and try again.",
+    "description": "Error message displayed when there is no network connection"
+  },
+  "error_connection_error": {
+    "message": "Connection error. Please check your Internet connection and try again.",
+    "description": "Error message displayed when a connection error occurs"
   }
 }

@@ -16,9 +16,10 @@
     <meta name="google" content="notranslate">
     <meta name="manifest.type" content="browser_action" />
     <style>
-      html, body { background-color: #161616; }
+      html, body, #root { background-color: #161616; margin: 0; min-height: 600px; min-width: 400px; padding: 0; }
       html:not(.theme-light) *, html:not(.theme-dark) *, body:not(.loaded) * { visibility: hidden; }
       html.theme-light *, html.theme-dark *, body.loaded * { visibility: visible; }
+      * { box-sizing: border-box; }
     </style>
   </head>
   <body>

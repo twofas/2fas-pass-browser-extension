@@ -19,6 +19,19 @@ const CustomOption = option => {
     option.selectOption(option.data);
   };
 
+  if (option.data.isDisabled) {
+    return (
+      <div className='react-select-tags__option react-select-tags__option_disabled'>
+        <span
+          className={option.data.value === null ? 'react-select-tags__option_clear' : ''}
+          title={option.data.label}
+        >
+          {option.data.label}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className='react-select-tags__option' onClick={handleClick}>
       <span
@@ -48,6 +61,12 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
   const containerRef = useRef(null);
 
   const options = useMemo(() => {
+    if (!tags || !Array.isArray(tags) || tags.length === 0) {
+      return [
+        { value: 'noTags', label: browser.i18n.getMessage('filters_no_tags'), tag: null, isDisabled: true }
+      ];
+    }
+
     const tagOptions = tags.map(tag => ({
       value: tag.id,
       label: `${tag.name} (${tag.amount || 0})`,
@@ -113,8 +132,8 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
 
   return (
     <>
-      <div className={S.thisTabAllLoginsSearchContainerTags} style={{ position: 'relative' }}>
-        <button 
+      <div ref={containerRef} className={S.thisTabAllLoginsSearchContainerTags} style={{ position: 'relative' }}>
+        <button
           ref={buttonRef}
           className={`${bS.btn} ${bS.btnFilter} ${isMenuOpen ? bS.btnFilterActive : ''}`}
           onClick={handleButtonClick}

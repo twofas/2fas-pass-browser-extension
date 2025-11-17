@@ -1,7 +1,7 @@
 {
   "details_header": {
-    "message": "Item details",
-    "description": "Header for the item details section"
+    "message": "details",
+    "description": "Header for the details section"
   },
   "details_field": {
     "message": "field",
@@ -16,12 +16,8 @@
     "description": "Message indicating that the password is stored only in the user's Vault"
   },
   "details_password_decrypt_error": {
-    "message": "Decrypting password error. Please reconnect with your mobile app.",
+    "message": "Decrypting password error. Please resync with your mobile app.",
     "description": "Error message displayed when decrypting the password fails"
-  },
-  "details_password_description": {
-    "message": "This password is only available in your Vault. \nEnter a new one here to update it.",
-    "description": "Explains that the password is stored in the Vault and can be updated here"
   },
   "details_delete_header": {
     "message": "No longer need this Item?",
@@ -47,9 +43,9 @@
     "message": "URL must be less than 2048 characters.",
     "description": "Validation message indicating the maximum length for the URL field"
   },
-  "details_service_not_found": {
-    "message": "Something went wrong. Service not found. Lock the Browser Extension and reconnect.",
-    "description": "Error shown when the requested service is not found, suggesting reconnection"
+  "details_item_not_found": {
+    "message": "Something went wrong. Item not found. Sync with your mobile app and try again.",
+    "description": "Error shown when the requested item is not found, suggesting reconnection"
   },
   "details_security_type": {
     "message": "Security Tier",
@@ -94,5 +90,13 @@
   "details_generate_password": {
     "message": "Generate password",
     "description": "Title for the button that opens password generator"
+  },
+  "details_fetch_text": {
+    "message": "Data available only in the mobile app.",
+    "description": "Text indicating that some data can be fetched from the mobile app"
+  },
+  "details_fetch_title": {
+    "message": "Fetch Highly Secret data",
+    "description": "Title for the fetch highly secret data link"
   }
 }

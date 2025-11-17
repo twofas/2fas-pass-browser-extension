@@ -4,33 +4,46 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { createContext, useContext, useMemo, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-const MatchingLoginsContext = createContext();
+let matchingLoginsLengthState = null;
+const subscribers = new Set();
 
-/** 
-* Function to provide matching logins context.
-* @param {ReactNode} children - The child components.
-* @return {JSX.Element} The context provider.
-*/
-export const MatchingLoginsProvider = ({ children }) => {
-  const [matchingLoginsLength, setMatchingLoginsLength] = useState(null);
-
-  const changeMatchingLoginsLength = value => {
-    setMatchingLoginsLength(value);
-  };
-
-  const value = useMemo(
-    () => ({
-      matchingLoginsLength,
-      changeMatchingLoginsLength
-    }),
-    [matchingLoginsLength]
-  );
-
-  return <MatchingLoginsContext.Provider value={value}>{children}</MatchingLoginsContext.Provider>;
+const notifySubscribers = value => {
+  matchingLoginsLengthState = value;
+  subscribers.forEach(callback => callback(value));
 };
 
+/**
+* Custom hook for managing matching logins length across components.
+* Uses a shared state pattern with subscribers to synchronize state between components.
+* @return {Object} Object containing matchingLoginsLength and changeMatchingLoginsLength function.
+*/
 export const useMatchingLogins = () => {
-  return useContext(MatchingLoginsContext);
+  const [matchingLoginsLength, setMatchingLoginsLength] = useState(matchingLoginsLengthState);
+
+  const changeMatchingLoginsLength = useCallback(value => {
+    notifySubscribers(value);
+  }, []);
+
+  useEffect(() => {
+    const updateState = newValue => {
+      setMatchingLoginsLength(newValue);
+    };
+
+    subscribers.add(updateState);
+
+    if (matchingLoginsLengthState !== null) {
+      setMatchingLoginsLength(matchingLoginsLengthState);
+    }
+
+    return () => {
+      subscribers.delete(updateState);
+    };
+  }, []);
+
+  return {
+    matchingLoginsLength,
+    changeMatchingLoginsLength
+  };
 };

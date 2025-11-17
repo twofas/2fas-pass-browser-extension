@@ -4,17 +4,16 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import URIMatcher from '@/partials/URIMatcher';
-import decryptPassword from '@/partials/functions/decryptPassword';
 import decryptValues from './decryptValues';
 
 /** 
-* Function to check the services data.
+* Function to check the items data.
 * @async
 * @param {Object} details - The details of the tab.
 * @param {Object} values - The values to check.
-* @return {Promise<string|boolean>} A promise that resolves to a string indicating the service status or false if the data is valid.
+* @return {Promise<string|boolean>} A promise that resolves to a string indicating the item status or false if the data is valid.
 */
 const checkServicesData = async (details, values) => {
   if (!details || !values) {
@@ -22,25 +21,25 @@ const checkServicesData = async (details, values) => {
     return false;
   }
 
-  let services = [];
+  let items = [];
 
   try {
-    services = await getServices();
+    items = await getItems();
   } catch (e) {
     await CatchError(e); // FUTURE - throw error
   }
 
-  if (!services || !Array.isArray(services)) {
+  if (!items || !Array.isArray(items)) {
     return { type: 'newService' };
   }
 
-  let matchedServices = [];
+  let matchedItems = [];
 
   try {
-    matchedServices = URIMatcher.getMatchedAccounts(services, details.url);
+    matchedItems = URIMatcher.getMatchedAccounts(items, details.url);
   } catch {}
 
-  if (!matchedServices || matchedServices.length <= 0) {
+  if (!matchedItems || matchedItems.length <= 0) {
     return { type: 'newService' };
   }
 
@@ -56,24 +55,25 @@ const checkServicesData = async (details, values) => {
   }
 
   // Check username if exists
-  const matchedServicesMatchedUsername = matchedServices.filter(service => service.username === decryptedValues.username);
+  const matchedItemsMatchedUsername = matchedItems.filter(item => item?.content?.username === decryptedValues.username);
 
-  if (!matchedServicesMatchedUsername || matchedServicesMatchedUsername.length <= 0) {
+  if (!matchedItemsMatchedUsername || matchedItemsMatchedUsername.length <= 0) {
     return { type: 'newService' };
   }
 
   // Decrypt passwords
-  const matchedServicesDecryptedPasswords = [];
+  const matchedItemsDecryptedPasswords = [];
 
-  for (const service of matchedServicesMatchedUsername) {
+  for (const item of matchedItemsMatchedUsername) {
     let decryptedPassword;
 
-    if (!service || !service.password) {
-      continue; // Skip if service or password is not defined
+    if (!item || !item.sifExists) {
+      continue; // Skip if item or password is not defined
     }
 
     try {
-      decryptedPassword = await decryptPassword(service);
+      const decryptedData = await item.decryptSif();
+      decryptedPassword = decryptedData.password;
     } catch (e) {
       throw new TwoFasError(TwoFasError.internalErrors.checkServicesDataDecryptError, {
         event: e,
@@ -81,18 +81,20 @@ const checkServicesData = async (details, values) => {
       });
     }
 
-    matchedServicesDecryptedPasswords.push(decryptedPassword);
+    matchedItemsDecryptedPasswords.push(decryptedPassword);
   }
 
   // Check password if is different
-  const matchedServicesMatchedPassword = matchedServicesDecryptedPasswords.filter(p => p === decryptedValues.password);
+  const matchedItemsMatchedPassword = matchedItemsDecryptedPasswords.filter(p => p === decryptedValues.password);
 
-  if (!matchedServicesMatchedPassword || matchedServicesMatchedPassword.length <= 0) {
+  if (!matchedItemsMatchedPassword || matchedItemsMatchedPassword.length <= 0) {
     // FUTURE - ask user which service to update if there is more than one
     return {
       type: 'updateService',
-      loginId: matchedServicesMatchedUsername[0].id,
-      securityType: matchedServicesMatchedUsername[0].securityType
+      contentType: matchedItemsMatchedUsername[0].contentType,
+      deviceId: matchedItemsMatchedUsername[0].deviceId,
+      vaultId: matchedItemsMatchedUsername[0].vaultId,
+      itemId: matchedItemsMatchedUsername[0].id
     };
   } else {
     return false;
