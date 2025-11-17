@@ -224,7 +224,7 @@ function SecureNoteText (props) {
               {generateErrorOverlay()}
             </div>
             <div className={`${pI.passInputAdditional}`}>
-              <div className={`${bS.passToggle} ${bS.loaded} ${sifDecryptError || data?.sifEditable ? bS.disabledSameColor : ''}`}>
+              <div className={`${bS.passToggle} ${bS.loaded}`}>
                 <input
                   type="checkbox"
                   name="reveal-secure-note"
