@@ -4,20 +4,20 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
-import getServicesKeys from '@/partials/sessionStorage/getServicesKeys';
-import compress from '@/partials/gzip/compress';
+import getItems from '@/partials/sessionStorage/getItems';
+import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import getKey from '@/partials/sessionStorage/getKey';
-import saveServices from '@/partials/WebSocket/utils/saveServices';
+import saveItems from '@/partials/WebSocket/utils/saveItems';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
 * Function to handle the forget password action.
 * @async
 * @param {Event} e - The click event.
-* @param {number} loginId - The ID of the login.
+* @param {number} itemId - The ID of the login.
 * @return {Promise<void>}
 */
-const handleForgetPassword = async (e, loginId, toggleMenu) => {
+const handleForgetPassword = async (e, itemId, toggleMenu) => {
   e.preventDefault();
   e.stopPropagation();
 
@@ -25,31 +25,26 @@ const handleForgetPassword = async (e, loginId, toggleMenu) => {
     toggleMenu(false);
   } catch {}
 
-  // Get services
-  const services = await getServices();
+  // Get items
+  const items = await getItems();
 
   // Update password
-  const service = services.find(service => service.id === loginId);
-  const deviceId = service.deviceId;
-  delete service.password;
+  const item = items.find(item => item.id === itemId);
+  const { vaultId, deviceId } = item;
+  item.removeSif();
 
-  // Get servicesKeys
-  const servicesKeys = await getServicesKeys(deviceId);
+  // Get itemsKeys
+  const itemsKeys = await getItemsKeys(deviceId, vaultId);
 
-  // Compress services
-  const servicesStringify = JSON.stringify(services);
-  const servicesGZIP_AB = await compress(servicesStringify);
-  const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
+  // Remove encryptionItemT2Key in session storage for this deviceId + itemId
+  const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, itemId });
+  await storage.removeItem(`session:${itemT2Key}`);
 
-  // Remove encryptionPassT2Key in session storage for this loginId & deviceId
-  const passT2Key = await getKey('pass_key_t2', { deviceId, loginId });
-  await storage.removeItem(`session:${passT2Key}`);
+  // Remove items from session storage (by itemsKeys)
+  await storage.removeItems(itemsKeys);
 
-  // Remove services from session storage (by servicesKeys)
-  await storage.removeItems(servicesKeys);
-
-  // saveServices
-  await saveServices(servicesGZIP, deviceId);
+  // saveItems
+  await saveItems(items, deviceId, vaultId);
 };
 
 export default handleForgetPassword;

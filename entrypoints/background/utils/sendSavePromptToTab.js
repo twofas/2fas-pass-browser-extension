@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
-import { SAVE_PROMPT_ACTIONS } from '@/constants/savePromptActions';
+import { SAVE_PROMPT_ACTIONS } from '@/constants';
 
 /** 
 * Function to send a save prompt to a specific tab.

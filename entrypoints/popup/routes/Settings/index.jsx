@@ -5,15 +5,15 @@
 // See LICENSE file for full terms
 
 import S from './Settings.module.scss';
-import { Link, useLocation } from 'react-router';
-import { useState, useEffect, lazy } from 'react';
+import { Link } from 'react-router';
+import { useState, useEffect, lazy, useRef } from 'react';
 import getRatingLink from './functions/getRatingLink';
 import getRatingText from './functions/getRatingText';
-import { usePopupState } from '@/hooks/usePopupState';
+import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to render the Settings component.
@@ -21,16 +21,13 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function Settings (props) {
-  const location = useLocation();
   const [version, setVersion] = useState('');
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
 
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
+  const scrollableRef = useRef(null);
 
-  useEffect(() => {
-    setHref(location.pathname);
-  }, [location.pathname, setHref]);
+  useScrollPosition(scrollableRef, false);
 
   useEffect(() => {
     try {
@@ -41,15 +38,9 @@ function Settings (props) {
     }
   }, []);
 
-  useEffect(() => {
-    if (shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
-      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
-    }
-  }, [shouldRestoreScroll, popupStateData, scrollElementRef]);
-
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => { setScrollElementRef(el); }}>
+      <div ref={scrollableRef}>
         <section className={S.settings}>
           <NavigationButton type='cancel' />
 
@@ -59,19 +50,25 @@ function Settings (props) {
             <div className={S.settingsMenu}>
               <ul>
                 <li>
-                  <Link to='/settings-preferences' prefetch='intent'>
+                  <Link to='/settings/preferences' prefetch='intent'>
                     <span>{browser.i18n.getMessage('settings_preferences')}</span>
                     <MenuArrowIcon />
                   </Link>
                 </li>
                 <li>
-                  <Link to='/settings-security' prefetch='intent'>
+                  <Link to='/settings/security' prefetch='intent'>
                     <span>{browser.i18n.getMessage('settings_security')}</span>
                     <MenuArrowIcon />
                   </Link>
                 </li>
                 <li>
-                  <Link to='/settings-about' prefetch='intent'>
+                  <Link to='/settings/devices' prefetch='intent'>
+                    <span>{browser.i18n.getMessage('settings_devices')}</span>
+                    <MenuArrowIcon />
+                  </Link>
+                </li>
+                <li>
+                  <Link to='/settings/about' prefetch='intent'>
                     <span>{browser.i18n.getMessage('settings_about')}</span>
                     <MenuArrowIcon />
                   </Link>

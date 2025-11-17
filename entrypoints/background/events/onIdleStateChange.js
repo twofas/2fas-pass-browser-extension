@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import cleanupDevices from '@/partials/functions/cleanupDevices';
-import isPaidDeviceConnected from '@/partials/functions/isPaidDeviceConnected';
+import { cleanupDevices, isPaidDeviceConnected } from '@/partials/functions';
 
 /** 
 * Function to handle idle state changes.

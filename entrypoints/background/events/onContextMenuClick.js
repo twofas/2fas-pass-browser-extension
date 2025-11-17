@@ -4,9 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import openPopupWindowInNewWindow from '../utils/openPopupWindowInNewWindow';
-import sendAutofillToTab from '../utils/sendAutofillToTab';
-import { SERVICE_REGEX, FETCH_REGEX } from '@/constants/regex';
+import { openPopupWindowInNewWindow, sendAutofillToTab } from '../utils';
+import { AUTOFILL_REGEX, FETCH_REGEX, PULL_REQUEST_TYPES } from '@/constants';
 
 /** 
 * Function to handle context menu click events.
@@ -17,23 +16,27 @@ import { SERVICE_REGEX, FETCH_REGEX } from '@/constants/regex';
 */
 const onContextMenuClick = async (info, tab) => {
   const { menuItemId } = info;
-  const serviceRegexTest = SERVICE_REGEX.exec(menuItemId);
+  const serviceRegexTest = AUTOFILL_REGEX.exec(menuItemId);
 
   try {
     if (serviceRegexTest) {
-      const serviceID = serviceRegexTest[1];
-      await sendAutofillToTab(tab.id, serviceID);
+      const [, deviceId, vaultId, itemId] = serviceRegexTest;
+      await sendAutofillToTab(tab.id, deviceId, vaultId, itemId);
       return true;
     }
   
     const fetchRegexTest = FETCH_REGEX.exec(menuItemId);
   
     if (fetchRegexTest) {
-      const loginId = fetchRegexTest[1];
-      const deviceId = fetchRegexTest[2];
+      const [, deviceId, vaultId, itemId, contentType] = fetchRegexTest;
+      const data = encodeURIComponent(JSON.stringify({
+        action: PULL_REQUEST_TYPES.SIF_REQUEST,
+        from: 'contextMenu',
+        data: { deviceId, vaultId, itemId, contentType }
+      }));
 
-      const data = encodeURIComponent(JSON.stringify({ action: 'passwordRequest', from: 'contextMenu', data: { loginId, deviceId } }));
       await openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
+
       return true;
     }
   
@@ -44,7 +47,7 @@ const onContextMenuClick = async (info, tab) => {
       }
   
       case '2fas-pass-add-account': {
-        await openPopupWindowInNewWindow({ pathname: '/add-new' });
+        await openPopupWindowInNewWindow({ pathname: '/add-new/Login' });
         return true;
       }
   

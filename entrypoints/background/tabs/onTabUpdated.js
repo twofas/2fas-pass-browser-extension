@@ -4,20 +4,14 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import sendDomainToPopupWindow from '../utils/sendDomainToPopupWindow';
+import { sendDomainToPopupWindow, sendSavePromptToTab, removeSavePromptAction, handleSavePromptResponse, setBadgeLocked, setBadgeIcon, setBadgeText } from '../utils';
 import isTabIsPopupWindow from './isTabIsPopupWindow';
 import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
 import checkPromptCS from '@/partials/contentScript/checkPromptCS';
-import sendSavePromptToTab from '../utils/sendSavePromptToTab';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
-import removeSavePromptAction from '../utils/savePrompt/removeSavePromptAction';
-import handleSavePromptResponse from '../utils/savePrompt/handleSavePromptResponse';
 import { parseDomain } from 'parse-domain';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import setBadgeLocked from '../utils/badge/setBadgeLocked';
-import setBadgeIcon from '../utils/badge/setBadgeIcon';
-import setBadgeText from '../utils/badge/setBadgeText';
 
 /** 
 * Function to handle tab updates in the browser.
@@ -82,16 +76,16 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
       tabUpdateData[tabID].savePromptVisible = false;
     }
 
-    let services;
+    let items;
 
     try {
-      services = await getServices();
+      items = await getItems();
     } catch {}
 
     await Promise.all([
-      setBadgeText(configured, services, tab.url, tabID).catch(e => CatchError(e)),
+      setBadgeText(configured, items, tab.url, tabID).catch(e => CatchError(e)),
       sendDomainToPopupWindow(tabID),
-      updateNoAccountItem(tabID, services),
+      updateNoAccountItem(tabID, items),
       checkPromptCS(tabID)
     ]);
 

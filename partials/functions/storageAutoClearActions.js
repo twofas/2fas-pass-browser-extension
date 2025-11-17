@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '../sessionStorage/getServices';
-import decryptPassword from './decryptPassword';
+import getItem from '../sessionStorage/getItem';
 import URIMatcher from '../URIMatcher';
 
 /** 
@@ -24,14 +23,18 @@ const storageAutoClearActions = async () => {
     return action.timestamp > latest.timestamp ? action : latest;
   }, storageClearActions[0]);
 
-  if (!action || !action?.itemId || !action?.itemType) {
+  if (!action || !action.deviceId || !action.vaultId || !action?.itemId || !action?.itemType) {
     await storage.setItem('session:autoClearActions', []);
     return;
   }
 
   let clipboardValue;
 
-  if (action?.itemId === '00000000-0000-0000-0000-000000000000') {
+  if (
+    action?.deviceId === '00000000-0000-0000-0000-000000000000' ||
+    action?.vaultId === '00000000-0000-0000-0000-000000000000' ||
+    action?.itemId === '00000000-0000-0000-0000-000000000000'
+  ) {
     try {
       clipboardValue = await navigator.clipboard.readText();
     } catch {
@@ -46,39 +49,33 @@ const storageAutoClearActions = async () => {
     }
   }
 
-  let services;
+  let item;
 
   try {
-    services = await getServices();
+    item = await getItem(action.deviceId, action.vaultId, action.itemId);
   } catch {
     return;
   }
 
-  if (!services || services.length === 0) {
+  if (!item) {
     await storage.setItem('session:autoClearActions', []);
     return;
   }
 
-  const service = services.find(s => s.id === action.itemId);
-
-  if (!service) {
-    await storage.setItem('session:autoClearActions', []);
-    return;
-  }
-
-  let serviceValue;
+  let itemValue;
 
   if (action.itemType === 'password') {
     try {
-      serviceValue = await decryptPassword(service);
+      const decryptedSif = await item.decryptSif();
+      itemValue = decryptedSif.password;
     } catch {
       await storage.setItem('session:autoClearActions', []);
       return;
     }
   } else if (action.itemType === 'uri') {
-    serviceValue = service.uris || [];
+    itemValue = item.content.uris || [];
   } else {
-    serviceValue = service[action.itemType];
+    itemValue = item.content[action.itemType];
   }
 
   try {
@@ -89,7 +86,7 @@ const storageAutoClearActions = async () => {
   }
 
   if (action.itemType === 'uri') {
-    const uriFiltered = serviceValue.filter(uri => {
+    const uriFiltered = itemValue.filter(uri => {
       let normalizedUrl;
 
       try {
@@ -106,7 +103,7 @@ const storageAutoClearActions = async () => {
     }
   }
 
-  if (serviceValue === clipboardValue) {
+  if (itemValue === clipboardValue) {
     try {
       await navigator.clipboard.writeText('');
     } catch {}

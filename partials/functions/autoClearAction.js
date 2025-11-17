@@ -14,7 +14,10 @@ const autoClearAction = async request => {
   if (request?.value === 'addNew') {
     try {
       await navigator.clipboard.writeText('');
-    } catch {}
+      return { status: 'ok' };
+    } catch {
+      return { status: 'error' };
+    }
   } else {
     let actionValue;
 
@@ -29,7 +32,7 @@ const autoClearAction = async request => {
           target: REQUEST_TARGETS.BACKGROUND
         });
       } catch {
-        return false;
+        return { status: 'error' };
       }
 
       let localKeyCrypto;
@@ -38,10 +41,10 @@ const autoClearAction = async request => {
         try {
           localKeyCrypto = await crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKeyResponse.data), { name: 'AES-GCM' }, false, ['decrypt'] );
         } catch {
-          return false;
+          return { status: 'error' };
         }
       } else {
-        return false;
+        return { status: 'error' };
       }
 
       const valueAB = Base64ToArrayBuffer(request.value);
@@ -55,7 +58,7 @@ const autoClearAction = async request => {
           valueDecryptedBytes.data
         );
       } catch {
-        return false;
+        return { status: 'error' };
       }
 
       actionValue = ArrayBufferToString(decryptedValueAB);
@@ -71,12 +74,18 @@ const autoClearAction = async request => {
       if (actionValue.some(value => value === clipboardValue)) {
         try {
           await navigator.clipboard.writeText('');
-        } catch {}
+          return { status: 'ok' };
+        } catch {
+          return { status: 'error' };
+        }
       }
     } else if (clipboardValue === actionValue) {
       try {
         await navigator.clipboard.writeText('');
-      } catch {}
+        return { status: 'ok' };
+      } catch {
+        return { status: 'error' };
+      }
     }
   }
 };

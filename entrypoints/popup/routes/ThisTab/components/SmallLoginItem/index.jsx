@@ -8,7 +8,7 @@ import S from '../../ThisTab.module.scss';
 import PasswordCopyOnlyBtn from '../../functions/serviceList/additionalButtons/PasswordCopyOnlyBtn';
 import generateIcon from '../../functions/serviceList/generateIcon';
 import { useState, useEffect, useRef } from 'react';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItem from '@/partials/sessionStorage/getItem';
 
 /** 
 * Function to render a small login item.
@@ -17,39 +17,37 @@ import getServices from '@/partials/sessionStorage/getServices';
 */
 function SmallLoginItem (props) {
   const [faviconError, setFaviconError] = useState(false);
-  const [login, setLogin] = useState(null);
+  const [item, setItem] = useState(null);
   const ref = useRef(null);
 
-  const getLogin = async () => {
-    if (!props?.loginId) {
+  const getItemData = async () => {
+    if (!props?.deviceId || !props?.vaultId || !props?.itemId) {
       return false;
     }
 
-    const logins = await getServices();
-    const login = logins.filter(l => l.id === props.loginId)[0];
-
-    setLogin(login);
+    const item = await getItem(props.deviceId, props.vaultId, props.itemId);
+    setItem(item);
   };
 
   useEffect(() => {
-    getLogin();
+    getItemData();
   }, []);
 
-  if (!login) {
+  if (!item) {
     return null;
   }
 
   return (
     <div
-      key={login.id}
+      key={item.id}
       className={`${S.servicesListItem} ${S.small}`}
       ref={ref}
     >
       <div className={S.servicesListItemAutofill}>
-        {generateIcon(login, faviconError, setFaviconError)}
+        {generateIcon(item, faviconError, setFaviconError)}
         <span>
-          <span>{login.name || browser.i18n.getMessage('no_item_name')}</span>
-          <span>{login.username || ''}</span>
+          <span>{item?.content?.name || browser.i18n.getMessage('no_item_name')}</span>
+          <span>{item?.content?.username || ''}</span>
         </span>
       </div>
       <div className={S.servicesListItemAdditionalButtons}>

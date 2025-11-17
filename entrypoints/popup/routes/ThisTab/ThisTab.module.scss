@@ -389,7 +389,7 @@
       position: sticky;
       width: 100%;
       top: 44px;
-      z-index: 2;
+      z-index: 3;
 
       @include m.darkMode {
         background-color: v.$primary-box-bg-dark;
@@ -524,13 +524,22 @@
     }
 
     &-tags-info {
+      background-color: v.$primary-box-bg-light;
       max-height: 0;
       overflow: hidden;
-      padding: 0 12px;
+      padding: 0 12px 0;
+      position: sticky;
+      top: 90px;
       width: 100%;
+      z-index: 2;
+
+      @include m.darkMode {
+        background-color: v.$primary-box-bg-dark;
+      }
       
       &.active {
-        max-height: 34px;
+        max-height: 42px;
+        padding: 0 12px 8px;
       }
       
       &-box {
@@ -602,7 +611,14 @@
     }
 
     &-list {
+      -webkit-overflow-scrolling: touch;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
       position: relative;
+
+      &::-webkit-scrollbar {
+        -webkit-appearance: none;
+      }
 
       &.no-data {
         border: 0 !important;
@@ -735,6 +751,7 @@
       border-radius: 6px;
       display: flex;
       flex-direction: row;
+      height: 58px;
       justify-content: flex-start;
       margin: 0;
       padding: 12px 12px;
@@ -855,6 +872,7 @@
               color: v.$primary-text-light;
               font-size: 14px;
               font-weight: 500;
+              height: 16px;
               line-height: .86;
               padding-bottom: 3px;
 
@@ -871,6 +889,7 @@
               color: v.$secondary-text-light;
               font-size: 12px;
               font-weight: 400;
+              height: 13px;
               line-height: .83;
               padding-bottom: 3px;
 
@@ -1049,21 +1068,30 @@
   animation: skeleton 1s ease-in-out forwards infinite;
   animation-direction: alternate;
   background-color: v.$secondary-text-light;
-  border-radius: 4px;
+  border-radius: 6px;
   display: inline-block;
   width: 100%;
 
   @include m.darkMode {
     background-color: v.$secondary-text-dark;
   }
+
+  &.icon {
+    animation: none;
+    border: 1px solid v.$object-stroke-light;
+
+    @include m.darkMode {
+      border-color: v.$object-stroke-dark;
+    }
+  }
 }
 
 @keyframes skeleton {
   0% {
-    opacity: .4;
+    opacity: .1;
   }
 
   85%, 100% {
-    opacity: 1;
+    opacity: .2;
   }
 }

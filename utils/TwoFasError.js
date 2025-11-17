@@ -172,6 +172,10 @@ class TwoFasError extends Error {
       message: TwoFasError.defaultErrorMessage,
       code: 2301
     },
+    pullRequestNoOriginalItem: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2302
+    },
     passwordRequestNoLoginId: {
       message: TwoFasError.defaultErrorMessage,
       code: 2310
@@ -252,6 +256,10 @@ class TwoFasError extends Error {
       message: TwoFasError.defaultErrorMessage,
       code: 2385
     },
+    pullRequestActionNewLoginAddedInAnotherVaultError: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2386
+    },
     pullRequestActionUpdateLoginWrongStatus: {
       message: TwoFasError.defaultErrorMessage,
       code: 2390
@@ -275,6 +283,14 @@ class TwoFasError extends Error {
     pullRequestActionUpdateLoginUpdatedWrongData: {
       message: TwoFasError.defaultErrorMessage,
       code: 2395
+    },
+    pullRequestActionUpdateLoginAddedInAnotherVaultError: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2396
+    },
+    pullRequestActionFullSyncCancelError: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2400
     },
     userCancelled: {
       message: 'Browser extension has been closed',
@@ -370,6 +386,10 @@ class TwoFasError extends Error {
       message: 'WebSocket is not opened',
       code: 9045
     },
+    websocketSchemeMismatch: {
+      message: 'WebSocket message scheme mismatch',
+      code: 9046
+    },
     // DEVICE
     deviceNotFound: {
       message: 'Device not found',
@@ -380,46 +400,34 @@ class TwoFasError extends Error {
       message: 'Wrong security type',
       code: 9070
     },
-    // DECRYPT PASSWORD
-    decryptPasswordNotDefined: {
-      message: 'decryptPassword: password is not defined',
+    // DECRYPT SIF
+    decryptSifDecryptBytes: {
+      message: 'decryptSif: error decrypting bytes',
       code: 9100
     },
-    decryptPasswordDeviceIdNotDefined: {
-      message: 'decryptPassword: deviceId is not defined',
+    decryptSifGetKey: {
+      message: 'decryptSif: error getting key item_key_t3',
       code: 9101
     },
-    decryptPasswordDecryptBytes: {
-      message: 'decryptPassword: error decrypting bytes',
+    decryptSifStorageGetKey: {
+      message: 'decryptSif: error getting key item_key_t3 from storage',
       code: 9102
     },
-    decryptPasswordGetKey: {
-      message: 'decryptPassword: error getting key pass_key_t3',
+    decryptSifImportKey: {
+      message: 'decryptSif: error importing key',
       code: 9103
     },
-    decryptPasswordStorageGetKey: {
-      message: 'decryptPassword: error getting key pass_key_t3 from storage',
+    decryptSifDecrypt: {
+      message: 'decryptSif: error decrypting password',
       code: 9104
-    },
-    decryptPasswordImportKey: {
-      message: 'decryptPassword: error importing key',
-      code: 9105
-    },
-    decryptPasswordDecrypt: {
-      message: 'decryptPassword: error decrypting password',
-      code: 9106
-    },
-    decryptPasswordSecurityTypeNotDefined: {
-      message: 'decryptPassword: security type is not defined',
-      code: 9107
     },
     // SEND AUTOFILL TO TAB
     sendAutofillToTabToTabService: {
       message: 'sendAutofillToTab: service error',
       code: 9120
     },
-    sendAutofillToTabDecryptPassword: {
-      message: 'sendAutofillToTab: error decrypting password',
+    sendAutofillToTabDecryptSif: {
+      message: 'sendAutofillToTab: error decrypting SIF',
       code: 9121
     },
     sendAutofillToTabNonceError: {
@@ -485,14 +493,26 @@ class TwoFasError extends Error {
       message: 'getKey: error signing data',
       code: 9187
     },
-    // GET SERVICES KEYS
-    getServicesKeysNotDefined: {
-      message: 'getServicesKeys: keyEnv is not defined',
+    // GET ITEMS KEYS
+    getItemsKeysNotDefined: {
+      message: 'getItemsKeys: keyEnv is not defined',
       code: 9200
     },
-    getServicesKeysCryptoKeyError: {
-      message: 'getServicesKeys: cryptoKeyImported error',
+    getItemsKeysCryptoKeyError: {
+      message: 'getItemsKeys: cryptoKeyImported error',
       code: 9201
+    },
+    getItemsKeysSignError: {
+      message: 'getItemsKeys: error signing data in loop',
+      code: 9202
+    },
+    getItemsKeysInvalidBase64: {
+      message: 'getItemsKeys: invalid Base64 cryptoKey',
+      code: 9203
+    },
+    getItemsKeysMaxIterationsExceeded: {
+      message: 'getItemsKeys: maximum iterations exceeded',
+      code: 9204
     },
     // CHECK DOMAIN ON IGNORED LIST
     checkDomainOnIgnoredListUrlError: {
@@ -601,11 +621,7 @@ class TwoFasError extends Error {
       message: 'compressPublicKey: error exporting key',
       code: 9322
     },
-    // IS T3 OR T2 WITH PASSWORD
-    isT3orT2WithPasswordWrongSecurityTypeError: {
-      message: 'isT3orT2WithPassword: wrong security type',
-      code: 9330
-    },
+    // EMPTY 9330
     // GET CONFIGURED
     getConfiguredNonceError: {
       message: 'getConfigured: error getting nonce',
@@ -701,43 +717,6 @@ class TwoFasError extends Error {
     setupStyleObserverMutationDetected: {
       message: 'Style observer detected mutation on shadowHost element',
       code: 9403
-    },
-    // POPUP STATE ENCRYPTION
-    popupStateEncryptNonceError: {
-      message: 'popupState: error generating nonce',
-      code: 9410
-    },
-    popupStateEncryptImportKeyError: {
-      message: 'popupState: error importing key',
-      code: 9411
-    },
-    popupStateEncryptError: {
-      message: 'popupState: error encrypting data',
-      code: 9412
-    },
-    popupStateDecryptImportKeyError: {
-      message: 'popupState: error importing key for decryption',
-      code: 9413
-    },
-    popupStateDecryptError: {
-      message: 'popupState: error decrypting data',
-      code: 9414
-    },
-    popupStateGetTabError: {
-      message: 'popupState: error getting tab',
-      code: 9415
-    },
-    popupStateGetKeyError: {
-      message: 'popupState: error getting storage key',
-      code: 9416
-    },
-    popupStateStorageError: {
-      message: 'popupState: error accessing storage',
-      code: 9417
-    },
-    popupStateCreateError: {
-      message: 'popupState: error creating popup state',
-      code: 9418
     },
     // TAG INDEX ERROR
     tagIndexError: {

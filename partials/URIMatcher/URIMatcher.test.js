@@ -505,53 +505,83 @@ describe('URIMatcher', () => {
   describe('getMatchedAccounts', () => {
     it('should return the matched accounts', () => {
       expect(() => URIMatcher.getMatchedAccounts()).to.throw('Parameter tabUrl is not a string');
-      expect(() => URIMatcher.getMatchedAccounts(null, '')).to.throw('Parameter services is not an array');
+      expect(() => URIMatcher.getMatchedAccounts(null, '')).to.throw('Parameter items is not an array');
       expect(() => URIMatcher.getMatchedAccounts([], '')).to.throw('Parameter tabUrl is not a valid URL');
       assert.deepEqual(URIMatcher.getMatchedAccounts([], 'google.pl'), []);
       assert.deepEqual(URIMatcher.getMatchedAccounts([123], 'google.pl'), []);
       assert.deepEqual(URIMatcher.getMatchedAccounts([null], 'google.pl'), []);
       assert.deepEqual(URIMatcher.getMatchedAccounts([{}], 'google.pl'), []);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: null }], 'google.pl'), []);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: [] }], 'google.pl'), []);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: {} }], 'google.pl'), []);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: 123 }], 'google.pl'), []);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: '' }], 'google.pl'), []);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: 'google.pl' }], 'google.pl'), []);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: { text: 'google.pl' } }], 'google.pl'), []);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: { text: 'google.pl', matcher: URIMatcher.M_DOMAIN_TYPE } }], 'google.pl'), []);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: [{ text: 'google.pl', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'google.pl'), [{ uris: [{ text: 'https://google.pl', matcher: URIMatcher.M_DOMAIN_TYPE }] }]);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: [{ text: '10.10.10.10', matcher: URIMatcher.M_DOMAIN_TYPE }] }], '10.10.10.10'), [{ uris: [{ text: 'https://10.10.10.10', matcher: URIMatcher.M_DOMAIN_TYPE }] }]);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: [{ text: '10.10.10.10', matcher: URIMatcher.M_HOST_TYPE }] }], '10.10.10.10'), [{ uris: [{ text: 'https://10.10.10.10', matcher: URIMatcher.M_HOST_TYPE }] }]);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: [{ text: '10.10.10.10', matcher: URIMatcher.M_EXACT_TYPE }] }], '10.10.10.10'), [{ uris: [{ text: 'https://10.10.10.10', matcher: URIMatcher.M_EXACT_TYPE }] }]);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ uris: [{ text: '10.10.10.10', matcher: URIMatcher.M_START_WITH_TYPE }] }], '10.10.10.10'), [{ uris: [{ text: 'https://10.10.10.10', matcher: URIMatcher.M_START_WITH_TYPE }] }]);
-      
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: null }], 'google.pl'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: null } }], 'google.pl'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: [] } }], 'google.pl'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: {} } }], 'google.pl'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: 123 } }], 'google.pl'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: '' } }], 'google.pl'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: 'google.pl' } }], 'google.pl'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: { text: 'google.pl' } } }], 'google.pl'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: { text: 'google.pl', matcher: URIMatcher.M_DOMAIN_TYPE } } }], 'google.pl'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: [{ text: 'google.pl', matcher: URIMatcher.M_DOMAIN_TYPE }] } }], 'google.pl'), [{ content: { uris: [{ text: 'https://google.pl', matcher: URIMatcher.M_DOMAIN_TYPE }] } }]);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: [{ text: '10.10.10.10', matcher: URIMatcher.M_DOMAIN_TYPE }] } }], '10.10.10.10'), [{ content: { uris: [{ text: 'https://10.10.10.10', matcher: URIMatcher.M_DOMAIN_TYPE }] } }]);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: [{ text: '10.10.10.10', matcher: URIMatcher.M_HOST_TYPE }] } }], '10.10.10.10'), [{ content: { uris: [{ text: 'https://10.10.10.10', matcher: URIMatcher.M_HOST_TYPE }] } }]);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: [{ text: '10.10.10.10', matcher: URIMatcher.M_EXACT_TYPE }] } }], '10.10.10.10'), [{ content: { uris: [{ text: 'https://10.10.10.10', matcher: URIMatcher.M_EXACT_TYPE }] } }]);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ content: { uris: [{ text: '10.10.10.10', matcher: URIMatcher.M_START_WITH_TYPE }] } }], '10.10.10.10'), [{ content: { uris: [{ text: 'https://10.10.10.10', matcher: URIMatcher.M_START_WITH_TYPE }] } }]);
+
       // Test cases with valid URL and invalid URLs
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '1', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'), [{ id: '1', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }] }]);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '2', uris: [{ text: 'https://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'), []);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '3', uris: [{ text: 'chrome-extension://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'), []);
-      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '4', uris: [{ text: 'http://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'), []);
-      
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '1', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }] } }], 'https://2fas.com'), [{ id: '1', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }] } }]);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '2', content: { uris: [{ text: 'https://', matcher: URIMatcher.M_DOMAIN_TYPE }] } }], 'https://2fas.com'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '3', content: { uris: [{ text: 'chrome-extension://', matcher: URIMatcher.M_DOMAIN_TYPE }] } }], 'https://2fas.com'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '4', content: { uris: [{ text: 'http://', matcher: URIMatcher.M_DOMAIN_TYPE }] } }], 'https://2fas.com'), []);
+
       // Test with multiple URIs - one valid and one invalid
       assert.deepEqual(
-        URIMatcher.getMatchedAccounts([{ id: '5', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'invalid-url', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'),
-        [{ id: '5', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'invalid-url', matcher: URIMatcher.M_DOMAIN_TYPE }] }]
+        URIMatcher.getMatchedAccounts([{ id: '5', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'invalid-url', matcher: URIMatcher.M_DOMAIN_TYPE }] } }], 'https://2fas.com'),
+        [{ id: '5', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'invalid-url', matcher: URIMatcher.M_DOMAIN_TYPE }] } }]
       );
-      
+
       // Test with protocol-only invalid URLs - these should not be modified by removeTrailingChars
       assert.deepEqual(
-        URIMatcher.getMatchedAccounts([{ id: '6', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'https://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'),
-        [{ id: '6', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'https://', matcher: URIMatcher.M_DOMAIN_TYPE }] }]
+        URIMatcher.getMatchedAccounts([{ id: '6', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'https://', matcher: URIMatcher.M_DOMAIN_TYPE }] } }], 'https://2fas.com'),
+        [{ id: '6', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'https://', matcher: URIMatcher.M_DOMAIN_TYPE }] } }]
       );
-      
+
       assert.deepEqual(
-        URIMatcher.getMatchedAccounts([{ id: '7', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'chrome-extension://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'),
-        [{ id: '7', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'chrome-extension://', matcher: URIMatcher.M_DOMAIN_TYPE }] }]
+        URIMatcher.getMatchedAccounts([{ id: '7', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'chrome-extension://', matcher: URIMatcher.M_DOMAIN_TYPE }] } }], 'https://2fas.com'),
+        [{ id: '7', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'chrome-extension://', matcher: URIMatcher.M_DOMAIN_TYPE }] } }]
       );
-      
+
       assert.deepEqual(
-        URIMatcher.getMatchedAccounts([{ id: '8', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'http://', matcher: URIMatcher.M_DOMAIN_TYPE }] }], 'https://2fas.com'),
-        [{ id: '8', uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'http://', matcher: URIMatcher.M_DOMAIN_TYPE }] }]
+        URIMatcher.getMatchedAccounts([{ id: '8', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'http://', matcher: URIMatcher.M_DOMAIN_TYPE }] } }], 'https://2fas.com'),
+        [{ id: '8', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }, { text: 'http://', matcher: URIMatcher.M_DOMAIN_TYPE }] } }]
       );
+
+      // Test duplicate filtering - multiple items with same ID should be deduplicated
+      assert.deepEqual(
+        URIMatcher.getMatchedAccounts([
+          { id: '9', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }] } },
+          { id: '9', content: { uris: [{ text: 'https://2fas.com/login', matcher: URIMatcher.M_DOMAIN_TYPE }] } }
+        ], 'https://2fas.com'),
+        [{ id: '9', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }] } }]
+      );
+
+      // Test matcher type filtering - different matcher types should work correctly
+      assert.deepEqual(
+        URIMatcher.getMatchedAccounts([
+          { id: '10', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }] } },
+          { id: '11', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_HOST_TYPE }] } },
+          { id: '12', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_EXACT_TYPE }] } },
+          { id: '13', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_START_WITH_TYPE }] } }
+        ], 'https://2fas.com/login'),
+        [
+          { id: '10', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_DOMAIN_TYPE }] } },
+          { id: '11', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_HOST_TYPE }] } },
+          { id: '13', content: { uris: [{ text: 'https://2fas.com', matcher: URIMatcher.M_START_WITH_TYPE }] } }
+        ]
+      );
+
+      // Test with invalid matcher values
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '14', content: { uris: [{ text: 'https://2fas.com', matcher: 999 }] } }], 'https://2fas.com'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '15', content: { uris: [{ text: 'https://2fas.com', matcher: -1 }] } }], 'https://2fas.com'), []);
+      assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '16', content: { uris: [{ text: 'https://2fas.com', matcher: 'invalid' }] } }], 'https://2fas.com'), []);
     });
   });
 

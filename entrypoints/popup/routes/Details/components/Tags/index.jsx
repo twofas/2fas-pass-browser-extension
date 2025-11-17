@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './Tags.module.scss';
+import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import { Field } from 'react-final-form';
 import { LazyMotion } from 'motion/react';
@@ -12,6 +13,9 @@ import * as m from 'motion/react-m';
 import { useState, useEffect, useRef, useCallback, useMemo, lazy } from 'react';
 import getTags from '@/partials/sessionStorage/getTags';
 import Select from 'react-select';
+import usePopupStateStore from '../../../../store/popupState';
+import getItem from '@/partials/sessionStorage/getItem';
+import updateItem from '../../functions/updateItem';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CloseIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
@@ -39,20 +43,21 @@ const CustomOption = option => {
   );
 };
 
+const getTagName = (tagID, availableTags) => {
+  const tag = availableTags.find(t => t.id === tagID);
+  return tag ? tag.name : tagID;
+};
+
 /**
 * Function to render the tags input field.
-* @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function Tags (props) {
-  const { data } = props; // actions
-  const { service, tagsEditable, form } = data;
-  // const { setTagsEditable } = actions;
-  
+function Tags () {
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
+
   const [availableTags, setAvailableTags] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectedTagIds, setSelectedTagIds] = useState([]);
-  const [initialized, setInitialized] = useState(false);
   const selectRef = useRef(null);
   const addButtonRef = useRef(null);
   const containerRef = useRef(null);
@@ -70,34 +75,16 @@ function Tags (props) {
     fetchTags();
   }, []);
 
-  useEffect(() => {
-    if (!initialized && service) {
-      const initialTagIds = service?.tags && Array.isArray(service.tags) ? service.tags : [];
-      setSelectedTagIds(initialTagIds);
-      
-      if (form) {
-        form.change('tags', initialTagIds);
-      }
-      setInitialized(true);
-    }
-  }, [service, form, initialized]);
-
-  const selectedTags = useMemo(() => {
-    return selectedTagIds.map(tagId => {
-      const tag = availableTags.find(t => t.id === tagId);
-      return tag || null;
-    }).filter(Boolean);
-  }, [selectedTagIds, availableTags]);
-
   const options = useMemo(() => {
-    const selectedTagIdsSet = new Set(selectedTagIds);
+    const selectedTagIdsSet = new Set(data.item.tags);
     const unselectedTags = availableTags.filter(tag => !selectedTagIdsSet.has(tag.id));
+
     return unselectedTags.map(tag => ({
       value: tag.id,
       label: tag.name,
       tag: tag
     }));
-  }, [availableTags, selectedTagIds]);
+  }, [availableTags, data.item.tags]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -118,82 +105,105 @@ function Tags (props) {
     };
   }, [isMenuOpen]);
 
-  // const handleEditClick = useCallback(() => {
-  //   setTagsEditable(!tagsEditable);
-  //   if (tagsEditable) {
-  //     setIsMenuOpen(false);
-  //   }
-  // }, [tagsEditable, setTagsEditable]);
+  const handleTagsEditable = async () => {
+    if (data.tagsEditable) {
+      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
-  const handleRemoveTag = useCallback((tagId) => {
-    const newTagIds = selectedTagIds.filter(id => id !== tagId);
-    setSelectedTagIds(newTagIds);
-    
-    if (form) {
-      form.change('tags', newTagIds);
-    }
-  }, [selectedTagIds, form]);
+      const updatedItem = updateItem(data.item, {
+        tags: item.tags,
+        internalData: { ...data.item.internalData }
+      });
 
-  const handleSelectChange = useCallback((option) => {
-    if (option && option.tag) {
-      const newTagIds = [...selectedTagIds, option.tag.id];
-      setSelectedTagIds(newTagIds);
-      
-      if (form) {
-        form.change('tags', newTagIds);
+      item = null;
+
+      setData('tagsEditable', false);
+      setData('item', updatedItem);
+      setIsMenuOpen(false);
+    } else {
+      if (availableTags.length === 0) {
+        showToast(browser.i18n.getMessage('details_tags_no_available'), 'info');
+        return;
       }
+
+      setData('tagsEditable', true);
     }
+  };
+
+  const handleRemoveTag = tagId => {
+    const newTagIds = data.item.tags.filter(id => id !== tagId);
+
+    const updatedItem = updateItem(data.item, {
+      tags: newTagIds,
+      internalData: { ...data.item.internalData }
+    });
+
+    setData('item', updatedItem);
+  };
+
+  const handleSelectChange = option => {
+    if (option && option.tag) {
+      const newTagIds = [...data.item.tags, option.tag.id];
+
+      const updatedItem = updateItem(data.item, {
+        tags: newTagIds,
+        internalData: { ...data.item.internalData }
+      });
+
+      setData('item', updatedItem);
+    }
+
     setIsMenuOpen(false);
-  }, [selectedTagIds, form]);
+  };
 
   const handleAddButtonClick = useCallback(() => {
-    if (tagsEditable) {
+    if (data.tagsEditable) {
       setIsMenuOpen(!isMenuOpen);
+
       if (!isMenuOpen && selectRef.current) {
         selectRef.current.focus();
       }
     }
-  }, [tagsEditable, isMenuOpen]);
+  }, [data.tagsEditable, isMenuOpen]);
 
   return (
     <Field name="tags">
       {({ input }) => (
-        <div className={`${pI.passInput} ${tagsEditable ? pI.resizable : pI.disabled}`}>
+        <div className={`${pI.passInput} ${data.tagsEditable ? pI.resizable : pI.disabled}`}>
           <div className={pI.passInputTop}>
             <div className={pI.passInputTopLabelLike}>
               <span>{browser.i18n.getMessage('details_tags_label')}</span>
             </div>
-            {/* <button
+            <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
-              onClick={handleEditClick}
+              onClick={handleTagsEditable}
             >
-              {tagsEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
-            </button> */}
+              {data.tagsEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+            </button>
           </div>
           <div className={pI.passInputBottomMotion}>
             <LazyMotion features={loadDomAnimation}>
-              <div className={`${S.tagsContainer} ${tagsEditable ? S.editable : S.disabled}`}>
-                {selectedTags.length > 0 ? (
-                  selectedTags.map(tag => (
+              <div className={`${S.tagsContainer} ${data.tagsEditable ? S.editable : S.disabled}`}>
+                {data.item.tags.length > 0 ? (
+                  data.item.tags.map(tag => (
                     <m.div
-                      key={tag.id}
-                      className={`${S.tagsPill} ${tagsEditable ? S.editable : ''}`}
-                      title={tag.name}
+                      key={tag}
+                      className={`${S.tagsPill} ${data.tagsEditable ? S.editable : ''}`}
+                      title={getTagName(tag.id, availableTags)}
                       variants={animationVariants}
                       initial='initial'
                       animate='animate'
                       exit='exit'
                       transition={{ duration: 0.2 }}
                     >
-                      <span className={S.tagsPillText} title={tag.name}>
-                        {tag.name}
+                      <span className={S.tagsPillText} title={getTagName(tag, availableTags)}>
+                        {getTagName(tag, availableTags)}
                       </span>
-                      {tagsEditable && (
+                      {data.tagsEditable && (
                         <button
                           type='button'
                           className={S.tagsPillDelete}
-                          onClick={() => handleRemoveTag(tag.id)}
+                          onClick={() => handleRemoveTag(tag)}
                           title={browser.i18n.getMessage('details_tags_remove')}
                         >
                           <CloseIcon />
@@ -202,14 +212,14 @@ function Tags (props) {
                     </m.div>
                   ))
                 ) : (
-                  !tagsEditable && (
+                  !data.tagsEditable && (
                     <span className={S.tagsPlaceholder}>
                       {browser.i18n.getMessage('details_tags_no_tags')}
                     </span>
                   )
                 )}
-                
-                {tagsEditable && options.length > 0 && (
+
+                {data.tagsEditable && options.length > 0 && (
                   <div ref={containerRef} className={S.tagsSelectContainer}>
                     <button
                       ref={addButtonRef}

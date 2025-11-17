@@ -50,7 +50,7 @@ export default defineConfig({
         },
         mangle: {
           eval: false,
-          keep_classnames: false,
+          keep_classnames: true,
           keep_fnames: false,
         },
         format: {
@@ -85,9 +85,6 @@ export default defineConfig({
       content_security_policy: {
         "extension_pages": "script-src 'self'; object-src 'self'"
       },
-      host_permissions: [
-        "*://*.2fas.com/*"
-      ],
       optional_permissions: [
         "clipboardRead"
       ]
