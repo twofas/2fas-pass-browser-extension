@@ -4,12 +4,13 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import PULL_REQUEST_TYPES from '@/entrypoints/popup/routes/Fetch/constants/PULL_REQUEST_TYPES';
+import PULL_REQUEST_TYPES from '@/constants/PULL_REQUEST_TYPES';
 import PULL_REQUEST_STATUSES from '@/entrypoints/popup/routes/Fetch/constants/PULL_REQUEST_STATUSES';
-import { deleteLoginAccept, deleteLoginCancel } from './fetch/deleteLogin';
-import { newLoginAdded, newLoginAddedInT1, newLoginCancel } from './fetch/newLogin';
-import { passwordRequestAccept, passwordRequestCancel } from './fetch/passwordRequest';
-import { updateLoginAddedInT1, updateLoginCancel, updateLoginUpdated } from './fetch/updateLogin';
+import { deleteDataAccept, deleteDataCancel } from './fetch/deleteData';
+import { addDataAdded, addDataAddedInAnotherVault, addDataAddedInT1, addDataCancel } from './fetch/addData';
+import { sifRequestAccept, sifRequestCancel } from './fetch/sifRequest';
+import { updateDataAddedInT1, updateDataAddedInAnotherVault, updateDataCancel, updateDataUpdated } from './fetch/updateData';
+import { fullSyncAccept, fullSyncCancel } from './fetch/fullSync';
 
 /** 
 * Handles the pull request action.
@@ -47,15 +48,15 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
   }
 
   switch (state.action) {
-    case PULL_REQUEST_TYPES.PASSWORD_REQUEST: {
+    case PULL_REQUEST_TYPES.SIF_REQUEST: {
       switch (data.status) {
         case PULL_REQUEST_STATUSES.CANCEL: {
-          closeData = await passwordRequestCancel(json.id);
+          closeData = await sifRequestCancel(json.id);
           break;
         }
 
         case PULL_REQUEST_STATUSES.ACCEPT: {
-          closeData = await passwordRequestAccept(
+          closeData = await sifRequestAccept(
             data,
             state,
             hkdfSaltAB,
@@ -74,15 +75,15 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
       break;
     }
 
-    case PULL_REQUEST_TYPES.DELETE_LOGIN: {
+    case PULL_REQUEST_TYPES.DELETE_DATA: {
       switch (data.status) {
         case PULL_REQUEST_STATUSES.CANCEL: {
-          closeData = await deleteLoginCancel(json.id);
+          closeData = await deleteDataCancel(json.id);
           break;
         }
 
         case PULL_REQUEST_STATUSES.ACCEPT: {
-          closeData = await deleteLoginAccept(state, json.id);
+          closeData = await deleteDataAccept(state, json.id);
           break;
         }
 
@@ -94,21 +95,27 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
       break;
     }
 
-    case PULL_REQUEST_TYPES.NEW_LOGIN: {
+    case PULL_REQUEST_TYPES.ADD_DATA: {
       switch (data.status) {
         case PULL_REQUEST_STATUSES.CANCEL: {
-          closeData = await newLoginCancel(json.id);
+          closeData = await addDataCancel(json.id);
           break;
         }
 
         case PULL_REQUEST_STATUSES.ADDED_IN_T1: {
-          closeData = await newLoginAddedInT1(json.id);
+          closeData = await addDataAddedInT1(json.id);
+          break;
+        }
+
+        case PULL_REQUEST_STATUSES.ADDED_IN_ANOTHER_VAULT: {
+          closeData = await addDataAddedInAnotherVault(json.id);
           break;
         }
 
         case PULL_REQUEST_STATUSES.ADDED: {
-          closeData = await newLoginAdded(
+          closeData = await addDataAdded(
             data,
+            state,
             hkdfSaltAB,
             sessionKeyForHKDF,
             json.id
@@ -124,26 +131,58 @@ const handlePullRequestAction = async (json, hkdfSaltAB, sessionKeyForHKDF, encr
       break;
     }
 
-    case PULL_REQUEST_TYPES.UPDATE_LOGIN: {
+    case PULL_REQUEST_TYPES.UPDATE_DATA: {
       switch (data.status) {
         case PULL_REQUEST_STATUSES.CANCEL: {
-          closeData = await updateLoginCancel(state.data.loginId, json.id);
+          closeData = await updateDataCancel(state.data.deviceId, state.data.vaultId, state.data.itemId, json.id);
           break;
         }
 
         case PULL_REQUEST_STATUSES.ADDED_IN_T1: {
-          closeData = await updateLoginAddedInT1(state, json.id);
+          closeData = await updateDataAddedInT1(state, json.id);
+          break;
+        }
+
+        case PULL_REQUEST_STATUSES.ADDED_IN_ANOTHER_VAULT: {
+          closeData = await updateDataAddedInAnotherVault(state, json.id);
           break;
         }
 
         case PULL_REQUEST_STATUSES.UPDATED: {
-          closeData = await updateLoginUpdated(
+          closeData = await updateDataUpdated(
             data,
             state,
             hkdfSaltAB,
             sessionKeyForHKDF,
             json.id
           );
+          break;
+        }
+
+        default: {
+          throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginWrongStatus);
+        }
+      }
+
+      break;
+    }
+
+    case PULL_REQUEST_TYPES.FULL_SYNC: {
+      switch (data.status) {
+        case PULL_REQUEST_STATUSES.CANCEL: {
+          closeData = await fullSyncCancel(json.id);
+          break;
+        }
+
+        case PULL_REQUEST_STATUSES.ACCEPT: {
+          await fullSyncAccept(
+            data,
+            state,
+            hkdfSaltAB,
+            sessionKeyForHKDF,
+            json.id
+          );
+
           break;
         }
 

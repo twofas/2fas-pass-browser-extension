@@ -4,14 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { HEX_REGEX, selectors as S } from '@/constants';
 import { createElement, createSVGElement, createTextElement } from '@/partials/DOMElements';
-import S from '@/constants/selectors';
+import { getDomain } from '@/partials/functions';
 import logoSrc from '@/assets/logo.svg?raw';
 import logoSrcDark from '@/assets/logo-dark.svg?raw';
 import closeSrc from '@/assets/popup-window/cancel.svg?raw';
-import { HEX_REGEX } from '@/constants/regex';
-import getDomain from '@/partials/functions/getDomain';
-import getTextColor from '@/partials/functions/getTextColor';
 import URIMatcher from '@/partials/URIMatcher';
 import { parseDomain, ParseResultType } from 'parse-domain';
 
@@ -46,13 +44,15 @@ const cancel = (n, sendResponse) => {
 * Function to perform an action.
 * @param {Object} n - The notification object.
 * @param {Function} sendResponse - The function to send the response back.
-* @param {string} id - The ID of the item.
+* @param {string} vaultId - The vault ID of the item.
 * @param {string} deviceId - The device ID of the item.
+* @param {string} id - The ID of the item.
+* @param {string} contentType - The content type of the item.
 * @return {void}
 */
-const action = (n, sendResponse, id, deviceId) => {
+const action = (n, sendResponse, vaultId, deviceId, id, contentType) => {
   closeNotification(n);
-  return sendResponse({ status: 'action', id, deviceId });
+  return sendResponse({ status: 'action', vaultId, deviceId, id, contentType });
 };
 
 /** 
@@ -64,14 +64,14 @@ const action = (n, sendResponse, id, deviceId) => {
 const generateLabel = (item, itemIcon) => {
   let backgroundColor = '';
 
-  if (item?.labelColor && HEX_REGEX.test(item.labelColor)) {
-    backgroundColor = item.labelColor;
+  if (item?.content?.labelColor && HEX_REGEX.test(item?.content?.labelColor)) {
+    backgroundColor = item.content.labelColor;
   }
 
   itemIcon.classList.add('icon-label');
   itemIcon.setAttribute('style', `background: ${backgroundColor} !important;`);
-  const itemLabelText = createTextElement('span', item?.labelText?.toUpperCase() || item?.name?.substring(0, 2).toUpperCase() || '');
-  itemLabelText.style.color = getTextColor(item.labelColor);
+  const itemLabelText = createTextElement('span', item?.content?.labelText?.toUpperCase() || item?.content?.name?.substring(0, 2).toUpperCase() || '');
+  itemLabelText.style.color = item.content.textColor;
   itemIcon.appendChild(itemLabelText);
 };
 
@@ -177,21 +177,21 @@ const matchingLogins = (request, sendResponse, container) => {
     const itemEl = createElement('div', 'twofas-pass-notification-matching-logins-item');
 
     const itemBtn = createElement('button', 'twofas-pass-notification-matching-logins-item-btn');
-    itemBtn.addEventListener('click', () => action(n, sendResponse, item.id, item.deviceId ));
+    itemBtn.addEventListener('click', () => action(n, sendResponse, item.vaultId, item.deviceId, item.id, item.contentType));
 
     const itemIcon = createElement('span', 'twofas-pass-notification-matching-logins-item-icon');
 
-    if ((!item?.iconType && item?.iconType !== 0) || item?.iconType === 1) {
+    if ((!item?.content?.iconType && item?.content?.iconType !== 0) || item?.content?.iconType === 1) {
       // Label
       generateLabel(item, itemIcon);
-    } else if (item?.iconType === 0) {
+    } else if (item?.content?.iconType === 0) {
       // Default favicon
       let iconDomain = '';
       let parsedDomain = null;
-      const iconUriIndex = item?.iconUriIndex || 0;
+      const iconUriIndex = item?.content?.iconUriIndex || 0;
 
       try {
-        iconDomain = getDomain(item?.uris[iconUriIndex]?.text);
+        iconDomain = getDomain(item?.content.uris[iconUriIndex]?.text);
 
         try {
           parsedDomain = parseDomain(iconDomain);
@@ -213,7 +213,7 @@ const matchingLogins = (request, sendResponse, container) => {
         itemIcon.classList.add('icon-image');
         const iconImage = createElement('img');
         iconImage.src = imageUrl;
-        iconImage.alt = item.name;
+        iconImage.alt = item.content.name;
         itemIcon.appendChild(iconImage);
 
         iconImage.onerror = () => {
@@ -228,8 +228,8 @@ const matchingLogins = (request, sendResponse, container) => {
       // Custom
       itemIcon.classList.add('icon-image');
       const iconImage = createElement('img');
-      iconImage.src = `https://custom-icon.2fas.com/?url=${item?.customImageUrl}`;
-      iconImage.alt = item.name;
+      iconImage.src = `https://custom-icon.2fas.com/?url=${item?.content?.customImageUrl}`;
+      iconImage.alt = item.content.name;
       itemIcon.appendChild(iconImage);
 
       iconImage.onerror = () => {
@@ -240,12 +240,12 @@ const matchingLogins = (request, sendResponse, container) => {
     }
 
     const itemAccount = createElement('span');
-    const itemAccountName = createTextElement('span', item.name || browser.i18n.getMessage('no_item_name'));
+    const itemAccountName = createTextElement('span', item.content.name || browser.i18n.getMessage('no_item_name'));
 
     let itemAccountUsername;
 
-    if (item?.username && item?.username.length > 0) {
-      itemAccountUsername = createTextElement('span', item.username);
+    if (item?.content?.username && item?.content?.username.length > 0) {
+      itemAccountUsername = createTextElement('span', item.content.username);
     }
 
     const itemSecondaryBtnText = (item.securityType === SECURITY_TIER.SECRET || item.t2WithPassword === true) ? browser.i18n.getMessage('autofill') : browser.i18n.getMessage('fetch');

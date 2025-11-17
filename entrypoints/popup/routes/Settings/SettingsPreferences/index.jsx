@@ -5,19 +5,19 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { Link, useLocation } from 'react-router';
-import { lazy, useEffect, useState, useRef } from 'react';
-import { usePopupState } from '@/hooks/usePopupState';
+import { Link } from 'react-router';
+import { lazy, useRef, Suspense } from 'react';
+import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import ExtensionName from './components/ExtensionName';
+import Shortcut from './components/Shortcut';
+import Push from './components/Push';
+import Theme from './components/Theme';
+import SavePasswordPrompt from './components/SavePasswordPrompt';
+import ContextMenu from './components/ContextMenu';
+import Logs from './components/Logs';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
-const ExtensionName = lazy(() => import('./components/ExtensionName'));
-const Shortcut = lazy(() => import('./components/Shortcut'));
-const Push = lazy(() => import('./components/Push'));
-const Theme = lazy(() => import('./components/Theme'));
-const SavePasswordPrompt = lazy(() => import('./components/SavePasswordPrompt'));
-const ContextMenu = lazy(() => import('./components/ContextMenu'));
-const Logs = lazy(() => import('./components/Logs'));
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to render the Settings Preferences component.
@@ -25,38 +25,19 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsPreferences (props) {
-  const location = useLocation();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll, popupState, setData } = usePopupState();
-  const [loadedComponents, setLoadedComponents] = useState(new Set());
-  const componentsToLoad = useRef(['ExtensionName', 'Shortcut', 'Push', 'Theme', 'SavePasswordPrompt', 'ContextMenu', 'Logs']);
+  const scrollableRef = useRef(null);
+  useScrollPosition(scrollableRef, false);
 
-  useEffect(() => {
-    setHref(location.pathname);
-  }, [location.pathname, setHref]);
-
-  useEffect(() => {
-    if (loadedComponents.size === componentsToLoad.current.length) {
-      if (shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
-        scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
-      }
-    }
-  }, [loadedComponents, shouldRestoreScroll, popupStateData, scrollElementRef]);
-
-  const handleComponentLoad = (componentName) => {
-    setLoadedComponents(prev => {
-      const newSet = new Set(prev);
-      newSet.add(componentName);
-      return newSet;
-    });
-  };
-  
-  
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => { setScrollElementRef(el); }}>
+      <div ref={scrollableRef}>
         <section className={S.settings}>
-          <NavigationButton type='back' />
-          <NavigationButton type='cancel' />
+          <Suspense fallback={null}>
+            <NavigationButton type='back' />
+          </Suspense>
+          <Suspense fallback={null}>
+            <NavigationButton type='cancel' />
+          </Suspense>
 
           <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
             <div className={S.settingsSubmenu}>
@@ -65,31 +46,29 @@ function SettingsPreferences (props) {
               </div>
     
               <div className={S.settingsSubmenuBody}>
-                <ExtensionName
-                  onLoad={() => handleComponentLoad('ExtensionName')}
-                  popupState={popupState}
-                  setData={setData}
-                />
-                <Shortcut onLoad={() => handleComponentLoad('Shortcut')} />
-                <Push onLoad={() => handleComponentLoad('Push')} />
-                <Theme onLoad={() => handleComponentLoad('Theme')} />
-                <SavePasswordPrompt onLoad={() => handleComponentLoad('SavePasswordPrompt')} />
+                <ExtensionName />
+                <Shortcut />
+                <Push />
+                <Theme />
+                <SavePasswordPrompt />
 
                 <div className={S.settingsAdvanced}>
                   <h4>{browser.i18n.getMessage('advanced')}</h4>
 
                   <div className={S.settingsAdvancedContainer}>
-                    <ContextMenu onLoad={() => handleComponentLoad('ContextMenu')} />
-                    <Logs onLoad={() => handleComponentLoad('Logs')} />
+                    <ContextMenu />
+                    <Logs />
                   </div>
                 </div>
 
                 <div className={S.settingsDangerZone}>
                   <h4>{browser.i18n.getMessage('settings_danger_zone')}</h4>
-                  
-                  <Link to='/settings-reset' className={S.settingsDangerZoneLink}>
+
+                  <Link to='/settings/preferences/reset' className={S.settingsDangerZoneLink}>
                     <span>{browser.i18n.getMessage('settings_danger_zone_reset')}</span>
-                    <MenuArrowIcon />
+                    <Suspense fallback={null}>
+                      <MenuArrowIcon />
+                    </Suspense>
                   </Link>
                 </div>
               </div>

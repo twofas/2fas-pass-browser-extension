@@ -10,6 +10,7 @@ import addExpirationDateToDevice from './utils/addExpirationDateToDevice';
 import checkStorageSessionCapacity from './utils/checkStorageSessionCapacity';
 import checkChecksumLength from './utils/checkChecksumLength';
 import TwoFasWebSocket from '@/partials/WebSocket';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
 * Handles the initialization of the transfer process.
@@ -26,7 +27,7 @@ const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid) => 
   checkChecksumLength(sha256GzipVaultDataEnc);
   await checkStorageSessionCapacity(totalSize);
 
-  const encryptionDataKeyAES = await generateEncryptionAESKey(hkdfSaltAB, StringToArrayBuffer('Data'), sessionKeyForHKDF, false);
+  const encryptionDataKeyAES = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.DATA.crypto, sessionKeyForHKDF, false);
 
   try {
     const newSessionIdEncAB = Base64ToArrayBuffer(newSessionIdEnc);
@@ -37,6 +38,7 @@ const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid) => 
     throw new TwoFasError(TwoFasError.errors.decryptNewSessionId, { event: e });
   }
 
+  // OPTIONAL
   if (json?.payload?.fcmTokenEnc && json?.payload?.fcmTokenEnc?.length > 0) {
     try {
       const fcmTokenEnc = json.payload.fcmTokenEnc;
@@ -50,6 +52,7 @@ const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid) => 
     }
   }
 
+  // OPTIONAL
   let expirationDateDec_B64 = null;
 
   if (json?.payload?.expirationDateEnc && json?.payload?.expirationDateEnc?.length > 0) {

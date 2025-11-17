@@ -8,73 +8,72 @@ import '@/partials/TwofasNotification/TwofasNotification.scss';
 import S from '../../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import Select from 'react-select';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import TwofasNotification from '@/partials/TwofasNotification';
 
 /**
 * Function to render the Push component.
 * @return {JSX.Element} The rendered component.
 */
-function Push (props) {
-  const [loading, setLoading] = useState(true);
-  const [push, setPush] = useState(null);
-  const [disabled, setDisabled] = useState(true);
+function Push () {
+  const defaultPushValue = import.meta.env.BROWSER === 'safari' ? false : true;
+  const [push, setPush] = useState(defaultPushValue);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const getNativePush = async () => {
-      let storageNativePush = await storage.getItem('local:nativePush');
+      try {
+        let storageNativePush = await storage.getItem('local:nativePush');
 
-      if (storageNativePush === null) {
-        storageNativePush = import.meta.env.BROWSER === 'safari' ? false : true;
-      }
+        if (storageNativePush === null) {
+          storageNativePush = defaultPushValue;
+          await storage.setItem('local:nativePush', storageNativePush);
+        }
 
-      setPush(storageNativePush);
-      await storage.setItem('local:nativePush', storageNativePush);
-
-      setLoading(false);
-      setDisabled(false);
-
-      if (props.onLoad) {
-        props.onLoad();
+        setPush(storageNativePush);
+        setIsInitialized(true);
+      } catch (e) {
+        await CatchError(e);
+        setIsInitialized(true);
       }
     };
 
-    try {
-      getNativePush();
-    } catch (e) {
-      CatchError(e);
-    }
-  }, []);
+    getNativePush();
+  }, [defaultPushValue]);
 
   const pushOptions = [
     { value: true, label: browser.i18n.getMessage('settings_push_native') },
     { value: false, label: browser.i18n.getMessage('settings_push_custom') }
   ];
 
-  const handlePushChange = async change => {
-    setDisabled(true);
+  const handlePushChange = useCallback(async change => {
+    if (!isInitialized) {
+      return;
+    }
 
     try {
       const value = change?.value;
-      await storage.setItem('local:nativePush', value);
       setPush(value);
+
+      await storage.setItem('local:nativePush', value);
       showToast(browser.i18n.getMessage('settings_push_notifications_changing_success'), 'success');
     } catch (e) {
+      const previousValue = await storage.getItem('local:nativePush') || defaultPushValue;
+      setPush(previousValue);
+
       showToast(browser.i18n.getMessage('error_saving_notification_settings'), 'error');
       await CatchError(e);
-    } finally {
-      setDisabled(false);
     }
-  };
-  
-  const handlePushTest = () => {
+  }, [isInitialized, defaultPushValue]);
+
+  const handlePushTest = useCallback(() => {
     return TwofasNotification.show({
       Title: browser.i18n.getMessage('notification_test_title'),
       Message: browser.i18n.getMessage('notification_test_message')
     });
-  };
+  }, []);
 
-  if (import.meta.env.BROWSER === 'safari' || loading) {
+  if (import.meta.env.BROWSER === 'safari') {
     return null;
   }
 
@@ -89,15 +88,16 @@ function Push (props) {
           classNamePrefix='react-select'
           isSearchable={false}
           options={pushOptions}
-          defaultValue={pushOptions.find(el => el.value === push)}
+          value={pushOptions.find(el => el.value === push)}
           onChange={handlePushChange}
+          isDisabled={!isInitialized}
         />
       </form>
 
       <button
         className={`${bS.btn} ${bS.btnClear} ${bS.btnPushTest}`}
         onClick={handlePushTest}
-        disabled={disabled ? 'disabled' : ''}
+        disabled={!isInitialized ? 'disabled' : ''}
       >
         {browser.i18n.getMessage('settings_notifications_send_test')}
       </button>

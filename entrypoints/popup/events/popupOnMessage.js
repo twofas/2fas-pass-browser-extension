@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import autoClearAction from '@/partials/functions/autoClearAction';
-import storageAutoClearActions from '@/partials/functions/storageAutoClearActions';
+import { autoClearAction, storageAutoClearActions } from '@/partials/functions';
 
 /** 
 * Function to handle messages sent to the popup.
@@ -23,7 +22,7 @@ const popupOnMessage = (request, sender, sendResponse) => {
     switch (request.action) {
       case REQUEST_ACTIONS.AUTO_CLEAR_ACTION: {
         if (import.meta.env.BROWSER !== 'safari') {
-          autoClearAction(request).finally(sendResponse({ status: 'ok' }));
+          autoClearAction(request).finally(sendResponse);
         } else {
           sendResponse({ status: 'ok' });
         }

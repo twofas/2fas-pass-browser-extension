@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { parseDomain, ParseResultType } from 'parse-domain';
-import { URL_REGEX, IP_REGEX } from '@/constants/regex';
+import { URL_REGEX, IP_REGEX } from '@/constants';
 
 // FUTURE - Check if TwoFasError works here
 
@@ -353,45 +353,45 @@ class URIMatcher {
     return this.normalizeUrl(serviceUrl, internalProtocols) === this.normalizeUrl(browserUrl, internalProtocols);
   }
 
-  static getMatchedAccounts (services, tabUrl) {
+  static getMatchedAccounts (items, tabUrl) {
     if (!this.isText(tabUrl)) {
       throw new Error('Parameter tabUrl is not a string');
     }
     
-    if (!Array.isArray(services)) {
-      throw new Error('Parameter services is not an array');
+    if (!Array.isArray(items)) {
+      throw new Error('Parameter items is not an array');
     }
     
     if (!this.isUrl(tabUrl, true)) {
       throw new Error('Parameter tabUrl is not a valid URL');
     }
     
-    if (services.length <= 0) {
+    if (items.length <= 0) {
       return [];
     }
 
     const domainCredentials = [];
 
     try {
-      services.forEach(account => {
-        if (!account?.uris || !Array.isArray(account?.uris) || account?.uris.length <= 0) {
+      items.forEach(item => {
+        if (!item?.content?.uris || !Array.isArray(item?.content?.uris) || item?.content?.uris?.length <= 0) {
           return;
         }
 
-        let serviceUrls;
+        let itemUrls;
 
         try {
-          serviceUrls = this.recognizeURIs(account.uris, true)?.urls;
+          itemUrls = this.recognizeURIs(item.content.uris, true)?.urls;
         } catch {
           // FUTURE - Log error?
           return;
         }
 
-        if (!serviceUrls || serviceUrls.length <= 0) {
+        if (!itemUrls || itemUrls.length <= 0) {
           return;
         }
 
-        serviceUrls.forEach(uri => {
+        itemUrls.forEach(uri => {
           const { matcher, text } = uri;
 
           if (
@@ -405,7 +405,7 @@ class URIMatcher {
           const matcherFunction = this.MATCHER_FUNCTIONS[matcher];
           
           if (matcherFunction && matcherFunction(text, tabUrl, true)) {
-            domainCredentials.push(account);
+            domainCredentials.push(item);
           }
         });
       });

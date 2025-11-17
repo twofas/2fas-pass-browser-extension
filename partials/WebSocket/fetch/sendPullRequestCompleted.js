@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import TwoFasWebSocket from '@/partials/WebSocket';
-import PULL_REQUEST_TYPES from '@/entrypoints/popup/routes/Fetch/constants/PULL_REQUEST_TYPES';
+import { PULL_REQUEST_TYPES } from '@/constants';
 
 /** 
 * Sends a message indicating that a pull request has been completed.

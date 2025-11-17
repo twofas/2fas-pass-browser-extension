@@ -4,16 +4,16 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import URIMatcher from '@/partials/URIMatcher';
 
 /** 
 * Function to configure the context menu when there is no account item for tabId.
 * @param {number} tabId - The ID of the tab to update the context menu for.
-* @param {Array|null} services - The list of services to match against the URL.
+* @param {Array|null} items - The list of items to match against the URL.
 * @return {Promise<boolean>} A promise that resolves to true if the context menu is updated successfully, otherwise false.
 */
-const updateNoAccountItem = async (tabId, services = null) => {
+const updateNoAccountItem = async (tabId, items = null) => {
   let tab;
 
   if (!tabId) {
@@ -29,19 +29,19 @@ const updateNoAccountItem = async (tabId, services = null) => {
   }
 
   try {
-    if (!services) {
-      services = await getServices();
+    if (!items) {
+      items = await getItems();
     }
   } catch (e) {
     await CatchError(e);
     return false;
   }
 
-  if (services && services.length > 0 && tab && tab?.url) {
+  if (items && items.length > 0 && tab && tab?.url) {
     let matchedAccounts = [];
 
     try {
-      matchedAccounts = URIMatcher.getMatchedAccounts(services, tab.url);
+      matchedAccounts = URIMatcher.getMatchedAccounts(items, tab.url);
     } catch {
       return false;
     }

@@ -4,22 +4,21 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
-import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
-import sendMessageToTab from '@/partials/functions/sendMessageToTab';
+import { sendMessageToAllFrames, sendMessageToTab, generateNonce } from '@/partials/functions';
+import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
-import decryptPassword from '@/partials/functions/decryptPassword';
-import generateNonce from '@/partials/functions/generateNonce';
 
 /** 
 * Function to send autofill data to a specific tab.
 * @async
 * @param {number} tabId - The ID of the tab to which the autofill data should be sent.
-* @param {string} serviceID - The ID of the service to use for the autofill data.
+* @param {string} deviceId - The ID of the device to use for the autofill data.
+* @param {string} vaultId - The ID of the vault to use for the autofill data.
+* @param {string} itemId - The ID of the item to use for the autofill data.
 * @return {Promise<void>} A promise that resolves when the autofill data is sent.
 */
-const sendAutofillToTab = async (tabId, serviceID) => {
+const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   const injectedCS = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
 
   if (!injectedCS) {
@@ -29,19 +28,18 @@ const sendAutofillToTab = async (tabId, serviceID) => {
     }, tabId, true);
   }
 
-  let services, service;
+  let item;
 
   try {
-    services = await getServices();
-    service = services.find(service => service.id === serviceID);
+    item = await getItem(deviceId, vaultId, itemId);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabToTabService, {
       event: e,
-      additional: { func: 'sendAutofillToTab - getServices' }
+      additional: { func: 'sendAutofillToTab - getItem' }
     });
   }
 
-  if (!service) {
+  if (!item) {
     return TwofasNotification.show({
       Title: browser.i18n.getMessage('notification_send_autofill_to_tab_lack_of_service_title'),
       Message: browser.i18n.getMessage('notification_send_autofill_to_tab_lack_of_service_message')
@@ -52,11 +50,11 @@ const sendAutofillToTab = async (tabId, serviceID) => {
   let noUsername = false;
   let decryptedPassword, encryptedValueB64;
 
-  if (!service?.password || service?.password?.length <= 0) {
+  if (!item?.sifExists) {
     noPassword = true;
   }
 
-  if (!service?.username || service?.username?.length <= 0) {
+  if (!item?.content?.username || item?.content?.username?.length <= 0) {
     noUsername = true;
   }
 
@@ -67,11 +65,12 @@ const sendAutofillToTab = async (tabId, serviceID) => {
 
   if (!noPassword) {
     try {
-      decryptedPassword = await decryptPassword(service);
+      const decryptedData = await item.decryptSif();
+      decryptedPassword = decryptedData.password;
     } catch (e) {
-      throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabDecryptPassword, {
+      throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabDecryptSif, {
         event: e,
-        additional: { func: 'sendAutofillToTab - decryptPassword' }
+        additional: { func: 'sendAutofillToTab - decryptSif' }
       });
     }
 
@@ -129,7 +128,7 @@ const sendAutofillToTab = async (tabId, serviceID) => {
       tabId,
       {
         action: REQUEST_ACTIONS.AUTOFILL,
-        username: service.username,
+        username: item.content.username,
         password: encryptedValueB64,
         target: REQUEST_TARGETS.CONTENT,
         noPassword,

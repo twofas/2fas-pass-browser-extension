@@ -88,11 +88,15 @@
     "description": "Error message displayed when the browser tab returns an unknown response"
   },
   "error_storage_capacity_exceeded": {
-    "message": "Data size exceeded. \nUse less data or try a different browser.",
+    "message": "Data size exceeded. Use less data or try a different browser.",
     "description": "Error shown when storage capacity exceeds the limit"
   },
+  "error_scheme_mismatch": {
+    "message": "Please update the 2FAS Pass mobile app.",
+    "description": "Error shown when there is a scheme mismatch between the extension and mobile app"
+  },
   "error_mobile_disconnected": {
-    "message": "Mobile device disconnected\nPlease try again.",
+    "message": "Mobile device disconnected. Please try again.",
     "description": "Error shown when the mobile device disconnects"
   },
   "error_timeout": {
@@ -102,6 +106,14 @@
   "error_feature_wrong_data": {
     "message": "Something went wrong. Our developer team is already working on it.",
     "description": "Error message displayed when there is an issue with the shortcut settings"
+  },
+  "error_no_network_connection": {
+    "message": "No Internet connection. Please check your connection and try again.",
+    "description": "Error message displayed when there is no network connection"
+  },
+  "error_connection_error": {
+    "message": "Connection error. Please check your Internet connection and try again.",
+    "description": "Error message displayed when a connection error occurs"
   },
   "appDesc": {
     "message": "2FAS Pass is a next-gen password manager with no compromises in security and full control over your data.",
@@ -286,6 +298,14 @@
   "no_valid_domain": {
     "message": "No valid domain detected. If it is a non-standard domain, add the appropriate protocol (e.g. https) at the beginning.",
     "description": "Label for a state where no valid domain is provided"
+  },
+  "sync": {
+    "message": "Sync",
+    "description": "Label for the sync functionality"
+  },
+  "sync_title": {
+    "message": "Sync with your 2FAS Pass mobile app",
+    "description": "Title for the sync data section"
   },
   "notification_send_autofill_to_tab_lack_of_service_title": {
     "message": "Error",
@@ -572,8 +592,8 @@
     "description": "Validation message displayed when the Domain (URI) entered is invalid"
   },
   "add_new_header": {
-    "message": "Adding a new service to \n2FAS Pass",
-    "description": "Header for the section to add a new service"
+    "message": "Adding a new Item to \n2FAS Pass",
+    "description": "Header for the section to add a new item"
   },
   "add_new_subheader": {
     "message": "Start the process here and continue in the mobile app.",
@@ -599,24 +619,12 @@
     "message": "Open popup",
     "description": "Button label to open the external popup."
   },
-  "connect_qr_placeholder_1": {
-    "message": "2FAS Pass is the best! Check our website for more info!",
-    "description": "Placeholder text for the QR code section promoting the 2FAS Pass website"
-  },
-  "connect_qr_placeholder_2": {
-    "message": "If you are searching for a secure 2FA solution, check out our 2FAS Auth app!",
-    "description": "Placeholder text for the QR code section promoting the 2FAS Auth app"
-  },
-  "connect_qr_placeholder_3": {
-    "message": "2FAS Auth is the best 2FA app on the market! 2FAS Pass is the best password manager!",
-    "description": "Placeholder promoting both 2FAS Auth and 2FAS Pass as top solutions for 2FA and password management"
-  },
   "connect_header": {
-    "message": "Scan this QR Code with your 2FAS Pass Mobile App",
+    "message": "Scan this QR Code with your 2FAS Pass mobile app",
     "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
   },
   "connect_description": {
-    "message": "Required for every browser launch to ensure secure access to your Items.",
+    "message": "Do this when you first launch the browser extension to securely connect it with your mobile app.",
     "description": "Explains the need to scan the QR code for secure access during each browser launch"
   },
   "connect_connecting": {
@@ -627,9 +635,45 @@
     "message": "Connection is opened.\nDon't close this window",
     "description": "Message displayed when the connection is successfully opened"
   },
+  "connect_push_cancelled": {
+    "message": "Connection cancelled in the mobile app.",
+    "description": "Message displayed when the connection is cancelled by the user from the mobile app"
+  },
+  "connect_device_select_header": {
+    "message": "Your Devices",
+    "description": "Header prompting the user to select their device"
+  },
+  "connect_device_select_list_header": {
+    "message": "Select the device you want to connect with:",
+    "description": "Header for the device selection list"
+  },
+  "connect_device_select_add_another": {
+    "message": "Add another device",
+    "description": "Button text for adding another device"
+  },
+  "connect_push_animation_description": {
+    "message": "To finish connecting, \nplease approve the request on your device.",
+    "description": "Description for the push notification animation"
+  },
+  "connect_push_trouble": {
+    "message": "Trouble connecting?",
+    "description": "Text for link to QR code view if having trouble with push notification"
+  },
+  "connect_push_trouble_tooltip": {
+    "message": "If the push notification doesn't arrive in a few seconds, please check your mobile app",
+    "description": "Tooltip text explaining what to do if the push notification does not arrive"
+  },
+  "connect_push_trouble_tooltip_or": {
+    "message": "or",
+    "description": "The word 'or' used between two options"
+  },
+  "connect_push_trouble_tooltip_use_qr": {
+    "message": "Use QR code",
+    "description": "Instruction to use QR code as an alternative method"
+  },
   "details_header": {
-    "message": "Item details",
-    "description": "Header for the item details section"
+    "message": "details",
+    "description": "Header for the details section"
   },
   "details_field": {
     "message": "field",
@@ -644,12 +688,8 @@
     "description": "Message indicating that the password is stored only in the user's Vault"
   },
   "details_password_decrypt_error": {
-    "message": "Decrypting password error. Please reconnect with your mobile app.",
+    "message": "Decrypting password error. Please resync with your mobile app.",
     "description": "Error message displayed when decrypting the password fails"
-  },
-  "details_password_description": {
-    "message": "This password is only available in your Vault. \nEnter a new one here to update it.",
-    "description": "Explains that the password is stored in the Vault and can be updated here"
   },
   "details_delete_header": {
     "message": "No longer need this Item?",
@@ -675,9 +715,9 @@
     "message": "URL must be less than 2048 characters.",
     "description": "Validation message indicating the maximum length for the URL field"
   },
-  "details_service_not_found": {
-    "message": "Something went wrong. Service not found. Lock the Browser Extension and reconnect.",
-    "description": "Error shown when the requested service is not found, suggesting reconnection"
+  "details_item_not_found": {
+    "message": "Something went wrong. Item not found. Sync with your mobile app and try again.",
+    "description": "Error shown when the requested item is not found, suggesting reconnection"
   },
   "details_security_type": {
     "message": "Security Tier",
@@ -723,6 +763,14 @@
     "message": "Generate password",
     "description": "Title for the button that opens password generator"
   },
+  "details_fetch_text": {
+    "message": "Data available only in the mobile app.",
+    "description": "Text indicating that some data can be fetched from the mobile app"
+  },
+  "details_fetch_title": {
+    "message": "Fetch Highly Secret data",
+    "description": "Title for the fetch highly secret data link"
+  },
   "details_tags_label": {
     "message": "Tags",
     "description": "Label for the tags field in details view"
@@ -748,8 +796,8 @@
     "description": "Placeholder text for the tag selection dropdown"
   },
   "fetch_push_header": {
-    "message": "Check the 2FAS Pass push notification on your mobile phone.",
-    "description": "Header prompting the user to check their mobile phone for a push notification"
+    "message": "Check the 2FAS Pass push notification on your mobile device.",
+    "description": "Header prompting the user to check their device for a push notification"
   },
   "fetch_push_waiting_for_mobile": {
     "message": "Waiting for mobile response...",
@@ -764,7 +812,7 @@
     "description": "Error message displayed when the FCM token is unregistered"
   },
   "fetch_connection_timeout_header": {
-    "message": "Timed out due to inactivity.",
+    "message": "Timed out \ndue to inactivity.",
     "description": "Error message displayed when the connection times out due to inactivity"
   },
   "fetch_continue_updating_header": {
@@ -799,8 +847,12 @@
     "message": "New Item added in Tier 1 (only in the mobile app)",
     "description": "Toast shown when a new login is added in tier 1, available only in the mobile app"
   },
+  "fetch_new_login_added_in_another_vault_toast": {
+    "message": "New Item added in another Vault",
+    "description": "Toast shown when a new login is added in another vault"
+  },
   "fetch_new_login_cancel_toast": {
-    "message": "User cancelled adding a new Item",
+    "message": "Item adding canceled",
     "description": "Toast message displayed when the user cancels adding a new login item"
   },
   "fetch_password_request_accept_toast": {
@@ -823,6 +875,18 @@
     "message": "Item updated in tier 1 (only in mobile app)",
     "description": "Toast shown when a login is updated in tier 1, available only in the mobile app"
   },
+  "fetch_update_login_added_in_another_vault_toast": {
+    "message": "Item updated in another Vault",
+    "description": "Toast shown when a login is updated in another vault"
+  },
+  "fetch_full_sync_cancel_toast": {
+    "message": "Synchronization canceled",
+    "description": "Toast message displayed when a full sync operation is canceled"
+  },
+  "fetch_full_sync_completed_toast": {
+    "message": "Synchronization completed",
+    "description": "Toast message displayed when a full sync operation is completed successfully"
+  },
   "not_found_text": {
     "message": "Route not implemented yet ;)",
     "description": "Message shown when a user navigates to an unimplemented route"
@@ -844,15 +908,15 @@
     "description": "Title for the regenerate password button"
   },
   "password_generator_uppercase": {
-    "message": "A-Z",
+    "message": "Uppercase characters",
     "description": "Checkbox label for including uppercase letters"
   },
   "password_generator_numbers": {
-    "message": "0-9",
+    "message": "Digits",
     "description": "Checkbox label for including numbers"
   },
   "password_generator_special_chars": {
-    "message": "!@#$%&^",
+    "message": "Special characters",
     "description": "Checkbox label for including special characters"
   },
   "password_generator_use_password": {
@@ -878,6 +942,10 @@
   "settings_security": {
     "message": "Security",
     "description": "Label for the security section in settings"
+  },
+  "settings_devices": {
+    "message": "Connected Devices",
+    "description": "Label for the trusted devices section in settings"
   },
   "settings_about": {
     "message": "About 2FAS Pass",
@@ -1000,7 +1068,7 @@
     "description": "Description for configuring idle lock behavior"
   },
   "settings_idle_lock_tooltip_1": {
-    "message": "Automatically lock browser extensions when idle",
+    "message": "Autolock browser extensions when idle",
     "description": "Tooltip explaining that the idle lock setting applies only to the extension"
   },
   "settings_idle_lock_tooltip_2": {
@@ -1051,6 +1119,10 @@
     "message": "To set or change this shortcut, go to your browser settings, extensions, then click on the gear icon and select “Manage Extension Shortcuts.”",
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
+  "settings_shortcut_safari_tooltip": {
+    "message": "To set or change this shortcut, go to your browser settings, extensions, 2FAS Pass Browser Extension, then change the shortcut in the provided field.",
+    "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
+  },
   "settings_push_native": {
     "message": "Native Browser's Notifications",
     "description": "Option to use the browser's native notification system"
@@ -1068,7 +1140,7 @@
     "description": "Header for the notifications settings"
   },
   "settings_notifications_description": {
-    "message": "Choose a notification mechanism that will prompt you about communication between the 2FAS Pass Bobile App and this Browser Extension.",
+    "message": "Choose a notification mechanism that will prompt you about communication between the 2FAS Pass mobile app and this browser extension.",
     "description": "Explains how to configure notifications for communication between the mobile app and extension"
   },
   "settings_notifications_send_test": {
@@ -1159,6 +1231,22 @@
     "message": "Cancel ignoring this domain",
     "description": "Title for the button to cancel ignoring a new domain to the ignored list"
   },
+  "settings_excluded_domains_remove_dialog_message": {
+    "message": "Are you sure you want to remove DOMAIN from the ignored domains list?",
+    "description": "Confirmation message when removing a domain from the ignored list"
+  },
+  "settings_excluded_domains_remove_dialog_message_replace_fallback": {
+    "message": "this domain",
+    "description": "Fallback text for the domain placeholder in the remove domain confirmation dialog"
+  },
+  "settings_excluded_domains_remove_dialog_cancel_text": {
+    "message": "Cancel",
+    "description": "Cancel button text in the remove domain confirmation dialog"
+  },
+  "settings_excluded_domains_remove_dialog_confirm_text": {
+    "message": "Remove",
+    "description": "Confirm button text in the remove domain confirmation dialog"
+  },
   "settings_danger_zone": {
     "message": "Danger Zone",
     "description": "Label for the danger zone section in settings"
@@ -1182,6 +1270,58 @@
   "settings_reset_action_cancel_button": {
     "message": "Cancel",
     "description": "Button label to cancel the reset action"
+  },
+  "settings_devices_header": {
+    "message": "Connected Devices",
+    "description": "Header for the trusted devices section in settings"
+  },
+  "settings_devices_description": {
+    "message": "List of devices connected with this Browser Extension. Disconnect them from here if you no longer use them.",
+    "description": "Description for managing trusted devices"
+  },
+  "settings_devices_unknown_platform": {
+    "message": "Unknown",
+    "description": "Label for devices with an unknown platform"
+  },
+  "settings_devices_no_devices": {
+    "message": "No devices found.",
+    "description": "Message displayed when there are no trusted devices found"
+  },
+  "settings_devices_current_device_title": {
+    "message": "This is your current device. You cannot disconnect it here.",
+    "description": "Warning message when disconnecting the current trusted device"
+  },
+  "settings_devices_name_header": {
+    "message": "Name",
+    "description": "Label for the device name column in the trusted devices list"
+  },
+  "settings_devices_platform_header": {
+    "message": "Platform",
+    "description": "Label for the device platform column in the trusted devices list"
+  },
+  "settings_devices_last_connected_header": {
+    "message": "Last connected",
+    "description": "Label for the last connected column in the trusted devices list"
+  },
+  "settings_devices_disconnect_title": {
+    "message": "Disconnect this device",
+    "description": "Title for the disconnect trusted device button"
+  },
+  "settings_devices_dialog_message": {
+    "message": "Are you sure you want to disconnect this device?",
+    "description": "Confirmation message when disconnecting a trusted device"
+  },
+  "settings_devices_dialog_submessage_current_device": {
+    "message": "This is your current device! Disconnecting it will block any future actions, such as fetching passwords",
+    "description": "Warning sub-message when disconnecting the current trusted device"
+  },
+  "settings_devices_dialog_cancel_text": {
+    "message": "Cancel",
+    "description": "Cancel button text in the disconnect trusted device confirmation dialog"
+  },
+  "settings_devices_dialog_confirm_text": {
+    "message": "Disconnect",
+    "description": "Confirm button text in the disconnect trusted device confirmation dialog"
   },
   "this_tab_matching_logins_header": {
     "message": "Matching Items",
@@ -1290,6 +1430,10 @@
   "this_tab_update_manual_required": {
     "message": "Please update the extension manually from your browser's extension settings",
     "description": "Error message when automatic update is not available"
+  },
+  "filters_no_tags": {
+    "message": "No Tags available",
+    "description": "Message shown in the tag filter dropdown when there are no tags created yet"
   },
   "filters_button_title": {
     "message": "Filter by Tag",

@@ -8,6 +8,7 @@ import S from './Blocked.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useEffect } from 'react';
 import focusPopupWindow from '@/partials/functions/focusPopupWindow';
+import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 
 /** 
 * Function to focus the popup window in a separate window.
@@ -15,10 +16,8 @@ import focusPopupWindow from '@/partials/functions/focusPopupWindow';
 * @return {void}
 */
 const focusPopupInSeparateWindow = async () => {
-  if (window && typeof window?.close === 'function' && import.meta.env.BROWSER !== 'safari') {
-    await focusPopupWindow();
-    window.close();
-  }
+  await focusPopupWindow();
+  tryWindowClose();
 };
 
 /** 
@@ -40,6 +39,8 @@ const handleOpenPopupButton = async () => {
       showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
     }
   }
+
+  tryWindowClose();
 };
 
 /** 
@@ -49,7 +50,9 @@ const handleOpenPopupButton = async () => {
 */
 function Blocked (props) {
   useEffect(() => {
-    focusPopupInSeparateWindow();
+    if (import.meta.env.BROWSER !== 'safari') {
+      focusPopupInSeparateWindow();
+    }
   }, []);
 
   return (

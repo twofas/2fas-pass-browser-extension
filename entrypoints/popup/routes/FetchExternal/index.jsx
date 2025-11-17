@@ -17,8 +17,6 @@ function FetchExternal () {
   try {
     params = useParams();
 
-    console.log(params);
-
     if (params && params.data) {
       let decodedData;
 

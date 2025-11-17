@@ -5,12 +5,12 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
 import { lazy } from 'react';
-import { useLocation } from 'react-router';
-import { usePopupState } from '@/hooks/usePopupState';
+import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
 const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
 const AboutIcon = lazy(() => import('@/assets/popup-window/about.svg?react'));
@@ -20,7 +20,6 @@ const DiscordIcon = lazy(() => import('@/assets/social/discord.svg?react'));
 const YoutubeIcon = lazy(() => import('@/assets/social/youtube.svg?react'));
 const TwitterIcon = lazy(() => import('@/assets/social/twitter.svg?react'));
 const GithubIcon = lazy(() => import('@/assets/social/github.svg?react'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to render the Settings About component.
@@ -28,34 +27,29 @@ const NavigationButton = lazy(() => import('@/entrypoints/popup/components/Navig
 * @return {JSX.Element} The rendered component.
 */
 function SettingsAbout (props) {
-  const location = useLocation();
+  const [loading, setLoading] = useState(true);
   const [version, setVersion] = useState('');
+
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
-  const { setScrollElementRef, scrollElementRef, popupStateData, setHref, shouldRestoreScroll } = usePopupState();
 
-  useEffect(() => {
-    setHref(location.pathname);
-  }, [location.pathname, setHref]);
+  const scrollableRef = useRef(null);
+
+  useScrollPosition(scrollableRef, loading);
 
   useEffect(() => {
     try {
       const manifest = browser.runtime.getManifest();
       setVersion(manifest.version);
+      setLoading(false);
     } catch (e) {
       CatchError(e);
     }
   }, []);
 
-  useEffect(() => {
-    if (shouldRestoreScroll && popupStateData?.scrollPosition && popupStateData.scrollPosition !== 0 && scrollElementRef.current) {
-      scrollElementRef.current.scrollTo(0, popupStateData.scrollPosition);
-    }
-  }, [shouldRestoreScroll, popupStateData, scrollElementRef]);
-
   return (
     <div className={`${props.className ? props.className : ''}`}>
-      <div ref={el => { setScrollElementRef(el); }}>
+      <div ref={scrollableRef}>
         <section className={S.settings}>
           <NavigationButton type='back' />
           <NavigationButton type='cancel' />

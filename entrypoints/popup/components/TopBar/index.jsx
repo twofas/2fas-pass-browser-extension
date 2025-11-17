@@ -8,6 +8,7 @@ import S from './TopBar.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useLocation } from 'react-router';
 import { useEffect, useRef, lazy, useCallback, useMemo, memo } from 'react';
+import { useAuthActions, useAuthState } from '@/hooks/useAuth';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
@@ -23,7 +24,8 @@ const AddNewIcon = lazy(() => import('@/assets/popup-window/add-new.svg?react'))
 */
 function TopBar () {
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout } = useAuthActions();
+  const { configured } = useAuthState();
   const { matchingLoginsLength } = useMatchingLogins();
   const unwatchConfigured = useRef(null);
 
@@ -50,24 +52,40 @@ function TopBar () {
   }, [logout]);
 
   const logoClass = useMemo(() => 
-    `${S.topbarLogo} ${(location.pathname === '/blocked' || location.pathname === '/') ? S.disabled : ''}`,
+    `${S.topbarLogo} ${(location.pathname === '/blocked' || location.pathname === '/' || location.pathname === '/connect') ? S.disabled : ''}`,
     [location.pathname]
   );
 
-  const lockButtonDisabled = useMemo(() => 
-    location.pathname === '/connect' || location.pathname === '/blocked',
-    [location.pathname]
+  const lockButtonDisabled = useMemo(() =>
+    !configured || location.pathname === '/blocked',
+    [configured, location.pathname]
   );
 
   const addNewClass = useMemo(() => {
-    if (location.pathname === '/connect') return '';
-    return (parseInt(matchingLoginsLength, 10) || 0) <= 0 ? S.highlighted : S.active;
-  }, [location.pathname, matchingLoginsLength]);
+    if (!configured) {
+      return '';
+    }
 
-  const addNewBtnClass = useMemo(() => 
-    `${S.topbarAddNewBtn} ${location.pathname === '/add-new' || location.pathname === '/connect' ? S.disabled : ''}`,
-    [location.pathname]
-  );
+    return (parseInt(matchingLoginsLength, 10) || 0) <= 0 ? S.highlighted : S.active;
+  }, [configured, matchingLoginsLength]);
+
+  const addNewBtnClass = useMemo(() => {
+    const path = location.pathname;
+    let returnClass = S.topbarAddNewBtn;
+
+    if (
+      path === '/add-new/Login' ||
+      path === '/fetch' ||
+      path.startsWith('/fetch/') ||
+      path === '/fetch-external' ||
+      path.startsWith('/fetch-external/') ||
+      !configured
+    ) {
+      returnClass += ` ${S.disabled}`;
+    }
+
+    return returnClass;
+  }, [configured, location.pathname]);
 
   const homePageTitle = useMemo(() => browser.i18n.getMessage('go_to_home_page'), []);
   const lockedText = useMemo(() => browser.i18n.getMessage('top_bar_locked'), []);
@@ -120,7 +138,7 @@ function TopBar () {
 
         <div className={`${S.topbarAddNew} ${addNewClass}`}>
           <Link
-            to='/add-new'
+            to='/add-new/Login'
             className={addNewBtnClass}
             prefetch='intent'
           >

@@ -4,12 +4,13 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getServices from '@/partials/sessionStorage/getServices';
-import getServicesKeys from '@/partials/sessionStorage/getServicesKeys';
+import getItems from '@/partials/sessionStorage/getItems';
+import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
-import compress from '@/partials/gzip/compress';
-import saveServices from '@/partials/WebSocket/utils/saveServices';
+import saveItems from '@/partials/WebSocket/utils/saveItems';
+import { generateNonce } from '@/partials/functions';
+import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 
 * Function to keep the password.
@@ -18,44 +19,62 @@ import saveServices from '@/partials/WebSocket/utils/saveServices';
 * @return {Promise<void>} A promise that resolves when the password is kept.
 */
 const keepPassword = async state => {
-  // Get services
-  const services = await getServices();
+  const [items, itemsKeys] = await Promise.all([
+    getItems(),
+    getItemsKeys(state.deviceId, state.vaultId)
+  ]);
 
-  // Get servicesKeys
-  const servicesKeys = await getServicesKeys(state.deviceId);
+  // Update sif (generic)
+  const item = items.find(item => item.id === state.itemId);
+  const sifs = item.sifs || {};
+  const updateSifArr = [];
 
-  // Update password
-  const service = services.find(service => service.id === state.loginId);
-  service.password = state.password;
-
-  // Compress services
-  const servicesStringify = JSON.stringify(services);
-  const servicesGZIP_AB = await compress(servicesStringify);
-  const servicesGZIP = ArrayBufferToBase64(servicesGZIP_AB);
-
-  // generate encryptionPassT2Key
-  const encryptionPassT2Key = await generateEncryptionAESKey(state.hkdfSaltAB, StringToArrayBuffer('PassT2'), state.sessionKeyForHKDF, true);
-  let encryptionPassT2KeyAES_B64;
+  // generate encryptionItemT2Key
+  const encryptionItemT2Key = await generateEncryptionAESKey(state.hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, state.sessionKeyForHKDF, true);
+  let encryptionItemT2KeyAES_B64;
 
   try {
-    const encryptionPassT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionPassT2Key);
-    encryptionPassT2KeyAES_B64 = ArrayBufferToBase64(encryptionPassT2KeyAESRaw);
+    const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
+    encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.keepPasswordExportKeyError, { event: e });
   }
 
-  // save encryptionPassT2Key in session storage
-  const passT2Key = await getKey('pass_key_t2', { deviceId: state.deviceId, loginId: state.loginId });
-  await storage.setItem(`session:${passT2Key}`, encryptionPassT2KeyAES_B64);
+  for (const sifKey of sifs) {
+    if (state[sifKey] === undefined) {
+      const nonce = await generateNonce();
+      const encryptedEmpty = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+        encryptionItemT2Key,
+        StringToArrayBuffer('')
+      );
+      const encryptedEmptyBytes = EncryptBytes(nonce.ArrayBuffer, encryptedEmpty);
+      const encryptedEmptyB64 = ArrayBufferToBase64(encryptedEmptyBytes);
 
-  // Remove services from session storage (by servicesKeys)
-  await storage.removeItems(servicesKeys);
+      updateSifArr.push({ [sifKey]: encryptedEmptyB64 });
+    } else {
+      updateSifArr.push({ [sifKey]: state[sifKey] });
+    }
+  }
 
-  // saveServices
-  await saveServices(servicesGZIP, state.deviceId);
+  item.setSif(updateSifArr);
+
+  // Save sifTime in item's internalData
+  const sifResetTime = state.expireInSeconds && state.expireInSeconds > 30 ? state.expireInSeconds / 60 : config.passwordResetDelay;
+  item.internalData.sifResetTime = sifResetTime;
+
+  // save encryptionItemT2Key in session storage
+  const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.deviceId, itemId: state.itemId });
+  await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
+
+  // Remove items from session storage (by itemsKeys)
+  await storage.removeItems(itemsKeys);
+
+  // saveItems
+  await saveItems(items, state.deviceId, state.vaultId);
   
-  // Set alarm for 3 minutes
-  await browser.alarms.create(`passwordT2Reset-${state.loginId}`, { delayInMinutes: config.passwordResetDelay });
+  // Set alarm for reset T2 SIF
+  await browser.alarms.create(`sifT2Reset-${state.deviceId}|${state.vaultId}|${state.itemId}`, { delayInMinutes: sifResetTime });
 };
 
 export default keepPassword;

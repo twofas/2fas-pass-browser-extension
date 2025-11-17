@@ -18,13 +18,18 @@ const handleHelloAction = async (json, uuid) => {
   const { browserName, browserVersion, browserExtName } = await getBeInfo();
   
   try {
-    const deviceId = await deviceUpdate(uuid, json.payload);
+    const deviceId = await deviceUpdate(uuid, json);
 
     const socket = TwoFasWebSocket.getInstance();
     await socket.sendMessage({
       id: json.id,
       action: SOCKET_ACTIONS.HELLO,
-      payload: { browserName, browserVersion, browserExtName }
+      payload: {
+        browserName,
+        browserVersion,
+        browserExtName,
+        supportedFeatures: config.supportedFeatures
+      }
     });
   
     return deviceId;

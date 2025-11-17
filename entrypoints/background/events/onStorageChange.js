@@ -19,7 +19,8 @@ import initContextMenu from '../contextMenu/initContextMenu';
 * @return {Promise<void>} A promise that resolves when the storage change is handled.
 */
 const onStorageChange = async (change, areaName, migrations) => {
-  if (!migrations?.state) {
+  // Block storage changes only during migration running, not when false or true
+  if (!migrations?.state || migrations.state === 'running') {
     return;
   }
 

@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../Settings.module.scss';
-import { useEffect, useState, lazy } from 'react';
+import { useEffect, useState, lazy, useCallback, Suspense } from 'react';
 import Select from 'react-select';
 import { Link } from 'react-router';
 
@@ -15,39 +15,38 @@ const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?re
 * Function to render the Save Password Prompt component.
 * @return {JSX.Element} The rendered component.
 */
-function SavePasswordPrompt (props) {
+function SavePasswordPrompt () {
   if (import.meta.env.BROWSER === 'safari') {
     return null; // Safari does not support this feature
   }
 
-  const [loading, setLoading] = useState(true);
-  const [sP, setSP] = useState(null);
+  const [sP, setSP] = useState('default');
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    const getDefaultSavePasswordPrompt = async () => {
-      // default, default_encrypted, browser, none
-      let storageSavePasswordPrompt = await storage.getItem('local:savePrompt');
+    const initializeSavePrompt = async () => {
+      try {
+        let storageSavePasswordPrompt = await storage.getItem('local:savePrompt');
 
-      if (!storageSavePasswordPrompt) {
-        storageSavePasswordPrompt = 'default';
-        await storage.setItem('local:savePrompt', storageSavePasswordPrompt);
-      }
+        if (!storageSavePasswordPrompt) {
+          storageSavePasswordPrompt = 'default';
+          await storage.setItem('local:savePrompt', storageSavePasswordPrompt);
+        } else {
+          setSP(storageSavePasswordPrompt);
+        }
 
-      await browser.privacy.services.passwordSavingEnabled.set({ value: storageSavePasswordPrompt === 'browser' });
+        browser.privacy.services.passwordSavingEnabled.set({
+          value: storageSavePasswordPrompt === 'browser'
+        }).catch(() => {});
 
-      setSP(storageSavePasswordPrompt);
-      setLoading(false);
-
-      if (props.onLoad) {
-        props.onLoad();
+        setIsInitialized(true);
+      } catch (e) {
+        await CatchError(e);
+        setIsInitialized(true);
       }
     };
 
-    try {
-      getDefaultSavePasswordPrompt();
-    } catch (e) {
-      CatchError(e);
-    }
+    initializeSavePrompt();
   }, []);
 
   const promptOptions = [
@@ -57,24 +56,30 @@ function SavePasswordPrompt (props) {
     { value: 'none', label: browser.i18n.getMessage('settings_save_prompt_none') },
   ];
 
-  const handleSavePasswordPromptChange = async change => {
+  const handleSavePasswordPromptChange = useCallback(async change => {
+    const value = change?.value;
+
+    if (!value || !isInitialized) {
+      return;
+    }
+
     try {
-      const value = change?.value;
+      setSP(value);
       await storage.setItem('local:savePrompt', value);
 
-      await browser.privacy.services.passwordSavingEnabled.set({ value: value === 'browser' });
+      browser.privacy.services.passwordSavingEnabled.set({
+        value: value === 'browser'
+      }).catch(() => {});
 
-      setSP(value);
       showToast(browser.i18n.getMessage('notification_save_password_prompt_success'), 'success');
     } catch (e) {
+      const previousValue = await storage.getItem('local:savePrompt') || 'default';
+      setSP(previousValue);
+
       showToast(browser.i18n.getMessage('error_save_password_prompt_saving'), 'error');
       await CatchError(e);
     }
-  };
-
-  if (loading) {
-    return null;
-  }
+  }, [isInitialized]);
 
   return (
     <div className={S.settingsSavePasswordPrompt}>
@@ -83,23 +88,26 @@ function SavePasswordPrompt (props) {
 
       <form action="#" className={S.settingsSavePasswordPromptForm}>
         <Select
-          className='react-select-container'
+          className='react-select-container react-select-save-prompt-container'
           classNamePrefix='react-select'
           isSearchable={false}
           options={promptOptions}
-          defaultValue={promptOptions.find(el => el.value === sP)}
+          value={promptOptions.find(el => el.value === sP)}
           onChange={handleSavePasswordPromptChange}
+          isDisabled={!isInitialized}
         />
       </form>
 
       {sP === 'default' || sP === 'default_encrypted' ? (
         <Link
-          to='/settings-save-login-excluded-domains'
+          to='/settings/preferences/save-login-excluded-domains'
           className={S.settingsSavePasswordPromptExcludedDomainsLink}
           prefetch='intent'
         >
           <span>{browser.i18n.getMessage('settings_excluded_domains')}</span>
-          <MenuArrowIcon />
+          <Suspense fallback={null}>
+            <MenuArrowIcon />
+          </Suspense>
         </Link>
       ) : null}
     </div>

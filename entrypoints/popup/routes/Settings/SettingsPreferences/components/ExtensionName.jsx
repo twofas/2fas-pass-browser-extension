@@ -11,48 +11,43 @@ import { useEffect, useState, useCallback } from 'react';
 import { Form, Field } from 'react-final-form';
 import { filterXSS } from 'xss';
 import valueToNFKD from '@/partials/functions/valueToNFKD';
+import usePopupStateStore from '../../../../store/popupState';
 
 /**
 * Function to render the Extension Name component.
 * @return {JSX.Element} The rendered component.
 */
-function ExtensionName (props) {
-  const [loading, setLoading] = useState(true);
-  const [extName, setExtName] = useState(props.popupState?.data?.extName || '');
+function ExtensionName () {
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
 
-  const updateData = useCallback(updates => {
-    if (props.setData) {
-      props.setData(prevData => ({
-        ...prevData,
-        ...updates
-      }));
-    }
-  }, [props]);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     const getExtName = async () => {
-      if (!props.popupState?.data?.extName) {
+      try {
         const browserInfo = await storage.getItem('local:browserInfo');
-        const name = filterXSS(browserInfo.name);
-        setExtName(name);
-        updateData({ extName: name });
-      }
 
-      setLoading(false);
+        if (browserInfo?.name) {
+          const name = filterXSS(browserInfo.name);
+          setData('extName', name);
+        }
 
-      if (props.onLoad) {
-        props.onLoad();
+        setIsInitialized(true);
+      } catch (e) {
+        await CatchError(e);
+        setIsInitialized(true);
       }
     };
 
-    try {
+    if (!data.extName) {
       getExtName();
-    } catch (e) {
-      CatchError(e);
+    } else {
+      setIsInitialized(true);
     }
   }, []);
 
-  const validate = values => {
+  const validate = useCallback(values => {
     const errors = {};
 
     if (!values['ext-name']) {
@@ -69,9 +64,9 @@ function ExtensionName (props) {
     }
 
     return true;
-  };
+  }, []);
 
-  const onSubmit = async e => {
+  const onSubmit = useCallback(async e => {
     if (!validate(e)) {
       return false;
     }
@@ -80,6 +75,10 @@ function ExtensionName (props) {
       const browserInfo = await storage.getItem('local:browserInfo');
       browserInfo.name = valueToNFKD(e['ext-name']);
       await storage.setItem('local:browserInfo', browserInfo);
+
+      // Update local state to reflect the change
+      setData('extName', browserInfo.name);
+
       showToast(browser.i18n.getMessage('notification_extension_name_update_success'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_saving_extension_name'), 'error');
@@ -87,43 +86,50 @@ function ExtensionName (props) {
     }
 
     return true;
-  };
-
-  if (loading) {
-    return null;
-  }
+  }, [validate]);
 
   return (
-    <Form onSubmit={onSubmit} initialValues={{ 'ext-name': extName }} render={({ handleSubmit, submitting, form }) => ( // form, pristine, values
-      <form className={S.settingsExtName} onSubmit={handleSubmit} onChange={() => {
-        const values = form.getState().values;
-        updateData({ extName: values['ext-name'] });
-      }}>
-        <Field name="ext-name">
-          {({ input }) => (
-             <div className={`${pI.passInput} ${pI.bigMargin}`}>
-              <div className={pI.passInputTop}>
-                <label htmlFor="ext-name">{browser.i18n.getMessage('settings_ext_name_label')}</label>
-                <button type="submit" className={`${bS.btn} ${bS.btnClear}`} disabled={submitting ? 'disabled' : ''}>{browser.i18n.getMessage('save')}</button>
+    <Form
+      onSubmit={onSubmit}
+      initialValues={{ 'ext-name': data.extName }}
+      render={({ handleSubmit, submitting }) => (
+        <form className={S.settingsExtName} onSubmit={handleSubmit}>
+          <Field name="ext-name">
+            {({ input }) => (
+               <div className={`${pI.passInput} ${pI.bigMargin}`}>
+                <div className={pI.passInputTop}>
+                  <label htmlFor="ext-name">{browser.i18n.getMessage('settings_ext_name_label')}</label>
+                  <button
+                    type="submit"
+                    className={`${bS.btn} ${bS.btnClear}`}
+                    disabled={submitting || !isInitialized ? 'disabled' : ''}
+                  >
+                    {browser.i18n.getMessage('save')}
+                  </button>
+                </div>
+                <div className={pI.passInputBottom}>
+                  <input
+                    type="text"
+                    {...input}
+                    id="ext-name"
+                    placeholder={browser.i18n.getMessage('settings_ext_name_placeholder')}
+                    dir="ltr"
+                    spellCheck="true"
+                    autoCorrect="on"
+                    autoComplete="on"
+                    disabled={!isInitialized}
+                    onChange={e => {
+                      input.onChange(e);
+                      setData('extName', e.target.value);
+                    }}
+                  />
+                </div>
               </div>
-              <div className={pI.passInputBottom}>
-                <input
-                  type="text"
-                  {...input}
-                  id="ext-name"
-                  placeholder={browser.i18n.getMessage('settings_ext_name_placeholder')}
-                  dir="ltr"
-                  spellCheck="true"
-                  autoCorrect="on"
-                  autoComplete="on"
-                />
-              </div>
-            </div>
-          )}
-        </Field>
-      </form>
-    )}
-  />
+            )}
+          </Field>
+        </form>
+      )}
+    />
   );
 }
 

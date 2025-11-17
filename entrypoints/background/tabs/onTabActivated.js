@@ -4,14 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import sendDomainToPopupWindow from '../utils/sendDomainToPopupWindow';
 import isTabIsPopupWindow from './isTabIsPopupWindow';
 import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
-import getServices from '@/partials/sessionStorage/getServices';
+import getItems from '@/partials/sessionStorage/getItems';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import setBadgeLocked from '../utils/badge/setBadgeLocked';
-import setBadgeIcon from '../utils/badge/setBadgeIcon';
-import setBadgeText from '../utils/badge/setBadgeText';
+import { sendDomainToPopupWindow, setBadgeLocked, setBadgeIcon, setBadgeText } from '../utils';
 
 /** 
 * Function to handle tab activation in the browser.
@@ -52,19 +49,19 @@ const onTabActivated = async ({ tabId }) => {
   }
 
   try {
-    const [services, isPopupWindow] = await Promise.all([
-      getServices().catch(() => []),
+    const [items, isPopupWindow] = await Promise.all([
+      getItems().catch(() => []),
       isTabIsPopupWindow(tabId).catch(() => false)
     ]);
 
     if (tab?.url) {
-      await setBadgeText(configured, services, tab.url, tabId).catch(e => CatchError(e));
+      await setBadgeText(configured, items, tab.url, tabId).catch(e => CatchError(e));
     }
 
     if (!isPopupWindow) {
       await Promise.all([
         sendDomainToPopupWindow(tabId),
-        updateNoAccountItem(tabId, services)
+        updateNoAccountItem(tabId, items)
       ]).catch(e => CatchError(e));
     }
 

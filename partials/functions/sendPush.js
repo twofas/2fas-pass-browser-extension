@@ -47,7 +47,8 @@ const sendPush = async (device, data = {}) => {
     data: {
       ...data,
       pkPersBe,
-      pkEpheBe
+      pkEpheBe,
+      scheme: String(config.scheme)
     }
   };
 
@@ -71,17 +72,6 @@ const sendPush = async (device, data = {}) => {
     );
   }
 
-  if (!response || !response.ok) {
-    if (json?.firebaseErrorCode === 'UNREGISTERED') {
-      return { error: 'UNREGISTERED' };
-    } else {
-      throw new TwoFasError(
-        TwoFasError.internalErrors.fetchSendPushResponseIsNotOk,
-        { event: response, additional: { func: 'sendPush - response' } }
-      );
-    }
-  }
-
   let json;
 
   try {
@@ -90,6 +80,17 @@ const sendPush = async (device, data = {}) => {
     throw new TwoFasError(
       TwoFasError.internalErrors.fetchSendPushResponseJsonParse,
       { event: e, additional: { func: 'sendPush - response.json' } }
+    );
+  }
+
+  if (!response || !response.ok) {
+    if (json?.firebaseErrorCode === 'UNREGISTERED') {
+      return { error: 'UNREGISTERED' };
+    }
+
+    throw new TwoFasError(
+      TwoFasError.internalErrors.fetchSendPushResponseIsNotOk,
+      { event: response, additional: { func: 'sendPush - response' } }
     );
   }
 

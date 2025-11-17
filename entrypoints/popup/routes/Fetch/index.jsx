@@ -6,22 +6,21 @@
 
 import S from './Fetch.module.scss';
 import { useLocation, useNavigate } from 'react-router';
-import { useState, useEffect, lazy } from 'react';
-import getCurrentDevice from '@/partials/functions/getCurrentDevice';
-import sendPush from '@/partials/functions/sendPush';
+import { useState, useEffect, useRef, lazy } from 'react';
 import FetchOnMessage from './socket/FetchOnMessage';
 import FetchOnClose from './socket/FetchOnClose';
 import TwoFasWebSocket from '@/partials/WebSocket';
-import PULL_REQUEST_TYPES from './constants/PULL_REQUEST_TYPES';
-import calculateSignature from './functions/calculateSignature';
-import getNTPTime from '@/partials/functions/getNTPTime';
-import deletePush from '@/partials/functions/deletePush';
+import { FETCH_STATE } from './constants';
+import { PULL_REQUEST_TYPES } from '@/constants';
+import calculateFetchSignature from './functions/calculateFetchSignature';
+import { getCurrentDevice, sendPush, getNTPTime, deletePush } from '@/partials/functions';
+import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
+import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 
 const PushNotification = lazy(() => import('./components/PushNotification'));
 const ConnectionError = lazy(() => import('./components/ConnectionError'));
 const ConnectionTimeout = lazy(() => import('./components/ConnectionTimeout'));
 const ContinueUpdate = lazy(() => import('./components/ContinueUpdate'));
-const NavigationButton = lazy(() => import('@/entrypoints/popup/components/NavigationButton'));
 
 /**
 * Function to handle the Fetch component.
@@ -33,30 +32,35 @@ function Fetch (props) {
   const { state } = location;
 
   const navigate = useNavigate();
-  const { wsActivate, wsDeactivate } = useWS();
 
   let device;
 
-  const [fetchState, setFetchState] = useState(-1); // 0 - pushNotification, 1 - connectionError, 2 - connectionTimeout, 3 - continueUpdate
+  const [fetchState, setFetchState] = useState(FETCH_STATE.DEFAULT);
   const [errorText, setErrorText] = useState(browser.i18n.getMessage('fetch_connection_error_header'));
+  const abortControllerRef = useRef(null);
 
-  const initConnection = async () => {
+  const initConnection = async abortSignal => {
+    if (abortSignal?.aborted) {
+      return false;
+    }
+
     switch (state?.action) {
-      case PULL_REQUEST_TYPES.UPDATE_LOGIN: {
-        setFetchState(3);
+      case PULL_REQUEST_TYPES.UPDATE_DATA: {
+        setFetchState(FETCH_STATE.CONTINUE_UPDATE);
         break;
       }
 
-      case PULL_REQUEST_TYPES.NEW_LOGIN:
-      case PULL_REQUEST_TYPES.PASSWORD_REQUEST:
-      case PULL_REQUEST_TYPES.DELETE_LOGIN: {
-        setFetchState(0);
+      case PULL_REQUEST_TYPES.ADD_DATA:
+      case PULL_REQUEST_TYPES.SIF_REQUEST:
+      case PULL_REQUEST_TYPES.DELETE_DATA:
+      case PULL_REQUEST_TYPES.FULL_SYNC: {
+        setFetchState(FETCH_STATE.PUSH_NOTIFICATION);
         break;
       }
 
       default: {
-        setFetchState(1);
-        
+        setFetchState(FETCH_STATE.CONNECTION_ERROR);
+
         throw new TwoFasError(TwoFasError.internalErrors.fetchInvalidAction, {
           additional: {
             data: { stateAction: state.action },
@@ -66,13 +70,21 @@ function Fetch (props) {
       }
     }
 
+    if (abortSignal?.aborted) {
+      return false;
+    }
+
     let sessionId, timestamp, sigPush;
 
     try {
       device = await getCurrentDevice(state?.data?.deviceId || null);
 
+      if (abortSignal?.aborted) {
+        return false;
+      }
+
       if (!device?.sessionId || !device?.id || !device?.uuid) {
-        setFetchState(1);
+        setFetchState(FETCH_STATE.CONNECTION_ERROR);
         setErrorText(browser.i18n.getMessage('error_general'));
         return false;
       }
@@ -80,16 +92,24 @@ function Fetch (props) {
       sessionId = Base64ToHex(device?.sessionId).toLowerCase();
       const timestampValue = await getNTPTime();
       timestamp = timestampValue.toString();
-      sigPush = await calculateSignature(sessionId, device?.id, device?.uuid, timestamp);
+      sigPush = await calculateFetchSignature(sessionId, device?.id, device?.uuid, timestamp);
     } catch (e) {
-      await CatchError(e, () => { setFetchState(1); });
+      await CatchError(e, () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
     }
-    
+
+    if (abortSignal?.aborted) {
+      return false;
+    }
+
     try {
       const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
 
+      if (abortSignal?.aborted) {
+        return false;
+      }
+
       if (json?.error === 'UNREGISTERED') {
-        setFetchState(1);
+        setFetchState(FETCH_STATE.CONNECTION_ERROR);
         setErrorText(browser.i18n.getMessage('fetch_token_unregistered_header'));
         return false;
       }
@@ -102,13 +122,17 @@ function Fetch (props) {
           data: { device, timestamp, sigPush },
           func: 'Fetch - initConnection'
         }
-      }), () => { setFetchState(1); });
+      }), () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
+    }
+
+    if (abortSignal?.aborted) {
+      return false;
     }
 
     const socket = new TwoFasWebSocket(sessionId);
-    socket.open(() => { wsActivate(); });
-    socket.addEventListener('message', FetchOnMessage, { state, device }, { setFetchState, setErrorText, navigate, wsDeactivate });
-    socket.addEventListener('close', FetchOnClose, { state }, { setFetchState, setErrorText, wsDeactivate });
+    socket.open();
+    socket.addEventListener('message', FetchOnMessage, { state, device });
+    socket.addEventListener('close', FetchOnClose, { state });
   };
 
   const closeConnection = async () => {
@@ -121,21 +145,27 @@ function Fetch (props) {
     try {
       socket = TwoFasWebSocket.getInstance();
     } catch {}
-    
+
     if (socket) {
       try {
-        await socket.sendError(
-          new TwoFasError(TwoFasError.errors.userCancelled, {
-            apiLog: false,
-            consoleLog: false
-          })
-        );
+        // await socket.sendError(
+        //   new TwoFasError(TwoFasError.errors.userCancelled, {
+        //     apiLog: false,
+        //     consoleLog: false
+        //   })
+        // );
+        socket.close();
       } catch {}
     }
   };
 
   const tryAgainHandle = async () => {
-    await initConnection();
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    abortControllerRef.current = new AbortController();
+    await initConnection(abortControllerRef.current.signal);
   };
 
   // FUTURE - Refactor (useCallback?)
@@ -144,13 +174,9 @@ function Fetch (props) {
     await closeConnection();
 
     if (state?.from === 'contextMenu' || state?.from === 'shortcut' || state?.from === 'savePrompt') {
-      if (
-        window &&
-        typeof window?.close === 'function' &&
-        import.meta.env.BROWSER !== 'safari'
-      ) {
-        window.close();
-      } else {
+      const windowCloseTest = await tryWindowClose();
+
+      if (windowCloseTest) {
         navigate('/');
       }
     } else {
@@ -162,10 +188,32 @@ function Fetch (props) {
     }
   };
 
+  // FUTURE - Refactor (useCallback?)
+  const handleNavigate = ({ path, options = {}}) => {
+    return navigate(path, options);
+  };
+
   useEffect(() => {
-    initConnection();
+    abortControllerRef.current = new AbortController();
+
+    // FUTURE - add value validation
+    eventBus.on(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
+    eventBus.on(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
+    eventBus.on(eventBus.EVENTS.FETCH.NAVIGATE, handleNavigate);
+    eventBus.on(eventBus.EVENTS.FETCH.DISCONNECT, closeConnection);
+
+    initConnection(abortControllerRef.current.signal);
 
     return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      eventBus.off(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
+      eventBus.off(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
+      eventBus.off(eventBus.EVENTS.FETCH.NAVIGATE, handleNavigate);
+      eventBus.off(eventBus.EVENTS.FETCH.DISCONNECT, closeConnection);
+
       closeConnection();
     };
   }, []);
@@ -177,10 +225,10 @@ function Fetch (props) {
           <div className={S.fetchContainer}>
             <NavigationButton type='cancel' onClick={cancelHandle} />
 
-            {fetchState === 0 && <PushNotification fetchState={fetchState} /> }
-            {fetchState === 1 && <ConnectionError fetchState={fetchState} errorText={errorText} /> }
-            {fetchState === 2 && <ConnectionTimeout fetchState={fetchState} tryAgainHandle={tryAgainHandle} />}
-            {fetchState === 3 && <ContinueUpdate fetchState={fetchState} />}
+            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} /> }
+            {fetchState === FETCH_STATE.CONNECTION_ERROR && <ConnectionError fetchState={fetchState} errorText={errorText} /> }
+            {fetchState === FETCH_STATE.CONNECTION_TIMEOUT && <ConnectionTimeout fetchState={fetchState} tryAgainHandle={tryAgainHandle} />}
+            {fetchState === FETCH_STATE.CONTINUE_UPDATE && <ContinueUpdate fetchState={fetchState} />}
           </div>
         </section>
       </div>

@@ -9,17 +9,17 @@ import TwoFasWebSocket from '@/partials/WebSocket';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import closeWindowIfNotInSeparateWindow from '../functions/closeWindowIfNotInSeparateWindow';
 import sendMessageToAllFrames from '../functions/sendMessageToAllFrames';
+import tryWindowClose from '../browserInfo/tryWindowClose';
 
 /** 
 * Handles the close signal for the pull request action.
 * @param {string} newSessionId - The new session ID.
 * @param {string} uuid - The unique identifier for the user.
 * @param {Object} closeData - The data related to the close action.
-* @param {Function} navigate - The navigation function.
 * @param {Object} state - The current state of fetch action.
 * @return {Promise<void>} 
 */
-const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData, navigate, state) => {
+const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData, state) => {
   await addNewSessionIdToDevice(uuid, newSessionId); // FUTURE - Change to deviceId instead of uuid?
 
   try {
@@ -27,8 +27,8 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     socket.close();
   } catch {}
 
-  if (closeData?.windowClose && window && typeof window?.close === 'function' && import.meta.env.BROWSER !== 'safari') {
-    return window.close();
+  if (closeData?.windowClose) {
+    await tryWindowClose();
   }
 
   if (closeData?.action === 'autofill') {
@@ -56,27 +56,31 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
       if (separateWindow || (!window || typeof window?.close !== 'function' || import.meta.env.BROWSER === 'safari')) {
         showToast(browser.i18n.getMessage('this_tab_autofill_success'), 'success');
-        navigate('/');
+        eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
       }
     } else {
       const toastId = showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
 
-      navigate('/', {
-        state: {
-          action: 'autofillT2Failed',
-          loginId: closeData.loginId,
-          deviceId: closeData.deviceId,
-          password: closeData.password,
-          hkdfSaltAB: closeData.hkdfSaltAB,
-          sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-          toastId
+      eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, {
+        path: '/',
+        options: {
+          state: {
+            action: 'autofillT2Failed', // Non-fetch action here
+            vaultId: closeData.vaultId,
+            deviceId: closeData.deviceId,
+            itemId: closeData.itemId,
+            s_password: closeData.password,
+            hkdfSaltAB: closeData.hkdfSaltAB,
+            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+            toastId
+          }
         }
       });
     }
   }
 
   if (closeData?.returnUrl) {
-    navigate(closeData.returnUrl);
+    eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: closeData.returnUrl });
   }
 
   if (closeData?.returnToast) {
