@@ -78,86 +78,185 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
     }
 
     case PULL_REQUEST_TYPES.ADD_DATA: {
-      if (!state?.data) {
+      if (!state?.data || !state?.data?.contentType) {
         throw new TwoFasError(TwoFasError.errors.newLoginNoData);
       }
 
-      if (!isText(state?.data?.content?.s_password?.value)) {
-        data = {
-          type: PULL_REQUEST_TYPES.ADD_DATA,
-          data: state.data
-        };
-      } else {
-        const [nonceP, encryptionPassNewKeyAES] = await Promise.all([
-          generateNonce(),
-          generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_NEW.crypto, sessionKeyForHKDF, true)
-        ]);
-        const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassNewKeyAES, StringToArrayBuffer(state.data.content.s_password.value));
-        const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
-        const passwordEncBytesB64 = ArrayBufferToBase64(passwordEncBytes);
+      switch (state.data.contentType) {
+        case 'login': {
+          if (!isText(state?.data?.content?.s_password?.value)) {
+            data = {
+              type: PULL_REQUEST_TYPES.ADD_DATA,
+              data: state.data
+            };
+          } else {
+            const [nonceP, encryptionPassNewKeyAES] = await Promise.all([
+              generateNonce(),
+              generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_NEW.crypto, sessionKeyForHKDF, true)
+            ]);
+            const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassNewKeyAES, StringToArrayBuffer(state.data.content.s_password.value));
+            const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
+            const passwordEncBytesB64 = ArrayBufferToBase64(passwordEncBytes);
 
-        state.data.content.s_password.value = passwordEncBytesB64;
+            state.data.content.s_password.value = passwordEncBytesB64;
 
-        data = {
-          type: PULL_REQUEST_TYPES.ADD_DATA,
-          data: {
-            ...state.data
+            data = {
+              type: PULL_REQUEST_TYPES.ADD_DATA,
+              data: {
+                ...state.data
+              }
+            };
           }
-        };
+
+          break;
+        }
+
+        case 'secureNote': {
+          if (!isText(state?.data?.content?.s_text)) {
+            data = {
+              type: PULL_REQUEST_TYPES.ADD_DATA,
+              data: state.data
+            };
+          } else {
+            const [nonceP, encryptionTextNewKeyAES] = await Promise.all([
+              generateNonce(),
+              generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_NEW.crypto, sessionKeyForHKDF, true)
+            ]);
+            const textEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionTextNewKeyAES, StringToArrayBuffer(state.data.content.s_text));
+            const textEncBytes = EncryptBytes(nonceP.ArrayBuffer, textEnc);
+            const textEncBytesB64 = ArrayBufferToBase64(textEncBytes);
+
+            state.data.content.s_text = textEncBytesB64;
+
+            data = {
+              type: PULL_REQUEST_TYPES.ADD_DATA,
+              data: {
+                ...state.data
+              }
+            };
+          }
+
+          break;
+        }
+
+        default: {
+          throw new TwoFasError(TwoFasError.errors.newLoginWrongContentType);
+        }
       }
 
       break;
     }
 
     case PULL_REQUEST_TYPES.UPDATE_DATA: {
-      if (!state?.data || !state?.data?.content || !state?.data?.itemId) { // FUTURE - Check if one of the update fields is existing
+      if (!state?.data || !state?.data?.content || !state?.data?.itemId || !state?.data?.contentType) { // FUTURE - Check if one of the update fields is existing
         throw new TwoFasError(TwoFasError.errors.updateLoginWrongData);
       }
 
-      if (!isText(state?.data?.content?.s_password?.value)) {
-        const stateData = structuredClone(state.data);
-        delete stateData?.deviceId;
-        
-        data = {
-          type: PULL_REQUEST_TYPES.UPDATE_DATA,
-          data: {
-            ...stateData
-          }
-        };
-      } else {
-        const originalItem = await getItem(state.data.deviceId, state.data.vaultId, state.data.itemId);
+      switch (state.data.contentType) {
+        case 'login': {
+          if (!isText(state?.data?.content?.s_password?.value)) {
+            const stateData = structuredClone(state.data);
+            delete stateData?.deviceId;
+            
+            data = {
+              type: PULL_REQUEST_TYPES.UPDATE_DATA,
+              data: {
+                ...stateData
+              }
+            };
+          } else {
+            const originalItem = await getItem(state.data.deviceId, state.data.vaultId, state.data.itemId);
 
-        if (!originalItem) {
-          throw new TwoFasError(TwoFasError.errors.pullRequestNoOriginalItem);
+            if (!originalItem) {
+              throw new TwoFasError(TwoFasError.errors.pullRequestNoOriginalItem);
+            }
+
+            const keyName = originalItem.securityType === SECURITY_TIER.HIGHLY_SECRET ? ENCRYPTION_KEYS.ITEM_T2.crypto : originalItem.securityType === SECURITY_TIER.SECRET ? ENCRYPTION_KEYS.ITEM_T3.crypto : null;
+
+            if (!keyName) {
+              throw new TwoFasError(TwoFasError.errors.updateLoginWrongSecurityType);
+            }
+
+            const [nonceP, encryptionPassTierKeyAES] = await Promise.all([
+              generateNonce(),
+              generateEncryptionAESKey(hkdfSaltAB, keyName, sessionKeyForHKDF, true)
+            ]);
+
+            const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassTierKeyAES, StringToArrayBuffer(state.data.content.s_password.value));
+            const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
+            const passwordEncBytesB64 = ArrayBufferToBase64(passwordEncBytes);
+
+            const stateData = structuredClone(state.data);
+            delete stateData?.deviceId;
+
+            stateData.content.s_password.value = passwordEncBytesB64;
+
+            data = {
+              type: PULL_REQUEST_TYPES.UPDATE_DATA,
+              data: {
+                ...stateData
+              }
+            };
+          }
+
+          break;
         }
 
-        const keyName = originalItem.securityType === SECURITY_TIER.HIGHLY_SECRET ? ENCRYPTION_KEYS.ITEM_T2.crypto : originalItem.securityType === SECURITY_TIER.SECRET ? ENCRYPTION_KEYS.ITEM_T3.crypto : null;
+        case 'secureNote': {
+          if (!isText(state?.data?.content?.s_text)) {
+            const stateData = structuredClone(state.data);
+            delete stateData?.deviceId;
+            
+            data = {
+              type: PULL_REQUEST_TYPES.UPDATE_DATA,
+              data: {
+                ...stateData
+              }
+            };
+          } else {
+            const originalItem = await getItem(state.data.deviceId, state.data.vaultId, state.data.itemId);
 
-        if (!keyName) {
-          throw new TwoFasError(TwoFasError.errors.updateLoginWrongSecurityType);
+            if (!originalItem) {
+              throw new TwoFasError(TwoFasError.errors.pullRequestNoOriginalItem);
+            }
+
+            const keyName = originalItem.securityType === SECURITY_TIER.HIGHLY_SECRET ? ENCRYPTION_KEYS.ITEM_T2.crypto : originalItem.securityType === SECURITY_TIER.SECRET ? ENCRYPTION_KEYS.ITEM_T3.crypto : null;
+
+            if (!keyName) {
+              throw new TwoFasError(TwoFasError.errors.updateLoginWrongSecurityType);
+            }
+
+            const [nonceP, encryptionTextTierKeyAES] = await Promise.all([
+              generateNonce(),
+              generateEncryptionAESKey(hkdfSaltAB, keyName, sessionKeyForHKDF, true)
+            ]);
+
+            const textEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionTextTierKeyAES, StringToArrayBuffer(state.data.content.s_text));
+            const textEncBytes = EncryptBytes(nonceP.ArrayBuffer, textEnc);
+            const textEncBytesB64 = ArrayBufferToBase64(textEncBytes);
+
+            const stateData = structuredClone(state.data);
+            delete stateData?.deviceId;
+
+            stateData.content.s_text = textEncBytesB64;
+
+            data = {
+              type: PULL_REQUEST_TYPES.UPDATE_DATA,
+              data: {
+                ...stateData
+              }
+            };
+          }
+
+          break;
         }
 
-        const [nonceP, encryptionPassTierKeyAES] = await Promise.all([
-          generateNonce(),
-          generateEncryptionAESKey(hkdfSaltAB, keyName, sessionKeyForHKDF, true)
-        ]);
-
-        const passwordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceP.ArrayBuffer }, encryptionPassTierKeyAES, StringToArrayBuffer(state.data.content.s_password.value));
-        const passwordEncBytes = EncryptBytes(nonceP.ArrayBuffer, passwordEnc);
-        const passwordEncBytesB64 = ArrayBufferToBase64(passwordEncBytes);
-
-        const stateData = structuredClone(state.data);
-        delete stateData?.deviceId;
-
-        stateData.content.s_password.value = passwordEncBytesB64;
-
-        data = {
-          type: PULL_REQUEST_TYPES.UPDATE_DATA,
-          data: {
-            ...stateData
-          }
-        };
+        default: {
+          throw new TwoFasError(TwoFasError.errors.updateLoginWrongContentType);
+        }
       }
+
+      
 
       break;
     }

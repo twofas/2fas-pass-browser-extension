@@ -188,6 +188,10 @@ class TwoFasError extends Error {
       message: TwoFasError.defaultErrorMessage,
       code: 2330
     },
+    newLoginWrongContentType: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2331
+    },
     updateLoginWrongData: {
       message: TwoFasError.defaultErrorMessage,
       code: 2340
@@ -195,6 +199,10 @@ class TwoFasError extends Error {
     updateLoginWrongSecurityType: {
       message: TwoFasError.defaultErrorMessage,
       code: 2341
+    },
+    updateLoginWrongContentType: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2342
     },
     pullRequestActionDataError: {
       message: TwoFasError.defaultErrorMessage,
