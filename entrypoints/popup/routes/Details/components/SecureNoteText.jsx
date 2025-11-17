@@ -33,8 +33,6 @@ function SecureNoteText (props) {
   const [showTextarea, setShowTextarea] = useState(false);
 
   const getTextValue = () => {
-    console.log(data.item);
-
     if (sifDecryptError) {
       return '';
     }
