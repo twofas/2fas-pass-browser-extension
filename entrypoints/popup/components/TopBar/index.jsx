@@ -30,9 +30,12 @@ function TopBar () {
   const { logout } = useAuthActions();
   const { configured } = useAuthState();
   const { matchingLoginsLength } = useMatchingLogins();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const unwatchConfigured = useRef(null);
   const addNewContainerRef = useRef(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const addNewBtnRef = useRef(null);
 
   const watchConfigured = useCallback(async () => {
     const configuredKey = await getKey('configured');
@@ -137,6 +140,7 @@ function TopBar () {
 
         <div className={`${S.topbarAddNew} ${addNewClass}`} ref={addNewContainerRef}>
           <button
+            ref={addNewBtnRef}
             className={addNewBtnClass}
             type='button'
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -156,6 +160,7 @@ function TopBar () {
             isClearable={false}
             isSearchable={false}
             noOptionsMessage={() => null}
+            additionalButtonRefs={[addNewBtnRef]}
             components={{
               Option: props => <AddNewCustomOption {...props} setIsMenuOpen={setIsMenuOpen} />
             }}

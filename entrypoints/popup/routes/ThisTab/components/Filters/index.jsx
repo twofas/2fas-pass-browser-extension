@@ -84,6 +84,7 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
   }, [tags, selectedTag]);
 
   const handleButtonClick = () => {
+    console.log('Filter button clicked, toggling menu', isMenuOpen);
     setIsMenuOpen(!isMenuOpen);
     if (!isMenuOpen && selectRef.current) {
       selectRef.current.focus();
@@ -134,6 +135,7 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
           classNamePrefix='react-select-tags'
           isClearable={false}
           isSearchable={false}
+          additionalButtonRefs={[buttonRef]}
           components={{
             Option: props => <CustomOption {...props} />
           }}

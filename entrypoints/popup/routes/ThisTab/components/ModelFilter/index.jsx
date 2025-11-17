@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../ThisTab.module.scss';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import AllIcon from '@/assets/popup-window/items/all.svg?react';
 import LoginIcon from '@/assets/popup-window/items/login.svg?react';
@@ -39,6 +39,7 @@ const ModalFilterCustomOption = option => {
 */
 const ModelFilter = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const buttonRef = useRef(null);
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
@@ -56,6 +57,7 @@ const ModelFilter = () => {
     <>
       <>
         <button
+          ref={buttonRef}
           className={S.thisTabAllLoginsHeaderModelFilter}
           onClick={() => setIsMenuOpen(prevState => !prevState)}
         > 
@@ -74,6 +76,7 @@ const ModelFilter = () => {
           isClearable={false}
           isSearchable={false}
           noOptionsMessage={() => null}
+          additionalButtonRefs={[buttonRef]}
           components={{
             Option: props => <ModalFilterCustomOption {...props} setIsMenuOpen={setIsMenuOpen} />
           }}

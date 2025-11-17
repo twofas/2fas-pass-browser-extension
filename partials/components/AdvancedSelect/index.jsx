@@ -22,7 +22,8 @@ function AdvancedSelect (props) {
       typeof props?.onMenuClose === 'function' &&
       props?.menuIsOpen &&
       selectContainerRef?.current &&
-      !selectContainerRef?.current?.contains(event.target)
+      !selectContainerRef?.current?.contains(event.target) &&
+      !(props?.additionalButtonRefs && Array.isArray(props?.additionalButtonRefs) && props?.additionalButtonRefs.some(ref => ref?.current && ref?.current.contains(event.target)))
     ) {
       props.onMenuClose(false);
     }
@@ -38,7 +39,10 @@ function AdvancedSelect (props) {
 
   return (
     <div ref={selectContainerRef}>
-      <Select {...props} />
+      <Select
+        {...props}
+        additionalButtonRefs={undefined}
+      />
     </div>
   );
 }
