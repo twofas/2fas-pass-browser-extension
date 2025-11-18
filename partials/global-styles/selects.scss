@@ -373,6 +373,7 @@
   }
 }
 
+/* NEW */
 .react-select-pass-dropdown {
   // @TODO: Improve this
   .react-select-add-new__control,
@@ -382,6 +383,14 @@
   .react-select-tags-details__control {
     display: none;
   }
+}
+
+.react-select-add-new__menu-portal,
+.react-select-model-filter__menu-portal,
+.react-select-tags__menu-portal,
+.react-select-tags-details__menu-portal,
+.react-select-dropdown__menu-portal {
+  position: static !important;
 }
 
 .react-select-add-new__menu-portal {
@@ -1590,6 +1599,7 @@
   }
 }
 
+/* GLOBAL */
 .react-select__single-value {
   margin-left: 0 !important;
 }
