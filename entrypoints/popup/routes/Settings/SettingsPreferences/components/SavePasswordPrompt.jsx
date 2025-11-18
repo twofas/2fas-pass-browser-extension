@@ -88,8 +88,9 @@ function SavePasswordPrompt () {
 
       <form action="#" className={S.settingsSavePasswordPromptForm}>
         <AdvancedSelect
-          className='react-select-container react-select-save-prompt-container'
+          className='react-select-container'
           classNamePrefix='react-select'
+          classNames={{ menuPortal: () => 'react-select-save-prompt__menu-portal' }}
           isSearchable={false}
           options={promptOptions}
           value={promptOptions.find(el => el.value === sP)}

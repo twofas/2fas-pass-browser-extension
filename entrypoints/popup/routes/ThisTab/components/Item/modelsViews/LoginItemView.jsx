@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../../ThisTab.module.scss';
-import { memo, useMemo, useState, lazy } from 'react';
+import { memo, useMemo, useState, lazy, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import handleAutofill from '../../../functions/serviceList/handleAutofill';
@@ -20,6 +20,7 @@ const CustomOption = lazy(() => import('../components/CustomOption'));
 
 function LoginItemView (props) {
   const [faviconError, setFaviconError] = useState(false);
+  const moreBtnRef = useRef(null);
   const navigate = useNavigate();
 
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
@@ -57,17 +58,17 @@ function LoginItemView (props) {
       <div className={S.servicesListItemAdditionalButtons}>
         <PasswordBtn item={props.data} more={props.more} setMore={toggleMenuCallback} />
         <UsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={toggleMenuCallback} />
-        <MoreBtn more={props.more} setMore={toggleMenuCallback} />
+        <MoreBtn more={props.more} setMore={toggleMenuCallback} ref={moreBtnRef} />
       </div>
       <AdvancedSelect
-        className='react-select-dropdown-container'
+        className='react-select-pass-dropdown'
         classNamePrefix='react-select-dropdown'
         isSearchable={false}
         options={dropdownOptions}
         menuIsOpen={props.more === true}
-        menuPlacement='bottom'
-        menuPosition='fixed'
         ref={props.selectRef}
+        additionalButtonRefs={[moreBtnRef]}
+        triggerRef={moreBtnRef}
         components={{
           Option: props => <CustomOption {...props} more={props.more} toggleMenu={toggleMenuCallback} />
         }}

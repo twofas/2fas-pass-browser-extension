@@ -96,8 +96,9 @@ function IdleLock () {
     
       <form action="#" className={S.settingsIdleLockForm}>
         <AdvancedSelect
-          className='react-select-idle-container'
+          className='react-select-container react-select-idle-lock-container'
           classNamePrefix='react-select'
+          classNames={{ menuPortal: () => 'react-select-idle-lock__menu-portal' }}
           isSearchable={false}
           options={idleLockOptions}
           defaultValue={idleLockOptions.find(el => el.value === iL)}

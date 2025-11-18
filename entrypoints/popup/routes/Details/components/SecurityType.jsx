@@ -73,8 +73,9 @@ function SecurityType () {
           </div>
           <div className={`${pI.passInputBottom} ${pI.switch}`}>
             <AdvancedSelect
-              className='react-select-container react-select-security-tier-container'
+              className='react-select-container'
               classNamePrefix='react-select'
+              classNames={{ menuPortal: () => 'react-select-security-type__menu-portal' }}
               isSearchable={false}
               options={securityTiersOptions}
               value={securityTiersOptions.find(option => option.value === input.value)}
