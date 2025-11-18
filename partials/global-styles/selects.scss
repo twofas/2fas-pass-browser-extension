@@ -404,6 +404,24 @@
     width: 200px;
     z-index: 9999;
 
+    body.theme-light & {
+      border: 1px solid v.$card-stroke-light;
+    }
+
+    body.theme-dark & {
+      border: 1px solid v.$card-stroke-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        border: 1px solid v.$card-stroke-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        border: 1px solid v.$card-stroke-dark;
+      }
+    }
+
     &-list {
       background: transparent;
       border-radius: 8px;
@@ -576,10 +594,27 @@
 
         svg {
           height: 10px;
-          stroke: #fff;
           stroke-linecap: round;
           stroke-linejoin: round;
           width: auto;
+
+          body.theme-light & {
+            stroke: v.$primary-box-bg-light;
+          }
+
+          body.theme-dark & {
+            stroke: v.$primary-box-bg-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              stroke: v.$primary-box-bg-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              stroke: v.$primary-box-bg-dark;
+            }
+          }
         }
       }
 
