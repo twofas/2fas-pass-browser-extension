@@ -16,9 +16,9 @@ const toggleMenu = (value, data, actions) => {
   const { setMore } = actions;
 
   if (value === false) {
-    if (selectRef?.current?.menuListRef?.parentElement) {
-      selectRef.current.menuListRef.parentElement.style = '';
-    }
+    // if (selectRef?.current?.menuListRef?.parentElement) {
+    //   selectRef.current.menuListRef.parentElement.style = '';
+    // }
 
     setMore(false);
     return;
@@ -26,38 +26,38 @@ const toggleMenu = (value, data, actions) => {
 
   setMore(true);
 
-  return new Promise(resolve => {
-    const checkAndPosition = attempts => {
-      if (attempts > 10) {
-        resolve();
-        return;
-      }
+  // return new Promise(resolve => {
+  //   const checkAndPosition = attempts => {
+  //     if (attempts > 10) {
+  //       resolve();
+  //       return;
+  //     }
 
-      if (!ref?.current) {
-        resolve();
-        return;
-      }
+  //     if (!ref?.current) {
+  //       resolve();
+  //       return;
+  //     }
 
-      if (!selectRef?.current?.menuListRef?.parentElement) {
-        requestAnimationFrame(() => checkAndPosition(attempts + 1));
-        return;
-      }
+  //     if (!selectRef?.current?.menuListRef?.parentElement) {
+  //       requestAnimationFrame(() => checkAndPosition(attempts + 1));
+  //       return;
+  //     }
 
-      const rect = ref.current.getBoundingClientRect();
-      const selectRect = selectRef.current.menuListRef.parentElement.getBoundingClientRect();
-      const selectBottom = rect.top + rect.height / 2 + selectRect.height + 40 + 40 + 16;
+  //     const rect = ref.current.getBoundingClientRect();
+  //     const selectRect = selectRef.current.menuListRef.parentElement.getBoundingClientRect();
+  //     const selectBottom = rect.top + rect.height / 2 + selectRect.height + 40 + 40 + 16;
 
-      if (selectBottom > window.innerHeight) {
-        selectRef.current.menuListRef.parentElement.style = `width: 240px; left: ${rect.left + rect.width - 251}px; top: ${rect.top - selectRect.height + 14 + 17}px`;
-      } else {
-        selectRef.current.menuListRef.parentElement.style = `width: 240px; left: ${rect.left + rect.width - 251}px; top: ${rect.top + rect.height - 17}px`;
-      }
+  //     if (selectBottom > window.innerHeight) {
+  //       selectRef.current.menuListRef.parentElement.style = `width: 240px; left: ${rect.left + rect.width - 251}px; top: ${rect.top - selectRect.height + 14 + 17}px`;
+  //     } else {
+  //       selectRef.current.menuListRef.parentElement.style = `width: 240px; left: ${rect.left + rect.width - 251}px; top: ${rect.top + rect.height - 17}px`;
+  //     }
 
-      resolve();
-    };
+  //     resolve();
+  //   };
 
-    requestAnimationFrame(() => checkAndPosition(1));
-  });
+  //   requestAnimationFrame(() => checkAndPosition(1));
+  // });
 };
 
 export default toggleMenu;

@@ -6,9 +6,7 @@
 
 @use "variables" as v;
 
-.react-select-container,
-.react-select-idle-container,
-.react-select-security-tier-container {
+.react-select-container {
   &.react-select--is-disabled {
     .react-select__control {
       body.theme-light & {
@@ -204,7 +202,9 @@
       }
     }
   }
+}
 
+.react-select__menu-portal {
   .react-select__menu {
     border-radius: 6px;
     margin-bottom: 0;
@@ -373,19 +373,878 @@
   }
 }
 
-.react-select-dropdown-container {
-  z-index: 9999;
-
-  .react-select-dropdown__control {
+.react-select-pass-dropdown {
+  // @TODO: Improve this
+  .react-select-add-new__control,
+  .react-select-model-filter__control,
+  .react-select-tags__control,
+  .react-select-dropdown__control,
+  .react-select-tags-details__control {
     display: none;
   }
+}
 
+.react-select-add-new__menu-portal {
+  .react-select-add-new__menu {
+    background: transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    z-index: 9999;
+
+    &-list {
+      background: transparent;
+      border-radius: 8px;
+      padding: 0;
+    }
+  }
+
+  .react-select-add-new__option {
+    overflow: hidden;
+
+    &:first-of-type {
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+
+      a {
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+      }
+    }
+
+    &:last-of-type {
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+
+      a {
+        border-bottom: 0 !important;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+    }
+
+    a {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      gap: 0 6px;
+      padding: 9px 12px;
+      transition: background-color .3s ease-in-out;
+      width: 100%;
+
+      body.theme-light & {
+        background-color: v.$card-bg-light;
+        border-bottom: 1px solid v.$card-stroke-light;
+      }
+
+      body.theme-dark & {
+        background-color: v.$card-bg-dark;
+        border-bottom: 1px solid v.$card-stroke-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          background-color: v.$card-bg-light;
+          border-bottom: 1px solid v.$card-stroke-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          background-color: v.$card-bg-dark;
+          border-bottom: 1px solid v.$card-stroke-dark;
+        }
+      }
+
+      &:hover {
+        body.theme-light & {
+          background-color: v.$hover-color-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$hover-color-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$hover-color-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$hover-color-dark;
+          }
+        }
+      }
+
+      .react-select-add-new__option-icon {
+        border-radius: 4px;
+        align-items: center;
+        display: flex;
+        height: 16px;
+        justify-content: center;
+        width: 16px;
+
+        &.icon-item-login {
+          body.theme-light & {
+            background-color: v.$login-item-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$login-item-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$login-item-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$login-item-dark;
+            }
+          }
+        }
+
+        &.icon-item-credit-card {
+          body.theme-light & {
+            background-color: v.$credit-card-item-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$credit-card-item-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$credit-card-item-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$credit-card-item-dark;
+            }
+          }
+        }
+
+        &.icon-item-secure-note {
+          body.theme-light & {
+            background-color: v.$secure-note-item-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$secure-note-item-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$secure-note-item-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$secure-note-item-dark;
+            }
+          }
+        }
+
+        &.icon-item-ssh-key {
+          body.theme-light & {
+            background-color: v.$ssh-key-item-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$ssh-key-item-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$ssh-key-item-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$ssh-key-item-dark;
+            }
+          }
+        }
+
+        svg {
+          height: 10px;
+          stroke: #fff;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          width: auto;
+        }
+      }
+
+      .react-select-add-new__option-label {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1;
+
+        body.theme-light & {
+          color: v.$primary-text-light;
+        }
+
+        body.theme-dark & {
+          color: v.$primary-text-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            color: v.$primary-text-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            color: v.$primary-text-dark;
+          }
+        }
+      }
+    }
+  }
+}
+
+.react-select-model-filter__menu-portal {
+  .react-select-model-filter__menu {
+    border-radius: 8px;
+    box-shadow: none;
+    left: 50%;
+    margin-bottom: 0;
+    margin-top: 0;
+    max-width: 200px;
+    overflow: hidden;
+    right: auto;
+    top: 8px;
+    transform: translateX(-50%);
+    transition: opacity .3s ease-in-out;
+    width: auto;
+    z-index: 9999;
+
+    body.theme-light & {
+      background-color: v.$card-bg-light;
+      border: 1px solid v.$card-stroke-light;
+    }
+
+    body.theme-dark & {
+      background-color: v.$card-bg-dark;
+      border: 1px solid v.$card-stroke-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        background-color: v.$card-bg-light;
+        border: 1px solid v.$card-stroke-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: v.$card-bg-dark;
+        border: 1px solid v.$card-stroke-dark;
+      }
+    }
+
+    &-list {
+      max-height: 172px;
+      overflow-x: hidden;
+      padding-bottom: 0;
+      padding-top: 0;
+    }
+  }
+
+  .react-select-model-filter__option {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: 9px 12px;
+    position: relative;
+    transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    user-select: none;
+    width: 198px;
+
+    body.theme-light & {
+      background-color: rgba(v.$hover-color-light, 0);
+      border-bottom: 0.5px solid v.$card-stroke-light;
+      color: v.$primary-text-light;
+    }
+
+    body.theme-dark & {
+      background-color: rgba(v.$hover-color-dark, 0);
+      border-bottom: 0.5px solid v.$card-stroke-dark;
+      color: v.$primary-text-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        background-color: rgba(v.$hover-color-light, 0);
+        border-bottom: 0.5px solid v.$card-stroke-light;
+        color: v.$primary-text-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: rgba(v.$hover-color-dark, 0);
+        border-bottom: 0.5px solid v.$card-stroke-dark;
+        color: v.$primary-text-dark;
+      }
+    }
+
+    &:not(.react-select-model-filter__option_disabled):hover {
+      body.theme-light & {
+        background-color: rgba(v.$hover-color-light, 1);
+        color: v.$primary-color-light;
+      }
+
+      body.theme-dark & {
+        background-color: rgba(v.$hover-color-dark, 1);
+        color: v.$primary-color-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          background-color: rgba(v.$hover-color-light, 1);
+          color: v.$primary-color-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          background-color: rgba(v.$hover-color-dark, 1);
+          color: v.$primary-color-dark;
+        }
+      }
+
+      .react-select-model-filter__option-circle {
+        body.theme-light & {
+          border-color: v.$primary-color-light;
+        }
+
+        body.theme-dark & {
+          border-color: v.$primary-color-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            border-color: v.$primary-color-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            border-color: v.$primary-color-dark;
+          }
+        }
+      }
+    }
+
+    &.react-select-model-filter__option_disabled {
+      height: 34px;
+      cursor: default;
+    }
+
+    &:last-of-type {
+      border-bottom: 0 !important;
+    }
+
+    > span {
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+
+      &:first-of-type {
+        padding-right: 8px;
+      }
+    }
+  }
+}
+
+.react-select-tags__menu-portal {
+  .react-select-tags__menu {
+    border-radius: 8px;
+    box-shadow: none;
+    margin-bottom: 0;
+    margin-top: 0;
+    max-width: 200px;
+    overflow: hidden;
+    right: 0;
+    top: 8px;
+    transition: opacity .3s ease-in-out;
+    width: auto;
+    z-index: 9999;
+
+    body.theme-light & {
+      background-color: v.$card-bg-light;
+      border: 1px solid v.$card-stroke-light;
+    }
+
+    body.theme-dark & {
+      background-color: v.$card-bg-dark;
+      border: 1px solid v.$card-stroke-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        background-color: v.$card-bg-light;
+        border: 1px solid v.$card-stroke-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: v.$card-bg-dark;
+        border: 1px solid v.$card-stroke-dark;
+      }
+    }
+
+    &-list {
+      max-height: 172px;
+      overflow-x: hidden;
+      padding-bottom: 0;
+      padding-top: 0;
+    }
+  }
+
+  .react-select-tags__option {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: 9px 12px;
+    position: relative;
+    transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    user-select: none;
+    width: 198px;
+
+    body.theme-light & {
+      background-color: rgba(v.$hover-color-light, 0);
+      border-bottom: 0.5px solid v.$card-stroke-light;
+      color: v.$primary-text-light;
+    }
+
+    body.theme-dark & {
+      background-color: rgba(v.$hover-color-dark, 0);
+      border-bottom: 0.5px solid v.$card-stroke-dark;
+      color: v.$primary-text-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        background-color: rgba(v.$hover-color-light, 0);
+        border-bottom: 0.5px solid v.$card-stroke-light;
+        color: v.$primary-text-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: rgba(v.$hover-color-dark, 0);
+        border-bottom: 0.5px solid v.$card-stroke-dark;
+        color: v.$primary-text-dark;
+      }
+    }
+
+    &:not(.react-select-tags__option_disabled):hover {
+      body.theme-light & {
+        background-color: rgba(v.$hover-color-light, 1);
+        color: v.$primary-color-light;
+      }
+
+      body.theme-dark & {
+        background-color: rgba(v.$hover-color-dark, 1);
+        color: v.$primary-color-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          background-color: rgba(v.$hover-color-light, 1);
+          color: v.$primary-color-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          background-color: rgba(v.$hover-color-dark, 1);
+          color: v.$primary-color-dark;
+        }
+      }
+
+      .react-select-tags__option-circle {
+        body.theme-light & {
+          border-color: v.$primary-color-light;
+        }
+
+        body.theme-dark & {
+          border-color: v.$primary-color-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            border-color: v.$primary-color-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            border-color: v.$primary-color-dark;
+          }
+        }
+      }
+    }
+
+    &.react-select-tags__option_disabled {
+      height: 34px;
+      cursor: default;
+    }
+
+    &:last-of-type {
+      border-bottom: 0 !important;
+    }
+
+    &-circle {
+      align-items: center;
+      border-radius: 50%;
+      display: inline-flex;
+      flex: 0 0 16px;
+      height: 16px;
+      justify-content: center;
+      transition: border-color .3s ease-in-out;
+      width: 16px;
+
+      body.theme-light & {
+        border: 1px solid v.$object-stroke-light;
+      }
+
+      body.theme-dark & {
+        border: 1px solid v.$object-stroke-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          border: 1px solid v.$object-stroke-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          border: 1px solid v.$object-stroke-dark;
+        }
+      }
+
+      &.selected {
+        body.theme-light & {
+          border-color: v.$primary-color-light;
+        }
+
+        body.theme-dark & {
+          border-color: v.$primary-color-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            border-color: v.$primary-color-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            border-color: v.$primary-color-dark;
+          }
+        }
+
+        span {
+          opacity: 1;
+        }
+      }
+
+      span {
+        border-radius: 50%;
+        display: block;
+        height: 6px;
+        opacity: 0;
+        transition: opacity .3s ease-in-out;
+        width: 6px;
+
+        body.theme-light & {
+          background-color: v.$primary-color-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$primary-color-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$primary-color-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$primary-color-dark;
+          }
+        }
+      }
+    }
+
+    > span {
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+
+      &:first-of-type {
+        padding-right: 8px;
+      }
+      
+      &.react-select-tags__option_clear {
+        body.theme-light & {
+          color: v.$error-light;
+        }
+
+        body.theme-dark & {
+          color: v.$error-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            color: v.$error-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            color: v.$error-dark;
+          }
+        }
+      }
+    }
+  }
+}
+
+.react-select-tags-details__menu-portal {
+  .react-select-tags-details__menu {
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .2);
+    margin-bottom: 0;
+    margin-top: 0;
+    max-height: 200px;
+    overflow: hidden;
+    position: relative;
+    transition: opacity .3s ease-in-out;
+    width: 150px;
+    z-index: 9999;
+
+    body.theme-light & {
+      background-color: v.$primary-box-bg-light;
+      border: 1px solid v.$primary-box-stroke-light;
+    }
+
+    body.theme-dark & {
+      background-color: v.$primary-box-bg-dark;
+      border: 1px solid v.$primary-box-stroke-dark;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        background-color: v.$primary-box-bg-light;
+        border: 1px solid v.$primary-box-stroke-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: v.$primary-box-bg-dark;
+        border: 1px solid v.$primary-box-stroke-dark;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+      }
+    }
+  }
+
+  .react-select-tags-details__menu-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 4px;
+  }
+
+  .react-select-tags-details__option {
+    align-items: center;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    font-size: 12px;
+    font-weight: 400;
+    justify-content: space-between;
+    margin-bottom: 2px;
+    overflow: hidden;
+    padding: 8px 12px;
+    transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    body.theme-light & {
+      background-color: transparent;
+      color: v.$primary-text-light;
+
+      &:hover {
+        background-color: v.$hover-color-light;
+      }
+
+      &:focus {
+        background-color: v.$hover-color-light;
+      }
+    }
+
+    body.theme-dark & {
+      background-color: transparent;
+      color: v.$primary-text-dark;
+
+      &:hover {
+        background-color: v.$hover-color-dark;
+      }
+
+      &:focus {
+        background-color: v.$hover-color-dark;
+      }
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        background-color: transparent;
+        color: v.$primary-text-light;
+
+        &:hover {
+          background-color: v.$hover-color-light;
+        }
+
+        &:focus {
+          background-color: v.$hover-color-light;
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: transparent;
+        color: v.$primary-text-dark;
+
+        &:hover {
+          background-color: v.$hover-color-dark;
+        }
+
+        &:focus {
+          background-color: v.$hover-color-dark;
+        }
+      }
+    }
+
+    &-count {
+      color: v.$secondary-text-light;
+      font-size: 11px;
+      margin-left: 8px;
+
+      body.theme-dark & {
+        color: v.$secondary-text-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: dark) {
+          color: v.$secondary-text-dark;
+        }
+      }
+    }
+  }
+
+  .react-select-tags-details__menu-notice {
+    color: v.$secondary-text-light;
+    font-size: 12px;
+    padding: 12px;
+    text-align: center;
+
+    body.theme-dark & {
+      color: v.$secondary-text-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: dark) {
+        color: v.$secondary-text-dark;
+      }
+    }
+  }
+}
+
+.react-select-security-type__menu-portal {
+  .react-select__menu {
+    &-list {
+      max-height: 100% !important;
+    }
+  }
+}
+
+.react-select-save-prompt__menu-portal {
+  .react-select__menu-list {
+    max-height: 150px;
+  }
+}
+
+.react-select-idle-lock-container {
+  .react-select__control {
+    .react-select__single-value {
+      span {
+        align-items: center;
+        display: flex;
+        gap: 0 7px;
+
+        svg {
+          height: 16px;
+          width: auto;
+        }
+      }
+    }
+  }
+}
+
+.react-select-idle-lock__menu-portal {
+  .react-select__menu-list {
+    overflow: auto;
+
+    .react-select__option {
+      &.react-select__option--is-disabled {
+        pointer-events: auto;
+
+        body.theme-light & {
+          background-color: v.$primary-bg-light !important;
+          color: v.$secondary-text-light !important;
+        }
+
+        body.theme-dark & {
+          background-color: v.$primary-bg-dark !important;
+          color: v.$secondary-text-dark !important;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$primary-bg-light !important;
+            color: v.$secondary-text-light !important;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$primary-bg-dark !important;
+            color: v.$secondary-text-dark !important;
+          }
+        }
+
+        span {
+          align-items: center;
+          display: inline-flex;
+          gap: 0 7px;
+
+          svg {
+            height: 16px;
+            width: auto;
+          }
+        }
+      }
+    }
+  }
+}
+
+.react-select-dropdown__menu-portal {
   .react-select-dropdown__menu {
     border-radius: 8px;
     box-shadow: none;
     margin-bottom: 0;
     margin-top: 0;
     max-width: 240px;
+    min-width: 200px;
     right: 0;
     transition: opacity .3s ease-in-out;
     z-index: 9999;
@@ -731,880 +1590,6 @@
   }
 }
 
-.react-select-idle-container {
-  .react-select__control {
-    .react-select__single-value {
-      span {
-        align-items: center;
-        display: flex;
-        gap: 0 7px;
-
-        svg {
-          height: 16px;
-          width: auto;
-        }
-      }
-    }
-  }
-
-  .react-select__menu-list {
-    overflow: auto;
-
-    .react-select__option {
-      &.react-select__option--is-disabled {
-        pointer-events: auto;
-
-        body.theme-light & {
-          background-color: v.$primary-bg-light !important;
-          color: v.$secondary-text-light !important;
-        }
-
-        body.theme-dark & {
-          background-color: v.$primary-bg-dark !important;
-          color: v.$secondary-text-dark !important;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            background-color: v.$primary-bg-light !important;
-            color: v.$secondary-text-light !important;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            background-color: v.$primary-bg-dark !important;
-            color: v.$secondary-text-dark !important;
-          }
-        }
-
-        span {
-          align-items: center;
-          display: inline-flex;
-          gap: 0 7px;
-
-          svg {
-            height: 16px;
-            width: auto;
-          }
-        }
-      }
-    }
-  }
-}
-
-.react-select-security-tier-container {
-  .react-select__menu {
-    &-list {
-      max-height: 100% !important;
-    }
-  }
-}
-
-.react-select-tags-container {
-  z-index: 9999;
-
-  .react-select-tags__control {
-    display: none;
-  }
-
-  .react-select-tags__menu {
-    border-radius: 8px;
-    box-shadow: none;
-    margin-bottom: 0;
-    margin-top: 0;
-    max-width: 200px;
-    overflow: hidden;
-    right: 0;
-    top: 8px;
-    transition: opacity .3s ease-in-out;
-    width: auto;
-    z-index: 9999;
-
-    body.theme-light & {
-      background-color: v.$card-bg-light;
-      border: 1px solid v.$card-stroke-light;
-    }
-
-    body.theme-dark & {
-      background-color: v.$card-bg-dark;
-      border: 1px solid v.$card-stroke-dark;
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        background-color: v.$card-bg-light;
-        border: 1px solid v.$card-stroke-light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        background-color: v.$card-bg-dark;
-        border: 1px solid v.$card-stroke-dark;
-      }
-    }
-
-    &-list {
-      max-height: 172px;
-      overflow-x: hidden;
-      padding-bottom: 0;
-      padding-top: 0;
-    }
-  }
-
-  .react-select-tags__option {
-    align-items: center;
-    cursor: pointer;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    overflow: hidden;
-    padding: 9px 12px;
-    position: relative;
-    transition: background-color .3s ease-in-out, color .3s ease-in-out;
-    user-select: none;
-    width: 198px;
-
-    body.theme-light & {
-      background-color: rgba(v.$hover-color-light, 0);
-      border-bottom: 0.5px solid v.$card-stroke-light;
-      color: v.$primary-text-light;
-    }
-
-    body.theme-dark & {
-      background-color: rgba(v.$hover-color-dark, 0);
-      border-bottom: 0.5px solid v.$card-stroke-dark;
-      color: v.$primary-text-dark;
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        background-color: rgba(v.$hover-color-light, 0);
-        border-bottom: 0.5px solid v.$card-stroke-light;
-        color: v.$primary-text-light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        background-color: rgba(v.$hover-color-dark, 0);
-        border-bottom: 0.5px solid v.$card-stroke-dark;
-        color: v.$primary-text-dark;
-      }
-    }
-
-    &:not(.react-select-tags__option_disabled):hover {
-      body.theme-light & {
-        background-color: rgba(v.$hover-color-light, 1);
-        color: v.$primary-color-light;
-      }
-
-      body.theme-dark & {
-        background-color: rgba(v.$hover-color-dark, 1);
-        color: v.$primary-color-dark;
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: light) {
-          background-color: rgba(v.$hover-color-light, 1);
-          color: v.$primary-color-light;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          background-color: rgba(v.$hover-color-dark, 1);
-          color: v.$primary-color-dark;
-        }
-      }
-
-      .react-select-tags__option-circle {
-        body.theme-light & {
-          border-color: v.$primary-color-light;
-        }
-
-        body.theme-dark & {
-          border-color: v.$primary-color-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            border-color: v.$primary-color-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            border-color: v.$primary-color-dark;
-          }
-        }
-      }
-    }
-
-    &.react-select-tags__option_disabled {
-      height: 34px;
-      cursor: default;
-    }
-
-    &:last-of-type {
-      border-bottom: 0 !important;
-    }
-
-    &-circle {
-      align-items: center;
-      border-radius: 50%;
-      display: inline-flex;
-      flex: 0 0 16px;
-      height: 16px;
-      justify-content: center;
-      transition: border-color .3s ease-in-out;
-      width: 16px;
-
-      body.theme-light & {
-        border: 1px solid v.$object-stroke-light;
-      }
-
-      body.theme-dark & {
-        border: 1px solid v.$object-stroke-dark;
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: light) {
-          border: 1px solid v.$object-stroke-light;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          border: 1px solid v.$object-stroke-dark;
-        }
-      }
-
-      &.selected {
-        body.theme-light & {
-          border-color: v.$primary-color-light;
-        }
-
-        body.theme-dark & {
-          border-color: v.$primary-color-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            border-color: v.$primary-color-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            border-color: v.$primary-color-dark;
-          }
-        }
-
-        span {
-          opacity: 1;
-        }
-      }
-
-      span {
-        border-radius: 50%;
-        display: block;
-        height: 6px;
-        opacity: 0;
-        transition: opacity .3s ease-in-out;
-        width: 6px;
-
-        body.theme-light & {
-          background-color: v.$primary-color-light;
-        }
-
-        body.theme-dark & {
-          background-color: v.$primary-color-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            background-color: v.$primary-color-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            background-color: v.$primary-color-dark;
-          }
-        }
-      }
-    }
-
-    > span {
-      font-size: 12px;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: 100%;
-
-      &:first-of-type {
-        padding-right: 8px;
-      }
-      
-      &.react-select-tags__option_clear {
-        body.theme-light & {
-          color: v.$error-light;
-        }
-
-        body.theme-dark & {
-          color: v.$error-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            color: v.$error-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            color: v.$error-dark;
-          }
-        }
-      }
-    }
-  }
-}
-
-.react-select-tags-details-container {
-  position: absolute !important;
-  left: 0;
-  top: calc(100% + 4px);
-  z-index: 9999;
-
-  .react-select-tags-details__control {
-    display: none;
-  }
-
-  .react-select-tags-details__menu {
-    border-radius: 6px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, .2);
-    margin-bottom: 0;
-    margin-top: 0;
-    max-height: 200px;
-    overflow: hidden;
-    position: relative;
-    transition: opacity .3s ease-in-out;
-    width: 150px;
-    z-index: 9999;
-
-    body.theme-light & {
-      background-color: v.$primary-box-bg-light;
-      border: 1px solid v.$primary-box-stroke-light;
-    }
-
-    body.theme-dark & {
-      background-color: v.$primary-box-bg-dark;
-      border: 1px solid v.$primary-box-stroke-dark;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        background-color: v.$primary-box-bg-light;
-        border: 1px solid v.$primary-box-stroke-light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        background-color: v.$primary-box-bg-dark;
-        border: 1px solid v.$primary-box-stroke-dark;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
-      }
-    }
-  }
-
-  .react-select-tags-details__menu-list {
-    max-height: 200px;
-    overflow-y: auto;
-    padding: 4px;
-  }
-
-  .react-select-tags-details__option {
-    align-items: center;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    font-size: 12px;
-    font-weight: 400;
-    justify-content: space-between;
-    margin-bottom: 2px;
-    overflow: hidden;
-    padding: 8px 12px;
-    transition: background-color .3s ease-in-out, color .3s ease-in-out;
-    
-    span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    body.theme-light & {
-      background-color: transparent;
-      color: v.$primary-text-light;
-
-      &:hover {
-        background-color: v.$hover-color-light;
-      }
-
-      &:focus {
-        background-color: v.$hover-color-light;
-      }
-    }
-
-    body.theme-dark & {
-      background-color: transparent;
-      color: v.$primary-text-dark;
-
-      &:hover {
-        background-color: v.$hover-color-dark;
-      }
-
-      &:focus {
-        background-color: v.$hover-color-dark;
-      }
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        background-color: transparent;
-        color: v.$primary-text-light;
-
-        &:hover {
-          background-color: v.$hover-color-light;
-        }
-
-        &:focus {
-          background-color: v.$hover-color-light;
-        }
-      }
-
-      @media (prefers-color-scheme: dark) {
-        background-color: transparent;
-        color: v.$primary-text-dark;
-
-        &:hover {
-          background-color: v.$hover-color-dark;
-        }
-
-        &:focus {
-          background-color: v.$hover-color-dark;
-        }
-      }
-    }
-
-    &-count {
-      color: v.$secondary-text-light;
-      font-size: 11px;
-      margin-left: 8px;
-
-      body.theme-dark & {
-        color: v.$secondary-text-dark;
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: dark) {
-          color: v.$secondary-text-dark;
-        }
-      }
-    }
-  }
-
-  .react-select-tags-details__menu-notice {
-    color: v.$secondary-text-light;
-    font-size: 12px;
-    padding: 12px;
-    text-align: center;
-
-    body.theme-dark & {
-      color: v.$secondary-text-dark;
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: dark) {
-        color: v.$secondary-text-dark;
-      }
-    }
-  }
-}
-
-.react-select-save-prompt-container {
-  .react-select__menu-list {
-    max-height: 150px;
-  }
-}
-
 .react-select__single-value {
   margin-left: 0 !important;
-}
-
-.react-select-add-new-container {
-  .react-select-add-new__control {
-    display: none;
-  }
-
-  .react-select-add-new__menu {
-    background: transparent;
-    border-radius: 8px;
-    overflow: hidden;
-    position: absolute;
-    top: 16px;
-    right: 0;
-    width: 200px;
-    z-index: 9999;
-
-    &-list {
-      background: transparent;
-      border-radius: 8px;
-      padding: 0;
-    }
-  }
-
-  .react-select-add-new__option {
-    overflow: hidden;
-
-    &:first-of-type {
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
-
-      a {
-        border-top-left-radius: 8px;
-        border-top-right-radius: 8px;
-      }
-    }
-
-    &:last-of-type {
-      border-bottom-left-radius: 8px;
-      border-bottom-right-radius: 8px;
-
-      a {
-        border-bottom: 0 !important;
-        border-bottom-left-radius: 8px;
-        border-bottom-right-radius: 8px;
-      }
-    }
-
-    a {
-      align-items: center;
-      display: flex;
-      flex-direction: row;
-      gap: 0 6px;
-      padding: 9px 12px;
-      transition: background-color .3s ease-in-out;
-      width: 100%;
-
-      body.theme-light & {
-        background-color: v.$card-bg-light;
-        border-bottom: 1px solid v.$card-stroke-light;
-      }
-
-      body.theme-dark & {
-        background-color: v.$card-bg-dark;
-        border-bottom: 1px solid v.$card-stroke-dark;
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: light) {
-          background-color: v.$card-bg-light;
-          border-bottom: 1px solid v.$card-stroke-light;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          background-color: v.$card-bg-dark;
-          border-bottom: 1px solid v.$card-stroke-dark;
-        }
-      }
-
-      &:hover {
-        body.theme-light & {
-          background-color: v.$hover-color-light;
-        }
-
-        body.theme-dark & {
-          background-color: v.$hover-color-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            background-color: v.$hover-color-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            background-color: v.$hover-color-dark;
-          }
-        }
-      }
-
-      .react-select-add-new__option-icon {
-        border-radius: 4px;
-        align-items: center;
-        display: flex;
-        height: 16px;
-        justify-content: center;
-        width: 16px;
-
-        &.icon-item-login {
-          body.theme-light & {
-            background-color: v.$login-item-light;
-          }
-
-          body.theme-dark & {
-            background-color: v.$login-item-dark;
-          }
-
-          body.theme-unset & {
-            @media (prefers-color-scheme: light) {
-              background-color: v.$login-item-light;
-            }
-
-            @media (prefers-color-scheme: dark) {
-              background-color: v.$login-item-dark;
-            }
-          }
-        }
-
-        &.icon-item-credit-card {
-          body.theme-light & {
-            background-color: v.$credit-card-item-light;
-          }
-
-          body.theme-dark & {
-            background-color: v.$credit-card-item-dark;
-          }
-
-          body.theme-unset & {
-            @media (prefers-color-scheme: light) {
-              background-color: v.$credit-card-item-light;
-            }
-
-            @media (prefers-color-scheme: dark) {
-              background-color: v.$credit-card-item-dark;
-            }
-          }
-        }
-
-        &.icon-item-secure-note {
-          body.theme-light & {
-            background-color: v.$secure-note-item-light;
-          }
-
-          body.theme-dark & {
-            background-color: v.$secure-note-item-dark;
-          }
-
-          body.theme-unset & {
-            @media (prefers-color-scheme: light) {
-              background-color: v.$secure-note-item-light;
-            }
-
-            @media (prefers-color-scheme: dark) {
-              background-color: v.$secure-note-item-dark;
-            }
-          }
-        }
-
-        &.icon-item-ssh-key {
-          body.theme-light & {
-            background-color: v.$ssh-key-item-light;
-          }
-
-          body.theme-dark & {
-            background-color: v.$ssh-key-item-dark;
-          }
-
-          body.theme-unset & {
-            @media (prefers-color-scheme: light) {
-              background-color: v.$ssh-key-item-light;
-            }
-
-            @media (prefers-color-scheme: dark) {
-              background-color: v.$ssh-key-item-dark;
-            }
-          }
-        }
-
-        svg {
-          height: 10px;
-          stroke: #fff;
-          stroke-linecap: round;
-          stroke-linejoin: round;
-          width: auto;
-        }
-      }
-
-      .react-select-add-new__option-label {
-        font-size: 12px;
-        font-weight: 400;
-        line-height: 1;
-
-        body.theme-light & {
-          color: v.$primary-text-light;
-        }
-
-        body.theme-dark & {
-          color: v.$primary-text-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            color: v.$primary-text-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            color: v.$primary-text-dark;
-          }
-        }
-      }
-    }
-  }
-}
-
-.react-select-model-filter-container {
-  z-index: 9999;
-
-  .react-select-model-filter__control {
-    display: none;
-  }
-
-  .react-select-model-filter__menu {
-    border-radius: 8px;
-    box-shadow: none;
-    margin-bottom: 0;
-    margin-top: 0;
-    max-width: 200px;
-    overflow: hidden;
-    right: 0;
-    top: 8px;
-    transition: opacity .3s ease-in-out;
-    width: auto;
-    z-index: 9999;
-
-    body.theme-light & {
-      background-color: v.$card-bg-light;
-      border: 1px solid v.$card-stroke-light;
-    }
-
-    body.theme-dark & {
-      background-color: v.$card-bg-dark;
-      border: 1px solid v.$card-stroke-dark;
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        background-color: v.$card-bg-light;
-        border: 1px solid v.$card-stroke-light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        background-color: v.$card-bg-dark;
-        border: 1px solid v.$card-stroke-dark;
-      }
-    }
-
-    &-list {
-      max-height: 172px;
-      overflow-x: hidden;
-      padding-bottom: 0;
-      padding-top: 0;
-    }
-  }
-
-  .react-select-model-filter__option {
-    align-items: center;
-    cursor: pointer;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    overflow: hidden;
-    padding: 9px 12px;
-    position: relative;
-    transition: background-color .3s ease-in-out, color .3s ease-in-out;
-    user-select: none;
-    width: 198px;
-
-    body.theme-light & {
-      background-color: rgba(v.$hover-color-light, 0);
-      border-bottom: 0.5px solid v.$card-stroke-light;
-      color: v.$primary-text-light;
-    }
-
-    body.theme-dark & {
-      background-color: rgba(v.$hover-color-dark, 0);
-      border-bottom: 0.5px solid v.$card-stroke-dark;
-      color: v.$primary-text-dark;
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        background-color: rgba(v.$hover-color-light, 0);
-        border-bottom: 0.5px solid v.$card-stroke-light;
-        color: v.$primary-text-light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        background-color: rgba(v.$hover-color-dark, 0);
-        border-bottom: 0.5px solid v.$card-stroke-dark;
-        color: v.$primary-text-dark;
-      }
-    }
-
-    &:not(.react-select-model-filter__option_disabled):hover {
-      body.theme-light & {
-        background-color: rgba(v.$hover-color-light, 1);
-        color: v.$primary-color-light;
-      }
-
-      body.theme-dark & {
-        background-color: rgba(v.$hover-color-dark, 1);
-        color: v.$primary-color-dark;
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: light) {
-          background-color: rgba(v.$hover-color-light, 1);
-          color: v.$primary-color-light;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          background-color: rgba(v.$hover-color-dark, 1);
-          color: v.$primary-color-dark;
-        }
-      }
-
-      .react-select-model-filter__option-circle {
-        body.theme-light & {
-          border-color: v.$primary-color-light;
-        }
-
-        body.theme-dark & {
-          border-color: v.$primary-color-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            border-color: v.$primary-color-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            border-color: v.$primary-color-dark;
-          }
-        }
-      }
-    }
-
-    &.react-select-model-filter__option_disabled {
-      height: 34px;
-      cursor: default;
-    }
-
-    &:last-of-type {
-      border-bottom: 0 !important;
-    }
-
-    > span {
-      font-size: 12px;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: 100%;
-
-      &:first-of-type {
-        padding-right: 8px;
-      }
-    }
-  }
 }

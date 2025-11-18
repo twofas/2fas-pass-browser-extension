@@ -71,12 +71,13 @@ const ModelFilter = () => {
           menuIsOpen={isMenuOpen}
           onMenuClose={() => setIsMenuOpen(false)}
           onMenuOpen={() => setIsMenuOpen(true)}
-          className='react-select-model-filter-container'
+          className='react-select-pass-dropdown'
           classNamePrefix='react-select-model-filter'
           isClearable={false}
           isSearchable={false}
           noOptionsMessage={() => null}
           additionalButtonRefs={[buttonRef]}
+          triggerRef={buttonRef}
           components={{
             Option: props => <ModalFilterCustomOption {...props} setIsMenuOpen={setIsMenuOpen} />
           }}

@@ -155,12 +155,13 @@ function TopBar () {
             menuIsOpen={isMenuOpen}
             onMenuClose={() => setIsMenuOpen(false)}
             onMenuOpen={() => setIsMenuOpen(true)}
-            className='react-select-add-new-container'
+            className='react-select-pass-dropdown'
             classNamePrefix='react-select-add-new'
             isClearable={false}
             isSearchable={false}
             noOptionsMessage={() => null}
             additionalButtonRefs={[addNewBtnRef]}
+            triggerRef={addNewBtnRef}
             components={{
               Option: props => <AddNewCustomOption {...props} setIsMenuOpen={setIsMenuOpen} />
             }}

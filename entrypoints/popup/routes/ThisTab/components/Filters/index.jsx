@@ -131,11 +131,12 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
           menuIsOpen={isMenuOpen}
           onMenuClose={() => setIsMenuOpen(false)}
           onMenuOpen={() => setIsMenuOpen(true)}
-          className='react-select-tags-container'
+          className='react-select-pass-dropdown'
           classNamePrefix='react-select-tags'
           isClearable={false}
           isSearchable={false}
           additionalButtonRefs={[buttonRef]}
+          triggerRef={buttonRef}
           components={{
             Option: props => <CustomOption {...props} />
           }}
