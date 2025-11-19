@@ -262,7 +262,7 @@
 
     &-header {
       background-color: v.$primary-box-bg-light;
-      padding: 20px 8px 16px;
+      padding: 20px 8px 8px;
       position: sticky;
       text-align: center;
       top: -20px;
@@ -301,19 +301,40 @@
             background-color: v.$primary-color-dark;
           }
 
+          &:global(.logins) {
+            background-color: v.$login-item-light;
+
+            @include m.darkMode {
+              background-color: v.$login-item-dark;
+            }
+
+            svg {
+              stroke-width: 1;
+            }
+          }
+
+          &:global(.secure-notes) {
+            background-color: v.$secure-note-item-light;
+
+            @include m.darkMode {
+              background-color: v.$secure-note-item-dark;
+            }
+
+            svg {
+              stroke-width: 1;
+            }
+          }
+
           svg {
             height: 16px;
+            stroke: v.$primary-box-bg-light;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-width: 1.5;
             width: auto;
 
-            &.model-all-icon {
-              stroke: v.$primary-box-bg-light;
-              stroke-linecap: round;
-              stroke-linejoin: round;
-              stroke-width: 1.5;
-
-              @include m.darkMode {
-                stroke: v.$primary-box-bg-dark;
-              }
+            @include m.darkMode {
+              stroke: v.$primary-box-bg-dark;
             }
           }
         }
@@ -335,7 +356,7 @@
 
       &-sort {
         align-items: center;
-        bottom: 24px;
+        bottom: 17px;
         display: flex;
         gap: 0 6px;
         position: absolute;

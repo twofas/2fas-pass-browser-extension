@@ -696,7 +696,7 @@
     cursor: pointer;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    gap: 0 6px;
     overflow: hidden;
     padding: 9px 12px;
     position: relative;
@@ -730,71 +730,140 @@
       }
     }
 
-    &:not(.react-select-model-filter__option_disabled):hover {
+    &.react-select-model-filter__option--is-selected {
       body.theme-light & {
-        background-color: rgba(v.$hover-color-light, 1);
-        color: v.$primary-color-light;
+        background-color: v.$primary-bg-light;
       }
 
       body.theme-dark & {
-        background-color: rgba(v.$hover-color-dark, 1);
-        color: v.$primary-color-dark;
+        background-color: v.$primary-bg-dark;
       }
 
       body.theme-unset & {
         @media (prefers-color-scheme: light) {
-          background-color: rgba(v.$hover-color-light, 1);
-          color: v.$primary-color-light;
+          background-color: v.$primary-bg-light;
         }
 
         @media (prefers-color-scheme: dark) {
-          background-color: rgba(v.$hover-color-dark, 1);
-          color: v.$primary-color-dark;
+          background-color: v.$primary-bg-dark;
+        }
+      }
+    }
+
+    &-icon {
+      align-items: center;
+      border-radius: 4px;
+      display: inline-flex;
+      flex-shrink: 0;
+      height: 16px;
+      justify-content: center;
+      width: 16px;
+
+      body.theme-light & {
+        background-color: v.$primary-color-light;
+      }
+
+      body.theme-dark & {
+        background-color: v.$primary-color-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          background-color: v.$primary-color-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          background-color: v.$primary-color-dark;
         }
       }
 
-      .react-select-model-filter__option-circle {
+      &.logins {
         body.theme-light & {
-          border-color: v.$primary-color-light;
+          background-color: v.$login-item-light;
         }
 
         body.theme-dark & {
-          border-color: v.$primary-color-dark;
+          background-color: v.$login-item-dark;
         }
 
         body.theme-unset & {
           @media (prefers-color-scheme: light) {
-            border-color: v.$primary-color-light;
+            background-color: v.$login-item-light;
           }
 
           @media (prefers-color-scheme: dark) {
-            border-color: v.$primary-color-dark;
+            background-color: v.$login-item-dark;
+          }
+        }
+      }
+
+      &.secure-notes {
+        body.theme-light & {
+          background-color: v.$secure-note-item-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$secure-note-item-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$secure-note-item-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$secure-note-item-dark;
+          }
+        }
+      }
+
+      svg {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        height: 11px;
+        width: auto;
+
+        body.theme-light & {
+          stroke: v.$primary-box-bg-light;
+        }
+
+        body.theme-dark & {
+          stroke: v.$primary-box-bg-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            stroke: v.$primary-box-bg-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            stroke: v.$primary-box-bg-dark;
           }
         }
       }
     }
 
-    &.react-select-model-filter__option_disabled {
-      height: 34px;
-      cursor: default;
-    }
-
-    &:last-of-type {
-      border-bottom: 0 !important;
-    }
-
-    > span {
+    &-label {
       font-size: 12px;
-      font-style: normal;
       font-weight: 400;
       line-height: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: 100%;
 
-      &:first-of-type {
-        padding-right: 8px;
+      body.theme-light & {
+        color: v.$primary-text-light;
+      }
+
+      body.theme-dark & {
+        color: v.$primary-text-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          color: v.$primary-text-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          color: v.$primary-text-dark;
+        }
       }
     }
   }
