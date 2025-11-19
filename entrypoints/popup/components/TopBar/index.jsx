@@ -126,7 +126,7 @@ function TopBar () {
             <button
               type='button'
               onClick={handleLogoClick}
-              title={browser.i18n.getMessage('go_to_home_page')}
+              title={browser.i18n.getMessage('scroll_to_top')}
             >
               <Logo className="theme-light" />
               <LogoDark className="theme-dark" />
