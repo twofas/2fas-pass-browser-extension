@@ -20,6 +20,7 @@ import BottomBar from './components/BottomBar';
 import usePopupStateStore from './store/popupState';
 import usePopupHref from './hooks/usePopupHref';
 import { addToNavigationHistory } from './utils/navigationHistory';
+import { ScrollableRefProvider } from './context/ScrollableRefProvider';
 import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
 import Connect from './routes/Connect';
@@ -181,11 +182,11 @@ const AppContent = memo(({ blocked }) => {
   const { configured } = useAuthState();
 
   return (
-    <>
+    <ScrollableRefProvider>
       <TopBar />
       <AuthRoutes blocked={blocked} configured={configured} />
       <BottomBar />
-    </>
+    </ScrollableRefProvider>
   );
 });
 

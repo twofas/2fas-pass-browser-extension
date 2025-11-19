@@ -97,7 +97,8 @@ const useScrollPosition = (scrollableRef, loading = false) => {
   return {
     saveScrollPosition,
     restoreScrollPosition,
-    scrollPosition
+    scrollPosition,
+    scrollableRef
   };
 };
 

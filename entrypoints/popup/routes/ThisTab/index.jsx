@@ -8,7 +8,8 @@ import S from './ThisTab.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import { useEffect, useState, useRef, useCallback, useMemo, memo } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo, memo, useContext } from 'react';
+import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
 import getDomainFromTab from './functions/getDomainFromTab';
 import onMessage from './events/onMessage';
 import generateAllItemsList from './functions/generateAllItemsList';
@@ -52,6 +53,7 @@ function ThisTab (props) {
   const location = useLocation();
   const { state } = location;
   const { changeMatchingLoginsLength } = useMatchingLogins();
+  const scrollableRefContext = useContext(ScrollableRefContext);
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('Unknown');
   const [url, setUrl] = useState('Unknown');
@@ -78,6 +80,12 @@ function ThisTab (props) {
   const thisTabTopRef = useRef(null);
 
   useScrollPosition(scrollableRef, loading);
+
+  useEffect(() => {
+    if (scrollableRefContext?.setRef && scrollableRef.current) {
+      scrollableRefContext.setRef(scrollableRef.current);
+    }
+  }, [scrollableRefContext]);
 
   const syncState = useCallback(() => {
     if (!location.state?.from) {
