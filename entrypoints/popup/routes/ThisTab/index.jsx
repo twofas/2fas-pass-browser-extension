@@ -299,7 +299,7 @@ function ThisTab (props) {
   const searchClass = `${S.thisTabAllLoginsSearch} ${data?.searchActive ? S.active : ''}`;
 
   const memoizedMatchingItemsList = useMemo(() => generateMatchingItemsList(matchingLogins, loading), [matchingLogins, loading]);
-  const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, sort, data?.searchValue, loading, tags, data?.selectedTag), [items, sort, data?.searchValue, loading, tags, data?.selectedTag]);
+  const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, sort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter), [items, sort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter]);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);

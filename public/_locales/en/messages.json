@@ -319,13 +319,25 @@
     "message": "Login",
     "description": "Label for the login functionality"
   },
+  "login_plural": {
+    "message": "Logins",
+    "description": "Label for multiple logins"
+  },
   "credit_card": {
     "message": "Credit Card",
     "description": "Label for the credit card functionality"
   },
+  "credit_card_plural": {
+    "message": "Credit Cards",
+    "description": "Label for multiple credit cards"
+  },
   "secure_note": {
     "message": "Secure Note",
     "description": "Label for the secure note functionality"
+  },
+  "secure_note_plural": {
+    "message": "Secure Notes",
+    "description": "Label for multiple secure notes"
   },
   "secure_note_placeholder": {
     "message": "Add the note",

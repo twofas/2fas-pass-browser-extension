@@ -20,9 +20,10 @@ const EmptyListIcon = lazy(() => import('@/assets/popup-window/empty-list.svg?re
 * @param {string} search - The search query.
 * @param {boolean} loading - Indicates if the items are still loading.
 * @param {Object|null} selectedTag - The selected tag object to filter by.
+* @param {Object|null} itemModelFilter - The item model filter object to filter by.
 * @return {JSX.Element|null} The generated item list or null.
 */
-const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) => {
+const generateAllItemsList = (items, sort, search, loading, tags, selectedTag, itemModelFilter) => {
   if (!isItemsCorrect(items) && !loading) {
     return null;
   }
@@ -62,6 +63,10 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag) =
       const tagsSet = new Set(item.tags);
       return tagsSet.has(selectedTag.id);
     });
+  }
+
+  if (itemModelFilter) {
+    itemsData = itemsData.filter(item => item?.constructor?.name === itemModelFilter);
   }
 
   if (search && search.length > 0) {
