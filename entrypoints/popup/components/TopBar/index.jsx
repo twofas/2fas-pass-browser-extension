@@ -7,13 +7,14 @@
 import S from './TopBar.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useLocation } from 'react-router';
-import { useEffect, useRef, useState, lazy, useCallback, useMemo, memo } from 'react';
+import { useEffect, useRef, useState, lazy, useCallback, useMemo, memo, useContext } from 'react';
 import { useAuthActions, useAuthState } from '@/hooks/useAuth';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import AddNewCustomOption from './components/AddNewCustomOption';
 import { addNewOptions } from '@/constants';
+import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
 
 const Logo = lazy(() => import('@/assets/logo.svg?react'));
 const LogoDark = lazy(() => import('@/assets/logo-dark.svg?react'));
@@ -30,6 +31,7 @@ function TopBar () {
   const { logout } = useAuthActions();
   const { configured } = useAuthState();
   const { matchingLoginsLength } = useMatchingLogins();
+  const scrollableRefContext = useContext(ScrollableRefContext);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -59,8 +61,18 @@ function TopBar () {
     await logout();
   }, [logout]);
 
-  const logoClass = useMemo(() => 
-    `${S.topbarLogo} ${(location.pathname === '/blocked' || location.pathname === '/' || location.pathname === '/connect') ? S.disabled : ''}`,
+  const handleLogoClick = useCallback(() => {
+    if (location.pathname === '/' && scrollableRefContext?.ref?.current) {
+      scrollableRefContext.ref.current.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [location.pathname, scrollableRefContext]);
+
+  const logoClass = useMemo(() =>
+    `${S.topbarLogo} ${(location.pathname === '/blocked' || location.pathname === '/connect') ? S.disabled : ''}`,
     [location.pathname]
   );
 
@@ -110,14 +122,25 @@ function TopBar () {
     <>
       <header className={S.topbar}>
         <div className={logoClass}>
-          <Link
-            to='/'
-            title={browser.i18n.getMessage('go_to_home_page')}
-            prefetch='render'
-          >
-            <Logo className="theme-light" />
-            <LogoDark className="theme-dark" />
-          </Link>
+          {location.pathname === '/' ? (
+            <button
+              type='button'
+              onClick={handleLogoClick}
+              title={browser.i18n.getMessage('go_to_home_page')}
+            >
+              <Logo className="theme-light" />
+              <LogoDark className="theme-dark" />
+            </button>
+          ) : (
+            <Link
+              to='/'
+              title={browser.i18n.getMessage('go_to_home_page')}
+              prefetch='render'
+            >
+              <Logo className="theme-light" />
+              <LogoDark className="theme-dark" />
+            </Link>
+          )}
         </div>
 
         <div className={S.topbarLock}>
