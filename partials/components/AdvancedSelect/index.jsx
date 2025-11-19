@@ -24,7 +24,7 @@ function AdvancedSelect (props) {
       props?.menuIsOpen &&
       selectContainerRef?.current &&
       !selectContainerRef?.current?.contains(event.target) &&
-      !(props?.additionalButtonRefs && Array.isArray(props?.additionalButtonRefs) && props?.additionalButtonRefs.some(ref => ref?.current && ref?.current.contains(event.target)))
+      !props?.triggerRef?.current?.contains(event.target)
     ) {
       props.onMenuClose(false);
     }
@@ -112,7 +112,6 @@ function AdvancedSelect (props) {
     <div ref={selectContainerRef}>
       <Select
         {...props}
-        additionalButtonRefs={undefined}
         triggerRef={undefined}
         menuPlacement={menuPlacement}
         menuPortalTarget={menuPortalTarget}

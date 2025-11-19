@@ -67,7 +67,6 @@ function LoginItemView (props) {
         options={dropdownOptions}
         menuIsOpen={props.more === true}
         ref={props.selectRef}
-        additionalButtonRefs={[moreBtnRef]}
         triggerRef={moreBtnRef}
         components={{
           Option: props => <CustomOption {...props} more={props.more} toggleMenu={toggleMenuCallback} />

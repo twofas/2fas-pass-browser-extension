@@ -86,7 +86,6 @@ const ModelFilter = () => {
           isClearable={false}
           isSearchable={false}
           noOptionsMessage={() => null}
-          additionalButtonRefs={[buttonRef]}
           triggerRef={buttonRef}
           components={{
             Option: props => <ModalFilterCustomOption {...props} itemModelFilter={data.itemModelFilter} />

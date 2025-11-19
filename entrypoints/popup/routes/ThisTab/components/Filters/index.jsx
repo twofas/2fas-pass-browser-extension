@@ -135,7 +135,6 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
           classNamePrefix='react-select-tags'
           isClearable={false}
           isSearchable={false}
-          additionalButtonRefs={[buttonRef]}
           triggerRef={buttonRef}
           components={{
             Option: props => <CustomOption {...props} />

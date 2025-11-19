@@ -227,7 +227,6 @@ function Tags () {
                       isSearchable={false}
                       placeholder={browser.i18n.getMessage('details_tags_select_tag')}
                       noOptionsMessage={() => null}
-                      additionalButtonRefs={[addButtonRef]}
                       triggerRef={addButtonRef}
                       components={{
                         Option: props => <CustomOption {...props} />
