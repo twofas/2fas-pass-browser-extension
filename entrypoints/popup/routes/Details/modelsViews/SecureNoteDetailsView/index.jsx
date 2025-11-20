@@ -13,7 +13,7 @@ import { Form } from 'react-final-form';
 import { valueToNFKD } from '@/partials/functions';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import SecureNote from '@/partials/models/itemModels/SecureNote';
-import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
+import { PULL_REQUEST_TYPES } from '@/constants';
 import getItem from '@/partials/sessionStorage/getItem';
 
 const Name = lazy(() => import('../../components/Name'));

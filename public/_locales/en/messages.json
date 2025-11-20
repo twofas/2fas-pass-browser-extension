@@ -343,6 +343,10 @@
     "message": "Secure Note",
     "description": "Label for the secure note functionality"
   },
+  "secure_note_note": {
+    "message": "Note",
+    "description": "Label for the secure note text field"
+  },
   "secure_note_plural": {
     "message": "Secure Notes",
     "description": "Label for multiple secure notes"
