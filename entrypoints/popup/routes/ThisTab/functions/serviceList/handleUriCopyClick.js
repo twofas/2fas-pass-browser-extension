@@ -13,8 +13,8 @@ import copyValue from '@/partials/functions/copyValue';
 * @return {Promise<void>}
 */
 const handleUriCopyClick = async props => {
-  if (props?.toggleMenu) {
-    props.toggleMenu(false);
+  if (props?.setMore) {
+    props.setMore(false);
   }
 
   try {

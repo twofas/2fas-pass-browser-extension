@@ -8,7 +8,6 @@ import S from '../../../ThisTab.module.scss';
 import { memo, lazy, useRef, useMemo, useCallback } from 'react';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
-import toggleMenu from '../functions/toggleMenu';
 
 const Skeleton = lazy(() => import('../../Skeleton'));
 const CopyNameBtn = lazy(() => import('../components/CopyNameBtn'));
@@ -20,10 +19,6 @@ function SecureNoteItemView (props) {
   const moreBtnRef = useRef(null);
 
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
-
-  const toggleMenuCallback = useCallback(value => {
-    toggleMenu(value, { ref: props.ref, selectRef: props.selectRef }, { setMore: props.setMore });
-  }, [props.setMore]);
 
   return (
     <>
@@ -37,9 +32,9 @@ function SecureNoteItemView (props) {
         </span>
       </div>
       <div className={S.servicesListItemAdditionalButtons}>
-        <CopySecureNoteBtn item={props.data} more={props.more} setMore={toggleMenuCallback} />
-        <CopyNameBtn item={props.data} more={props.more} setMore={toggleMenuCallback} />
-        <MoreBtn item={props.data} more={props.more} setMore={toggleMenuCallback} ref={moreBtnRef} />
+        <CopySecureNoteBtn item={props.data} more={props.more} setMore={props.setMore} />
+        <CopyNameBtn item={props.data} more={props.more} setMore={props.setMore} />
+        <MoreBtn item={props.data} more={props.more} setMore={props.setMore} ref={moreBtnRef} />
       </div>
       <AdvancedSelect
         className='react-select-pass-dropdown'
@@ -50,7 +45,7 @@ function SecureNoteItemView (props) {
         ref={props.selectRef}
         triggerRef={moreBtnRef}
         components={{
-          Option: props => <CustomOption {...props} more={props.more} toggleMenu={toggleMenuCallback} />
+          Option: props => <CustomOption {...props} more={props.more} setMore={props.setMore} />
         }}
       />
     </>

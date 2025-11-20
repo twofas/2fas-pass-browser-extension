@@ -7,7 +7,6 @@
 import S from '../../ThisTab.module.scss';
 
 import { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
-import toggleMenu from './functions/toggleMenu';
 
 // Models
 import LoginItemView from './modelsViews/LoginItemView';
@@ -63,7 +62,7 @@ function Item (props) {
       return;
     }
 
-    toggleMenu(false, { ref, selectRef }, { setMore });
+    setMore(false);
   }, []);
 
   const handleMouseEnter = useCallback(() => {
