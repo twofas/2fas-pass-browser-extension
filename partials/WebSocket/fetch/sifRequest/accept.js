@@ -172,7 +172,7 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
     return {
       returnUrl,
       returnToast: {
-        text: browser.i18n.getMessage('fetch_password_request_accept_toast'),
+        text: browser.i18n.getMessage(`fetch_${item.contentType ?? 'generic'}_request_accept_toast`),
         type: 'success'
       }
     };
