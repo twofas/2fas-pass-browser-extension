@@ -17,12 +17,12 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @param {number} itemId - The ID of the login.
 * @return {Promise<void>}
 */
-const handleForgetPassword = async (e, itemId, toggleMenu) => {
+const handleForgetPassword = async (e, itemId, setMore) => {
   e.preventDefault();
   e.stopPropagation();
 
   try {
-    toggleMenu(false);
+    setMore(false);
   } catch {}
 
   // Get items

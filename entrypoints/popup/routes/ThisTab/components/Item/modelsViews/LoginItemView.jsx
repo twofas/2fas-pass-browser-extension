@@ -9,7 +9,6 @@ import { memo, useMemo, useState, lazy, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import handleAutofill from '../../../functions/serviceList/handleAutofill';
-import toggleMenu from '../functions/toggleMenu';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 const Skeleton = lazy(() => import('../../Skeleton'));
@@ -35,12 +34,8 @@ function LoginItemView (props) {
       return;
     }
 
-    await handleAutofill(props.data.deviceId, props.data.vaultId, props.data.id, navigate, props.more, value => toggleMenu(value, { ref: props.ref, selectRef: props.selectRef }, { setMore: props.setMore }));
+    await handleAutofill(props.data.deviceId, props.data.vaultId, props.data.id, navigate, props.more, props.setMore);
   }, [props?.data?.deviceId, props?.data?.vaultId, props?.data?.id, navigate, props.more]);
-
-  const toggleMenuCallback = useCallback(value => {
-    toggleMenu(value, { ref: props.ref, selectRef: props.selectRef }, { setMore: props.setMore });
-  }, [props.setMore]);
 
   return (
     <>
@@ -56,9 +51,9 @@ function LoginItemView (props) {
         </span>
       </button>
       <div className={S.servicesListItemAdditionalButtons}>
-        <PasswordBtn item={props.data} more={props.more} setMore={toggleMenuCallback} />
-        <UsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={toggleMenuCallback} />
-        <MoreBtn more={props.more} setMore={toggleMenuCallback} ref={moreBtnRef} />
+        <PasswordBtn item={props.data} more={props.more} setMore={props.setMore} />
+        <UsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={props.setMore} />
+        <MoreBtn more={props.more} setMore={props.setMore} ref={moreBtnRef} />
       </div>
       <AdvancedSelect
         className='react-select-pass-dropdown'
@@ -69,7 +64,7 @@ function LoginItemView (props) {
         ref={props.selectRef}
         triggerRef={moreBtnRef}
         components={{
-          Option: props => <CustomOption {...props} more={props.more} toggleMenu={toggleMenuCallback} />
+          Option: props => <CustomOption {...props} more={props.more} setMore={props.setMore} />
         }}
       />
     </>
