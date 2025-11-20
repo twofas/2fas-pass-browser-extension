@@ -975,13 +975,25 @@
     "message": "Item adding canceled",
     "description": "Toast message displayed when the user cancels adding a new login item"
   },
-  "fetch_password_request_accept_toast": {
+  "fetch_generic_request_accept_toast": {
+    "message": "Data request accepted",
+    "description": "Toast message displayed when a unknown request is accepted"
+  },
+  "fetch_login_request_accept_toast": {
     "message": "Password request accepted",
     "description": "Toast message displayed when a password request is accepted"
   },
-  "fetch_password_request_cancel_toast": {
-    "message": "Password request rejected",
-    "description": "Toast message displayed when a password request is rejected"
+  "fetch_secureNote_request_accept_toast": {
+    "message": "Secure Note request accepted",
+    "description": "Toast message displayed when a secure note request is accepted"
+  },
+  "fetch_creditCard_request_accept_toast": {
+    "message": "Credit Card request accepted",
+    "description": "Toast message displayed when a credit card request is accepted"
+  },
+  "fetch_request_cancel_toast": {
+    "message": "Item request rejected",
+    "description": "Toast message displayed when a request is rejected"
   },
   "fetch_update_login_updated_toast": {
     "message": "Item updated",
@@ -1470,6 +1482,10 @@
   "this_tab_more_forget_password": {
     "message": "Forget this password",
     "description": "Button label to forget the saved password for a login item"
+  },
+  "this_tab_more_forget_secure_note": {
+    "message": "Forget this secure note",
+    "description": "Button label to forget the saved secure note"
   },
   "this_tab_more_uris": {
     "message": "Website URL(s):",

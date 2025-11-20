@@ -1554,6 +1554,10 @@
         font-weight: 400;
       }
 
+      &.forget {
+        padding-right: 8px !important;
+      }
+
       svg {
         flex-shrink: 0;
         height: 17px;
