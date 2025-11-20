@@ -735,6 +735,11 @@ class TwoFasError extends Error {
     handleNameNoService: {
       message: 'handleName: secure note not found',
       code: 9430
+    },
+    // ERROR FALLBACK
+    errorFallbackRenderError: {
+      message: 'ErrorFallback: error rendering fallback component',
+      code: 9440
     }
   };
 }

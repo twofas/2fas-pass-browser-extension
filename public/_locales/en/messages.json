@@ -123,6 +123,10 @@
     "message": "Connection error. Please check your Internet connection and try again.",
     "description": "Error message displayed when a connection error occurs"
   },
+  "error_error_message_copy_failed": {
+    "message": "Failed to copy error message to clipboard.",
+    "description": "Error message displayed when copying the error message to the clipboard fails"
+  },
   "appDesc": {
     "message": "2FAS Pass is a next-gen password manager with no compromises in security and full control over your data.",
     "description": "Description of the 2FAS Pass Browser Extension highlighting its features"
@@ -482,6 +486,10 @@
   "notification_secure_note_text_copied": {
     "message": "Secure note text copied to clipboard",
     "description": "Notification message when the secure note text is successfully copied to the clipboard"
+  },
+  "notification_error_message_copied": {
+    "message": "Error message copied to clipboard",
+    "description": "Notification message when the error message is successfully copied to the clipboard"
   },
   "placeholder_domain_uri": {
     "message": "e.g., https://2fas.com",
@@ -890,6 +898,22 @@
   "details_tags_select_tag": {
     "message": "Select Tag",
     "description": "Placeholder text for the tag selection dropdown"
+  },
+  "error_fallback_header": {
+    "message": "Error occurred",
+    "description": "Header message displayed on the error fallback screen"
+  },
+  "error_fallback_description": {
+    "message": "Sorry, an unexpected error has occurred. Click the button below to retry.",
+    "description": "Description message displayed on the error fallback screen"
+  },
+  "error_fallback_retry_button": {
+    "message": "Retry",
+    "description": "Label for the retry button on the error fallback screen"
+  },
+  "error_fallback_copy_error_title": {
+    "message": "Copy Error Message to clipboard",
+    "description": "Title for the copy error message button on the error fallback screen"
   },
   "fetch_push_header": {
     "message": "Check the 2FAS Pass push notification on your mobile device.",

@@ -425,6 +425,10 @@
     }
   }
 
+  &.btn-error-fallback {
+    padding: 0 40px;
+  }
+
   // INSTALL PAGE
   &.btn-install-page {
     border-radius: 32px;
