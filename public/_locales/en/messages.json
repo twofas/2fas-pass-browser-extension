@@ -163,6 +163,10 @@
     "message": "Go to Home Page",
     "description": "Button label to navigate to the home page"
   },
+  "scroll_to_top": {
+    "message": "Scroll to top",
+    "description": "Button label to scroll to the top of the page"
+  },
   "cancel": {
     "message": "Cancel",
     "description": "Button label to cancel an action"

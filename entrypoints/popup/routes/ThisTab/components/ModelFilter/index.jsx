@@ -72,7 +72,7 @@ const ModelFilter = () => {
         > 
           {generateModelIcon()}
           <span className={S.thisTabAllLoginsHeaderModelFilterText}>{itemModelsOptions.find(option => option.value === data.itemModelFilter)?.label || browser.i18n.getMessage('this_tab_all_logins_header')}</span>
-          <ChevronIcon className={S.thisTabAllLoginsHeaderModelFilterChevron} />
+          <ChevronIcon className={`${S.thisTabAllLoginsHeaderModelFilterChevron} ${isMenuOpen ? S.open : ''}`} />
         </button>
         <AdvancedSelect
           options={itemModelsOptions}

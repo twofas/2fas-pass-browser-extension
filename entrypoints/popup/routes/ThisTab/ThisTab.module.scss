@@ -351,6 +351,10 @@
           @include m.darkMode {
             fill: v.$object-dark;
           }
+
+          &.open {
+            transform: rotate(180deg);
+          }
         }
       }
 
