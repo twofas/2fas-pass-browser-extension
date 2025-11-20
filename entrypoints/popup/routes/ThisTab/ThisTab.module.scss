@@ -167,7 +167,9 @@
       &.service-url,
       &.service-username,
       &.service-more,
-      &.service-fetch {
+      &.service-fetch,
+      &.serivce-copy-2,
+      &.service-name {
         stroke: v.$object-light;
         stroke-width: 1.5;
         stroke-linecap: round;
@@ -179,9 +181,11 @@
         }
       }
 
-      &.service-password,
-      &.service-name,
       &.service-copy-2 {
+        stroke-width: 1.6;
+      }
+
+      &.service-password {
         fill: v.$object-light;
         transition: fill .3s ease-in-out;
 
@@ -868,7 +872,9 @@
             &.service-username,
             &.service-more,
             &.service-fetch,
-            &.service-details {
+            &.service-details,
+            &.service-copy-2,
+            &.service-name {
               stroke: v.$primary-color-light;
   
               @include m.darkMode {
@@ -876,9 +882,7 @@
               }
             }
   
-            &.service-password,
-            &.service-name,
-            &.service-copy-2 {
+            &.service-password {
               fill: v.$primary-color-light;
   
               @include m.darkMode {
@@ -1056,7 +1060,9 @@
           svg {
             &.service-more,
             &.service-username,
-            &.service-fetch {
+            &.service-fetch,
+            &.service-copy-2,
+            &.service-name {
               stroke: v.$primary-color-light;
               transition: stroke .3s ease-in-out;
 
@@ -1065,9 +1071,7 @@
               }
             }
 
-            &.service-password,
-            &.service-name,
-            &.service-copy-2 {
+            &.service-password {
               fill: v.$primary-color-light;
               transition: fill .3s ease-in-out;
 
@@ -1186,20 +1190,20 @@
           }
 
           &.service-name {
-            fill: v.$object-light;
-            width: 14px;
+            stroke: v.$object-light;
+            width: 20px;
 
             @include m.darkMode {
-              fill: v.$object-dark;
+              stroke: v.$object-dark;
             }
           }
 
           &.service-copy-2 {
-            fill: v.$object-light;
-            width: 13px;
+            stroke: v.$object-light;
+            width: 19px;
 
             @include m.darkMode {
-              fill: v.$object-dark;
+              stroke: v.$object-dark;
             }
           }
         }
