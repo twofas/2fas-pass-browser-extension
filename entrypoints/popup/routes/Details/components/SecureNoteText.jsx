@@ -191,7 +191,7 @@ function SecureNoteText (props) {
         {() => (
           <div className={`${pI.passInput} ${!data?.sifEditable || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''}`}>
             <div className={pI.passInputTop}>
-              <label htmlFor='editedSif'>{browser.i18n.getMessage('secure_note')}</label>
+              <label htmlFor='editedSif'>{browser.i18n.getMessage('secure_note_note')}</label>
               <button
                 type='button'
                 className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}

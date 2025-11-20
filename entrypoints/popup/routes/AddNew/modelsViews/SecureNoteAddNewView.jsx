@@ -116,7 +116,7 @@ function SecureNoteAddNewView () {
           {({ input }) => (
             <div className={`${pI.passInput} ${inputError === 'text' ? pI.error : ''}`}>
               <div className={pI.passInputTop}>
-                <label htmlFor='add-new-text'>{browser.i18n.getMessage('secure_note')}</label>
+                <label htmlFor='add-new-text'>{browser.i18n.getMessage('secure_note_note')}</label>
               </div>
               <div className={pI.passInputBottom}>
                 <textarea
