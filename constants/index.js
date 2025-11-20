@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 // Files with default exports
-export { default as addNewOptions } from './addNewOptions.js';
 export { default as allowedSavePromptRequests } from './allowedSavePromptRequests.js';
 export { default as badgeIcons } from './badgeIcons.js';
 export { default as CONNECT_VIEWS } from './CONNECT_VIEWS.js';
@@ -20,6 +19,7 @@ export { default as REQUEST_STRING_ACTIONS } from './REQUEST_STRING_ACTIONS.js';
 export { default as secIconColors } from './secIconColors.js';
 export { default as secIconSVGs } from './secIconSVGs.js';
 export { default as selectors } from './selectors.js';
+export { default as supportedFeatures } from './supportedFeatures.js';
 export { default as SOCKET_PATHS } from './SOCKET_PATHS.js';
 export { default as userNameAttributes } from './userNameAttributes.js';
 export { default as userNameDeniedKeywords } from './userNameDeniedKeywords.js';

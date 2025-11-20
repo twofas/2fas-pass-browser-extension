@@ -8,17 +8,12 @@ import S from '../../ThisTab.module.scss';
 import { useState, useRef } from 'react';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import AllIcon from '@/assets/popup-window/items/all.svg?react';
-import LoginIcon from '@/assets/popup-window/items/login.svg?react';
-import SecureNoteIcon from '@/assets/popup-window/items/secure-note.svg?react';
 import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import { components } from 'react-select';
-
-const itemModelsOptions = Object.freeze([
-  { value: null, label: browser.i18n.getMessage('this_tab_all_logins_header'), icon: <AllIcon className={S.modelAllIcon} /> },
-  { value: 'Login', label: browser.i18n.getMessage('login_plural'), icon: <LoginIcon className={S.modelLoginIcon} />, className: 'logins' },
-  { value: 'SecureNote', label: browser.i18n.getMessage('secure_note_plural'), icon: <SecureNoteIcon className={S.modelSecureNoteIcon} />, className: 'secure-notes' }
-]);
+import { getSupportedFeatures } from '@/partials/functions';
+import generateItemModelsOptions from './functions/generateItemModelsOptions';
+import { supportedFeatures } from '@/constants';
 
 const ModalFilterCustomOption = option => {
   return (
@@ -41,11 +36,13 @@ const ModalFilterCustomOption = option => {
 */
 const ModelFilter = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [itemModelsOptions, setItemModelsOptions] = useState([]);
+  const [deviceSupportedFeatures, setDeviceSupportedFeatures] = useState([]);
+
   const buttonRef = useRef(null);
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
-  // <h3>{browser.i18n.getMessage('this_tab_all_logins_header')}</h3>
 
   const generateModelIcon = () => {
     const selectedModel = itemModelsOptions.find(option => option.value === data.itemModelFilter);
@@ -62,36 +59,55 @@ const ModelFilter = () => {
     setData('itemModelFilter', newValue);
   };
 
+  const handleModelBtnClick = async () => {
+    if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
+      setItemModelsOptions(generateItemModelsOptions(deviceSupportedFeatures));
+      setIsMenuOpen(prevState => !prevState);
+    }
+  };
+
+  useEffect(() => {
+    getSupportedFeatures()
+      .then(features => setDeviceSupportedFeatures(features))
+      .catch(() => setDeviceSupportedFeatures([]));
+  }, []);
+
   return (
     <>
-      <>
-        <button
-          ref={buttonRef}
-          className={S.thisTabAllLoginsHeaderModelFilter}
-          onClick={() => setIsMenuOpen(prevState => !prevState)}
-        > 
-          {generateModelIcon()}
-          <span className={S.thisTabAllLoginsHeaderModelFilterText}>{itemModelsOptions.find(option => option.value === data.itemModelFilter)?.label || browser.i18n.getMessage('this_tab_all_logins_header')}</span>
-          <ChevronIcon className={`${S.thisTabAllLoginsHeaderModelFilterChevron} ${isMenuOpen ? S.open : ''}`} />
-        </button>
-        <AdvancedSelect
-          options={itemModelsOptions}
-          value={itemModelsOptions.find(option => option.value === data.itemModelFilter)}
-          menuIsOpen={isMenuOpen}
-          onMenuClose={() => setIsMenuOpen(false)}
-          onMenuOpen={() => setIsMenuOpen(true)}
-          onChange={selectedOption => handleModelChange(selectedOption)}
-          className='react-select-pass-dropdown'
-          classNamePrefix='react-select-model-filter'
-          isClearable={false}
-          isSearchable={false}
-          noOptionsMessage={() => null}
-          triggerRef={buttonRef}
-          components={{
-            Option: props => <ModalFilterCustomOption {...props} itemModelFilter={data.itemModelFilter} />
-          }}
-        />
-      </>
+      <button
+        ref={buttonRef}
+        className={`${S.thisTabAllLoginsHeaderModelFilter} ${deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) ? '' : S.disabled}`}
+        onClick={handleModelBtnClick}
+      > 
+        {
+          deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) ? (
+            <>
+              {generateModelIcon()}
+              <span className={S.thisTabAllLoginsHeaderModelFilterText}>{itemModelsOptions.find(option => option.value === data.itemModelFilter)?.label || browser.i18n.getMessage('this_tab_all_logins_header')}</span>
+              <ChevronIcon className={`${S.thisTabAllLoginsHeaderModelFilterChevron} ${isMenuOpen ? S.open : ''}`} />
+            </>
+          ) : (
+            <span className={S.thisTabAllLoginsHeaderModelFilterText}>{browser.i18n.getMessage('this_tab_all_logins_header')}</span>
+          )
+        }
+      </button>
+      <AdvancedSelect
+        options={itemModelsOptions}
+        value={itemModelsOptions.find(option => option.value === data.itemModelFilter)}
+        menuIsOpen={isMenuOpen}
+        onMenuClose={() => setIsMenuOpen(false)}
+        onMenuOpen={() => setIsMenuOpen(true)}
+        onChange={selectedOption => handleModelChange(selectedOption)}
+        className='react-select-pass-dropdown'
+        classNamePrefix='react-select-model-filter'
+        isClearable={false}
+        isSearchable={false}
+        noOptionsMessage={() => null}
+        triggerRef={buttonRef}
+        components={{
+          Option: props => <ModalFilterCustomOption {...props} itemModelFilter={data.itemModelFilter} />
+        }}
+      />
     </>
   );
 };
