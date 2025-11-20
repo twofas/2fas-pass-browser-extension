@@ -54,7 +54,6 @@
       display: flex;
       height: 100%;
       padding: 0;
-      user-select: none;
     }
 
     a,
@@ -223,7 +222,6 @@
       padding: 0 9px 0 12px;
       pointer-events: none;
       transition: border-color .3s ease-in-out, color .3s ease-in-out, background-color .3s ease-in-out;
-      user-select: none;
       width: 100%;
 
       &.disabled {

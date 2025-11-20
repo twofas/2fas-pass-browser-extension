@@ -46,7 +46,6 @@
     position: absolute;
     transform: translateX(-50%);
     transition: opacity .3s ease-in-out, border-color .3s ease-in-out, border-width .3s ease-in-out;
-    user-select: none;
     width: 64px;
     z-index: 3;
 
@@ -215,7 +214,6 @@
       opacity: 1;
       text-align: center;
       transition: opacity .3s ease-in-out, background-color .3s ease-in-out;
-      user-select: none;
       width: 32px;
 
       @include m.darkMode {
@@ -332,7 +330,6 @@
       justify-content: center;
       padding: 4px 12px 4px 6px;
       transition: background-color .3s ease-in-out;
-      user-select: none;
 
       @include m.darkMode {
         background-color: rgba(v.$hover-color-dark, 0);
