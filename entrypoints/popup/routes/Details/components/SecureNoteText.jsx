@@ -206,7 +206,7 @@ function SecureNoteText (props) {
                 <textarea
                   ref={textareaRef}
                   value={getTextValue()}
-                  placeholder={!sifDecryptError && (originalItem?.isT3orT2WithSif || data?.sifEditable) ? browser.i18n.getMessage('placeholder_secure_note') : ''}
+                  placeholder={!sifDecryptError && (originalItem?.isT3orT2WithSif || data?.sifEditable) ? browser.i18n.getMessage('placeholder_secure_note_empty') : ''}
                   id='editedSif'
                   className={S.detailsSecureNoteTextarea}
                   disabled={!data?.sifEditable || sifDecryptError}
