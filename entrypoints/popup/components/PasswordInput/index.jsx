@@ -28,7 +28,6 @@ function PasswordInput (props) {
     ...inputProps
   } = props;
 
-
   const [isFocused, setIsFocused] = useState(false);
   const [selection, setSelection] = useState({ start: 0, end: 0 });
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -43,6 +42,7 @@ function PasswordInput (props) {
   const isTypingRef = useRef(false);
   const lastInteractionRef = useRef(null);
   const scrollLeftRef = useRef(0); // Keep real-time scroll value in ref
+  const isCopyOperationRef = useRef(false); // Track if copy/cut just happened
   
   const getCharacterType = useCallback((char) => {
     if (/[0-9]/.test(char)) {
@@ -87,11 +87,34 @@ function PasswordInput (props) {
         }
       }, 200);
     }, 100);
-  }, [onChange, value, disabled]);
+  }, [onChange, value, disabled, selection]);
 
   const handleKeyDown = useCallback((e) => {
     // Don't process any keyboard events if input is disabled
     if (disabled) {
+      return;
+    }
+
+    // Check for modifier keys alone (Ctrl, Cmd, Option, Alt, Shift)
+    const modifierKeyRegex = /^(Control|Meta|Shift|Alt)$/;
+    const isModifierKeyAlone = modifierKeyRegex.test(e.key);
+
+    if (isModifierKeyAlone) {
+      return; // Don't process modifier keys alone
+    }
+
+    // Clear copy operation flag on any other keyboard interaction (except copy/cut)
+    if (!(e.ctrlKey || e.metaKey) || (e.key !== 'c' && e.key !== 'x')) {
+      // Only reset flag if we're doing something other than copy/cut
+      if (e.key.length === 1 || ['Backspace', 'Delete'].includes(e.key)) {
+        isCopyOperationRef.current = false;
+      }
+    }
+
+    // Don't handle Ctrl+V here - let the paste event handler and browser handle it
+    if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+      // Allow default behavior - paste event will be handled by onPaste
+      isCopyOperationRef.current = false; // Clear copy flag on paste
       return;
     }
 
@@ -137,7 +160,9 @@ function PasswordInput (props) {
 
     // Clear selection on any non-Shift key press if there's a selection
     // But don't clear for Ctrl+A/Cmd+A as it's meant to select all
-    if (!e.shiftKey && selection.start !== selection.end && !(e.key === 'a' && (e.ctrlKey || e.metaKey))) {
+    // And don't clear for Ctrl+C/Cmd+C or Ctrl+X/Cmd+X (copy/cut operations)
+    const isCopyOrCutKey = (e.key === 'c' || e.key === 'x') && (e.ctrlKey || e.metaKey);
+    if (!e.shiftKey && selection.start !== selection.end && !(e.key === 'a' && (e.ctrlKey || e.metaKey)) && !isCopyOrCutKey) {
       // Keys that we handle explicitly below
       const handledKeys = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'Backspace', 'Delete'];
 
@@ -257,6 +282,71 @@ function PasswordInput (props) {
       }
     }
 
+    if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+      e.preventDefault();
+
+      if (inputRef.current && selection.start !== selection.end) {
+        const selectedText = value.substring(selection.start, selection.end);
+
+        // Mark that a copy operation is happening - this prevents blur from clearing selection
+        isCopyOperationRef.current = true;
+
+        // Force re-render immediately to show selection highlight
+        setForceRenderKey(prev => prev + 1);
+
+        navigator.clipboard.writeText(selectedText).finally(() => {
+          // Reset copy flag after clipboard operation completes
+          // Use a longer timeout to ensure blur event can check the flag
+          // The selection will remain visible until this timeout fires
+          setTimeout(() => {
+            isCopyOperationRef.current = false;
+          }, 2000);
+        });
+      }
+    }
+
+    if ((e.ctrlKey || e.metaKey) && e.key === 'x') {
+      e.preventDefault();
+
+      if (inputRef.current && selection.start !== selection.end) {
+        const selectedText = value.substring(selection.start, selection.end);
+        const start = selection.start;
+        const end = selection.end;
+
+        // Mark that a copy operation is happening (for cut as well)
+        isCopyOperationRef.current = true;
+
+        navigator.clipboard.writeText(selectedText).then(() => {
+
+          const newValue = value.substring(0, start) + value.substring(end);
+          inputRef.current.value = newValue;
+          inputRef.current.setSelectionRange(start, start);
+          setSelection({ start: start, end: start });
+          setForceRenderKey(prev => prev + 1);
+
+          const syntheticEvent = {
+            target: {
+              value: newValue,
+              selectionStart: start,
+              selectionEnd: start
+            }
+          };
+
+          handleChange(syntheticEvent);
+          lastInteractionRef.current = 'typing';
+
+          // Reset copy flag after cut completes
+          // For cut, we can reset sooner since selection is already cleared
+          setTimeout(() => {
+            isCopyOperationRef.current = false;
+          }, 200);
+        }).catch(() => {
+          // Handle clipboard write error silently
+          isCopyOperationRef.current = false;
+        });
+      }
+    }
+
     // Handle End key or Ctrl/Cmd+Right to jump to end
     if (e.key === 'End' || ((e.ctrlKey || e.metaKey) && e.key === 'ArrowRight')) {
       e.preventDefault();
@@ -319,7 +409,11 @@ function PasswordInput (props) {
     }
 
     // Handle arrow keys with Shift for selection
-    if (e.key === 'ArrowLeft' && inputRef.current) {
+    // ONLY process arrow keys if they're not combined with Ctrl/Cmd alone
+    // (Ctrl/Cmd+Arrow is handled above for Home/End functionality)
+    const isCtrlOrCmdAlone = (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey;
+
+    if (e.key === 'ArrowLeft' && inputRef.current && !(isCtrlOrCmdAlone)) {
       e.preventDefault();
 
       if (e.shiftKey) {
@@ -358,7 +452,7 @@ function PasswordInput (props) {
       return;
     }
 
-    if (e.key === 'ArrowRight' && inputRef.current) {
+    if (e.key === 'ArrowRight' && inputRef.current && !(isCtrlOrCmdAlone)) {
       e.preventDefault();
 
       if (e.shiftKey) {
@@ -396,7 +490,82 @@ function PasswordInput (props) {
 
       return;
     }
-  }, [value, selection, selectionAnchor, handleChange, setIsSelecting, setSelectionStartIndex, setForceRenderKey, disabled]);
+  }, [value, selection, selectionAnchor, handleChange, disabled]);
+
+  const handlePaste = useCallback((e) => {
+    // Clear copy flag on paste
+    isCopyOperationRef.current = false;
+
+    // Don't process paste when disabled
+    if (disabled) {
+      e.preventDefault();
+      return;
+    }
+
+    e.preventDefault();
+
+    if (!inputRef.current) {
+      return;
+    }
+
+    // Get pasted text from clipboard via event
+    const pastedText = e.clipboardData?.getData('text') || '';
+
+    if (!pastedText) {
+      return;
+    }
+
+    // Stop any ongoing mouse selection when pasting
+    setIsSelecting(false);
+    setSelectionStartIndex(null);
+    setSelectionAnchor(null);
+
+    // If input is not focused, paste at the end of the value
+    // If input is focused, paste at cursor position from React state
+    let start;
+    let end;
+
+    if (!isFocused) {
+      // Not focused - paste at the end
+      start = value.length;
+      end = value.length;
+    } else {
+      // Focused - use React state selection (NOT hidden input's selection)
+      // The hidden input's selectionStart/selectionEnd don't reflect our custom selection
+      start = selection.start;
+      end = selection.end;
+    }
+
+    // Replace selected text (or insert at cursor if no selection)
+    const newValue = value.substring(0, start) + pastedText + value.substring(end);
+    const newCursorPos = start + pastedText.length;
+
+    // Update input and selection
+    inputRef.current.value = newValue;
+    inputRef.current.setSelectionRange(newCursorPos, newCursorPos);
+
+    // Force a complete re-render
+    setSelection({ start: newCursorPos, end: newCursorPos });
+    setForceRenderKey(prev => prev + 1);
+
+    // Focus the input after pasting if it wasn't focused
+    if (!isFocused) {
+      setIsFocused(true);
+      inputRef.current.focus();
+    }
+
+    // Create a synthetic event for onChange
+    const syntheticEvent = {
+      target: {
+        value: newValue,
+        selectionStart: newCursorPos,
+        selectionEnd: newCursorPos
+      }
+    };
+
+    handleChange(syntheticEvent);
+    lastInteractionRef.current = 'typing';
+  }, [value, isFocused, disabled, handleChange, selection]);
 
   const handleWheel = useCallback((e) => {
     // Don't allow scrolling when disabled
@@ -476,6 +645,9 @@ function PasswordInput (props) {
       return;
     }
 
+    // Clear copy flag on mouse interaction (user clicked somewhere)
+    isCopyOperationRef.current = false;
+
     lastInteractionRef.current = 'mouse';
 
     // Clear selection anchor when starting new selection with mouse
@@ -498,7 +670,7 @@ function PasswordInput (props) {
         setScrollLeft(currentScroll);
       }
     }
-  }, [getCharacterIndexFromMousePosition, disabled]);
+  }, [getCharacterIndexFromMousePosition, disabled, selection]);
 
   const handleMouseMove = useCallback((e) => {
     // Don't allow mouse interactions when disabled
@@ -737,10 +909,12 @@ function PasswordInput (props) {
       // Include forceRenderKey in the key to ensure React re-renders when selection changes
       const uniqueKey = `${index}-${forceRenderKey}-${isSelected}`;
 
+      const finalClassName = `${S.passwordInputCharacter} ${shouldColorize ? S[`passwordInputCharacter${charType.charAt(0).toUpperCase() + charType.slice(1)}`] : ''} ${isSelected ? S.passwordInputCharacterSelected : ''}`;
+
       return (
         <span
           key={uniqueKey}
-          className={`${S.passwordInputCharacter} ${shouldColorize ? S[`passwordInputCharacter${charType.charAt(0).toUpperCase() + charType.slice(1)}`] : ''} ${isSelected ? S.passwordInputCharacterSelected : ''}`}
+          className={finalClassName}
           data-index={index}
         >
           {isPassword ? '•' : char}
@@ -755,17 +929,20 @@ function PasswordInput (props) {
         ref={displayRef}
         className={`${S.passwordInputDisplay} ${isFocused ? S.passwordInputDisplayFocused : ''} ${state === 'nonFetched' ? S.nonFetched : ''}`}
         onScroll={handleDisplayScroll}
-        onMouseDown={handleMouseDown}
+        onMouseDown={(e) => {
+          if (!disabled) {
+            inputRef.current?.focus();
+            handleMouseDown(e);
+          }
+        }}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onClick={() => !disabled && setIsFocused(true)}
-        tabIndex={disabled ? -1 : 0}
-        onFocus={() => !disabled && setIsFocused(true)}
-        onBlur={() => {
-          setIsFocused(false);
-          setSelection({ start: 0, end: 0 });
+        onClick={() => {
+          if (!disabled) {
+            setIsFocused(true);
+            inputRef.current?.focus();
+          }
         }}
-        onKeyDown={handleKeyDown}
       >
         <input
           ref={inputRef}
@@ -774,16 +951,39 @@ function PasswordInput (props) {
           id={id}
           value={value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          onFocus={() => {
+            !disabled && setIsFocused(true);
+          }}
+          onBlur={() => {
+            setIsFocused(false);
+
+            // Don't clear selection if a copy operation just happened
+            // The flag should still be true during copy, so we preserve selection
+            if (!isCopyOperationRef.current) {
+              setSelection({ start: 0, end: 0 });
+            }
+          }}
           disabled={disabled}
           className={S.passwordInputHiddenInput}
-          tabIndex={-1}
+          tabIndex={disabled ? -1 : 0}
           style={{
             position: 'absolute',
-            left: '-9999px',
-            width: '1px',
-            height: '1px',
+            left: '0',
+            top: '0',
+            width: '100%',
+            height: '100%',
             opacity: 0,
-            pointerEvents: 'none'
+            pointerEvents: 'auto',
+            zIndex: '2',
+            backgroundColor: 'transparent',
+            border: 'none',
+            padding: '0',
+            margin: '0',
+            font: 'inherit',
+            color: 'transparent',
+            caretColor: 'transparent'
           }}
         />
 
