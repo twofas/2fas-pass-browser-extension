@@ -20,6 +20,7 @@ export { default as getLastActiveTab } from './getLastActiveTab.js';
 export { default as getLoaderProgress } from './getLoaderProgress.js';
 export { default as getNTPTime } from './getNTPTime.js';
 export { default as getPopupWindowData } from './getPopupWindowData.js';
+export { default as getSupportedFeatures } from './getSupportedFeatures.js';
 export { default as isCryptoAvailable } from './isCryptoAvailable.js';
 export { default as isElementInArray } from './isElementInArray.js';
 export { default as isPaidDeviceConnected } from './isPaidDeviceConnected.js';

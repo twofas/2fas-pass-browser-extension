@@ -288,6 +288,10 @@
           }
         }
 
+        &.disabled {
+          pointer-events: none;
+        }
+
         &-icon {
           align-items: center;
           background-color: v.$primary-color-light;

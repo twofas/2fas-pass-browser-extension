@@ -6,15 +6,17 @@
 
 import S from './TopBar.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { useEffect, useRef, useState, lazy, useCallback, useMemo, memo, useContext } from 'react';
 import { useAuthActions, useAuthState } from '@/hooks/useAuth';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import AddNewCustomOption from './components/AddNewCustomOption';
-import { addNewOptions } from '@/constants';
 import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
+import generateAddNewOptions from './functions/generateAddNewOptions';
+import { getSupportedFeatures } from '@/partials/functions';
+import { supportedFeatures } from '@/constants';
 
 const Logo = lazy(() => import('@/assets/logo.svg?react'));
 const LogoDark = lazy(() => import('@/assets/logo-dark.svg?react'));
@@ -28,12 +30,16 @@ const AddNewIcon = lazy(() => import('@/assets/popup-window/add-new.svg?react'))
 */
 function TopBar () {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const { logout } = useAuthActions();
   const { configured } = useAuthState();
   const { matchingLoginsLength } = useMatchingLogins();
   const scrollableRefContext = useContext(ScrollableRefContext);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [addNewOptions, setAddNewOptions] = useState([]);
+  const [deviceSupportedFeatures, setDeviceSupportedFeatures] = useState([]);
 
   const unwatchConfigured = useRef(null);
   const addNewContainerRef = useRef(null);
@@ -106,6 +112,15 @@ function TopBar () {
     return returnClass;
   }, [configured, location.pathname]);
 
+  const handleAddNewClick = useCallback(async () => {
+    if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
+      setAddNewOptions(generateAddNewOptions(deviceSupportedFeatures));
+      setIsMenuOpen(!isMenuOpen);
+    } else {
+      navigate('/add-new/Login');
+    }
+  }, [isMenuOpen, deviceSupportedFeatures, navigate]);
+
   useEffect(() => {
     watchConfigured().then(unwatch => {
       unwatchConfigured.current = unwatch;
@@ -117,6 +132,12 @@ function TopBar () {
       }
     };
   }, [watchConfigured]);
+
+  useEffect(() => {
+    getSupportedFeatures()
+      .then(features => setDeviceSupportedFeatures(features))
+      .catch(() => setDeviceSupportedFeatures([]));
+  }, []);
 
   return (
     <>
@@ -166,7 +187,7 @@ function TopBar () {
             ref={addNewBtnRef}
             className={addNewBtnClass}
             type='button'
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={handleAddNewClick}
           >
             <span>{browser.i18n.getMessage('top_bar_add_new')}</span>
             <AddNewIcon />

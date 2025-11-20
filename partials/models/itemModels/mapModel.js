@@ -4,25 +4,20 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import Login from './Login.js';
-import SecureNote from './SecureNote.js';
-
-const modelClasses = [Login, SecureNote];
-const models = new Map(
-  modelClasses
-    .filter(Model => Model.contentType)
-    .map(Model => [Model.contentType, Model])
-);
+import getModelsForDevice from './getModelsForDevice.js';
 
 /**
  * Checks if the itemData has a contentType and contentVersion that match any of the available models
  * and validates that the model constructor doesn't throw errors
+ * @async
  * @param {Object} itemData - The item data to check
  * @param {string} deviceId - The device ID
  * @param {string} vaultId - The ID of the vault
- * @returns {boolean} True if contentType and contentVersion match a model and validation passes, false otherwise
+ * @returns {boolean|Object} True if contentType and contentVersion match a model and validation passes, false otherwise, or the item instance
  */
-const mapModel = (itemData, deviceId, vaultId) => {
+const mapModel = async (itemData, deviceId, vaultId) => {
+  const models = await getModelsForDevice(deviceId);
+
   if (!itemData?.contentType) {
     return false;
   }
