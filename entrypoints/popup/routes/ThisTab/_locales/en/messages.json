@@ -27,6 +27,10 @@
     "message": "Forget this password",
     "description": "Button label to forget the saved password for a login item"
   },
+  "this_tab_more_forget_secure_note": {
+    "message": "Forget this secure note",
+    "description": "Button label to forget the saved secure note"
+  },
   "this_tab_more_uris": {
     "message": "Website URL(s):",
     "description": "Label for displaying associated website URLs of a login item"
