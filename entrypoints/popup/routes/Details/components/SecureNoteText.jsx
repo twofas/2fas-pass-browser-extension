@@ -11,6 +11,7 @@ import { Field } from 'react-final-form';
 import { lazy, useState } from 'react';
 import { LazyMotion, animate } from 'motion/react';
 import { useEffect, useRef } from 'react';
+import { isText } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
@@ -37,7 +38,7 @@ function SecureNoteText (props) {
       return '';
     }
 
-    if (data.item.internalData.editedSif !== null && data.item.internalData.editedSif !== undefined) { // @TODO: isText?
+    if (isText(data.item.internalData.editedSif)) {
       return data.item.internalData.editedSif;
     }
 
