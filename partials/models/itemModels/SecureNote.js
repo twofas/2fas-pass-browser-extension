@@ -94,7 +94,15 @@ class SecureNote extends Item {
   }
 
   get dropdownList () {
-    return [];
+    const dO = [
+      { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
+    ];
+
+    if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
+      dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_secure_note'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
+    }
+
+    return dO;
   }
 
   get contextMenuItem () {

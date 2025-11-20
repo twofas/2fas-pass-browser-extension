@@ -13,10 +13,16 @@ import { copyValue } from '@/partials/functions';
 * @param {number} deviceId - The ID of the device.
 * @param {number} vaultId - The ID of the vault.
 * @param {number} itemId - The ID of the item.
+* @param {boolean} more - Indicates if more actions are available.
+* @param {function} setMore - Function to update the more state.
 * @return {Promise<void>}
 */
-const handleSecureNoteText = async (deviceId, vaultId, itemId) => {
+const handleSecureNoteText = async (deviceId, vaultId, itemId, more, setMore) => {
   let item;
+
+  if (more) {
+    setMore(false);
+  }
   
   try {
     item = await getItem(deviceId, vaultId, itemId);

@@ -5,16 +5,26 @@
 // See LICENSE file for full terms
 
 import S from '../../../ThisTab.module.scss';
-import { memo, lazy } from 'react';
-import { Link } from 'react-router';
+import { memo, lazy, useRef, useMemo, useCallback } from 'react';
 import generateIcon from '../../../functions/serviceList/generateIcon';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
+import toggleMenu from '../functions/toggleMenu';
 
 const Skeleton = lazy(() => import('../../Skeleton'));
-const DetailsIcon = lazy(() => import('@/assets/popup-window/details.svg?react'));
 const CopyNameBtn = lazy(() => import('../components/CopyNameBtn'));
 const CopySecureNoteBtn = lazy(() => import('../components/CopySecureNoteBtn'));
+const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
+const CustomOption = lazy(() => import('../components/CustomOption'));
 
 function SecureNoteItemView (props) {
+  const moreBtnRef = useRef(null);
+
+  const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
+
+  const toggleMenuCallback = useCallback(value => {
+    toggleMenu(value, { ref: props.ref, selectRef: props.selectRef }, { setMore: props.setMore });
+  }, [props.setMore]);
+
   return (
     <>
       <div
@@ -27,23 +37,22 @@ function SecureNoteItemView (props) {
         </span>
       </div>
       <div className={S.servicesListItemAdditionalButtons}>
-        <CopySecureNoteBtn item={props.data} />
-        <CopyNameBtn item={props.data} />
-
-        <Link
-          to={`/details/${props.data.deviceId}/${props.data.vaultId}/${props.data.id}`}
-          className={S.serviceDetailsBtn}
-          state={{
-            from: 'thisTab',
-            data: { ...props.data },
-            // scrollPosition @TODO: implement scroll position saving
-          }}
-          prefetch='intent'
-          title={browser.i18n.getMessage('this_tab_more_details')}
-        >
-          <DetailsIcon className={S.serviceDetails} />
-        </Link>
+        <CopySecureNoteBtn item={props.data} more={props.more} setMore={toggleMenuCallback} />
+        <CopyNameBtn item={props.data} more={props.more} setMore={toggleMenuCallback} />
+        <MoreBtn item={props.data} more={props.more} setMore={toggleMenuCallback} ref={moreBtnRef} />
       </div>
+      <AdvancedSelect
+        className='react-select-pass-dropdown'
+        classNamePrefix='react-select-dropdown'
+        isSearchable={false}
+        options={dropdownOptions}
+        menuIsOpen={props.more === true}
+        ref={props.selectRef}
+        triggerRef={moreBtnRef}
+        components={{
+          Option: props => <CustomOption {...props} more={props.more} toggleMenu={toggleMenuCallback} />
+        }}
+      />
     </>
   );
 }

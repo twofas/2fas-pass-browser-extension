@@ -19,9 +19,11 @@ const ServiceCopyIcon = lazy(() => import('@/assets/popup-window/copy2.svg?react
 * Function to render the password button.
 * @param {Object} props - The component props.
 * @param {Object} props.item - The item object.
+* @param {boolean} props.more - Indicates if more actions are available.
+* @param {function} props.setMore - Function to update the more state.
 * @return {JSX.Element} The rendered button element.
 */
-const CopySecureNoteBtn = ({ item }) => {
+const CopySecureNoteBtn = ({ item, more, setMore }) => {
   const [scheduledTime, setScheduledTime] = useState(false);
   const loaderRef = useRef(null);
   const intervalIdRef = useRef(0);
@@ -85,7 +87,7 @@ const CopySecureNoteBtn = ({ item }) => {
   if (item?.securityType === SECURITY_TIER.SECRET) {
     return (
       <button
-        onClick={async () => await handleSecureNoteText(item.deviceId, item.vaultId, item.id)}
+        onClick={async () => await handleSecureNoteText(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_text')}
       >
         <ServiceCopyIcon className={S.serviceCopy2} />
@@ -94,7 +96,7 @@ const CopySecureNoteBtn = ({ item }) => {
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
     return (
       <button
-        onClick={async () => await handleSecureNoteText(item.deviceId, item.vaultId, item.id)}
+        onClick={async () => await handleSecureNoteText(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_text')}
         className={S.servicePasswordLoader}
       >
