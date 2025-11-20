@@ -6,6 +6,7 @@
 
 import getKey from '@/partials/sessionStorage/getKey';
 import compressPublicKey from '@/partials/functions/compressPublicKey';
+import updateDeviceUpdatedAt from './updateDeviceUpdatedAt';
 
 /** 
 * Sends a push notification to a device.
@@ -18,6 +19,8 @@ const sendPush = async (device, data = {}) => {
   if (!device || !device.id || !device?.uuid) {
     throw new TwoFasError(TwoFasError.internalErrors.fetchSendPushInvalidDevice, { additional: { func: 'sendPush' } });
   }
+
+  await updateDeviceUpdatedAt(device);
 
   let pkPersBe;
 

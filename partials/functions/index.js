@@ -41,4 +41,5 @@ export { default as storageAutoClearActions } from './storageAutoClearActions.js
 export { default as tabIsInternal } from './tabIsInternal.js';
 export { default as uniqueElementOnly } from './uniqueElementOnly.js';
 export { default as uniqueOnly } from './uniqueOnly.js';
+export { default as updateDeviceUpdatedAt } from './updateDeviceUpdatedAt.js';
 export { default as valueToNFKD } from './valueToNFKD.js';
