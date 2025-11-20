@@ -24,6 +24,7 @@ import { ScrollableRefProvider } from './context/ScrollableRefProvider';
 import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
 import Connect from './routes/Connect';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const AddNew = lazy(() => import('./routes/AddNew'));
 const Settings = lazy(() => import('./routes/Settings'));
@@ -38,6 +39,7 @@ const FetchExternal = lazy(() => import('./routes/FetchExternal'));
 const Details = lazy(() => import('./routes/Details'));
 const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
+const ErrorFallback = lazy(() => import('./routes/ErrorFallback'));
 
 const emptyFunc = () => {};
 
@@ -381,11 +383,20 @@ const PopupMain = memo(() => {
 */
 function Popup () {
   return (
-    <HashRouter>
-      <AuthProvider>
-        <PopupMain />
-      </AuthProvider>
-    </HashRouter>
+    <ErrorBoundary
+      fallbackRender={props => <ErrorFallback {...props} className={`${S.pass} ${S.passScreen} ${S.passError}`} />}
+      onError={(error, info) => {
+        CatchError(new TwoFasError(TwoFasError.internalErrors.errorFallbackRenderError, {
+          additional: { error, info }
+        }));
+      }}
+    >
+      <HashRouter>
+        <AuthProvider>
+          <PopupMain />
+        </AuthProvider>
+      </HashRouter>
+    </ErrorBoundary>
   );
 }
 

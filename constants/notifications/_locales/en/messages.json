@@ -106,5 +106,9 @@
   "notification_secure_note_text_copied": {
     "message": "Secure note text copied to clipboard",
     "description": "Notification message when the secure note text is successfully copied to the clipboard"
+  },
+  "notification_error_message_copied": {
+    "message": "Error message copied to clipboard",
+    "description": "Notification message when the error message is successfully copied to the clipboard"
   }
 }

@@ -122,5 +122,9 @@
   "error_connection_error": {
     "message": "Connection error. Please check your Internet connection and try again.",
     "description": "Error message displayed when a connection error occurs"
+  },
+  "error_error_message_copy_failed": {
+    "message": "Failed to copy error message to clipboard.",
+    "description": "Error message displayed when copying the error message to the clipboard fails"
   }
 }
