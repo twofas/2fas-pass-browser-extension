@@ -11,7 +11,7 @@ import { lazy } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { Link } from 'react-router';
-import { copyValue } from '@/partials/functions';
+import { copyValue, isText } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect, useRef } from 'react';
 import usePopupStateStore from '../../../store/popupState';
@@ -55,7 +55,7 @@ function Password (props) {
       return '';
     }
 
-    if (data.item.internalData.editedSif !== null && data.item.internalData.editedSif !== undefined) { // @TODO: isText?
+    if (isText(data.item.internalData.editedSif)) {
       return data.item.internalData.editedSif;
     }
 

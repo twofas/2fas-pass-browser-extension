@@ -80,7 +80,7 @@ function Details (props) {
         try {
           const decryptedData = await item.decryptSif();
 
-          // @TODO: Refactor this
+          // FUTURE - Refactor this
           if (item.constructor.name === 'Login') {
             item.setSifDecrypted(decryptedData.password);
           } else if (item.constructor.name === 'SecureNote') {
