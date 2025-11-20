@@ -74,7 +74,6 @@
       position: absolute;
       transform: translateY(11px);
       transition: opacity .3s ease-in-out, transform .3s ease-in-out;
-      user-select: none;
       z-index: 9999;
 
       @include m.darkMode {

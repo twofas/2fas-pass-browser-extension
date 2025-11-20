@@ -701,7 +701,6 @@
     padding: 9px 12px;
     position: relative;
     transition: background-color .3s ease-in-out, color .3s ease-in-out;
-    user-select: none;
     width: 198px;
 
     body.theme-light & {
@@ -923,7 +922,6 @@
     padding: 9px 12px;
     position: relative;
     transition: background-color .3s ease-in-out, color .3s ease-in-out;
-    user-select: none;
     width: 198px;
 
     body.theme-light & {
@@ -1493,7 +1491,6 @@
       padding: 12px 30px 9px 8px;
       text-align: left;
       transition: color .3s ease-in-out;
-      user-select: none;
       width: 100%;
 
       &.uris {

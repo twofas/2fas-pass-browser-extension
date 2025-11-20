@@ -522,7 +522,6 @@
         top: 50%;
         transform: translateY(-50%);
         transition: opacity .3s ease-in-out !important;
-        user-select: none;
 
         &.hidden {
           opacity: 0;

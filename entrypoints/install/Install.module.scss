@@ -912,7 +912,6 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity .3s ease-in-out;
-      user-select: none;
 
       @media all and (max-width: 800px) {
         display: none;
