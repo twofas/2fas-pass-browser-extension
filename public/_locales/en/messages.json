@@ -515,6 +515,10 @@
     "message": "Type your Secure Note",
     "description": "Placeholder text for the Secure Note text input field"
   },
+  "placeholder_secure_note_empty": {
+    "message": "Your Secure Note is empty",
+    "description": "Placeholder text when there is no Secure Note available"
+  },
   "background_contextMenuConfigured_no_accounts": {
     "message": "There are no matching Items for this domain",
     "description": "Message displayed when no login items match the current domain in the context menu"
@@ -732,7 +736,7 @@
     "description": "Message displayed when the connection is successfully opened"
   },
   "connect_push_cancelled": {
-    "message": "Connection cancelled in the mobile app.",
+    "message": "Connection canceled in the mobile app.",
     "description": "Message displayed when the connection is cancelled by the user from the mobile app"
   },
   "connect_device_select_header": {
@@ -896,7 +900,7 @@
     "description": "Tooltip for add tag button"
   },
   "details_tags_no_available": {
-    "message": "No Tags available",
+    "message": "Create Tags in the mobile app",
     "description": "Message shown when there are no more tags to add"
   },
   "details_tags_select_tag": {
