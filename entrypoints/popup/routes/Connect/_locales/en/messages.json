@@ -16,7 +16,7 @@
     "description": "Message displayed when the connection is successfully opened"
   },
   "connect_push_cancelled": {
-    "message": "Connection cancelled in the mobile app.",
+    "message": "Connection canceled in the mobile app.",
     "description": "Message displayed when the connection is cancelled by the user from the mobile app"
   },
   "connect_device_select_header": {
