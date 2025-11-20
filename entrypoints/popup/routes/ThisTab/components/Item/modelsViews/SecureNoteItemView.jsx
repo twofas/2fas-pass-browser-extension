@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../../ThisTab.module.scss';
-import { memo, lazy, useRef, useMemo, useCallback } from 'react';
+import { memo, lazy, useRef, useMemo } from 'react';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
@@ -17,7 +17,6 @@ const CustomOption = lazy(() => import('../components/CustomOption'));
 
 function SecureNoteItemView (props) {
   const moreBtnRef = useRef(null);
-
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
 
   return (
