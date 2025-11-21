@@ -64,7 +64,7 @@
     "description": "Error message displayed when the requested login item is not found"
   },
   "error_secure_note_not_found": {
-    "message": "Something went wrong. Secure note not found.",
+    "message": "Something went wrong. Secure Note not found.",
     "description": "Error message displayed when the requested secure note is not found"
   },
   "error_username_copy_failed": {
@@ -84,7 +84,7 @@
     "description": "Error message displayed when the autofill operation fails"
   },
   "error_secure_note_name_copy_failed": {
-    "message": "Failed to copy secure note name to clipboard.",
+    "message": "Failed to copy Secure Note name to clipboard.",
     "description": "Error message displayed when copying the secure note name to the clipboard fails"
   },
   "error_no_response_from_tab": {
@@ -352,7 +352,7 @@
     "description": "Label for multiple secure notes"
   },
   "secure_note_placeholder": {
-    "message": "Add the note",
+    "message": "Add the Note",
     "description": "Placeholder text for the secure note input field"
   },
   "secure_note_name": {
@@ -360,7 +360,7 @@
     "description": "Placeholder text for the secure note name input field"
   },
   "secure_note_name_placeholder": {
-    "message": "Secure Note's name",
+    "message": "Secure Note name",
     "description": "Placeholder text for the secure note name input field"
   },
   "secure_note_name_required": {
@@ -368,7 +368,7 @@
     "description": "Validation message indicating that the secure note name is required"
   },
   "secure_note_name_max_length": {
-    "message": "Secure Note title must be less than 256 characters.",
+    "message": "Secure Note name must be less than 256 characters.",
     "description": "Validation message indicating that the secure note title exceeds the maximum length"
   },
   "secure_note_text_max_length": {
@@ -484,11 +484,11 @@
     "description": "Notification message when the password is successfully copied to the clipboard"
   },
   "notification_secure_note_name_copied": {
-    "message": "Secure note name copied to clipboard",
+    "message": "Secure Note name copied to clipboard",
     "description": "Notification message when the secure note name is successfully copied to the clipboard"
   },
   "notification_secure_note_text_copied": {
-    "message": "Secure note text copied to clipboard",
+    "message": "Secure Note text copied to clipboard",
     "description": "Notification message when the secure note text is successfully copied to the clipboard"
   },
   "notification_error_message_copied": {
@@ -1492,7 +1492,7 @@
     "description": "Button label to forget the saved password for a login item"
   },
   "this_tab_more_forget_secure_note": {
-    "message": "Forget this secure note",
+    "message": "Forget this Secure Note",
     "description": "Button label to forget the saved secure note"
   },
   "this_tab_more_uris": {
@@ -1608,11 +1608,11 @@
     "description": "Sort option for sorting items from Z to A"
   },
   "sort_newest": {
-    "message": "Most recently updated",
+    "message": "Newest",
     "description": "Sort option for sorting items by most recently updated first"
   },
   "sort_oldest": {
-    "message": "Least recently updated",
+    "message": "Oldest",
     "description": "Sort option for sorting items by least recently updated first"
   }
 }
