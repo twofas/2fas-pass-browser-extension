@@ -100,11 +100,11 @@
     "description": "Notification message when the password is successfully copied to the clipboard"
   },
   "notification_secure_note_name_copied": {
-    "message": "Secure note name copied to clipboard",
+    "message": "Secure Note name copied to clipboard",
     "description": "Notification message when the secure note name is successfully copied to the clipboard"
   },
   "notification_secure_note_text_copied": {
-    "message": "Secure note text copied to clipboard",
+    "message": "Secure Note text copied to clipboard",
     "description": "Notification message when the secure note text is successfully copied to the clipboard"
   },
   "notification_error_message_copied": {
