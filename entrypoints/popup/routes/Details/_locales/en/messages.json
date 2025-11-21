@@ -108,7 +108,7 @@
     "description": "Message indicating that the highly secret data has not been fetched yet"
   },
   "details_reveal_secure_note": {
-    "message": "Reveal Secure Note",
+    "message": "Reveal Note",
     "description": "Button label to reveal the secure note content"
   }
 }
