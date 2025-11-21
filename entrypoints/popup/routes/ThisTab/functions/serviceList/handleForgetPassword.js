@@ -30,7 +30,13 @@ const handleForgetPassword = async (e, itemId, setMore) => {
 
   // Update password
   const item = items.find(item => item.id === itemId);
+
+  if (!item) {
+    return;
+  }
+
   const { vaultId, deviceId } = item;
+
   item.removeSif();
 
   // Get itemsKeys
