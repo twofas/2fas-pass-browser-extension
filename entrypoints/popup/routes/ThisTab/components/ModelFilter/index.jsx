@@ -5,15 +5,16 @@
 // See LICENSE file for full terms
 
 import S from '../../ThisTab.module.scss';
-import { useState, useRef } from 'react';
+import { useState, useRef, lazy } from 'react';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
-import AllIcon from '@/assets/popup-window/items/all.svg?react';
 import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import { components } from 'react-select';
 import { getSupportedFeatures } from '@/partials/functions';
 import generateItemModelsOptions from './functions/generateItemModelsOptions';
 import { supportedFeatures } from '@/constants';
+
+const AllIcon = lazy(() => import('@/assets/popup-window/items/all.svg?react'));
 
 const ModalFilterCustomOption = option => {
   return (
