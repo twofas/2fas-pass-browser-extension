@@ -8,11 +8,11 @@
     "description": "Sort option for sorting items from Z to A"
   },
   "sort_newest": {
-    "message": "Most recently updated",
+    "message": "Newest",
     "description": "Sort option for sorting items by most recently updated first"
   },
   "sort_oldest": {
-    "message": "Least recently updated",
+    "message": "Oldest",
     "description": "Sort option for sorting items by least recently updated first"
   }
 }
