@@ -134,7 +134,7 @@ function Connect (props) {
       socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralDataRef.current.uuid, path: SOCKET_PATHS.CONNECT.QR });
       socket.addEventListener('close', ConnectOnClose, { path: SOCKET_PATHS.CONNECT.QR });
       setQrCode(qr);
-    } catch (e) {
+    } catch {
       setSocketError(true);
       showConnectToast({ message: browser.i18n.getMessage('error_general'), type: 'error' });
       setConnectingLoader(264);
