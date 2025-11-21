@@ -61,6 +61,7 @@ function Connect (props) {
   const ephemeralDataRef = useRef(null);
   const abortControllerRef = useRef(null);
   const sliderRef = useRef(null);
+  const previousViewRef = useRef(null);
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
@@ -115,7 +116,9 @@ function Connect (props) {
           }
         }
 
-        await new Promise(res => setTimeout(res, 250));
+        if (i < 4) {
+          await new Promise(res => setTimeout(res, 250));
+        }
       }
     }
 
@@ -126,17 +129,26 @@ function Connect (props) {
       return;
     }
 
-    socket.open();
-    socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralDataRef.current.uuid, path: SOCKET_PATHS.CONNECT.QR });
-    socket.addEventListener('close', ConnectOnClose, { path: SOCKET_PATHS.CONNECT.QR });
-    
-    setQrCode(qr);
+    try {
+      socket.open();
+      socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralDataRef.current.uuid, path: SOCKET_PATHS.CONNECT.QR });
+      socket.addEventListener('close', ConnectOnClose, { path: SOCKET_PATHS.CONNECT.QR });
+      setQrCode(qr);
+    } catch (e) {
+      setSocketError(true);
+      showConnectToast({ message: browser.i18n.getMessage('error_general'), type: 'error' });
+      setConnectingLoader(264);
+    }
   }, []);
 
   const handleSocketReload = useCallback(async () => {
-    await initEphemeralKeys();
-    await initQRConnection();
-    setSocketError(false);
+    try {
+      await initEphemeralKeys();
+      await initQRConnection();
+      setSocketError(false);
+    } catch {
+      // Error handling in initQRConnection and initEphemeralKeys
+    }
   }, [initEphemeralKeys, initQRConnection]);
 
   const showConnectToast = useCallback(({ message, type }) => {
@@ -148,55 +160,55 @@ function Connect (props) {
       return false;
     }
 
-    setDeviceName(device?.name);
-    setConnectView(CONNECT_VIEWS.PushSent);
-
-    // add UUID from ephemeral data to device object
-    device.uuid = ephemeralDataRef.current.uuid;
-
-    if (abortSignal?.aborted) {
-      return false;
-    }
-
-    let sessionId, timestamp, sigPush;
-
     try {
-      sessionId = Base64ToHex(device?.sessionId).toLowerCase();
-
-      const timestampValue = await getNTPTime();
-      timestamp = timestampValue.toString();
-
-      sigPush = await calculateFetchSignature(sessionId, device?.id, device?.uuid, timestamp);
-    } catch (e) {
-      await CatchError(e);
-    }
-
-    if (abortSignal?.aborted) {
-      return false;
-    }
-
-    try {
-      const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
+      setDeviceName(device?.name);
+      setConnectView(CONNECT_VIEWS.PushSent);
+      device.uuid = ephemeralDataRef.current.uuid;
 
       if (abortSignal?.aborted) {
         return false;
       }
 
-      if (json?.error === 'UNREGISTERED') {
-        setSocketError(true);
-        showConnectToast({ message: browser.i18n.getMessage('fetch_token_unregistered_header'), type: 'error' });
+      let sessionId, timestamp, sigPush;
+
+      try {
+        sessionId = Base64ToHex(device?.sessionId).toLowerCase();
+        const timestampValue = await getNTPTime();
+        timestamp = timestampValue.toString();
+        sigPush = await calculateFetchSignature(sessionId, device?.id, device?.uuid, timestamp);
+      } catch (e) {
+        await CatchError(e);
+      }
+
+      if (abortSignal?.aborted) {
         return false;
       }
 
-      const socket = new TwoFasWebSocket(sessionId);
-      socket.open();
-      socket.addEventListener('message', ConnectOnMessage, { uuid: device.uuid, action: PULL_REQUEST_TYPES.FULL_SYNC, path: SOCKET_PATHS.CONNECT.PUSH });
-      socket.addEventListener('close', ConnectOnClose, { path: SOCKET_PATHS.CONNECT.PUSH });
-    } catch (e) {
-      setConnectView(CONNECT_VIEWS.DeviceSelect);
-      const toastMessage = await networkTest('error_general');
-      showConnectToast({ message: browser.i18n.getMessage(toastMessage), type: 'error' });
-      await CatchError(e);
+      try {
+        const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
+
+        if (abortSignal?.aborted) {
+          return false;
+        }
+
+        if (json?.error === 'UNREGISTERED') {
+          setSocketError(true);
+          showConnectToast({ message: browser.i18n.getMessage('fetch_token_unregistered_header'), type: 'error' });
+          return false;
+        }
+
+        const socket = new TwoFasWebSocket(sessionId);
+        socket.open();
+        socket.addEventListener('message', ConnectOnMessage, { uuid: device.uuid, action: PULL_REQUEST_TYPES.FULL_SYNC, path: SOCKET_PATHS.CONNECT.PUSH });
+        socket.addEventListener('close', ConnectOnClose, { path: SOCKET_PATHS.CONNECT.PUSH });
+      } catch (e) {
+        setConnectView(CONNECT_VIEWS.DeviceSelect);
+        const toastMessage = await networkTest('error_general');
+        showConnectToast({ message: browser.i18n.getMessage(toastMessage), type: 'error' });
+        await CatchError(e);
+      }
+    } catch {
+      // Error handling in nested try-catch blocks
     }
   }, [showConnectToast]);
 
@@ -217,36 +229,53 @@ function Connect (props) {
   }, [connectView, data?.connectSliderIndex, readyDevices, connectByPush]);
 
   const handleViewSwitch = useCallback(async () => {
-    switch (connectView) {
-      case CONNECT_VIEWS.QrView: {
-        if (closeConnectionRef.current) {
-          await closeConnectionRef.current().catch();
-        }
+    const viewChanged = previousViewRef.current !== connectView;
 
-        if (!socketError) {
-          if (!ephemeralDataRef?.current?.publicKey) {
-            await initEphemeralKeys();
+    if (!viewChanged) {
+      return;
+    }
+
+    previousViewRef.current = connectView;
+
+    try {
+      switch (connectView) {
+        case CONNECT_VIEWS.QrView: {
+          if (closeConnectionRef.current) {
+            await closeConnectionRef.current().catch(() => {
+              // Ignore close errors
+            });
           }
 
-          await initQRConnection();
+          if (!socketError) {
+            if (!ephemeralDataRef?.current?.publicKey) {
+              await initEphemeralKeys();
+            }
+
+            await initQRConnection();
+          }
+
+          break;
         }
 
-        break;
-      }
+        case CONNECT_VIEWS.DeviceSelect: {
+          if (closeConnectionRef.current) {
+            await closeConnectionRef.current().catch(() => {
+              // Ignore close errors
+            });
+          }
 
-      case CONNECT_VIEWS.DeviceSelect: {
-        if (closeConnectionRef.current) {
-          await closeConnectionRef.current().catch();
+          await getReadyDevices();
+          break;
         }
 
-        await getReadyDevices();
-
-        break;
+        default: {
+          break;
+        }
       }
-
-      default: break;
+    } catch {
+      // Error handling in nested functions
     }
-  }, [connectView, socketError, initQRConnection, getReadyDevices]);
+  }, [connectView, socketError, initEphemeralKeys, initQRConnection, getReadyDevices]);
 
   const generateDeviceIcon = device => {
     const platform = device?.platform || 'unknown';
@@ -343,7 +372,9 @@ function Connect (props) {
         if (socket && socket.socket.readyState !== WebSocket.CLOSED) {
           try {
             socket.close(WEBSOCKET_STATES.NORMAL_CLOSURE, 'Component unmounted');
-          } catch {}
+          } catch {
+            // Ignore close errors
+          }
 
           await new Promise(resolve => {
             const checkClosed = setInterval(() => {
@@ -368,7 +399,9 @@ function Connect (props) {
 
     return () => {
       if (closeConnectionRef.current) {
-        closeConnectionRef.current().catch();
+        closeConnectionRef.current().catch(() => {
+          // Ignore cleanup errors
+        });
       }
     };
   }, []);
@@ -384,7 +417,7 @@ function Connect (props) {
     eventBus.on(eventBus.EVENTS.CONNECT.LOGIN, login);
 
     initEphemeralKeys()
-      .then(getReadyDevices)
+      .then(() => getReadyDevices())
       .then(devices => {
         if (devices.length === 0) {
           setConnectView(CONNECT_VIEWS.QrView);
@@ -392,7 +425,9 @@ function Connect (props) {
           setConnectView(CONNECT_VIEWS.DeviceSelect);
         }
       })
-      .catch(CatchError);
+      .catch(error => {
+        CatchError(error);
+      });
 
     return () => {
       if (abortControllerRef.current) {
@@ -407,7 +442,9 @@ function Connect (props) {
       eventBus.off(eventBus.EVENTS.CONNECT.LOGIN, login);
 
       if (closeConnectionRef.current) {
-        closeConnectionRef.current().catch();
+        closeConnectionRef.current().catch(() => {
+          // Ignore cleanup errors
+        });
       }
     };
   }, []);
@@ -426,7 +463,7 @@ function Connect (props) {
 
   useEffect(() => {
     handleViewSwitch();
-  }, [handleViewSwitch]);
+  }, [connectView, handleViewSwitch]);
 
   useEffect(() => {
     if (sliderRef?.current && sliderRef.current.splide) {
@@ -442,7 +479,6 @@ function Connect (props) {
 
       if (savedIndex > 0 && savedIndex < readyDevices.length && splide.index !== savedIndex) {
         const originalSpeed = splide.options.speed;
-
         splide.options.speed = 0;
 
         requestAnimationFrame(() => {
