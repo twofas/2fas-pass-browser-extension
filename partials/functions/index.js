@@ -36,7 +36,7 @@ export { default as sendMessageToAllFrames } from './sendMessageToAllFrames.js';
 export { default as sendMessageToTab } from './sendMessageToTab.js';
 export { default as sendPush } from './sendPush.js';
 export { default as shuffleArray } from './shuffleArray.js';
-export { default as sortByName } from './sortByName.js';
+export { default as sortFunction } from './sortFunction.js';
 export { default as storageAutoClearActions } from './storageAutoClearActions.js';
 export { default as tabIsInternal } from './tabIsInternal.js';
 export { default as uniqueElementOnly } from './uniqueElementOnly.js';

@@ -8,7 +8,7 @@ import S from '../ThisTab.module.scss';
 import Item from '../components/Item';
 import SafariViewportList from '@/entrypoints/popup/components/SafariViewportList';
 import { lazy } from 'react';
-import sortByName from '@/partials/functions/sortByName';
+import { sortFunction } from '@/partials/functions';
 import isItemsCorrect from './isItemsCorrect';
 
 const EmptyListIcon = lazy(() => import('@/assets/popup-window/empty-list.svg?react'));
@@ -49,8 +49,8 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag, i
   let fetchedItems = items.filter(item => item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists);
   let restItems = items.filter(item => item?.securityType !== SECURITY_TIER.HIGHLY_SECRET || (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && !item?.sifExists));
 
-  fetchedItems = sortByName(fetchedItems, sort);
-  restItems = sortByName(restItems, sort);
+  fetchedItems = sortFunction(fetchedItems, sort);
+  restItems = sortFunction(restItems, sort);
 
   itemsData = fetchedItems.concat(restItems);
 

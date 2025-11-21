@@ -1551,6 +1551,10 @@
     "message": "Copy note",
     "description": "Button label to copy text from a secure note to the clipboard"
   },
+  "this_tab_copy_name": {
+    "message": "Copy name",
+    "description": "Button label to copy the name of an item to the clipboard"
+  },
   "this_tab_fetch_text": {
     "message": "Fetch note",
     "description": "Button label to fetch the text from the mobile app"
@@ -1594,5 +1598,21 @@
   "filters_clear_choice": {
     "message": "Clear filters",
     "description": "Option text to clear the selected tag filter"
+  },
+  "sort_az": {
+    "message": "A-Z",
+    "description": "Sort option for sorting items from A to Z"
+  },
+  "sort_za": {
+    "message": "Z-A",
+    "description": "Sort option for sorting items from Z to A"
+  },
+  "sort_newest": {
+    "message": "Most recently updated",
+    "description": "Sort option for sorting items by most recently updated first"
+  },
+  "sort_oldest": {
+    "message": "Least recently updated",
+    "description": "Sort option for sorting items by least recently updated first"
   }
 }
