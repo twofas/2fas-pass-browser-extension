@@ -64,21 +64,29 @@ const checkStorageAutoClearActions = async () => {
       await storage.setItem('session:autoClearActions', []);
       return;
     }
+  } else if (action.itemType === 'text') {
+    try {
+      const decryptedSif = await item.decryptSif();
+      itemValue = decryptedSif.text;
+    } catch {
+      await storage.setItem('session:autoClearActions', []);
+      return;
+    }
   } else if (action.itemType === 'uri') {
     const uris = item.content.uris || [];
-    
+
     if (!uris || uris.length === 0) {
       await storage.setItem('session:autoClearActions', []);
       return false;
     }
-    
+
     const uriTexts = uris.map(uri => uri?.text).filter(text => text);
-    
+
     if (!uriTexts || uriTexts.length === 0) {
       await storage.setItem('session:autoClearActions', []);
       return false;
     }
-    
+
     itemValue = [];
     uriTexts.forEach(text => {
       itemValue.push(text);
@@ -92,7 +100,7 @@ const checkStorageAutoClearActions = async () => {
       } catch {}
     });
 
-    itemValue = [...new Set(itemValue)]; // unique values
+    itemValue = [...new Set(itemValue)];
     itemValue = JSON.stringify(itemValue);
   } else {
     itemValue = item.content[action.itemType];
