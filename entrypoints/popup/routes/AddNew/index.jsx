@@ -38,10 +38,10 @@ function AddNew(props) {
 
     const modelData = {};
 
-    switch (modelName) {
-      case Login.contentType:
+    switch (modelName.toLowerCase()) {
+      case Login.contentType.toLowerCase():
         return <LoginView {...props} {...modelData} />;
-      case SecureNote.contentType:
+      case SecureNote.contentType.toLowerCase():
         return <SecureNoteView {...props} {...modelData} />;
       default:
         return null;
