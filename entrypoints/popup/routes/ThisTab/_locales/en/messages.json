@@ -84,11 +84,11 @@
     "description": "Button label to copy the username to the clipboard"
   },
   "this_tab_copy_text": {
-    "message": "Copy text",
+    "message": "Copy note",
     "description": "Button label to copy text from a secure note to the clipboard"
   },
   "this_tab_fetch_text": {
-    "message": "Fetch text",
+    "message": "Fetch note",
     "description": "Button label to fetch the text from the mobile app"
   },
   "this_tab_more_actions": {
