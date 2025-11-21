@@ -41,7 +41,7 @@ const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
 const ErrorFallback = lazy(() => import('./routes/ErrorFallback'));
 
-const emptyFunc = () => {};
+const emptyFunc = () => { };
 
 const routeConfig = [
   { path: '/connect', component: Connect },
@@ -240,7 +240,7 @@ const initializePopupOnce = async () => {
 
   initializationPromise = (async () => {
     try {
-      const [tab, otherPopupExists, ] = await Promise.all([
+      const [tab, otherPopupExists,] = await Promise.all([
         browser?.tabs?.getCurrent().catch(() => null),
         isPopupInSeparateWindowExists(),
         setTheme()
@@ -296,7 +296,7 @@ const PopupMain = memo(() => {
   const stateUpdated = useRef(false);
 
   const classNames = useMemo(() => {
-    const baseClass = `${S.pass} ${!state.isSeparateWindow ? S.passNonSeparateWindow: ''} ${import.meta.env.BROWSER}`;
+    const baseClass = `${S.pass} ${!state.isSeparateWindow ? S.passNonSeparateWindow : ''} ${import.meta.env.BROWSER}`;
     return {
       blocked: `${baseClass} ${S.passBlocked}`,
       main: baseClass
@@ -320,8 +320,8 @@ const PopupMain = memo(() => {
           stateUpdated.current = true;
           setState(prev => {
             if (prev.loaded === result.loaded &&
-                prev.blocked === result.blocked &&
-                prev.isSeparateWindow === result.isSeparateWindow) {
+              prev.blocked === result.blocked &&
+              prev.isSeparateWindow === result.isSeparateWindow) {
               return prev;
             }
 
@@ -342,7 +342,7 @@ const PopupMain = memo(() => {
 
     try {
       storageAutoClearActions();
-    } catch {}
+    } catch { }
 
     if (import.meta.env.BROWSER === 'safari') {
       document.addEventListener('click', safariBlankLinks);
@@ -381,7 +381,7 @@ const PopupMain = memo(() => {
 * Popup component to render the main popup UI with HashRouter.
 * @return {JSX.Element} The rendered component.
 */
-function Popup () {
+function Popup() {
   return (
     <ErrorBoundary
       fallbackRender={props => <ErrorFallback {...props} className={`${S.pass} ${S.passScreen} ${S.passError}`} />}
