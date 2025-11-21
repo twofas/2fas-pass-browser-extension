@@ -11,12 +11,10 @@ import handleName from '../../../functions/serviceList/handleName';
 const CopyNameIcon = lazy(() => import('@/assets/popup-window/copy-name.svg?react'));
 
 const CopyNameBtn = ({ item, more, setMore }) => {
-
-
   return (
     <button
       onClick={async () => await handleName(item.deviceId, item.vaultId, item.id, more, setMore)}
-      title={browser.i18n.getMessage('this_tab_copy_password')}
+      title={browser.i18n.getMessage('this_tab_copy_name')}
     >
       <CopyNameIcon className={S.serviceName} />
     </button>
