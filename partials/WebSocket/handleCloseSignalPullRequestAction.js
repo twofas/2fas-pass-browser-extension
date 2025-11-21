@@ -25,7 +25,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
   try {
     const socket = TwoFasWebSocket.getInstance();
     socket.close();
-  } catch {}
+  } catch { }
 
   if (closeData?.windowClose) {
     await tryWindowClose();
@@ -41,7 +41,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
           action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,
           target: REQUEST_TARGETS.PROMPT
         });
-      } catch {}
+      } catch { }
 
       try {
         await browser.runtime.sendMessage({
@@ -49,7 +49,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
           target: REQUEST_TARGETS.BACKGROUND_PROMPT,
           tabId: state.data.tabId
         });
-      } catch {}
+      } catch { }
 
       const separateWindow = await popupIsInSeparateWindow();
       await closeWindowIfNotInSeparateWindow(separateWindow);
@@ -80,7 +80,13 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
   }
 
   if (closeData?.returnUrl) {
-    eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: closeData.returnUrl });
+    const navigationPayload = { path: closeData.returnUrl };
+
+    if (closeData?.returnState) {
+      navigationPayload.options = { state: closeData.returnState };
+    }
+
+    eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, navigationPayload);
   }
 
   if (closeData?.returnToast) {

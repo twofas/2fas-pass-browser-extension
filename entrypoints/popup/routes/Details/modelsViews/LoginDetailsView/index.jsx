@@ -30,7 +30,7 @@ const DangerZone = lazy(() => import('../../components/DangerZone'));
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function LoginDetailsView (props) {
+function LoginDetailsView(props) {
   const data = usePopupStateStore(state => state.data);
   const [inputError, setInputError] = useState(undefined);
 
@@ -130,7 +130,7 @@ function LoginDetailsView (props) {
 
     if (data.tierEditable) {
       const originalItem = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      
+
       if (originalItem.securityType !== e.securityType) {
         stateData.securityType = e.securityType;
       }
@@ -143,6 +143,22 @@ function LoginDetailsView (props) {
     if (data.notesEditable) {
       stateData.content.notes = e?.content?.notes ? valueToNFKD(e.content.notes) : '';
     }
+
+    stateData.uiState = {
+      nameEditable: data.nameEditable,
+      usernameEditable: data.usernameEditable,
+      passwordEditable: data.passwordEditable,
+      passwordEdited: data.passwordEdited,
+      passwordVisible: data.passwordVisible,
+      passwordMobile: data.passwordMobile,
+      usernameMobile: data.usernameMobile,
+      domainsEditable: data.domainsEditable,
+      tierEditable: data.tierEditable,
+      tagsEditable: data.tagsEditable,
+      notesEditable: data.notesEditable,
+      urisRemoved: data.urisRemoved,
+      sifDecryptError: data.sifDecryptError
+    };
 
     return navigate('/fetch', {
       state: {
