@@ -13,7 +13,7 @@ import S from './PasswordInput.module.scss';
  * @param {Object} props - Component props
  * @return {JSX.Element} The rendered component
  */
-function PasswordInput (props) {
+function PasswordInput(props) {
   const {
     value = '',
     onChange,
@@ -43,7 +43,7 @@ function PasswordInput (props) {
   const lastInteractionRef = useRef(null);
   const scrollLeftRef = useRef(0); // Keep real-time scroll value in ref
   const isCopyOperationRef = useRef(false); // Track if copy/cut just happened
-  
+
   const getCharacterType = useCallback((char) => {
     if (/[0-9]/.test(char)) {
       return 'number';
@@ -53,7 +53,7 @@ function PasswordInput (props) {
       return 'letter';
     }
   }, []);
-  
+
   const handleChange = useCallback((e) => {
     // Don't process changes when disabled
     if (disabled) {
@@ -188,7 +188,7 @@ function PasswordInput (props) {
       // Stop any ongoing mouse selection
       setIsSelecting(false);
       setSelectionStartIndex(null);
-      
+
       // Clear selection anchor when deleting
       setSelectionAnchor(null);
 
@@ -235,7 +235,7 @@ function PasswordInput (props) {
       // Stop any ongoing mouse selection
       setIsSelecting(false);
       setSelectionStartIndex(null);
-      
+
       // Clear selection anchor when deleting
       setSelectionAnchor(null);
 
@@ -705,7 +705,7 @@ function PasswordInput (props) {
       display.removeEventListener('wheel', handleWheel);
     };
   }, [handleWheel]);
-  
+
   const getCursorAbsolutePosition = useCallback(() => {
     const cursorPos = selection.end;
 
@@ -741,7 +741,7 @@ function PasswordInput (props) {
     // Fallback: calculate based on character index and estimated width
     // Measure a sample character to get the actual width
     const testSpan = document.createElement('span');
-    testSpan.style.fontFamily = 'monospace';
+    testSpan.style.fontFamily = 'monospace'; // Ensure monospace for consistent width
     testSpan.style.fontSize = '14px';
     testSpan.style.fontWeight = '400';
     testSpan.style.position = 'absolute';
@@ -757,7 +757,7 @@ function PasswordInput (props) {
 
     return position;
   }, [selection.end, value, showPassword]);
-  
+
 
   useEffect(() => {
     if (!inputRef.current) {
@@ -889,7 +889,7 @@ function PasswordInput (props) {
       lastInteractionRef.current = null;
     }
   }, [selection, isFocused, getCursorAbsolutePosition, scrollLeft, value]);
-  
+
   const renderColoredText = () => {
     if (!value) {
       return null;
@@ -922,7 +922,7 @@ function PasswordInput (props) {
       );
     });
   };
-  
+
   return (
     <div className={`${S.passwordInput} ${className} ${disabled ? (disabledColors ? S.disabledColors : S.disabled) : ''}`}>
       <div
