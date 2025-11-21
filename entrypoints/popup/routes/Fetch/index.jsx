@@ -186,6 +186,48 @@ function Fetch(props) {
           from: 'fetch'
         }
       });
+    } else if (state?.from === 'details' && state?.data) {
+      const restoredItem = { ...state.data };
+      const uiFlags = {};
+
+      if (restoredItem.content) {
+        if (restoredItem.content.username && typeof restoredItem.content.username === 'object' && restoredItem.content.username.value !== undefined) {
+          restoredItem.content.username = restoredItem.content.username.value;
+          uiFlags.usernameEditable = true;
+        }
+
+        if (restoredItem.content.s_password && typeof restoredItem.content.s_password === 'object' && restoredItem.content.s_password.value !== undefined) {
+          restoredItem.content.s_password = restoredItem.content.s_password.value;
+          uiFlags.passwordEditable = true;
+          uiFlags.passwordEdited = true;
+        }
+        
+        if (restoredItem.content.s_text && typeof restoredItem.content.s_text === 'object' && restoredItem.content.s_text.value !== undefined) {
+          restoredItem.content.s_text = restoredItem.content.s_text.value;
+          uiFlags.sifEditable = true;
+        } else if (restoredItem.content.s_text !== undefined) {
+          uiFlags.sifEditable = true;
+        }
+
+        if (restoredItem.content.name !== undefined) uiFlags.nameEditable = true;
+        if (restoredItem.content.notes !== undefined) uiFlags.notesEditable = true;
+        if (restoredItem.tags !== undefined) uiFlags.tagsEditable = true;
+        if (restoredItem.securityType !== undefined) uiFlags.tierEditable = true;
+      }
+
+      if (restoredItem.itemId) {
+        restoredItem.id = restoredItem.itemId;
+      }
+
+      navigate(`/details/${state.data.deviceId}/${state.data.vaultId}/${state.data.itemId}`, {
+        state: {
+          data: {
+            item: restoredItem,
+            ...uiFlags
+          },
+          from: 'fetch'
+        }
+      });
     } else {
       if (fetchState === 1) {
         navigate('/');

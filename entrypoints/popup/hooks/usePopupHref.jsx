@@ -42,8 +42,10 @@ const usePopupHref = (hydrationComplete = false) => {
     const excludedPaths = ['/fetch', '/blocked'];
     const isExcluded = excludedPaths.includes(pathname) || pathname.startsWith('/fetch/');
 
+    // For excluded paths, don't update href - preserve the previous path
+    // This ensures that if the popup closes while at /fetch, it will reopen to the previous page (e.g., /details)
     if (isExcluded) {
-      setHref('/');
+      // Only clear data and scroll position, but keep the previous href
       setScrollPosition(0);
 
       const defaultDataForPath = defaultData['/'] || {};
