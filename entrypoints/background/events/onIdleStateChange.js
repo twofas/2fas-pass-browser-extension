@@ -13,8 +13,6 @@ import { cleanupDevices, isPaidDeviceConnected } from '@/partials/functions';
 * @return {Promise<boolean>} A promise that resolves to true if the idle state change is handled successfully, otherwise false.
 */
 const onIdleStateChange = async state => {
-  console.log('Idle state changed to:', state);
-  
   if (state !== browser.idle.IdleState.IDLE) {
     return false;
   }
@@ -22,9 +20,6 @@ const onIdleStateChange = async state => {
   try {
     const autoIdleLock = await storage.getItem('local:autoIdleLock');
     const paidDeviceConnected = await isPaidDeviceConnected();
-
-    console.log('Auto Idle Lock setting:', autoIdleLock);
-    console.log('Is paid device connected:', paidDeviceConnected);
 
     if ((autoIdleLock === 'default' || autoIdleLock === null) && paidDeviceConnected) {
       return false;
