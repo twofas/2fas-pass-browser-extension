@@ -411,6 +411,12 @@
       }
     }
 
+    &.sort {
+      svg {
+        stroke-width: 2;
+      }
+    }
+
     svg {
       height: 16px;
       stroke: v.$primary-color-light;

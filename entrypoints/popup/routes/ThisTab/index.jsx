@@ -30,11 +30,10 @@ import SmallLoginItem from './components/SmallLoginItem';
 import DomainIcon from '@/assets/popup-window/domain.svg?react';
 import SearchIcon from '@/assets/popup-window/search-icon.svg?react';
 import ClearIcon from '@/assets/popup-window/clear.svg?react';
-import SortUpIcon from '@/assets/popup-window/sort-up.svg?react';
-import SortDownIcon from '@/assets/popup-window/sort-down.svg?react';
 import NoMatch from './components/NoMatch';
 import ModelFilter from './components/ModelFilter';
 import Filters from './components/Filters';
+import Sort from './components/Sort';
 import UpdateComponent from './components/UpdateComponent';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
@@ -60,8 +59,6 @@ function ThisTab (props) {
   const [items, setItems] = useState([]);
   const [tags, setTags] = useState([]);
   const [matchingLogins, setMatchingLogins] = useState([]);
-  const [sort, setSort] = useState(false); // false - asc, true - desc
-  const [sortDisabled, setSortDisabled] = useState(true);
   const [storageVersion, setStorageVersion] = useState(null);
   const [autofillFailed, setAutofillFailed] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -131,19 +128,9 @@ function ThisTab (props) {
     }
   }, [location.state, location.pathname, setScrollPosition, setHref]);
 
-  const handleSortClick = useCallback(async () => {
-    setSortDisabled(true);
-
-    try {
-      const newSort = !sort;
-      setSort(newSort);
-      await storage.setItem('local:allLoginsSort', newSort);
-    } catch (e) {
-      await CatchError(e);
-    } finally {
-      setSortDisabled(false);
-    }
-  }, [sort]);
+  const handleSortChange = useCallback(async newSort => {
+    setData('selectedSort', newSort);
+  }, []);
 
   const handleSearchChange = useCallback(e => {
     const value = e?.target?.value;
@@ -286,12 +273,6 @@ function ThisTab (props) {
     setLoading(false);
   }, [changeMatchingLoginsLength]);
 
-  const getSort = useCallback(async () => {
-    const s = await storage.getItem('local:allLoginsSort');
-    setSort(s);
-    return null;
-  }, []);
-
   const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl, setUpdateAvailable), [sendUrl, setUpdateAvailable]);
 
   const hasMatchingLogins = useMemo(() => isItemsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
@@ -307,7 +288,7 @@ function ThisTab (props) {
   const searchClass = `${S.thisTabAllLoginsSearch} ${data?.searchActive ? S.active : ''}`;
 
   const memoizedMatchingItemsList = useMemo(() => generateMatchingItemsList(matchingLogins, loading), [matchingLogins, loading]);
-  const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, sort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter), [items, sort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter]);
+  const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter), [items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter]);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
@@ -322,14 +303,12 @@ function ThisTab (props) {
       .catch(() => {});
     }
 
-    Promise.all([ getDomain(), getStorageItems(), getSort(), getStorageTags() ])
+    Promise.all([ getDomain(), getStorageItems(), getStorageTags() ])
       .then(([domain, items, , tags]) => Promise.all([
         getMatchingLogins(items, domain),
         getTagsAmount(tags, items)
       ]))
       .then(() => {
-        setSortDisabled(false);
-
         if (items.length === 0) {
           setTimeout(() => {
             if (boxAnimationRef?.current?.play) {
@@ -454,14 +433,6 @@ function ThisTab (props) {
               <div className={allLoginsClass}>
                 <div className={S.thisTabAllLoginsHeader}>
                   <ModelFilter />
-
-                  <div className={S.thisTabAllLoginsHeaderSort}>
-                    <span>{browser.i18n.getMessage('this_tab_sort')}:</span>
-                    <button className={`${sort ? S.desc : S.asc}`} onClick={handleSortClick} disabled={sortDisabled}>
-                      <SortUpIcon />
-                      <SortDownIcon />
-                    </button>
-                  </div>
                 </div>
 
                 <div className={S.thisTabAllLoginsSearchContainer}>
@@ -494,6 +465,10 @@ function ThisTab (props) {
                     selectedTag={data.selectedTag}
                     onTagChange={handleTagChange}
                     forceClose={forceCloseFilters}
+                  />
+                  <Sort
+                    selectedSort={data.selectedSort || 'az'}
+                    onSortChange={handleSortChange}
                   />
                 </div>
 

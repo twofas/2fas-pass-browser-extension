@@ -6,7 +6,7 @@
 
 import LoginItem from '../components/Item';
 import SafariViewportList from '@/entrypoints/popup/components/SafariViewportList';
-import sortByName from '@/partials/functions/sortByName';
+import sortByName from '@/partials/functions/sortFunction';
 import isItemsCorrect from './isItemsCorrect';
 
 /** 
