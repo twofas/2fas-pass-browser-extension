@@ -34,7 +34,7 @@ const additionalVariants = {
 * AddNew component for creating a new login entry.
 * @return {JSX.Element} The rendered component.
 */
-function LoginAddNewView () {
+function LoginAddNewView() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -53,17 +53,18 @@ function LoginAddNewView () {
         const storeData = data || {};
         const domainData = await getDomainInfo();
         const isReturningFromPasswordGenerator = location?.state?.from === 'passwordGenerator';
+        const isReturningFromFetch = location?.state?.from === 'fetch';
 
         const getValueWithPriority = (key, stateValue, storeValue, fallback, shouldSanitize = false) => {
           let selectedValue;
 
-          if (isReturningFromPasswordGenerator) {
+          if (isReturningFromPasswordGenerator || isReturningFromFetch) {
             if (key === 's_password' && stateValue !== undefined) {
+              selectedValue = stateValue;
+            } else if (stateValue !== undefined) {
               selectedValue = stateValue;
             } else if (storeValue !== undefined && storeValue !== null) {
               selectedValue = storeValue;
-            } else if (stateValue !== undefined) {
-              selectedValue = stateValue;
             } else {
               selectedValue = fallback;
             }
@@ -218,6 +219,8 @@ function LoginAddNewView () {
         action: PULL_REQUEST_TYPES.ADD_DATA,
         from: 'add-new',
         data: formData,
+        originalData: e,
+        model: Login.contentType,
         deviceId
       }
     });
@@ -419,7 +422,7 @@ function LoginAddNewView () {
           </button>
         </div>
       </form>
-      )}
+    )}
     />
   );
 }

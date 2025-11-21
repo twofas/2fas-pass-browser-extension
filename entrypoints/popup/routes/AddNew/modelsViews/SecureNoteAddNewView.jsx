@@ -12,15 +12,16 @@ import usePopupStateStore from '../../../store/popupState';
 import { Form, Field } from 'react-final-form';
 import { valueToNFKD, getCurrentDevice } from '@/partials/functions';
 import SecureNote from '@/partials/models/itemModels/SecureNote';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { PULL_REQUEST_TYPES } from '@/constants';
 
 /** 
 * SecureNoteAddNewView component for adding a new Secure Note.
 * @return {JSX.Element} The rendered component.
 */
-function SecureNoteAddNewView () {
+function SecureNoteAddNewView() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [inputError, setInputError] = useState(undefined);
 
@@ -48,6 +49,14 @@ function SecureNoteAddNewView () {
 
     return true;
   };
+
+  useEffect(() => {
+    if (location?.state?.data) {
+      const stateData = location.state.data;
+      if (stateData.name) setData('name', stateData.name);
+      if (stateData.text) setData('text', stateData.text);
+    }
+  }, [location?.state?.data]);
 
   const onSubmit = async e => {
     setInputError(undefined);
@@ -78,6 +87,8 @@ function SecureNoteAddNewView () {
         action: PULL_REQUEST_TYPES.ADD_DATA,
         from: 'add-new',
         data: formData,
+        originalData: e,
+        model: SecureNote.contentType,
         deviceId
       }
     });
@@ -148,7 +159,7 @@ function SecureNoteAddNewView () {
           </button>
         </div>
       </form>
-      )}
+    )}
     />
   );
 }

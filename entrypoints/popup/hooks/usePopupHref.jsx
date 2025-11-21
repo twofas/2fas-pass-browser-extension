@@ -60,7 +60,8 @@ const usePopupHref = (hydrationComplete = false) => {
     if (pathname !== lastPathnameRef.current) {
       changeCountRef.current += 1;
 
-      const isUserNavigation = changeCountRef.current > 2;
+      const isReturningFromFetch = location?.state?.from === 'fetch';
+      const isUserNavigation = changeCountRef.current > 2 && !isReturningFromFetch;
 
       lastPathnameRef.current = pathname;
       setHref(pathname);

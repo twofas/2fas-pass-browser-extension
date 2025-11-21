@@ -27,7 +27,7 @@ const ContinueUpdate = lazy(() => import('./components/ContinueUpdate'));
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function Fetch (props) {
+function Fetch(props) {
   const location = useLocation();
   const { state } = location;
 
@@ -140,11 +140,11 @@ function Fetch (props) {
 
     try {
       await deletePush(device.id, state.data.notificationId);
-    } catch {}
+    } catch { }
 
     try {
       socket = TwoFasWebSocket.getInstance();
-    } catch {}
+    } catch { }
 
     if (socket) {
       try {
@@ -155,7 +155,7 @@ function Fetch (props) {
         //   })
         // );
         socket.close();
-      } catch {}
+      } catch { }
     }
   };
 
@@ -179,6 +179,13 @@ function Fetch (props) {
       if (windowCloseTest) {
         navigate('/');
       }
+    } else if (state?.from === 'add-new' && state?.originalData && state?.model) {
+      navigate(`/add-new/${state.model}`, {
+        state: {
+          data: state.originalData,
+          from: 'fetch'
+        }
+      });
     } else {
       if (fetchState === 1) {
         navigate('/');
@@ -189,7 +196,7 @@ function Fetch (props) {
   };
 
   // FUTURE - Refactor (useCallback?)
-  const handleNavigate = ({ path, options = {}}) => {
+  const handleNavigate = ({ path, options = {} }) => {
     return navigate(path, options);
   };
 
@@ -221,12 +228,12 @@ function Fetch (props) {
   return (
     <div className={`${props.className ? props.className : ''}`}>
       <div>
-        <section className={S.fetch}> 
+        <section className={S.fetch}>
           <div className={S.fetchContainer}>
             <NavigationButton type='cancel' onClick={cancelHandle} />
 
-            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} /> }
-            {fetchState === FETCH_STATE.CONNECTION_ERROR && <ConnectionError fetchState={fetchState} errorText={errorText} /> }
+            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} />}
+            {fetchState === FETCH_STATE.CONNECTION_ERROR && <ConnectionError fetchState={fetchState} errorText={errorText} />}
             {fetchState === FETCH_STATE.CONNECTION_TIMEOUT && <ConnectionTimeout fetchState={fetchState} tryAgainHandle={tryAgainHandle} />}
             {fetchState === FETCH_STATE.CONTINUE_UPDATE && <ContinueUpdate fetchState={fetchState} />}
           </div>
