@@ -28,7 +28,7 @@ const AddNewIcon = lazy(() => import('@/assets/popup-window/add-new.svg?react'))
 * Function component for the TopBar.
 * @return {JSX.Element} The rendered component.
 */
-function TopBar () {
+function TopBar() {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -137,7 +137,7 @@ function TopBar () {
     getSupportedFeatures()
       .then(features => setDeviceSupportedFeatures(features))
       .catch(() => setDeviceSupportedFeatures([]));
-  }, []);
+  }, [configured]);
 
   return (
     <>
