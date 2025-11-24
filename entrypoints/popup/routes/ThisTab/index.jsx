@@ -236,6 +236,11 @@ function ThisTab (props) {
   }, []);
 
   const getTagsAmount = useCallback(async (tags, services) => {
+    if (!Array.isArray(tags) || tags.length === 0) {
+      setTags([]);
+      return false;
+    }
+
     const servicesWithTags = services.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
 
     for (const service of servicesWithTags) {
@@ -304,7 +309,7 @@ function ThisTab (props) {
     }
 
     Promise.all([ getDomain(), getStorageItems(), getStorageTags() ])
-      .then(([domain, items, , tags]) => Promise.all([
+      .then(([domain, items, tags]) => Promise.all([
         getMatchingLogins(items, domain),
         getTagsAmount(tags, items)
       ]))
