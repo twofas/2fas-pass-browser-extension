@@ -397,9 +397,8 @@
     border-radius: 8px;
     box-shadow: none !important;
     overflow: hidden;
-    position: absolute;
-    top: 0;
     right: 0;
+    top: 8px;
     width: 200px;
     z-index: 9999;
 
@@ -1399,6 +1398,7 @@
     max-width: 240px;
     min-width: 200px;
     right: 0;
+    top: 8px;
     transition: opacity .3s ease-in-out;
     z-index: 9999;
 
