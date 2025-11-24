@@ -452,6 +452,30 @@
       }
     }
 
+    &.active {
+      a {
+        pointer-events: none !important;
+
+        body.theme-light & {
+          background-color: v.$pressed-bg-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$pressed-bg-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$pressed-bg-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$pressed-bg-dark;
+          }
+        }
+      }
+    }
+
     a {
       align-items: center;
       display: flex;

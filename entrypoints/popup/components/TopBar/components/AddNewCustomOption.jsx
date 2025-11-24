@@ -9,7 +9,7 @@ import { Link } from 'react-router';
 
 const AddNewCustomOption = option => {
   return (
-    <div className='react-select-add-new__option'>
+    <div className={`react-select-add-new__option ${option.pathname === option.data.value ? 'active' : ''}`}>
       <Link
         to={option.data.value}
         title={`${browser.i18n.getMessage('top_bar_create_new')} ${option.data.label}`}
