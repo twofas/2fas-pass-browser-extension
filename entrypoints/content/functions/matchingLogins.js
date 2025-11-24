@@ -13,36 +13,65 @@ import closeSrc from '@/assets/popup-window/cancel.svg?raw';
 import URIMatcher from '@/partials/URIMatcher';
 import { parseDomain, ParseResultType } from 'parse-domain';
 
-/** 
+/**
 * Function to close the notification.
 * @param {Object} n - The notification object.
+* @param {Object} timers - The timers object containing all timer IDs.
 * @return {void}
 */
-const closeNotification = n => {
-  n.item.classList.add('twofas-pass-hidden');
+const closeNotification = (n, timers) => {
+  if (timers.visible !== null) {
+    clearTimeout(timers.visible);
+    timers.visible = null;
+  }
 
-  setTimeout(() => {
-    n.item.classList.remove('twofas-pass-hidden');
-    n.item.classList.remove('twofas-pass-visible');
-    n.item.classList.add('twofas-pass-old');
-    n = null;
-  }, 300);
+  if (timers.maxHeight1 !== null) {
+    clearTimeout(timers.maxHeight1);
+    timers.maxHeight1 = null;
+  }
+
+  if (timers.maxHeight2 !== null) {
+    clearTimeout(timers.maxHeight2);
+    timers.maxHeight2 = null;
+  }
+
+  if (timers.cleanup !== null) {
+    clearTimeout(timers.cleanup);
+    timers.cleanup = null;
+  }
+
+  if (n && n.item) {
+    n.item.classList.add('twofas-pass-hidden');
+
+    timers.cleanup = setTimeout(() => {
+      if (n && n.item) {
+        n.item.classList.remove('twofas-pass-hidden');
+        n.item.classList.remove('twofas-pass-visible');
+        n.item.classList.add('twofas-pass-old');
+      }
+
+      n = null;
+      timers.cleanup = null;
+    }, 300);
+  }
 };
 
-/** 
+/**
 * Function to cancel the notification.
 * @param {Object} n - The notification object.
+* @param {Object} timers - The timers object containing all timer IDs.
 * @param {Function} sendResponse - The function to send the response back.
 * @return {void}
 */
-const cancel = (n, sendResponse) => {
-  closeNotification(n);
+const cancel = (n, timers, sendResponse) => {
+  closeNotification(n, timers);
   return sendResponse({ status: 'cancel' });
 };
 
-/** 
+/**
 * Function to perform an action.
 * @param {Object} n - The notification object.
+* @param {Object} timers - The timers object containing all timer IDs.
 * @param {Function} sendResponse - The function to send the response back.
 * @param {string} vaultId - The vault ID of the item.
 * @param {string} deviceId - The device ID of the item.
@@ -50,8 +79,8 @@ const cancel = (n, sendResponse) => {
 * @param {string} contentType - The content type of the item.
 * @return {void}
 */
-const action = (n, sendResponse, vaultId, deviceId, id, contentType) => {
-  closeNotification(n);
+const action = (n, timers, sendResponse, vaultId, deviceId, id, contentType) => {
+  closeNotification(n, timers);
   return sendResponse({ status: 'action', vaultId, deviceId, id, contentType });
 };
 
@@ -153,8 +182,15 @@ const matchingLogins = (request, sendResponse, container) => {
     n.logoSvg = createSVGElement(isDarkMode ? logoSrcDark : logoSrc);
   }
 
+  const timers = {
+    visible: null,
+    maxHeight1: null,
+    maxHeight2: null,
+    cleanup: null
+  };
+
   n.close = createElement('button', 'twofas-pass-notification-matching-logins-top-close');
-  n.close.addEventListener('click', () => cancel(n, sendResponse));
+  n.close.addEventListener('click', () => cancel(n, timers, sendResponse));
   n.closeSvg = createSVGElement(closeSrc);
 
   n.close.appendChild(n.closeSvg);
@@ -177,7 +213,7 @@ const matchingLogins = (request, sendResponse, container) => {
     const itemEl = createElement('div', 'twofas-pass-notification-matching-logins-item');
 
     const itemBtn = createElement('button', 'twofas-pass-notification-matching-logins-item-btn');
-    itemBtn.addEventListener('click', () => action(n, sendResponse, item.vaultId, item.deviceId, item.id, item.contentType));
+    itemBtn.addEventListener('click', () => action(n, timers, sendResponse, item.vaultId, item.deviceId, item.id, item.contentType));
 
     const itemIcon = createElement('span', 'twofas-pass-notification-matching-logins-item-icon');
 
@@ -268,9 +304,29 @@ const matchingLogins = (request, sendResponse, container) => {
   n.item.appendChild(n.items);
   n.container.appendChild(n.item);
 
-  setTimeout(() => n.item.classList.add('twofas-pass-visible'), 300);
-  setTimeout(() => { n.items.style.setProperty('max-height', `${(request.data.length * 57) - 13}px`, 'important'); }, 301);
-  setTimeout(() => { n.item.style.maxHeight = `${n.item.offsetHeight + (request.data.length * 57) - 13}px`; }, 302);
+  timers.visible = setTimeout(() => {
+    if (n && n.item) {
+      n.item.classList.add('twofas-pass-visible');
+    }
+
+    timers.visible = null;
+  }, 300);
+
+  timers.maxHeight1 = setTimeout(() => {
+    if (n && n.items) {
+      n.items.style.setProperty('max-height', `${(request.data.length * 57) - 13}px`, 'important');
+    }
+
+    timers.maxHeight1 = null;
+  }, 301);
+
+  timers.maxHeight2 = setTimeout(() => {
+    if (n && n.item) {
+      n.item.style.maxHeight = `${n.item.offsetHeight + (request.data.length * 57) - 13}px`;
+    }
+
+    timers.maxHeight2 = null;
+  }, 302);
 };
 
 export default matchingLogins;
