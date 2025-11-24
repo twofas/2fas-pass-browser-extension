@@ -365,6 +365,8 @@ function Connect (props) {
   };
 
   useEffect(() => {
+    let cleanupTimers = null;
+
     closeConnectionRef.current = async () => {
       try {
         const socket = TwoFasWebSocket.getInstance();
@@ -377,16 +379,41 @@ function Connect (props) {
           }
 
           await new Promise(resolve => {
-            const checkClosed = setInterval(() => {
+            let intervalId = null;
+            let timeoutId = null;
+            let resolved = false;
+
+            const cleanup = () => {
+              if (resolved) {
+                return;
+              }
+
+              resolved = true;
+
+              if (intervalId !== null) {
+                clearInterval(intervalId);
+                intervalId = null;
+              }
+
+              if (timeoutId !== null) {
+                clearTimeout(timeoutId);
+                timeoutId = null;
+              }
+
+              cleanupTimers = null;
+              resolve();
+            };
+
+            cleanupTimers = cleanup;
+
+            intervalId = setInterval(() => {
               if (socket.socket.readyState === WebSocket.CLOSED) {
-                clearInterval(checkClosed);
-                resolve();
+                cleanup();
               }
             }, 10);
 
-            setTimeout(() => {
-              clearInterval(checkClosed);
-              resolve();
+            timeoutId = setTimeout(() => {
+              cleanup();
             }, 1000);
           });
         }
@@ -398,6 +425,10 @@ function Connect (props) {
     };
 
     return () => {
+      if (cleanupTimers) {
+        cleanupTimers();
+      }
+
       if (closeConnectionRef.current) {
         closeConnectionRef.current().catch(() => {
           // Ignore cleanup errors
