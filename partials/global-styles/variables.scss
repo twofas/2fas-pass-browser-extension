@@ -64,13 +64,17 @@ $pressed-bg-light: #d9e2fc;
 $pressed-bg-dark: #383f63;
 $error-pressed-bg-light: #fedfdf;
 $error-pressed-bg-dark: #5c2a2a;
-$login-item-light: #e97900;
-$login-item-dark: #e97900;
-$credit-card-item-light: #11be3c;
-$credit-card-item-dark: #11be3c;
-$secure-note-item-light: #05afdc;
-$secure-note-item-dark: #05afdc;
-$secure-note-bg-light: #dcf0fb;
-$secure-note-bg-dark: #dcf0fb;
-$ssh-key-item-light: #5125e3;
-$ssh-key-item-dark: #5125e3;
+
+// Item type colors
+$login-item-light: #ff8400;
+$login-item-dark: #ff9230;
+$login-item-bg-light: #ffe4cb;
+$login-item-bg-dark: #432b15;
+$secure-note-item-light: #00b2e1;
+$secure-note-item-dark: #3cd3fe;
+$secure-note-item-bg-light: #dcf0fb;
+$secure-note-item-bg-dark: #1e455b;
+$ssh-key-item-light: #4d50ed;
+$ssh-key-item-dark: #6b5eff;
+$ssh-key-item-bg-light: #e2e9ff;
+$ssh-key-item-bg-dark: #1d2b54;
