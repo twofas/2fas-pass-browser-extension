@@ -455,8 +455,8 @@
       align-items: center;
       display: flex;
       flex-direction: row;
-      gap: 0 6px;
-      padding: 9px 12px;
+      gap: 0 8px;
+      padding: 10px 12px;
       transition: background-color .3s ease-in-out;
       width: 100%;
 
@@ -506,113 +506,87 @@
         border-radius: 4px;
         align-items: center;
         display: flex;
-        height: 16px;
+        height: 18px;
         justify-content: center;
-        width: 16px;
+        width: 18px;
 
         &.icon-item-login {
           body.theme-light & {
-            background-color: v.$login-item-light;
+            background-color: v.$login-item-bg-light;
+
+            svg {
+              stroke: v.$login-item-light;
+            }
           }
 
           body.theme-dark & {
-            background-color: v.$login-item-dark;
+            background-color: v.$login-item-bg-dark;
+
+            svg {
+              stroke: v.$login-item-dark;
+            }
           }
 
           body.theme-unset & {
             @media (prefers-color-scheme: light) {
-              background-color: v.$login-item-light;
+              background-color: v.$login-item-bg-light;
+
+              svg {
+                stroke: v.$login-item-light;
+              }
             }
 
             @media (prefers-color-scheme: dark) {
-              background-color: v.$login-item-dark;
-            }
-          }
-        }
+              background-color: v.$login-item-bg-dark;
 
-        &.icon-item-credit-card {
-          body.theme-light & {
-            background-color: v.$credit-card-item-light;
-          }
-
-          body.theme-dark & {
-            background-color: v.$credit-card-item-dark;
-          }
-
-          body.theme-unset & {
-            @media (prefers-color-scheme: light) {
-              background-color: v.$credit-card-item-light;
-            }
-
-            @media (prefers-color-scheme: dark) {
-              background-color: v.$credit-card-item-dark;
+              svg {
+                stroke: v.$login-item-dark;
+              }
             }
           }
         }
 
         &.icon-item-secure-note {
           body.theme-light & {
-            background-color: v.$secure-note-item-light;
+            background-color: v.$secure-note-item-bg-light;
+
+            svg {
+              fill: v.$secure-note-item-light;
+            }
           }
 
           body.theme-dark & {
-            background-color: v.$secure-note-item-dark;
+            background-color: v.$secure-note-item-bg-dark;
+
+            svg {
+              fill: v.$secure-note-item-dark;
+            }
           }
 
           body.theme-unset & {
             @media (prefers-color-scheme: light) {
-              background-color: v.$secure-note-item-light;
+              background-color: v.$secure-note-item-bg-light;
+
+              svg {
+                fill: v.$secure-note-item-light;
+              }
             }
 
             @media (prefers-color-scheme: dark) {
-              background-color: v.$secure-note-item-dark;
-            }
-          }
-        }
+              background-color: v.$secure-note-item-bg-dark;
 
-        &.icon-item-ssh-key {
-          body.theme-light & {
-            background-color: v.$ssh-key-item-light;
-          }
-
-          body.theme-dark & {
-            background-color: v.$ssh-key-item-dark;
-          }
-
-          body.theme-unset & {
-            @media (prefers-color-scheme: light) {
-              background-color: v.$ssh-key-item-light;
-            }
-
-            @media (prefers-color-scheme: dark) {
-              background-color: v.$ssh-key-item-dark;
+              svg {
+                fill: v.$secure-note-item-dark;
+              }
             }
           }
         }
 
         svg {
-          height: 10px;
+          height: 12px;
           stroke-linecap: round;
           stroke-linejoin: round;
           width: auto;
-
-          body.theme-light & {
-            stroke: v.$primary-box-bg-light;
-          }
-
-          body.theme-dark & {
-            stroke: v.$primary-box-bg-dark;
-          }
-
-          body.theme-unset & {
-            @media (prefers-color-scheme: light) {
-              stroke: v.$primary-box-bg-light;
-            }
-
-            @media (prefers-color-scheme: dark) {
-              stroke: v.$primary-box-bg-dark;
-            }
-          }
         }
       }
 
@@ -696,7 +670,7 @@
     flex-direction: row;
     gap: 0 6px;
     overflow: hidden;
-    padding: 9px 12px;
+    padding: 10px 12px;
     position: relative;
     transition: background-color .3s ease-in-out, color .3s ease-in-out;
     width: 198px;
@@ -752,9 +726,9 @@
       border-radius: 4px;
       display: inline-flex;
       flex-shrink: 0;
-      height: 16px;
+      height: 18px;
       justify-content: center;
-      width: 16px;
+      width: 18px;
 
       body.theme-light & {
         background-color: v.$primary-color-light;
@@ -776,48 +750,93 @@
 
       &.logins {
         body.theme-light & {
-          background-color: v.$login-item-light;
+          background-color: v.$login-item-bg-light;
+
+          svg {
+            stroke: v.$login-item-light !important;
+          }
         }
 
         body.theme-dark & {
-          background-color: v.$login-item-dark;
+          background-color: v.$login-item-bg-dark;
+
+          svg {
+            stroke: v.$login-item-dark !important;
+          }
         }
 
         body.theme-unset & {
           @media (prefers-color-scheme: light) {
-            background-color: v.$login-item-light;
+            background-color: v.$login-item-bg-light;
+
+            svg {
+              stroke: v.$login-item-light !important;
+            }
           }
 
           @media (prefers-color-scheme: dark) {
-            background-color: v.$login-item-dark;
+            background-color: v.$login-item-bg-dark;
+
+            svg {
+              stroke: v.$login-item-dark !important;
+            }
           }
+        }
+
+        svg {
+          stroke-width: 1 !important;
         }
       }
 
       &.secure-notes {
         body.theme-light & {
-          background-color: v.$secure-note-item-light;
+          background-color: v.$secure-note-item-bg-light;
+
+          svg {
+            fill: v.$secure-note-item-light;
+            stroke: transparent !important;
+          }
         }
 
         body.theme-dark & {
-          background-color: v.$secure-note-item-dark;
+          background-color: v.$secure-note-item-bg-dark;
+
+          svg {
+            fill: v.$secure-note-item-dark;
+            stroke: transparent !important;
+          }
         }
 
         body.theme-unset & {
           @media (prefers-color-scheme: light) {
-            background-color: v.$secure-note-item-light;
+            background-color: v.$secure-note-item-bg-light;
+
+            svg {
+              fill: v.$secure-note-item-light;
+              stroke: transparent !important;
+            }
           }
 
           @media (prefers-color-scheme: dark) {
-            background-color: v.$secure-note-item-dark;
+            background-color: v.$secure-note-item-bg-dark;
+
+            svg {
+              fill: v.$secure-note-item-dark;
+              stroke: transparent !important;
+            }
           }
+        }
+
+        svg {
+          stroke-width: 1 !important;
         }
       }
 
       svg {
         stroke-linecap: round;
         stroke-linejoin: round;
-        height: 11px;
+        stroke-width: 1.5;
+        height: 12px;
         width: auto;
 
         body.theme-light & {

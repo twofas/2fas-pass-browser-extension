@@ -310,26 +310,37 @@
           }
 
           &:global(.logins) {
-            background-color: v.$login-item-light;
+            background-color: v.$login-item-bg-light;
 
             @include m.darkMode {
-              background-color: v.$login-item-dark;
+              background-color: v.$login-item-bg-dark;
             }
 
             svg {
+              stroke: v.$login-item-light !important;
               stroke-width: 1;
+
+              @include m.darkMode {
+                stroke: v.$login-item-dark;
+              }
             }
           }
 
           &:global(.secure-notes) {
-            background-color: v.$secure-note-item-light;
+            background-color: v.$secure-note-item-bg-light;
 
             @include m.darkMode {
-              background-color: v.$secure-note-item-dark;
+              background-color: v.$secure-note-item-bg-dark;
             }
 
             svg {
+              fill: v.$secure-note-item-light;
+              stroke: transparent !important;
               stroke-width: 1;
+
+              @include m.darkMode {
+                fill: v.$secure-note-item-dark;
+              }
             }
           }
 
@@ -853,17 +864,17 @@
           }
 
           &.icon-secure-note {
-            background-color: v.$secure-note-bg-light;
-            border: 1px solid v.$secure-note-bg-light;
+            background-color: v.$secure-note-item-bg-light;
+            border: 1px solid v.$secure-note-item-bg-light;
 
             @include m.darkMode {
-              background-color: v.$secure-note-bg-dark;
-              border-color: v.$secure-note-bg-dark;
+              background-color: v.$secure-note-item-bg-dark;
+              border-color: v.$secure-note-item-bg-dark;
             }
 
             svg {
               fill: v.$secure-note-item-light;
-              height: 12px;
+              height: 16px;
               width: auto;
 
               @include m.darkMode {
