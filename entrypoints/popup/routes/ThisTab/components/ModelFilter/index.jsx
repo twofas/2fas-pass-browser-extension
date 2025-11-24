@@ -60,9 +60,8 @@ const ModelFilter = () => {
     setData('itemModelFilter', newValue);
   };
 
-  const handleModelBtnClick = async () => {
+  const handleModelBtnClick = () => {
     if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
-      setItemModelsOptions(generateItemModelsOptions(deviceSupportedFeatures));
       setIsMenuOpen(prevState => !prevState);
     }
   };
@@ -72,6 +71,12 @@ const ModelFilter = () => {
       .then(features => setDeviceSupportedFeatures(features))
       .catch(() => setDeviceSupportedFeatures([]));
   }, []);
+
+  useEffect(() => {
+    if (deviceSupportedFeatures.length > 0) {
+      setItemModelsOptions(generateItemModelsOptions(deviceSupportedFeatures));
+    }
+  }, [deviceSupportedFeatures]);
 
   return (
     <>
