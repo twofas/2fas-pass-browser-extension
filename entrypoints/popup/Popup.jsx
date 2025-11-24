@@ -41,8 +41,6 @@ const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
 const ErrorFallback = lazy(() => import('./routes/ErrorFallback'));
 
-const emptyFunc = () => { };
-
 const routeConfig = [
   { path: '/connect', component: Connect },
   { path: '/', component: ThisTab, isProtectedRoute: true },
@@ -348,17 +346,10 @@ const PopupMain = memo(() => {
       document.addEventListener('click', safariBlankLinks);
     }
 
-    requestAnimationFrame(() => {
-      window.addEventListener('error', emptyFunc);
-      window.addEventListener('unhandledrejection', emptyFunc);
-    });
-
     return () => {
       browser.runtime.onMessage.removeListener(popupOnMessage);
       document.removeEventListener('keydown', lockShortcuts);
       document.removeEventListener('contextmenu', lockRMB);
-      window.removeEventListener('error', emptyFunc);
-      window.removeEventListener('unhandledrejection', emptyFunc);
       window.removeEventListener('focus', storageAutoClearActions);
 
       if (import.meta.env.BROWSER === 'safari') {
