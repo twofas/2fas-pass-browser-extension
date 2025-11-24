@@ -206,7 +206,7 @@ function TopBar() {
             noOptionsMessage={() => null}
             triggerRef={addNewBtnRef}
             components={{
-              Option: props => <AddNewCustomOption {...props} setIsMenuOpen={setIsMenuOpen} />
+              Option: props => <AddNewCustomOption {...props} setIsMenuOpen={setIsMenuOpen} pathname={location.pathname} />
             }}
           />
         </div>
