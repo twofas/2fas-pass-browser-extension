@@ -68,19 +68,36 @@ const PasswordBtn = ({ item, more, setMore }) => {
   };
 
   useLayoutEffect(() => {
+    let isMounted = true;
+    let localIntervalId = null;
+
     getItemAlarm()
       .then(ok => {
+        if (!isMounted) {
+          return;
+        }
+
         if (ok) {
           updateProgress();
-
-          intervalIdRef.current = setInterval(() => {
+          localIntervalId = setInterval(() => {
             updateProgress();
           }, 1000);
+          intervalIdRef.current = localIntervalId;
         }
       });
 
     return () => {
-      clearInterval(intervalIdRef.current);
+      isMounted = false;
+
+      if (localIntervalId !== null) {
+        clearInterval(localIntervalId);
+        localIntervalId = null;
+      }
+
+      if (intervalIdRef.current !== null) {
+        clearInterval(intervalIdRef.current);
+        intervalIdRef.current = null;
+      }
     };
   }, [item, scheduledTime]);
 
