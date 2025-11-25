@@ -52,7 +52,7 @@ const CustomOption = option => {
           <a
             href='#'
             className='react-select-dropdown__option--uri forget'
-            onClick={async e => await handleForgetPassword(e, option.data.id, option.setMore)}
+            onClick={async e => await handleForgetPassword(e, option.data.id, option.selectProps.setMore)}
           >
             <TrashIcon />
             <span>{option.data.label}</span>
