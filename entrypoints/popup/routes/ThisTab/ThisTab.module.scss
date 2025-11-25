@@ -910,7 +910,7 @@
               color: v.$primary-text-light;
               font-size: 14px;
               font-weight: 500;
-              line-height: .86;
+              line-height: 1;
               padding-bottom: 3px;
 
               @include m.darkMode {
