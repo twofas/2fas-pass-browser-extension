@@ -732,7 +732,7 @@
     "description": "Message displayed while the connection process is ongoing"
   },
   "connect_connection_opened": {
-    "message": "Connection is opened.\nDon't close this window",
+    "message": "Connection is opened.\nPlease keep this window open",
     "description": "Message displayed when the connection is successfully opened"
   },
   "connect_push_cancelled": {
@@ -948,11 +948,11 @@
     "description": "Header prompting the user to continue updating in the mobile app"
   },
   "fetch_continue_updating_description": {
-    "message": "To finish adding this service, continue on your \nmobile phone. Don't close this window.",
+    "message": "To finish adding this service, continue on your \nmobile phone. Please keep this window open.",
     "description": "Explains that the user should continue the process on their mobile phone"
   },
   "fetch_full_sync_description": {
-    "message": "To complete the synchronization, continue on your mobile phone. Don't close this window.",
+    "message": "To complete the sync process, continue on your mobile device. Please keep this window open.",
     "description": "Explains that the user should continue the full sync process on their mobile phone"
   },
   "fetch_delete_login_accept_toast": {

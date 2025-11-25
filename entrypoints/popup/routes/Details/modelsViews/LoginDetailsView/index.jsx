@@ -47,11 +47,13 @@ function LoginDetailsView(props) {
       errors.username = browser.i18n.getMessage('details_username_max_length');
     }
 
-    values.content?.uris.forEach((uri, index) => {
-      if (uri?.text?.length > 2048) {
-        errors[`uris[${index}]`] = browser.i18n.getMessage('details_uri_max_length');
-      }
-    });
+    if (values?.content?.uris && Array.isArray(values.content.uris)) {
+      values?.content?.uris.forEach((uri, index) => {
+        if (uri?.text?.length > 2048) {
+          errors[`uris[${index}]`] = browser.i18n.getMessage('details_uri_max_length');
+        }
+      });
+    }
 
     const errorKeys = Object.keys(errors);
 
