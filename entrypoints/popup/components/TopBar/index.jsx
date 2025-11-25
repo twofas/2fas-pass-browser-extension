@@ -205,8 +205,10 @@ function TopBar() {
             isSearchable={false}
             noOptionsMessage={() => null}
             triggerRef={addNewBtnRef}
+            setIsMenuOpen={setIsMenuOpen}
+            pathname={location.pathname}
             components={{
-              Option: props => <AddNewCustomOption {...props} setIsMenuOpen={setIsMenuOpen} pathname={location.pathname} />
+              Option: AddNewCustomOption
             }}
           />
         </div>

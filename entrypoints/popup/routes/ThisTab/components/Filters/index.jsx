@@ -136,7 +136,7 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
           isSearchable={false}
           triggerRef={buttonRef}
           components={{
-            Option: props => <CustomOption {...props} />
+            Option: CustomOption
           }}
         />
       </div>
