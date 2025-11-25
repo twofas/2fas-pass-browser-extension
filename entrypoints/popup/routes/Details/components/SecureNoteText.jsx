@@ -22,6 +22,8 @@ const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
+const TEXTAREA_LINE_HEIGHT = 19;
+
 function SecureNoteText (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
@@ -69,13 +71,15 @@ function SecureNoteText (props) {
 
         setTimeout(() => {
           if (textareaRef.current) {
+            textareaRef.current.style.height = '0';
             const scrollHeight = textareaRef.current.scrollHeight;
+            const targetHeight = Math.max(TEXTAREA_LINE_HEIGHT, Math.min(scrollHeight, 200));
 
-            textareaRef.current.style.height = '19px';
+            textareaRef.current.style.height = `${TEXTAREA_LINE_HEIGHT}px`;
             textareaRef.current.style.overflowY = 'hidden';
 
-            animate(19, scrollHeight, {
-              duration: 0.3,
+            animate(TEXTAREA_LINE_HEIGHT, targetHeight, {
+              duration: .3,
               onUpdate: value => {
                 if (textareaRef.current) {
                   textareaRef.current.style.height = `${value}px`;
@@ -101,8 +105,8 @@ function SecureNoteText (props) {
 
         textareaRef.current.style.overflowY = 'hidden';
 
-        await animate(currentHeight, 19, {
-          duration: 0.3,
+        await animate(currentHeight, TEXTAREA_LINE_HEIGHT, {
+          duration: .3,
           onUpdate: value => {
             if (textareaRef.current) {
               textareaRef.current.style.height = `${value}px`;

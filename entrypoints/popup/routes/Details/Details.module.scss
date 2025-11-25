@@ -241,8 +241,9 @@
     }
   }
 
-  &-details-secure-note-textarea {
+  &-secure-note-textarea {
     overflow: hidden;
+    resize: vertical !important;
     transition: none;
   }
 
