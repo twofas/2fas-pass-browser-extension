@@ -274,7 +274,7 @@ function Fetch(props) {
           <div className={S.fetchContainer}>
             <NavigationButton type='cancel' onClick={cancelHandle} />
 
-            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} />}
+            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} description={state?.action === PULL_REQUEST_TYPES.FULL_SYNC ? browser.i18n.getMessage('fetch_full_sync_description') : undefined} />}
             {fetchState === FETCH_STATE.CONNECTION_ERROR && <ConnectionError fetchState={fetchState} errorText={errorText} />}
             {fetchState === FETCH_STATE.CONNECTION_TIMEOUT && <ConnectionTimeout fetchState={fetchState} tryAgainHandle={tryAgainHandle} />}
             {fetchState === FETCH_STATE.CONTINUE_UPDATE && <ContinueUpdate fetchState={fetchState} />}
