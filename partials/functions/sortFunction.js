@@ -12,16 +12,27 @@
 */
 const sortFunction = (data, sort = 'az') => {
   return data.sort((a, b) => {
+    const nameA = a?.content?.name?.toLowerCase();
+    const nameB = b?.content?.name?.toLowerCase();
+
     switch (sort) {
       case 'za':
-        return a?.content?.name?.toLowerCase() < b?.content?.name?.toLowerCase() ? 1 : -1;
+        if (nameA !== nameB) {
+          return nameA < nameB ? 1 : -1;
+        }
+
+        return new Date(b?.createdAt) - new Date(a?.createdAt);
       case 'newest':
         return new Date(b?.updatedAt) - new Date(a?.updatedAt);
       case 'oldest':
         return new Date(a?.updatedAt) - new Date(b?.updatedAt);
       case 'az':
       default:
-        return a?.content?.name?.toLowerCase() > b?.content?.name?.toLowerCase() ? 1 : -1;
+        if (nameA !== nameB) {
+          return nameA > nameB ? 1 : -1;
+        }
+
+        return new Date(a?.createdAt) - new Date(b?.createdAt);
     }
   });
 };
