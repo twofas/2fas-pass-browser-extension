@@ -77,19 +77,9 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag, i
         urisTexts = item.content.uris.map(uri => uri?.text).filter(Boolean);
       }
 
-      let tagNamesMatch = false;
-
-      if (item?.tags && Array.isArray(item?.tags) && tags && Array.isArray(tags)) {
-        tagNamesMatch = item.tags.some(tagId => {
-          const tag = tags.find(t => t.id === tagId);
-          return tag?.name?.toLowerCase().includes(search?.toLowerCase());
-        });
-      }
-
       return item?.content?.name?.toLowerCase().includes(search?.toLowerCase()) ||
         item?.content?.username?.toLowerCase().includes(search?.toLowerCase()) ||
-        urisTexts.some(uriText => uriText?.toLowerCase().includes(search?.toLowerCase())) ||
-        tagNamesMatch;
+        urisTexts.some(uriText => uriText?.toLowerCase().includes(search?.toLowerCase()));
     });
   }
 
