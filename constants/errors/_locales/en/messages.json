@@ -84,7 +84,7 @@
     "description": "Error message displayed when the autofill operation fails"
   },
   "error_secure_note_name_copy_failed": {
-    "message": "Failed to copy Secure Note name to clipboard.",
+    "message": "Failed to copy Name to clipboard.",
     "description": "Error message displayed when copying the secure note name to the clipboard fails"
   },
   "error_no_response_from_tab": {
