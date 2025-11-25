@@ -469,7 +469,7 @@
         font-weight: 400;
         height: 100%;
         outline: none;
-        padding-right: 24px;
+        padding-right: 0;
         width: 100%;
 
         @include m.darkMode {
@@ -528,6 +528,10 @@
           display: none;
           opacity: 0;
           pointer-events: none;
+        }
+
+        &.with-value {
+          padding-right: 24px;
         }
       }
     }

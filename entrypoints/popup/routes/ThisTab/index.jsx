@@ -456,6 +456,7 @@ function ThisTab (props) {
                       maxLength="2048"
                       onChange={handleSearchChange}
                       value={data.searchValue || ''}
+                      className={data?.searchValue && data?.searchValue?.length > 0 ? S.withValue : ''}
                     />
         
                     <button
