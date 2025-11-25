@@ -11,6 +11,7 @@ import logoSrc from '@/assets/logo.svg?raw';
 import logoSrcDark from '@/assets/logo-dark.svg?raw';
 import closeSrc from '@/assets/popup-window/cancel.svg?raw';
 import URIMatcher from '@/partials/URIMatcher';
+import { nfkdSubstring } from '@/partials/functions';
 import { parseDomain, ParseResultType } from 'parse-domain';
 
 /**
@@ -99,7 +100,7 @@ const generateLabel = (item, itemIcon) => {
 
   itemIcon.classList.add('icon-label');
   itemIcon.setAttribute('style', `background: ${backgroundColor} !important;`);
-  const itemLabelText = createTextElement('span', item?.content?.labelText?.toUpperCase() || item?.content?.name?.substring(0, 2).toUpperCase() || '');
+  const itemLabelText = createTextElement('span', item?.content?.labelText?.toUpperCase() || nfkdSubstring(item?.content?.name, 0, 2).toUpperCase() || '');
   itemLabelText.style.color = item.content.textColor;
   itemIcon.appendChild(itemLabelText);
 };
