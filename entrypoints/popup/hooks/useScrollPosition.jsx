@@ -21,29 +21,37 @@ const useScrollPosition = (scrollableRef, loading = false) => {
   const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
   const storedHref = usePopupStateStore(state => state.href);
   const hasRestoredRef = useRef(false);
+  const isRestoringRef = useRef(false);
+  const targetScrollPositionRef = useRef(null);
 
   const saveScrollPosition = useCallback(() => {
     if (!scrollableRef?.current) {
       return;
     }
 
-    const scrollTop = scrollableRef.current.scrollTop;
-    setScrollPosition(scrollTop);
-  }, [scrollableRef, setScrollPosition]);
-
-  const restoreScrollPosition = useCallback(() => {
-    if (!scrollableRef?.current || scrollPosition === undefined || storedHref !== location.pathname) {
+    if (isRestoringRef.current) {
       return;
     }
 
-    if (scrollPosition !== undefined && scrollPosition > 0) {
+    const scrollTop = scrollableRef.current.scrollTop;
+    setScrollPosition(scrollTop);
+  }, [setScrollPosition]);
+
+  const restoreScrollPosition = useCallback(() => {
+    const targetPosition = targetScrollPositionRef.current;
+
+    if (!scrollableRef?.current || targetPosition === undefined || targetPosition === null || storedHref !== location.pathname) {
+      return;
+    }
+
+    if (targetPosition > 0) {
       scrollableRef.current.scrollTo({
-        top: scrollPosition,
+        top: targetPosition,
         left: 0,
         behavior: 'instant'
       });
     }
-  }, [scrollableRef, scrollPosition, storedHref, location.pathname]);
+  }, [storedHref, location.pathname]);
 
   useEffect(() => {
     const scrollElement = scrollableRef?.current;
@@ -67,16 +75,45 @@ const useScrollPosition = (scrollableRef, loading = false) => {
       scrollElement.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeout);
     };
-  }, [scrollableRef, saveScrollPosition, loading]);
+  }, [saveScrollPosition, loading]);
 
   useEffect(() => {
-    if (!loading && !hasRestoredRef.current && scrollableRef?.current && scrollPosition !== undefined && storedHref === location.pathname) {
+    const shouldRestore = !loading && !hasRestoredRef.current && scrollableRef?.current && scrollPosition !== undefined && storedHref === location.pathname;
+
+    if (shouldRestore) {
+      isRestoringRef.current = true;
+      targetScrollPositionRef.current = scrollPosition;
+
       requestAnimationFrame(() => {
         restoreScrollPosition();
-        hasRestoredRef.current = true;
+
+        requestAnimationFrame(() => {
+          const currentScroll = scrollableRef.current?.scrollTop;
+          const targetScroll = targetScrollPositionRef.current;
+
+          if (currentScroll !== targetScroll && targetScroll !== null) {
+            restoreScrollPosition();
+          }
+
+          hasRestoredRef.current = true;
+
+          setTimeout(() => {
+            const finalScroll = scrollableRef.current?.scrollTop;
+            const finalTarget = targetScrollPositionRef.current;
+
+            if (finalScroll !== finalTarget && finalTarget !== null) {
+              restoreScrollPosition();
+            }
+
+            setTimeout(() => {
+              isRestoringRef.current = false;
+              targetScrollPositionRef.current = null;
+            }, 200);
+          }, 100);
+        });
       });
     }
-  }, [loading, scrollableRef, scrollPosition, restoreScrollPosition, storedHref, location.pathname]);
+  }, [loading, scrollPosition, restoreScrollPosition, storedHref, location.pathname]);
 
   useEffect(() => {
     hasRestoredRef.current = false;
@@ -84,7 +121,7 @@ const useScrollPosition = (scrollableRef, loading = false) => {
 
   useEffect(() => {
     return () => {
-      if (scrollableRef?.current) {
+      if (scrollableRef?.current && !isRestoringRef.current) {
         const scrollTop = scrollableRef.current.scrollTop;
 
         if (scrollTop > 0) {
@@ -92,7 +129,7 @@ const useScrollPosition = (scrollableRef, loading = false) => {
         }
       }
     };
-  }, [scrollableRef, setScrollPosition]);
+  }, [setScrollPosition]);
 
   return {
     saveScrollPosition,
