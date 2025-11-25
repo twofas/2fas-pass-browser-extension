@@ -27,6 +27,10 @@
     "message": "To finish adding this service, continue on your \nmobile phone. Don't close this window.",
     "description": "Explains that the user should continue the process on their mobile phone"
   },
+  "fetch_full_sync_description": {
+    "message": "To complete the synchronization, continue on your mobile phone. Don't close this window.",
+    "description": "Explains that the user should continue the full sync process on their mobile phone"
+  },
   "fetch_delete_login_accept_toast": {
     "message": "Item deleted",
     "description": "Toast message displayed when a login is successfully deleted"
