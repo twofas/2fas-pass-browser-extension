@@ -122,7 +122,7 @@ const Sort = ({ selectedSort, onSortChange, forceClose }) => {
           isSearchable={false}
           triggerRef={buttonRef}
           components={{
-            Option: props => <CustomOption {...props} />
+            Option: CustomOption
           }}
         />
       </div>

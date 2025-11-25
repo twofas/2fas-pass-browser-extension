@@ -9,11 +9,11 @@ import { Link } from 'react-router';
 
 const AddNewCustomOption = option => {
   return (
-    <div className={`react-select-add-new__option ${option.pathname === option.data.value ? 'active' : ''}`}>
+    <div className={`react-select-add-new__option ${option?.selectProps?.pathname === option.data.value ? 'active' : ''}`}>
       <Link
         to={option.data.value}
         title={`${browser.i18n.getMessage('top_bar_create_new')} ${option.data.label}`}
-        onClick={() => option.setIsMenuOpen(false)}
+        onClick={() => option?.selectProps?.setIsMenuOpen ? option?.selectProps?.setIsMenuOpen(false) : {}}
       >
         <span className={`react-select-add-new__option-icon ${itemsUiData[option.data.item].selectClassName}`}>
           {itemsUiData[option.data.item].svg}
