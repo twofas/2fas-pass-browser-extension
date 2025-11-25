@@ -826,16 +826,18 @@
           }
 
           &.icon-label {
-            background-color: v.$primary-color-light;
-            border: 1px solid v.$primary-color-light;
+            background-color: v.$login-item-bg-light;
+            border: 1px solid v.$login-item-bg-light;
+            color: v.$login-item-light;
             font-size: 10px;
             font-weight: 700;
             line-height: 1.2;
             text-align: center;
 
             @include m.darkMode {
-              background-color: v.$primary-color-dark;
-              border-color: v.$primary-color-dark;
+              background-color: v.$login-item-bg-dark;
+              border-color: v.$login-item-bg-dark;
+              color: v.$login-item-dark;
             }
           }
 

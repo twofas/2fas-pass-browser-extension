@@ -304,7 +304,8 @@
               > span {
                 &.twofas-pass-notification-matching-logins-item-icon {
                   &.icon-label {
-                    background-color: v.$primary-color-light !important;
+                    background-color: v.$login-item-bg-light !important;
+                    color: v.$login-item-light !important;
                   }
 
                   &.icon-image {
@@ -364,7 +365,8 @@
               > span {
                 &.twofas-pass-notification-matching-logins-item-icon {
                   &.icon-label {
-                    background-color: v.$primary-color-dark !important;
+                    background-color: v.$login-item-bg-dark !important;
+                    color: v.$login-item-dark !important;
                   }
 
                   &.icon-image {
@@ -426,7 +428,8 @@
                 > span {
                   &.twofas-pass-notification-matching-logins-item-icon {
                     &.icon-label {
-                      background-color: v.$primary-color-light !important;
+                      background-color: v.$login-item-bg-light !important;
+                      color: v.$login-item-light !important;
                     }
 
                     &.icon-image {
@@ -486,7 +489,8 @@
                 > span {
                   &.twofas-pass-notification-matching-logins-item-icon {
                     &.icon-label {
-                      background-color: v.$primary-color-dark !important;
+                      background-color: v.$login-item-bg-dark !important;
+                      color: v.$login-item-dark !important;
                     }
 
                     &.icon-image {
