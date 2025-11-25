@@ -28,6 +28,7 @@ export { default as isText } from './isText.js';
 export { default as isURL } from './isURL.js';
 export { default as isVisible } from './isVisible.js';
 export { default as networkTest } from './networkTest.js';
+export { default as nfkdSubstring } from './nfkdSubstring.js';
 export { default as openPopup } from './openPopup.js';
 export { default as popupIsInSeparateWindow } from './popupIsInSeparateWindow.js';
 export { default as safariBlankLinks } from './safariBlankLinks.js';
