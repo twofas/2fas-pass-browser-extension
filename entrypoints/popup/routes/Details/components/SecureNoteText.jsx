@@ -217,34 +217,41 @@ function SecureNoteText (props) {
                   autoComplete="off"
                   autoCapitalize="off"
                 />
-              ) : (
-                <input type='password' id='editedSif' value='***************************************' readOnly />
+              ) : data?.item?.securityType === SECURITY_TIER.HIGHLY_SECRET && !data?.item?.sifExists ? null : (
+                <input
+                  type='password'
+                  id='editedSif'
+                  value='***************************************'
+                  readOnly
+                />
               )}
 
               {generateSecurityTypeTooltip(originalItem)}
               {generateErrorOverlay()}
             </div>
-            <div className={`${pI.passInputAdditional}`}>
-              <div className={`${bS.passToggle} ${bS.loaded}`}>
-                <input
-                  type="checkbox"
-                  name="reveal-secure-note"
-                  id="reveal-secure-note"
-                  checked={data?.revealSecureNote || false}
-                  disabled={data?.sifEditable || sifDecryptError}
-                  onChange={handleRevealToggle}
-                />
-                <label htmlFor="reveal-secure-note">
-                  <span className={bS.passToggleBox}>
-                    <span className={bS.passToggleBoxCircle}></span>
-                  </span>
+            {data?.item?.securityType === SECURITY_TIER.HIGHLY_SECRET && !data?.item?.sifExists ? null : (
+              <div className={`${pI.passInputAdditional}`}>
+                <div className={`${bS.passToggle} ${bS.loaded}`}>
+                  <input
+                    type="checkbox"
+                    name="reveal-secure-note"
+                    id="reveal-secure-note"
+                    checked={data?.revealSecureNote || false}
+                    disabled={data?.sifEditable || sifDecryptError}
+                    onChange={handleRevealToggle}
+                  />
+                  <label htmlFor="reveal-secure-note">
+                    <span className={bS.passToggleBox}>
+                      <span className={bS.passToggleBoxCircle}></span>
+                    </span>
 
-                  <span className={bS.passToggleText}>
-                    <span>{browser.i18n.getMessage('details_reveal_secure_note')}</span>
-                  </span>
-                </label>
+                    <span className={bS.passToggleText}>
+                      <span>{browser.i18n.getMessage('details_reveal_secure_note')}</span>
+                    </span>
+                  </label>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </Field>
