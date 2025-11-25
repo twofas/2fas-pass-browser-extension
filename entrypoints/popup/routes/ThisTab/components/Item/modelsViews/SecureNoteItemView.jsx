@@ -43,8 +43,9 @@ function SecureNoteItemView (props) {
         menuIsOpen={props.more === true}
         ref={props.selectRef}
         triggerRef={moreBtnRef}
+        setMore={props.setMore}
         components={{
-          Option: props => <CustomOption {...props} more={props.more} setMore={props.setMore} />
+          Option: CustomOption
         }}
       />
     </>

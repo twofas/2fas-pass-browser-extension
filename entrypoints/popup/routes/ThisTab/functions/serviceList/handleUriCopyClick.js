@@ -9,16 +9,16 @@ import copyValue from '@/partials/functions/copyValue';
 /** 
 * Function to handle the URI copy action.
 * @async
-* @param {Object} props - The props object.
+* @param {Object} option - The option object.
 * @return {Promise<void>}
 */
-const handleUriCopyClick = async props => {
-  if (props?.setMore) {
-    props.setMore(false);
+const handleUriCopyClick = async option => {
+  if (option?.selectProps?.setMore) {
+    option.selectProps.setMore(false);
   }
 
   try {
-    await copyValue(props.data.value, props.data.deviceId, props.data.vaultId, props.data.itemId, 'uri');
+    await copyValue(option.data.value, option.data.deviceId, option.data.vaultId, option.data.itemId, 'uri');
     showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
   } catch (e) {
     showToast(browser.i18n.getMessage('error_uri_copy_failed'), 'error');
