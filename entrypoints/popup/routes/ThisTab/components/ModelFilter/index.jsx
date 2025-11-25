@@ -16,11 +16,11 @@ import { supportedFeatures } from '@/constants';
 
 const AllIcon = lazy(() => import('@/assets/popup-window/items/all.svg?react'));
 
-const ModalFilterCustomOption = option => {
+const ModelFilterCustomOption = option => {
   return (
     <components.Option
       {...option}
-      className={`react-select-model-filter__option ${option.isSelected || (!option?.itemModelFilter && option.data.value === null) ? 'react-select-model-filter__option--is-selected' : ''}`}
+      className={`react-select-model-filter__option ${option.isSelected || (!option?.selectProps?.itemModelFilter && option.data.value === null) ? 'react-select-model-filter__option--is-selected' : ''}`}
       title={option.data.label}
       onClick={() => {}}
     >
@@ -110,8 +110,9 @@ const ModelFilter = () => {
         isSearchable={false}
         noOptionsMessage={() => null}
         triggerRef={buttonRef}
+        itemModelFilter={data.itemModelFilter}
         components={{
-          Option: props => <ModalFilterCustomOption {...props} itemModelFilter={data.itemModelFilter} />
+          Option: ModelFilterCustomOption
         }}
       />
     </>

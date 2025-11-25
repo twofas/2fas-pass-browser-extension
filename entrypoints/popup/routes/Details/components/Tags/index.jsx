@@ -229,7 +229,7 @@ function Tags () {
                       noOptionsMessage={() => null}
                       triggerRef={addButtonRef}
                       components={{
-                        Option: props => <CustomOption {...props} />
+                        Option: CustomOption
                       }}
                     />
                   </div>
