@@ -27,6 +27,7 @@ class SecureNote extends Item {
     validate(secureNoteData.content && typeof secureNoteData.content === 'object', 'Invalid secureNote data');
     validate(secureNoteData?.content?.name, isValidString, 'Invalid content.name: must be a string');
     validateOptional(secureNoteData?.content?.s_text, isValidBase64, 'Invalid content.s_text: must be a base64 string');
+    validateOptional(secureNoteData?.content?.additionalInfo, isValidString, 'Invalid content.additionalInfo: must be a string');
 
     validateOptional(secureNoteData?.internalData, data => typeof data === 'object', 'Invalid secureNoteData.internalData: must be an object');
     validateOptional(secureNoteData?.internalData?.type, isValidString, 'Invalid secureNoteData.internalData.type: must be a string');
@@ -36,7 +37,8 @@ class SecureNote extends Item {
 
     this.content = {
       name: secureNoteData.content.name,
-      s_text: secureNoteData.content.s_text
+      s_text: secureNoteData.content.s_text,
+      additionalInfo: secureNoteData.content.additionalInfo || null
     };
 
     this.internalData = {
@@ -129,7 +131,8 @@ class SecureNote extends Item {
       contentVersion: SecureNote.contentVersion,
       content: {
         name: this.content.name,
-        s_text: this.#s_text
+        s_text: this.#s_text,
+        additionalInfo: this.content.additionalInfo || null
       },
       internalData: {
         uiName: this.internalData.uiName,

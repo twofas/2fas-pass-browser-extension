@@ -17,6 +17,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 
 const Name = lazy(() => import('../../components/Name'));
 const SecureNoteText = lazy(() => import('../../components/SecureNoteText'));
+const AdditionalInfo = lazy(() => import('../../components/AdditionalInfo'));
 const SecurityType = lazy(() => import('../../components/SecurityType'));
 const Tags = lazy(() => import('../../components/Tags'));
 const DangerZone = lazy(() => import('../../components/DangerZone'));
@@ -79,6 +80,10 @@ function SecureNoteDetailsView(props) {
       stateData.content.s_text = data?.item?.internalData?.editedSif ? data.item.internalData.editedSif : (data?.item?.sifDecrypted ? data.item.sifDecrypted : '');
     }
 
+    if (data.additionalInfoEditable) {
+      stateData.content.additionalInfo = e?.content?.additionalInfo ? e.content.additionalInfo : '';
+    }
+
     if (data.tierEditable) {
       const originalItem = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
@@ -124,6 +129,13 @@ function SecureNoteDetailsView(props) {
             formData={{ form, originalItem: props.originalItem }}
             sifDecryptError={data.sifDecryptError}
           />
+          {
+            !data?.item?.content?.additionalInfo ? null : (
+              <AdditionalInfo
+                key={`additional-info-${data.item.id}`}
+              />
+            )
+          }
           <SecurityType key={`security-type-${data.item.id}`} />
           <Tags key={`tags-${data.item.id}`} />
           <div className={S.detailsButton}>
