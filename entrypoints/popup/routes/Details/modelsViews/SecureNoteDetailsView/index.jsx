@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router';
 import { useState, lazy } from 'react';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
-import { valueToNFKD } from '@/partials/functions';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import SecureNote from '@/partials/models/itemModels/SecureNote';
 import { PULL_REQUEST_TYPES } from '@/constants';
@@ -73,11 +72,11 @@ function SecureNoteDetailsView(props) {
     }
 
     if (data.nameEditable) {
-      stateData.content.name = e?.content?.name ? valueToNFKD(e.content.name) : '';
+      stateData.content.name = e?.content?.name ? e.content.name : '';
     }
 
     if (data.sifEditable) {
-      stateData.content.s_text = data?.item?.internalData?.editedSif ? valueToNFKD(data.item.internalData.editedSif) : (data?.item?.sifDecrypted ? valueToNFKD(data.item.sifDecrypted) : '');
+      stateData.content.s_text = data?.item?.internalData?.editedSif ? data.item.internalData.editedSif : (data?.item?.sifDecrypted ? data.item.sifDecrypted : '');
     }
 
     if (data.tierEditable) {
