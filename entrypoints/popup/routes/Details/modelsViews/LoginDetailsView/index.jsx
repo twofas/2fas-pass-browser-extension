@@ -11,7 +11,6 @@ import { useState, lazy } from 'react';
 import generateURLs from '../../functions/generateURLs';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
-import { valueToNFKD } from '@/partials/functions';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import Login from '@/partials/models/itemModels/Login';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
@@ -86,14 +85,14 @@ function LoginDetailsView(props) {
     }
 
     if (data.nameEditable) {
-      stateData.content.name = e?.content?.name ? valueToNFKD(e.content.name) : '';
+      stateData.content.name = e?.content?.name ? e.content.name : '';
     }
 
     if (data.usernameEditable) {
       if (data.usernameMobile) {
         stateData.content.username = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       } else {
-        stateData.content.username = { value: e?.content?.username ? valueToNFKD(e.content.username) : '', action: REQUEST_STRING_ACTIONS.SET };
+        stateData.content.username = { value: e?.content?.username ? e.content.username : '', action: REQUEST_STRING_ACTIONS.SET };
       }
     }
 
@@ -102,7 +101,7 @@ function LoginDetailsView(props) {
         stateData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       } else {
         stateData.content.s_password = {
-          value: data?.item?.internalData?.editedSif ? valueToNFKD(data.item.internalData.editedSif) : (data?.item?.sifDecrypted ? valueToNFKD(data.item.sifDecrypted) : ''),
+          value: data?.item?.internalData?.editedSif ? data.item.internalData.editedSif : (data?.item?.sifDecrypted ? data.item.sifDecrypted : ''),
           action: REQUEST_STRING_ACTIONS.SET
         };
       }
@@ -121,7 +120,7 @@ function LoginDetailsView(props) {
     if (hasUriChanges) {
       const processedUris = (e.content.uris || []).map(uri => {
         return {
-          text: uri?.text ? valueToNFKD(uri.text) : '',
+          text: uri?.text ? uri.text : '',
           matcher: uri?.matcher
         };
       });
@@ -143,7 +142,7 @@ function LoginDetailsView(props) {
     }
 
     if (data.notesEditable) {
-      stateData.content.notes = e?.content?.notes ? valueToNFKD(e.content.notes) : '';
+      stateData.content.notes = e?.content?.notes ? e.content.notes : '';
     }
 
     stateData.uiState = {
