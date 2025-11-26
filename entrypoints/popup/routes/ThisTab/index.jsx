@@ -282,10 +282,61 @@ function ThisTab (props) {
 
   const hasMatchingLogins = useMemo(() => isItemsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
   const hasLogins = useMemo(() => isItemsCorrect(items) && items?.length > 0, [items]);
+
+  const filteredItemsByModel = useMemo(() => {
+    if (!data?.itemModelFilter) {
+      return items;
+    }
+
+    return items.filter(item => item?.constructor?.name === data.itemModelFilter);
+  }, [items, data?.itemModelFilter]);
+
+  const tagsWithFilteredAmounts = useMemo(() => {
+    if (!Array.isArray(tags) || tags.length === 0) {
+      return [];
+    }
+
+    const itemsToCount = filteredItemsByModel;
+    const servicesWithTags = itemsToCount.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
+
+    return tags.map(tag => {
+      let amount = 0;
+
+      for (const service of servicesWithTags) {
+        if (service.tags.includes(tag.id)) {
+          amount += 1;
+        }
+      }
+
+      return { ...tag, amount };
+    });
+  }, [tags, filteredItemsByModel]);
+
   const searchPlaceholder = useMemo(() => {
-    const amount = data?.selectedTag ? (data.selectedTag.amount || 0) : (items?.length || 0);
+    let amount;
+
+    if (data?.selectedTag) {
+      const tagWithFilteredAmount = tagsWithFilteredAmounts.find(t => t.id === data.selectedTag.id);
+      amount = tagWithFilteredAmount?.amount || 0;
+    } else {
+      amount = filteredItemsByModel?.length || 0;
+    }
+
     return browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', amount);
-  }, [data?.selectedTag, items?.length]);
+  }, [data?.selectedTag, filteredItemsByModel?.length, tagsWithFilteredAmounts]);
+
+  const currentTagInfo = useMemo(() => {
+    if (!data?.selectedTag || !data?.lastSelectedTagInfo) {
+      return null;
+    }
+
+    const tagWithFilteredAmount = tagsWithFilteredAmounts.find(t => t.id === data.selectedTag.id);
+
+    return {
+      name: data.lastSelectedTagInfo.name,
+      amount: tagWithFilteredAmount?.amount || 0
+    };
+  }, [data?.selectedTag, data?.lastSelectedTagInfo, tagsWithFilteredAmounts]);
 
   const autofillPopupClass = `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`;
   const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
@@ -467,7 +518,7 @@ function ThisTab (props) {
                     </button>
                   </div>
                   <Filters
-                    tags={tags}
+                    tags={tagsWithFilteredAmounts}
                     selectedTag={data.selectedTag}
                     onTagChange={handleTagChange}
                     forceClose={forceCloseFilters}
@@ -478,12 +529,12 @@ function ThisTab (props) {
                   />
                 </div>
 
-                <div className={`${S.thisTabAllLoginsTagsInfo} ${data.lastSelectedTagInfo && data.selectedTag ? S.active : ''}`}>
-                  <div 
+                <div className={`${S.thisTabAllLoginsTagsInfo} ${currentTagInfo && data.selectedTag ? S.active : ''}`}>
+                  <div
                     className={S.thisTabAllLoginsTagsInfoBox}
-                    title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', data.lastSelectedTagInfo?.amount || '').replace('TAG_NAME', data.lastSelectedTagInfo?.name || '')}
+                    title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', currentTagInfo?.amount || '').replace('TAG_NAME', currentTagInfo?.name || '')}
                   >
-                    <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', data.lastSelectedTagInfo?.amount || '').replace('TAG_NAME', data.lastSelectedTagInfo?.name || '')}</p>
+                    <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', currentTagInfo?.amount || '').replace('TAG_NAME', currentTagInfo?.name || '')}</p>
                     <button
                       onClick={() => setData('selectedTag', null)}
                       title={browser.i18n.getMessage('this_tab_clear_tag_filter')}
