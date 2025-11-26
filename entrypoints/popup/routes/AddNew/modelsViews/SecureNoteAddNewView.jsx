@@ -10,7 +10,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { memo, useState } from 'react';
 import usePopupStateStore from '../../../store/popupState';
 import { Form, Field } from 'react-final-form';
-import { valueToNFKD, getCurrentDevice } from '@/partials/functions';
+import { getCurrentDevice } from '@/partials/functions';
 import SecureNote from '@/partials/models/itemModels/SecureNote';
 import { useNavigate, useLocation } from 'react-router';
 import { PULL_REQUEST_TYPES } from '@/constants';
@@ -77,8 +77,8 @@ function SecureNoteAddNewView() {
     const formData = {
       contentType: SecureNote.contentType,
       content: {
-        name: e.name ? valueToNFKD(e.name) : '',
-        s_text: e.text ? valueToNFKD(e.text) : ''
+        name: e.name ? e.name : '',
+        s_text: e.text ? e.text : ''
       }
     };
 

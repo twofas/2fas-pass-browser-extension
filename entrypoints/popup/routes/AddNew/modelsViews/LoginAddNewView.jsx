@@ -13,7 +13,7 @@ import getDomainInfo from '../functions/getDomainInfo';
 import { useEffect, useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import onMessage from '../events/onMessage';
-import { valueToNFKD, copyValue, getCurrentDevice } from '@/partials/functions';
+import { copyValue, getCurrentDevice } from '@/partials/functions';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
 import usePopupStateStore from '../../../store/popupState';
@@ -199,10 +199,10 @@ function LoginAddNewView() {
     const formData = {
       contentType: Login.contentType,
       content: {
-        url: e.url ? valueToNFKD(e.url) : '',
-        passwordMinLength: e['password-minlength'] ? valueToNFKD(e['password-minlength']) : null,
-        passwordMaxLength: e['password-maxlength'] ? valueToNFKD(e['password-maxlength']) : null,
-        passwordPattern: e['password-pattern'] ? valueToNFKD(e['password-pattern']) : null
+        url: e.url ? e.url : '',
+        passwordMinLength: e['password-minlength'] ? e['password-minlength'] : null,
+        passwordMaxLength: e['password-maxlength'] ? e['password-maxlength'] : null,
+        passwordPattern: e['password-pattern'] ? e['password-pattern'] : null
       }
     };
 
@@ -210,8 +210,8 @@ function LoginAddNewView() {
       formData.content.username = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       formData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
     } else {
-      formData.content.username = { value: e.username ? valueToNFKD(e.username) : '', action: REQUEST_STRING_ACTIONS.SET };
-      formData.content.s_password = { value: e.s_password ? valueToNFKD(e.s_password) : '', action: REQUEST_STRING_ACTIONS.SET };
+      formData.content.username = { value: e.username ? e.username : '', action: REQUEST_STRING_ACTIONS.SET };
+      formData.content.s_password = { value: e.s_password ? e.s_password : '', action: REQUEST_STRING_ACTIONS.SET };
     }
 
     return navigate('/fetch', {

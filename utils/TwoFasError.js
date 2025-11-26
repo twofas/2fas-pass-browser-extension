@@ -459,15 +459,7 @@ class TwoFasError extends Error {
       message: 'No valid device UUID found for push notification',
       code: 9141
     },
-    // VALUE TO NFKD
-    valueToNFKDNotText: {
-      message: 'The value is not a text.',
-      code: 9170
-    },
-    valueToNFKDNotSupportNormalization: {
-      message: 'The value does not support normalization.',
-      code: 9171
-    },
+    // VALUE TO NFKD (DEPRECATED)
     // GET KEY
     getKeyNotFoundEnv: {
       message: 'Key %KEY_NAME% not found in persistentKeys or ephemeralKeys',
