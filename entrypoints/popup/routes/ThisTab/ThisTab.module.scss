@@ -905,6 +905,26 @@
               }
             }
           }
+
+          &.icon-credit-card {
+            background-color: v.$credit-card-item-bg-light;
+            border: 1px solid v.$credit-card-item-bg-light;
+
+            @include m.darkMode {
+              background-color: v.$credit-card-item-bg-dark;
+              border-color: v.$credit-card-item-bg-dark;
+            }
+
+            svg {
+              stroke: v.$credit-card-item-light;
+              height: 16px;
+              width: auto;
+
+              @include m.darkMode {
+                stroke: v.$credit-card-item-dark;
+              }
+            }
+          }
         }
         
         &:nth-of-type(2) { // Account data

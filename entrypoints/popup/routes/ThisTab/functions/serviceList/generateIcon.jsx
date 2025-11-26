@@ -13,6 +13,7 @@ import { parseDomain, ParseResultType } from 'parse-domain';
 
 const Skeleton = lazy(() => import('../../components/Skeleton'));
 const SecureNoteIcon = lazy(() => import('@/assets/popup-window/items/secure-note.svg?react'));
+const CreditCardIcon = lazy(() => import('@/assets/popup-window/items/credit-card.svg?react'));
 
 /** 
 * Function to generate the icon for a login item.
@@ -105,6 +106,14 @@ const generateIcon = (item, faviconError, setFaviconError, loading) => {
       return (
         <span className={S.iconSecureNote}>
           <SecureNoteIcon />
+        </span>
+      );
+    }
+
+    case 'CreditCard': {
+      return (
+        <span className={S.iconCreditCard}>
+          <CreditCardIcon />
         </span>
       );
     }
