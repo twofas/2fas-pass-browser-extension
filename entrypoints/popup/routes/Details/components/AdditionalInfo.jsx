@@ -16,42 +16,42 @@ import updateItem from '../functions/updateItem';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
-const notesVariants = {
+const additionalInfoVariants = {
   hidden: { height: 'auto', minHeight: '20px', maxHeight: '600px' },
   visible: { height: '121px', minHeight: '121px', maxHeight: '600px' }
 };
 
 /**
-* Function to render the notes input field.
+* Function to render the additional info input field.
 * @return {JSX.Element} The rendered component.
 */
-function Notes () {
+function AdditionalInfo () {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
 
-  const handleNotesEditable = async () => {
-    if (data.notesEditable) {
+  const handleAdditionalInfoEditable = async () => {
+    if (data.additionalInfoEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
       
       const updatedItem = updateItem(data.item, {
-        content: { notes: item.content.notes || '' },
+        content: { additionalInfo: item.content.additionalInfo || '' },
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
       setData('item', updatedItem);
-      setData('notesEditable', false);
+      setData('additionalInfoEditable', false);
     } else {
-      setData('notesEditable', true);
+      setData('additionalInfoEditable', true);
     }
   };
 
-  const handleNotesChange = useCallback(e => {
-    const newNotes = e.target.value;
+  const handleAdditionalInfoChange = useCallback(e => {
+    const newAdditionalInfo = e.target.value;
 
     const updatedItem = updateItem(data.item, {
-      content: { notes: newNotes },
+      content: { additionalInfo: newAdditionalInfo },
       internalData: { ...data.item.internalData }
     });
 
@@ -59,39 +59,39 @@ function Notes () {
   }, [data.item, setData]);
 
   return (
-    <Field name="content.notes">
+    <Field name="content.additionalInfo">
       {({ input }) => (
-        <div className={`${pI.passInput} ${data.notesEditable ? pI.resizable : pI.disabled}`}>
+        <div className={`${pI.passInput} ${data.additionalInfoEditable ? pI.resizable : pI.disabled}`}>
           <div className={pI.passInputTop}>
             <div className={pI.passInputTopLabelLike}>
-              <span>{browser.i18n.getMessage('notes')}</span>
+              <span>{browser.i18n.getMessage('details_additional_info')}</span>
             </div>
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
-              onClick={handleNotesEditable}
+              onClick={handleAdditionalInfoEditable}
             >
-              {data.notesEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data.additionalInfoEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
           </div>
           <div className={pI.passInputBottomMotion}>
             <LazyMotion features={loadDomAnimation}>
               <m.div
-                className={`${pI.passInputBottom} ${pI.note} ${data.notesEditable ? pI.noteEditable : ''}`}
-                variants={notesVariants}
+                className={`${pI.passInputBottom} ${pI.note} ${data.additionalInfoEditable ? pI.noteEditable : ''}`}
+                variants={additionalInfoVariants}
                 initial="hidden"
                 transition={{ duration: 0.3 }}
-                animate={input.value.length > 0 || data.notesEditable ? 'visible' : 'hidden'}
+                animate={input.value.length > 0 || data.additionalInfoEditable ? 'visible' : 'hidden'}
               >
                 <textarea
                   {...input}
                   onChange={e => {
                     input.onChange(e);
-                    handleNotesChange(e);
+                    handleAdditionalInfoChange(e);
                   }}
-                  placeholder={browser.i18n.getMessage('details_notes_placeholder')}
-                  id="notes"
-                  disabled={!data.notesEditable ? 'disabled' : ''}
+                  placeholder={browser.i18n.getMessage('details_additional_info_placeholder')}
+                  id="additional-info"
+                  disabled={!data.additionalInfoEditable ? 'disabled' : ''}
                   dir="ltr"
                   spellCheck="true"
                   autoCorrect="off"
@@ -107,4 +107,4 @@ function Notes () {
   );
 }
 
-export default Notes;
+export default AdditionalInfo;
