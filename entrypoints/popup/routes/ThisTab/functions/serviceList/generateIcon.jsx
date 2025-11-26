@@ -6,7 +6,7 @@
 
 import S from '../../ThisTab.module.scss';
 import { lazy } from 'react';
-import { getDomain, nfkdSubstring } from '@/partials/functions';
+import { getDomain } from '@/partials/functions';
 import { HEX_REGEX } from '@/constants';
 import URIMatcher from '@/partials/URIMatcher';
 import { parseDomain, ParseResultType } from 'parse-domain';
@@ -41,7 +41,7 @@ const generateIcon = (item, faviconError, setFaviconError, loading) => {
 
         return (
           <span className={S.iconLabel} style={style}>
-            <span style={{ color: item.content.textColor }}>{item?.content?.labelText?.toUpperCase() || nfkdSubstring(item?.content?.name, 0, 2).toUpperCase() || ''}</span>
+            <span style={{ color: item.content.textColor }}>{item?.content?.labelText?.toUpperCase() || (item?.content?.name || '').substring(0, 2).toUpperCase() || ''}</span>
           </span>
         );
       } else if (item?.content?.iconType === 0) {
@@ -119,7 +119,7 @@ const generateIcon = (item, faviconError, setFaviconError, loading) => {
 
       return (
         <span className={S.iconLabel} style={style}>
-          <span style={{ color: item.content.textColor }}>{item?.content?.labelText?.toUpperCase() || nfkdSubstring(item?.content?.name, 0, 2).toUpperCase() || ''}</span>
+          <span style={{ color: item.content.textColor }}>{item?.content?.labelText?.toUpperCase() || (item?.content?.name || '').substring(0, 2).toUpperCase() || ''}</span>
         </span>
       );
     }
