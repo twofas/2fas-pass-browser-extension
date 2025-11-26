@@ -879,9 +879,21 @@
     "message": "This information is only available on your mobile phone. Click the \"Fetch\" button at the top of this window to retrieve it.",
     "description": "Message indicating that the highly secret data has not been fetched yet"
   },
+  "details_notes_placeholder": {
+    "message": "Notes are empty",
+    "description": "Placeholder text for the notes input field"
+  },
   "details_reveal_secure_note": {
     "message": "Reveal Note",
     "description": "Button label to reveal the secure note content"
+  },
+  "details_additional_info": {
+    "message": "Additional info",
+    "description": "Label for the additional info field in the item details"
+  },
+  "details_additional_info_placeholder": {
+    "message": "Additional info is empty",
+    "description": "Placeholder text for the additional info input field"
   },
   "details_tags_label": {
     "message": "Tags",

@@ -26,6 +26,7 @@ const getEditableAmount = () => {
 
   if (data?.nameEditable) { amount++; }
   if (data?.sifEditable) { amount++; }
+  if (data?.additionalInfoEditable) { amount++; }
   if (data?.tierEditable) { amount++; }
   if (data?.tagsEditable) { amount++; }
 
