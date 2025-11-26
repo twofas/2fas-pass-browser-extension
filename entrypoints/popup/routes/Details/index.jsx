@@ -18,13 +18,15 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 // Model Views
 import LoginDetailsView from './modelsViews/LoginDetailsView';
 import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
+import CreditCardDetailsView from './modelsViews/CreditCardDetailsView';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 
 const DetailsViews = {
   'Login': LoginDetailsView,
-  'SecureNote': SecureNoteDetailsView
+  'SecureNote': SecureNoteDetailsView,
+  'CreditCard': CreditCardDetailsView
 };
 
 /** 
