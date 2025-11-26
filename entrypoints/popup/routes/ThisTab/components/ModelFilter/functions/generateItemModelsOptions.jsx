@@ -11,6 +11,7 @@ import { lazy } from 'react';
 const AllIcon = lazy(() => import('@/assets/popup-window/items/all.svg?react'));
 const LoginIcon = lazy(() => import('@/assets/popup-window/items/login.svg?react'));
 const SecureNoteIcon = lazy(() => import('@/assets/popup-window/items/secure-note.svg?react'));
+const CreditCardIcon = lazy(() => import('@/assets/popup-window/items/credit-card.svg?react'));
 
 /** 
 * Function to generate item models options based on device supported features.
@@ -25,6 +26,10 @@ const generateItemModelsOptions = deviceSupportedFeatures => {
 
   if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
     itemModelsOptions.push({ value: 'SecureNote', label: browser.i18n.getMessage('secure_note_plural'), icon: <SecureNoteIcon className={S.modelSecureNoteIcon} />, className: 'secure-notes' });
+  }
+
+  if (deviceSupportedFeatures.includes(supportedFeatures?.items?.creditCard)) {
+    itemModelsOptions.push({ value: 'CreditCard', label: browser.i18n.getMessage('credit_card_plural'), icon: <CreditCardIcon className={S.modelCreditCardIcon} />, className: 'credit-cards' });
   }
 
   return itemModelsOptions;

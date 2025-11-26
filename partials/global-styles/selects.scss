@@ -892,6 +892,46 @@
         }
       }
 
+      &.credit-cards {
+        body.theme-light & {
+          background-color: v.$credit-card-item-bg-light;
+
+          svg {
+            stroke: v.$credit-card-item-light;
+          }
+        }
+
+        body.theme-dark & {
+          background-color: v.$credit-card-item-bg-dark;
+
+          svg {
+            stroke: v.$credit-card-item-dark;
+          }
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$credit-card-item-bg-light;
+
+            svg {
+              stroke: v.$credit-card-item-light;
+            }
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$credit-card-item-bg-dark;
+
+            svg {
+              stroke: v.$credit-card-item-dark;
+            }
+          }
+        }
+
+        svg {
+          stroke-width: 1 !important;
+        }
+      }
+
       svg {
         stroke-linecap: round;
         stroke-linejoin: round;

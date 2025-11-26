@@ -344,6 +344,23 @@
             }
           }
 
+          &:global(.credit-cards) {
+            background-color: v.$credit-card-item-bg-light !important;
+
+            @include m.darkMode {
+              background-color: v.$credit-card-item-bg-dark !important;
+            }
+
+            svg {
+              stroke: v.$credit-card-item-light;
+              stroke-width: 1;
+
+              @include m.darkMode {
+                stroke: v.$credit-card-item-dark;
+              }
+            }
+          }
+
           svg {
             height: 16px;
             stroke: v.$primary-box-bg-light;
