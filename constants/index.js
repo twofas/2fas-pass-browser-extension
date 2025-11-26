@@ -37,7 +37,7 @@ export {
   AUTO_CLEAR_CLIPBOARD_REGEX,
   URL_REGEX,
   IP_REGEX,
-  CREDIT_CARD_REGEX
+  PAYMENT_CARD_REGEX
 } from './regex.js';
 
 // Re-export named export from savePromptActions.js

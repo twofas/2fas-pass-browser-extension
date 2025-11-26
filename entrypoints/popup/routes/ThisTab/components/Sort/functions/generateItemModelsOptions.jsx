@@ -11,6 +11,7 @@ import { lazy } from 'react';
 const AllIcon = lazy(() => import('@/assets/popup-window/items/all.svg?react'));
 const LoginIcon = lazy(() => import('@/assets/popup-window/items/login.svg?react'));
 const SecureNoteIcon = lazy(() => import('@/assets/popup-window/items/secure-note.svg?react'));
+const PaymentCardIcon = lazy(() => import('@/assets/popup-window/items/payment-card.svg?react'));
 
 /** 
 * Function to generate item models options based on device supported features.
@@ -25,6 +26,10 @@ const generateItemModelsOptions = deviceSupportedFeatures => {
 
   if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
     itemModelsOptions.push({ value: 'SecureNote', label: browser.i18n.getMessage('secure_note_plural'), icon: <SecureNoteIcon className={S.modelSecureNoteIcon} />, className: 'secure-notes' });
+  }
+
+  if (deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard)) {
+    itemModelsOptions.push({ value: 'PaymentCard', label: browser.i18n.getMessage('payment_card_plural'), icon: <PaymentCardIcon className={S.modelPaymentCardIcon} />, className: 'payment-cards' });
   }
 
   return itemModelsOptions;

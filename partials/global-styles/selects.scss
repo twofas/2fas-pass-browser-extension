@@ -606,37 +606,37 @@
           }
         }
 
-        &.icon-item-credit-card {
+        &.icon-item-payment-card {
           body.theme-light & {
-            background-color: v.$credit-card-item-bg-light;
+            background-color: v.$payment-card-item-bg-light;
 
             svg {
-              stroke: v.$credit-card-item-light;
+              stroke: v.$payment-card-item-light;
             }
           }
 
           body.theme-dark & {
-            background-color: v.$credit-card-item-bg-dark;
+            background-color: v.$payment-card-item-bg-dark;
 
             svg {
-              stroke: v.$credit-card-item-dark;
+              stroke: v.$payment-card-item-dark;
             }
           }
 
           body.theme-unset & {
             @media (prefers-color-scheme: light) {
-              background-color: v.$credit-card-item-bg-light;
+              background-color: v.$payment-card-item-bg-light;
 
               svg {
-                stroke: v.$credit-card-item-light;
+                stroke: v.$payment-card-item-light;
               }
             }
 
             @media (prefers-color-scheme: dark) {
-              background-color: v.$credit-card-item-bg-dark;
+              background-color: v.$payment-card-item-bg-dark;
 
               svg {
-                stroke: v.$credit-card-item-dark;
+                stroke: v.$payment-card-item-dark;
               }
             }
           }
@@ -892,37 +892,37 @@
         }
       }
 
-      &.credit-cards {
+      &.payment-cards {
         body.theme-light & {
-          background-color: v.$credit-card-item-bg-light;
+          background-color: v.$payment-card-item-bg-light;
 
           svg {
-            stroke: v.$credit-card-item-light;
+            stroke: v.$payment-card-item-light;
           }
         }
 
         body.theme-dark & {
-          background-color: v.$credit-card-item-bg-dark;
+          background-color: v.$payment-card-item-bg-dark;
 
           svg {
-            stroke: v.$credit-card-item-dark;
+            stroke: v.$payment-card-item-dark;
           }
         }
 
         body.theme-unset & {
           @media (prefers-color-scheme: light) {
-            background-color: v.$credit-card-item-bg-light;
+            background-color: v.$payment-card-item-bg-light;
 
             svg {
-              stroke: v.$credit-card-item-light;
+              stroke: v.$payment-card-item-light;
             }
           }
 
           @media (prefers-color-scheme: dark) {
-            background-color: v.$credit-card-item-bg-dark;
+            background-color: v.$payment-card-item-bg-dark;
 
             svg {
-              stroke: v.$credit-card-item-dark;
+              stroke: v.$payment-card-item-dark;
             }
           }
         }

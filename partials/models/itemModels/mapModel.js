@@ -17,12 +17,15 @@ import getModelsForDevice from './getModelsForDevice.js';
  */
 const mapModel = async (itemData, deviceId, vaultId) => {
   const models = await getModelsForDevice(deviceId);
+  console.log('mapModel models:', models);
 
   if (!itemData?.contentType) {
+    console.log('mapModel missing contentType:', itemData);
     return false;
   }
 
   const Model = models.get(itemData.contentType);
+  console.log('mapModel Model:', Model);
 
   if (!Model) {
     return false;

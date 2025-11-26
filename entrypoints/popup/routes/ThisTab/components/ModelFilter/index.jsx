@@ -82,11 +82,11 @@ const ModelFilter = () => {
     <>
       <button
         ref={buttonRef}
-        className={`${S.thisTabAllLoginsHeaderModelFilter} ${deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) ? '' : S.disabled}`}
+        className={`${S.thisTabAllLoginsHeaderModelFilter} ${deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) || deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard) ? '' : S.disabled}`}
         onClick={handleModelBtnClick}
       > 
         {
-          deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) ? (
+          deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) || deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard) ? (
             <>
               {generateModelIcon()}
               <span className={S.thisTabAllLoginsHeaderModelFilterText}>{itemModelsOptions.find(option => option.value === data.itemModelFilter)?.label || browser.i18n.getMessage('this_tab_all_logins_header')}</span>

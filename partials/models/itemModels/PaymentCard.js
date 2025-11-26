@@ -8,11 +8,11 @@ import Item from './Item';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
-* Class representing a credit card.
+* Class representing a payment card.
 * @extends Item
 */
-export default class CreditCard extends Item {
-  static contentType = 'card';
+export default class PaymentCard extends Item {
+  static contentType = 'paymentCard';
   static contentVersion = 1;
 
   #s_cardNumber;
@@ -22,54 +22,54 @@ export default class CreditCard extends Item {
   #s_expirationDateDecrypted;
   #s_securityCodeDecrypted;
 
-  constructor (creditCardData, deviceId = null, vaultId = null) {
-    if (creditCardData.constructor.name === creditCardData.name) {
-      return creditCardData;
+  constructor (paymentCardData, deviceId = null, vaultId = null) {
+    if (paymentCardData.constructor.name === paymentCardData.name) {
+      return paymentCardData;
     }
 
-    super(creditCardData, deviceId, vaultId);
+    super(paymentCardData, deviceId, vaultId);
 
-    validate(creditCardData.content && typeof creditCardData.content === 'object', 'Invalid credit card data');
+    validate(paymentCardData.content && typeof paymentCardData.content === 'object', 'Invalid payment card data');
 
-    validateOptional(creditCardData?.content?.name, isValidString, 'Invalid creditCardData.content.name: must be a string');
-    validateOptional(creditCardData?.content?.cardHolder, isValidString, 'Invalid creditCardData.content.cardHolder: must be a string');
+    validateOptional(paymentCardData?.content?.name, isValidString, 'Invalid paymentCardData.content.name: must be a string');
+    validateOptional(paymentCardData?.content?.cardHolder, isValidString, 'Invalid paymentCardData.content.cardHolder: must be a string');
 
-    validateOptional(creditCardData?.content?.s_cardNumber, isValidBase64, 'Invalid creditCardData.content.s_cardNumber: must be a base64 string');
-    validateOptional(creditCardData?.content?.s_expirationDate, isValidBase64, 'Invalid creditCardData.content.s_expirationDate: must be a base64 string');
-    validateOptional(creditCardData?.content?.s_securityCode, isValidBase64, 'Invalid creditCardData.content.s_securityCode: must be a base64 string');
+    validateOptional(paymentCardData?.content?.s_cardNumber, isValidBase64, 'Invalid paymentCardData.content.s_cardNumber: must be a base64 string');
+    validateOptional(paymentCardData?.content?.s_expirationDate, isValidBase64, 'Invalid paymentCardData.content.s_expirationDate: must be a base64 string');
+    validateOptional(paymentCardData?.content?.s_securityCode, isValidBase64, 'Invalid paymentCardData.content.s_securityCode: must be a base64 string');
 
-    validateOptional(creditCardData?.content?.notes, isValidString, 'Invalid creditCardData.content.notes: must be a string');
+    validateOptional(paymentCardData?.content?.notes, isValidString, 'Invalid paymentCardData.content.notes: must be a string');
 
-    validateOptional(creditCardData?.internalData, data => typeof data === 'object', 'Invalid creditCardData.internalData: must be an object');
-    validateOptional(creditCardData?.internalData?.type, isValidString, 'Invalid creditCardData.internalData.type: must be a string');
+    validateOptional(paymentCardData?.internalData, data => typeof data === 'object', 'Invalid paymentCardData.internalData: must be an object');
+    validateOptional(paymentCardData?.internalData?.type, isValidString, 'Invalid paymentCardData.internalData.type: must be a string');
 
-    this.contentType = CreditCard.contentType;
-    this.contentVersion = CreditCard.contentVersion;
+    this.contentType = PaymentCard.contentType;
+    this.contentVersion = PaymentCard.contentVersion;
 
     this.content = {
-      name: creditCardData.content.name,
-      cardHolder: creditCardData.content.cardHolder,
-      notes: creditCardData.content.notes ?? null,
-      cardNumberMask: creditCardData.content.cardNumberMask ?? null,
-      cardIssuer: creditCardData.content.cardIssuer ?? null,
-      s_cardNumber: creditCardData.content.s_cardNumber ?? null,
-      s_expirationDate: creditCardData.content.s_expirationDate ?? null,
-      s_securityCode: creditCardData.content.s_securityCode ?? null
+      name: paymentCardData.content.name,
+      cardHolder: paymentCardData.content.cardHolder,
+      notes: paymentCardData.content.notes ?? null,
+      cardNumberMask: paymentCardData.content.cardNumberMask ?? null,
+      cardIssuer: paymentCardData.content.cardIssuer ?? null,
+      s_cardNumber: paymentCardData.content.s_cardNumber ?? null,
+      s_expirationDate: paymentCardData.content.s_expirationDate ?? null,
+      s_securityCode: paymentCardData.content.s_securityCode ?? null
     };
 
     this.internalData = {
-      uiName: 'Credit Card',
-      type: creditCardData.internalData?.type || null,
-      sifResetTime: creditCardData.internalData?.sifResetTime || null,
-      editedCardNumber: creditCardData.internalData?.editedCardNumber,
-      editedExpirationDate: creditCardData.internalData?.editedExpirationDate,
-      editedSecurityCode: creditCardData.internalData?.editedSecurityCode
+      uiName: 'Payment Card',
+      type: paymentCardData.internalData?.type || null,
+      sifResetTime: paymentCardData.internalData?.sifResetTime || null,
+      editedCardNumber: paymentCardData.internalData?.editedCardNumber,
+      editedExpirationDate: paymentCardData.internalData?.editedExpirationDate,
+      editedSecurityCode: paymentCardData.internalData?.editedSecurityCode
     };
 
     // Secure Input Fields
-    this.#s_cardNumber = creditCardData.content.s_cardNumber ?? null;
-    this.#s_expirationDate = creditCardData.content.s_expirationDate ?? null;
-    this.#s_securityCode = creditCardData.content.s_securityCode ?? null;
+    this.#s_cardNumber = paymentCardData.content.s_cardNumber ?? null;
+    this.#s_expirationDate = paymentCardData.content.s_expirationDate ?? null;
+    this.#s_securityCode = paymentCardData.content.s_securityCode ?? null;
     this.#s_cardNumberDecrypted = null;
     this.#s_expirationDateDecrypted = null;
     this.#s_securityCodeDecrypted = null;
@@ -157,8 +157,8 @@ export default class CreditCard extends Item {
   toJSON () {
     return {
       ...super.toJSON(),
-      contentType: CreditCard.contentType,
-      contentVersion: CreditCard.contentVersion,
+      contentType: PaymentCard.contentType,
+      contentVersion: PaymentCard.contentVersion,
       content: {
         ...this.content,
         s_cardNumber: this.#s_cardNumber,

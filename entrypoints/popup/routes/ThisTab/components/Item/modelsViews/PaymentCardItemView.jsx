@@ -14,14 +14,14 @@ const Skeleton = lazy(() => import('../../Skeleton'));
 const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
 const CustomOption = lazy(() => import('../components/CustomOption'));
 
-function CreditCardItemView (props) {
+function PaymentCardItemView (props) {
   const moreBtnRef = useRef(null);
   const navigate = useNavigate();
 
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
 
   const handleAutofillClick = useCallback(async () => {
-    console.log('Autofill credit card not implemented yet');
+    console.log('Autofill payment card not implemented yet');
   }, [props?.data?.deviceId, props?.data?.vaultId, props?.data?.id, navigate, props.more]);
 
   return (
@@ -57,4 +57,4 @@ function CreditCardItemView (props) {
   );
 }
 
-export default memo(CreditCardItemView);
+export default memo(PaymentCardItemView);

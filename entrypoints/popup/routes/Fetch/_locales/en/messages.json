@@ -75,9 +75,9 @@
     "message": "Secure Note request accepted",
     "description": "Toast message displayed when a secure note request is accepted"
   },
-  "fetch_creditCard_request_accept_toast": {
-    "message": "Credit Card request accepted",
-    "description": "Toast message displayed when a credit card request is accepted"
+  "fetch_paymentCard_request_accept_toast": {
+    "message": "Payment Card request accepted",
+    "description": "Toast message displayed when a payment card request is accepted"
   },
   "fetch_request_cancel_toast": {
     "message": "Item request rejected",

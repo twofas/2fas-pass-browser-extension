@@ -18,7 +18,7 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 // Model Views
 import LoginDetailsView from './modelsViews/LoginDetailsView';
 import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
-import CreditCardDetailsView from './modelsViews/CreditCardDetailsView';
+import PaymentCardDetailsView from './modelsViews/PaymentCardDetailsView';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
@@ -26,7 +26,7 @@ const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.
 const DetailsViews = {
   'Login': LoginDetailsView,
   'SecureNote': SecureNoteDetailsView,
-  'CreditCard': CreditCardDetailsView
+  'PaymentCard': PaymentCardDetailsView
 };
 
 /** 

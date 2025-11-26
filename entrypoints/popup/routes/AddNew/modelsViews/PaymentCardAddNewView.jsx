@@ -11,15 +11,15 @@ import { memo, useState } from 'react';
 import usePopupStateStore from '../../../store/popupState';
 import { Form, Field } from 'react-final-form';
 import { valueToNFKD, getCurrentDevice } from '@/partials/functions';
-import CreditCard from '@/partials/models/itemModels/CreditCard';
+import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 import { useNavigate, useLocation } from 'react-router';
-import { PULL_REQUEST_TYPES, CREDIT_CARD_REGEX } from '@/constants';
+import { PULL_REQUEST_TYPES, PAYMENT_CARD_REGEX } from '@/constants';
 
 /** 
-* CreditCardAddNewView component for adding a new Credit Card.
+* PaymentCardAddNewView component for adding a new Payment Card.
 * @return {JSX.Element} The rendered component.
 */
-function CreditCardAddNewView () {
+function PaymentCardAddNewView () {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -45,7 +45,7 @@ function CreditCardAddNewView () {
 
     if (!values?.cardNumber || values?.cardNumber?.length <= 0) {
       errors.cardNumber = 'Card number is required';
-    } else if (!CREDIT_CARD_REGEX.test(values.cardNumber)) {
+    } else if (!PAYMENT_CARD_REGEX.test(values.cardNumber)) {
       errors.cardNumber = 'Card number is invalid';
     }
 
@@ -113,7 +113,7 @@ function CreditCardAddNewView () {
     const deviceId = device.id;
 
     const formData = {
-      contentType: CreditCard.contentType,
+      contentType: PaymentCard.contentType,
       content: {
         name: e.name ? valueToNFKD(e.name) : '',
         cardHolder: e.cardHolder ? valueToNFKD(e.cardHolder) : '',
@@ -129,7 +129,7 @@ function CreditCardAddNewView () {
         from: 'add-new',
         data: formData,
         originalData: e,
-        model: CreditCard.contentType,
+        model: PaymentCard.contentType,
         deviceId
       }
     });
@@ -293,4 +293,4 @@ function CreditCardAddNewView () {
   );
 }
 
-export default memo(CreditCardAddNewView);
+export default memo(PaymentCardAddNewView);

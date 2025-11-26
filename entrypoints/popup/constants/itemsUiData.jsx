@@ -7,7 +7,7 @@
 import { lazy } from 'react';
 
 const LoginIcon = lazy(() => import('@/assets/popup-window/items/login.svg?react'));
-const CreditCardIcon = lazy(() => import('@/assets/popup-window/items/credit-card.svg?react'));
+const PaymentCardIcon = lazy(() => import('@/assets/popup-window/items/payment-card.svg?react'));
 const SecureNoteIcon = lazy(() => import('@/assets/popup-window/items/secure-note.svg?react'));
 const SSHKeyIcon = lazy(() => import('@/assets/popup-window/items/ssh-key.svg?react'));
 
@@ -17,10 +17,10 @@ const itemsUiData = {
     selectClassName: 'icon-item-login',
     svg: <LoginIcon />
   },
-  CreditCard: {
-    label: browser.i18n.getMessage('credit_card'),
-    selectClassName: 'icon-item-credit-card',
-    svg: <CreditCardIcon />
+  PaymentCard: {
+    label: browser.i18n.getMessage('payment_card'),
+    selectClassName: 'icon-item-payment-card',
+    svg: <PaymentCardIcon />
   },
   SecureNote: {
     label: browser.i18n.getMessage('secure_note'),
