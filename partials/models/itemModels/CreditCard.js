@@ -12,12 +12,15 @@ import { v4 as uuidv4 } from 'uuid';
 * @extends Item
 */
 export default class CreditCard extends Item {
-  static contentType = 'creditCard';
+  static contentType = 'card';
   static contentVersion = 1;
 
   #s_cardNumber;
   #s_expirationDate;
   #s_securityCode;
+  #s_cardNumberDecrypted;
+  #s_expirationDateDecrypted;
+  #s_securityCodeDecrypted;
 
   constructor (creditCardData, deviceId = null, vaultId = null) {
     if (creditCardData.constructor.name === creditCardData.name) {
@@ -26,68 +29,50 @@ export default class CreditCard extends Item {
 
     super(creditCardData, deviceId, vaultId);
 
-    // validate(loginData.content && typeof loginData.content === 'object', 'Invalid login data');
+    validate(creditCardData.content && typeof creditCardData.content === 'object', 'Invalid credit card data');
 
-    // validate(isValidInteger(loginData.content.iconType, 0, 2), 'Invalid or missing loginData.iconType: must be an integer between 0 and 2');
+    validateOptional(creditCardData?.content?.name, isValidString, 'Invalid creditCardData.content.name: must be a string');
+    validateOptional(creditCardData?.content?.cardHolder, isValidString, 'Invalid creditCardData.content.cardHolder: must be a string');
 
-    // validateOptional(loginData?.content?.name, isValidString, 'Invalid loginData.content.name: must be a string');
-    // validateOptional(loginData?.content?.username, isValidString, 'Invalid loginData.content.username: must be a string');
+    validateOptional(creditCardData?.content?.s_cardNumber, isValidBase64, 'Invalid creditCardData.content.s_cardNumber: must be a base64 string');
+    validateOptional(creditCardData?.content?.s_expirationDate, isValidBase64, 'Invalid creditCardData.content.s_expirationDate: must be a base64 string');
+    validateOptional(creditCardData?.content?.s_securityCode, isValidBase64, 'Invalid creditCardData.content.s_securityCode: must be a base64 string');
 
-    // validateOptional(loginData?.content?.s_password, isValidBase64, 'Invalid loginData.content.s_password: must be a base64 string');
+    validateOptional(creditCardData?.content?.notes, isValidString, 'Invalid creditCardData.content.notes: must be a string');
 
-    // if (loginData?.content?.uris !== undefined) {
-    //   validate(Array.isArray(loginData.content.uris), 'Invalid loginData.content.uris: must be an array');
+    validateOptional(creditCardData?.internalData, data => typeof data === 'object', 'Invalid creditCardData.internalData: must be an object');
+    validateOptional(creditCardData?.internalData?.type, isValidString, 'Invalid creditCardData.internalData.type: must be a string');
 
-    //   if (loginData?.content?.uris?.length > 0) {
-    //     loginData.content.uris.forEach((uri, index) => {
-    //       validate(uri && typeof uri === 'object', `Invalid loginData.content.uris[${index}]: must be an object`);
-    //       validate(typeof uri.text === 'string', `Invalid loginData.content.uris[${index}].text: must be a string`);
-    //       validate(isValidInteger(uri.matcher, URIMatcher.M_DOMAIN_TYPE, URIMatcher.M_EXACT_TYPE), `Invalid loginData.content.uris[${index}].matcher: must be an integer`);
-    //     });
-    //   }
-    // }
+    this.contentType = CreditCard.contentType;
+    this.contentVersion = CreditCard.contentVersion;
 
-    // if (loginData?.content?.iconUriIndex !== undefined && loginData?.content?.iconUriIndex !== null) {
-    //   const urisLength = loginData?.content?.uris?.length && loginData.content.uris.length > 0 ? loginData.content.uris.length : 1;
-    //   validate(isValidInteger(loginData.content.iconUriIndex, -1, urisLength - 1), `Invalid loginData.content.iconUriIndex: must be an integer between 0 and ${urisLength - 1}`);
-    // }
+    this.content = {
+      name: creditCardData.content.name,
+      cardHolder: creditCardData.content.cardHolder,
+      notes: creditCardData.content.notes ?? null,
+      cardNumberMask: creditCardData.content.cardNumberMask ?? null,
+      cardIssuer: creditCardData.content.cardIssuer ?? null,
+      s_cardNumber: creditCardData.content.s_cardNumber ?? null,
+      s_expirationDate: creditCardData.content.s_expirationDate ?? null,
+      s_securityCode: creditCardData.content.s_securityCode ?? null
+    };
 
-    // validateOptional(loginData?.content?.labelText, isValidString, 'Invalid loginData.content.labelText: must be a string');
-    // validateOptional(loginData?.content?.labelColor, isValidHexColor, 'Invalid loginData.content.labelColor: must be a hex color string (3 or 6 characters)');
-    // validateOptional(loginData?.content?.customImageUrl, isValidString, 'Invalid loginData.content.customImageUrl: must be a string');
-    // validateOptional(loginData?.content?.notes, isValidString, 'Invalid loginData.content.notes: must be a string');
+    this.internalData = {
+      uiName: 'Credit Card',
+      type: creditCardData.internalData?.type || null,
+      sifResetTime: creditCardData.internalData?.sifResetTime || null,
+      editedCardNumber: creditCardData.internalData?.editedCardNumber,
+      editedExpirationDate: creditCardData.internalData?.editedExpirationDate,
+      editedSecurityCode: creditCardData.internalData?.editedSecurityCode
+    };
 
-    // validateOptional(loginData?.internalData, data => typeof data === 'object', 'Invalid loginData.internalData: must be an object');
-    // validateOptional(loginData?.internalData?.type, isValidString, 'Invalid loginData.internalData.type: must be a string');
-
-    // this.contentType = Login.contentType;
-    // this.contentVersion = Login.contentVersion;
-
-    // this.content = {
-    //   name: loginData.content.name,
-    //   username: loginData.content.username,
-    //   uris: loginData.content.uris,
-    //   iconType: loginData.content.iconType,
-    //   iconUriIndex: loginData.content.iconUriIndex ?? null,
-    //   labelText: loginData.content.labelText ?? null,
-    //   labelColor: loginData.content.labelColor ?? null,
-    //   customImageUrl: loginData.content.customImageUrl ?? null,
-    //   notes: loginData.content.notes ?? null,
-    //   s_password: loginData.content.s_password ?? null
-    // };
-
-    // this.internalData = {
-    //   uiName: 'Login',
-    //   urisWithTempIds: loginData.internalData?.urisWithTempIds || this.#urisWithTempIds(loginData.content.uris) || [],
-    //   normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || [],
-    //   type: loginData.internalData?.type || null,
-    //   sifResetTime: loginData.internalData?.sifResetTime || null,
-    //   editedSif: loginData.internalData?.editedSif ?? null
-    // };
-
-    // // Secure Input Fields
-    // this.#s_password = loginData.content.s_password ?? null;
-    // this.#s_sifDecrypted = null;
+    // Secure Input Fields
+    this.#s_cardNumber = creditCardData.content.s_cardNumber ?? null;
+    this.#s_expirationDate = creditCardData.content.s_expirationDate ?? null;
+    this.#s_securityCode = creditCardData.content.s_securityCode ?? null;
+    this.#s_cardNumberDecrypted = null;
+    this.#s_expirationDateDecrypted = null;
+    this.#s_securityCodeDecrypted = null;
   }
 
   removeSif () {
@@ -176,13 +161,17 @@ export default class CreditCard extends Item {
       contentVersion: CreditCard.contentVersion,
       content: {
         ...this.content,
-        // s_password: this.#s_password
+        s_cardNumber: this.#s_cardNumber,
+        s_expirationDate: this.#s_expirationDate,
+        s_securityCode: this.#s_securityCode
       },
       internalData: {
         uiName: this.internalData.uiName,
         type: this.internalData.type,
         sifResetTime: this.internalData.sifResetTime,
-        editedSif: this.internalData.editedSif
+        editedCardNumber: this.internalData.editedCardNumber,
+        editedExpirationDate: this.internalData.editedExpirationDate,
+        editedSecurityCode: this.internalData.editedSecurityCode
       }
     };
   }

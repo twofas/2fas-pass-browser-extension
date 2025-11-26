@@ -20,10 +20,9 @@ const generateAddNewOptions = deviceSupportedFeatures => {
     addNewOptions.push({ value: '/add-new/SecureNote', label: browser.i18n.getMessage('secure_note'), item: 'SecureNote' });
   }
 
-  // @TODO: Re-enable when credit card feature is available
-  // if (deviceSupportedFeatures.includes(supportedFeatures?.items?.creditCard)) {
+  if (deviceSupportedFeatures.includes(supportedFeatures?.items?.creditCard)) {
     addNewOptions.push({ value: '/add-new/CreditCard', label: browser.i18n.getMessage('credit_card'), item: 'CreditCard' });
-  // }
+  }
 
   return addNewOptions;
 };

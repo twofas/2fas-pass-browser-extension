@@ -45,7 +45,7 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
     const itemData = Object.assign({}, info.data);
     itemData.deviceId = state.data.deviceId;
 
-    const item = matchModel(itemData);
+    const item = await matchModel(itemData);
 
     if (!item) {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginUpdatedWrongData);
