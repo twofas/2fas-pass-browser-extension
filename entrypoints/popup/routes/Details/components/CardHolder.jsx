@@ -1,0 +1,114 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+import pI from '@/partials/global-styles/pass-input.module.scss';
+import bS from '@/partials/global-styles/buttons.module.scss';
+import { Field } from 'react-final-form';
+import { lazy, useCallback } from 'react';
+import copyValue from '@/partials/functions/copyValue';
+import usePopupStateStore from '../../../store/popupState';
+import getItem from '@/partials/sessionStorage/getItem';
+import updateItem from '../functions/updateItem';
+
+const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+
+/** 
+* Function to render the cardholder input field.
+* @param {Object} props - The component props.
+* @return {JSX.Element} The rendered component.
+*/
+function CardHolder (props) {
+  const data = usePopupStateStore(state => state.data);
+  const setData = usePopupStateStore(state => state.setData);
+
+  const { formData } = props;
+  const { inputError } = formData;
+
+  const handleCopyCardholder = useCallback(async cardholder => {
+    if (!cardholder) {
+      return;
+    }
+
+    await copyValue(cardholder, data.item.deviceId, data.item.vaultId, data.item.id, 'cardHolder');
+    showToast('Copied', 'success'); // @TODO: i18n
+  }, [data.item.id]);
+
+  const handleCardholderEditable = async () => {
+    if (data.cardHolderEditable) {
+      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
+
+      const updatedItem = updateItem(data.item, {
+        content: { cardholder: item.content.cardholder },
+        internalData: { ...data.item.internalData }
+      });
+
+      item = null;
+
+      setData('cardHolderEditable', false);
+      setData('item', updatedItem);
+    } else {
+      setData('cardHolderEditable', true);
+    }
+  };
+
+  const handleCardholderChange = useCallback(e => {
+    const newCardholder = e.target.value;
+
+    const updatedItem = updateItem(data.item, {
+      content: { cardholder: newCardholder },
+      internalData: { ...data.item.internalData }
+    });
+
+    setData('item', updatedItem);
+  }, [data.item, setData]);
+
+  return (
+    <Field name="content.cardHolder">
+      {({ input }) => (
+        <div className={`${pI.passInput} ${data.nameEditable ? '' : pI.disabled} ${inputError === 'cardHolder' ? pI.error : ''}`}>
+          <div className={pI.passInputTop}>
+            <label htmlFor="cardHolder">Cardholder</label> {/* @TODO: i18n */}
+            <button
+              type='button'
+              className={`${bS.btn} ${bS.btnClear}`}
+              onClick={handleCardholderEditable}
+            >
+              {data.cardHolderEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+            </button>
+          </div>
+          <div className={pI.passInputBottom}>
+            <input
+              type='text'
+              {...input}
+              onChange={e => {
+                input.onChange(e);
+                handleCardholderChange(e);
+              }}
+              placeholder='Cardholder Name' /* @TODO: i18n */
+              id='cardHolder'
+              disabled={!data.cardHolderEditable ? 'disabled' : ''}
+              dir='ltr'
+              spellCheck='true'
+              autoCorrect='true'
+              autoComplete='true'
+              autoCapitalize='off'
+            />
+          <button
+            type='button'
+            className={`${bS.btn} ${pI.iconButton}`}
+            onClick={() => handleCopyCardholder(input.value)}
+            title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+          >
+            <CopyIcon />
+          </button>
+        </div>
+      </div>
+      )}
+    </Field>
+  );
+}
+
+export default CardHolder;
