@@ -4,44 +4,40 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import Login from './Login.js';
-import SecureNote from './SecureNote.js';
-
-const modelClasses = [Login, SecureNote];
-const models = new Map(
-  modelClasses
-    .filter(Model => Model.contentType)
-    .map(Model => [Model.contentType, Model])
-);
+import getModelsForDevice from './getModelsForDevice.js';
 
 /**
  * Checks if the itemData has a contentType and contentVersion that match any of the available models
  * and validates that the model constructor doesn't throw errors.
  * If itemData is already a model instance (Login, SecureNote, etc.), returns it directly.
- * @param {Object|Login|SecureNote} itemData - The item data to check or an existing model instance
- * @returns {Login|SecureNote|null} Model instance if valid, null otherwise
+ * @async
+ * @param {Object|Login|SecureNote|CreditCard} itemData - The item data to check or an existing model instance
+ * @returns {Login|SecureNote|CreditCard|null} Model instance if valid, null otherwise
  */
-const matchModel = itemData => {
+const matchModel = async itemData => {
   if (!itemData?.contentType) {
     return null;
   }
 
-  if (itemData?.constructor?.name === 'Login' || itemData?.constructor?.name === 'SecureNote') {
+  const Model = itemData?.constructor;
+
+  if (Model?.contentType === itemData.contentType) {
     return itemData;
   }
 
-  const Model = models.get(itemData.contentType);
+  const models = await getModelsForDevice(itemData.deviceId);
+  const MatchedModel = models.get(itemData.contentType);
 
-  if (!Model) {
+  if (!MatchedModel) {
     return null;
   }
 
-  if (Model.contentVersion !== itemData.contentVersion) {
+  if (MatchedModel.contentVersion !== itemData.contentVersion) {
     return null;
   }
 
   try {
-    return new Model(itemData);
+    return new MatchedModel(itemData);
   } catch {
     return null;
   }

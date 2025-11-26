@@ -107,7 +107,8 @@ const getItems = async (filter = []) => {
   const jsons = (await Promise.all(processPromises)).filter(Boolean);
   const flattened = jsons.flat();
 
-  const mapped = flattened.map(matchModel).filter(Boolean);
+  const mappedPromises = flattened.map(matchModel);
+  const mapped = (await Promise.all(mappedPromises)).filter(Boolean);
 
   if (filter && Array.isArray(filter) && filter.length > 0) {
     return mapped.filter(item => filter.includes(item?.constructor?.name));

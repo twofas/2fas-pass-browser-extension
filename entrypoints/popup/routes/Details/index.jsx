@@ -74,15 +74,15 @@ function Details(props) {
 
           delete mergedItem.internalData;
 
-          item = matchModel(mergedItem);
+          item = await matchModel(mergedItem);
         } else {
-          item = matchModel({ ...location.state.data.item, securityType: originalItem?.securityType });
+          item = await matchModel({ ...location.state.data.item, securityType: originalItem?.securityType });
         }
       } else if (data?.item) {
         if (location.state?.from !== 'thisTab') {
           try {
             editedSecurityType = data.item.securityType;
-            item = matchModel({ ...data.item, securityType: originalItem?.securityType });
+            item = await matchModel({ ...data.item, securityType: originalItem?.securityType });
           } catch {
             if (params.id) {
               item = await getItem(params.deviceId, params.vaultId, params.id);

@@ -46,7 +46,7 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
 
     newData.deviceId = state.deviceId;
 
-    const newItem = matchModel(newData);
+    const newItem = await matchModel(newData);
 
     if (!newItem) {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongData);
