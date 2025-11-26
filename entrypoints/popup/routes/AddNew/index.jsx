@@ -14,12 +14,12 @@ import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import { itemsUiData } from '../../constants';
 import Login from '@/partials/models/itemModels/Login';
 import SecureNote from '@/partials/models/itemModels/SecureNote';
-import CreditCard from '@/partials/models/itemModels/CreditCard';
+import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 
 // Model Views
 import LoginView from './modelsViews/LoginAddNewView';
 import SecureNoteView from './modelsViews/SecureNoteAddNewView';
-import CreditCardAddNewView from './modelsViews/CreditCardAddNewView';
+import PaymentCardAddNewView from './modelsViews/PaymentCardAddNewView';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
@@ -45,8 +45,8 @@ function AddNew(props) {
         return <LoginView {...props} {...modelData} />;
       case SecureNote.contentType.toLowerCase():
         return <SecureNoteView {...props} {...modelData} />;
-      case CreditCard.contentType.toLowerCase():
-        return <CreditCardAddNewView {...props} {...modelData} />;
+      case PaymentCard.contentType.toLowerCase():
+        return <PaymentCardAddNewView {...props} {...modelData} />;
       default:
         return null;
     }

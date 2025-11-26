@@ -6,7 +6,7 @@
 
 import Login from './Login.js';
 import SecureNote from './SecureNote.js';
-import CreditCard from './CreditCard.js';
+import PaymentCard from './PaymentCard.js';
 import supportedFeatures from '@/constants/supportedFeatures.js';
 import getSupportedFeatures from '@/partials/functions/getSupportedFeatures.js';
 
@@ -27,14 +27,14 @@ const getModelsForDevice = async deviceId => {
   const modelClasses = [Login];
 
   const isSecureNoteSupported = deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote);
-  const isCreditCardSupported = deviceSupportedFeatures.includes(supportedFeatures?.items?.creditCard);
+  const isPaymentCardSupported = deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard);
 
   if (isSecureNoteSupported) {
     modelClasses.push(SecureNote);
   }
 
-  if (isCreditCardSupported) {
-    modelClasses.push(CreditCard);
+  if (isPaymentCardSupported) {
+    modelClasses.push(PaymentCard);
   }
   
   const models = new Map(

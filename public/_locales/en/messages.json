@@ -331,13 +331,13 @@
     "message": "Logins",
     "description": "Label for multiple logins"
   },
-  "credit_card": {
-    "message": "Credit Card",
-    "description": "Label for the credit card functionality"
+  "payment_card": {
+    "message": "Payment Card",
+    "description": "Label for the payment card functionality"
   },
-  "credit_card_plural": {
-    "message": "Credit Cards",
-    "description": "Label for multiple credit cards"
+  "payment_card_plural": {
+    "message": "Payment Cards",
+    "description": "Label for multiple payment cards"
   },
   "secure_note": {
     "message": "Secure Note",
@@ -999,9 +999,9 @@
     "message": "Secure Note request accepted",
     "description": "Toast message displayed when a secure note request is accepted"
   },
-  "fetch_creditCard_request_accept_toast": {
-    "message": "Credit Card request accepted",
-    "description": "Toast message displayed when a credit card request is accepted"
+  "fetch_paymentCard_request_accept_toast": {
+    "message": "Payment Card request accepted",
+    "description": "Toast message displayed when a payment card request is accepted"
   },
   "fetch_request_cancel_toast": {
     "message": "Item request rejected",

@@ -11,7 +11,7 @@ import { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 // Models
 import LoginItemView from './modelsViews/LoginItemView';
 import SecureNoteItemView from './modelsViews/SecureNoteItemView';
-import CreditCardItemView from './modelsViews/CreditCardItemView';
+import PaymentCardItemView from './modelsViews/PaymentCardItemView';
 
 /** 
 * Function to render the item.
@@ -143,8 +143,8 @@ function Item (props) {
     modelComponent = <LoginItemView {...props} {...modelData} />;
   } else if (constructorName === 'SecureNote') {
     modelComponent = <SecureNoteItemView {...props} {...modelData} />;
-  } else if (constructorName === 'CreditCard') {
-    modelComponent = <CreditCardItemView {...props} {...modelData} />;
+  } else if (constructorName === 'PaymentCard') {
+    modelComponent = <PaymentCardItemView {...props} {...modelData} />;
   } else {
     return null;
   }

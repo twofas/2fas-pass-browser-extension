@@ -11,8 +11,8 @@ import getModelsForDevice from './getModelsForDevice.js';
  * and validates that the model constructor doesn't throw errors.
  * If itemData is already a model instance (Login, SecureNote, etc.), returns it directly.
  * @async
- * @param {Object|Login|SecureNote|CreditCard} itemData - The item data to check or an existing model instance
- * @returns {Login|SecureNote|CreditCard|null} Model instance if valid, null otherwise
+ * @param {Object|Login|SecureNote|PaymentCard} itemData - The item data to check or an existing model instance
+ * @returns {Login|SecureNote|PaymentCard|null} Model instance if valid, null otherwise
  */
 const matchModel = async itemData => {
   if (!itemData?.contentType) {

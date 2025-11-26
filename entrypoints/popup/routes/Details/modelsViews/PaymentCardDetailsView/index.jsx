@@ -24,11 +24,11 @@ const Notes = lazy(() => import('../../components/Notes'));
 const DangerZone = lazy(() => import('../../components/DangerZone'));
 
 /** 
-* Function to render the details component for Credit Card.
+* Function to render the details component for Payment Card.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function CreditCardDetailsView (props) {
+function PaymentCardDetailsView (props) {
   const data = usePopupStateStore(state => state.data);
   const [inputError, setInputError] = useState(undefined);
 
@@ -152,4 +152,4 @@ function CreditCardDetailsView (props) {
   );
 }
 
-export default CreditCardDetailsView;
+export default PaymentCardDetailsView;

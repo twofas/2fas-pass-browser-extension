@@ -344,19 +344,19 @@
             }
           }
 
-          &:global(.credit-cards) {
-            background-color: v.$credit-card-item-bg-light !important;
+          &:global(.payment-cards) {
+            background-color: v.$payment-card-item-bg-light !important;
 
             @include m.darkMode {
-              background-color: v.$credit-card-item-bg-dark !important;
+              background-color: v.$payment-card-item-bg-dark !important;
             }
 
             svg {
-              stroke: v.$credit-card-item-light;
+              stroke: v.$payment-card-item-light;
               stroke-width: 1;
 
               @include m.darkMode {
-                stroke: v.$credit-card-item-dark;
+                stroke: v.$payment-card-item-dark;
               }
             }
           }
@@ -906,22 +906,22 @@
             }
           }
 
-          &.icon-credit-card {
-            background-color: v.$credit-card-item-bg-light;
-            border: 1px solid v.$credit-card-item-bg-light;
+          &.icon-payment-card {
+            background-color: v.$payment-card-item-bg-light;
+            border: 1px solid v.$payment-card-item-bg-light;
 
             @include m.darkMode {
-              background-color: v.$credit-card-item-bg-dark;
-              border-color: v.$credit-card-item-bg-dark;
+              background-color: v.$payment-card-item-bg-dark;
+              border-color: v.$payment-card-item-bg-dark;
             }
 
             svg {
-              stroke: v.$credit-card-item-light;
+              stroke: v.$payment-card-item-light;
               height: 16px;
               width: auto;
 
               @include m.darkMode {
-                stroke: v.$credit-card-item-dark;
+                stroke: v.$payment-card-item-dark;
               }
             }
           }
