@@ -25,7 +25,6 @@ import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
 import Connect from './routes/Connect';
 import { ErrorBoundary } from 'react-error-boundary';
-import { PrimeReactProvider } from 'primereact/api';
 
 const AddNew = lazy(() => import('./routes/AddNew'));
 const Settings = lazy(() => import('./routes/Settings'));
@@ -383,13 +382,11 @@ function Popup() {
         }));
       }}
     >
-      <PrimeReactProvider>
-        <HashRouter>
-          <AuthProvider>
-            <PopupMain />
-          </AuthProvider>
-        </HashRouter>
-      </PrimeReactProvider>
+      <HashRouter>
+        <AuthProvider>
+          <PopupMain />
+        </AuthProvider>
+      </HashRouter>
     </ErrorBoundary>
   );
 }

@@ -10,10 +10,13 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { memo, useState } from 'react';
 import usePopupStateStore from '../../../store/popupState';
 import { Form, Field } from 'react-final-form';
-import { valueToNFKD, getCurrentDevice } from '@/partials/functions';
+import { getCurrentDevice } from '@/partials/functions';
 import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 import { useNavigate, useLocation } from 'react-router';
 import { PULL_REQUEST_TYPES, PAYMENT_CARD_REGEX } from '@/constants';
+import { Calendar } from 'primereact/calendar';
+import PaymentCardNumberInput from '@/entrypoints/popup/components/PaymentCardNumberInput';
+import PaymentCardSecurityCodeInput from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput';
 
 /** 
 * PaymentCardAddNewView component for adding a new Payment Card.
@@ -116,11 +119,11 @@ function PaymentCardAddNewView () {
     const formData = {
       contentType: PaymentCard.contentType,
       content: {
-        name: e.name ? valueToNFKD(e.name) : '',
-        cardHolder: e.cardHolder ? valueToNFKD(e.cardHolder) : '',
-        s_cardNumber: e.cardNumber ? valueToNFKD(e.cardNumber) : '',
-        s_expirationDate: e.expirationDate ? valueToNFKD(e.expirationDate) : '',
-        s_securityCode: e.securityCode ? valueToNFKD(e.securityCode) : ''
+        name: e.name ? e.name : '',
+        cardHolder: e.cardHolder ? e.cardHolder : '',
+        s_cardNumber: e.cardNumber ? e.cardNumber : '',
+        s_expirationDate: e.expirationDate ? e.expirationDate : '',
+        s_securityCode: e.securityCode ? e.securityCode : ''
       }
     };
 
@@ -198,16 +201,9 @@ function PaymentCardAddNewView () {
                 <label htmlFor='add-new-cardNumber'>Card number</label>
               </div>
               <div className={pI.passInputBottom}>
-                <input
-                  type='text'
+                <PaymentCardNumberInput
                   {...input}
-                  placeholder="0000 0000 0000 0000"
                   id='add-new-cardNumber'
-                  dir='ltr'
-                  spellCheck='false'
-                  autoCorrect='off'
-                  autoComplete='off'
-                  autoCapitalize='off'
                   onChange={e => {
                     input.onChange(e);
                     setData('cardNumber', e.target.value);
@@ -225,10 +221,13 @@ function PaymentCardAddNewView () {
                   <label htmlFor='add-new-expirationDate'>Expiration Date</label>
                 </div>
                 <div className={pI.passInputBottom}>
-                  <input
-                    type='text'
+                  <Calendar
                     {...input}
-                    placeholder="MM/YYYY"
+                    dateFormat='mm/y'
+                    mask='99/99'
+                    view='month'
+                    maxDate={new Date()}
+                    placeholder="MM/YY"
                     id='add-new-expirationDate'
                     dir='ltr'
                     spellCheck='false'
@@ -251,16 +250,10 @@ function PaymentCardAddNewView () {
                   <label htmlFor='add-new-securityCode'>Security Code</label>
                 </div>
                 <div className={pI.passInputBottom}>
-                  <input
-                    type='text'
+                  <PaymentCardSecurityCodeInput
                     {...input}
-                    placeholder="123"
                     id='add-new-securityCode'
-                    dir='ltr'
-                    spellCheck='false'
-                    autoCorrect='off'
-                    autoComplete='off'
-                    autoCapitalize='off'
+                    cardNumber={data?.cardNumber}
                     onChange={e => {
                       input.onChange(e);
                       setData('securityCode', e.target.value);
