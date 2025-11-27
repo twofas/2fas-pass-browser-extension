@@ -12,6 +12,9 @@ import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 const Skeleton = lazy(() => import('../../Skeleton'));
 const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
+const CopyCardNumberBtn = lazy(() => import('../components/CopyCardNumberBtn'));
+const CopyCardSecurityCodeBtn = lazy(() => import('../components/CopyCardSecurityCodeBtn'));
+const { useCallback } = await import('react');
 const CustomOption = lazy(() => import('../components/CustomOption'));
 
 function PaymentCardItemView (props) {
@@ -34,10 +37,12 @@ function PaymentCardItemView (props) {
         {generateIcon(props.data, null, null, props.loading)}
         <span>
           {props.loading ? <Skeleton /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
-          {props.loading ? <Skeleton /> : <span>{props?.data?.content?.cardNumberMask ? `**** **** **** ${props?.data?.content?.cardNumberMask}` : browser.i18n.getMessage('no_item_name')}</span>} {/* @TODO: i18n */}
+          {props.loading ? <Skeleton /> : <span>{props?.data?.content?.cardNumberMask ? `**** ${props?.data?.content?.cardNumberMask}` : browser.i18n.getMessage('no_item_name')}</span>} {/* @TODO: i18n */}
         </span>
       </button>
       <div className={S.servicesListItemAdditionalButtons}>
+        <CopyCardNumberBtn item={props.data} more={props.more} setMore={props.setMore} />
+        <CopyCardSecurityCodeBtn item={props.data} more={props.more} setMore={props.setMore} />
         <MoreBtn item={props.data} more={props.more} setMore={props.setMore} ref={moreBtnRef} />
       </div>
       <AdvancedSelect
