@@ -4,6 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+@use 'sass:color';
 @use "@/partials/global-styles/variables" as v;
 @use "@/partials/global-styles/mixins" as m;
 
@@ -270,7 +271,7 @@
       position: sticky;
       text-align: center;
       top: -20px;
-      z-index: 2;
+      z-index: 3;
 
       @include m.darkMode {
         background-color: v.$primary-box-bg-dark;
@@ -847,8 +848,8 @@
           }
 
           &.icon-label {
-            background-color: v.$login-item-bg-light;
-            border: 1px solid v.$login-item-bg-light;
+            background: v.$login-item-bg-light;
+            background: linear-gradient(135deg,v.$login-item-bg-light 0%, color.adjust(v.$login-item-bg-dark, $blackness: -143%) 100%);
             color: v.$login-item-light;
             font-size: 10px;
             font-weight: 700;
@@ -856,43 +857,47 @@
             text-align: center;
 
             @include m.darkMode {
-              background-color: v.$login-item-bg-dark;
-              border-color: v.$login-item-bg-dark;
+              background: v.$login-item-bg-dark;
+              background: linear-gradient(135deg,v.$login-item-bg-dark 0%, color.adjust(v.$login-item-bg-dark, $lightness: 5%) 100%);
               color: v.$login-item-dark;
             }
           }
 
           &.icon-image {
             background-color: v.$primary-box-bg-light;
-            border: 1px solid v.$object-stroke-light;
+            overflow: hidden;
+            position: relative;
 
             @include m.darkMode {
               background-color: v.$primary-box-bg-dark;
-              border-color: v.$object-stroke-dark;
             }
 
             img {
-              background-color: v.$primary-box-bg-light;
-              height: 30px;
+              height: 26px;
               object-fit: fill;
               opacity: 0;
               padding: 3px;
+              position: relative;
               transition: opacity .3s ease-in-out;
-              width: 30px;
+              width: 26px;
+              z-index: 2;
 
-              @include m.darkMode {
-                background-color: v.$primary-box-bg-dark;
+              &.icon-image-blur {
+                filter: blur(14px) saturate(2);
+                position: absolute;
+                transform: scale(1.4);
+                z-index: 1;
               }
             }
           }
 
           &.icon-secure-note {
-            background-color: v.$secure-note-item-bg-light;
-            border: 1px solid v.$secure-note-item-bg-light;
+            background: v.$secure-note-item-bg-light;
+            background: linear-gradient(135deg,v.$secure-note-item-bg-light 0%, color.adjust(v.$secure-note-item-bg-dark, $blackness: -150%) 100%);
 
             @include m.darkMode {
-              background-color: v.$secure-note-item-bg-dark;
-              border-color: v.$secure-note-item-bg-dark;
+              background: v.$secure-note-item-bg-dark;
+              background: linear-gradient(135deg,v.$secure-note-item-bg-dark 0%, color.adjust(v.$secure-note-item-bg-dark, $lightness: 5%) 100%);
             }
 
             svg {
@@ -907,17 +912,18 @@
           }
 
           &.icon-payment-card {
-            background-color: v.$payment-card-item-bg-light;
-            border: 1px solid v.$payment-card-item-bg-light;
+            background: v.$payment-card-item-bg-light;
+            background: linear-gradient(135deg,v.$payment-card-item-bg-light 0%, color.adjust(v.$payment-card-item-bg-dark, $blackness: -145%) 100%);
 
             @include m.darkMode {
-              background-color: v.$payment-card-item-bg-dark;
-              border-color: v.$payment-card-item-bg-dark;
+              background: v.$payment-card-item-bg-dark;
+              background: linear-gradient(135deg,v.$payment-card-item-bg-dark 0%, color.adjust(v.$payment-card-item-bg-dark, $lightness: 5%) 100%);
             }
 
             svg {
               stroke: v.$payment-card-item-light;
-              height: 16px;
+              stroke-width: 0.8;
+              height: 17px;
               width: auto;
 
               @include m.darkMode {

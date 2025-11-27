@@ -11,7 +11,7 @@ import { useState, lazy } from 'react';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
+import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import getItem from '@/partials/sessionStorage/getItem';
 
