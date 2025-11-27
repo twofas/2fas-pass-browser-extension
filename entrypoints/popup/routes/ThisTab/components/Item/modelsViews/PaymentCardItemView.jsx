@@ -21,7 +21,7 @@ function PaymentCardItemView (props) {
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
 
   const handleAutofillClick = useCallback(async () => {
-    console.log('Autofill payment card not implemented yet');
+    console.log('Autofill card not implemented yet');
   }, [props?.data?.deviceId, props?.data?.vaultId, props?.data?.id, navigate, props.more]);
 
   return (
