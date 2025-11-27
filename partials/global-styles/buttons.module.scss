@@ -118,7 +118,7 @@
     color: v.$primary-color-light;
     font-size: 14px;
     font-weight: 600;
-    line-height: .8571;
+    line-height: 1;
 
     @include m.darkMode {
       color: v.$primary-color-dark;
