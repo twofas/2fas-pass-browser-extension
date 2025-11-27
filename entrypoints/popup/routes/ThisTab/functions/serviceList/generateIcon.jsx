@@ -80,6 +80,14 @@ const generateIcon = (item, faviconError, setFaviconError, loading) => {
             <img
               src={imageUrl}
               alt={item?.content?.name}
+              className={S.iconImageBlur}
+              onError={handleFaviconError}
+              onLoad={el => { el.target.style.opacity = 1; }}
+              loading="lazy"
+            />
+            <img
+              src={imageUrl}
+              alt={item?.content?.name}
               onError={handleFaviconError}
               onLoad={el => { el.target.style.opacity = 1; }}
               loading="lazy"
@@ -90,6 +98,14 @@ const generateIcon = (item, faviconError, setFaviconError, loading) => {
         // Custom
         return (
           <span className={S.iconImage}>
+            <img
+              src={item?.content?.customImageUrl}
+              alt={item?.content?.name}
+              className={S.iconImageBlur}
+              onError={handleFaviconError}
+              onLoad={el => { el.target.style.opacity = 1; }}
+              loading="lazy"
+            />
             <img
               src={item?.content?.customImageUrl}
               alt={item?.content?.name}
