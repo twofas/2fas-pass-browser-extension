@@ -226,7 +226,7 @@ function PaymentCardAddNewView () {
                     dateFormat='mm/y'
                     mask='99/99'
                     view='month'
-                    minDate={new Date()}
+                    minDate={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
                     placeholder="MM/YY"
                     id='add-new-expirationDate'
                     onChange={e => {
