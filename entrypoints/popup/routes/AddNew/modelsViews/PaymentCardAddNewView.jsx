@@ -226,14 +226,9 @@ function PaymentCardAddNewView () {
                     dateFormat='mm/y'
                     mask='99/99'
                     view='month'
-                    maxDate={new Date()}
+                    minDate={new Date()}
                     placeholder="MM/YY"
                     id='add-new-expirationDate'
-                    dir='ltr'
-                    spellCheck='false'
-                    autoCorrect='off'
-                    autoComplete='off'
-                    autoCapitalize='off'
                     onChange={e => {
                       input.onChange(e);
                       setData('expirationDate', e.target.value);

@@ -9,6 +9,7 @@ import '@splidejs/react-splide/css/core';
 import '@/partials/global-styles/global.scss';
 import '@/partials/global-styles/toasts.scss';
 import '@/partials/global-styles/selects.scss';
+import '@/partials/global-styles/prime-react.scss';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Popup from './Popup.jsx';
