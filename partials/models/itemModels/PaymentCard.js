@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 import Item from './Item';
-import { v4 as uuidv4 } from 'uuid';
 
 /**
 * Class representing a payment card.
@@ -18,9 +17,7 @@ export default class PaymentCard extends Item {
   #s_cardNumber;
   #s_expirationDate;
   #s_securityCode;
-  #s_cardNumberDecrypted;
-  #s_expirationDateDecrypted;
-  #s_securityCodeDecrypted;
+  #s_sifDecrypted;
 
   constructor (paymentCardData, deviceId = null, vaultId = null) {
     if (paymentCardData.constructor.name === paymentCardData.name) {
@@ -70,51 +67,99 @@ export default class PaymentCard extends Item {
     this.#s_cardNumber = paymentCardData.content.s_cardNumber ?? null;
     this.#s_expirationDate = paymentCardData.content.s_expirationDate ?? null;
     this.#s_securityCode = paymentCardData.content.s_securityCode ?? null;
-    this.#s_cardNumberDecrypted = null;
-    this.#s_expirationDateDecrypted = null;
-    this.#s_securityCodeDecrypted = null;
+    this.#s_sifDecrypted = null;
   }
 
   removeSif () {
-    // if (this.securityType !== SECURITY_TIER.HIGHLY_SECRET) {
-    //   throw new Error('Item is not of Highly Secret security tier');
-    // }
+    if (this.securityType !== SECURITY_TIER.HIGHLY_SECRET) {
+      throw new Error('Item is not of Highly Secret security tier');
+    }
 
-    // this.#s_password = null;
+    this.#s_cardNumber = null;
+    this.#s_expirationDate = null;
+    this.#s_securityCode = null;
   }
 
   async decryptSif () {
-    // return {
-    //   password: await super.decryptSif(this.#s_password, this?.internalData?.type)
-    // };
+    const result = {
+      cardNumber: null,
+      expirationDate: null,
+      securityCode: null
+    };
+
+    if (this.#s_cardNumber) {
+      result.cardNumber = await super.decryptSif(this.#s_cardNumber, this?.internalData?.type);
+    }
+
+    if (this.#s_expirationDate) {
+      result.expirationDate = await super.decryptSif(this.#s_expirationDate, this?.internalData?.type);
+    }
+
+    if (this.#s_securityCode) {
+      result.securityCode = await super.decryptSif(this.#s_securityCode, this?.internalData?.type);
+    }
+
+    return result;
+  }
+
+  async decryptCardNumber () {
+    if (!this.#s_cardNumber) {
+      return null;
+    }
+
+    return await super.decryptSif(this.#s_cardNumber, this?.internalData?.type);
+  }
+
+  async decryptExpirationDate () {
+    if (!this.#s_expirationDate) {
+      return null;
+    }
+
+    return await super.decryptSif(this.#s_expirationDate, this?.internalData?.type);
+  }
+
+  async decryptSecurityCode () {
+    if (!this.#s_securityCode) {
+      return null;
+    }
+
+    return await super.decryptSif(this.#s_securityCode, this?.internalData?.type);
   }
 
   setSif (sifData) {
-    // if (!Array.isArray(sifData)) {
-    //   throw new Error('Invalid SIF data: must be an array');
-    // }
+    if (!Array.isArray(sifData)) {
+      throw new Error('Invalid SIF data: must be an array');
+    }
 
-    // sifData.forEach(item => {
-    //   if (Object.prototype.hasOwnProperty.call(item, 's_password')) {
-    //     this.#s_password = item.s_password;
-    //   }
-    // });
+    sifData.forEach(item => {
+      if (Object.prototype.hasOwnProperty.call(item, 's_cardNumber')) {
+        this.#s_cardNumber = item.s_cardNumber;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(item, 's_expirationDate')) {
+        this.#s_expirationDate = item.s_expirationDate;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(item, 's_securityCode')) {
+        this.#s_securityCode = item.s_securityCode;
+      }
+    });
   }
 
   setSifDecrypted (decryptedSif) {
-    // this.#s_sifDecrypted = decryptedSif;
+    this.#s_sifDecrypted = decryptedSif;
   }
 
   removeSifDecrypted () {
-    // this.#s_sifDecrypted = null;
+    this.#s_sifDecrypted = null;
   }
 
   get sifDecrypted () {
-    // return this.#s_sifDecrypted;
+    return this.#s_sifDecrypted;
   }
 
   get isSifDecrypted () {
-    // return this.#s_sifDecrypted !== null;
+    return this.#s_sifDecrypted !== null;
   }
 
   get dropdownList () {
@@ -125,14 +170,6 @@ export default class PaymentCard extends Item {
     if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
       dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_password'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
     }
-
-    // if (this.internalData.normalizedUris && this.internalData.normalizedUris.length > 0) {
-    //   dO.push({ value: 'uris:', label: `${browser.i18n.getMessage('this_tab_more_uris')}`, type: 'urisHeader' });
-
-    //   this.internalData.normalizedUris.forEach(uri => {
-    //     dO.push({ value: uri.text, label: uri.text, deviceId: this.deviceId, vaultId: this.vaultId, itemId: this.id });
-    //   });
-    // }
 
     return dO;
   }
@@ -146,7 +183,19 @@ export default class PaymentCard extends Item {
   }
 
   get sifExists () {
-    // return this.#s_password && this.#s_password !== '';
+    return this.cardNumberExists || this.expirationDateExists || this.securityCodeExists;
+  }
+
+  get cardNumberExists () {
+    return this.#s_cardNumber && this.#s_cardNumber.length > 0;
+  }
+
+  get expirationDateExists () {
+    return this.#s_expirationDate && this.#s_expirationDate.length > 0;
+  }
+
+  get securityCodeExists () {
+    return this.#s_securityCode && this.#s_securityCode.length > 0;
   }
 
   get isT3orT2WithSif () {

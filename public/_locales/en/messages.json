@@ -67,6 +67,10 @@
     "message": "Something went wrong. Secure Note not found.",
     "description": "Error message displayed when the requested secure note is not found"
   },
+  "error_card_not_found": {
+    "message": "Something went wrong. Payment Card not found.",
+    "description": "Error message displayed when the requested payment card is not found"
+  },
   "error_username_copy_failed": {
     "message": "Failed to copy username to clipboard.",
     "description": "Error message displayed when copying the username to the clipboard fails"
@@ -86,6 +90,14 @@
   "error_secure_note_name_copy_failed": {
     "message": "Failed to copy Name to clipboard.",
     "description": "Error message displayed when copying the secure note name to the clipboard fails"
+  },
+  "error_card_number_copy_failed": {
+    "message": "Failed to copy card number to clipboard.",
+    "description": "Error message displayed when copying the card number to the clipboard fails"
+  },
+  "error_card_security_code_copy_failed": {
+    "message": "Failed to copy security code to clipboard.",
+    "description": "Error message displayed when copying the security code to the clipboard fails"
   },
   "error_no_response_from_tab": {
     "message": "No response from tab",
@@ -490,6 +502,14 @@
   "notification_secure_note_text_copied": {
     "message": "Note copied to clipboard",
     "description": "Notification message when the secure note text is successfully copied to the clipboard"
+  },
+  "notification_card_number_copied": {
+    "message": "Card number copied to clipboard",
+    "description": "Notification message when the card number is successfully copied to the clipboard"
+  },
+  "notification_card_security_code_copied": {
+    "message": "Security code copied to clipboard",
+    "description": "Notification message when the security code is successfully copied to the clipboard"
   },
   "notification_error_message_copied": {
     "message": "Error message copied to clipboard",
@@ -1574,6 +1594,22 @@
   "this_tab_fetch_text": {
     "message": "Fetch note",
     "description": "Button label to fetch the text from the mobile app"
+  },
+  "this_tab_copy_card_number": {
+    "message": "Copy card number",
+    "description": "Button label to copy the card number to the clipboard"
+  },
+  "this_tab_fetch_card_number": {
+    "message": "Fetch card number",
+    "description": "Button label to fetch the card number from the mobile app"
+  },
+  "this_tab_copy_card_security_code": {
+    "message": "Copy security code",
+    "description": "Button label to copy the security code to the clipboard"
+  },
+  "this_tab_fetch_card_security_code": {
+    "message": "Fetch security code",
+    "description": "Button label to fetch the security code from the mobile app"
   },
   "this_tab_more_actions": {
     "message": "More actions",

@@ -107,6 +107,14 @@
     "message": "Note copied to clipboard",
     "description": "Notification message when the secure note text is successfully copied to the clipboard"
   },
+  "notification_card_number_copied": {
+    "message": "Card number copied to clipboard",
+    "description": "Notification message when the card number is successfully copied to the clipboard"
+  },
+  "notification_card_security_code_copied": {
+    "message": "Security code copied to clipboard",
+    "description": "Notification message when the security code is successfully copied to the clipboard"
+  },
   "notification_error_message_copied": {
     "message": "Error message copied to clipboard",
     "description": "Notification message when the error message is successfully copied to the clipboard"

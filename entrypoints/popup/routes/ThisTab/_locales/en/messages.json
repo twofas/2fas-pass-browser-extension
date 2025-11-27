@@ -95,6 +95,22 @@
     "message": "Fetch note",
     "description": "Button label to fetch the text from the mobile app"
   },
+  "this_tab_copy_card_number": {
+    "message": "Copy card number",
+    "description": "Button label to copy the card number to the clipboard"
+  },
+  "this_tab_fetch_card_number": {
+    "message": "Fetch card number",
+    "description": "Button label to fetch the card number from the mobile app"
+  },
+  "this_tab_copy_card_security_code": {
+    "message": "Copy security code",
+    "description": "Button label to copy the security code to the clipboard"
+  },
+  "this_tab_fetch_card_security_code": {
+    "message": "Fetch security code",
+    "description": "Button label to fetch the security code from the mobile app"
+  },
   "this_tab_more_actions": {
     "message": "More actions",
     "description": "Label for a dropdown or menu containing additional actions"
