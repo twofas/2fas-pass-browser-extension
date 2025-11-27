@@ -332,11 +332,11 @@
     "description": "Label for multiple logins"
   },
   "payment_card": {
-    "message": "Payment Card",
+    "message": "Card",
     "description": "Label for the payment card functionality"
   },
   "payment_card_plural": {
-    "message": "Payment Cards",
+    "message": "Cards",
     "description": "Label for multiple payment cards"
   },
   "secure_note": {
@@ -1012,7 +1012,7 @@
     "description": "Toast message displayed when a secure note request is accepted"
   },
   "fetch_paymentCard_request_accept_toast": {
-    "message": "Payment Card request accepted",
+    "message": "Card request accepted",
     "description": "Toast message displayed when a payment card request is accepted"
   },
   "fetch_request_cancel_toast": {

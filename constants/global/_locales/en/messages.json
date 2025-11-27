@@ -204,11 +204,11 @@
     "description": "Label for multiple logins"
   },
   "payment_card": {
-    "message": "Payment Card",
+    "message": "Card",
     "description": "Label for the payment card functionality"
   },
   "payment_card_plural": {
-    "message": "Payment Cards",
+    "message": "Cards",
     "description": "Label for multiple payment cards"
   },
   "secure_note": {

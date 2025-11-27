@@ -31,6 +31,7 @@ function PaymentCardAddNewView () {
   const validate = values => {
     const errors = {};
 
+    // @TODO: i18n!
     if (!values?.name || values?.name?.length <= 0) {
       errors.name = 'Card name is required';
     } else if (values.name?.length > 255) {

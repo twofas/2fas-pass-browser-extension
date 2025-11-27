@@ -29,7 +29,7 @@ export default class PaymentCard extends Item {
 
     super(paymentCardData, deviceId, vaultId);
 
-    validate(paymentCardData.content && typeof paymentCardData.content === 'object', 'Invalid payment card data');
+    validate(paymentCardData.content && typeof paymentCardData.content === 'object', 'Invalid card data');
 
     validateOptional(paymentCardData?.content?.name, isValidString, 'Invalid paymentCardData.content.name: must be a string');
     validateOptional(paymentCardData?.content?.cardHolder, isValidString, 'Invalid paymentCardData.content.cardHolder: must be a string');
