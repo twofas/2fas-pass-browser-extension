@@ -139,6 +139,60 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           break;
         }
 
+        case 'paymentCard': {
+          if (!isText(state?.data?.content?.s_cardNumber) && !isText(state?.data?.content?.s_expirationDate) && !isText(state?.data?.content?.s_securityCode)) {
+            data = {
+              type: PULL_REQUEST_TYPES.ADD_DATA,
+              data: state.data
+            };
+          } else {
+            if (isText(state?.data?.content?.s_cardNumber)) {
+              const [nonceCardNumber, encryptionCardNumberNewKeyAES] = await Promise.all([
+                generateNonce(),
+                generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_NEW.crypto, sessionKeyForHKDF, true)
+              ]);
+              const cardNumberEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceCardNumber.ArrayBuffer }, encryptionCardNumberNewKeyAES, StringToArrayBuffer(state.data.content.s_cardNumber));
+              const cardNumberEncBytes = EncryptBytes(nonceCardNumber.ArrayBuffer, cardNumberEnc);
+              const cardNumberEncBytesB64 = ArrayBufferToBase64(cardNumberEncBytes);
+
+              state.data.content.s_cardNumber = cardNumberEncBytesB64;
+            }
+
+            if (isText(state?.data?.content?.s_expirationDate)) {
+              const [nonceExpirationDate, encryptionExpirationDateNewKeyAES] = await Promise.all([
+                generateNonce(),
+                generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_NEW.crypto, sessionKeyForHKDF, true)
+              ]);
+              const expirationDateEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceExpirationDate.ArrayBuffer }, encryptionExpirationDateNewKeyAES, StringToArrayBuffer(state.data.content.s_expirationDate));
+              const expirationDateEncBytes = EncryptBytes(nonceExpirationDate.ArrayBuffer, expirationDateEnc);
+              const expirationDateEncBytesB64 = ArrayBufferToBase64(expirationDateEncBytes);
+
+              state.data.content.s_expirationDate = expirationDateEncBytesB64;
+            }
+
+            if (isText(state?.data?.content?.s_securityCode)) {
+              const [nonceSecurityCode, encryptionSecurityCodeNewKeyAES] = await Promise.all([
+                generateNonce(),
+                generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_NEW.crypto, sessionKeyForHKDF, true)
+              ]);
+              const securityCodeEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceSecurityCode.ArrayBuffer }, encryptionSecurityCodeNewKeyAES, StringToArrayBuffer(state.data.content.s_securityCode));
+              const securityCodeEncBytes = EncryptBytes(nonceSecurityCode.ArrayBuffer, securityCodeEnc);
+              const securityCodeEncBytesB64 = ArrayBufferToBase64(securityCodeEncBytes);
+
+              state.data.content.s_securityCode = securityCodeEncBytesB64;
+            }
+
+            data = {
+              type: PULL_REQUEST_TYPES.ADD_DATA,
+              data: {
+                ...state.data
+              }
+            };
+          }
+
+          break;
+        };
+
         default: {
           throw new TwoFasError(TwoFasError.errors.newLoginWrongContentType);
         }
@@ -249,6 +303,10 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           }
 
           break;
+        }
+
+        case 'paymentCard': {
+          throw new Error('Not implemented yet');
         }
 
         default: {

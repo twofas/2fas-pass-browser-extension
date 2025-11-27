@@ -14,9 +14,9 @@ import { getCurrentDevice } from '@/partials/functions';
 import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 import { useNavigate, useLocation } from 'react-router';
 import { PULL_REQUEST_TYPES, PAYMENT_CARD_REGEX } from '@/constants';
-import { Calendar } from 'primereact/calendar';
 import PaymentCardNumberInput from '@/entrypoints/popup/components/PaymentCardNumberInput';
 import PaymentCardSecurityCodeInput from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput';
+import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
 
 /** 
 * PaymentCardAddNewView component for adding a new Payment Card.
@@ -49,8 +49,12 @@ function PaymentCardAddNewView () {
 
     if (!values?.cardNumber || values?.cardNumber?.length <= 0) {
       errors.cardNumber = 'Card number is required';
-    } else if (!PAYMENT_CARD_REGEX.test(values.cardNumber)) {
-      errors.cardNumber = 'Card number is invalid';
+    } else {
+      const cleanCardNumber = values.cardNumber.replace(/\s/g, '');
+
+      if (!PAYMENT_CARD_REGEX.test(cleanCardNumber)) {
+        errors.cardNumber = 'Card number is invalid';
+      }
     }
 
     if (!values?.expirationDate || values?.expirationDate?.length <= 0) {
@@ -59,13 +63,21 @@ function PaymentCardAddNewView () {
       const expDateParts = values.expirationDate.split('/');
 
       if (expDateParts.length !== 2) {
-        errors.expirationDate = 'Expiration date must be in MM/YYYY format';
+        errors.expirationDate = 'Expiration date is invalid';
       } else {
         const month = parseInt(expDateParts[0], 10);
         const year = parseInt(expDateParts[1], 10);
 
-        if (isNaN(month) || isNaN(year) || month < 1 || month > 12 || year < 1900) {
-          errors.expirationDate = 'Expiration date must be in MM/YYYY format';
+        if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
+          errors.expirationDate = 'Expiration date is invalid';
+        } else {
+          const now = new Date();
+          const currentMonth = now.getMonth() + 1;
+          const currentYear = now.getFullYear();
+
+          if (year < currentYear || (year === currentYear && month < currentMonth)) {
+            errors.expirationDate = 'Expiration date cannot be in the past';
+          }
         }
       }
     }
@@ -221,17 +233,12 @@ function PaymentCardAddNewView () {
                   <label htmlFor='add-new-expirationDate'>Expiration Date</label>
                 </div>
                 <div className={pI.passInputBottom}>
-                  <Calendar
-                    {...input}
-                    dateFormat='mm/y'
-                    mask='99/99'
-                    view='month'
-                    minDate={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
-                    placeholder="MM/YY"
-                    id='add-new-expirationDate'
-                    onChange={e => {
-                      input.onChange(e);
-                      setData('expirationDate', e.target.value);
+                  <PaymentCardExpirationDate
+                    value={input.value}
+                    inputId='add-new-expirationDate'
+                    onChange={formattedValue => {
+                      input.onChange(formattedValue);
+                      setData('expirationDate', formattedValue);
                     }}
                   />
                 </div>
