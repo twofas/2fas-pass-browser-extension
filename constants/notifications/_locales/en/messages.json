@@ -115,6 +115,10 @@
     "message": "Security code copied to clipboard",
     "description": "Notification message when the security code is successfully copied to the clipboard"
   },
+  "notification_expiration_date_copied": {
+    "message": "Expiration date copied to clipboard",
+    "description": "Notification message when the expiration date is successfully copied to the clipboard"
+  },
   "notification_error_message_copied": {
     "message": "Error message copied to clipboard",
     "description": "Notification message when the error message is successfully copied to the clipboard"

@@ -41,7 +41,7 @@ function CardHolder (props) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
       const updatedItem = updateItem(data.item, {
-        content: { cardholder: item.content.cardholder },
+        content: { cardHolder: item.content.cardHolder },
         internalData: { ...data.item.internalData }
       });
 
@@ -55,10 +55,10 @@ function CardHolder (props) {
   };
 
   const handleCardholderChange = useCallback(e => {
-    const newCardholder = e.target.value;
+    const newCardHolder = e.target.value;
 
     const updatedItem = updateItem(data.item, {
-      content: { cardholder: newCardholder },
+      content: { cardHolder: newCardHolder },
       internalData: { ...data.item.internalData }
     });
 
@@ -68,7 +68,7 @@ function CardHolder (props) {
   return (
     <Field name="content.cardHolder">
       {({ input }) => (
-        <div className={`${pI.passInput} ${data.nameEditable ? '' : pI.disabled} ${inputError === 'cardHolder' ? pI.error : ''}`}>
+        <div className={`${pI.passInput} ${data.cardHolderEditable ? '' : pI.disabled} ${inputError === 'cardHolder' ? pI.error : ''}`}>
           <div className={pI.passInputTop}>
             <label htmlFor="cardHolder">Cardholder</label> {/* @TODO: i18n */}
             <button

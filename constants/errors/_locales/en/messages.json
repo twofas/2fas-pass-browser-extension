@@ -99,6 +99,10 @@
     "message": "Failed to copy security code to clipboard.",
     "description": "Error message displayed when copying the security code to the clipboard fails"
   },
+  "error_expiration_date_copy_failed": {
+    "message": "Failed to copy expiration date to clipboard.",
+    "description": "Error message displayed when copying the expiration date to the clipboard fails"
+  },
   "error_no_response_from_tab": {
     "message": "No response from tab",
     "description": "Error message displayed when there is no response from the browser tab"

@@ -7,16 +7,7 @@
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 
 /**
-* Function to get the editable amount.
-* @param {boolean} nameEditable - Indicates if the name field is editable.
-* @param {boolean} usernameEditable - Indicates if the username field is editable.
-* @param {boolean} passwordEditable - Indicates if the password field is editable.
-* @param {Array<boolean>} domainsEditable - Indicates if the domain fields are editable.
-* @param {boolean} notesEditable - Indicates if the notes field is editable.
-* @param {boolean} tierEditable - Indicates if the tier field is editable.
-* @param {boolean} tagsEditable - Indicates if the tags field is editable.
-* @param {Array} currentUris - Current URIs array.
-* @param {Array} originalUris - Original URIs array from the service.
+* Function to get the editable amount for PaymentCard details.
 * @return {Object} An object containing the editable amount and a text description.
 */
 const getEditableAmount = () => {
@@ -25,7 +16,11 @@ const getEditableAmount = () => {
   let amount = 0;
 
   if (data?.nameEditable) { amount++; }
-  if (data?.sifEditable) { amount++; }
+  if (data?.cardHolderEditable) { amount++; }
+  if (data?.cardNumberEditable) { amount++; }
+  if (data?.expirationDateEditable) { amount++; }
+  if (data?.securityCodeEditable) { amount++; }
+  if (data?.notesEditable) { amount++; }
   if (data?.tierEditable) { amount++; }
   if (data?.tagsEditable) { amount++; }
 
