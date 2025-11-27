@@ -1531,6 +1531,10 @@
     "message": "Forget this note",
     "description": "Button label to forget the saved secure note"
   },
+  "this_tab_more_forget_payment_card": {
+    "message": "Forget this card",
+    "description": "Button label to forget the saved payment card"
+  },
   "this_tab_more_uris": {
     "message": "Website URL(s):",
     "description": "Label for displaying associated website URLs of a login item"
