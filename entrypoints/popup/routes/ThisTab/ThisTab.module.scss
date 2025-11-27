@@ -894,12 +894,13 @@
           align-items: flex-start;
           display: flex;
           flex-direction: column;
-          gap: 5px 0;
+          gap: 3px 0;
           max-width: 255px;
           overflow: hidden;
           transition: max-width .3s ease-in-out;
 
           > span {
+            line-height: 1.2;
             max-width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -910,8 +911,6 @@
               color: v.$primary-text-light;
               font-size: 14px;
               font-weight: 500;
-              line-height: 1;
-              padding-bottom: 3px;
 
               @include m.darkMode {
                 color: v.$primary-text-dark;
@@ -926,9 +925,6 @@
               color: v.$secondary-text-light;
               font-size: 12px;
               font-weight: 400;
-              height: 13px;
-              line-height: .83;
-              padding-bottom: 3px;
 
               &.skeleton {
                 width: 195px;
