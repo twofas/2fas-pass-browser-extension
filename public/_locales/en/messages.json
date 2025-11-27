@@ -963,6 +963,42 @@
     "message": "Toggle security code visibility",
     "description": "Title for the button that toggles security code visibility"
   },
+  "details_cardholder_required": {
+    "message": "Cardholder is required.",
+    "description": "Validation message indicating that the cardholder field is required"
+  },
+  "details_cardholder_max_length": {
+    "message": "Cardholder must be less than 256 characters.",
+    "description": "Validation message indicating the maximum length for the cardholder field"
+  },
+  "details_card_number_required": {
+    "message": "Card number is required.",
+    "description": "Validation message indicating that the card number field is required"
+  },
+  "details_card_number_invalid": {
+    "message": "Card number is invalid.",
+    "description": "Validation message indicating that the card number is not valid"
+  },
+  "details_expiration_date_required": {
+    "message": "Expiration date is required.",
+    "description": "Validation message indicating that the expiration date field is required"
+  },
+  "details_expiration_date_invalid": {
+    "message": "Expiration date is invalid.",
+    "description": "Validation message indicating that the expiration date format is not valid"
+  },
+  "details_expiration_date_past": {
+    "message": "Expiration date cannot be in the past.",
+    "description": "Validation message indicating that the expiration date must not be in the past"
+  },
+  "details_security_code_required": {
+    "message": "Security code is required.",
+    "description": "Validation message indicating that the security code field is required"
+  },
+  "details_security_code_invalid": {
+    "message": "Security code must be 3 or 4 digits.",
+    "description": "Validation message indicating that the security code must be 3 or 4 digits"
+  },
   "details_tags_label": {
     "message": "Tags",
     "description": "Label for the tags field in details view"
