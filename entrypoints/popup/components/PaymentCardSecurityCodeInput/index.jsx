@@ -62,7 +62,7 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, ...inp
       mask={securityCodeMaskData.mask}
       autoClear={false}
       value={value}
-      placeholder={securityCodeMaskData.placeholder}
+      placeholder={'_ _ _'}
       id={id}
       onChange={handleChange}
     />
