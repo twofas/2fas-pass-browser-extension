@@ -14,9 +14,10 @@ import { Calendar } from 'primereact/calendar';
 * @param {string} props.value - The expiration date value in MM/YYYY format.
 * @param {Function} props.onChange - Change handler function receiving formatted string.
 * @param {string} props.inputId - Input element ID.
+* @param {boolean} props.disabled - Whether the component is disabled.
 * @return {JSX.Element} The rendered component.
 */
-function PaymentCardExpirationDate ({ value, onChange, inputId }) {
+function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
   const calendarMinDate = useMemo(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
@@ -69,6 +70,7 @@ function PaymentCardExpirationDate ({ value, onChange, inputId }) {
       placeholder='MM/YY'
       inputId={inputId}
       onChange={handleChange}
+      disabled={disabled}
     />
   );
 }

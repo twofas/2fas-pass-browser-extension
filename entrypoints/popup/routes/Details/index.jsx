@@ -106,15 +106,20 @@ function Details(props) {
       }
 
       const hasEditedSifFromState = location.state?.data?.editedSif !== undefined;
-      if (item.sifExists && !item.isSifDecrypted && !item.internalData?.editedSif && !hasEditedSifFromState) {
+      const hasEditedPaymentCardSifFromState = location.state?.data?.editedCardNumber !== undefined
+        || location.state?.data?.editedExpirationDate !== undefined
+        || location.state?.data?.editedSecurityCode !== undefined;
+
+      if (item.sifExists && !item.isSifDecrypted && !item.internalData?.editedSif && !hasEditedSifFromState && !hasEditedPaymentCardSifFromState) {
         try {
           const decryptedData = await item.decryptSif();
 
-          // FUTURE - Refactor this
           if (item.constructor.name === 'Login') {
             item.setSifDecrypted(decryptedData.password);
           } else if (item.constructor.name === 'SecureNote') {
             item.setSifDecrypted(decryptedData.text);
+          } else if (item.constructor.name === 'PaymentCard') {
+            item.setSifDecrypted(decryptedData);
           }
 
           setData('sifDecryptError', false);

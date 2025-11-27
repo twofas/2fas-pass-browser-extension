@@ -99,6 +99,10 @@
     "message": "Failed to copy security code to clipboard.",
     "description": "Error message displayed when copying the security code to the clipboard fails"
   },
+  "error_expiration_date_copy_failed": {
+    "message": "Failed to copy expiration date to clipboard.",
+    "description": "Error message displayed when copying the expiration date to the clipboard fails"
+  },
   "error_no_response_from_tab": {
     "message": "No response from tab",
     "description": "Error message displayed when there is no response from the browser tab"
@@ -511,6 +515,10 @@
     "message": "Security code copied to clipboard",
     "description": "Notification message when the security code is successfully copied to the clipboard"
   },
+  "notification_expiration_date_copied": {
+    "message": "Expiration date copied to clipboard",
+    "description": "Notification message when the expiration date is successfully copied to the clipboard"
+  },
   "notification_error_message_copied": {
     "message": "Error message copied to clipboard",
     "description": "Notification message when the error message is successfully copied to the clipboard"
@@ -914,6 +922,46 @@
   "details_additional_info_placeholder": {
     "message": "Additional info is empty",
     "description": "Placeholder text for the additional info input field"
+  },
+  "details_card_number": {
+    "message": "Card number",
+    "description": "Label for the card number field in payment card details"
+  },
+  "details_card_number_decrypt_error": {
+    "message": "Decrypting card number error. Please resync with your mobile app.",
+    "description": "Error message displayed when decrypting the card number fails"
+  },
+  "details_toggle_card_number_visibility": {
+    "message": "Toggle card number visibility",
+    "description": "Title for the button that toggles card number visibility"
+  },
+  "details_expiration_date": {
+    "message": "Expiration date",
+    "description": "Label for the expiration date field in payment card details"
+  },
+  "details_expiration_date_decrypt_error": {
+    "message": "Decrypting expiration date error. Please resync with your mobile app.",
+    "description": "Error message displayed when decrypting the expiration date fails"
+  },
+  "details_toggle_expiration_date_visibility": {
+    "message": "Toggle expiration date visibility",
+    "description": "Title for the button that toggles expiration date visibility"
+  },
+  "details_copy_expiration_date": {
+    "message": "Copy expiration date",
+    "description": "Title for the button that copies expiration date to clipboard"
+  },
+  "details_security_code": {
+    "message": "Security code",
+    "description": "Label for the security code field in payment card details"
+  },
+  "details_security_code_decrypt_error": {
+    "message": "Decrypting security code error. Please resync with your mobile app.",
+    "description": "Error message displayed when decrypting the security code fails"
+  },
+  "details_toggle_security_code_visibility": {
+    "message": "Toggle security code visibility",
+    "description": "Title for the button that toggles security code visibility"
   },
   "details_tags_label": {
     "message": "Tags",

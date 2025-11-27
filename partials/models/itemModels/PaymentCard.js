@@ -55,7 +55,7 @@ export default class PaymentCard extends Item {
     };
 
     this.internalData = {
-      uiName: 'Payment Card',
+      uiName: 'Card',
       type: paymentCardData.internalData?.type || null,
       sifResetTime: paymentCardData.internalData?.sifResetTime || null,
       editedCardNumber: paymentCardData.internalData?.editedCardNumber,
