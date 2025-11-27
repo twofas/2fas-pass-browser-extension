@@ -168,7 +168,7 @@ export default class PaymentCard extends Item {
     ];
 
     if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
-      dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_password'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
+      dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_payment_card'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
     }
 
     return dO;
