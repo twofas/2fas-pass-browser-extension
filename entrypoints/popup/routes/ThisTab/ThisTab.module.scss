@@ -883,7 +883,7 @@
               z-index: 2;
 
               &.icon-image-blur {
-                filter: blur(14px) saturate(2);
+                filter: blur(12px) saturate(2);
                 position: absolute;
                 transform: scale(1.4);
                 z-index: 1;
@@ -922,12 +922,40 @@
 
             svg {
               stroke: v.$payment-card-item-light;
-              stroke-width: 0.8;
+              stroke-width: .8;
               height: 17px;
               width: auto;
 
               @include m.darkMode {
                 stroke: v.$payment-card-item-dark;
+              }
+            }
+          }
+
+          &.icon-payment-card-image {
+            background-color: v.$primary-box-bg-light;
+            overflow: hidden;
+            position: relative;
+
+            @include m.darkMode {
+              background-color: v.$primary-box-bg-dark;
+            }
+
+            img {
+              height: 26px;
+              object-fit: fill;
+              opacity: 0;
+              padding: 3px;
+              position: relative;
+              transition: opacity .3s ease-in-out;
+              width: 26px;
+              z-index: 2;
+
+              &.icon-payment-card-image-blur {
+                filter: blur(12px) saturate(2);
+                position: absolute;
+                transform: scale(1.4);
+                z-index: 1;
               }
             }
           }
