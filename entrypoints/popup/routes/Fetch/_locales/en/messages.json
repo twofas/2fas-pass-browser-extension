@@ -24,23 +24,23 @@
     "description": "Header prompting the user to continue updating in the mobile app"
   },
   "fetch_continue_updating_description": {
-    "message": "To update this Item, continue in the \nmobile app. Please keep this window open.",
+    "message": "To update this Item, continue on your \nmobile phone. Please keep this window open.",
     "description": "Explains that the user should continue the process on their mobile phone"
   },
   "fetch_full_sync_description": {
-    "message": "To complete the sync process, continue in the \nmobile app. Please keep this window open.",
+    "message": "To complete the sync process, continue on your mobile device. Please keep this window open.",
     "description": "Explains that the user should continue the full sync process on their mobile phone"
   },
   "fetch_sif_request_description": {
-    "message": "To fetch Item details, continue in the \nmobile app. Please keep this window open.",
+    "message": "To fetch Item details, continue on your mobile device. Please keep this window open.",
     "description": "Explains that the user should continue the SIF request process on their mobile phone"
   },
   "fetch_delete_request_description": {
-    "message": "To delete this Item, continue in the \nmobile app. Please keep this window open.",
+    "message": "To delete this Item, continue on your mobile device. Please keep this window open.",
     "description": "Explains that the user should continue the login deletion process on their mobile phone"
   },
   "fetch_add_request_description": {
-    "message": "To add this Item, continue in the \nmobile app. Please keep this window open.",
+    "message": "To add this Item, continue on your mobile device. Please keep this window open.",
     "description": "Explains that the user should continue the login addition process on their mobile phone"
   },
   "fetch_delete_login_accept_toast": {
