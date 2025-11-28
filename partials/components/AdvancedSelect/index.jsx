@@ -77,7 +77,6 @@ function AdvancedSelect (props) {
     }
 
     const rect = triggerElement.getBoundingClientRect();
-
     const menuPortalElement = document.getElementById('select-menu-portal');
 
     if (!menuPortalElement) {
@@ -109,7 +108,18 @@ function AdvancedSelect (props) {
       }
 
       const menuElementRect = menuElement.getBoundingClientRect();
-      const realMenuHeight = menuElementRect.height || (menuList ? menuList.scrollHeight : 0);
+      const menuListScrollHeight = menuList ? menuList.scrollHeight : 0;
+      const menuListMaxHeight = menuList ? parseFloat(getComputedStyle(menuList).maxHeight) || 0 : 0;
+
+      let realMenuHeight;
+
+      if (menuListMaxHeight > 0 && menuListScrollHeight > menuListMaxHeight) {
+        realMenuHeight = menuListMaxHeight;
+      } else if (menuElementRect.height > 10) {
+        realMenuHeight = menuElementRect.height;
+      } else {
+        realMenuHeight = menuListScrollHeight;
+      }
 
       const menuStyles = getComputedStyle(menuElement);
       const cssTopOffsetRaw = menuStyles.top;
@@ -119,9 +129,8 @@ function AdvancedSelect (props) {
         cssTopOffset = 8;
       }
 
-      const cssRightRaw = menuStyles.right;
-      const cssRightValue = parseFloat(cssRightRaw) || 0;
-      const hasRightZeroPositioning = cssRightValue === 0 && cssRightRaw !== 'auto';
+      const rightAlignedPrefixes = ['react-select-dropdown', 'react-select-add-new', 'react-select-model-filter', 'react-select-tags', 'react-select-tags-details'];
+      const hasRightZeroPositioning = rightAlignedPrefixes.includes(classNamePrefix);
 
       const cssTransform = menuStyles.transform;
       let hasCenteredPositioning = false;
@@ -145,7 +154,6 @@ function AdvancedSelect (props) {
       const spaceAbove = rect.top;
 
       const shouldPlaceOnTop = realMenuHeight > 0 && spaceBelow < (realMenuHeight + minSpaceRequired + cssTopOffset) && spaceAbove > (realMenuHeight + minSpaceRequired + cssTopOffset);
-
       const menuWidth = menuElementRect.width || rect.width;
 
       if (hasCenteredPositioning) {
