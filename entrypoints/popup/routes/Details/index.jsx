@@ -60,18 +60,19 @@ function Details(props) {
         editedSecurityType = location.state.data.item.securityType;
 
         if (location.state?.from === 'fetch' && originalItem) {
-          const mergedItem = { ...originalItem };
+          const originalItemData = originalItem.toJSON();
+          const mergedItem = { ...originalItemData };
 
           if (location.state.data.item.content) {
-            mergedItem.content = { ...originalItem.content, ...location.state.data.item.content };
+            const stateContent = { ...location.state.data.item.content };
+            delete stateContent.s_text;
+            delete stateContent.s_password;
+
+            mergedItem.content = { ...originalItemData.content, ...stateContent };
           }
 
           if (location.state.data.item.tags !== undefined) {
             mergedItem.tags = location.state.data.item.tags;
-          }
-
-          if (editedSecurityType !== undefined) {
-            mergedItem.securityType = editedSecurityType;
           }
 
           delete mergedItem.internalData;
