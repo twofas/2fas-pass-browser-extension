@@ -14,7 +14,6 @@ import { Form } from 'react-final-form';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import Login from '@/partials/models/itemModels/Login';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
-import getItem from '@/partials/sessionStorage/getItem';
 
 const Name = lazy(() => import('../../components/Name'));
 const Username = lazy(() => import('../../components/Username'));
@@ -80,7 +79,7 @@ function LoginDetailsView(props) {
       content: {}
     };
 
-    if (data.item.isT3orT2WithSif) {
+    if (props.originalItem?.isT3orT2WithSif) {
       stateData.sifFetched = true;
     }
 
@@ -130,9 +129,7 @@ function LoginDetailsView(props) {
     }
 
     if (data.tierEditable) {
-      const originalItem = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-
-      if (originalItem.securityType !== e.securityType) {
+      if (props.originalItem?.securityType !== e.securityType) {
         stateData.securityType = e.securityType;
       }
     }
