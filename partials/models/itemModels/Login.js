@@ -82,12 +82,13 @@ export default class Login extends Item {
       normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || [],
       type: loginData.internalData?.type || null,
       sifResetTime: loginData.internalData?.sifResetTime || null,
-      editedSif: loginData.internalData?.editedSif ?? null
+      editedSif: loginData.internalData?.editedSif ?? null,
+      cachedSifDecrypted: loginData.internalData?.cachedSifDecrypted ?? null
     };
 
     // Secure Input Fields
     this.#s_password = loginData.content.s_password ?? null;
-    this.#s_sifDecrypted = null;
+    this.#s_sifDecrypted = loginData.internalData?.cachedSifDecrypted ?? null;
   }
 
   #normalizeUris (uris) {
@@ -146,10 +147,12 @@ export default class Login extends Item {
 
   setSifDecrypted (decryptedSif) {
     this.#s_sifDecrypted = decryptedSif;
+    this.internalData.cachedSifDecrypted = decryptedSif;
   }
 
   removeSifDecrypted () {
     this.#s_sifDecrypted = null;
+    this.internalData.cachedSifDecrypted = null;
   }
 
   get sifDecrypted () {
@@ -270,7 +273,8 @@ export default class Login extends Item {
         uiName: this.internalData.uiName,
         type: this.internalData.type,
         sifResetTime: this.internalData.sifResetTime,
-        editedSif: this.internalData.editedSif
+        editedSif: this.internalData.editedSif,
+        cachedSifDecrypted: this.internalData.cachedSifDecrypted
       }
     };
   }
