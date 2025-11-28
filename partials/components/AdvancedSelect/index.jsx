@@ -113,7 +113,11 @@ function AdvancedSelect (props) {
 
       const menuStyles = getComputedStyle(menuElement);
       const cssTopOffsetRaw = menuStyles.top;
-      const cssTopOffset = cssTopOffsetRaw.includes('%') ? 0 : (parseFloat(cssTopOffsetRaw) || 0);
+      let cssTopOffset = cssTopOffsetRaw.includes('%') ? 0 : (parseFloat(cssTopOffsetRaw) || 0);
+
+      if (cssTopOffset > 50) {
+        cssTopOffset = 8;
+      }
 
       const cssRightRaw = menuStyles.right;
       const cssRightValue = parseFloat(cssRightRaw) || 0;
