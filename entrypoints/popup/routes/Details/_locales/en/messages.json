@@ -104,7 +104,7 @@
     "description": "Title for the fetch highly secret data link"
   },
   "details_sif_not_fetched": {
-    "message": "This information is only available in your mobile app. Click the \"Fetch\" button at the top of this window to retrieve it.",
+    "message": "This information is only available on your mobile phone. Click the \"Fetch\" button at the top of this window to retrieve it.",
     "description": "Message indicating that the highly secret data has not been fetched yet"
   },
   "details_notes_placeholder": {
