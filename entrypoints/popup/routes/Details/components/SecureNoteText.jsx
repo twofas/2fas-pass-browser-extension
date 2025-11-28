@@ -221,7 +221,7 @@ function SecureNoteText (props) {
                   autoComplete="off"
                   autoCapitalize="off"
                 />
-              ) : data?.item?.securityType === SECURITY_TIER.HIGHLY_SECRET && !data?.item?.sifExists ? null : (
+              ) : originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? null : (
                 <input
                   type='password'
                   id='editedSif'
@@ -233,7 +233,7 @@ function SecureNoteText (props) {
               {generateSecurityTypeTooltip(originalItem)}
               {generateErrorOverlay()}
             </div>
-            {data?.item?.securityType === SECURITY_TIER.HIGHLY_SECRET && !data?.item?.sifExists ? null : (
+            {originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? null : (
               <div className={`${pI.passInputAdditional}`}>
                 <div className={`${bS.passToggle} ${bS.loaded}`}>
                   <input
