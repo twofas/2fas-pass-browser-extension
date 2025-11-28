@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import Select from 'react-select';
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useState } from 'react';
 
 let activeMenuCloseCallback = null;
 
@@ -16,7 +16,9 @@ let activeMenuCloseCallback = null;
 */
 function AdvancedSelect (props) {
   const selectContainerRef = useRef(null);
+  const selectRef = useRef(null);
   const closeCallbackRef = useRef(null);
+  const [internalMenuIsOpen, setInternalMenuIsOpen] = useState(false);
 
   const handleClickOutside = useCallback(event => {
     if (!props?.menuIsOpen) {
@@ -157,12 +159,23 @@ function AdvancedSelect (props) {
     }
 
     closeCallbackRef.current = () => {
+      if (selectRef.current) {
+        if (selectRef.current.inputRef) {
+          selectRef.current.inputRef.blur();
+        } else if (typeof selectRef.current.blur === 'function') {
+          selectRef.current.blur();
+        }
+      }
+
       if (props?.onMenuClose && typeof props?.onMenuClose === 'function') {
         props.onMenuClose();
       }
+
+      setInternalMenuIsOpen(false);
     };
 
     activeMenuCloseCallback = closeCallbackRef.current;
+    setInternalMenuIsOpen(true);
 
     calculateMenuPosition();
 
@@ -183,6 +196,8 @@ function AdvancedSelect (props) {
       activeMenuCloseCallback = null;
     }
 
+    setInternalMenuIsOpen(false);
+
     if (props?.onMenuClose && typeof props?.onMenuClose === 'function') {
       props.onMenuClose();
     }
@@ -197,27 +212,53 @@ function AdvancedSelect (props) {
   }, [handleClickOutside]);
 
   useEffect(() => {
-    if (props?.menuIsOpen) {
-      if (activeMenuCloseCallback && activeMenuCloseCallback !== closeCallbackRef.current) {
-        activeMenuCloseCallback();
-      }
+    const isMenuOpen = props?.menuIsOpen || internalMenuIsOpen;
 
-      closeCallbackRef.current = () => {
-        if (props?.onMenuClose && typeof props?.onMenuClose === 'function') {
-          props.onMenuClose();
+    if (isMenuOpen) {
+      if (props?.menuIsOpen) {
+        if (activeMenuCloseCallback && activeMenuCloseCallback !== closeCallbackRef.current) {
+          activeMenuCloseCallback();
         }
-      };
 
-      activeMenuCloseCallback = closeCallbackRef.current;
+        closeCallbackRef.current = () => {
+          if (props?.onMenuClose && typeof props?.onMenuClose === 'function') {
+            props.onMenuClose();
+          }
+        };
 
-      calculateMenuPosition();
+        activeMenuCloseCallback = closeCallbackRef.current;
+
+        calculateMenuPosition();
+      }
 
       const handleResize = () => {
         calculateMenuPosition();
       };
 
-      const handleScroll = () => {
-        calculateMenuPosition();
+      const handleScroll = event => {
+        const scrollTarget = event.target;
+
+        if (scrollTarget === document || scrollTarget === document.documentElement || scrollTarget === document.body) {
+          if (activeMenuCloseCallback === closeCallbackRef.current) {
+            activeMenuCloseCallback();
+            activeMenuCloseCallback = null;
+          }
+
+          return;
+        }
+
+        const menuPortalElement = document.getElementById('select-menu-portal');
+        const isSelectContainerScroll = selectContainerRef.current?.contains(scrollTarget);
+        const isMenuPortalScroll = menuPortalElement?.contains(scrollTarget);
+
+        if (isSelectContainerScroll || isMenuPortalScroll) {
+          return;
+        }
+
+        if (activeMenuCloseCallback === closeCallbackRef.current) {
+          activeMenuCloseCallback();
+          activeMenuCloseCallback = null;
+        }
       };
 
       window.addEventListener('resize', handleResize);
@@ -228,7 +269,7 @@ function AdvancedSelect (props) {
         window.removeEventListener('scroll', handleScroll, true);
       };
     }
-  }, [props?.menuIsOpen, calculateMenuPosition, props]);
+  }, [props?.menuIsOpen, internalMenuIsOpen, calculateMenuPosition, props]);
 
   const menuPortalTarget = document.getElementById('select-menu-portal');
 
@@ -236,6 +277,7 @@ function AdvancedSelect (props) {
     <div ref={selectContainerRef}>
       <Select
         {...props}
+        ref={selectRef}
         triggerRef={undefined}
         menuPlacement='auto'
         menuPortalTarget={menuPortalTarget}
