@@ -13,7 +13,6 @@ import { Form } from 'react-final-form';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import SecureNote from '@/partials/models/itemModels/SecureNote';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import getItem from '@/partials/sessionStorage/getItem';
 
 const Name = lazy(() => import('../../components/Name'));
 const SecureNoteText = lazy(() => import('../../components/SecureNoteText'));
@@ -68,7 +67,7 @@ function SecureNoteDetailsView(props) {
       content: {}
     };
 
-    if (data.item.isT3orT2WithSif) {
+    if (props.originalItem?.isT3orT2WithSif) {
       stateData.sifFetched = true;
     }
 
@@ -85,9 +84,7 @@ function SecureNoteDetailsView(props) {
     }
 
     if (data.tierEditable) {
-      const originalItem = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-
-      if (originalItem.securityType !== e.securityType) {
+      if (props.originalItem?.securityType !== e.securityType) {
         stateData.securityType = e.securityType;
       }
     }
