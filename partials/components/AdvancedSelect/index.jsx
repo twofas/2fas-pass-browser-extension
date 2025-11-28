@@ -77,6 +77,7 @@ function AdvancedSelect (props) {
     }
 
     const rect = triggerElement.getBoundingClientRect();
+
     const menuPortalElement = document.getElementById('select-menu-portal');
 
     if (!menuPortalElement) {
@@ -101,17 +102,38 @@ function AdvancedSelect (props) {
         return;
       }
 
-      const realMenuHeight = menuList ? menuList.scrollHeight : 0;
       const menuElement = menuPortalElement.querySelector('[class*="__menu"]:not([class*="__menu-portal"]):not([class*="__menu-list"])');
 
       if (!menuElement) {
         return;
       }
 
+      const menuElementRect = menuElement.getBoundingClientRect();
+      const realMenuHeight = menuElementRect.height || (menuList ? menuList.scrollHeight : 0);
+
       const menuStyles = getComputedStyle(menuElement);
-      const cssTopOffset = parseFloat(menuStyles.top) || 0;
-      const cssRightValue = menuStyles.right;
-      const hasRightPositioning = cssRightValue !== 'auto' && cssRightValue !== '';
+      const cssTopOffsetRaw = menuStyles.top;
+      const cssTopOffset = cssTopOffsetRaw.includes('%') ? 0 : (parseFloat(cssTopOffsetRaw) || 0);
+
+      const cssRightRaw = menuStyles.right;
+      const cssRightValue = parseFloat(cssRightRaw) || 0;
+      const hasRightZeroPositioning = cssRightValue === 0 && cssRightRaw !== 'auto';
+
+      const cssTransform = menuStyles.transform;
+      let hasCenteredPositioning = false;
+
+      if (cssTransform && cssTransform !== 'none') {
+        if (cssTransform.includes('translateX(-50%)')) {
+          hasCenteredPositioning = true;
+        } else if (cssTransform.startsWith('matrix(')) {
+          const matrixMatch = cssTransform.match(/matrix\([^,]+,\s*[^,]+,\s*[^,]+,\s*[^,]+,\s*([^,]+),/);
+
+          if (matrixMatch) {
+            const translateX = parseFloat(matrixMatch[1]);
+            hasCenteredPositioning = translateX < 0;
+          }
+        }
+      }
 
       const bottomBarHeight = 72;
       const minSpaceRequired = 10;
@@ -119,29 +141,33 @@ function AdvancedSelect (props) {
       const spaceAbove = rect.top;
 
       const shouldPlaceOnTop = realMenuHeight > 0 && spaceBelow < (realMenuHeight + minSpaceRequired + cssTopOffset) && spaceAbove > (realMenuHeight + minSpaceRequired + cssTopOffset);
-      const determinedPlacement = shouldPlaceOnTop ? 'top' : 'bottom';
 
-      if (hasRightPositioning) {
+      const menuWidth = menuElementRect.width || rect.width;
+
+      if (hasCenteredPositioning) {
+        const triggerCenterX = rect.left + (rect.width / 2);
+        menuPortalElement.style.cssText = `position: fixed !important; left: ${triggerCenterX}px !important; transform: translateX(-50%) !important; z-index: 9999 !important;`;
+      } else if (hasRightZeroPositioning) {
         const rightValue = window.innerWidth - rect.right;
-        menuPortalElement.style.cssText = `position: fixed !important; right: ${rightValue}px !important; width: ${rect.width}px !important; z-index: 9999 !important;`;
+        menuPortalElement.style.cssText = `position: fixed !important; right: ${rightValue}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
       } else {
         menuPortalElement.style.cssText = `position: fixed !important; left: ${rect.left}px !important; width: ${rect.width}px !important; z-index: 9999 !important;`;
       }
 
-      if (determinedPlacement === 'bottom') {
-        const topValue = rect.bottom + cssTopOffset;
+      if (shouldPlaceOnTop) {
+        const topValue = rect.top - realMenuHeight - cssTopOffset;
         menuPortalElement.style.cssText += ` top: ${topValue}px !important; bottom: auto !important;`;
       } else {
-        const topValue = rect.top - realMenuHeight - cssTopOffset;
+        const topValue = rect.bottom + cssTopOffset;
         menuPortalElement.style.cssText += ` top: ${topValue}px !important; bottom: auto !important;`;
       }
 
-      menuElement.style.cssText = `margin-top: 0 !important; margin-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; top: 0 !important; bottom: auto !important; z-index: 9999 !important;`;
+      menuElement.style.cssText = `margin-top: 0 !important; margin-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; top: 0 !important; left: 0 !important; right: auto !important; bottom: auto !important; z-index: 9999 !important; position: relative !important; transform: none !important;`;
 
       const menuPortal = menuPortalElement.querySelector('[class*="__menu-portal"]');
 
       if (menuPortal) {
-        menuPortal.style.cssText = `position: absolute !important; top: 0 !important; left: 0 !important; right: auto !important; bottom: auto !important; width: 100% !important; margin: 0 !important; z-index: 9999 !important;`;
+        menuPortal.style.cssText = `position: static !important; top: auto !important; left: auto !important; right: auto !important; bottom: auto !important; width: 100% !important; margin: 0 !important; z-index: 9999 !important; transform: none !important;`;
       }
 
       requestAnimationFrame(() => {
