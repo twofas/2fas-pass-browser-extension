@@ -45,12 +45,13 @@ class SecureNote extends Item {
       uiName: 'Secure Note',
       type: secureNoteData.internalData?.type || null,
       sifResetTime: secureNoteData.internalData?.sifResetTime || null,
-      editedSif: secureNoteData.internalData?.editedSif ?? null
+      editedSif: secureNoteData.internalData?.editedSif ?? null,
+      cachedSifDecrypted: secureNoteData.internalData?.cachedSifDecrypted ?? null
     };
-    
+
     // Secure Input Fields
     this.#s_text = secureNoteData.content.s_text;
-    this.#s_sifDecrypted = null;
+    this.#s_sifDecrypted = secureNoteData.internalData?.cachedSifDecrypted ?? null;
   }
 
   removeSif () {
@@ -81,10 +82,12 @@ class SecureNote extends Item {
 
   setSifDecrypted (decryptedSif) {
     this.#s_sifDecrypted = decryptedSif;
+    this.internalData.cachedSifDecrypted = decryptedSif;
   }
 
   removeSifDecrypted () {
     this.#s_sifDecrypted = null;
+    this.internalData.cachedSifDecrypted = null;
   }
 
   get sifDecrypted () {
@@ -138,7 +141,8 @@ class SecureNote extends Item {
         uiName: this.internalData.uiName,
         type: this.internalData.type,
         sifResetTime: this.internalData.sifResetTime,
-        editedSif: this.internalData.editedSif
+        editedSif: this.internalData.editedSif,
+        cachedSifDecrypted: this.internalData.cachedSifDecrypted
       }
     };
   }
