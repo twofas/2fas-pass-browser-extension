@@ -23,6 +23,35 @@ const ConnectionTimeout = lazy(() => import('./components/ConnectionTimeout'));
 const ContinueUpdate = lazy(() => import('./components/ContinueUpdate'));
 
 /**
+ * Generates a description message based on the pull request action type.
+ * @param {string} action - The action type from PULL_REQUEST_TYPES.
+ * @returns {string|undefined} The i18n description message or undefined for default action.
+ */
+const getPushNotificationDescription = action => {
+  switch (action) {
+    case PULL_REQUEST_TYPES.SIF_REQUEST: {
+      return browser.i18n.getMessage('fetch_sif_request_description');
+    }
+
+    case PULL_REQUEST_TYPES.DELETE_DATA: {
+      return browser.i18n.getMessage('fetch_delete_request_description');
+    }
+
+    case PULL_REQUEST_TYPES.FULL_SYNC: {
+      return browser.i18n.getMessage('fetch_full_sync_description');
+    }
+
+    case PULL_REQUEST_TYPES.ADD_DATA: {
+      return browser.i18n.getMessage('fetch_add_request_description');
+    }
+
+    default: {
+      return undefined;
+    }
+  }
+};
+
+/**
 * Function to handle the Fetch component.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
@@ -274,7 +303,7 @@ function Fetch(props) {
           <div className={S.fetchContainer}>
             <NavigationButton type='cancel' onClick={cancelHandle} />
 
-            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} description={state?.action === PULL_REQUEST_TYPES.FULL_SYNC ? browser.i18n.getMessage('fetch_full_sync_description') : undefined} />}
+            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} description={getPushNotificationDescription(state?.action)} />}
             {fetchState === FETCH_STATE.CONNECTION_ERROR && <ConnectionError fetchState={fetchState} errorText={errorText} />}
             {fetchState === FETCH_STATE.CONNECTION_TIMEOUT && <ConnectionTimeout fetchState={fetchState} tryAgainHandle={tryAgainHandle} />}
             {fetchState === FETCH_STATE.CONTINUE_UPDATE && <ContinueUpdate fetchState={fetchState} />}
