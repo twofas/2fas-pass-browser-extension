@@ -42,7 +42,7 @@ class SecureNote extends Item {
     };
 
     this.internalData = {
-      uiName: 'Secure Note',
+      uiName: browser.i18n.getMessage('secure_note'),
       type: secureNoteData.internalData?.type || null,
       sifResetTime: secureNoteData.internalData?.sifResetTime || null,
       editedSif: secureNoteData.internalData?.editedSif ?? null,

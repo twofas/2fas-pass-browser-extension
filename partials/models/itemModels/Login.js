@@ -77,7 +77,7 @@ export default class Login extends Item {
     };
 
     this.internalData = {
-      uiName: 'Login',
+      uiName: browser.i18n.getMessage('login'),
       urisWithTempIds: loginData.internalData?.urisWithTempIds || this.#urisWithTempIds(loginData.content.uris) || [],
       normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || [],
       type: loginData.internalData?.type || null,
