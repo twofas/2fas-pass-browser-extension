@@ -84,9 +84,7 @@ function PaymentCardDetailsView (props) {
     }
 
     if (data.cardHolderEditable) {
-      if (!values?.content?.cardHolder || values?.content?.cardHolder?.length <= 0) {
-        errors.cardHolder = browser.i18n.getMessage('details_cardholder_required');
-      } else if (values.content?.cardHolder?.length > 255) {
+      if (values?.content?.cardHolder && values.content?.cardHolder?.length > 255) {
         errors.cardHolder = browser.i18n.getMessage('details_cardholder_max_length');
       }
     }
@@ -94,9 +92,7 @@ function PaymentCardDetailsView (props) {
     if (data.cardNumberEditable) {
       const cardNumber = getCardNumberValue();
 
-      if (!cardNumber || cardNumber.length <= 0) {
-        errors.cardNumber = browser.i18n.getMessage('details_card_number_required');
-      } else {
+      if (cardNumber && cardNumber.length > 0) {
         const cleanCardNumber = cardNumber.replace(/\s/g, '');
 
         if (!PAYMENT_CARD_REGEX.test(cleanCardNumber)) {
@@ -108,9 +104,7 @@ function PaymentCardDetailsView (props) {
     if (data.expirationDateEditable) {
       const expirationDate = getExpirationDateValue();
 
-      if (!expirationDate || expirationDate.length <= 0) {
-        errors.expirationDate = browser.i18n.getMessage('details_expiration_date_required');
-      } else {
+      if (expirationDate && expirationDate.length > 0) {
         const expDateParts = expirationDate.split('/');
 
         if (expDateParts.length !== 2) {
@@ -121,14 +115,6 @@ function PaymentCardDetailsView (props) {
 
           if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
             errors.expirationDate = browser.i18n.getMessage('details_expiration_date_invalid');
-          } else {
-            const now = new Date();
-            const currentMonth = now.getMonth() + 1;
-            const currentYear = now.getFullYear();
-
-            if (year < currentYear || (year === currentYear && month < currentMonth)) {
-              errors.expirationDate = browser.i18n.getMessage('details_expiration_date_past');
-            }
           }
         }
       }
@@ -137,9 +123,7 @@ function PaymentCardDetailsView (props) {
     if (data.securityCodeEditable) {
       const securityCode = getSecurityCodeValue();
 
-      if (!securityCode || securityCode.length <= 0) {
-        errors.securityCode = browser.i18n.getMessage('details_security_code_required');
-      } else {
+      if (securityCode && securityCode.length > 0) {
         if (!/^\d{3,4}$/.test(securityCode)) {
           errors.securityCode = browser.i18n.getMessage('details_security_code_invalid');
         }

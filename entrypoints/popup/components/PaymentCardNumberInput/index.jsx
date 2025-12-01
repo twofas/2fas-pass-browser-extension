@@ -22,13 +22,13 @@ function PaymentCardNumberInput ({ value, onChange, id, ...inputProps }) {
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
 
-  const cardMaskData = useMemo(
+  const mask = useMemo(
     () => getCardNumberMask(value),
     [value]
   );
 
   useLayoutEffect(() => {
-    if (previousMaskRef.current && previousMaskRef.current !== cardMaskData.mask) {
+    if (previousMaskRef.current && previousMaskRef.current !== mask) {
       if (cursorPositionRef.current !== null) {
         const savedCursorPos = cursorPositionRef.current;
 
@@ -43,8 +43,8 @@ function PaymentCardNumberInput ({ value, onChange, id, ...inputProps }) {
       }
     }
 
-    previousMaskRef.current = cardMaskData.mask;
-  }, [cardMaskData.mask, id]);
+    previousMaskRef.current = mask;
+  }, [mask, id]);
 
   const handleChange = useCallback(e => {
     const domInput = document.getElementById(id);
@@ -56,12 +56,12 @@ function PaymentCardNumberInput ({ value, onChange, id, ...inputProps }) {
   return (
     <InputMask
       {...inputProps}
+      placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
       className={S.paymentCardNumberInput}
       type='text'
-      mask={cardMaskData.mask}
+      mask={mask}
       autoClear={false}
       value={value}
-      placeholder={cardMaskData.placeholder}
       id={id}
       onChange={handleChange}
     />

@@ -34,59 +34,42 @@ function PaymentCardAddNewView () {
   const validate = values => {
     const errors = {};
 
-    // @TODO: i18n!
     if (!values?.name || values?.name?.length <= 0) {
-      errors.name = 'Card name is required';
+      errors.name = browser.i18n.getMessage('add_new_validate_card_name_required');
     } else if (values.name?.length > 255) {
-      errors.name = 'Card name must be less than 256 characters';
+      errors.name = browser.i18n.getMessage('add_new_validate_card_name_length');
     }
 
-    if (!values?.cardHolder || values?.cardHolder?.length <= 0) {
-      errors.cardHolder = 'Cardholder is required';
-    } else if (values.cardHolder?.length > 255) {
-      errors.cardHolder = 'Cardholder must be less than 256 characters';
+    if (values?.cardHolder && values.cardHolder?.length > 255) {
+      errors.cardHolder = browser.i18n.getMessage('add_new_validate_cardholder_length');
     }
 
-    if (!values?.cardNumber || values?.cardNumber?.length <= 0) {
-      errors.cardNumber = 'Card number is required';
-    } else {
+    if (values?.cardNumber && values.cardNumber?.length > 0) {
       const cleanCardNumber = values.cardNumber.replace(/\s/g, '');
 
       if (!PAYMENT_CARD_REGEX.test(cleanCardNumber)) {
-        errors.cardNumber = 'Card number is invalid';
+        errors.cardNumber = browser.i18n.getMessage('add_new_validate_card_number_invalid');
       }
     }
 
-    if (!values?.expirationDate || values?.expirationDate?.length <= 0) {
-      errors.expirationDate = 'Expiration date is required';
-    } else {
+    if (values?.expirationDate && values.expirationDate?.length > 0) {
       const expDateParts = values.expirationDate.split('/');
 
       if (expDateParts.length !== 2) {
-        errors.expirationDate = 'Expiration date is invalid';
+        errors.expirationDate = browser.i18n.getMessage('add_new_validate_expiration_date_invalid');
       } else {
         const month = parseInt(expDateParts[0], 10);
         const year = parseInt(expDateParts[1], 10);
 
         if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
-          errors.expirationDate = 'Expiration date is invalid';
-        } else {
-          const now = new Date();
-          const currentMonth = now.getMonth() + 1;
-          const currentYear = now.getFullYear();
-
-          if (year < currentYear || (year === currentYear && month < currentMonth)) {
-            errors.expirationDate = 'Expiration date cannot be in the past';
-          }
+          errors.expirationDate = browser.i18n.getMessage('add_new_validate_expiration_date_invalid');
         }
       }
     }
 
-    if (!values?.securityCode || values?.securityCode?.length <= 0) {
-      errors.securityCode = 'Security code is required';
-    } else {
+    if (values?.securityCode && values.securityCode?.length > 0) {
       if (!/^\d{3,4}$/.test(values.securityCode)) {
-        errors.securityCode = 'Security code must be 3 or 4 digits';
+        errors.securityCode = browser.i18n.getMessage('add_new_validate_security_code_invalid');
       }
     }
 
@@ -158,13 +141,13 @@ function PaymentCardAddNewView () {
           {({ input }) => (
             <div className={`${pI.passInput} ${inputError === 'name' ? pI.error : ''}`}>
               <div className={pI.passInputTop}>
-                <label htmlFor='add-new-name'>Card name</label>
+                <label htmlFor='add-new-name'>{browser.i18n.getMessage('payment_card_name')}</label>
               </div>
               <div className={pI.passInputBottom}>
                 <input
                   type='text'
                   {...input}
-                  placeholder="Set this item's name"
+                  placeholder={browser.i18n.getMessage('placeholder_payment_card_name')}
                   id='add-new-name'
                   dir='ltr'
                   spellCheck='false'
@@ -184,13 +167,13 @@ function PaymentCardAddNewView () {
           {({ input }) => (
             <div className={`${pI.passInput} ${inputError === 'cardHolder' ? pI.error : ''}`}>
               <div className={pI.passInputTop}>
-                <label htmlFor='add-new-cardHolder'>Cardholder</label>
+                <label htmlFor='add-new-cardHolder'>{browser.i18n.getMessage('payment_card_cardholder')}</label>
               </div>
               <div className={pI.passInputBottom}>
                 <input
                   type='text'
                   {...input}
-                  placeholder="Set this item's cardholder"
+                  placeholder={browser.i18n.getMessage('placeholder_payment_card_cardholder')}
                   id='add-new-cardHolder'
                   dir='ltr'
                   spellCheck='false'
@@ -210,7 +193,7 @@ function PaymentCardAddNewView () {
           {({ input }) => (
             <div className={`${pI.passInput} ${inputError === 'cardNumber' ? pI.error : ''}`}>
               <div className={pI.passInputTop}>
-                <label htmlFor='add-new-cardNumber'>Card number</label>
+                <label htmlFor='add-new-cardNumber'>{browser.i18n.getMessage('payment_card_card_number')}</label>
               </div>
               <div className={pI.passInputBottom}>
                 <PaymentCardNumberInput
@@ -230,7 +213,7 @@ function PaymentCardAddNewView () {
             {({ input }) => (
               <div className={`${pI.passInput} ${inputError === 'expirationDate' ? pI.error : ''}`}>
                 <div className={pI.passInputTop}>
-                  <label htmlFor='add-new-expirationDate'>Expiration Date</label>
+                  <label htmlFor='add-new-expirationDate'>{browser.i18n.getMessage('payment_card_expiration_date')}</label>
                 </div>
                 <div className={pI.passInputBottom}>
                   <PaymentCardExpirationDate
@@ -249,7 +232,7 @@ function PaymentCardAddNewView () {
             {({ input }) => (
               <div className={`${pI.passInput} ${inputError === 'securityCode' ? pI.error : ''}`}>
                 <div className={pI.passInputTop}>
-                  <label htmlFor='add-new-securityCode'>Security Code</label>
+                  <label htmlFor='add-new-securityCode'>{browser.i18n.getMessage('payment_card_security_code')}</label>
                 </div>
                 <div className={pI.passInputBottom}>
                   <PaymentCardSecurityCodeInput

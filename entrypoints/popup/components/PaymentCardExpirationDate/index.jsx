@@ -67,7 +67,7 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
       dateFormat='mm/y'
       view='month'
       minDate={calendarMinDate}
-      placeholder='MM/YY'
+      placeholder={browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
       inputId={inputId}
       onChange={handleChange}
       disabled={disabled}
