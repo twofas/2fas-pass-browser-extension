@@ -8,6 +8,7 @@ import S from '../../../ThisTab.module.scss';
 import { memo, lazy, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
+import handleAutofill from '../../../functions/serviceList/handleAutofill';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 const Skeleton = lazy(() => import('../../Skeleton'));
@@ -24,7 +25,11 @@ function PaymentCardItemView (props) {
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
 
   const handleAutofillClick = useCallback(async () => {
-    console.log('Autofill card not implemented yet');
+    if (!props.data?.id) {
+      return;
+    }
+
+    await handleAutofill(props.data.deviceId, props.data.vaultId, props.data.id, navigate, props.more, props.setMore);
   }, [props?.data?.deviceId, props?.data?.vaultId, props?.data?.id, navigate, props.more]);
 
   return (
