@@ -274,5 +274,9 @@
   "item": {
     "message": "Item",
     "description": "Generic label for an item"
+  },
+  "button_open_calendar": {
+    "message": "Open calendar",
+    "description": "Button title for opening the calendar popup to select expiration date"
   }
 }
