@@ -7,6 +7,7 @@
 export const REQUEST_ACTIONS = Object.freeze({
   AUTO_CLEAR_ACTION: 'autoClearAction', // background, focus, popup
   AUTOFILL: 'autofill', // content
+  AUTOFILL_CARD: 'autofillCard', // content
   CHECK_AUTOFILL_INPUTS: 'checkAutofillInputs', // content
   SEND_URL: 'sendUrl', // popup
   MATCHING_LOGINS: 'matchingLogins', // content
