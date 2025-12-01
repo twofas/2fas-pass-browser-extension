@@ -33,7 +33,7 @@ function CardHolder (props) {
     }
 
     await copyValue(cardholder, data.item.deviceId, data.item.vaultId, data.item.id, 'cardHolder');
-    showToast('Copied', 'success'); // @TODO: i18n
+    showToast(browser.i18n.getMessage('details_cardholder_copied'), 'success');
   }, [data.item.id]);
 
   const handleCardholderEditable = async () => {
@@ -70,7 +70,7 @@ function CardHolder (props) {
       {({ input }) => (
         <div className={`${pI.passInput} ${data.cardHolderEditable ? '' : pI.disabled} ${inputError === 'cardHolder' ? pI.error : ''}`}>
           <div className={pI.passInputTop}>
-            <label htmlFor="cardHolder">Cardholder</label> {/* @TODO: i18n */}
+            <label htmlFor="cardHolder">{browser.i18n.getMessage('payment_card_cardholder')}</label>
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
@@ -87,7 +87,7 @@ function CardHolder (props) {
                 input.onChange(e);
                 handleCardholderChange(e);
               }}
-              placeholder='Cardholder Name' /* @TODO: i18n */
+              placeholder={browser.i18n.getMessage('placeholder_payment_card_cardholder')}
               id='cardHolder'
               disabled={!data.cardHolderEditable ? 'disabled' : ''}
               dir='ltr'

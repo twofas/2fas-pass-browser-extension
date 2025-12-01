@@ -211,6 +211,26 @@
     "message": "Cards",
     "description": "Label for multiple payment cards"
   },
+  "payment_card_name": {
+    "message": "Name",
+    "description": "Label for the payment card name field"
+  },
+  "payment_card_cardholder": {
+    "message": "Cardholder",
+    "description": "Label for the payment card cardholder field"
+  },
+  "payment_card_card_number": {
+    "message": "Card Number",
+    "description": "Label for the payment card number field"
+  },
+  "payment_card_expiration_date": {
+    "message": "Expiration Date",
+    "description": "Label for the payment card expiration date field"
+  },
+  "payment_card_security_code": {
+    "message": "Security Code",
+    "description": "Label for the payment card security code field"
+  },
   "secure_note": {
     "message": "Secure Note",
     "description": "Label for the secure note functionality"

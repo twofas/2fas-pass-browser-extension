@@ -178,6 +178,7 @@ function CardNumber (props) {
                 id='editedCardNumber'
                 onChange={handleCardNumberChange}
                 disabled={!data?.cardNumberEditable || sifDecryptError}
+                placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
               />
             ) : (
               <input
@@ -185,6 +186,7 @@ function CardNumber (props) {
                 id='editedCardNumber'
                 value={getMaskedValue()}
                 readOnly
+                placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
               />
             )}
 

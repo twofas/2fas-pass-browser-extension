@@ -62,7 +62,7 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, ...inp
       mask={securityCodeMaskData.mask}
       autoClear={false}
       value={value}
-      placeholder={'_ _ _'}
+      placeholder={browser.i18n.getMessage('placeholder_payment_card_security_code')}
       id={id}
       onChange={handleChange}
     />

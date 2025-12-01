@@ -171,6 +171,10 @@
     "message": "Cardholder must be less than 256 characters.",
     "description": "Validation message indicating the maximum length for the cardholder field"
   },
+  "details_cardholder_copied": {
+    "message": "Cardholder copied to clipboard",
+    "description": "Success message shown when the cardholder is copied to clipboard"
+  },
   "details_card_number_required": {
     "message": "Card number is required.",
     "description": "Validation message indicating that the card number field is required"
