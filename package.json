@@ -71,7 +71,7 @@
     "uuid": "^13.0.0",
     "vite-plugin-svgr": "^4.5.0",
     "xss": "^1.0.15",
-    "zustand": "^5.0.8"
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@wxt-dev/module-react": "^1.1.5",
@@ -80,7 +80,7 @@
     "eslint-plugin-react": "^7.37.5",
     "sass-embedded": "1.93.3",
     "terser": "^5.44.1",
-    "vitest": "^4.0.13",
+    "vitest": "^4.0.14",
     "wxt": "^0.20.11"
   }
 }
