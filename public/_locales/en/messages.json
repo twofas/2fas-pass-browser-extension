@@ -355,6 +355,26 @@
     "message": "Cards",
     "description": "Label for multiple payment cards"
   },
+  "payment_card_name": {
+    "message": "Name",
+    "description": "Label for the payment card name field"
+  },
+  "payment_card_cardholder": {
+    "message": "Cardholder",
+    "description": "Label for the payment card cardholder field"
+  },
+  "payment_card_card_number": {
+    "message": "Card Number",
+    "description": "Label for the payment card number field"
+  },
+  "payment_card_expiration_date": {
+    "message": "Expiration Date",
+    "description": "Label for the payment card expiration date field"
+  },
+  "payment_card_security_code": {
+    "message": "Security Code",
+    "description": "Label for the payment card security code field"
+  },
   "secure_note": {
     "message": "Secure Note",
     "description": "Label for the secure note functionality"
@@ -398,6 +418,10 @@
   "item": {
     "message": "Item",
     "description": "Generic label for an item"
+  },
+  "button_open_calendar": {
+    "message": "Open calendar",
+    "description": "Button title for opening the calendar popup to select expiration date"
   },
   "notification_send_autofill_to_tab_lack_of_service_title": {
     "message": "Error",
@@ -546,6 +570,26 @@
   "placeholder_secure_note_empty": {
     "message": "Note is empty",
     "description": "Placeholder text when there is no Secure Note available"
+  },
+  "placeholder_payment_card_name": {
+    "message": "Type the card name",
+    "description": "Placeholder text for the payment card name input field"
+  },
+  "placeholder_payment_card_cardholder": {
+    "message": "Type the cardholder's name",
+    "description": "Placeholder text for the cardholder name input field"
+  },
+  "placeholder_payment_card_number": {
+    "message": "0000 0000 0000 0000",
+    "description": "Placeholder text for the payment card number input field"
+  },
+  "placeholder_payment_card_expiration_date": {
+    "message": "MM/YY",
+    "description": "Placeholder text for the payment card expiration date input field"
+  },
+  "placeholder_payment_card_security_code": {
+    "message": "_ _ _",
+    "description": "Placeholder text for the payment card security code input field"
   },
   "background_contextMenuConfigured_no_accounts": {
     "message": "There are no matching Items for this domain",
@@ -718,6 +762,30 @@
   "add_new_validate_invalid_domain": {
     "message": "Please enter a valid Domain (URI)",
     "description": "Validation message displayed when the Domain (URI) entered is invalid"
+  },
+  "add_new_validate_card_name_required": {
+    "message": "Card name is required",
+    "description": "Validation message displayed when the Card Name field is empty"
+  },
+  "add_new_validate_card_name_length": {
+    "message": "Card name must be less than 256 characters",
+    "description": "Validation message displayed when the Card Name field exceeds 255 characters"
+  },
+  "add_new_validate_cardholder_length": {
+    "message": "Cardholder must be less than 256 characters",
+    "description": "Validation message displayed when the Cardholder field exceeds 255 characters"
+  },
+  "add_new_validate_card_number_invalid": {
+    "message": "Card number is invalid",
+    "description": "Validation message displayed when the Card Number field is invalid"
+  },
+  "add_new_validate_expiration_date_invalid": {
+    "message": "Expiration date is invalid",
+    "description": "Validation message displayed when the Expiration Date field is invalid"
+  },
+  "add_new_validate_security_code_invalid": {
+    "message": "Security code must be 3 or 4 digits",
+    "description": "Validation message displayed when the Security Code field is invalid"
   },
   "add_new_header": {
     "message": "Adding a new ITEM to \n2FAS Pass",
@@ -970,6 +1038,10 @@
   "details_cardholder_max_length": {
     "message": "Cardholder must be less than 256 characters.",
     "description": "Validation message indicating the maximum length for the cardholder field"
+  },
+  "details_cardholder_copied": {
+    "message": "Cardholder copied to clipboard",
+    "description": "Success message shown when the cardholder is copied to clipboard"
   },
   "details_card_number_required": {
     "message": "Card number is required.",
