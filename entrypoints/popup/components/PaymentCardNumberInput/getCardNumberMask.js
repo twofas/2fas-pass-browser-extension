@@ -13,93 +13,75 @@
  * - UnionPay (19 digits): 4-4-4-4-3
  */
 const CARD_MASKS = {
-  AMEX: {
-    mask: '9999 999999 99999',
-    placeholder: '0000 000000 00000'
-  },
-  DINERS_14: {
-    mask: '9999 999999 9999',
-    placeholder: '0000 000000 0000'
-  },
-  UNIONPAY_16: {
-    mask: '9999 9999 9999 9999',
-    placeholder: '0000 0000 0000 0000'
-  },
-  UNIONPAY_19: {
-    mask: '9999 9999 9999 9999 999',
-    placeholder: '0000 0000 0000 0000 000'
-  },
-  STANDARD_16: {
-    mask: '9999 9999 9999 9999',
-    placeholder: '0000 0000 0000 0000'
-  },
-  DEFAULT: {
-    mask: '9999 9999 9999 9999',
-    placeholder: '0000 0000 0000 0000'
-  }
+  AMEX: '9999 999999 99999',
+  DINERS_14: '9999 999999 9999',
+  UNIONPAY_16: '9999 9999 9999 9999',
+  UNIONPAY_19: '9999 9999 9999 9999 999',
+  STANDARD_16: '9999 9999 9999 9999',
+  DEFAULT: '9999 9999 9999 9999'
 };
 
 /**
  * Detects card type and returns appropriate mask based on card number prefix.
  * @param {string} cardNumber - The card number (can include spaces).
- * @returns {Object} Object with mask, placeholder, and cardType properties.
+ * @returns {string} The mask string for the detected card type.
  */
 const getCardNumberMask = cardNumber => {
   if (!cardNumber) {
-    return { ...CARD_MASKS.DEFAULT, cardType: null };
+    return CARD_MASKS.DEFAULT;
   }
 
   const cleanNumber = cardNumber.replace(/\D/g, '');
 
   if (cleanNumber.length === 0) {
-    return { ...CARD_MASKS.DEFAULT, cardType: null };
+    return CARD_MASKS.DEFAULT;
   }
 
   if (/^3[47]/.test(cleanNumber)) {
-    return { ...CARD_MASKS.AMEX, cardType: 'amex' };
+    return CARD_MASKS.AMEX;
   }
 
   if (/^3(?:0[0-5]|[689])/.test(cleanNumber)) {
     if (cleanNumber.length > 14) {
-      return { ...CARD_MASKS.STANDARD_16, cardType: 'diners' };
+      return CARD_MASKS.STANDARD_16;
     }
 
-    return { ...CARD_MASKS.DINERS_14, cardType: 'diners' };
+    return CARD_MASKS.DINERS_14;
   }
 
   if (/^62/.test(cleanNumber)) {
     if (/^62055/.test(cleanNumber)) {
-      return { ...CARD_MASKS.UNIONPAY_19, cardType: 'unionpay' };
+      return CARD_MASKS.UNIONPAY_19;
     }
 
-    return { ...CARD_MASKS.UNIONPAY_16, cardType: 'unionpay' };
+    return CARD_MASKS.UNIONPAY_16;
   }
 
   if (/^4/.test(cleanNumber)) {
-    return { ...CARD_MASKS.STANDARD_16, cardType: 'visa' };
+    return CARD_MASKS.STANDARD_16;
   }
 
   if (/^5[1-5]/.test(cleanNumber) || /^2[2-7]/.test(cleanNumber)) {
-    return { ...CARD_MASKS.STANDARD_16, cardType: 'mastercard' };
+    return CARD_MASKS.STANDARD_16;
   }
 
   if (/^6555/.test(cleanNumber)) {
-    return { ...CARD_MASKS.STANDARD_16, cardType: 'bccard' };
+    return CARD_MASKS.STANDARD_16;
   }
 
   if (/^6(?:011|5|4[4-9])/.test(cleanNumber)) {
-    return { ...CARD_MASKS.STANDARD_16, cardType: 'discover' };
+    return CARD_MASKS.STANDARD_16;
   }
 
   if (/^35/.test(cleanNumber)) {
-    return { ...CARD_MASKS.STANDARD_16, cardType: 'jcb' };
+    return CARD_MASKS.STANDARD_16;
   }
 
   if (/^5062/.test(cleanNumber)) {
-    return { ...CARD_MASKS.STANDARD_16, cardType: 'carnet' };
+    return CARD_MASKS.STANDARD_16;
   }
 
-  return { ...CARD_MASKS.DEFAULT, cardType: null };
+  return CARD_MASKS.DEFAULT;
 };
 
 export { getCardNumberMask, CARD_MASKS };
