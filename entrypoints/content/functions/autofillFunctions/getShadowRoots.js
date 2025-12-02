@@ -4,38 +4,36 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
-* Function to get all shadow roots of a given element.
-* @param {HTMLElement} el - The element to get shadow roots from.
-* @return {Array} An array of shadow root elements.
+/**
+* Traverses the DOM tree and returns all shadow roots found.
+* @param {HTMLElement|null} rootElement - The element to start traversing from, or null for entire document.
+* @return {ShadowRoot[]} An array of shadow roots found in the DOM tree.
 */
-const getShadowRoots = el => {
-  const shadowElements = [];
+const getShadowRoots = rootElement => {
+  const shadowRoots = [];
+  const visited = new WeakSet();
 
-  const getShadowChildren = (element) => {
-    if (element.shadowRoot) {
-      shadowElements.push(element.shadowRoot);
-      const childElements = Array.from(element.shadowRoot.querySelectorAll('*'));
-      childElements.forEach((child) => getShadowChildren(child));
-    } else {
-      shadowElements.push(element);
+  const traverseElement = element => {
+    if (!element || visited.has(element)) {
+      return;
     }
+
+    visited.add(element);
+
+    if (element.shadowRoot) {
+      shadowRoots.push(element.shadowRoot);
+
+      Array.from(element.shadowRoot.querySelectorAll('*')).forEach(traverseElement);
+    }
+
+    Array.from(element.children || []).forEach(traverseElement);
   };
 
-  const traverseAllElements = (elements) => {
-    elements.forEach((el) => {
-      if (el.shadowRoot) {
-        getShadowChildren(el);
-      }
+  const startElement = rootElement || document.body;
 
-      traverseAllElements(Array.from(el.children));
-    });
-  };
+  traverseElement(startElement);
 
-  const allElements = Array.from(el ? [el] : document.querySelectorAll('*'));
-  traverseAllElements(allElements);
-
-  return shadowElements;
+  return shadowRoots;
 };
 
 export default getShadowRoots;
