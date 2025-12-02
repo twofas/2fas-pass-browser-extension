@@ -195,6 +195,10 @@
     "message": "Expiration date cannot be in the past.",
     "description": "Validation message indicating that the expiration date must not be in the past"
   },
+  "details_card_expired": {
+    "message": "This card has expired.",
+    "description": "Informational message indicating that the payment card expiration date is in the past"
+  },
   "details_security_code_required": {
     "message": "Security code is required.",
     "description": "Validation message indicating that the security code field is required"

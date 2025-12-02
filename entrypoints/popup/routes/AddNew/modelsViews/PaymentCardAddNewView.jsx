@@ -10,7 +10,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { memo, useState } from 'react';
 import usePopupStateStore from '../../../store/popupState';
 import { Form, Field } from 'react-final-form';
-import { getCurrentDevice } from '@/partials/functions';
+import { getCurrentDevice, paymentCardExpirationDateValidation } from '@/partials/functions';
 import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 import { useNavigate, useLocation } from 'react-router';
 import { PULL_REQUEST_TYPES, PAYMENT_CARD_REGEX } from '@/constants';
@@ -224,6 +224,9 @@ function PaymentCardAddNewView () {
                       setData('expirationDate', formattedValue);
                     }}
                   />
+                </div>
+                <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
+                  <p className={paymentCardExpirationDateValidation(input.value) ? '' : pI.empty}>{paymentCardExpirationDateValidation(input.value) ? browser.i18n.getMessage('details_card_expired') : ''}</p>
                 </div>
               </div>
             )}

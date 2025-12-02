@@ -8,7 +8,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { lazy, useEffect, useRef } from 'react';
-import { copyValue, isText } from '@/partials/functions';
+import { copyValue, isText, paymentCardExpirationDateValidation } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
 import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
 
@@ -178,6 +178,9 @@ function CardExpirationDate (props) {
 
             {generateSecurityTypeTooltip(originalItem)}
             {generateErrorOverlay()}
+          </div>
+          <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
+            <p className={paymentCardExpirationDateValidation(getExpirationDateValue()) ? '' : pI.empty}>{paymentCardExpirationDateValidation(getExpirationDateValue()) ? browser.i18n.getMessage('details_card_expired') : ''}</p>
           </div>
         </div>
       )}
