@@ -1,0 +1,68 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+// camelCase - other cases are generated in paymentCardNumberSelectors.js
+const paymentCardNumberTexts = Object.freeze([
+  'cardNumber',
+  'cardnumber',
+  'card-Number',
+  'card_Number',
+  'card-number',
+  'card_number',
+  'creditCard',
+  'creditcard',
+  'credit-Card',
+  'credit_Card',
+  'credit-card',
+  'credit_card',
+  'creditCardNumber',
+  'credit-Card-Number',
+  'credit_Card_Number',
+  'ccNumber',
+  'cc-Number',
+  'cc_Number',
+  'cc-number',
+  'cc_number',
+  'ccNum',
+  'cc-Num',
+  'cc_Num',
+  'ccNo',
+  'cc-No',
+  'cc_No',
+  'cardNum',
+  'card-Num',
+  'card_Num',
+  'cardNo',
+  'card-No',
+  'card_No',
+  'paymentCard',
+  'payment-Card',
+  'payment_Card',
+  'paymentCardNumber',
+  'payment-Card-Number',
+  'payment_Card_Number',
+  'debitCard',
+  'debit-Card',
+  'debit_Card',
+  'debitCardNumber',
+  'debit-Card-Number',
+  'debit_Card_Number',
+  'addCreditCard',
+  'add-Credit-Card',
+  'add_Credit_Card',
+  'newCreditCard',
+  'new-Credit-Card',
+  'new_Credit_Card',
+  'paymentMethod',
+  'payment-Method',
+  'payment_Method',
+  'pan',
+  'primaryAccountNumber',
+  'primary-Account-Number',
+  'primary_Account_Number'
+]);
+
+export default paymentCardNumberTexts;

@@ -1,0 +1,66 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+// camelCase - other cases are generated in paymentCardholderNameSelectors.js
+const paymentCardholderNameTexts = Object.freeze([
+  'cardholderName',
+  'cardholder-Name',
+  'cardholder_Name',
+  'cardholder-name',
+  'cardholder_name',
+  'cardHolder',
+  'card-Holder',
+  'card_Holder',
+  'card-holder',
+  'card_holder',
+  'cardHolderName',
+  'card-Holder-Name',
+  'card_Holder_Name',
+  'card-holder-name',
+  'card_holder_name',
+  'nameOnCard',
+  'name-On-Card',
+  'name_On_Card',
+  'name-on-card',
+  'name_on_card',
+  'ccName',
+  'cc-Name',
+  'cc_Name',
+  'cc-name',
+  'cc_name',
+  'cardName',
+  'card-Name',
+  'card_Name',
+  'card-name',
+  'card_name',
+  'holderName',
+  'holder-Name',
+  'holder_Name',
+  'holder-name',
+  'holder_name',
+  'ownerName',
+  'owner-Name',
+  'owner_Name',
+  'owner-name',
+  'owner_name',
+  'cardOwner',
+  'card-Owner',
+  'card_Owner',
+  'card-owner',
+  'card_owner',
+  'billingName',
+  'billing-Name',
+  'billing_Name',
+  'billing-name',
+  'billing_name',
+  'fullName',
+  'full-Name',
+  'full_Name',
+  'full-name',
+  'full_name'
+]);
+
+export default paymentCardholderNameTexts;
