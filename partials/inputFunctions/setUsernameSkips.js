@@ -6,35 +6,30 @@
 
 /**
 * Sets the 'twofas-pass-skip' attribute on username inputs based on the presence of password inputs.
+* Username inputs that share a form with at least one password input should NOT be skipped.
+* Username inputs in different forms than all password inputs should be skipped.
 * @param {HTMLInputElement[]} passwordInputs - The password input elements.
 * @param {HTMLInputElement[]} usernameInputs - The username input elements.
 * @return {void}
 */
 const setUsernameSkips = (passwordInputs, usernameInputs) => {
-  passwordInputs.forEach(input => {
-    const closestPasswordForm = input.closest('form');
+  const passwordForms = passwordInputs
+    .map(input => input.closest('form'))
+    .filter(Boolean);
 
-    if (closestPasswordForm) {
-      usernameInputs.forEach(usernameInput => {
-        const closestUsernameForm = usernameInput.closest('form');
+  usernameInputs.forEach(usernameInput => {
+    const usernameForm = usernameInput.closest('form');
 
-        if (closestUsernameForm) {
-          if (!closestPasswordForm.isEqualNode(closestUsernameForm)) {
-            const usernameSkipAttribute = usernameInput.getAttribute('twofas-pass-skip');
-  
-            if (!usernameSkipAttribute || usernameSkipAttribute !== 'false') {
-              usernameInput.setAttribute('twofas-pass-skip', 'true');
-            }
-          } else {
-            usernameInput.setAttribute('twofas-pass-skip', 'false');
-          }
-        }
-      });
-    } else {
-      usernameInputs.forEach(usernameInput => {
-        usernameInput.setAttribute('twofas-pass-skip', 'false');
-      });
+    if (!usernameForm) {
+      usernameInput.setAttribute('twofas-pass-skip', 'false');
+      return;
     }
+
+    const sharesFormWithPassword = passwordForms.some(
+      passwordForm => passwordForm === usernameForm
+    );
+
+    usernameInput.setAttribute('twofas-pass-skip', sharesFormWithPassword ? 'false' : 'true');
   });
 };
 

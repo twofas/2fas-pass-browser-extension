@@ -60,6 +60,7 @@ const handleLoginAutofill = async (item, navigate) => {
   const hasPassword = item.sifExists;
   const hasUsername = item?.content.username && item.content.username.length > 0;
   let passwordDecrypt = true;
+  let needsFetchPassword = false;
 
   if (isHighlySecret) {
     if (!hasPassword) {
@@ -106,6 +107,7 @@ const handleLoginAutofill = async (item, navigate) => {
       }
 
       passwordDecrypt = false;
+      needsFetchPassword = true;
     }
   } else if (item.securityType === SECURITY_TIER.SECRET) {
     if (!hasPassword && hasUsername) {
@@ -202,7 +204,9 @@ const handleLoginAutofill = async (item, navigate) => {
   if (isOk) {
     const separateWindow = await popupIsInSeparateWindow();
 
-    if (!passwordDecrypt) {
+    if (!passwordDecrypt && needsFetchPassword) {
+      showToast(browser.i18n.getMessage('this_tab_autofill_fetch_password'), 'info');
+    } else if (!passwordDecrypt) {
       showToast(browser.i18n.getMessage('this_tab_autofill_no_password'), 'info');
     } else if (!separateWindow) {
       await closeWindowIfNotInSeparateWindow(separateWindow);
