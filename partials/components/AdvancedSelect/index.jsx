@@ -113,22 +113,15 @@ function AdvancedSelect (props) {
 
       let realMenuHeight;
 
-      if (menuListMaxHeight > 0 && menuListScrollHeight > menuListMaxHeight) {
-        realMenuHeight = menuListMaxHeight;
-      } else if (menuElementRect.height > 10) {
+      if (menuElementRect.height > 10) {
         realMenuHeight = menuElementRect.height;
+      } else if (menuListMaxHeight > 0 && menuListScrollHeight > menuListMaxHeight) {
+        realMenuHeight = menuListMaxHeight;
       } else {
         realMenuHeight = menuListScrollHeight;
       }
 
       const menuStyles = getComputedStyle(menuElement);
-      const cssTopOffsetRaw = menuStyles.top;
-      let cssTopOffset = cssTopOffsetRaw.includes('%') ? 0 : (parseFloat(cssTopOffsetRaw) || 0);
-
-      if (cssTopOffset > 50) {
-        cssTopOffset = 8;
-      }
-
       const rightAlignedPrefixes = ['react-select-dropdown', 'react-select-add-new', 'react-select-model-filter', 'react-select-tags', 'react-select-tags-details'];
       const hasRightZeroPositioning = rightAlignedPrefixes.includes(classNamePrefix);
 
@@ -148,30 +141,48 @@ function AdvancedSelect (props) {
         }
       }
 
+      const topBarHeight = 56;
       const bottomBarHeight = 72;
       const minSpaceRequired = 10;
+      const menuGap = 4;
       const spaceBelow = window.innerHeight - rect.bottom - bottomBarHeight;
-      const spaceAbove = rect.top;
+      const spaceAbove = rect.top - topBarHeight;
 
-      const shouldPlaceOnTop = realMenuHeight > 0 && spaceBelow < (realMenuHeight + minSpaceRequired + cssTopOffset) && spaceAbove > (realMenuHeight + minSpaceRequired + cssTopOffset);
+      const spaceNeeded = realMenuHeight + minSpaceRequired + menuGap;
+      const shouldPlaceOnTop = realMenuHeight > 0 && spaceBelow < spaceNeeded && spaceAbove > spaceNeeded;
+
       const menuWidth = menuElementRect.width || rect.width;
 
       if (hasCenteredPositioning) {
         const triggerCenterX = rect.left + (rect.width / 2);
-        menuPortalElement.style.cssText = `position: fixed !important; left: ${triggerCenterX}px !important; transform: translateX(-50%) !important; z-index: 9999 !important;`;
+        const cssText = `position: fixed !important; left: ${triggerCenterX}px !important; transform: translateX(-50%) !important; z-index: 9999 !important;`;
+        menuPortalElement.style.cssText = cssText;
       } else if (hasRightZeroPositioning) {
         const rightValue = window.innerWidth - rect.right;
-        menuPortalElement.style.cssText = `position: fixed !important; right: ${rightValue}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
+        const calculatedLeftEdge = rect.right - menuWidth;
+
+        let cssText;
+
+        if (calculatedLeftEdge < 0) {
+          cssText = `position: fixed !important; left: ${rect.left}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
+        } else {
+          cssText = `position: fixed !important; right: ${rightValue}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
+        }
+
+        menuPortalElement.style.cssText = cssText;
       } else {
-        menuPortalElement.style.cssText = `position: fixed !important; left: ${rect.left}px !important; width: ${rect.width}px !important; z-index: 9999 !important;`;
+        const cssText = `position: fixed !important; left: ${rect.left}px !important; width: ${rect.width}px !important; z-index: 9999 !important;`;
+        menuPortalElement.style.cssText = cssText;
       }
 
       if (shouldPlaceOnTop) {
-        const topValue = rect.top - realMenuHeight - cssTopOffset;
-        menuPortalElement.style.cssText += ` top: ${topValue}px !important; bottom: auto !important;`;
+        const topValue = rect.top - realMenuHeight - menuGap;
+        const verticalCss = ` top: ${topValue}px !important; bottom: auto !important;`;
+        menuPortalElement.style.cssText += verticalCss;
       } else {
-        const topValue = rect.bottom + cssTopOffset;
-        menuPortalElement.style.cssText += ` top: ${topValue}px !important; bottom: auto !important;`;
+        const topValue = rect.bottom + menuGap;
+        const verticalCss = ` top: ${topValue}px !important; bottom: auto !important;`;
+        menuPortalElement.style.cssText += verticalCss;
       }
 
       menuElement.style.cssText = `margin-top: 0 !important; margin-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; top: 0 !important; left: 0 !important; right: auto !important; bottom: auto !important; z-index: 9999 !important; position: relative !important; transform: none !important;`;
