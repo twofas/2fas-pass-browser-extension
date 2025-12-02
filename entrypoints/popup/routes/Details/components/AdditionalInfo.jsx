@@ -23,11 +23,15 @@ const additionalInfoVariants = {
 
 /**
 * Function to render the additional info input field.
+* @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function AdditionalInfo () {
+function AdditionalInfo (props) {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+
+  const { formData } = props;
+  const { inputError } = formData;
 
   const handleAdditionalInfoEditable = async () => {
     if (data.additionalInfoEditable) {
@@ -61,7 +65,7 @@ function AdditionalInfo () {
   return (
     <Field name="content.additionalInfo">
       {({ input }) => (
-        <div className={`${pI.passInput} ${data.additionalInfoEditable ? pI.resizable : pI.disabled}`}>
+        <div className={`${pI.passInput} ${data.additionalInfoEditable ? pI.resizable : pI.disabled} ${inputError === 'content.additionalInfo' ? pI.error : ''}`}>
           <div className={pI.passInputTop}>
             <div className={pI.passInputTopLabelLike}>
               <span>{browser.i18n.getMessage('details_additional_info')}</span>

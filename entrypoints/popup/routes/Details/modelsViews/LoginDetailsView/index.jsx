@@ -39,9 +39,11 @@ function LoginDetailsView(props) {
 
     if (!values?.content?.name || values?.content?.name?.length <= 0) {
       errors.name = browser.i18n.getMessage('details_name_required');
-    } else if (values.content?.name?.length > 255) {
+    } else if (values?.content?.name?.length > 255) {
       errors.name = browser.i18n.getMessage('details_name_max_length');
-    } else if (values.content?.username?.length > 255) {
+    } 
+    
+    if (values?.content?.username && values?.content?.username?.length > 255) {
       errors.username = browser.i18n.getMessage('details_username_max_length');
     }
 
