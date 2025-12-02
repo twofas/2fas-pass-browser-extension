@@ -69,7 +69,7 @@ function SecureNoteDetailsView(props) {
           errors.content = {};
         }
 
-        errors.content.s_text = browser.i18n.getMessage('details_secure_note_text_max_length');
+        errors.content.s_text = browser.i18n.getMessage('secure_note_text_max_length');
       }
     }
 
