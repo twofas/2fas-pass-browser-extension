@@ -57,7 +57,7 @@
   flex-shrink: 0;
   height: 16px;
   justify-content: center;
-  margin-right: 6px;
+  margin-right: 4px;
   max-width: 16px;
   opacity: 1;
   outline: none;
@@ -88,9 +88,9 @@
   }
 
   svg {
-    height: 16px;
+    height: 15px !important;
     stroke: v.$primary-color-light;
-    stroke-width: 1.5;
+    stroke-width: 2 !important;
     transition: stroke .3s ease-in-out;
     width: auto;
 
