@@ -5,7 +5,9 @@
 // See LICENSE file for full terms
 
 import checkAutofillInputs from '../functions/checkAutofillInputs';
+import checkAutofillInputsCard from '../functions/checkAutofillInputsCard';
 import autofill from '../functions/autofill';
+import autofillCard from '../functions/autofillCard';
 import getDomainInfo from '../functions/getDomainInfo';
 import notification from '../functions/notification';
 import matchingLogins from '../functions/matchingLogins';
@@ -55,6 +57,19 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
         autofill(request)
           .then(autofillStatus => { sendResponse(autofillStatus); })
           .catch(error => { sendResponse({ status: 'error', message: 'Autofill failed', error }); });
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS_CARD: {
+        sendResponse(checkAutofillInputsCard());
+        break;
+      }
+
+      case REQUEST_ACTIONS.AUTOFILL_CARD: {
+        autofillCard(request)
+          .then(autofillStatus => { sendResponse(autofillStatus); })
+          .catch(error => { sendResponse({ status: 'error', message: 'Autofill card failed', error }); });
 
         break;
       }
