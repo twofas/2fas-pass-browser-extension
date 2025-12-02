@@ -258,11 +258,7 @@ function PaymentCardAddNewView () {
             className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
             disabled={
               submitting || 
-              !data?.name || data?.name?.length === 0 ||
-              !data?.cardHolder || data?.cardHolder?.length === 0 ||
-              !data?.cardNumber || data?.cardNumber?.length === 0 ||
-              !data?.expirationDate || data?.expirationDate?.length === 0 ||
-              !data?.securityCode || data?.securityCode?.length === 0
+              !data?.name || data?.name?.length === 0
               ? 'disabled' : ''
             }
           >
