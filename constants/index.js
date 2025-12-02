@@ -42,3 +42,22 @@ export {
 
 // Re-export named export from savePromptActions.js
 export { SAVE_PROMPT_ACTIONS } from './savePromptActions.js';
+
+// Re-export all payment card-related constants
+export {
+  paymentCardAttributes,
+  paymentCardDeniedKeywords,
+  paymentCardFormTexts,
+  paymentCardNumberTexts,
+  paymentCardNumberWords,
+  paymentCardNumberSelectors,
+  paymentCardholderNameTexts,
+  paymentCardholderNameWords,
+  paymentCardholderNameSelectors,
+  paymentCardExpirationDateTexts,
+  paymentCardExpirationDateWords,
+  paymentCardExpirationDateSelectors,
+  paymentCardSecurityCodeTexts,
+  paymentCardSecurityCodeWords,
+  paymentCardSecurityCodeSelectors
+} from './paymentCards/index.js';
