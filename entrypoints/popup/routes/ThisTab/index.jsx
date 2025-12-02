@@ -346,6 +346,45 @@ function ThisTab (props) {
   const memoizedMatchingItemsList = useMemo(() => generateMatchingItemsList(matchingLogins, loading), [matchingLogins, loading]);
   const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter), [items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter]);
 
+  const filteredItemsCount = useMemo(() => {
+    if (!isItemsCorrect(items)) {
+      return 0;
+    }
+
+    let itemsData = items;
+
+    if (data?.selectedTag) {
+      itemsData = itemsData.filter(item => {
+        if (!item?.tags || !Array.isArray(item?.tags)) {
+          return false;
+        }
+
+        const tagsSet = new Set(item.tags);
+        return tagsSet.has(data.selectedTag.id);
+      });
+    }
+
+    if (data?.itemModelFilter) {
+      itemsData = itemsData.filter(item => item?.constructor?.name === data.itemModelFilter);
+    }
+
+    if (data?.searchValue && data.searchValue.length > 0) {
+      itemsData = itemsData.filter(item => {
+        let urisTexts = [];
+
+        if (item?.content && item?.content?.uris && Array.isArray(item?.content?.uris)) {
+          urisTexts = item.content.uris.map(uri => uri?.text).filter(Boolean);
+        }
+
+        return item?.content?.name?.toLowerCase().includes(data.searchValue?.toLowerCase()) ||
+          item?.content?.username?.toLowerCase().includes(data.searchValue?.toLowerCase()) ||
+          urisTexts.some(uriText => uriText?.toLowerCase().includes(data.searchValue?.toLowerCase()));
+      });
+    }
+
+    return itemsData.length;
+  }, [items, data?.selectedTag, data?.itemModelFilter, data?.searchValue]);
+
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
 
@@ -532,9 +571,9 @@ function ThisTab (props) {
                 <div className={`${S.thisTabAllLoginsTagsInfo} ${currentTagInfo && data.selectedTag ? S.active : ''}`}>
                   <div
                     className={S.thisTabAllLoginsTagsInfoBox}
-                    title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', currentTagInfo?.amount || '').replace('TAG_NAME', currentTagInfo?.name || '')}
+                    title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', filteredItemsCount).replace('TAG_NAME', currentTagInfo?.name || '')}
                   >
-                    <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', currentTagInfo?.amount || '').replace('TAG_NAME', currentTagInfo?.name || '')}</p>
+                    <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', filteredItemsCount).replace('TAG_NAME', currentTagInfo?.name || '')}</p>
                     <button
                       onClick={() => setData('selectedTag', null)}
                       title={browser.i18n.getMessage('this_tab_clear_tag_filter')}
