@@ -26,7 +26,7 @@ const TEXTAREA_LINE_HEIGHT = 19;
 
 function SecureNoteText (props) {
   const { sifDecryptError, formData } = props;
-  const { form, originalItem } = formData;
+  const { form, originalItem, inputError } = formData;
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
@@ -194,7 +194,7 @@ function SecureNoteText (props) {
     <LazyMotion features={loadDomAnimation}>
       <Field name='editedSif'>
         {() => (
-          <div className={`${pI.passInput} ${!data?.sifEditable || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''}`}>
+          <div className={`${pI.passInput} ${!data?.sifEditable || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''} ${inputError === 'content.s_text' ? pI.error : ''}`}>
             <div className={pI.passInputTop}>
               <label htmlFor='editedSif'>{browser.i18n.getMessage('secure_note_note')}</label>
               <button

@@ -35,7 +35,9 @@ function SecureNoteAddNewView() {
       errors.name = browser.i18n.getMessage('secure_note_name_required');
     } else if (values.name?.length > 255) {
       errors.name = browser.i18n.getMessage('secure_note_name_max_length');
-    } else if (values.text?.length > 16384) {
+    }
+    
+    if (values?.text && values?.text?.length > 16384) {
       errors.text = browser.i18n.getMessage('secure_note_text_max_length');
     }
 

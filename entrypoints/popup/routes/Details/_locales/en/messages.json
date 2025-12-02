@@ -206,5 +206,13 @@
   "details_security_code_invalid": {
     "message": "Security code must be 3 or 4 digits.",
     "description": "Validation message indicating that the security code must be 3 or 4 digits"
+  },
+  "details_secure_note_text_max_length": {
+    "message": "Secure note text must be less than 16384 characters.",
+    "description": "Validation message indicating the maximum length for the secure note text field"
+  },
+  "details_additional_info_max_length": {
+    "message": "Additional info must be less than 16384 characters.",
+    "description": "Validation message indicating the maximum length for the additional info field"
   }
 }

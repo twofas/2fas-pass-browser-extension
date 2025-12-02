@@ -32,6 +32,26 @@ function SecureNoteDetailsView(props) {
 
   const navigate = useNavigate();
 
+  const getFirstError = errors => {
+    for (const key of Object.keys(errors)) {
+      const value = errors[key];
+
+      if (typeof value === 'string') {
+        return { key, message: value };
+      }
+
+      if (typeof value === 'object' && value !== null) {
+        const nestedResult = getFirstError(value);
+
+        if (nestedResult) {
+          return { key: `${key}.${nestedResult.key}`, message: nestedResult.message };
+        }
+      }
+    }
+
+    return null;
+  };
+
   const validate = values => {
     const errors = {};
 
@@ -41,11 +61,31 @@ function SecureNoteDetailsView(props) {
       errors.name = browser.i18n.getMessage('details_name_max_length');
     }
 
-    const errorKeys = Object.keys(errors);
+    if (values?.content?.s_text) {
+      const tempText = data?.item?.internalData?.editedSif ? data.item.internalData.editedSif : (data?.item?.sifDecrypted ? data.item.sifDecrypted : '');
 
-    if (errorKeys.length > 0) {
-      showToast(errors[errorKeys[0]], 'error');
-      setInputError(errorKeys[0]);
+      if (tempText.length > 16384) {
+        if (errors?.content === undefined) {
+          errors.content = {};
+        }
+
+        errors.content.s_text = browser.i18n.getMessage('details_secure_note_text_max_length');
+      }
+    }
+
+    if (values?.content?.additionalInfo && values?.content?.additionalInfo?.length > 16384) {
+      if (errors?.content === undefined) {
+        errors.content = {};
+      }
+
+      errors.content.additionalInfo = browser.i18n.getMessage('details_additional_info_max_length');
+    }
+
+    const firstError = getFirstError(errors);
+
+    if (firstError) {
+      showToast(firstError.message, 'error');
+      setInputError(firstError.key);
       return false;
     }
 
@@ -123,13 +163,14 @@ function SecureNoteDetailsView(props) {
           />
           <SecureNoteText
             key={`secure-note-text-${data.item.id}`}
-            formData={{ form, originalItem: props.originalItem }}
+            formData={{ form, originalItem: props.originalItem, inputError }}
             sifDecryptError={data.sifDecryptError}
           />
           {
             !data?.item?.content?.additionalInfo ? null : (
               <AdditionalInfo
                 key={`additional-info-${data.item.id}`}
+                formData={{ inputError }}
               />
             )
           }
