@@ -1740,7 +1740,7 @@
     "description": "Message displayed when autofill operation fails completely"
   },
   "this_tab_can_t_find_inputs": {
-    "message": "Browser Extension can't find the appropriate Item details. Use the context menu or copy and paste them manually.",
+    "message": "No input field found. Can't autofill Item details.",
     "description": "Message shown when input fields for autofill can't be found"
   },
   "this_tab_copy_password": {
