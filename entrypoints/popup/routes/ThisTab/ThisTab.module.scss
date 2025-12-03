@@ -170,7 +170,9 @@
       &.service-more,
       &.service-fetch,
       &.serivce-copy-2,
-      &.service-name {
+      &.service-name,
+      &.service-copy-card-number,
+      &.service-copy-security-code {
         stroke: v.$object-light;
         stroke-width: 1.5;
         stroke-linecap: round;
@@ -184,6 +186,10 @@
 
       &.service-copy-2 {
         stroke-width: 1.6;
+      }
+
+      &.service-copy-card-number {
+        stroke-width: 1.4;
       }
 
       &.service-password {
@@ -809,6 +815,8 @@
             &.service-fetch,
             &.service-details,
             &.service-copy-2,
+            &.service-copy-card-number,
+            &.service-copy-security-code,
             &.service-name {
               stroke: v.$primary-color-light;
   
@@ -1047,6 +1055,8 @@
             &.service-username,
             &.service-fetch,
             &.service-copy-2,
+            &.service-copy-card-number,
+            &.service-copy-security-code,
             &.service-name {
               stroke: v.$primary-color-light;
               transition: stroke .3s ease-in-out;
@@ -1184,6 +1194,16 @@
           }
 
           &.service-copy-2 {
+            stroke: v.$object-light;
+            width: 19px;
+
+            @include m.darkMode {
+              stroke: v.$object-dark;
+            }
+          }
+
+          &.service-copy-security-code,
+          &.service-copy-card-number {
             stroke: v.$object-light;
             width: 19px;
 

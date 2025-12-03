@@ -90,7 +90,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
         onClick={async () => await handleCardNumber(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_card_number')}
       >
-        <ServiceCopyIcon className={S.serviceCopy2} />
+        <ServiceCopyIcon className={S.serviceCopyCardNumber} />
       </button>
     );
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
@@ -110,7 +110,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
           <circle cx="48" cy="48" r="42" />
         </svg>
 
-        <ServiceCopyIcon className={S.serviceCopy2} />
+        <ServiceCopyIcon className={S.serviceCopyCardNumber} />
       </button>
     );
   } else {

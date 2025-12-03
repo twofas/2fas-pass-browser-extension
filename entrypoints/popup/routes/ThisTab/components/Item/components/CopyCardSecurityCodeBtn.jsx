@@ -25,7 +25,7 @@ const CopyCardSecurityCodeBtn = ({ item, more, setMore }) => {
         onClick={async () => await handleCardSecurityCode(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_card_security_code')}
       >
-        <ServiceCopyIcon className={S.serviceCopy2} />
+        <ServiceCopyIcon className={S.serviceCopySecurityCode} />
       </button>
     );
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
@@ -34,7 +34,7 @@ const CopyCardSecurityCodeBtn = ({ item, more, setMore }) => {
         onClick={async () => await handleCardSecurityCode(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_card_security_code')}
       >
-        <ServiceCopyIcon className={S.serviceCopy2} />
+        <ServiceCopyIcon className={S.serviceCopySecurityCode} />
       </button>
     );
   } else {
