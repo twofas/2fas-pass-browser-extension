@@ -11,6 +11,7 @@ import { lazy, useEffect, useRef } from 'react';
 import { copyValue, isText } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
 import PaymentCardNumberInput from '@/entrypoints/popup/components/PaymentCardNumberInput';
+import getCardNumberMask from '@/entrypoints/popup/components/PaymentCardNumberInput/getCardNumberMask';
 
 const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
 const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
@@ -147,14 +148,87 @@ function CardNumber (props) {
     form.change('editedCardNumber', newValue);
   };
 
-  const getMaskedValue = () => {
+  const getHiddenMaskValue = () => {
+    return '********';
+  };
+
+  const getRawCardNumber = () => {
     const cardNumber = getCardNumberValue();
 
-    if (!cardNumber) {
-      return '****************';
+    return cardNumber.replace(/\D/g, '');
+  };
+
+  const handleRawCardNumberChange = e => {
+    const newValue = e.target.value.replace(/\D/g, '');
+    const itemData = data.item.toJSON();
+    itemData.internalData = { ...data.item.internalData };
+    const updatedItem = new (data.item.constructor)(itemData);
+
+    if (data.item.isSifDecrypted) {
+      updatedItem.setSifDecrypted(data.item.sifDecrypted);
     }
 
-    return '*'.repeat(cardNumber.length);
+    updatedItem.internalData.editedCardNumber = newValue;
+
+    setData('item', updatedItem);
+    form.change('editedCardNumber', newValue);
+  };
+
+  const renderInput = () => {
+    const isEditable = data?.cardNumberEditable;
+    const isVisible = data?.cardNumberVisible;
+
+    if (!isEditable && !isVisible) {
+      return (
+        <input
+          type='password'
+          id='editedCardNumber'
+          value={getHiddenMaskValue()}
+          disabled
+          placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
+        />
+      );
+    }
+
+    if (isEditable && !isVisible) {
+      const rawCardNumber = getRawCardNumber();
+      const mask = getCardNumberMask(rawCardNumber);
+      const maxLength = mask.replace(/\s/g, '').length;
+
+      return (
+        <input
+          type='password'
+          id='editedCardNumber'
+          value={rawCardNumber}
+          onChange={handleRawCardNumberChange}
+          disabled={sifDecryptError}
+          maxLength={maxLength}
+          placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
+        />
+      );
+    }
+
+    if (!isEditable && isVisible) {
+      return (
+        <PaymentCardNumberInput
+          value={getCardNumberValue()}
+          id='editedCardNumber'
+          onChange={handleCardNumberChange}
+          disabled
+          placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
+        />
+      );
+    }
+
+    return (
+      <PaymentCardNumberInput
+        value={getCardNumberValue()}
+        id='editedCardNumber'
+        onChange={handleCardNumberChange}
+        disabled={sifDecryptError}
+        placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
+      />
+    );
   };
 
   return (
@@ -173,23 +247,7 @@ function CardNumber (props) {
             </button>
           </div>
           <div className={pI.passInputBottom}>
-            {data?.cardNumberVisible ? (
-              <PaymentCardNumberInput
-                value={getCardNumberValue()}
-                id='editedCardNumber'
-                onChange={handleCardNumberChange}
-                disabled={!data?.cardNumberEditable || sifDecryptError}
-                placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
-              />
-            ) : (
-              <input
-                type='password'
-                id='editedCardNumber'
-                value={getMaskedValue()}
-                readOnly
-                placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
-              />
-            )}
+            {renderInput()}
 
             <div className={pI.passInputBottomButtons}>
               <button
