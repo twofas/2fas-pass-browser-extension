@@ -35,3 +35,22 @@ export {
   paymentCardSecurityCodeWords,
   paymentCardSecurityCodeSelectors
 } from './paymentCardSecurityCode/index.js';
+
+// Payment Card Issuer (field detection)
+export {
+  paymentCardIssuerTexts,
+  paymentCardIssuerWords,
+  paymentCardIssuerSelectors
+} from './paymentCardIssuer/index.js';
+
+// Payment Card Issuers (name variations)
+export {
+  PaymentCardIssuerVisa,
+  PaymentCardIssuerMasterCard,
+  PaymentCardIssuerAmericanExpress,
+  PaymentCardIssuerDiscover,
+  PaymentCardIssuerJCB,
+  PaymentCardIssuerDinersClub,
+  PaymentCardIssuerMaestro,
+  PaymentCardIssuerUnionPay
+} from './paymentCardIssuers/index.js';

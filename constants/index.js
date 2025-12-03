@@ -59,5 +59,16 @@ export {
   paymentCardExpirationDateSelectors,
   paymentCardSecurityCodeTexts,
   paymentCardSecurityCodeWords,
-  paymentCardSecurityCodeSelectors
+  paymentCardSecurityCodeSelectors,
+  paymentCardIssuerTexts,
+  paymentCardIssuerWords,
+  paymentCardIssuerSelectors,
+  PaymentCardIssuerVisa,
+  PaymentCardIssuerMasterCard,
+  PaymentCardIssuerAmericanExpress,
+  PaymentCardIssuerDiscover,
+  PaymentCardIssuerJCB,
+  PaymentCardIssuerDinersClub,
+  PaymentCardIssuerMaestro,
+  PaymentCardIssuerUnionPay
 } from './paymentCards/index.js';
