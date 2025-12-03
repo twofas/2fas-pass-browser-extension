@@ -171,6 +171,7 @@ function CardSecurityCode (props) {
               type='button'
               className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
               onClick={handleEditableClick}
+              tabIndex={-1}
             >
               {data?.securityCodeEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
@@ -200,6 +201,7 @@ function CardSecurityCode (props) {
                 onClick={handleSecurityCodeVisibleClick}
                 className={`${pI.iconButton} ${pI.visibleButton} ${!(originalItem?.isT3orT2WithSif || data?.securityCodeEditable) || sifDecryptError ? pI.hidden : ''}`}
                 title={browser.i18n.getMessage('details_toggle_security_code_visibility')}
+                tabIndex={-1}
               >
                 <VisibleIcon />
               </button>
@@ -209,6 +211,7 @@ function CardSecurityCode (props) {
                   className={`${bS.btn} ${pI.iconButton}`}
                   onClick={handleCopySecurityCode}
                   title={browser.i18n.getMessage('this_tab_copy_card_security_code')}
+                  tabIndex={-1}
                 >
                   <CopyIcon />
                 </button>

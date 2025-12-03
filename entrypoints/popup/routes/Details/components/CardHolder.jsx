@@ -75,6 +75,7 @@ function CardHolder (props) {
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
               onClick={handleCardholderEditable}
+              tabIndex={-1}
             >
               {data.cardHolderEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
@@ -101,6 +102,7 @@ function CardHolder (props) {
             className={`${bS.btn} ${pI.iconButton}`}
             onClick={() => handleCopyCardholder(input.value)}
             title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+            tabIndex={-1}
           >
             <CopyIcon />
           </button>

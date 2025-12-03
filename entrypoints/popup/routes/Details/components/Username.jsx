@@ -101,6 +101,7 @@ function Username (props) {
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
               onClick={handleUsernameEditable}
+              tabIndex={-1}
             >
               {data.usernameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
@@ -127,6 +128,7 @@ function Username (props) {
             className={`${bS.btn} ${pI.iconButton}`}
             onClick={() => handleCopyUsername(input.value)}
             title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+            tabIndex={-1}
           >
             <CopyIcon />
           </button>

@@ -167,6 +167,7 @@ function CardNumber (props) {
               type='button'
               className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
               onClick={handleEditableClick}
+              tabIndex={-1}
             >
               {data?.cardNumberEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
@@ -196,6 +197,7 @@ function CardNumber (props) {
                 onClick={handleCardNumberVisibleClick}
                 className={`${pI.iconButton} ${pI.visibleButton} ${!(originalItem?.isT3orT2WithSif || data?.cardNumberEditable) || sifDecryptError ? pI.hidden : ''}`}
                 title={browser.i18n.getMessage('details_toggle_card_number_visibility')}
+                tabIndex={-1}
               >
                 <VisibleIcon />
               </button>
@@ -205,6 +207,7 @@ function CardNumber (props) {
                   className={`${bS.btn} ${pI.iconButton}`}
                   onClick={handleCopyCardNumber}
                   title={browser.i18n.getMessage('this_tab_copy_card_number')}
+                  tabIndex={-1}
                 >
                   <CopyIcon />
                 </button>

@@ -288,6 +288,7 @@ function PasswordGenerator (props) {
                                 }}
                                 className={bS.btnIcon}
                                 title={browser.i18n.getMessage('copy_to_clipboard')}
+                                tabIndex={-1}
                               >
                                 <CopyIcon />
                               </button>

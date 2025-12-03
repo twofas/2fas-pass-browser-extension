@@ -67,6 +67,7 @@ function SecurityType () {
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
               onClick={handleTierEditable}
+              tabIndex={-1}
             >
               {data.tierEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>

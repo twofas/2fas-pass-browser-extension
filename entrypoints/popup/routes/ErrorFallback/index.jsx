@@ -57,6 +57,7 @@ function ErrorFallback (props) {
                 className={S.errorFallbackDetailsCopyButton}
                 title={browser.i18n.getMessage('error_fallback_copy_error_title')}
                 onClick={handleCopyErrorMessage}
+                tabIndex={-1}
               >
                 <CopyIcon />
               </button>

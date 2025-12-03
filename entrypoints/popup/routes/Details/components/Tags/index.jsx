@@ -158,6 +158,7 @@ function Tags () {
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
               onClick={handleTagsEditable}
+              tabIndex={-1}
             >
               {data.tagsEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>

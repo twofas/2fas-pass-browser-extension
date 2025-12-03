@@ -202,7 +202,7 @@ function URLComponent (props) {
           >
             <div className={pI.passInputTop}>
               <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
-              <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={handleUriEditable}>{buttonText}</button>
+              <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={handleUriEditable} tabIndex={-1}>{buttonText}</button>
             </div>
             <div className={pI.passInputBottom}>
               <input
@@ -228,6 +228,7 @@ function URLComponent (props) {
                   className={`${bS.btn} ${pI.iconButton}`}
                   onClick={() => handleCopyUri(index)}
                   title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                  tabIndex={-1}
                 >
                   <CopyIcon />
                 </button>

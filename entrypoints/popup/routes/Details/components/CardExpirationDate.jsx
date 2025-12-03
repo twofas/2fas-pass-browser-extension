@@ -151,6 +151,7 @@ function CardExpirationDate (props) {
               type='button'
               className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
               onClick={handleEditableClick}
+              tabIndex={-1}
             >
               {data?.expirationDateEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
@@ -170,6 +171,7 @@ function CardExpirationDate (props) {
                   className={`${bS.btn} ${pI.iconButton}`}
                   onClick={handleCopyExpirationDate}
                   title={browser.i18n.getMessage('details_copy_expiration_date')}
+                  tabIndex={-1}
                 >
                   <CopyIcon />
                 </button>
