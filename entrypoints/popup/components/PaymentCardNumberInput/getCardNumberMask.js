@@ -7,10 +7,22 @@
 /**
  * Card type definitions with masks based on Stripe testing documentation.
  * Formats:
- * - Standard (16 digits): 4-4-4-4 (Visa, Mastercard, Discover, JCB, UnionPay 16)
+ * - Standard (16 digits): 4-4-4-4 (Visa, Mastercard, Discover, JCB, UnionPay 16, Diners Club 16)
  * - American Express (15 digits): 4-6-5
  * - Diners Club (14 digits): 4-6-4
  * - UnionPay (19 digits): 4-4-4-4-3
+ *
+ * Card brand prefixes (based on Stripe testing documentation):
+ * - Visa: 4
+ * - Mastercard: 51-55, 2221-2720
+ * - American Express: 34, 37
+ * - Discover: 6011, 622126-622925, 644-649, 65
+ * - JCB: 3528-3589
+ * - Diners Club (14-digit): 36
+ * - Diners Club (16-digit): 300-305, 3095, 38, 39
+ * - UnionPay: 62 (various ranges)
+ * - Carnet: 5062
+ * - BCcard/DinaCard: 6555
  */
 const CARD_MASKS = {
   AMEX: '9999 999999 99999',
@@ -41,16 +53,24 @@ const getCardNumberMask = cardNumber => {
     return CARD_MASKS.AMEX;
   }
 
-  if (/^3(?:0[0-5]|[689])/.test(cleanNumber)) {
-    if (cleanNumber.length > 14) {
-      return CARD_MASKS.STANDARD_16;
-    }
-
+  if (/^36/.test(cleanNumber)) {
     return CARD_MASKS.DINERS_14;
   }
 
+  if (/^3(?:0[0-5]|095|8|9)/.test(cleanNumber)) {
+    return CARD_MASKS.STANDARD_16;
+  }
+
+  if (/^35(?:2[89]|[3-8]\d)/.test(cleanNumber)) {
+    return CARD_MASKS.STANDARD_16;
+  }
+
+  if (/^35/.test(cleanNumber) && cleanNumber.length < 4) {
+    return CARD_MASKS.STANDARD_16;
+  }
+
   if (/^62/.test(cleanNumber)) {
-    if (/^62055/.test(cleanNumber)) {
+    if (/^6205[56]/.test(cleanNumber)) {
       return CARD_MASKS.UNIONPAY_19;
     }
 
@@ -61,23 +81,35 @@ const getCardNumberMask = cardNumber => {
     return CARD_MASKS.STANDARD_16;
   }
 
-  if (/^5[1-5]/.test(cleanNumber) || /^2[2-7]/.test(cleanNumber)) {
+  if (/^5[1-5]/.test(cleanNumber)) {
     return CARD_MASKS.STANDARD_16;
   }
 
-  if (/^6555/.test(cleanNumber)) {
+  if (/^2(?:2[2-9]|[3-6]\d|7[01]|720)/.test(cleanNumber)) {
     return CARD_MASKS.STANDARD_16;
   }
 
-  if (/^6(?:011|5|4[4-9])/.test(cleanNumber)) {
+  if (/^2[2-7]/.test(cleanNumber) && cleanNumber.length < 4) {
     return CARD_MASKS.STANDARD_16;
   }
 
-  if (/^35/.test(cleanNumber)) {
+  if (/^6011/.test(cleanNumber)) {
+    return CARD_MASKS.STANDARD_16;
+  }
+
+  if (/^64[4-9]/.test(cleanNumber)) {
+    return CARD_MASKS.STANDARD_16;
+  }
+
+  if (/^65/.test(cleanNumber)) {
     return CARD_MASKS.STANDARD_16;
   }
 
   if (/^5062/.test(cleanNumber)) {
+    return CARD_MASKS.STANDARD_16;
+  }
+
+  if (/^6555/.test(cleanNumber)) {
     return CARD_MASKS.STANDARD_16;
   }
 

@@ -75,6 +75,16 @@ describe('getCardNumberMask', () => {
       expect(getCardNumberMask('26')).toBe(CARD_MASKS.STANDARD_16);
       expect(getCardNumberMask('27')).toBe(CARD_MASKS.STANDARD_16);
     });
+
+    it('detects Mastercard 2-series boundary values (2221-2720 range)', () => {
+      expect(getCardNumberMask('2221')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('2229')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('2300')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('2699')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('2700')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('2710')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('2720')).toBe(CARD_MASKS.STANDARD_16);
+    });
   });
 
   describe('American Express cards (15 digits, 4-6-5 format)', () => {
@@ -127,7 +137,7 @@ describe('getCardNumberMask', () => {
   });
 
   describe('Diners Club cards (14 or 16 digits)', () => {
-    it('detects Diners Club from Stripe test card 3056930009020004 (16 digits)', () => {
+    it('detects Diners Club 16-digit from Stripe test card 3056930009020004', () => {
       expect(getCardNumberMask('3056930009020004')).toBe(CARD_MASKS.STANDARD_16);
     });
 
@@ -135,35 +145,37 @@ describe('getCardNumberMask', () => {
       expect(getCardNumberMask('36227206271667')).toBe(CARD_MASKS.DINERS_14);
     });
 
-    it('detects Diners Club from partial input 300-305 range', () => {
-      expect(getCardNumberMask('300')).toBe(CARD_MASKS.DINERS_14);
-      expect(getCardNumberMask('301')).toBe(CARD_MASKS.DINERS_14);
-      expect(getCardNumberMask('302')).toBe(CARD_MASKS.DINERS_14);
-      expect(getCardNumberMask('303')).toBe(CARD_MASKS.DINERS_14);
-      expect(getCardNumberMask('304')).toBe(CARD_MASKS.DINERS_14);
-      expect(getCardNumberMask('305')).toBe(CARD_MASKS.DINERS_14);
+    it('detects Diners Club 16-digit from partial input 300-305 range (modern 16-digit format)', () => {
+      expect(getCardNumberMask('300')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('301')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('302')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('303')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('304')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('305')).toBe(CARD_MASKS.STANDARD_16);
     });
 
-    it('detects Diners Club from partial input 36 prefix', () => {
+    it('detects Diners Club 14-digit from partial input 36 prefix', () => {
       expect(getCardNumberMask('36')).toBe(CARD_MASKS.DINERS_14);
     });
 
-    it('detects Diners Club from partial input 38 prefix', () => {
-      expect(getCardNumberMask('38')).toBe(CARD_MASKS.DINERS_14);
+    it('detects Diners Club 16-digit from partial input 38 prefix (modern 16-digit format)', () => {
+      expect(getCardNumberMask('38')).toBe(CARD_MASKS.STANDARD_16);
     });
 
-    it('detects Diners Club from partial input 39 prefix', () => {
-      expect(getCardNumberMask('39')).toBe(CARD_MASKS.DINERS_14);
+    it('detects Diners Club 16-digit from partial input 39 prefix (modern 16-digit format)', () => {
+      expect(getCardNumberMask('39')).toBe(CARD_MASKS.STANDARD_16);
     });
 
-    it('uses 14-digit mask for Diners Club cards with 14 or fewer digits', () => {
+    it('uses 14-digit mask for Diners Club 36xx cards', () => {
       expect(getCardNumberMask('36227206271667')).toBe(CARD_MASKS.DINERS_14);
       expect(getCardNumberMask('3622720627166')).toBe(CARD_MASKS.DINERS_14);
+      expect(getCardNumberMask('362')).toBe(CARD_MASKS.DINERS_14);
     });
 
-    it('uses 16-digit mask for Diners Club cards with more than 14 digits', () => {
-      expect(getCardNumberMask('362272062716670')).toBe(CARD_MASKS.STANDARD_16);
-      expect(getCardNumberMask('3622720627166700')).toBe(CARD_MASKS.STANDARD_16);
+    it('uses 16-digit mask for Diners Club 300-305, 38, 39 cards', () => {
+      expect(getCardNumberMask('3056930009020004')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('3841234567890123')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('3912345678901234')).toBe(CARD_MASKS.STANDARD_16);
     });
   });
 
@@ -178,6 +190,14 @@ describe('getCardNumberMask', () => {
 
     it('detects JCB from partial input 35 prefix', () => {
       expect(getCardNumberMask('35')).toBe(CARD_MASKS.STANDARD_16);
+    });
+
+    it('detects JCB boundary values (3528-3589 range)', () => {
+      expect(getCardNumberMask('3528')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('3529')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('3530')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('3580')).toBe(CARD_MASKS.STANDARD_16);
+      expect(getCardNumberMask('3589')).toBe(CARD_MASKS.STANDARD_16);
     });
   });
 
