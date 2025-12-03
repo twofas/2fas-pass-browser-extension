@@ -14,7 +14,15 @@ import paymentCardAttributes from '../paymentCardAttributes.js';
  */
 const paymentCardNumberSelectors = () => {
   const selectors = [
-    'input[autocomplete="cc-number"]'
+    'input[autocomplete="cc-number"]',
+    'input[name*="ccnumber"]',
+    'input[name*="ccNumber"]',
+    'input[name*="cc_number"]',
+    'input[name*="cc-number"]',
+    'input[name*="cardnumber"]',
+    'input[name*="cardNumber"]',
+    'input[name*="card_number"]',
+    'input[name*="card-number"]'
   ];
 
   paymentCardNumberTexts.forEach(text => {

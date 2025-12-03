@@ -17,7 +17,25 @@ const paymentCardholderNameSelectors = () => {
     'input[autocomplete="cc-name"]',
     'input[autocomplete="cc-given-name"]',
     'input[autocomplete="cc-additional-name"]',
-    'input[autocomplete="cc-family-name"]'
+    'input[autocomplete="cc-family-name"]',
+    'input[name*="cc_uname"]',
+    'input[name*="ccuname"]',
+    'input[name*="cardname"]',
+    'input[name*="cardName"]',
+    'input[name*="card_name"]',
+    'input[name*="card-name"]',
+    'input[name*="ccname"]',
+    'input[name*="ccName"]',
+    'input[name*="cc_name"]',
+    'input[name*="cc-name"]',
+    'input[name*="cardholder"]',
+    'input[name*="cardHolder"]',
+    'input[name*="card_holder"]',
+    'input[name*="card-holder"]',
+    'input[name*="nameoncard"]',
+    'input[name*="nameOnCard"]',
+    'input[name*="name_on_card"]',
+    'input[name*="name-on-card"]'
   ];
 
   paymentCardholderNameTexts.forEach(text => {

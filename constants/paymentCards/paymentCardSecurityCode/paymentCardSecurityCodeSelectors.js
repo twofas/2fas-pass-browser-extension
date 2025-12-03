@@ -14,7 +14,18 @@ import paymentCardAttributes from '../paymentCardAttributes.js';
  */
 const paymentCardSecurityCodeSelectors = () => {
   const selectors = [
-    'input[autocomplete="cc-csc"]'
+    'input[autocomplete="cc-csc"]',
+    'input[name*="cvc"]',
+    'input[name*="cvv"]',
+    'input[name*="csc"]',
+    'input[name*="securitycode"]',
+    'input[name*="securityCode"]',
+    'input[name*="security_code"]',
+    'input[name*="security-code"]',
+    'input[name*="cardcode"]',
+    'input[name*="cardCode"]',
+    'input[name*="card_code"]',
+    'input[name*="card-code"]'
   ];
 
   paymentCardSecurityCodeTexts.forEach(text => {

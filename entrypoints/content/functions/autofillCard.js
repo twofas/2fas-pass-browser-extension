@@ -8,7 +8,29 @@ import getPaymentCardNumberInputs from '@/partials/inputFunctions/getPaymentCard
 import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPaymentCardholderNameInputs';
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
+import getPaymentCardIssuerInputs from '@/partials/inputFunctions/getPaymentCardIssuerInputs';
 import inputSetValue from './autofillFunctions/inputSetValue';
+import {
+  PaymentCardIssuerVisa,
+  PaymentCardIssuerMasterCard,
+  PaymentCardIssuerAmericanExpress,
+  PaymentCardIssuerDiscover,
+  PaymentCardIssuerJCB,
+  PaymentCardIssuerDinersClub,
+  PaymentCardIssuerMaestro,
+  PaymentCardIssuerUnionPay
+} from '@/constants';
+
+const issuerVariations = {
+  visa: PaymentCardIssuerVisa,
+  mastercard: PaymentCardIssuerMasterCard,
+  americanExpress: PaymentCardIssuerAmericanExpress,
+  discover: PaymentCardIssuerDiscover,
+  jcb: PaymentCardIssuerJCB,
+  dinersClub: PaymentCardIssuerDinersClub,
+  maestro: PaymentCardIssuerMaestro,
+  unionPay: PaymentCardIssuerUnionPay
+};
 
 /**
 * Checks if autofill should proceed when in an iframe.
@@ -173,12 +195,28 @@ const setSelectValue = (select, value, alternateValues = []) => {
   const valuesToTry = [value, ...alternateValues];
 
   for (const val of valuesToTry) {
+    const valLower = val.toLowerCase();
+
     for (const option of select.options) {
       const optionValue = option.value.toLowerCase();
       const optionText = option.text.toLowerCase();
-      const valLower = val.toLowerCase();
 
-      if (optionValue === valLower || optionText === valLower || optionValue.includes(valLower) || optionText.includes(valLower)) {
+      if (optionValue === valLower || optionText === valLower) {
+        select.value = option.value;
+        select.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+        return true;
+      }
+    }
+  }
+
+  for (const val of valuesToTry) {
+    const valLower = val.toLowerCase();
+
+    for (const option of select.options) {
+      const optionValue = option.value.toLowerCase();
+      const optionText = option.text.toLowerCase();
+
+      if (optionValue.includes(valLower) || optionText.includes(valLower)) {
         select.value = option.value;
         select.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
         return true;
@@ -193,15 +231,16 @@ const setSelectValue = (select, value, alternateValues = []) => {
 * Sets expiration date value for an input or select element.
 * @param {Object} inputData - The input data object with element, type, and isSelect properties.
 * @param {Object} parsedDate - The parsed date object.
-* @return {void}
+* @return {{success: boolean, type: string}} Result object indicating success and field type.
 */
 const setExpirationDateValue = (inputData, parsedDate) => {
   const { element, type, isSelect } = inputData;
+  let success = true;
 
   if (type === 'month') {
     if (isSelect) {
       const monthName = getMonthName(parsedDate.monthNumeric);
-      setSelectValue(element, parsedDate.month, [
+      success = setSelectValue(element, parsedDate.month, [
         String(parsedDate.monthNumeric),
         monthName,
         monthName.substring(0, 3)
@@ -211,7 +250,7 @@ const setExpirationDateValue = (inputData, parsedDate) => {
     }
   } else if (type === 'year') {
     if (isSelect) {
-      setSelectValue(element, parsedDate.yearFull, [parsedDate.yearShort]);
+      success = setSelectValue(element, parsedDate.yearFull, [parsedDate.yearShort]);
     } else {
       const yearValue = element.maxLength === 2 ? parsedDate.yearShort : parsedDate.yearFull;
       inputSetValue(element, yearValue);
@@ -219,7 +258,7 @@ const setExpirationDateValue = (inputData, parsedDate) => {
   } else if (type === 'combined') {
     if (isSelect) {
       const combinedValue = `${parsedDate.month}/${parsedDate.yearShort}`;
-      setSelectValue(element, combinedValue, [
+      success = setSelectValue(element, combinedValue, [
         `${parsedDate.month}/${parsedDate.yearFull}`,
         `${parsedDate.monthNumeric}/${parsedDate.yearShort}`,
         `${parsedDate.monthNumeric}/${parsedDate.yearFull}`
@@ -240,6 +279,54 @@ const setExpirationDateValue = (inputData, parsedDate) => {
       inputSetValue(element, combinedValue);
     }
   }
+
+  return { success, type };
+};
+
+/**
+* Gets all name variations for a given card issuer.
+* @param {string} issuer - The card issuer identifier.
+* @return {string[]} Array of name variations for the issuer.
+*/
+const getIssuerVariations = issuer => {
+  if (!issuer) {
+    return [];
+  }
+
+  const issuerLower = issuer.toLowerCase();
+
+  for (const [key, variations] of Object.entries(issuerVariations)) {
+    const keyLower = key.toLowerCase();
+
+    if (issuerLower === keyLower || issuerLower.includes(keyLower)) {
+      return [...variations];
+    }
+
+    const hasMatch = variations.some(variation => variation.toLowerCase() === issuerLower);
+
+    if (hasMatch) {
+      return [...variations];
+    }
+  }
+
+  return [issuer];
+};
+
+/**
+* Sets the card issuer value for an input or select element.
+* @param {Object} inputData - The input data object with element and isSelect properties.
+* @param {string} issuerValue - The card issuer value to set.
+* @return {void}
+*/
+const setCardIssuerValue = (inputData, issuerValue) => {
+  const { element, isSelect } = inputData;
+  const variations = getIssuerVariations(issuerValue);
+
+  if (isSelect) {
+    setSelectValue(element, issuerValue, variations);
+  } else {
+    inputSetValue(element, issuerValue);
+  }
 };
 
 /**
@@ -249,6 +336,7 @@ const setExpirationDateValue = (inputData, parsedDate) => {
 * @param {string} [request.cardNumber] - The card number to fill (may be encrypted).
 * @param {string} [request.expirationDate] - The expiration date to fill (may be encrypted).
 * @param {string} [request.securityCode] - The security code to fill (may be encrypted).
+* @param {string} [request.cardIssuer] - The card issuer/type to fill.
 * @param {boolean} [request.cryptoAvailable] - Flag indicating encrypted fields need decryption.
 * @return {Promise<{status: string, message?: string}>} The status of the autofill operation.
 */
@@ -257,23 +345,27 @@ const autofillCard = async request => {
   const cardholderNameInputs = getPaymentCardholderNameInputs();
   const expirationDateInputs = getPaymentCardExpirationDateInputs();
   const securityCodeInputs = getPaymentCardSecurityCodeInputs();
+  const cardIssuerInputs = getPaymentCardIssuerInputs();
 
   const hasCardNumberData = request.cardNumber?.length > 0;
   const hasCardholderNameData = request.cardholderName?.length > 0;
   const hasExpirationDateData = request.expirationDate?.length > 0;
   const hasSecurityCodeData = request.securityCode?.length > 0;
+  const hasCardIssuerData = request.cardIssuer?.length > 0;
 
   const hasCardNumberInput = cardNumberInputs.length > 0;
   const hasCardholderNameInput = cardholderNameInputs.length > 0;
   const hasExpirationDateInput = expirationDateInputs.length > 0;
   const hasSecurityCodeInput = securityCodeInputs.length > 0;
+  const hasCardIssuerInput = cardIssuerInputs.length > 0;
 
   const canFillCardNumber = hasCardNumberData && hasCardNumberInput;
   const canFillCardholderName = hasCardholderNameData && hasCardholderNameInput;
   const canFillExpirationDate = hasExpirationDateData && hasExpirationDateInput;
   const canFillSecurityCode = hasSecurityCodeData && hasSecurityCodeInput;
+  const canFillCardIssuer = hasCardIssuerData && hasCardIssuerInput;
 
-  if (!canFillCardNumber && !canFillCardholderName && !canFillExpirationDate && !canFillSecurityCode) {
+  if (!canFillCardNumber && !canFillCardholderName && !canFillExpirationDate && !canFillSecurityCode && !canFillCardIssuer) {
     return { status: 'error', message: 'No input fields found' };
   }
 
@@ -306,6 +398,8 @@ const autofillCard = async request => {
     cardNumberValue = null;
   }
 
+  let failedExpirationFields = [];
+
   if (canFillExpirationDate) {
     let expirationDateValue;
 
@@ -324,7 +418,8 @@ const autofillCard = async request => {
     const parsedDate = parseExpirationDate(expirationDateValue);
     expirationDateValue = null;
 
-    expirationDateInputs.forEach(inputData => setExpirationDateValue(inputData, parsedDate));
+    const expirationResults = expirationDateInputs.map(inputData => setExpirationDateValue(inputData, parsedDate));
+    failedExpirationFields = expirationResults.filter(r => !r.success).map(r => r.type);
   }
 
   if (canFillSecurityCode) {
@@ -344,6 +439,18 @@ const autofillCard = async request => {
 
     securityCodeInputs.forEach(input => inputSetValue(input, securityCodeValue));
     securityCodeValue = null;
+  }
+
+  if (canFillCardIssuer) {
+    cardIssuerInputs.forEach(inputData => setCardIssuerValue(inputData, request.cardIssuer));
+  }
+
+  if (failedExpirationFields.length > 0) {
+    return {
+      status: 'partial',
+      message: 'Some expiration date fields could not be filled',
+      failedFields: failedExpirationFields
+    };
   }
 
   return { status: 'ok' };

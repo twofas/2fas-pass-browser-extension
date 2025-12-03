@@ -232,6 +232,7 @@ const handleCardAutofill = async (item, navigate) => {
   const actionData = {
     action: REQUEST_ACTIONS.AUTOFILL_CARD,
     cardholderName: item.content.cardHolder,
+    cardIssuer: item.content.cardIssuer,
     target: REQUEST_TARGETS.CONTENT,
     cryptoAvailable: cryptoAvailableRes.cryptoAvailable
   };
@@ -272,6 +273,22 @@ const handleCardAutofill = async (item, navigate) => {
   }
 
   const isOk = res.some(frameResponse => frameResponse.status === 'ok');
+  const isPartial = res.some(frameResponse => frameResponse.status === 'partial');
+  const partialResponse = res.find(frameResponse => frameResponse.status === 'partial');
+
+  if (isPartial && partialResponse?.failedFields) {
+    const failedFields = partialResponse.failedFields;
+    let messageKey = 'this_tab_autofill_expiration_date_not_available';
+
+    if (failedFields.includes('year') && !failedFields.includes('month')) {
+      messageKey = 'this_tab_autofill_year_not_available';
+    } else if (failedFields.includes('month') && !failedFields.includes('year')) {
+      messageKey = 'this_tab_autofill_month_not_available';
+    }
+
+    showToast(browser.i18n.getMessage(messageKey), 'info');
+    return;
+  }
 
   if (isOk) {
     const separateWindow = await popupIsInSeparateWindow();

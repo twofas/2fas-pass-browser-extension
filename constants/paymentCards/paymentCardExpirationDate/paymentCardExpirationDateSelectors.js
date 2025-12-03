@@ -18,7 +18,31 @@ const paymentCardExpirationDateSelectors = () => {
     'input[autocomplete="cc-exp-month"]',
     'input[autocomplete="cc-exp-year"]',
     'select[autocomplete="cc-exp-month"]',
-    'select[autocomplete="cc-exp-year"]'
+    'select[autocomplete="cc-exp-year"]',
+    'input[name*="ccexp"]',
+    'input[name*="ccExp"]',
+    'input[name*="cc_exp"]',
+    'input[name*="cc-exp"]',
+    'select[name*="ccexp"]',
+    'select[name*="ccExp"]',
+    'select[name*="cc_exp"]',
+    'select[name*="cc-exp"]',
+    'input[name*="cardexp"]',
+    'input[name*="cardExp"]',
+    'input[name*="card_exp"]',
+    'input[name*="card-exp"]',
+    'select[name*="cardexp"]',
+    'select[name*="cardExp"]',
+    'select[name*="card_exp"]',
+    'select[name*="card-exp"]',
+    'input[name*="expiry"]',
+    'input[name*="Expiry"]',
+    'select[name*="expiry"]',
+    'select[name*="Expiry"]',
+    'input[name*="expiration"]',
+    'input[name*="Expiration"]',
+    'select[name*="expiration"]',
+    'select[name*="Expiration"]'
   ];
 
   paymentCardExpirationDateTexts.forEach(text => {
