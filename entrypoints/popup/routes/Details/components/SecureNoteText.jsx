@@ -201,6 +201,7 @@ function SecureNoteText (props) {
                 type='button'
                 className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
                 onClick={handleEditableClick}
+                tabIndex={-1}
               >
                 {data?.sifEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
               </button>

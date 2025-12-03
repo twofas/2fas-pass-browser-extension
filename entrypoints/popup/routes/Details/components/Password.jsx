@@ -216,6 +216,7 @@ function Password (props) {
                 type='button'
                 className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
                 onClick={handleEditableClick}
+                tabIndex={-1}
               >
                 {data?.passwordEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
               </button>
@@ -251,6 +252,7 @@ function Password (props) {
                   onClick={handlePasswordVisibleClick}
                   className={`${pI.iconButton} ${pI.visibleButton} ${!(originalItem?.isT3orT2WithSif || data?.passwordEditable) || sifDecryptError ? pI.hidden : ''}`}
                   title={browser.i18n.getMessage('details_toggle_password_visibility')}
+                  tabIndex={-1}
                 >
                   <VisibleIcon />
                 </button>
@@ -260,6 +262,7 @@ function Password (props) {
                     className={`${bS.btn} ${pI.iconButton}`}
                     onClick={handleCopyPassword}
                     title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                    tabIndex={-1}
                   >
                     <CopyIcon />
                   </button>

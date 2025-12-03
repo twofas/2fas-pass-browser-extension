@@ -70,6 +70,7 @@ function AdditionalInfo () {
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
               onClick={handleAdditionalInfoEditable}
+              tabIndex={-1}
             >
               {data.additionalInfoEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>

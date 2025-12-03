@@ -164,6 +164,7 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
         onClick={handleCalendarButtonClick}
         disabled={disabled}
         title={browser.i18n.getMessage('button_open_calendar')}
+        tabIndex={-1}
       >
         <CalendarIcon />
       </button>

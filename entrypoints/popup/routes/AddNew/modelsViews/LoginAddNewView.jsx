@@ -270,6 +270,7 @@ function LoginAddNewView() {
                     className={`${bS.btn} ${pI.iconButton}`}
                     onClick={() => handleCopyUrl(form)}
                     title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                    tabIndex={-1}
                   >
                     <CopyIcon />
                   </button>
@@ -343,6 +344,7 @@ function LoginAddNewView() {
                       onClick={() => handleCopyUsername(form)}
                       title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
                       disabled={data?.onMobile ? 'disabled' : ''}
+                      tabIndex={-1}
                     >
                       <CopyIcon />
                     </button>
@@ -390,6 +392,7 @@ function LoginAddNewView() {
                       onClick={handlePasswordVisibleClick}
                       className={`${pI.iconButton} ${pI.visibleButton}`}
                       title={browser.i18n.getMessage('add_new_toggle_password_visibility')}
+                      tabIndex={-1}
                     >
                       <VisibleIcon />
                     </button>
@@ -398,6 +401,7 @@ function LoginAddNewView() {
                       className={`${bS.btn} ${pI.iconButton}`}
                       onClick={() => handleCopyPassword(form)}
                       title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                      tabIndex={-1}
                     >
                       <CopyIcon />
                     </button>
