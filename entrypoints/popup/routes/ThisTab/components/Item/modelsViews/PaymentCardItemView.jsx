@@ -42,7 +42,7 @@ function PaymentCardItemView (props) {
         {generateIcon(props.data, null, null, props.loading)}
         <span>
           {props.loading ? <Skeleton /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
-          {props.loading ? <Skeleton /> : <span>{props?.data?.content?.cardNumberMask ? `**** ${props?.data?.content?.cardNumberMask}` : browser.i18n.getMessage('no_item_name')}</span>} {/* @TODO: i18n */}
+          {props.loading ? <Skeleton /> : <span>{props?.data?.content?.cardNumberMask ? `**** ${props?.data?.content?.cardNumberMask}` : browser.i18n.getMessage('no_item_name')}</span>}
         </span>
       </button>
       <div className={S.servicesListItemAdditionalButtons}>

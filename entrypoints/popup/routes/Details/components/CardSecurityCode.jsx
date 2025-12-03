@@ -12,6 +12,7 @@ import { lazy, useEffect, useRef } from 'react';
 import { copyValue, isText } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
 import PaymentCardSecurityCodeInput from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput';
+import getSecurityCodeMask from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/getSecurityCodeMask';
 
 const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
 const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
@@ -113,7 +114,6 @@ function CardSecurityCode (props) {
       form.change('editedSecurityCode', data.item.isSifDecrypted ? data.item.sifDecrypted?.securityCode : '');
     } else {
       setData('securityCodeEditable', true);
-      setData('securityCodeVisible', true);
     }
   };
 
@@ -161,6 +161,89 @@ function CardSecurityCode (props) {
     form.change('editedSecurityCode', newValue);
   };
 
+  const getHiddenMaskValue = () => {
+    return '***';
+  };
+
+  const getRawSecurityCode = () => {
+    const securityCode = getSecurityCodeValue();
+
+    return securityCode.replace(/\D/g, '');
+  };
+
+  const handleRawSecurityCodeChange = e => {
+    const newValue = e.target.value.replace(/\D/g, '');
+    const itemData = data.item.toJSON();
+    itemData.internalData = { ...data.item.internalData };
+    const updatedItem = new (data.item.constructor)(itemData);
+
+    if (data.item.isSifDecrypted) {
+      updatedItem.setSifDecrypted(data.item.sifDecrypted);
+    }
+
+    updatedItem.internalData.editedSecurityCode = newValue;
+
+    setData('item', updatedItem);
+    form.change('editedSecurityCode', newValue);
+  };
+
+  const renderInput = () => {
+    const isEditable = data?.securityCodeEditable;
+    const isVisible = data?.securityCodeVisible;
+
+    if (!isEditable && !isVisible) {
+      return (
+        <input
+          type='password'
+          id='editedSecurityCode'
+          className={S.paymentCardSecurityCodeInput}
+          value={getHiddenMaskValue()}
+          disabled
+        />
+      );
+    }
+
+    if (isEditable && !isVisible) {
+      const cardNumber = getCardNumberValue();
+      const securityCodeMaskData = getSecurityCodeMask(cardNumber);
+      const maxLength = securityCodeMaskData.mask.length;
+
+      return (
+        <input
+          type='password'
+          id='editedSecurityCode'
+          className={S.paymentCardSecurityCodeInput}
+          value={getRawSecurityCode()}
+          onChange={handleRawSecurityCodeChange}
+          disabled={sifDecryptError}
+          maxLength={maxLength}
+        />
+      );
+    }
+
+    if (!isEditable && isVisible) {
+      return (
+        <PaymentCardSecurityCodeInput
+          value={getSecurityCodeValue()}
+          id='editedSecurityCode'
+          cardNumber={getCardNumberValue()}
+          onChange={handleSecurityCodeChange}
+          disabled
+        />
+      );
+    }
+
+    return (
+      <PaymentCardSecurityCodeInput
+        value={getSecurityCodeValue()}
+        id='editedSecurityCode'
+        cardNumber={getCardNumberValue()}
+        onChange={handleSecurityCodeChange}
+        disabled={sifDecryptError}
+      />
+    );
+  };
+
   return (
     <Field name='editedSecurityCode'>
       {() => (
@@ -177,23 +260,7 @@ function CardSecurityCode (props) {
             </button>
           </div>
           <div className={pI.passInputBottom}>
-            {data?.securityCodeVisible ? (
-              <PaymentCardSecurityCodeInput
-                value={getSecurityCodeValue()}
-                id='editedSecurityCode'
-                cardNumber={getCardNumberValue()}
-                onChange={handleSecurityCodeChange}
-                disabled={!data?.securityCodeEditable || sifDecryptError}
-              />
-            ) : (
-              <input
-                type='password'
-                id='editedSecurityCode'
-                className={S.paymentCardSecurityCodeInput}
-                value='****'
-                readOnly
-              />
-            )}
+            {renderInput()}
 
             <div className={pI.passInputBottomButtons}>
               <button
