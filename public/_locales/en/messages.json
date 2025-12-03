@@ -1819,6 +1819,26 @@
     "message": "Please update the extension manually from your browser's extension settings",
     "description": "Error message when automatic update is not available"
   },
+  "this_tab_autofill_fetch_card_data": {
+    "message": "Cardholder name autofilled. Fetch card details from device to complete.",
+    "description": "Message displayed when cardholder name is autofilled for a Highly Secret item that requires fetching card data from device"
+  },
+  "this_tab_autofill_no_card_data_available": {
+    "message": "Only cardholder name was available for autofill",
+    "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
+  },
+  "this_tab_autofill_year_not_available": {
+    "message": "The expiry year is not available in the form options",
+    "description": "Message displayed when the card expiry year doesn't match any available option in the form's year dropdown"
+  },
+  "this_tab_autofill_month_not_available": {
+    "message": "The expiry month is not available in the form options",
+    "description": "Message displayed when the card expiry month doesn't match any available option in the form's month dropdown"
+  },
+  "this_tab_autofill_expiration_date_not_available": {
+    "message": "The expiry date is not available in the form options",
+    "description": "Message displayed when the card expiry date doesn't match any available option in the form's dropdown"
+  },
   "filters_no_tags": {
     "message": "No Tags available",
     "description": "Message shown in the tag filter dropdown when there are no tags created yet"
