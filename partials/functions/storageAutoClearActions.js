@@ -80,6 +80,30 @@ const storageAutoClearActions = async () => {
       await storage.setItem('session:autoClearActions', []);
       return;
     }
+  } else if (action.itemType === 'cardNumber') {
+    try {
+      const decryptedSif = await item.decryptSif();
+      itemValue = decryptedSif.cardNumber;
+    } catch {
+      await storage.setItem('session:autoClearActions', []);
+      return;
+    }
+  } else if (action.itemType === 'expirationDate') {
+    try {
+      const decryptedSif = await item.decryptSif();
+      itemValue = decryptedSif.expirationDate;
+    } catch {
+      await storage.setItem('session:autoClearActions', []);
+      return;
+    }
+  } else if (action.itemType === 'securityCode') {
+    try {
+      const decryptedSif = await item.decryptSif();
+      itemValue = decryptedSif.securityCode;
+    } catch {
+      await storage.setItem('session:autoClearActions', []);
+      return;
+    }
   } else if (action.itemType === 'uri') {
     itemValue = item.content.uris || [];
   } else {
