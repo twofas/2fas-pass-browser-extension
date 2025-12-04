@@ -278,7 +278,7 @@
           &-top {
             &-close {
               svg {
-                fill: v.$additional-light !important;
+                fill: v.$primary-box-bg-light !important;
                 stroke: v.$primary-color-light !important;
               }
             }
@@ -306,10 +306,6 @@
                   &.icon-label {
                     background-color: v.$login-item-bg-light !important;
                     color: v.$login-item-light !important;
-                  }
-
-                  &.icon-image {
-                    border: 1px solid v.$object-stroke-light !important;
                   }
                 }
 
@@ -367,10 +363,6 @@
                   &.icon-label {
                     background-color: v.$login-item-bg-dark !important;
                     color: v.$login-item-dark !important;
-                  }
-
-                  &.icon-image {
-                    border: 1px solid v.$object-stroke-dark !important;
                   }
                 }
 
@@ -431,10 +423,6 @@
                       background-color: v.$login-item-bg-light !important;
                       color: v.$login-item-light !important;
                     }
-
-                    &.icon-image {
-                      border: 1px solid v.$object-stroke-light !important;
-                    }
                   }
 
                   &.twofas-pass-notification-matching-logins-item-secondary-btn {
@@ -491,10 +479,6 @@
                     &.icon-label {
                       background-color: v.$login-item-bg-dark !important;
                       color: v.$login-item-dark !important;
-                    }
-
-                    &.icon-image {
-                      border: 1px solid v.$object-stroke-dark !important;
                     }
                   }
 
@@ -793,7 +777,7 @@
 
       span {
         display: inline-block !important;
-        margin-top: 32px !important;
+        margin-top: 16px !important;
         margin-bottom: 8px !important;
       }
     }
@@ -856,9 +840,24 @@
             }
   
             &.icon-image {
+              overflow: hidden !important;
+              position: relative !important;
+
               img {
                 height: auto !important;
+                max-height: 24px !important;
+                opacity: 0 !important;
+                position: relative !important;
+                transition: opacity .3s ease-in-out !important;
                 width: 24px !important;
+                z-index: 2 !important;
+
+                &.icon-image-blur {
+                  filter: blur(12px) saturate(2) !important;
+                  position: absolute !important;
+                  transform: scale(1.4) !important;
+                  z-index: 1 !important;
+                }
               }
             }
           }

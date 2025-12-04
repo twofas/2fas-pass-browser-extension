@@ -247,12 +247,22 @@ const matchingLogins = (request, sendResponse, container) => {
         const imageUrl = `https://icon.2fas.com/${iconDomain}/favicon.png`;
 
         itemIcon.classList.add('icon-image');
+
+        const iconImageBlur = createElement('img');
+        iconImageBlur.src = imageUrl;
+        iconImageBlur.alt = item.content.name;
+        iconImageBlur.classList.add('icon-image-blur');
+        iconImageBlur.onload = () => { iconImageBlur.style.setProperty('opacity', '1', 'important'); };
+        itemIcon.appendChild(iconImageBlur);
+
         const iconImage = createElement('img');
         iconImage.src = imageUrl;
         iconImage.alt = item.content.name;
+        iconImage.onload = () => { iconImage.style.setProperty('opacity', '1', 'important'); };
         itemIcon.appendChild(iconImage);
 
         iconImage.onerror = () => {
+          itemIcon.removeChild(iconImageBlur);
           itemIcon.removeChild(iconImage);
           itemIcon.classList.remove('icon-image');
           generateLabel(item, itemIcon);
@@ -262,13 +272,25 @@ const matchingLogins = (request, sendResponse, container) => {
       }
     } else {
       // Custom
+      const customImageUrl = `https://custom-icon.2fas.com/?url=${item?.content?.customImageUrl}`;
+
       itemIcon.classList.add('icon-image');
+
+      const iconImageBlur = createElement('img');
+      iconImageBlur.src = customImageUrl;
+      iconImageBlur.alt = item.content.name;
+      iconImageBlur.classList.add('icon-image-blur');
+      iconImageBlur.onload = () => { iconImageBlur.style.setProperty('opacity', '1', 'important'); };
+      itemIcon.appendChild(iconImageBlur);
+
       const iconImage = createElement('img');
-      iconImage.src = `https://custom-icon.2fas.com/?url=${item?.content?.customImageUrl}`;
+      iconImage.src = customImageUrl;
       iconImage.alt = item.content.name;
+      iconImage.onload = () => { iconImage.style.setProperty('opacity', '1', 'important'); };
       itemIcon.appendChild(iconImage);
 
       iconImage.onerror = () => {
+        itemIcon.removeChild(iconImageBlur);
         itemIcon.removeChild(iconImage);
         itemIcon.classList.remove('icon-image');
         generateLabel(item, itemIcon);
