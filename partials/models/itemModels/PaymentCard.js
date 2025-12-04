@@ -175,7 +175,45 @@ export default class PaymentCard extends Item {
   }
 
   get contextMenuItem () {
-    return {};
+    if (this.securityType !== SECURITY_TIER.HIGHLY_SECRET && this.securityType !== SECURITY_TIER.SECRET) {
+      return {};
+    }
+
+    const contexts = ['page', 'editable'];
+
+    if (import.meta.env.BROWSER !== 'safari')  {
+      contexts.push('page_action');
+    }
+
+    if (
+      this.securityType === SECURITY_TIER.SECRET ||
+      (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists)
+    ) {
+      return {
+        id: `2fas-pass-autofill-${this.deviceId}|${this.vaultId}|${this.id}`,
+        enabled: true,
+        title: `${browser.i18n.getMessage('autofill')} ${this.content.name}`,
+        type: 'normal',
+        visible: true,
+        parentId: '2fas-pass-payment-cards',
+        contexts
+      };
+    } else if (
+      this.securityType === SECURITY_TIER.HIGHLY_SECRET && !this.sifExists ||
+      !this.sifExists
+    ) {
+      return {
+        id: `2fas-pass-fetch-${this.deviceId}|${this.vaultId}|${this.id}|${this.contentType}`,
+        enabled: true,
+        title: `${browser.i18n.getMessage('fetch')} ${this.content.name}...`,
+        type: 'normal',
+        visible: true,
+        parentId: '2fas-pass-payment-cards',
+        contexts
+      };
+    } else {
+      return {};
+    }
   }
 
   get sifs () {
