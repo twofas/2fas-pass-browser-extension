@@ -21,6 +21,24 @@
   border-radius: 4px;
 }
 
+:global(html.firefox.theme-light) {
+  scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+}
+
+:global(html.firefox.theme-dark) {
+  scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+}
+
+:global(html.firefox.theme-unset) {
+  @media (prefers-color-scheme: light) {
+    scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+  }
+}
+
 :global(body.theme-light) {
   &::-webkit-scrollbar,
   *::-webkit-scrollbar {

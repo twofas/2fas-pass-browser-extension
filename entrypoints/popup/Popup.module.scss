@@ -81,6 +81,12 @@
   }
 
   &:global(.firefox) {
+    scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+
+    @include m.darkMode {
+      scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+    }
+
     .pass-screen {
       > div {
         padding: 11px 12px 43px;
@@ -106,6 +112,18 @@
   &.pass-non-separate-window {
     max-width: 400px !important;
     width: 400px !important;
+  }
+
+  &.scrollable {
+    pointer-events: auto;
+
+    &:global(.firefox) {
+      .pass-screen {
+        > div {
+          padding-right: 0 !important;
+        }
+      }
+    }
   }
 
   &.pass-error {

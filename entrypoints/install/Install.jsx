@@ -199,6 +199,7 @@ function Install () {
   useEffect(() => {
     const unwatchTheme = storage.watch('local:theme', async (newValue, oldValue) => {
       if (oldValue) {
+        document.documentElement.classList.remove(`theme-${oldValue}`);
         document.body.classList.remove(`theme-${oldValue}`);
       }
 
@@ -206,12 +207,15 @@ function Install () {
         newValue = 'unset';
       }
 
+      document.documentElement.classList.add(`theme-${newValue}`);
       document.body.classList.add(`theme-${newValue}`);
     });
 
     if (import.meta.env.BROWSER === 'safari') {
       document.addEventListener('click', safariBlankLinks);
     }
+
+    document.documentElement.classList.add(import.meta.env.BROWSER);
 
     detectDefaultTheme();
     getDefaultLogs();
