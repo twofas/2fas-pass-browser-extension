@@ -6,7 +6,7 @@
 
 import S from './Popup.module.scss';
 import { HashRouter, Route, Routes, Navigate, useNavigate, useLocation } from 'react-router';
-import { useEffect, useState, useMemo, memo, useRef, lazy } from 'react';
+import { useEffect, useState, useMemo, memo, useRef, lazy, useCallback } from 'react';
 import { PrimeReactProvider } from 'primereact/api';
 import { AuthProvider, useAuthState } from '@/hooks/useAuth';
 import popupOnMessage from './events/popupOnMessage';
@@ -194,11 +194,14 @@ const AppContent = memo(({ blocked }) => {
 /**
 * Main app content - without AuthProvider since it's now in main.jsx
 * @param {Object} props - The component props.
+* @param {boolean} props.blockedValue - Whether the popup is blocked.
+* @param {string} props.mainSectionClassName - Class name for main section.
+* @param {Object} props.sectionRef - Ref for the section element.
 * @return {JSX.Element} The rendered app.
 */
-const MainApp = memo(({ blockedValue, mainSectionClassName }) => {
+const MainApp = memo(({ blockedValue, mainSectionClassName, sectionRef }) => {
   return (
-    <section className={mainSectionClassName}>
+    <section ref={sectionRef} className={mainSectionClassName}>
       <AppContent blocked={blockedValue} />
       <ToastsContent />
     </section>
@@ -207,22 +210,28 @@ const MainApp = memo(({ blockedValue, mainSectionClassName }) => {
 
 /**
 * PopupContent wrapper that handles blocking logic
+* @param {Object} props - The component props.
+* @param {boolean} props.loaded - Whether the popup is loaded.
+* @param {boolean} props.blocked - Whether the popup is blocked.
+* @param {string} props.blockedSectionClassName - Class name for blocked section.
+* @param {string} props.mainSectionClassName - Class name for main section.
+* @param {Object} props.sectionRef - Ref for the section element.
 * @return {JSX.Element} The rendered component.
 */
-const PopupContent = memo(({ loaded, blocked, blockedSectionClassName, mainSectionClassName }) => {
+const PopupContent = memo(({ loaded, blocked, blockedSectionClassName, mainSectionClassName, sectionRef }) => {
   if (!loaded) {
     return null;
   }
 
   if (blocked) {
     return (
-      <section className={blockedSectionClassName}>
+      <section ref={sectionRef} className={blockedSectionClassName}>
         <Blocked className={S.passScreen} />
       </section>
     );
   }
 
-  return <MainApp blockedValue={blocked} mainSectionClassName={mainSectionClassName} />;
+  return <MainApp blockedValue={blocked} mainSectionClassName={mainSectionClassName} sectionRef={sectionRef} />;
 });
 
 let initializationPromise = null;
@@ -290,17 +299,65 @@ const PopupMain = memo(() => {
       isSeparateWindow: false
     };
   });
+  const [isScrollable, setIsScrollable] = useState(false);
 
   const initialized = useRef(false);
   const stateUpdated = useRef(false);
+  const sectionRef = useRef(null);
+  const resizeObserverRef = useRef(null);
+  const mutationObserverRef = useRef(null);
+
+  const checkScrollable = useCallback(() => {
+    if (!sectionRef.current) {
+      return;
+    }
+
+    const scrollableChild = sectionRef.current.querySelector(`.${S.passScreen} > div`);
+
+    if (scrollableChild) {
+      const hasScrollbar = scrollableChild.scrollHeight > scrollableChild.clientHeight;
+      setIsScrollable(hasScrollbar);
+    } else {
+      setIsScrollable(false);
+    }
+  }, []);
 
   const classNames = useMemo(() => {
-    const baseClass = `${S.pass} ${!state.isSeparateWindow ? S.passNonSeparateWindow : ''} ${import.meta.env.BROWSER}`;
+    const baseClass = `${S.pass} ${!state.isSeparateWindow ? S.passNonSeparateWindow : ''} ${isScrollable ? S.scrollable : ''} ${import.meta.env.BROWSER}`;
     return {
       blocked: `${baseClass} ${S.passBlocked}`,
       main: baseClass
     };
-  }, [state.isSeparateWindow]);
+  }, [state.isSeparateWindow, isScrollable]);
+
+  useEffect(() => {
+    if (!state.loaded || !sectionRef.current) {
+      return;
+    }
+
+    checkScrollable();
+
+    resizeObserverRef.current = new ResizeObserver(checkScrollable);
+    resizeObserverRef.current.observe(sectionRef.current);
+
+    mutationObserverRef.current = new MutationObserver(checkScrollable);
+    mutationObserverRef.current.observe(sectionRef.current, {
+      childList: true,
+      subtree: true
+    });
+
+    return () => {
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
+
+      if (mutationObserverRef.current) {
+        mutationObserverRef.current.disconnect();
+        mutationObserverRef.current = null;
+      }
+    };
+  }, [state.loaded, checkScrollable]);
 
   useEffect(() => {
     if (initialized.current) {
@@ -365,6 +422,7 @@ const PopupMain = memo(() => {
       blocked={state.blocked}
       blockedSectionClassName={classNames.blocked}
       mainSectionClassName={classNames.main}
+      sectionRef={sectionRef}
     />
   );
 });

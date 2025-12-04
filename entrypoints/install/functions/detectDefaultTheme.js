@@ -22,6 +22,7 @@ const detectDefaultTheme = async () => {
     themeValueStorage = 'unset';
   }
 
+  document.documentElement.classList.add(`theme-${themeValueStorage}`);
   document.body.classList.add(`theme-${themeValueStorage}`);
 };
 
