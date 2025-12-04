@@ -599,6 +599,10 @@
     "message": "Add account...",
     "description": "Option in the context menu to add a new account for the current domain"
   },
+  "background_contextMenuConfigured_cards": {
+    "message": "Cards",
+    "description": "Submenu title for payment cards in the context menu"
+  },
   "background_contextMenuNotConfigured_connect": {
     "message": "Connect with the 2FAS Pass mobile app...",
     "description": "Option to connect the extension with the 2FAS Pass mobile app"
@@ -606,6 +610,30 @@
   "background_get_browser_info_on": {
     "message": "on",
     "description": "Used in generating the browser extension name, e.g., Chrome on Windows"
+  },
+  "notification_card_autofill_no_data_title": {
+    "message": "No card data",
+    "description": "Title for the notification when the card has no data to autofill"
+  },
+  "notification_card_autofill_no_data_message": {
+    "message": "This card has no data to autofill",
+    "description": "Message for the notification when the card has no data to autofill"
+  },
+  "notification_card_autofill_partial_title": {
+    "message": "Partial autofill",
+    "description": "Title for the notification when card autofill is only partially successful"
+  },
+  "notification_card_autofill_year_not_available": {
+    "message": "The expiry year is not available in the form options",
+    "description": "Message when the card expiry year doesn't match any available option in the form's year dropdown"
+  },
+  "notification_card_autofill_month_not_available": {
+    "message": "The expiry month is not available in the form options",
+    "description": "Message when the card expiry month doesn't match any available option in the form's month dropdown"
+  },
+  "notification_card_autofill_expiration_date_not_available": {
+    "message": "The expiry date is not available in the form options",
+    "description": "Message when the card expiry date doesn't match any available option in the form's dropdown"
   },
   "content_matching_logins_title": {
     "message": "Matching Items",
@@ -1082,46 +1110,6 @@
   "details_additional_info_max_length": {
     "message": "Additional info must be less than 16384 characters.",
     "description": "Validation message indicating the maximum length for the additional info field"
-  },
-  "details_card_number": {
-    "message": "Card number",
-    "description": "Label for the card number field in payment card details"
-  },
-  "details_card_number_decrypt_error": {
-    "message": "Decrypting card number error. Please resync with your mobile app.",
-    "description": "Error message displayed when decrypting the card number fails"
-  },
-  "details_toggle_card_number_visibility": {
-    "message": "Toggle card number visibility",
-    "description": "Title for the button that toggles card number visibility"
-  },
-  "details_expiration_date": {
-    "message": "Expiration date",
-    "description": "Label for the expiration date field in payment card details"
-  },
-  "details_expiration_date_decrypt_error": {
-    "message": "Decrypting expiration date error. Please resync with your mobile app.",
-    "description": "Error message displayed when decrypting the expiration date fails"
-  },
-  "details_toggle_expiration_date_visibility": {
-    "message": "Toggle expiration date visibility",
-    "description": "Title for the button that toggles expiration date visibility"
-  },
-  "details_copy_expiration_date": {
-    "message": "Copy expiration date",
-    "description": "Title for the button that copies expiration date to clipboard"
-  },
-  "details_security_code": {
-    "message": "Security code",
-    "description": "Label for the security code field in payment card details"
-  },
-  "details_security_code_decrypt_error": {
-    "message": "Decrypting security code error. Please resync with your mobile app.",
-    "description": "Error message displayed when decrypting the security code fails"
-  },
-  "details_toggle_security_code_visibility": {
-    "message": "Toggle security code visibility",
-    "description": "Title for the button that toggles security code visibility"
   },
   "details_tags_label": {
     "message": "Tags",

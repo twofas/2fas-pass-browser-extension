@@ -43,6 +43,7 @@ export { default as openPopupWindowInNewWindow } from './openPopupWindowInNewWin
 export { default as promptInput } from './promptInput.js';
 export { default as sendAutoClearAction } from './sendAutoClearAction.js';
 export { default as sendAutofillToTab } from './sendAutofillToTab.js';
+export { default as sendCardAutofillToTab } from './sendCardAutofillToTab.js';
 export { default as sendDomainToPopupWindow } from './sendDomainToPopupWindow.js';
 export { default as sendMatchingLoginsToTab } from './sendMatchingLoginsToTab.js';
 export { default as sendSavePromptToTab } from './sendSavePromptToTab.js';

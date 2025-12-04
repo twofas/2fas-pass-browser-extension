@@ -8,7 +8,7 @@ import getItems from '@/partials/sessionStorage/getItems';
 
 let isContextMenuConfiguring = false;
 
-/** 
+/**
 * Function to configure the context menu for the 2FAS Pass Browser Extension.
 * @async
 * @param {Array} items - An array of items to configure the context menu for.
@@ -42,7 +42,7 @@ const contextMenuConfigured = async (items = null) => {
 
     try {
       if (!items) {
-        items = await getItems(['Login']);
+        items = await getItems(['Login', 'PaymentCard']);
       }
     } catch (e) {
       await CatchError(e);
@@ -64,7 +64,14 @@ const contextMenuConfigured = async (items = null) => {
       await CatchError(e);
     }
 
+    const paymentCards = [];
+
     for (const item of items) {
+      if (item.constructor.name === 'PaymentCard') {
+        paymentCards.push(item);
+        continue;
+      }
+
       const contextMenuItem = item?.contextMenuItem;
 
       if (!contextMenuItem || Object.keys(contextMenuItem).length === 0) {
@@ -118,6 +125,51 @@ const contextMenuConfigured = async (items = null) => {
       });
     } catch (e) {
       await CatchError(e);
+    }
+
+    // Payment Cards section
+    if (paymentCards.length > 0) {
+      // Cards separator
+      try {
+        browser.contextMenus.create({
+          id: '2fas-pass-cards-separator',
+          type: 'separator',
+          parentId: '2fas-pass-configured',
+          contexts
+        });
+      } catch (e) {
+        await CatchError(e);
+      }
+
+      // Cards submenu
+      try {
+        browser.contextMenus.create({
+          id: '2fas-pass-payment-cards',
+          enabled: true,
+          title: browser.i18n.getMessage('background_contextMenuConfigured_cards'),
+          type: 'normal',
+          visible: true,
+          parentId: '2fas-pass-configured',
+          contexts
+        });
+      } catch (e) {
+        await CatchError(e);
+      }
+
+      // Payment card items
+      for (const card of paymentCards) {
+        const contextMenuItem = card?.contextMenuItem;
+
+        if (!contextMenuItem || Object.keys(contextMenuItem).length === 0) {
+          continue;
+        }
+
+        try {
+          browser.contextMenus.create(contextMenuItem);
+        } catch (e) {
+          await CatchError(e);
+        }
+      }
     }
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.contextMenuConfiguredError, {
