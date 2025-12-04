@@ -152,7 +152,7 @@
     "description": "Title for the button that copies expiration date to clipboard"
   },
   "details_security_code": {
-    "message": "Security code",
+    "message": "Security code (CVV)",
     "description": "Label for the security code field in payment card details"
   },
   "details_security_code_decrypt_error": {
@@ -244,7 +244,7 @@
     "description": "Title for the button that copies expiration date to clipboard"
   },
   "details_security_code": {
-    "message": "Security code",
+    "message": "Security code (CVV)",
     "description": "Label for the security code field in payment card details"
   },
   "details_security_code_decrypt_error": {

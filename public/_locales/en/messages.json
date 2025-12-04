@@ -372,7 +372,7 @@
     "description": "Label for the payment card expiration date field"
   },
   "payment_card_security_code": {
-    "message": "Security Code",
+    "message": "Security Code (CVV)",
     "description": "Label for the payment card security code field"
   },
   "secure_note": {
@@ -1048,7 +1048,7 @@
     "description": "Title for the button that copies expiration date to clipboard"
   },
   "details_security_code": {
-    "message": "Security code",
+    "message": "Security code (CVV)",
     "description": "Label for the security code field in payment card details"
   },
   "details_security_code_decrypt_error": {
