@@ -7,15 +7,14 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { lazy, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { copyValue, isText } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
 import PaymentCardNumberInput from '@/entrypoints/popup/components/PaymentCardNumberInput';
 import getCardNumberMask from '@/entrypoints/popup/components/PaymentCardNumberInput/getCardNumberMask';
-
-const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
-const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+import VisibleIcon from '@/assets/popup-window/visible.svg?react';
+import InfoIcon from '@/assets/popup-window/info.svg?react';
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 
 /**
 * Renders the card number input field for PaymentCard details view.
@@ -30,6 +29,7 @@ function CardNumber (props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const previousCardNumberRef = useRef(null);
 
@@ -95,9 +95,11 @@ function CardNumber (props) {
 
       updatedItem.internalData.editedCardNumber = null;
 
-      setData('item', updatedItem);
-      setData('cardNumberEdited', false);
-      setData('cardNumberEditable', false);
+      setBatchData({
+        item: updatedItem,
+        cardNumberEdited: false,
+        cardNumberEditable: false
+      });
       form.change('editedCardNumber', data.item.isSifDecrypted ? data.item.sifDecrypted?.cardNumber : '');
     } else {
       setData('cardNumberEditable', true);

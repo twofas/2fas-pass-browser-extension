@@ -31,6 +31,7 @@ function CardSecurityCode (props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const previousSecurityCodeRef = useRef(null);
 
@@ -108,9 +109,11 @@ function CardSecurityCode (props) {
 
       updatedItem.internalData.editedSecurityCode = null;
 
-      setData('item', updatedItem);
-      setData('securityCodeEdited', false);
-      setData('securityCodeEditable', false);
+      setBatchData({
+        item: updatedItem,
+        securityCodeEdited: false,
+        securityCodeEditable: false
+      });
       form.change('editedSecurityCode', data.item.isSifDecrypted ? data.item.sifDecrypted?.securityCode : '');
     } else {
       setData('securityCodeEditable', true);

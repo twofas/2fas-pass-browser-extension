@@ -6,18 +6,17 @@
 
 import S from '../../ThisTab.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { lazy, useState, useRef, useEffect, useMemo } from 'react';
+import { lazy, useState, useRef, useEffect, useMemo, memo, useCallback } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 const SortIcon = lazy(() => import('@/assets/popup-window/sort.svg?react'));
 
-const CustomOption = option => {
-  const handleClick = e => {
+const CustomOption = memo(function CustomOption (option) {
+  const handleClick = useCallback(e => {
     e.preventDefault();
     e.stopPropagation();
-
     option.selectOption(option.data);
-  };
+  }, [option.selectOption, option.data]);
 
   if (option.data.isDisabled) {
     return (
@@ -47,7 +46,9 @@ const CustomOption = option => {
       )}
     </div>
   );
-};
+});
+
+const selectComponents = { Option: CustomOption };
 
 const options = [
   { value: 'az', label: browser.i18n.getMessage('sort_az') },
@@ -74,13 +75,16 @@ const Sort = ({ selectedSort, onSortChange, forceClose }) => {
     }
   };
 
-  const handleSelectChange = (option) => {
+  const handleSelectChange = useCallback(option => {
     if (onSortChange) {
       onSortChange(option ? option.value : null);
     }
 
     setIsMenuOpen(false);
-  };
+  }, [onSortChange]);
+
+  const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
+  const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
 
   const selectedOption = useMemo(() => {
     if (!selectedSort) {
@@ -114,16 +118,14 @@ const Sort = ({ selectedSort, onSortChange, forceClose }) => {
           value={selectedOption}
           onChange={handleSelectChange}
           menuIsOpen={isMenuOpen}
-          onMenuClose={() => setIsMenuOpen(false)}
-          onMenuOpen={() => setIsMenuOpen(true)}
+          onMenuClose={handleMenuClose}
+          onMenuOpen={handleMenuOpen}
           className='react-select-pass-dropdown'
           classNamePrefix='react-select-tags'
           isClearable={false}
           isSearchable={false}
           triggerRef={buttonRef}
-          components={{
-            Option: CustomOption
-          }}
+          components={selectComponents}
         />
       </div>
     </>

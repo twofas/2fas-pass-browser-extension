@@ -10,10 +10,11 @@ import SafariViewportList from '@/entrypoints/popup/components/SafariViewportLis
 import { lazy } from 'react';
 import { sortFunction } from '@/partials/functions';
 import isItemsCorrect from './isItemsCorrect';
+import { ItemListProvider } from '../context/ItemListContext';
 
 const EmptyListIcon = lazy(() => import('@/assets/popup-window/empty-list.svg?react'));
 
-/** 
+/**
 * Function to generate a list of all items.
 * @param {Array} items - The array of items.
 * @param {string} sort - The sorting criteria.
@@ -37,9 +38,11 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag, i
 
     return (
       <div className={S.thisTabAllLoginsList}>
-        <SafariViewportList items={itemsEmpty} overscan={3}>
-          {item => <Item data={item} key={item.id} loading={loading} />}
-        </SafariViewportList>
+        <ItemListProvider>
+          <SafariViewportList items={itemsEmpty} overscan={3}>
+            {item => <Item data={item} key={item.id} loading={loading} />}
+          </SafariViewportList>
+        </ItemListProvider>
       </div>
     );
   }
@@ -59,7 +62,7 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag, i
       if (!item?.tags || !Array.isArray(item?.tags)) {
         return false;
       }
-      
+
       const tagsSet = new Set(item.tags);
       return tagsSet.has(selectedTag.id);
     });
@@ -96,9 +99,11 @@ const generateAllItemsList = (items, sort, search, loading, tags, selectedTag, i
 
   return (
     <div className={S.thisTabAllLoginsList}>
-      <SafariViewportList items={itemsData} overscan={10}>
-        {item => <Item data={item} key={item.id} loading={loading} />}
-      </SafariViewportList>
+      <ItemListProvider>
+        <SafariViewportList items={itemsData} overscan={10}>
+          {item => <Item data={item} key={item.id} loading={loading} />}
+        </SafariViewportList>
+      </ItemListProvider>
     </div>
   );
 };

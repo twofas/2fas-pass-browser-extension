@@ -28,6 +28,7 @@ const notesVariants = {
 function Notes () {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const handleNotesEditable = async () => {
     if (data.notesEditable) {
@@ -40,8 +41,10 @@ function Notes () {
 
       item = null;
 
-      setData('item', updatedItem);
-      setData('notesEditable', false);
+      setBatchData({
+        item: updatedItem,
+        notesEditable: false
+      });
     } else {
       setData('notesEditable', true);
     }

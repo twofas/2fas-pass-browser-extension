@@ -6,65 +6,37 @@
 
 import S from '../../ThisTab.module.scss';
 
-import { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
+import { useEffect, useRef, useCallback, useMemo, memo } from 'react';
+import { useItemList } from '../../context/ItemListContext';
 
 // Models
 import LoginItemView from './modelsViews/LoginItemView';
 import SecureNoteItemView from './modelsViews/SecureNoteItemView';
 import PaymentCardItemView from './modelsViews/PaymentCardItemView';
 
-/** 
+/**
 * Function to render the item.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
 function Item (props) {
-  const [more, setMoreState] = useState(false);
+  const { openItemId, openMenu, closeMenu } = useItemList();
 
   const ref = useRef(null);
   const selectRef = useRef(null);
   const autofillBtnRef = useRef(null);
   const isHoveredRef = useRef(false);
-  const isClosingRef = useRef(false);
-  const moreRef = useRef(false);
+
+  const itemId = props.data?.id;
+  const more = openItemId === itemId;
 
   const setMore = useCallback(value => {
-    moreRef.current = value;
-    setMoreState(value);
-  }, []);
-
-  const handleScroll = useCallback(event => {
-    if (!more || isClosingRef.current) {
-      return;
+    if (value) {
+      openMenu(itemId);
+    } else {
+      closeMenu();
     }
-
-    const selectMenuListElement = document.querySelector('.react-select-dropdown__menu-list');
-
-    if (selectMenuListElement && (event.target === selectMenuListElement || selectMenuListElement.contains(event.target))) {
-      return;
-    }
-
-    isClosingRef.current = true;
-    setMore(false);
-  }, [more]);
-
-  const handleClickOutside = useCallback(event => {
-    if (ref.current && ref.current.contains(event.target)) {
-      return;
-    }
-
-    if (!moreRef.current) {
-      return;
-    }
-
-    const selectMenu = document.querySelector('.react-select-dropdown__menu');
-
-    if (selectMenu && selectMenu.contains(event.target)) {
-      return;
-    }
-
-    setMore(false);
-  }, []);
+  }, [itemId, openMenu, closeMenu]);
 
   const handleMouseEnter = useCallback(() => {
     isHoveredRef.current = true;
@@ -98,10 +70,6 @@ function Item (props) {
   );
 
   useEffect(() => {
-    if (more) {
-      isClosingRef.current = false;
-    }
-
     if (!more && !isHoveredRef.current) {
       if (ref.current) {
         ref.current.classList.remove(S.hover);
@@ -112,16 +80,6 @@ function Item (props) {
       }
     }
   }, [more]);
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, true);
-    document.addEventListener('mousedown', handleClickOutside, true);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll, true);
-      document.removeEventListener('mousedown', handleClickOutside, true);
-    };
-  }, [handleScroll, handleClickOutside]);
 
   if (!props.data) {
     return null;
@@ -154,6 +112,7 @@ function Item (props) {
       key={props.data.id}
       className={itemClassName}
       ref={ref}
+      data-item-id={itemId}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

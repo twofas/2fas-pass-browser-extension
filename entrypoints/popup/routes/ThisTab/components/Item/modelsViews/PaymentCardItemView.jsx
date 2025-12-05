@@ -18,6 +18,8 @@ const CopyCardSecurityCodeBtn = lazy(() => import('../components/CopyCardSecurit
 const { useCallback } = await import('react');
 const CustomOption = lazy(() => import('../components/CustomOption'));
 
+const selectComponents = { Option: CustomOption };
+
 function PaymentCardItemView (props) {
   const moreBtnRef = useRef(null);
   const navigate = useNavigate();
@@ -59,9 +61,7 @@ function PaymentCardItemView (props) {
         ref={props.selectRef}
         triggerRef={moreBtnRef}
         setMore={props.setMore}
-        components={{
-          Option: CustomOption
-        }}
+        components={selectComponents}
       />
     </>
   );

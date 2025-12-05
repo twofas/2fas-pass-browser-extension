@@ -6,18 +6,19 @@
 
 import S from '../../ThisTab.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { lazy, useState, useRef, useEffect, useMemo } from 'react';
+import { lazy, useState, useRef, useEffect, useMemo, useCallback, memo, Suspense } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
+import IconFallback from '@/entrypoints/popup/components/IconFallback';
 
 const FiltersIcon = lazy(() => import('@/assets/popup-window/filters.svg?react'));
 
-const CustomOption = option => {
-  const handleClick = e => {
+const CustomOption = memo(function CustomOption (option) {
+  const handleClick = useCallback(e => {
     e.preventDefault();
     e.stopPropagation();
 
     option.selectOption(option.data);
-  };
+  }, [option.selectOption, option.data]);
 
   if (option.data.isDisabled) {
     return (
@@ -47,9 +48,11 @@ const CustomOption = option => {
       )}
     </div>
   );
-};
+});
 
-/** 
+const selectComponents = { Option: CustomOption };
+
+/**
 * Function to render the Filters component.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
@@ -90,12 +93,16 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
     }
   };
 
-  const handleSelectChange = (option) => {
+  const handleSelectChange = useCallback(option => {
     if (onTagChange) {
       onTagChange(option ? option.tag : null);
     }
+
     setIsMenuOpen(false);
-  };
+  }, [onTagChange]);
+
+  const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
+  const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
 
   const selectedOption = useMemo(() => {
     if (!selectedTag) {
@@ -119,7 +126,9 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
           onClick={handleButtonClick}
           title={browser.i18n.getMessage('filters_button_title')}
         >
-          <FiltersIcon />
+          <Suspense fallback={<IconFallback size={16} />}>
+            <FiltersIcon />
+          </Suspense>
         </button>
         
         <AdvancedSelect
@@ -128,16 +137,14 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
           value={selectedOption}
           onChange={handleSelectChange}
           menuIsOpen={isMenuOpen}
-          onMenuClose={() => setIsMenuOpen(false)}
-          onMenuOpen={() => setIsMenuOpen(true)}
+          onMenuClose={handleMenuClose}
+          onMenuOpen={handleMenuOpen}
           className='react-select-pass-dropdown'
           classNamePrefix='react-select-tags'
           isClearable={false}
           isSearchable={false}
           triggerRef={buttonRef}
-          components={{
-            Option: CustomOption
-          }}
+          components={selectComponents}
         />
       </div>
     </>

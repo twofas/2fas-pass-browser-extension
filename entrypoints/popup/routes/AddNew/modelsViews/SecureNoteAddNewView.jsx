@@ -27,6 +27,7 @@ function SecureNoteAddNewView() {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const validate = values => {
     const errors = {};
@@ -55,10 +56,16 @@ function SecureNoteAddNewView() {
   useEffect(() => {
     if (location?.state?.data) {
       const stateData = location.state.data;
-      if (stateData.name) setData('name', stateData.name);
-      if (stateData.text) setData('text', stateData.text);
+      const batchUpdate = {};
+
+      if (stateData.name) batchUpdate.name = stateData.name;
+      if (stateData.text) batchUpdate.text = stateData.text;
+
+      if (Object.keys(batchUpdate).length > 0) {
+        setBatchData(batchUpdate);
+      }
     }
-  }, [location?.state?.data]);
+  }, [location?.state?.data, setBatchData]);
 
   const onSubmit = async e => {
     setInputError(undefined);

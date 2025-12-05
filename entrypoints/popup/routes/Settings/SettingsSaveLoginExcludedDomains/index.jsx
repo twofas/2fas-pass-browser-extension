@@ -31,6 +31,7 @@ function SettingsSaveLoginExcludedDomains (props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const removeExcludedDomain = async domain => {
     const updatedDomains = excludedDomains.filter((d) => d !== domain);
@@ -129,8 +130,10 @@ function SettingsSaveLoginExcludedDomains (props) {
     const updatedDomains = [...excludedDomains, getDomain(e['ignored-domain'])];
     await storage.setItem('local:savePromptIgnoreDomains', updatedDomains);
     setExcludedDomains(updatedDomains);
-    setData('newDomainForm', false);
-    setData('inputValue', '');
+    setBatchData({
+      newDomainForm: false,
+      inputValue: ''
+    });
     form.reset();
     showToast(browser.i18n.getMessage('settings_excluded_domains_add_success'), 'success');
   };
@@ -225,8 +228,10 @@ function SettingsSaveLoginExcludedDomains (props) {
                                       type='button'
                                       title={browser.i18n.getMessage('settings_excluded_domains_add_cancel_title')}
                                       onClick={() => {
-                                        setData('newDomainForm', false);
-                                        setData('inputValue', '');
+                                        setBatchData({
+                                          newDomainForm: false,
+                                          inputValue: ''
+                                        });
                                         form.reset();
                                       }}
                                     >

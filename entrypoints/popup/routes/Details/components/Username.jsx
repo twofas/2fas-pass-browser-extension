@@ -31,6 +31,7 @@ const usernameMobileVariants = {
 function Username (props) {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const { formData } = props;
   const { inputError } = formData;
@@ -56,8 +57,10 @@ function Username (props) {
 
       item = null;
 
-      setData('usernameEditable', false);
-      setData('item', updatedItem);
+      setBatchData({
+        usernameEditable: false,
+        item: updatedItem
+      });
     } else {
       setData('usernameEditable', true);
     }

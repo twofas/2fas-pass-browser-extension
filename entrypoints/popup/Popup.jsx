@@ -7,7 +7,6 @@
 import S from './Popup.module.scss';
 import { HashRouter, Route, Routes, Navigate, useNavigate, useLocation } from 'react-router';
 import { useEffect, useState, useMemo, memo, useRef, lazy, useCallback } from 'react';
-import { PrimeReactProvider } from 'primereact/api';
 import { AuthProvider, useAuthState } from '@/hooks/useAuth';
 import popupOnMessage from './events/popupOnMessage';
 import lockShortcuts from './utils/lockShortcuts';
@@ -441,13 +440,11 @@ function Popup() {
         }));
       }}
     >
-      <PrimeReactProvider>
-        <HashRouter>
-          <AuthProvider>
-            <PopupMain />
-          </AuthProvider>
-        </HashRouter>
-      </PrimeReactProvider>
+      <HashRouter>
+        <AuthProvider>
+          <PopupMain />
+        </AuthProvider>
+      </HashRouter>
     </ErrorBoundary>
   );
 }

@@ -7,10 +7,10 @@
 import S from '../../ThisTab.module.scss';
 import PasswordCopyOnlyBtn from '../../functions/serviceList/additionalButtons/PasswordCopyOnlyBtn';
 import generateIcon from '../../functions/serviceList/generateIcon';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import getItem from '@/partials/sessionStorage/getItem';
 
-/** 
+/**
 * Function to render a small login item.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
@@ -20,18 +20,18 @@ function SmallLoginItem (props) {
   const [item, setItem] = useState(null);
   const ref = useRef(null);
 
-  const getItemData = async () => {
+  const getItemData = useCallback(async () => {
     if (!props?.deviceId || !props?.vaultId || !props?.itemId) {
       return false;
     }
 
-    const item = await getItem(props.deviceId, props.vaultId, props.itemId);
-    setItem(item);
-  };
+    const fetchedItem = await getItem(props.deviceId, props.vaultId, props.itemId);
+    setItem(fetchedItem);
+  }, [props?.deviceId, props?.vaultId, props?.itemId]);
 
   useEffect(() => {
     getItemData();
-  }, []);
+  }, [getItemData]);
 
   if (!item) {
     return null;
@@ -57,4 +57,4 @@ function SmallLoginItem (props) {
   );
 }
 
-export default SmallLoginItem;
+export default memo(SmallLoginItem);

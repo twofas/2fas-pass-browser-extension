@@ -15,6 +15,8 @@ const CopySecureNoteBtn = lazy(() => import('../components/CopySecureNoteBtn'));
 const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
 const CustomOption = lazy(() => import('../components/CustomOption'));
 
+const selectComponents = { Option: CustomOption };
+
 function SecureNoteItemView (props) {
   const moreBtnRef = useRef(null);
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
@@ -44,9 +46,7 @@ function SecureNoteItemView (props) {
         ref={props.selectRef}
         triggerRef={moreBtnRef}
         setMore={props.setMore}
-        components={{
-          Option: CustomOption
-        }}
+        components={selectComponents}
       />
     </>
   );

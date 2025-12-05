@@ -5,12 +5,12 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardSecurityCodeInput.module.scss';
-import { memo, useMemo, useRef, useLayoutEffect, useCallback } from 'react';
-import { InputMask } from 'primereact/inputmask';
+import { memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
 import getSecurityCodeMask from './getSecurityCodeMask';
 
 /**
 * PaymentCardSecurityCodeInput component with dynamic mask based on card type.
+* Lazy loads PrimeReact InputMask for optimized bundle size.
 * @param {Object} props - Component props.
 * @param {string} props.value - The security code value.
 * @param {Function} props.onChange - Change handler function.
@@ -20,13 +20,27 @@ import getSecurityCodeMask from './getSecurityCodeMask';
 * @return {JSX.Element} The rendered component.
 */
 function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, ...inputProps }) {
+  const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
+  const loadedRef = useRef(false);
 
   const securityCodeMaskData = useMemo(
     () => getSecurityCodeMask(cardNumber),
     [cardNumber]
   );
+
+  useEffect(() => {
+    if (loadedRef.current) {
+      return;
+    }
+
+    loadedRef.current = true;
+
+    import('primereact/inputmask').then(module => {
+      setInputMask(() => module.InputMask);
+    });
+  }, []);
 
   useLayoutEffect(() => {
     if (previousMaskRef.current && previousMaskRef.current !== securityCodeMaskData.mask) {
@@ -53,6 +67,21 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, ...inp
     cursorPositionRef.current = domInput?.selectionStart;
     onChange(e);
   }, [id, onChange]);
+
+  if (!InputMask) {
+    return (
+      <input
+        {...inputProps}
+        className={S.paymentCardSecurityCodeInput}
+        type='text'
+        value={value}
+        placeholder={browser.i18n.getMessage('placeholder_payment_card_security_code')}
+        id={id}
+        onChange={e => onChange(e)}
+        disabled
+      />
+    );
+  }
 
   return (
     <InputMask

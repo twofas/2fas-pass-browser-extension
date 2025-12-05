@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../ThisTab.module.scss';
-import { useState, useRef, lazy } from 'react';
+import { useState, useRef, lazy, useEffect, memo, useCallback } from 'react';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
@@ -16,19 +16,24 @@ import { supportedFeatures } from '@/constants';
 
 const AllIcon = lazy(() => import('@/assets/popup-window/items/all.svg?react'));
 
-const ModelFilterCustomOption = option => {
+const handleNoOp = () => {};
+
+const ModelFilterCustomOption = memo(function ModelFilterCustomOption (option) {
   return (
     <components.Option
       {...option}
       className={`react-select-model-filter__option ${option.isSelected || (!option?.selectProps?.itemModelFilter && option.data.value === null) ? 'react-select-model-filter__option--is-selected' : ''}`}
       title={option.data.label}
-      onClick={() => {}}
+      onClick={handleNoOp}
     >
       <span className={`react-select-model-filter__option-icon ${option.data.className}`}>{option.data.icon}</span>
       <span className='react-select-model-filter__option-label'>{option.data.label}</span>
     </components.Option>
   );
-};
+});
+
+const selectComponents = { Option: ModelFilterCustomOption };
+const noOptionsMessage = () => null;
 
 /** 
 * Function to render the ModelFilter component.
@@ -60,11 +65,15 @@ const ModelFilter = () => {
     setData('itemModelFilter', newValue);
   };
 
-  const handleModelBtnClick = () => {
+  const handleModelBtnClick = useCallback(() => {
     if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
       setIsMenuOpen(prevState => !prevState);
     }
-  };
+  }, [deviceSupportedFeatures]);
+
+  const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
+  const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
+  const handleChange = useCallback(selectedOption => handleModelChange(selectedOption), []);
 
   useEffect(() => {
     getSupportedFeatures()
@@ -101,19 +110,17 @@ const ModelFilter = () => {
         options={itemModelsOptions}
         value={itemModelsOptions.find(option => option.value === data.itemModelFilter)}
         menuIsOpen={isMenuOpen}
-        onMenuClose={() => setIsMenuOpen(false)}
-        onMenuOpen={() => setIsMenuOpen(true)}
-        onChange={selectedOption => handleModelChange(selectedOption)}
+        onMenuClose={handleMenuClose}
+        onMenuOpen={handleMenuOpen}
+        onChange={handleChange}
         className='react-select-pass-dropdown'
         classNamePrefix='react-select-model-filter'
         isClearable={false}
         isSearchable={false}
-        noOptionsMessage={() => null}
+        noOptionsMessage={noOptionsMessage}
         triggerRef={buttonRef}
         itemModelFilter={data.itemModelFilter}
-        components={{
-          Option: ModelFilterCustomOption
-        }}
+        components={selectComponents}
       />
     </>
   );

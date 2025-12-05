@@ -29,6 +29,7 @@ const additionalInfoVariants = {
 function AdditionalInfo (props) {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const { formData } = props;
   const { inputError } = formData;
@@ -44,8 +45,10 @@ function AdditionalInfo (props) {
 
       item = null;
 
-      setData('item', updatedItem);
-      setData('additionalInfoEditable', false);
+      setBatchData({
+        item: updatedItem,
+        additionalInfoEditable: false
+      });
     } else {
       setData('additionalInfoEditable', true);
     }

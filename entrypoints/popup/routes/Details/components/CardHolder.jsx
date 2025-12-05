@@ -23,6 +23,7 @@ const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?
 function CardHolder (props) {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const { formData } = props;
   const { inputError } = formData;
@@ -47,8 +48,10 @@ function CardHolder (props) {
 
       item = null;
 
-      setData('cardHolderEditable', false);
-      setData('item', updatedItem);
+      setBatchData({
+        cardHolderEditable: false,
+        item: updatedItem
+      });
     } else {
       setData('cardHolderEditable', true);
     }

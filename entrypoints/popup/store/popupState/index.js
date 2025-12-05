@@ -32,6 +32,10 @@ const usePopupStateStore = create(
         newData[name] = data;
         return { data: newData };
       }),
+      setBatchData: updates => set(state => {
+        const newData = { ...state.data, ...updates };
+        return { data: newData };
+      }),
       clearData: () => set({ data: {} }),
       scrollPosition: 0,
       setScrollPosition: position => set({ scrollPosition: position }),

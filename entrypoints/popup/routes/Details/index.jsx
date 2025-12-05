@@ -45,6 +45,7 @@ function Details(props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
   const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
 
   const getData = useCallback(async originalItem => {
@@ -180,8 +181,10 @@ function Details(props) {
 
       if (location.state?.generatedPassword) {
         item.internalData.editedSif = location.state.generatedPassword;
-        setData('passwordEditable', true);
-        setData('passwordEdited', true);
+        setBatchData({
+          passwordEditable: true,
+          passwordEdited: true
+        });
       }
 
       if (!location.state?.data && item && item.internalData?.urisWithTempIds && item.internalData.urisWithTempIds.length > 0) {
