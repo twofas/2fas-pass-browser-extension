@@ -6,10 +6,9 @@
 
 import S from '../../ThisTab.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { lazy, useState, useRef, useEffect, useMemo, memo, useCallback } from 'react';
+import { useState, useRef, useEffect, useMemo, memo, useCallback } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
-
-const SortIcon = lazy(() => import('@/assets/popup-window/sort.svg?react'));
+import SortIcon from '@/assets/popup-window/sort.svg?react';
 
 const CustomOption = memo(function CustomOption (option) {
   const handleClick = useCallback(e => {
