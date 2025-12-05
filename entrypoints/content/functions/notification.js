@@ -119,7 +119,7 @@ const notification = (request, container) => {
 
         n = null;
         cleanupTimer = null;
-      }, 300);
+      }, 200);
     }
   };
 
@@ -129,7 +129,7 @@ const notification = (request, container) => {
     }
 
     visibleTimer = null;
-  }, 300);
+  }, 200);
 
   maxHeightTimer = setTimeout(() => {
     if (n && n.item) {
@@ -137,14 +137,14 @@ const notification = (request, container) => {
     }
 
     maxHeightTimer = null;
-  }, 1300);
+  }, 1200);
 
   window.addEventListener('beforeunload', handleBeforeUnload);
 
   if (request.timeout) {
     autoCloseTimer = setTimeout(() => {
       closeNotification();
-    }, 6600);
+    }, 6400);
   }
 };
 

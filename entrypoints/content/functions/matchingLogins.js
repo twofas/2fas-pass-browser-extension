@@ -52,7 +52,7 @@ const closeNotification = (n, timers) => {
 
       n = null;
       timers.cleanup = null;
-    }, 300);
+    }, 200);
   }
 };
 
@@ -332,7 +332,7 @@ const matchingLogins = (request, sendResponse, container) => {
     }
 
     timers.visible = null;
-  }, 300);
+  }, 200);
 
   timers.maxHeight1 = setTimeout(() => {
     if (n && n.items) {
@@ -340,7 +340,7 @@ const matchingLogins = (request, sendResponse, container) => {
     }
 
     timers.maxHeight1 = null;
-  }, 301);
+  }, 201);
 
   timers.maxHeight2 = setTimeout(() => {
     if (n && n.item) {
@@ -348,7 +348,7 @@ const matchingLogins = (request, sendResponse, container) => {
     }
 
     timers.maxHeight2 = null;
-  }, 302);
+  }, 202);
 };
 
 export default matchingLogins;

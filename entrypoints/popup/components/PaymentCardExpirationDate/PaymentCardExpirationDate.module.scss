@@ -24,7 +24,7 @@
   font-weight: 400;
   line-height: 1;
   padding: 0;
-  transition: color .3s ease-in-out;
+  transition: color v.$anim;
   width: 100%;
 
   @include m.darkMode {
@@ -63,7 +63,7 @@
   outline: none;
   overflow: hidden;
   padding: 0;
-  transition: max-width .3s ease-in-out, margin-right .3s ease-in-out, opacity .3s ease-in-out;
+  transition: max-width v.$anim, margin-right v.$anim, opacity v.$anim;
   width: 16px;
 
   &:hover,
@@ -91,7 +91,7 @@
     height: 15px !important;
     stroke: v.$primary-color-light;
     stroke-width: 2 !important;
-    transition: stroke .3s ease-in-out;
+    transition: stroke v.$anim;
     width: auto;
 
     @include m.darkMode {
@@ -127,7 +127,7 @@
   position: fixed !important;
   right: 24px !important;
   transform: none !important;
-  transition: opacity .15s ease-in-out;
+  transition: opacity .15s ease-out;
   z-index: 9999 !important;
 
   &:global(.p-connected-overlay-enter-done) {

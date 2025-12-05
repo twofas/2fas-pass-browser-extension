@@ -88,7 +88,7 @@ function AdditionalInfo (props) {
                 className={`${pI.passInputBottom} ${pI.note} ${data.additionalInfoEditable ? pI.noteEditable : ''}`}
                 variants={additionalInfoVariants}
                 initial="hidden"
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
                 animate={input.value.length > 0 || data.additionalInfoEditable ? 'visible' : 'hidden'}
               >
                 <textarea

@@ -185,7 +185,7 @@ function Tags () {
                       initial='initial'
                       animate='animate'
                       exit='exit'
-                      transition={{ duration: 0.2 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
                     >
                       <span className={S.tagsPillText} title={getTagName(tag, availableTags)}>
                         {getTagName(tag, availableTags)}

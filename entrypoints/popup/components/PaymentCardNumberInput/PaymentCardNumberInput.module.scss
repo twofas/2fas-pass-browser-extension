@@ -17,7 +17,7 @@
   font-weight: 400;
   line-height: 1;
   padding: 0;
-  transition: color .3s ease-in-out;
+  transition: color v.$anim;
   width: 100%;
 
   @include m.darkMode {

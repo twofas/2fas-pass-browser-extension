@@ -18,7 +18,7 @@
     height: 38px;
     line-height: 1;
     padding: 10px 12px;
-    transition: background-color .3s ease-in-out, border-color .3s ease-in-out, color .3s ease-in-out;
+    transition: background-color v.$anim, border-color v.$anim, color v.$anim;
     width: 100%;
 
     body.theme-light & {
@@ -166,7 +166,7 @@
       display: inline-flex;
       height: 1.5rem;
       justify-content: center;
-      transition: background-color .3s ease-in-out, color .3s ease-in-out;
+      transition: background-color v.$anim, color v.$anim;
       width: 1.5rem;
 
       body.theme-light & {
@@ -232,7 +232,7 @@
         font-size: 13px;
         font-weight: 600;
         padding: 4px 6px;
-        transition: background-color .3s ease-in-out, color .3s ease-in-out;
+        transition: background-color v.$anim, color v.$anim;
 
         body.theme-light & {
           color: v.$primary-text-light;
@@ -323,7 +323,7 @@
         display: flex;
         height: 2.5rem;
         justify-content: center;
-        transition: background-color .3s ease-in-out, color .3s ease-in-out;
+        transition: background-color v.$anim, color v.$anim;
         width: 2.5rem;
 
         body.theme-light & {
@@ -487,7 +487,7 @@
       border-radius: 4px !important;
       font-size: 12px !important;
       padding: 6px 2px !important;
-      transition: background-color .3s ease-in-out, color .3s ease-in-out;
+      transition: background-color v.$anim, color v.$anim;
       width: calc(33.3% - 2px);
 
       body.theme-light & {
@@ -594,7 +594,7 @@
       border-radius: 4px !important;
       font-size: 12px !important;
       padding: 6px 2px !important;
-      transition: background-color .3s ease-in-out, color .3s ease-in-out;
+      transition: background-color v.$anim, color v.$anim;
       width: calc(50% - 1px);
 
       body.theme-light & {
@@ -719,7 +719,7 @@
       border-radius: 50%;
       cursor: pointer;
       height: 2rem;
-      transition: background-color .3s ease-in-out, color .3s ease-in-out;
+      transition: background-color v.$anim, color v.$anim;
       width: 2rem;
 
       body.theme-light & {
@@ -792,7 +792,7 @@
   height: 38px;
   line-height: 1;
   padding: 10px 12px;
-  transition: background-color .3s ease-in-out, border-color .3s ease-in-out, color .3s ease-in-out;
+  transition: background-color v.$anim, border-color v.$anim, color v.$anim;
   width: 100%;
 
   body.theme-light & {

@@ -130,7 +130,7 @@
     &-icon {
       animation: none !important;
       margin-inline-end: 8px !important;
-      transition: opacity .3s ease-in-out !important;
+      transition: opacity v.$anim !important;
       width: 16px !important;
 
       svg {
@@ -146,7 +146,7 @@
       height: 25px !important;
       margin-left: auto !important;
       padding: 0 !important;
-      transition: opacity .3s ease-in-out !important;
+      transition: opacity v.$anim !important;
       width: 25px !important;
 
       &.active {

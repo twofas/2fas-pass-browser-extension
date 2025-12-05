@@ -80,7 +80,7 @@ function SettingsSaveLoginExcludedDomains (props) {
 
   const handleDialogCancel = () => {
     setDialogOpen(false);
-    setTimeout(() => { setDomainToRemove(null); }, 301);
+    setTimeout(() => { setDomainToRemove(null); }, 201);
   };
 
   const handleDialogConfirm = async () => {
@@ -89,7 +89,7 @@ function SettingsSaveLoginExcludedDomains (props) {
     }
 
     setDialogOpen(false);
-    setTimeout(() => { setDomainToRemove(null); }, 301);
+    setTimeout(() => { setDomainToRemove(null); }, 201);
   };
 
   const validate = values => {

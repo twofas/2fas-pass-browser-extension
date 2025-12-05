@@ -80,7 +80,8 @@ function SecureNoteText (props) {
             textareaRef.current.style.overflowY = 'hidden';
 
             animate(TEXTAREA_LINE_HEIGHT, targetHeight, {
-              duration: .3,
+              duration: 0.2,
+              ease: 'easeOut',
               onUpdate: value => {
                 if (textareaRef.current) {
                   textareaRef.current.style.height = `${value}px`;
@@ -107,7 +108,8 @@ function SecureNoteText (props) {
         textareaRef.current.style.overflowY = 'hidden';
 
         await animate(currentHeight, TEXTAREA_LINE_HEIGHT, {
-          duration: .3,
+          duration: 0.2,
+          ease: 'easeOut',
           onUpdate: value => {
             if (textareaRef.current) {
               textareaRef.current.style.height = `${value}px`;

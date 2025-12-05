@@ -18,8 +18,8 @@ const updateBarVariants = {
     opacity: 1,
     padding: '8px',
     transition: { 
-      maxHeight: { duration: 0.3, ease: 'easeInOut' },
-      opacity: { duration: 0.2, delay: 0.1 }
+      maxHeight: { duration: 0.2, ease: 'easeOut' },
+      opacity: { duration: 0.1, delay: 0.1 }
     }
   },
   hidden: { 
@@ -27,8 +27,8 @@ const updateBarVariants = {
     opacity: 0,
     padding: '0',
     transition: { 
-      maxHeight: { duration: 0.3, ease: 'easeInOut', delay: 0.1 },
-      opacity: { duration: 0.2 }
+      maxHeight: { duration: 0.2, ease: 'easeOut', delay: 0.1 },
+      opacity: { duration: 0.1 }
     }
   }
 };

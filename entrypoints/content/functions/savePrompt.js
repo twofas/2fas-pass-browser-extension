@@ -39,7 +39,7 @@ const closeNotification = (n, timers) => {
 
       n = null;
       timers.cleanup = null;
-    }, 300);
+    }, 200);
   }
 };
 
@@ -220,7 +220,7 @@ const savePrompt = (request, sendResponse, container) => {
     }
 
     timers.visible = null;
-  }, 300);
+  }, 200);
 };
 
 export default savePrompt;

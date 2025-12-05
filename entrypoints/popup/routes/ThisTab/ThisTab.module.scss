@@ -23,7 +23,7 @@
     pointer-events: none;
     position: fixed;
     top: 0;
-    transition: opacity .3s ease-in-out;
+    transition: opacity v.$anim;
     width: 100%;
     z-index: 99999;
 
@@ -177,7 +177,7 @@
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
 
         @include m.darkMode {
           stroke: v.$object-dark;
@@ -194,7 +194,7 @@
 
       &.service-password {
         fill: v.$object-light;
-        transition: fill .3s ease-in-out;
+        transition: fill v.$anim;
 
         @include m.darkMode {
           fill: v.$object-dark;
@@ -441,7 +441,7 @@
       height: 38px;
       padding: 0 12px;
       position: relative;
-      transition: border .3s ease-in-out;
+      transition: border v.$anim;
       width: 100%;
 
       @include m.darkMode {
@@ -466,7 +466,7 @@
         right: 12px;
         top: 50%;
         transform: translateY(-50%);
-        transition: opacity .3s ease-in-out !important;
+        transition: opacity v.$anim !important;
 
         &.hidden {
           opacity: 0;
@@ -508,7 +508,7 @@
           -webkit-box-shadow: 0 0 0 0 transparent inset !important;
           -webkit-text-fill-color: v.$primary-text-light !important;
           box-shadow: inset 0 0 0 0 transparent;
-          transition: background-color 5000s ease-in-out 0s !important;
+          transition: background-color 5000s ease-out 0s !important;
 
           @include m.darkMode {
             -webkit-text-fill-color: v.$primary-text-dark !important;
@@ -619,7 +619,7 @@
             fill: v.$primary-color-light;
             stroke-linecap: round;
             stroke-linejoin: round;
-            transition: fill .3s ease-in-out;
+            transition: fill v.$anim;
             width: auto;
 
             @include m.darkMode {
@@ -792,7 +792,7 @@
       justify-content: flex-start;
       margin: 0;
       padding: 12px 12px;
-      transition: background-color .3s ease-in-out;
+      transition: background-color v.$anim;
       width: 100%;
 
       @include m.darkMode {
@@ -886,7 +886,7 @@
               opacity: 0;
               padding: 3px;
               position: relative;
-              transition: opacity .3s ease-in-out;
+              transition: opacity v.$anim;
               width: 26px;
               z-index: 2;
 
@@ -955,7 +955,7 @@
               opacity: 0;
               padding: 3px;
               position: relative;
-              transition: opacity .3s ease-in-out;
+              transition: opacity v.$anim;
               width: 26px;
               z-index: 2;
 
@@ -976,7 +976,7 @@
           gap: 3px 0;
           max-width: 255px;
           overflow: hidden;
-          transition: max-width .3s ease-in-out;
+          transition: max-width v.$anim;
 
           > span {
             line-height: 1.2;
@@ -1036,7 +1036,7 @@
         justify-content: center;
         opacity: 0;
         padding: 0;
-        transition: background-color .3s ease-in-out, opacity .3s ease-in-out;
+        transition: background-color v.$anim, opacity v.$anim;
         width: 32px;
 
         @include m.darkMode {
@@ -1059,7 +1059,7 @@
             &.service-copy-security-code,
             &.service-name {
               stroke: v.$primary-color-light;
-              transition: stroke .3s ease-in-out;
+              transition: stroke v.$anim;
 
               @include m.darkMode {
                 stroke: v.$primary-color-dark;
@@ -1068,7 +1068,7 @@
 
             &.service-password {
               fill: v.$primary-color-light;
-              transition: fill .3s ease-in-out;
+              transition: fill v.$anim;
 
               @include m.darkMode {
                 fill: v.$primary-color-dark;
@@ -1125,7 +1125,7 @@
             stroke-linejoin: miter;
             stroke-width: 3.5;
             transform: rotate(-90deg);
-            transition: stroke-dashoffset .3s ease-in-out;
+            transition: stroke-dashoffset v.$anim;
             vertical-align: top;
             width: 36px;
 
