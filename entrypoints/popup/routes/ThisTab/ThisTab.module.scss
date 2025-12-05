@@ -1199,15 +1199,7 @@
             }
           }
 
-          &.service-copy-2 {
-            stroke: v.$object-light;
-            width: 19px;
-
-            @include m.darkMode {
-              stroke: v.$object-dark;
-            }
-          }
-
+          &.service-copy-2,
           &.service-copy-security-code,
           &.service-copy-card-number {
             stroke: v.$object-light;
@@ -1216,6 +1208,10 @@
             @include m.darkMode {
               stroke: v.$object-dark;
             }
+          }
+
+          &.service-copy-security-code {
+            transform: translateY(-1px);
           }
         }
       }
