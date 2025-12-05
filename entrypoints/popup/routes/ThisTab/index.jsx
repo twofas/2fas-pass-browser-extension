@@ -39,8 +39,8 @@ import UpdateComponent from './components/UpdateComponent';
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const thisTabTopVariants = {
-  visible: { height: 'auto', transition: { duration: 0.3 } },
-  hidden: { height: '0', marginBottom: '-10px', borderWidth: '0', transition: { duration: 0 } }
+  visible: { height: 'auto', transition: { duration: 0.2, ease: 'easeOut' } },
+  hidden: { height: '0', marginBottom: '-10px', borderWidth: '0', transition: { duration: 0, ease: 'easeOut' } }
 };
 
 /** 
@@ -408,7 +408,7 @@ function ThisTab (props) {
             if (boxAnimationDarkRef?.current?.play) {
               boxAnimationDarkRef.current.play();
             }
-          }, 700);
+          }, 600);
         }
 
         return watchStorageVersion();

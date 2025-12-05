@@ -538,7 +538,7 @@ function Connect (props) {
             className={S.connect}
             variants={viewVariants}
             initial="hidden"
-            transition={{ duration: 0.3, type: 'tween' }}
+            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
             animate={connectView === CONNECT_VIEWS.QrView ? 'visible' : 'hidden'}
           >
             <div className={S.connectContainer}>
@@ -571,7 +571,7 @@ function Connect (props) {
             className={S.deviceSelect}
             variants={viewVariants}
             initial="hidden"
-            transition={{ duration: 0.3, type: 'tween' }}
+            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
             animate={connectView === CONNECT_VIEWS.DeviceSelect ? 'visible' : 'hidden'}
           >
             <div className={S.deviceSelectContainer}>
@@ -658,7 +658,7 @@ function Connect (props) {
             className={S.progress}
             variants={viewVariants}
             initial="hidden"
-            transition={{ duration: 0.3, type: 'tween' }}
+            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
             animate={connectView === CONNECT_VIEWS.Progress ? 'visible' : 'hidden'}
           >
             <div className={S.progressContainer}>
@@ -686,7 +686,7 @@ function Connect (props) {
             className={S.push}
             variants={viewVariants}
             initial="hidden"
-            transition={{ duration: 0.3, type: 'tween' }}
+            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
             animate={connectView === CONNECT_VIEWS.PushSent ? 'visible' : 'hidden'}
           >
             <div className={S.pushContainer}>

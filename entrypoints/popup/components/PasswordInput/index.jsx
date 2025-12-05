@@ -108,7 +108,6 @@ function PasswordInput(props) {
   const scrollLeftRef = useRef(0);
   const isCopyOperationRef = useRef(false);
 
-
   const handleChange = useCallback((e) => {
     // Don't process changes when disabled
     if (disabled) {

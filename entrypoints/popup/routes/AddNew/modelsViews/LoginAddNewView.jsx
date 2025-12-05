@@ -308,7 +308,7 @@ function LoginAddNewView() {
           className={`${S.addNewAdditional} ${data?.additionalOverflow ? S.overflowH : ''}`}
           variants={additionalVariants}
           initial={data?.onMobile ? 'hidden' : 'visible'}
-          transition={{ duration: 0.3, type: 'tween' }}
+          transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
           animate={data?.onMobile ? 'hidden' : 'visible'}
           onAnimationStart={() => { setData('additionalOverflow', true); }}
           onAnimationComplete={() => {

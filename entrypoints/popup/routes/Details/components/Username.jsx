@@ -141,7 +141,7 @@ function Username (props) {
             className={`${pI.passInputAdditional} ${data.usernameEditable ? '' : pI.removeMarginTop}`}
             variants={usernameMobileVariants}
             initial="hidden"
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
             animate={data.usernameEditable ? 'visible' : 'hidden'}
           >
             <div className={`${bS.passToggle} ${bS.loaded}`}>

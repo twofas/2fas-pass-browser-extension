@@ -84,7 +84,7 @@ function Notes () {
                 className={`${pI.passInputBottom} ${pI.note} ${data.notesEditable ? pI.noteEditable : ''}`}
                 variants={notesVariants}
                 initial="hidden"
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
                 animate={input.value.length > 0 || data.notesEditable ? 'visible' : 'hidden'}
               >
                 <textarea

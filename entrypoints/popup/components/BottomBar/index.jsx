@@ -54,10 +54,7 @@ function BottomBar () {
 
   const setSecIcon = useCallback(async () => {
     const svgContent = await getSecIcon();
-
-    setTimeout(() => {
-      setSecurityIcon(svgContent);
-    }, 310);
+    setSecurityIcon(svgContent);
   }, []);
 
   const popupCheck = useCallback(async () => {

@@ -28,8 +28,8 @@ const urlVariants = {
     marginBottom: 0,
     overflow: 'hidden',
     transition: {
-      duration: 0.3,
-      ease: 'easeInOut'
+      duration: 0.2,
+      ease: 'easeOut'
     }
   },
   visible: {
@@ -38,8 +38,8 @@ const urlVariants = {
     marginBottom: 24,
     overflow: 'visible',
     transition: {
-      duration: 0.3,
-      ease: 'easeInOut'
+      duration: 0.2,
+      ease: 'easeOut'
     }
   }
 };

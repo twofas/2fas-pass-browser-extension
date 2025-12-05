@@ -16,7 +16,7 @@ import getElementInitialScale from './getElementInitialScale';
 const inputSetValue = (el, value) => {
   const AUTOFILL_CLASS_DELAY = 10;
   const AUTOFILL_VALUE_DELAY = 20;
-  const AUTOFILL_RESET_DELAY = 300;
+  const AUTOFILL_RESET_DELAY = 200;
   const usernameSkipAttribute = el.getAttribute('twofas-pass-skip');
 
   if (!isVisible(el) || usernameSkipAttribute === 'true') {

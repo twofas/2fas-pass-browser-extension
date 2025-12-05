@@ -221,7 +221,7 @@
       line-height: 1;
       padding: 0 9px 0 12px;
       pointer-events: none;
-      transition: border-color .3s ease-in-out, color .3s ease-in-out, background-color .3s ease-in-out;
+      transition: border-color v.$anim, color v.$anim, background-color v.$anim;
       width: 100%;
 
       &.disabled {
@@ -249,7 +249,7 @@
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
       }
     }
   }

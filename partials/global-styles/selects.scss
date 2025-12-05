@@ -60,7 +60,7 @@
     cursor: pointer;
     height: 38px;
     min-height: 0;
-    transition: background-color .3s ease-in-out, border-color .3s ease-in-out;
+    transition: background-color v.$anim, border-color v.$anim;
 
     body.theme-light & {
       background-color: v.$primary-box-bg-light;
@@ -146,7 +146,7 @@
         line-height: 1;
         padding-bottom: 3px;
         transform: translateY(1px);
-        transition: color .3s ease-in-out;
+        transition: color v.$anim;
 
         body.theme-light & {
           color: v.$primary-text-light;
@@ -481,7 +481,7 @@
       flex-direction: row;
       gap: 0 8px;
       padding: 10px 12px;
-      transition: background-color .3s ease-in-out;
+      transition: background-color v.$anim;
       width: 100%;
 
       body.theme-light & {
@@ -689,7 +689,7 @@
     right: auto;
     top: 8px;
     transform: translateX(-50%);
-    transition: opacity .3s ease-in-out;
+    transition: opacity v.$anim;
     width: auto;
     z-index: 9999;
 
@@ -732,7 +732,7 @@
     overflow: hidden;
     padding: 10px 12px;
     position: relative;
-    transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    transition: background-color v.$anim, color v.$anim;
     width: 198px;
 
     body.theme-light & {
@@ -995,7 +995,7 @@
     overflow: hidden;
     right: 0;
     top: 8px;
-    transition: opacity .3s ease-in-out;
+    transition: opacity v.$anim;
     width: auto;
     z-index: 9999;
 
@@ -1038,7 +1038,7 @@
     overflow: hidden;
     padding: 9px 12px;
     position: relative;
-    transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    transition: background-color v.$anim, color v.$anim;
     width: 198px;
 
     body.theme-light & {
@@ -1127,7 +1127,7 @@
       flex: 0 0 16px;
       height: 16px;
       justify-content: center;
-      transition: border-color .3s ease-in-out;
+      transition: border-color v.$anim;
       width: 16px;
 
       body.theme-light & {
@@ -1177,7 +1177,7 @@
         display: block;
         height: 6px;
         opacity: 0;
-        transition: opacity .3s ease-in-out;
+        transition: opacity v.$anim;
         width: 6px;
 
         body.theme-light & {
@@ -1246,7 +1246,7 @@
     max-height: 200px;
     overflow: hidden;
     position: relative;
-    transition: opacity .3s ease-in-out;
+    transition: opacity v.$anim;
     width: 150px;
     z-index: 9999;
 
@@ -1292,7 +1292,7 @@
     margin-bottom: 2px;
     overflow: hidden;
     padding: 8px 12px;
-    transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    transition: background-color v.$anim, color v.$anim;
     
     span {
       overflow: hidden;
@@ -1475,7 +1475,7 @@
     min-width: 200px;
     right: 0;
     top: 8px;
-    transition: opacity .3s ease-in-out;
+    transition: opacity v.$anim;
     z-index: 9999;
 
     body.theme-light & {
@@ -1608,7 +1608,7 @@
       max-width: 100%;
       padding: 12px 30px 9px 8px;
       text-align: left;
-      transition: color .3s ease-in-out;
+      transition: color v.$anim;
       width: 100%;
 
       &.uris {
@@ -1683,7 +1683,7 @@
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 1.5;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
         width: 14px;
 
         body.theme-light & {
@@ -1722,7 +1722,7 @@
       right: 8px;
       top: 50%;
       transform: translateY(-50%);
-      transition: background-color .3s ease-in-out;
+      transition: background-color v.$anim;
       z-index: 2;
 
       body.theme-light & {
@@ -1792,7 +1792,7 @@
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
         width: 16px;
 
         body.theme-light & {
@@ -1817,7 +1817,7 @@
 
     a {
       border-radius: 6px;
-      transition: background-color .3s ease-in-out, color .3s ease-in-out;
+      transition: background-color v.$anim, color v.$anim;
     }
   }
 }

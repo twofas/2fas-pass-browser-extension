@@ -279,7 +279,7 @@ function Password (props) {
               className={`${pI.passInputAdditional} ${data?.passwordEditable ? '' : pI.removeMarginTop}`}
               variants={passwordMobileVariants}
               initial="hidden"
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
               animate={data?.passwordEditable ? 'visible' : 'hidden'}
             >
               <div className={`${bS.passToggle} ${bS.loaded}`}>
@@ -300,7 +300,7 @@ function Password (props) {
                 className={pI.passInputLink}
                 variants={changePasswordVariants}
                 initial="hidden"
-                transition={{ duration: .3 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
                 animate={changePasswordUrl ? 'visible' : 'hidden'}
               >
                 <button

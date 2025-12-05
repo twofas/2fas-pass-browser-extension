@@ -46,7 +46,7 @@ function DangerZone (props) {
         className={S.detailsDangerZoneBody}
         variants={dangerZoneVariants}
         initial='hidden'
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
         animate={data.dangerZoneOpened ? 'visible' : 'hidden'}
       >
         <p>{browser.i18n.getMessage('details_delete_header')}</p>

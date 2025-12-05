@@ -40,8 +40,8 @@ const PlayIcon = lazy(() => import('@/assets/install-page/play.svg?react'));
 const DownloadMobileApp  = lazy(() => import('./components/DownloadMobileApp'));
 
 const stepVariants = {
-  hidden: { opacity: 0, display: 'none', transition: { duration: 0.3, ease: 'easeInOut' } },
-  visible: { opacity: 1, display: 'block', transition: { duration: 0.3, ease: 'easeInOut' } }
+  hidden: { opacity: 0, display: 'none', transition: { duration: 0.2, ease: 'easeOut' } },
+  visible: { opacity: 1, display: 'block', transition: { duration: 0.2, ease: 'easeOut' } }
 };
 
 /** 
@@ -82,7 +82,7 @@ function Install () {
       return false;
     }
 
-    const timeout = stepVisibleRef.current === 0 ? 0 : 301;
+    const timeout = stepVisibleRef.current === 0 ? 0 : 201;
 
     setStepVisible(0);
 
