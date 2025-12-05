@@ -14,6 +14,8 @@ import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
 
+const selectComponents = { Option: CustomTierOption };
+
 const securityTiersOptions = [
   { value: SECURITY_TIER.SECRET, label: browser.i18n.getMessage('tier_2_name'), description: browser.i18n.getMessage('tier_2_description') },
   { value: SECURITY_TIER.HIGHLY_SECRET, label: browser.i18n.getMessage('tier_1_name'), description: browser.i18n.getMessage('tier_1_description') },
@@ -27,6 +29,7 @@ const securityTiersOptions = [
 function SecurityType () {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const handleTierEditable = async () => {
     if (data.tierEditable) {
@@ -39,8 +42,10 @@ function SecurityType () {
 
       item = null;
 
-      setData('tierEditable', false);
-      setData('item', updatedItem);
+      setBatchData({
+        tierEditable: false,
+        item: updatedItem
+      });
     } else {
       setData('tierEditable', true);
     }
@@ -80,14 +85,12 @@ function SecurityType () {
               isSearchable={false}
               options={securityTiersOptions}
               value={securityTiersOptions.find(option => option.value === input.value)}
-              onChange={selectedOption => handleSelectChange(selectedOption)}
+              onChange={handleSelectChange}
               onBlur={input.onBlur}
               menuPlacement='top'
               menuPosition='fixed'
               isDisabled={!data.tierEditable}
-              components={{
-                Option: CustomTierOption
-              }}
+              components={selectComponents}
             />
           </div>
         </div>

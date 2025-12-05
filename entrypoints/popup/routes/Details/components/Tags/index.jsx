@@ -10,7 +10,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import { Field } from 'react-final-form';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import { useState, useEffect, useRef, useCallback, useMemo, lazy } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo, lazy, memo } from 'react';
 import getTags from '@/partials/sessionStorage/getTags';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import usePopupStateStore from '../../../../store/popupState';
@@ -27,12 +27,12 @@ const animationVariants = {
   exit: { opacity: 0, scale: 0.8 }
 };
 
-const CustomOption = option => {
-  const handleClick = e => {
+const CustomOption = memo(function CustomOption (option) {
+  const handleClick = useCallback(e => {
     e.preventDefault();
     e.stopPropagation();
     option.selectOption(option.data);
-  };
+  }, [option.selectOption, option.data]);
 
   return (
     <div className='react-select-tags-details__option' onClick={handleClick}>
@@ -41,7 +41,10 @@ const CustomOption = option => {
       </span>
     </div>
   );
-};
+});
+
+const selectComponents = { Option: CustomOption };
+const noOptionsMessage = () => null;
 
 const getTagName = (tagID, availableTags) => {
   const tag = availableTags.find(t => t.id === tagID);
@@ -55,6 +58,7 @@ const getTagName = (tagID, availableTags) => {
 function Tags () {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const [availableTags, setAvailableTags] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -97,8 +101,10 @@ function Tags () {
 
       item = null;
 
-      setData('tagsEditable', false);
-      setData('item', updatedItem);
+      setBatchData({
+        tagsEditable: false,
+        item: updatedItem
+      });
       setIsMenuOpen(false);
     } else {
       if (availableTags.length === 0) {
@@ -121,7 +127,7 @@ function Tags () {
     setData('item', updatedItem);
   };
 
-  const handleSelectChange = option => {
+  const handleSelectChange = useCallback(option => {
     if (option && option.tag) {
       const newTagIds = [...data.item.tags, option.tag.id];
 
@@ -134,7 +140,10 @@ function Tags () {
     }
 
     setIsMenuOpen(false);
-  };
+  }, [data.item, setData]);
+
+  const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
+  const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
 
   const handleAddButtonClick = useCallback(() => {
     if (data.tagsEditable) {
@@ -220,18 +229,16 @@ function Tags () {
                       value={null}
                       onChange={handleSelectChange}
                       menuIsOpen={isMenuOpen}
-                      onMenuClose={() => setIsMenuOpen(false)}
-                      onMenuOpen={() => setIsMenuOpen(true)}
+                      onMenuClose={handleMenuClose}
+                      onMenuOpen={handleMenuOpen}
                       className='react-select-pass-dropdown'
                       classNamePrefix='react-select-tags-details'
                       isClearable={false}
                       isSearchable={false}
                       placeholder={browser.i18n.getMessage('details_tags_select_tag')}
-                      noOptionsMessage={() => null}
+                      noOptionsMessage={noOptionsMessage}
                       triggerRef={addButtonRef}
-                      components={{
-                        Option: CustomOption
-                      }}
+                      components={selectComponents}
                     />
                   </div>
                 )}

@@ -7,13 +7,12 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { lazy, useCallback } from 'react';
+import { useCallback } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
-
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 
 /** 
 * Function to render the name input field.
@@ -23,6 +22,7 @@ const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?
 function Name (props) {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const { formData } = props;
   const { inputError } = formData;
@@ -47,8 +47,10 @@ function Name (props) {
 
       item = null;
 
-      setData('nameEditable', false);
-      setData('item', updatedItem);
+      setBatchData({
+        nameEditable: false,
+        item: updatedItem
+      });
     } else {
       setData('nameEditable', true);
     }

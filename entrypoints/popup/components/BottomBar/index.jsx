@@ -5,17 +5,16 @@
 // See LICENSE file for full terms
 
 import S from './BottomBar.module.scss';
-import { useState, useEffect, lazy, useCallback, useMemo, memo } from 'react';
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import { PULL_REQUEST_TYPES, CONNECT_VIEWS } from '@/constants';
 import { useAuthState } from '@/hooks/useAuth';
 import useConnectView from '../../hooks/useConnectView';
 import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
-
-const NewWindowIcon = lazy(() => import('@/assets/popup-window/new-window.svg?react'));
-const SettingsIcon = lazy(() => import('@/assets/popup-window/settings.svg?react'));
-const FullSyncIcon = lazy(() => import('@/assets/popup-window/full-sync.svg?react'));
+import NewWindowIcon from '@/assets/popup-window/new-window.svg?react';
+import SettingsIcon from '@/assets/popup-window/settings.svg?react';
+import FullSyncIcon from '@/assets/popup-window/full-sync.svg?react';
 
 /** 
 * Function to get the security icon.

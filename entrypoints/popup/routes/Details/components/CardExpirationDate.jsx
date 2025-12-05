@@ -7,13 +7,12 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { lazy, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { copyValue, isText, paymentCardExpirationDateValidation } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
 import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
-
-const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+import InfoIcon from '@/assets/popup-window/info.svg?react';
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 
 /**
 * Renders the expiration date input field for PaymentCard details view.
@@ -28,6 +27,7 @@ function CardExpirationDate (props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const previousExpirationDateRef = useRef(null);
 
@@ -93,9 +93,11 @@ function CardExpirationDate (props) {
 
       updatedItem.internalData.editedExpirationDate = null;
 
-      setData('item', updatedItem);
-      setData('expirationDateEdited', false);
-      setData('expirationDateEditable', false);
+      setBatchData({
+        item: updatedItem,
+        expirationDateEdited: false,
+        expirationDateEditable: false
+      });
       form.change('editedExpirationDate', data.item.isSifDecrypted ? data.item.sifDecrypted?.expirationDate : '');
     } else {
       setData('expirationDateEditable', true);

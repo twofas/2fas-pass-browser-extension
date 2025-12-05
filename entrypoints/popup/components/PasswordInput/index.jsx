@@ -4,8 +4,76 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useReducer, memo, useMemo } from 'react';
 import S from './PasswordInput.module.scss';
+
+const ACTION_TYPES = {
+  SET_FOCUSED: 'SET_FOCUSED',
+  SET_SELECTION: 'SET_SELECTION',
+  SET_SCROLL_LEFT: 'SET_SCROLL_LEFT',
+  SET_SELECTING: 'SET_SELECTING',
+  SET_SELECTION_START_INDEX: 'SET_SELECTION_START_INDEX',
+  SET_SELECTION_ANCHOR: 'SET_SELECTION_ANCHOR',
+  INCREMENT_FORCE_RENDER_KEY: 'INCREMENT_FORCE_RENDER_KEY',
+  BATCH_UPDATE: 'BATCH_UPDATE'
+};
+
+const initialState = {
+  isFocused: false,
+  selection: { start: 0, end: 0 },
+  scrollLeft: 0,
+  isSelecting: false,
+  selectionStartIndex: null,
+  selectionAnchor: null,
+  forceRenderKey: 0
+};
+
+const passwordInputReducer = (state, action) => {
+  switch (action.type) {
+    case ACTION_TYPES.SET_FOCUSED:
+      return { ...state, isFocused: action.payload };
+    case ACTION_TYPES.SET_SELECTION:
+      return { ...state, selection: action.payload };
+    case ACTION_TYPES.SET_SCROLL_LEFT:
+      return { ...state, scrollLeft: action.payload };
+    case ACTION_TYPES.SET_SELECTING:
+      return { ...state, isSelecting: action.payload };
+    case ACTION_TYPES.SET_SELECTION_START_INDEX:
+      return { ...state, selectionStartIndex: action.payload };
+    case ACTION_TYPES.SET_SELECTION_ANCHOR:
+      return { ...state, selectionAnchor: action.payload };
+    case ACTION_TYPES.INCREMENT_FORCE_RENDER_KEY:
+      return { ...state, forceRenderKey: state.forceRenderKey + 1 };
+    case ACTION_TYPES.BATCH_UPDATE:
+      return { ...state, ...action.payload };
+    default:
+      return state;
+  }
+};
+
+const getCharacterType = char => {
+  if (/[0-9]/.test(char)) {
+    return 'number';
+  } else if (/[^a-zA-Z0-9]/.test(char)) {
+    return 'special';
+  } else {
+    return 'letter';
+  }
+};
+
+const Character = memo(function Character ({ char, index, charType, isPassword, isSelected, forceRenderKey }) {
+  const finalClassName = `${S.passwordInputCharacter} ${charType !== 'default' ? S[`passwordInputCharacter${charType.charAt(0).toUpperCase() + charType.slice(1)}`] : ''} ${isSelected ? S.passwordInputCharacterSelected : ''}`;
+
+  return (
+    <span
+      key={`${index}-${forceRenderKey}-${isSelected}`}
+      className={finalClassName}
+      data-index={index}
+    >
+      {isPassword ? '•' : char}
+    </span>
+  );
+});
 
 /**
  * PasswordInput component that displays each character with different colors
@@ -28,31 +96,18 @@ function PasswordInput(props) {
     ...inputProps
   } = props;
 
-  const [isFocused, setIsFocused] = useState(false);
-  const [selection, setSelection] = useState({ start: 0, end: 0 });
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const [isSelecting, setIsSelecting] = useState(false);
-  const [selectionStartIndex, setSelectionStartIndex] = useState(null);
-  const [selectionAnchor, setSelectionAnchor] = useState(null); // For Shift+Arrow selection
-  const [forceRenderKey, setForceRenderKey] = useState(0); // Force re-render when selection clears
+  const [inputState, dispatch] = useReducer(passwordInputReducer, initialState);
+  const { isFocused, selection, scrollLeft, isSelecting, selectionStartIndex, selectionAnchor, forceRenderKey } = inputState;
+
   const inputRef = useRef(null);
   const displayRef = useRef(null);
   const textWrapperRef = useRef(null);
   const previousValueRef = useRef(value);
   const isTypingRef = useRef(false);
   const lastInteractionRef = useRef(null);
-  const scrollLeftRef = useRef(0); // Keep real-time scroll value in ref
-  const isCopyOperationRef = useRef(false); // Track if copy/cut just happened
+  const scrollLeftRef = useRef(0);
+  const isCopyOperationRef = useRef(false);
 
-  const getCharacterType = useCallback((char) => {
-    if (/[0-9]/.test(char)) {
-      return 'number';
-    } else if (/[^a-zA-Z0-9]/.test(char)) {
-      return 'special';
-    } else {
-      return 'letter';
-    }
-  }, []);
 
   const handleChange = useCallback((e) => {
     // Don't process changes when disabled
@@ -123,11 +178,7 @@ function PasswordInput(props) {
       e.preventDefault();
 
       // Stop any ongoing mouse selection when typing
-      setIsSelecting(false);
-      setSelectionStartIndex(null);
-
-      // Clear selection anchor when typing
-      setSelectionAnchor(null);
+      dispatch({ type: ACTION_TYPES.BATCH_UPDATE, payload: { isSelecting: false, selectionStartIndex: null, selectionAnchor: null } });
 
       // Use the selection from React state since that's what's being displayed
       const start = selection.start;
@@ -142,8 +193,8 @@ function PasswordInput(props) {
       inputRef.current.setSelectionRange(newCursorPos, newCursorPos);
 
       // Force a complete re-render by updating selection and incrementing the key
-      setSelection({ start: newCursorPos, end: newCursorPos });
-      setForceRenderKey(prev => prev + 1);
+      dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: newCursorPos, end: newCursorPos } });
+      dispatch({ type: ACTION_TYPES.INCREMENT_FORCE_RENDER_KEY });
 
       // Create a synthetic event for onChange
       const syntheticEvent = {
@@ -169,14 +220,13 @@ function PasswordInput(props) {
       // For any key not explicitly handled, just clear the selection
       if (!handledKeys.includes(e.key)) {
         // Stop any ongoing mouse selection
-        setIsSelecting(false);
-        setSelectionStartIndex(null);
-        setSelectionAnchor(null);
+        dispatch({ type: ACTION_TYPES.BATCH_UPDATE, payload: { isSelecting: false, selectionStartIndex: null, selectionAnchor: null } });
 
         const pos = selection.end;
+
         if (inputRef.current) {
           inputRef.current.setSelectionRange(pos, pos);
-          setSelection({ start: pos, end: pos });
+          dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: pos, end: pos } });
         }
       }
     }
@@ -185,12 +235,8 @@ function PasswordInput(props) {
     if (e.key === 'Backspace' && inputRef.current) {
       e.preventDefault();
 
-      // Stop any ongoing mouse selection
-      setIsSelecting(false);
-      setSelectionStartIndex(null);
-
-      // Clear selection anchor when deleting
-      setSelectionAnchor(null);
+      // Stop any ongoing mouse selection and clear selection anchor
+      dispatch({ type: ACTION_TYPES.BATCH_UPDATE, payload: { isSelecting: false, selectionStartIndex: null, selectionAnchor: null } });
 
       // Use the selection from React state since that's what's being displayed
       const start = selection.start;
@@ -212,8 +258,8 @@ function PasswordInput(props) {
       // Update input and selection BEFORE calling onChange
       inputRef.current.value = newValue;
       inputRef.current.setSelectionRange(newPos, newPos);
-      setSelection({ start: newPos, end: newPos });
-      setForceRenderKey(prev => prev + 1); // Force re-render when selection clears
+      dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: newPos, end: newPos } });
+      dispatch({ type: ACTION_TYPES.INCREMENT_FORCE_RENDER_KEY });
 
       const syntheticEvent = {
         target: {
@@ -232,12 +278,8 @@ function PasswordInput(props) {
     if (e.key === 'Delete' && inputRef.current) {
       e.preventDefault();
 
-      // Stop any ongoing mouse selection
-      setIsSelecting(false);
-      setSelectionStartIndex(null);
-
-      // Clear selection anchor when deleting
-      setSelectionAnchor(null);
+      // Stop any ongoing mouse selection and clear selection anchor
+      dispatch({ type: ACTION_TYPES.BATCH_UPDATE, payload: { isSelecting: false, selectionStartIndex: null, selectionAnchor: null } });
 
       // Use the selection from React state since that's what's being displayed
       const start = selection.start;
@@ -257,8 +299,8 @@ function PasswordInput(props) {
       // Update input and selection BEFORE calling onChange
       inputRef.current.value = newValue;
       inputRef.current.setSelectionRange(start, start);
-      setSelection({ start: start, end: start });
-      setForceRenderKey(prev => prev + 1); // Force re-render when selection clears
+      dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: start, end: start } });
+      dispatch({ type: ACTION_TYPES.INCREMENT_FORCE_RENDER_KEY });
 
       const syntheticEvent = {
         target: {
@@ -278,7 +320,7 @@ function PasswordInput(props) {
 
       if (inputRef.current && value) {
         inputRef.current.setSelectionRange(0, value.length);
-        setSelection({ start: 0, end: value.length });
+        dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: 0, end: value.length } });
       }
     }
 
@@ -292,7 +334,7 @@ function PasswordInput(props) {
         isCopyOperationRef.current = true;
 
         // Force re-render immediately to show selection highlight
-        setForceRenderKey(prev => prev + 1);
+        dispatch({ type: ACTION_TYPES.INCREMENT_FORCE_RENDER_KEY });
 
         navigator.clipboard.writeText(selectedText).finally(() => {
           // Reset copy flag after clipboard operation completes
@@ -317,12 +359,11 @@ function PasswordInput(props) {
         isCopyOperationRef.current = true;
 
         navigator.clipboard.writeText(selectedText).then(() => {
-
           const newValue = value.substring(0, start) + value.substring(end);
           inputRef.current.value = newValue;
           inputRef.current.setSelectionRange(start, start);
-          setSelection({ start: start, end: start });
-          setForceRenderKey(prev => prev + 1);
+          dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: start, end: start } });
+          dispatch({ type: ACTION_TYPES.INCREMENT_FORCE_RENDER_KEY });
 
           const syntheticEvent = {
             target: {
@@ -354,26 +395,29 @@ function PasswordInput(props) {
         if (e.shiftKey) {
           // Select from current position to end
           const anchor = selectionAnchor !== null ? selectionAnchor : selection.start;
+
           if (selectionAnchor === null) {
-            setSelectionAnchor(selection.start);
+            dispatch({ type: ACTION_TYPES.SET_SELECTION_ANCHOR, payload: selection.start });
           }
+
           inputRef.current.setSelectionRange(anchor, value.length);
-          setSelection({ start: anchor, end: value.length });
+          dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: anchor, end: value.length } });
         } else {
           // Just move cursor to end
-          setSelectionAnchor(null);
+          dispatch({ type: ACTION_TYPES.SET_SELECTION_ANCHOR, payload: null });
           const endPos = value.length;
           inputRef.current.setSelectionRange(endPos, endPos);
-          setSelection({ start: endPos, end: endPos });
+          dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: endPos, end: endPos } });
         }
 
         // Scroll to show the end
         const displayWidth = displayRef.current.clientWidth;
         const maxScroll = textWrapperRef.current.scrollWidth - displayWidth;
+
         if (maxScroll > 0) {
           displayRef.current.scrollLeft = maxScroll;
           scrollLeftRef.current = maxScroll;
-          setScrollLeft(maxScroll);
+          dispatch({ type: ACTION_TYPES.SET_SCROLL_LEFT, payload: maxScroll });
         }
       }
       lastInteractionRef.current = 'keyboard';
@@ -383,27 +427,31 @@ function PasswordInput(props) {
     // Handle Home key or Ctrl/Cmd+Left to jump to beginning
     if (e.key === 'Home' || ((e.ctrlKey || e.metaKey) && e.key === 'ArrowLeft')) {
       e.preventDefault();
+
       if (inputRef.current && displayRef.current) {
         if (e.shiftKey) {
           // Select from current position to beginning
           const anchor = selectionAnchor !== null ? selectionAnchor : selection.end;
+
           if (selectionAnchor === null) {
-            setSelectionAnchor(selection.end);
+            dispatch({ type: ACTION_TYPES.SET_SELECTION_ANCHOR, payload: selection.end });
           }
+
           inputRef.current.setSelectionRange(0, anchor);
-          setSelection({ start: 0, end: anchor });
+          dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: 0, end: anchor } });
         } else {
           // Just move cursor to beginning
-          setSelectionAnchor(null);
+          dispatch({ type: ACTION_TYPES.SET_SELECTION_ANCHOR, payload: null });
           inputRef.current.setSelectionRange(0, 0);
-          setSelection({ start: 0, end: 0 });
+          dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: 0, end: 0 } });
         }
 
         // Scroll to beginning
         displayRef.current.scrollLeft = 0;
         scrollLeftRef.current = 0;
-        setScrollLeft(0);
+        dispatch({ type: ACTION_TYPES.SET_SCROLL_LEFT, payload: 0 });
       }
+
       lastInteractionRef.current = 'keyboard';
       return;
     }
@@ -419,12 +467,14 @@ function PasswordInput(props) {
       if (e.shiftKey) {
         // Set anchor if not already set
         const anchor = selectionAnchor !== null ? selectionAnchor : selection.start;
+
         if (selectionAnchor === null) {
-          setSelectionAnchor(selection.start);
+          dispatch({ type: ACTION_TYPES.SET_SELECTION_ANCHOR, payload: selection.start });
         }
 
         // Move the focus point left
         let newFocus;
+
         if (selection.start === anchor) {
           // Moving left from the anchor
           newFocus = Math.max(0, selection.end - 1);
@@ -437,18 +487,18 @@ function PasswordInput(props) {
         const newEnd = Math.max(anchor, newFocus);
 
         inputRef.current.setSelectionRange(newStart, newEnd);
-        setSelection({ start: newStart, end: newEnd });
+        dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: newStart, end: newEnd } });
       } else {
         // Clear anchor when not using Shift
-        setSelectionAnchor(null);
+        dispatch({ type: ACTION_TYPES.SET_SELECTION_ANCHOR, payload: null });
         // If there's a selection, collapse it to the start
         const hasSelection = selection.start !== selection.end;
         const newPos = hasSelection ? selection.start : Math.max(0, selection.start - 1);
         inputRef.current.setSelectionRange(newPos, newPos);
-        setSelection({ start: newPos, end: newPos });
+        dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: newPos, end: newPos } });
       }
-      lastInteractionRef.current = 'keyboard';
 
+      lastInteractionRef.current = 'keyboard';
       return;
     }
 
@@ -458,12 +508,14 @@ function PasswordInput(props) {
       if (e.shiftKey) {
         // Set anchor if not already set
         const anchor = selectionAnchor !== null ? selectionAnchor : selection.end;
+
         if (selectionAnchor === null) {
-          setSelectionAnchor(selection.end);
+          dispatch({ type: ACTION_TYPES.SET_SELECTION_ANCHOR, payload: selection.end });
         }
 
         // Move the focus point right
         let newFocus;
+
         if (selection.end === anchor) {
           // Moving right from the anchor
           newFocus = Math.min(value.length, selection.start + 1);
@@ -476,18 +528,18 @@ function PasswordInput(props) {
         const newEnd = Math.max(anchor, newFocus);
 
         inputRef.current.setSelectionRange(newStart, newEnd);
-        setSelection({ start: newStart, end: newEnd });
+        dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: newStart, end: newEnd } });
       } else {
         // Clear anchor when not using Shift
-        setSelectionAnchor(null);
+        dispatch({ type: ACTION_TYPES.SET_SELECTION_ANCHOR, payload: null });
         // If there's a selection, collapse it to the end
         const hasSelection = selection.start !== selection.end;
         const newPos = hasSelection ? selection.end : Math.min(value.length, selection.end + 1);
         inputRef.current.setSelectionRange(newPos, newPos);
-        setSelection({ start: newPos, end: newPos });
+        dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: newPos, end: newPos } });
       }
-      lastInteractionRef.current = 'keyboard';
 
+      lastInteractionRef.current = 'keyboard';
       return;
     }
   }, [value, selection, selectionAnchor, handleChange, disabled]);
@@ -516,9 +568,7 @@ function PasswordInput(props) {
     }
 
     // Stop any ongoing mouse selection when pasting
-    setIsSelecting(false);
-    setSelectionStartIndex(null);
-    setSelectionAnchor(null);
+    dispatch({ type: ACTION_TYPES.BATCH_UPDATE, payload: { isSelecting: false, selectionStartIndex: null, selectionAnchor: null } });
 
     // If input is not focused, paste at the end of the value
     // If input is focused, paste at cursor position from React state
@@ -545,12 +595,12 @@ function PasswordInput(props) {
     inputRef.current.setSelectionRange(newCursorPos, newCursorPos);
 
     // Force a complete re-render
-    setSelection({ start: newCursorPos, end: newCursorPos });
-    setForceRenderKey(prev => prev + 1);
+    dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: newCursorPos, end: newCursorPos } });
+    dispatch({ type: ACTION_TYPES.INCREMENT_FORCE_RENDER_KEY });
 
     // Focus the input after pasting if it wasn't focused
     if (!isFocused) {
-      setIsFocused(true);
+      dispatch({ type: ACTION_TYPES.SET_FOCUSED, payload: true });
       inputRef.current.focus();
     }
 
@@ -582,7 +632,7 @@ function PasswordInput(props) {
       const actualScroll = displayRef.current.scrollLeft;
 
       scrollLeftRef.current = actualScroll;
-      setScrollLeft(actualScroll);
+      dispatch({ type: ACTION_TYPES.SET_SCROLL_LEFT, payload: actualScroll });
       lastInteractionRef.current = 'wheel';
     }
   }, [disabled]);
@@ -595,7 +645,7 @@ function PasswordInput(props) {
 
     const newScrollLeft = displayRef.current.scrollLeft;
     scrollLeftRef.current = newScrollLeft;
-    setScrollLeft(newScrollLeft);
+    dispatch({ type: ACTION_TYPES.SET_SCROLL_LEFT, payload: newScrollLeft });
     lastInteractionRef.current = 'scroll';
   }, [disabled]);
 
@@ -651,26 +701,25 @@ function PasswordInput(props) {
     lastInteractionRef.current = 'mouse';
 
     // Clear selection anchor when starting new selection with mouse
-    setSelectionAnchor(null);
+    dispatch({ type: ACTION_TYPES.SET_SELECTION_ANCHOR, payload: null });
 
     const clickedIndex = getCharacterIndexFromMousePosition(e);
 
     if (clickedIndex !== null && inputRef.current) {
       // Start selection
-      setIsSelecting(true);
-      setSelectionStartIndex(clickedIndex);
+      dispatch({ type: ACTION_TYPES.BATCH_UPDATE, payload: { isSelecting: true, selectionStartIndex: clickedIndex } });
 
       // Set initial cursor position
       inputRef.current.setSelectionRange(clickedIndex, clickedIndex);
-      setSelection({ start: clickedIndex, end: clickedIndex });
+      dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: clickedIndex, end: clickedIndex } });
 
       if (displayRef.current) {
         const currentScroll = displayRef.current.scrollLeft;
         scrollLeftRef.current = currentScroll;
-        setScrollLeft(currentScroll);
+        dispatch({ type: ACTION_TYPES.SET_SCROLL_LEFT, payload: currentScroll });
       }
     }
-  }, [getCharacterIndexFromMousePosition, disabled, selection]);
+  }, [getCharacterIndexFromMousePosition, disabled]);
 
   const handleMouseMove = useCallback((e) => {
     // Don't allow mouse interactions when disabled
@@ -686,12 +735,12 @@ function PasswordInput(props) {
       const end = Math.max(selectionStartIndex, currentIndex);
 
       inputRef.current.setSelectionRange(start, end);
-      setSelection({ start, end });
+      dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start, end } });
     }
   }, [isSelecting, selectionStartIndex, getCharacterIndexFromMousePosition, disabled]);
 
   const handleMouseUp = useCallback(() => {
-    setIsSelecting(false);
+    dispatch({ type: ACTION_TYPES.SET_SELECTING, payload: false });
   }, []);
   useEffect(() => {
     const display = displayRef.current;
@@ -772,7 +821,7 @@ function PasswordInput(props) {
       setTimeout(() => {
         if (inputRef.current && isFocused) {
           inputRef.current.setSelectionRange(newLength, newLength);
-          setSelection({ start: newLength, end: newLength });
+          dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: newLength, end: newLength } });
         }
       }, 0);
     }
@@ -880,8 +929,8 @@ function PasswordInput(props) {
 
     if (newScroll !== currentScroll && displayRef.current) {
       displayRef.current.scrollLeft = newScroll;
-      scrollLeftRef.current = newScroll; // Update ref
-      setScrollLeft(newScroll);
+      scrollLeftRef.current = newScroll;
+      dispatch({ type: ACTION_TYPES.SET_SCROLL_LEFT, payload: newScroll });
     }
 
     // Reset interaction type after auto-scrolling (but not for typing)
@@ -890,7 +939,7 @@ function PasswordInput(props) {
     }
   }, [selection, isFocused, getCursorAbsolutePosition, scrollLeft, value]);
 
-  const renderColoredText = () => {
+  const renderedCharacters = useMemo(() => {
     if (!value) {
       return null;
     }
@@ -900,28 +949,25 @@ function PasswordInput(props) {
     const hasSelection = selection.start !== selection.end;
     const minSelection = Math.min(selection.start, selection.end);
     const maxSelection = Math.max(selection.start, selection.end);
+    const isPassword = !showPassword;
 
     return characters.map((char, index) => {
       const charType = shouldColorize ? getCharacterType(char) : 'default';
-      const isPassword = !showPassword;
       const isSelected = hasSelection && index >= minSelection && index < maxSelection;
 
-      // Include forceRenderKey in the key to ensure React re-renders when selection changes
-      const uniqueKey = `${index}-${forceRenderKey}-${isSelected}`;
-
-      const finalClassName = `${S.passwordInputCharacter} ${shouldColorize ? S[`passwordInputCharacter${charType.charAt(0).toUpperCase() + charType.slice(1)}`] : ''} ${isSelected ? S.passwordInputCharacterSelected : ''}`;
-
       return (
-        <span
-          key={uniqueKey}
-          className={finalClassName}
-          data-index={index}
-        >
-          {isPassword ? '•' : char}
-        </span>
+        <Character
+          key={`${index}-${forceRenderKey}-${isSelected}`}
+          char={char}
+          index={index}
+          charType={charType}
+          isPassword={isPassword}
+          isSelected={isSelected}
+          forceRenderKey={forceRenderKey}
+        />
       );
     });
-  };
+  }, [value, isDecrypted, showPassword, selection.start, selection.end, forceRenderKey]);
 
   return (
     <div className={`${S.passwordInput} ${className} ${disabled ? (disabledColors ? S.disabledColors : S.disabled) : ''}`}>
@@ -939,7 +985,7 @@ function PasswordInput(props) {
         onMouseUp={handleMouseUp}
         onClick={() => {
           if (!disabled) {
-            setIsFocused(true);
+            dispatch({ type: ACTION_TYPES.SET_FOCUSED, payload: true });
             inputRef.current?.focus();
           }
         }}
@@ -954,15 +1000,15 @@ function PasswordInput(props) {
           onKeyDown={handleKeyDown}
           onPaste={handlePaste}
           onFocus={() => {
-            !disabled && setIsFocused(true);
+            !disabled && dispatch({ type: ACTION_TYPES.SET_FOCUSED, payload: true });
           }}
           onBlur={() => {
-            setIsFocused(false);
+            dispatch({ type: ACTION_TYPES.SET_FOCUSED, payload: false });
 
             // Don't clear selection if a copy operation just happened
             // The flag should still be true during copy, so we preserve selection
             if (!isCopyOperationRef.current) {
-              setSelection({ start: 0, end: 0 });
+              dispatch({ type: ACTION_TYPES.SET_SELECTION, payload: { start: 0, end: 0 } });
             }
           }}
           disabled={disabled}
@@ -997,7 +1043,7 @@ function PasswordInput(props) {
             position: 'relative' // Make this the positioning context for the cursor
           }}
         >
-          {renderColoredText()}
+          {renderedCharacters}
           {isFocused && selection.start === selection.end && (
             <span
               className={S.passwordInputCursor}

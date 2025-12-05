@@ -30,6 +30,7 @@ function SecureNoteText (props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const previousSifValueRef = useRef(null);
   const textareaRef = useRef(null);
@@ -159,14 +160,18 @@ function SecureNoteText (props) {
 
       updatedItem.internalData.editedSif = null;
 
-      setData('item', updatedItem);
-      setData('sifEdited', false);
-      setData('sifEditable', false);
-      setData('revealSecureNote', false);
+      setBatchData({
+        item: updatedItem,
+        sifEdited: false,
+        sifEditable: false,
+        revealSecureNote: false
+      });
       form.change('editedSif', data.item.isSifDecrypted ? data.item.sifDecrypted : '');
     } else {
-      setData('sifEditable', true);
-      setData('revealSecureNote', true);
+      setBatchData({
+        sifEditable: true,
+        revealSecureNote: true
+      });
     }
   };
 

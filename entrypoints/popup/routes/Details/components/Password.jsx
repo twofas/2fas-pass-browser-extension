@@ -15,13 +15,13 @@ import { copyValue, isText } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect, useRef } from 'react';
 import usePopupStateStore from '../../../store/popupState';
+import VisibleIcon from '@/assets/popup-window/visible.svg?react';
+import InfoIcon from '@/assets/popup-window/info.svg?react';
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
+import ExternalLinkIcon from '@/assets/popup-window/new-tab.svg?react';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
-const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
-const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
-const ExternalLinkIcon = lazy(() => import('@/assets/popup-window/new-tab.svg?react'));
 const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
 
 const passwordMobileVariants = {
@@ -45,6 +45,7 @@ function Password (props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
@@ -165,9 +166,11 @@ function Password (props) {
 
       updatedItem.internalData.editedSif = null;
 
-      setData('item', updatedItem);
-      setData('passwordEdited', false);
-      setData('passwordEditable', false);
+      setBatchData({
+        item: updatedItem,
+        passwordEdited: false,
+        passwordEditable: false
+      });
       form.change('editedSif', data.item.isSifDecrypted ? data.item.sifDecrypted : '');
     } else {
       setData('passwordEditable', true);

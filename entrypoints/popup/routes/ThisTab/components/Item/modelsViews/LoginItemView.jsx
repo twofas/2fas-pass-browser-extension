@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../../ThisTab.module.scss';
-import { memo, useMemo, useState, lazy, useRef } from 'react';
+import { memo, useMemo, useState, lazy, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import handleAutofill from '../../../functions/serviceList/handleAutofill';
@@ -16,6 +16,8 @@ const PasswordBtn = lazy(() => import('../../../functions/serviceList/additional
 const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
 const UsernameBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/UsernameBtn'));
 const CustomOption = lazy(() => import('../components/CustomOption'));
+
+const selectComponents = { Option: CustomOption };
 
 function LoginItemView (props) {
   const [faviconError, setFaviconError] = useState(false);
@@ -64,9 +66,7 @@ function LoginItemView (props) {
         ref={props.selectRef}
         triggerRef={moreBtnRef}
         setMore={props.setMore}
-        components={{
-          Option: CustomOption
-        }}
+        components={selectComponents}
       />
     </>
   );

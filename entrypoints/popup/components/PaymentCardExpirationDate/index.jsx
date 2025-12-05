@@ -5,9 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardExpirationDate.module.scss';
-import { memo, useCallback, useRef, useEffect } from 'react';
-import { InputMask } from 'primereact/inputmask';
-import { Calendar } from 'primereact/calendar';
+import { memo, useCallback, useRef, useEffect, useState } from 'react';
 import CalendarIcon from '@/assets/popup-window/calendar.svg?react';
 
 const PANEL_CLASS = 'payment-card-expiration-date-panel';
@@ -19,6 +17,7 @@ const MIN_SPACE_REQUIRED = 8;
 /**
 * PaymentCardExpirationDate component for selecting card expiration date.
 * Uses InputMask with MM/YY format and a calendar button for month picker popup.
+* Lazy loads PrimeReact components for optimized bundle size.
 * @param {Object} props - Component props.
 * @param {string} props.value - The expiration date value in MM/YY format.
 * @param {Function} props.onChange - Change handler function receiving formatted string.
@@ -27,9 +26,11 @@ const MIN_SPACE_REQUIRED = 8;
 * @return {JSX.Element} The rendered component.
 */
 function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
+  const [primeReactComponents, setPrimeReactComponents] = useState({ InputMask: null, Calendar: null });
   const calendarRef = useRef(null);
   const buttonRef = useRef(null);
   const isOpenRef = useRef(false);
+  const loadedRef = useRef(false);
 
   const parseExpirationToDate = useCallback(stringValue => {
     if (!stringValue || typeof stringValue !== 'string') {
@@ -132,6 +133,24 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
   }, []);
 
   useEffect(() => {
+    if (loadedRef.current) {
+      return;
+    }
+
+    loadedRef.current = true;
+
+    Promise.all([
+      import('primereact/inputmask'),
+      import('primereact/calendar')
+    ]).then(([inputMaskModule, calendarModule]) => {
+      setPrimeReactComponents({
+        InputMask: inputMaskModule.InputMask,
+        Calendar: calendarModule.Calendar
+      });
+    });
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       if (isOpenRef.current && calendarRef.current) {
         calendarRef.current.hide();
@@ -144,6 +163,33 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
       window.removeEventListener('scroll', handleScroll, true);
     };
   }, []);
+
+  const { InputMask, Calendar } = primeReactComponents;
+
+  if (!InputMask || !Calendar) {
+    return (
+      <div className={S.paymentCardExpirationDate}>
+        <input
+          className={S.paymentCardExpirationDateInput}
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder={browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
+          id={inputId}
+          disabled
+        />
+        <button
+          ref={buttonRef}
+          type='button'
+          className={`${S.paymentCardExpirationDateButton} ${S.paymentCardExpirationDateButtonHidden}`}
+          disabled
+          title={browser.i18n.getMessage('button_open_calendar')}
+          tabIndex={-1}
+        >
+          <CalendarIcon />
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className={S.paymentCardExpirationDate}>

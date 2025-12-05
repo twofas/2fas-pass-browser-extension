@@ -66,6 +66,7 @@ function ThisTab (props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
   const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
   const setHref = usePopupStateStore(state => state.setHref);
 
@@ -139,27 +140,24 @@ function ThisTab (props) {
     setTimeout(() => setForceCloseFilters(false), 100);
 
     if (value.trim().length > 0) {
-      setData('searchActive', true);
-      setData('searchValue', value);
+      setBatchData({ searchActive: true, searchValue: value });
     } else {
-      setData('searchActive', false);
-      setData('searchValue', '');
+      setBatchData({ searchActive: false, searchValue: '' });
     }
-  }, [setData]);
+  }, [setBatchData]);
 
   const handleSearchClear = useCallback(() => {
-    setData('searchValue', '');
-    setData('searchActive', false);
-  }, [setData]);
+    setBatchData({ searchValue: '', searchActive: false });
+  }, [setBatchData]);
 
-  const handleTagChange = useCallback((tag) => {
-    setData('selectedTag', tag);
-
+  const handleTagChange = useCallback(tag => {
     if (tag) {
       const tagInfo = { name: tag.name, amount: tag.amount };
-      setData('lastSelectedTagInfo', tagInfo);
+      setBatchData({ selectedTag: tag, lastSelectedTagInfo: tagInfo });
+    } else {
+      setData('selectedTag', null);
     }
-  }, [setData]);
+  }, [setBatchData, setData]);
 
   const handleKeepPassword = useCallback(async () => {
     await keepPassword(state);
@@ -204,9 +202,8 @@ function ThisTab (props) {
       changeMatchingLoginsLength(matchingLogins?.length || 0);
     }, 200);
 
-    setData('searchActive', false);
-    setData('searchValue', '');
-  }, [changeMatchingLoginsLength, setData]);
+    setBatchData({ searchActive: false, searchValue: '' });
+  }, [changeMatchingLoginsLength, setBatchData]);
 
   const watchStorageVersion = useCallback(() => {
     const uSV = storage.watch('session:storageVersion', async newValue => {
@@ -241,14 +238,15 @@ function ThisTab (props) {
       return false;
     }
 
+    const tagMap = new Map(tags.map((tag, index) => [tag.id, index]));
     const servicesWithTags = services.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
 
     for (const service of servicesWithTags) {
-      for (const tag of service.tags) {
-        const tagIndex = tags.findIndex(t => t.id === tag);
+      for (const tagId of service.tags) {
+        const tagIndex = tagMap.get(tagId);
 
-        if (tagIndex === -1) {
-          await CatchError(new TwoFasError(TwoFasError.internalErrors.tagIndexError, { additional: { tagId: tag } }));
+        if (tagIndex === undefined) {
+          await CatchError(new TwoFasError(TwoFasError.internalErrors.tagIndexError, { additional: { tagId } }));
           continue;
         }
 
@@ -283,34 +281,68 @@ function ThisTab (props) {
   const hasMatchingLogins = useMemo(() => isItemsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
   const hasLogins = useMemo(() => isItemsCorrect(items) && items?.length > 0, [items]);
 
-  const filteredItemsByModel = useMemo(() => {
-    if (!data?.itemModelFilter) {
-      return items;
+  const filteredItemsData = useMemo(() => {
+    let filteredByModel = items;
+
+    if (data?.itemModelFilter) {
+      filteredByModel = items.filter(item => item?.constructor?.name === data.itemModelFilter);
     }
 
-    return items.filter(item => item?.constructor?.name === data.itemModelFilter);
-  }, [items, data?.itemModelFilter]);
+    const servicesWithTags = filteredByModel.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
 
-  const tagsWithFilteredAmounts = useMemo(() => {
-    if (!Array.isArray(tags) || tags.length === 0) {
-      return [];
-    }
+    const tagAmountMap = new Map();
 
-    const itemsToCount = filteredItemsByModel;
-    const servicesWithTags = itemsToCount.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
-
-    return tags.map(tag => {
-      let amount = 0;
-
-      for (const service of servicesWithTags) {
-        if (service.tags.includes(tag.id)) {
-          amount += 1;
-        }
+    for (const service of servicesWithTags) {
+      for (const tagId of service.tags) {
+        tagAmountMap.set(tagId, (tagAmountMap.get(tagId) || 0) + 1);
       }
+    }
 
-      return { ...tag, amount };
-    });
-  }, [tags, filteredItemsByModel]);
+    const tagsWithAmounts = Array.isArray(tags) && tags.length > 0
+      ? tags.map(tag => ({ ...tag, amount: tagAmountMap.get(tag.id) || 0 }))
+      : [];
+
+    let filteredByTag = filteredByModel;
+
+    if (data?.selectedTag) {
+      const selectedTagId = data.selectedTag.id;
+      filteredByTag = filteredByModel.filter(item => {
+        if (!item?.tags || !Array.isArray(item?.tags)) {
+          return false;
+        }
+
+        return item.tags.includes(selectedTagId);
+      });
+    }
+
+    let filteredBySearch = filteredByTag;
+
+    if (data?.searchValue && data.searchValue.length > 0) {
+      const searchLower = data.searchValue.toLowerCase();
+      filteredBySearch = filteredByTag.filter(item => {
+        let urisTexts = [];
+
+        if (item?.content && item?.content?.uris && Array.isArray(item?.content?.uris)) {
+          urisTexts = item.content.uris.map(uri => uri?.text).filter(Boolean);
+        }
+
+        return item?.content?.name?.toLowerCase().includes(searchLower) ||
+          item?.content?.username?.toLowerCase().includes(searchLower) ||
+          urisTexts.some(uriText => uriText?.toLowerCase().includes(searchLower));
+      });
+    }
+
+    return {
+      filteredByModel,
+      tagsWithAmounts,
+      filteredByTag,
+      filteredBySearch,
+      filteredCount: filteredBySearch.length
+    };
+  }, [items, tags, data?.itemModelFilter, data?.selectedTag, data?.searchValue]);
+
+  const filteredItemsByModel = filteredItemsData.filteredByModel;
+  const tagsWithFilteredAmounts = filteredItemsData.tagsWithAmounts;
 
   const searchPlaceholder = useMemo(() => {
     let amount;
@@ -346,44 +378,7 @@ function ThisTab (props) {
   const memoizedMatchingItemsList = useMemo(() => generateMatchingItemsList(matchingLogins, loading), [matchingLogins, loading]);
   const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter), [items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter]);
 
-  const filteredItemsCount = useMemo(() => {
-    if (!isItemsCorrect(items)) {
-      return 0;
-    }
-
-    let itemsData = items;
-
-    if (data?.selectedTag) {
-      itemsData = itemsData.filter(item => {
-        if (!item?.tags || !Array.isArray(item?.tags)) {
-          return false;
-        }
-
-        const tagsSet = new Set(item.tags);
-        return tagsSet.has(data.selectedTag.id);
-      });
-    }
-
-    if (data?.itemModelFilter) {
-      itemsData = itemsData.filter(item => item?.constructor?.name === data.itemModelFilter);
-    }
-
-    if (data?.searchValue && data.searchValue.length > 0) {
-      itemsData = itemsData.filter(item => {
-        let urisTexts = [];
-
-        if (item?.content && item?.content?.uris && Array.isArray(item?.content?.uris)) {
-          urisTexts = item.content.uris.map(uri => uri?.text).filter(Boolean);
-        }
-
-        return item?.content?.name?.toLowerCase().includes(data.searchValue?.toLowerCase()) ||
-          item?.content?.username?.toLowerCase().includes(data.searchValue?.toLowerCase()) ||
-          urisTexts.some(uriText => uriText?.toLowerCase().includes(data.searchValue?.toLowerCase()));
-      });
-    }
-
-    return itemsData.length;
-  }, [items, data?.selectedTag, data?.itemModelFilter, data?.searchValue]);
+  const filteredItemsCount = filteredItemsData.filteredCount;
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);

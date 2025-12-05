@@ -30,6 +30,7 @@ function PaymentCardAddNewView () {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const validate = values => {
     const errors = {};
@@ -87,13 +88,19 @@ function PaymentCardAddNewView () {
   useEffect(() => {
     if (location?.state?.data) {
       const stateData = location.state.data;
-      if (stateData.name) setData('name', stateData.name);
-      if (stateData.cardHolder) setData('cardHolder', stateData.cardHolder);
-      if (stateData.cardNumber) setData('cardNumber', stateData.cardNumber);
-      if (stateData.expirationDate) setData('expirationDate', stateData.expirationDate);
-      if (stateData.securityCode) setData('securityCode', stateData.securityCode);
+      const batchUpdate = {};
+
+      if (stateData.name) batchUpdate.name = stateData.name;
+      if (stateData.cardHolder) batchUpdate.cardHolder = stateData.cardHolder;
+      if (stateData.cardNumber) batchUpdate.cardNumber = stateData.cardNumber;
+      if (stateData.expirationDate) batchUpdate.expirationDate = stateData.expirationDate;
+      if (stateData.securityCode) batchUpdate.securityCode = stateData.securityCode;
+
+      if (Object.keys(batchUpdate).length > 0) {
+        setBatchData(batchUpdate);
+      }
     }
-  }, [location?.state?.data]);
+  }, [location?.state?.data, setBatchData]);
 
   const onSubmit = async e => {
     setInputError(undefined);

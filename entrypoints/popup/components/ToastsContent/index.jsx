@@ -5,13 +5,11 @@
 // See LICENSE file for full terms
 
 import { ToastContainer, Slide } from 'react-toastify';
-import { lazy } from 'react';
 import ToastCloseButton from '@/partials/components/ToastCloseButton';
-
-const SuccessIcon = lazy(() => import('@/assets/popup-window/toast-success.svg?react'));
-const InfoIcon = lazy(() => import('@/assets/popup-window/toast-info.svg?react'));
-const WarningIcon = lazy(() => import('@/assets/popup-window/toast-warning.svg?react'));
-const ErrorIcon = lazy(() => import('@/assets/popup-window/toast-error.svg?react'));
+import SuccessIcon from '@/assets/popup-window/toast-success.svg?react';
+import InfoIcon from '@/assets/popup-window/toast-info.svg?react';
+import WarningIcon from '@/assets/popup-window/toast-warning.svg?react';
+import ErrorIcon from '@/assets/popup-window/toast-error.svg?react';
 
 /** 
 * Function component for the ToastsContent.

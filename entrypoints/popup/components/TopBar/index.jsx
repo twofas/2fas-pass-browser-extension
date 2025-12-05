@@ -18,6 +18,9 @@ import generateAddNewOptions from './functions/generateAddNewOptions';
 import { getSupportedFeatures } from '@/partials/functions';
 import { supportedFeatures } from '@/constants';
 
+const selectComponents = { Option: AddNewCustomOption };
+const noOptionsMessage = () => null;
+
 const Logo = lazy(() => import('@/assets/logo.svg?react'));
 const LogoDark = lazy(() => import('@/assets/logo-dark.svg?react'));
 const LockedIcon = lazy(() => import('@/assets/popup-window/locked.svg?react'));
@@ -121,6 +124,9 @@ function TopBar() {
     }
   }, [isMenuOpen, deviceSupportedFeatures, navigate]);
 
+  const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
+  const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
+
   useEffect(() => {
     watchConfigured().then(unwatch => {
       unwatchConfigured.current = unwatch;
@@ -197,19 +203,17 @@ function TopBar() {
             options={addNewOptions}
             value={null}
             menuIsOpen={isMenuOpen}
-            onMenuClose={() => setIsMenuOpen(false)}
-            onMenuOpen={() => setIsMenuOpen(true)}
+            onMenuClose={handleMenuClose}
+            onMenuOpen={handleMenuOpen}
             className='react-select-pass-dropdown'
             classNamePrefix='react-select-add-new'
             isClearable={false}
             isSearchable={false}
-            noOptionsMessage={() => null}
+            noOptionsMessage={noOptionsMessage}
             triggerRef={addNewBtnRef}
             setIsMenuOpen={setIsMenuOpen}
             pathname={location.pathname}
-            components={{
-              Option: AddNewCustomOption
-            }}
+            components={selectComponents}
           />
         </div>
       </header>
