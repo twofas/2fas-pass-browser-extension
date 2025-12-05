@@ -129,11 +129,17 @@
       font-weight: 400;
       gap: 0 4px;
       margin-bottom: 8px;
+      opacity: 0;
       padding: 5px;
+      transition: opacity v.$anim;
 
       @include m.darkMode {
         background-color: v.$hover-color-dark;
         color: v.$primary-text-dark;
+      }
+
+      &.loaded {
+        opacity: 1;
       }
       
       span {

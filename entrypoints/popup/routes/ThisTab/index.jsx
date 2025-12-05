@@ -498,9 +498,9 @@ function ThisTab (props) {
 
                 <div className={S.thisTabHeader}>
                   <h1>
-                    {hasMatchingLogins ? browser.i18n.getMessage('this_tab_matching_logins_header') : browser.i18n.getMessage('this_tab_matching_logins_header_no_logins')}
+                    {loading ? '\u00A0' : (hasMatchingLogins ? browser.i18n.getMessage('this_tab_matching_logins_header') : browser.i18n.getMessage('this_tab_matching_logins_header_no_logins'))}
                   </h1>
-                  <h2 title={url}>
+                  <h2 className={loading ? '' : S.loaded} title={url}>
                     <DomainIcon />
                     <span>{domain}</span>
                   </h2>

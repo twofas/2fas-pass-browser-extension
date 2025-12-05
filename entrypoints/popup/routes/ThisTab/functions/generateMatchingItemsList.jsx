@@ -16,18 +16,12 @@ import isItemsCorrect from './isItemsCorrect';
 * @return {JSX.Element|null} The generated login items or null.
 */
 const generateMatchingItemsList = (items, loading) => {
-  if (!isItemsCorrect(items) && !loading) {
-    return null;
+  if (!isItemsCorrect(items) && loading) {
+    return <div style={{ height: '86px' }} />;
   }
 
-  if (!isItemsCorrect(items) && loading) {
-    const itemsEmpty = [{ id: 0, item: [] }];
-
-    return (
-      <SafariViewportList items={itemsEmpty} overscan={2}>
-        {item => <LoginItem item={item} key={item.id} loading={loading} />}
-      </SafariViewportList>
-    );
+  if (!isItemsCorrect(items) && !loading) {
+    return null;
   }
 
   let fetchedLogins = items.filter(item => item.securityType === SECURITY_TIER.HIGHLY_SECRET && item.sifExists);
