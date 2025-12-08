@@ -23,6 +23,7 @@ function PaymentCardNumberInput ({ value, onChange, id, ...inputProps }) {
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
   const loadedRef = useRef(false);
+  const { handleMouseDown, handleFocus } = useInputMaskFocus();
 
   const mask = useMemo(
     () => getCardNumberMask(value),
@@ -93,6 +94,8 @@ function PaymentCardNumberInput ({ value, onChange, id, ...inputProps }) {
       value={value}
       id={id}
       onChange={handleChange}
+      onMouseDown={handleMouseDown}
+      onFocus={handleFocus}
     />
   );
 }

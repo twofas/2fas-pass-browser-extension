@@ -24,6 +24,7 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, ...inp
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
   const loadedRef = useRef(false);
+  const { handleMouseDown, handleFocus } = useInputMaskFocus();
 
   const securityCodeMaskData = useMemo(
     () => getSecurityCodeMask(cardNumber),
@@ -94,6 +95,8 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, ...inp
       placeholder={browser.i18n.getMessage('placeholder_payment_card_security_code')}
       id={id}
       onChange={handleChange}
+      onMouseDown={handleMouseDown}
+      onFocus={handleFocus}
     />
   );
 }
