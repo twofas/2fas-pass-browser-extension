@@ -31,6 +31,7 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
   const buttonRef = useRef(null);
   const isOpenRef = useRef(false);
   const loadedRef = useRef(false);
+  const { handleMouseDown: handleInputMouseDown, handleFocus: handleInputFocus } = useInputMaskFocus();
 
   const parseExpirationToDate = useCallback(stringValue => {
     if (!stringValue || typeof stringValue !== 'string') {
@@ -197,6 +198,8 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
         className={S.paymentCardExpirationDateInput}
         value={value}
         onChange={handleInputChange}
+        onMouseDown={handleInputMouseDown}
+        onFocus={handleInputFocus}
         mask='99/99'
         placeholder={browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
         id={inputId}

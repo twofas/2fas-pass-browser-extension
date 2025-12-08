@@ -15,6 +15,7 @@ export { default as deletePush } from './deletePush.js';
 export { default as focusPopupWindow } from './focusPopupWindow.js';
 export { default as generateNonce } from './generateNonce.js';
 export { default as getCurrentDevice } from './getCurrentDevice.js';
+export { default as getInputClickPosition } from './getInputClickPosition.js';
 export { default as getDomain } from './getDomain.js';
 export { default as getLastActiveTab } from './getLastActiveTab.js';
 export { default as getLoaderProgress } from './getLoaderProgress.js';
