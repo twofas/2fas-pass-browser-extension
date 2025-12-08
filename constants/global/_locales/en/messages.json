@@ -228,7 +228,7 @@
     "description": "Label for the payment card expiration date field"
   },
   "payment_card_security_code": {
-    "message": "Security Code (CVV)",
+    "message": "Security Code",
     "description": "Label for the payment card security code field"
   },
   "secure_note": {
