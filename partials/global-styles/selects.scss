@@ -761,6 +761,26 @@
       }
     }
 
+    &:hover {
+      body.theme-light & {
+        background-color: v.$hover-color-light;
+      }
+
+      body.theme-dark & {
+        background-color: v.$hover-color-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          background-color: v.$hover-color-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          background-color: v.$hover-color-dark;
+        }
+      }
+    }
+
     &.react-select-model-filter__option--is-selected {
       body.theme-light & {
         background-color: v.$primary-bg-light;
