@@ -127,7 +127,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
             contentType: PaymentCard.contentType
           }
         }}
-        title={browser.i18n.getMessage('this_tab_fetch_card_number')}
+        title={browser.i18n.getMessage('this_tab_fetch_card_info')}
         prefetch='intent'
       >
         <ServiceFetchIcon className={S.serviceFetch} />
