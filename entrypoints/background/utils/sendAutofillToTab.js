@@ -123,6 +123,39 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     }
   }
 
+  let iframePermissionGranted = true;
+
+  try {
+    const permissionResults = await sendMessageToAllFrames(tabId, {
+      action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
+      target: REQUEST_TARGETS.CONTENT,
+      autofillType: 'login'
+    });
+
+    const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
+    const needsPermission = crossDomainFrames.length > 0;
+
+    if (needsPermission) {
+      const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
+
+      const confirmMessage = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
+        .replace('DOMAINS', uniqueDomains.join(', '));
+
+      const confirmResult = await sendMessageToTab(tabId, {
+        action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+        target: REQUEST_TARGETS.CONTENT,
+        message: confirmMessage
+      });
+
+      if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+        iframePermissionGranted = false;
+        return;
+      }
+    }
+  } catch (e) {
+    await CatchError(e);
+  }
+
   try {
     const response = await sendMessageToAllFrames(
       tabId,
@@ -133,7 +166,8 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
         target: REQUEST_TARGETS.CONTENT,
         noPassword,
         noUsername,
-        cryptoAvailable: cryptoAvailableRes?.cryptoAvailable
+        cryptoAvailable: cryptoAvailableRes?.cryptoAvailable,
+        iframePermissionGranted
       }
     );
 
