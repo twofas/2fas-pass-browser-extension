@@ -15,19 +15,25 @@ import getCardNumberMask from './getCardNumberMask';
 * @param {string} props.value - The card number value.
 * @param {Function} props.onChange - Change handler function.
 * @param {string} props.id - Input element ID.
+* @param {number} props.securityType - Security tier type (0=Top Secret, 1=Highly Secret, 2=Secret).
+* @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
+* @param {string} props.placeholder - Optional placeholder text override.
 * @param {Object} props.inputProps - Additional props to spread on InputMask.
 * @return {JSX.Element} The rendered component.
 */
-function PaymentCardNumberInput ({ value, onChange, id, ...inputProps }) {
+function PaymentCardNumberInput ({ value, onChange, id, securityType, sifExists, placeholder, ...inputProps }) {
   const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
   const loadedRef = useRef(false);
   const { handleMouseDown, handleFocus } = useInputMaskFocus();
 
+  const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
+  const displayValue = isHighlySecretWithoutSif ? '' : value;
+
   const mask = useMemo(
-    () => getCardNumberMask(value),
-    [value]
+    () => getCardNumberMask(displayValue),
+    [displayValue]
   );
 
   useEffect(() => {
@@ -68,17 +74,19 @@ function PaymentCardNumberInput ({ value, onChange, id, ...inputProps }) {
     onChange(e);
   }, [id, onChange]);
 
-  if (!InputMask) {
+  const effectivePlaceholder = placeholder ?? (isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_number'));
+
+  if (!InputMask || isHighlySecretWithoutSif) {
     return (
       <input
         {...inputProps}
-        placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
+        placeholder={effectivePlaceholder}
         className={S.paymentCardNumberInput}
         type='text'
-        value={value}
+        value={displayValue}
         id={id}
         onChange={e => onChange(e)}
-        disabled
+        disabled={!InputMask || isHighlySecretWithoutSif}
       />
     );
   }
@@ -86,12 +94,12 @@ function PaymentCardNumberInput ({ value, onChange, id, ...inputProps }) {
   return (
     <InputMask
       {...inputProps}
-      placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
+      placeholder={effectivePlaceholder}
       className={S.paymentCardNumberInput}
       type='text'
       mask={mask}
       autoClear={false}
-      value={value}
+      value={displayValue}
       id={id}
       onChange={handleChange}
       onMouseDown={handleMouseDown}

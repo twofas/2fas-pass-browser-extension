@@ -35,8 +35,10 @@ function CardSecurityCode (props) {
 
   const previousSecurityCodeRef = useRef(null);
 
+  const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
+
   const getSecurityCodeValue = () => {
-    if (sifDecryptError) {
+    if (sifDecryptError || isHighlySecretWithoutSif) {
       return '';
     }
 
@@ -165,6 +167,10 @@ function CardSecurityCode (props) {
   };
 
   const getHiddenMaskValue = () => {
+    if (isHighlySecretWithoutSif) {
+      return '';
+    }
+
     return '***';
   };
 
@@ -232,6 +238,8 @@ function CardSecurityCode (props) {
           cardNumber={getCardNumberValue()}
           onChange={handleSecurityCodeChange}
           disabled
+          securityType={originalItem?.securityType}
+          sifExists={originalItem?.sifExists}
         />
       );
     }
@@ -243,6 +251,8 @@ function CardSecurityCode (props) {
         cardNumber={getCardNumberValue()}
         onChange={handleSecurityCodeChange}
         disabled={sifDecryptError}
+        securityType={originalItem?.securityType}
+        sifExists={originalItem?.sifExists}
       />
     );
   };
