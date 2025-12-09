@@ -23,15 +23,20 @@ const MIN_SPACE_REQUIRED = 8;
 * @param {Function} props.onChange - Change handler function receiving formatted string.
 * @param {string} props.inputId - Input element ID.
 * @param {boolean} props.disabled - Whether the component is disabled.
+* @param {number} props.securityType - Security tier type (0=Top Secret, 1=Highly Secret, 2=Secret).
+* @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
 * @return {JSX.Element} The rendered component.
 */
-function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
+function PaymentCardExpirationDate ({ value, onChange, inputId, disabled, securityType, sifExists }) {
   const [primeReactComponents, setPrimeReactComponents] = useState({ InputMask: null, Calendar: null });
   const calendarRef = useRef(null);
   const buttonRef = useRef(null);
   const isOpenRef = useRef(false);
   const loadedRef = useRef(false);
   const { handleMouseDown: handleInputMouseDown, handleFocus: handleInputFocus } = useInputMaskFocus();
+
+  const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
+  const displayValue = isHighlySecretWithoutSif ? '' : value;
 
   const parseExpirationToDate = useCallback(stringValue => {
     if (!stringValue || typeof stringValue !== 'string') {
@@ -167,16 +172,16 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
 
   const { InputMask, Calendar } = primeReactComponents;
 
-  if (!InputMask || !Calendar) {
+  if (!InputMask || !Calendar || isHighlySecretWithoutSif) {
     return (
       <div className={S.paymentCardExpirationDate}>
         <input
           className={S.paymentCardExpirationDateInput}
-          value={value}
+          value={displayValue}
           onChange={e => onChange(e.target.value)}
-          placeholder={browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
+          placeholder={isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
           id={inputId}
-          disabled
+          disabled={!InputMask || !Calendar || isHighlySecretWithoutSif}
         />
         <button
           ref={buttonRef}
@@ -196,7 +201,7 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
     <div className={S.paymentCardExpirationDate}>
       <InputMask
         className={S.paymentCardExpirationDateInput}
-        value={value}
+        value={displayValue}
         onChange={handleInputChange}
         onMouseDown={handleInputMouseDown}
         onFocus={handleInputFocus}
@@ -221,7 +226,7 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled }) {
         ref={calendarRef}
         className={S.paymentCardExpirationDateCalendar}
         panelClassName={PANEL_CLASS}
-        value={parseExpirationToDate(value)}
+        value={parseExpirationToDate(displayValue)}
         onChange={handleCalendarChange}
         onShow={handleCalendarShow}
         onHide={handleCalendarHide}

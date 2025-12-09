@@ -31,8 +31,10 @@ function CardExpirationDate (props) {
 
   const previousExpirationDateRef = useRef(null);
 
+  const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
+
   const getExpirationDateValue = () => {
-    if (sifDecryptError) {
+    if (sifDecryptError || isHighlySecretWithoutSif) {
       return '';
     }
 
@@ -164,6 +166,8 @@ function CardExpirationDate (props) {
               inputId='editedExpirationDate'
               onChange={handleExpirationDateChange}
               disabled={!data?.expirationDateEditable || sifDecryptError}
+              securityType={originalItem?.securityType}
+              sifExists={originalItem?.sifExists}
             />
 
             <div className={pI.passInputBottomButtons}>

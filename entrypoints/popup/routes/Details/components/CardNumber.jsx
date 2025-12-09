@@ -33,8 +33,10 @@ function CardNumber (props) {
 
   const previousCardNumberRef = useRef(null);
 
+  const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
+
   const getCardNumberValue = () => {
-    if (sifDecryptError) {
+    if (sifDecryptError || isHighlySecretWithoutSif) {
       return '';
     }
 
@@ -151,6 +153,10 @@ function CardNumber (props) {
   };
 
   const getHiddenMaskValue = () => {
+    if (isHighlySecretWithoutSif) {
+      return '';
+    }
+
     return '********';
   };
 
@@ -179,6 +185,7 @@ function CardNumber (props) {
   const renderInput = () => {
     const isEditable = data?.cardNumberEditable;
     const isVisible = data?.cardNumberVisible;
+    const placeholder = isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_number');
 
     if (!isEditable && !isVisible) {
       return (
@@ -187,7 +194,7 @@ function CardNumber (props) {
           id='editedCardNumber'
           value={getHiddenMaskValue()}
           disabled
-          placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
+          placeholder={placeholder}
         />
       );
     }
@@ -203,9 +210,9 @@ function CardNumber (props) {
           id='editedCardNumber'
           value={rawCardNumber}
           onChange={handleRawCardNumberChange}
-          disabled={sifDecryptError}
+          disabled={sifDecryptError || isHighlySecretWithoutSif}
           maxLength={maxLength}
-          placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
+          placeholder={placeholder}
         />
       );
     }
@@ -217,7 +224,9 @@ function CardNumber (props) {
           id='editedCardNumber'
           onChange={handleCardNumberChange}
           disabled
-          placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
+          placeholder={placeholder}
+          securityType={originalItem?.securityType}
+          sifExists={originalItem?.sifExists}
         />
       );
     }
@@ -227,8 +236,10 @@ function CardNumber (props) {
         value={getCardNumberValue()}
         id='editedCardNumber'
         onChange={handleCardNumberChange}
-        disabled={sifDecryptError}
-        placeholder={browser.i18n.getMessage('placeholder_payment_card_number')}
+        disabled={sifDecryptError || isHighlySecretWithoutSif}
+        placeholder={placeholder}
+        securityType={originalItem?.securityType}
+        sifExists={originalItem?.sifExists}
       />
     );
   };

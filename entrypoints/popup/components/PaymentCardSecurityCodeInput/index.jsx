@@ -16,15 +16,20 @@ import getSecurityCodeMask from './getSecurityCodeMask';
 * @param {Function} props.onChange - Change handler function.
 * @param {string} props.id - Input element ID.
 * @param {string} props.cardNumber - The card number to determine mask (Amex uses 4 digits).
+* @param {number} props.securityType - Security tier type (0=Top Secret, 1=Highly Secret, 2=Secret).
+* @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
 * @param {Object} props.inputProps - Additional props to spread on InputMask.
 * @return {JSX.Element} The rendered component.
 */
-function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, ...inputProps }) {
+function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, securityType, sifExists, ...inputProps }) {
   const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
   const loadedRef = useRef(false);
   const { handleMouseDown, handleFocus } = useInputMaskFocus();
+
+  const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
+  const displayValue = isHighlySecretWithoutSif ? '' : value;
 
   const securityCodeMaskData = useMemo(
     () => getSecurityCodeMask(cardNumber),
@@ -75,7 +80,7 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, ...inp
         {...inputProps}
         className={S.paymentCardSecurityCodeInput}
         type='text'
-        value={value}
+        value={displayValue}
         placeholder={browser.i18n.getMessage('placeholder_payment_card_security_code')}
         id={id}
         onChange={e => onChange(e)}
@@ -91,7 +96,7 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, ...inp
       type='text'
       mask={securityCodeMaskData.mask}
       autoClear={false}
-      value={value}
+      value={displayValue}
       placeholder={browser.i18n.getMessage('placeholder_payment_card_security_code')}
       id={id}
       onChange={handleChange}
