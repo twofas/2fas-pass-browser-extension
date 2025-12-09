@@ -241,6 +241,43 @@ export default class PaymentCard extends Item {
       || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
   }
 
+  /**
+   * Validates a card number using the Luhn algorithm (mod 10 checksum).
+   * @param {string} cardNumber - The card number to validate (digits only, no spaces).
+   * @return {boolean} True if the card number passes the Luhn check, false otherwise.
+   */
+  static isValidLuhn (cardNumber) {
+    if (!cardNumber || typeof cardNumber !== 'string') {
+      return false;
+    }
+
+    const digits = cardNumber.replace(/\D/g, '');
+
+    if (digits.length === 0) {
+      return false;
+    }
+
+    let sum = 0;
+    let isSecond = false;
+
+    for (let i = digits.length - 1; i >= 0; i--) {
+      let digit = parseInt(digits[i], 10);
+
+      if (isSecond) {
+        digit *= 2;
+
+        if (digit > 9) {
+          digit -= 9;
+        }
+      }
+
+      sum += digit;
+      isSecond = !isSecond;
+    }
+
+    return sum % 10 === 0;
+  }
+
   toJSON () {
     return {
       ...super.toJSON(),

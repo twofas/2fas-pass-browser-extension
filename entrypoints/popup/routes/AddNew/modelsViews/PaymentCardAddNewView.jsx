@@ -48,7 +48,11 @@ function PaymentCardAddNewView () {
     if (values?.cardNumber && values.cardNumber?.length > 0) {
       const cleanCardNumber = values.cardNumber.replace(/\s/g, '');
 
-      if (!PAYMENT_CARD_REGEX.test(cleanCardNumber)) {
+      if (cleanCardNumber.length < 13 || cleanCardNumber.length > 19) {
+        errors.cardNumber = browser.i18n.getMessage('add_new_validate_card_number_invalid');
+      } else if (!PAYMENT_CARD_REGEX.test(cleanCardNumber)) {
+        errors.cardNumber = browser.i18n.getMessage('add_new_validate_card_number_invalid');
+      } else if (!PaymentCard.isValidLuhn(cleanCardNumber)) {
         errors.cardNumber = browser.i18n.getMessage('add_new_validate_card_number_invalid');
       }
     }

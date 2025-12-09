@@ -95,7 +95,11 @@ function PaymentCardDetailsView (props) {
       if (cardNumber && cardNumber.length > 0) {
         const cleanCardNumber = cardNumber.replace(/\s/g, '');
 
-        if (!PAYMENT_CARD_REGEX.test(cleanCardNumber)) {
+        if (cleanCardNumber.length < 13 || cleanCardNumber.length > 19) {
+          errors.cardNumber = browser.i18n.getMessage('details_card_number_invalid');
+        } else if (!PAYMENT_CARD_REGEX.test(cleanCardNumber)) {
+          errors.cardNumber = browser.i18n.getMessage('details_card_number_invalid');
+        } else if (!PaymentCard.isValidLuhn(cleanCardNumber)) {
           errors.cardNumber = browser.i18n.getMessage('details_card_number_invalid');
         }
       }
