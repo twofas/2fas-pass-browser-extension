@@ -229,12 +229,41 @@ const handleCardAutofill = async (item, navigate) => {
     decryptedSecurityCode = '';
   }
 
+  let iframePermissionGranted = true;
+
+  try {
+    const permissionResults = await sendMessageToAllFrames(tab.id, {
+      action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
+      target: REQUEST_TARGETS.CONTENT,
+      autofillType: 'card'
+    });
+
+    const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
+    const needsPermission = crossDomainFrames.length > 0;
+
+    if (needsPermission) {
+      const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
+
+      const message = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
+        .replace('DOMAINS', uniqueDomains.join(', '));
+
+      iframePermissionGranted = window.confirm(message);
+
+      if (!iframePermissionGranted) {
+        return;
+      }
+    }
+  } catch (e) {
+    await CatchError(e);
+  }
+
   const actionData = {
     action: REQUEST_ACTIONS.AUTOFILL_CARD,
     cardholderName: item.content.cardHolder,
     cardIssuer: item.content.cardIssuer,
     target: REQUEST_TARGETS.CONTENT,
-    cryptoAvailable: cryptoAvailableRes.cryptoAvailable
+    cryptoAvailable: cryptoAvailableRes.cryptoAvailable,
+    iframePermissionGranted
   };
 
   if (sifDecrypt) {

@@ -183,12 +183,46 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     decryptedSecurityCode = '';
   }
 
+  let iframePermissionGranted = true;
+
+  try {
+    const permissionResults = await sendMessageToAllFrames(tabId, {
+      action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
+      target: REQUEST_TARGETS.CONTENT,
+      autofillType: 'card'
+    });
+
+    const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
+    const needsPermission = crossDomainFrames.length > 0;
+
+    if (needsPermission) {
+      const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
+
+      const confirmMessage = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
+        .replace('DOMAINS', uniqueDomains.join(', '));
+
+      const confirmResult = await sendMessageToTab(tabId, {
+        action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+        target: REQUEST_TARGETS.CONTENT,
+        message: confirmMessage
+      });
+
+      if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+        iframePermissionGranted = false;
+        return;
+      }
+    }
+  } catch (e) {
+    await CatchError(e);
+  }
+
   const actionData = {
     action: REQUEST_ACTIONS.AUTOFILL_CARD,
     cardholderName: item.content.cardHolder,
     cardIssuer: item.content.cardIssuer,
     target: REQUEST_TARGETS.CONTENT,
-    cryptoAvailable
+    cryptoAvailable,
+    iframePermissionGranted
   };
 
   if (encryptedCardNumberB64) {

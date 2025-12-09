@@ -547,6 +547,10 @@
     "message": "Error message copied to clipboard",
     "description": "Notification message when the error message is successfully copied to the clipboard"
   },
+  "autofill_cross_domain_warning_popup": {
+    "message": "This page contains forms from external domains:\nDOMAINS\n\nDo you want to autofill data in these frames?",
+    "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
+  },
   "placeholder_domain_uri": {
     "message": "e.g., https://2fas.com",
     "description": "Placeholder text for the domain or URI input field"

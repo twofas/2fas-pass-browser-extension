@@ -10,44 +10,6 @@ import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import inputSetValue from './autofillFunctions/inputSetValue';
 
 /**
-* Checks if autofill should proceed when in an iframe.
-* @return {Promise<boolean>} True if should proceed, false if cancelled.
-*/
-const checkIframePermission = async () => {
-  if (window.self === window.top) {
-    return true;
-  }
-
-  let currentFrameDomain;
-
-  try {
-    currentFrameDomain = new URL(window.location.href).hostname;
-  } catch (e) {
-    CatchError(e);
-    return true;
-  }
-
-  try {
-    const topFrameDomain = new URL(window.top.location.href).hostname;
-
-    if (currentFrameDomain === topFrameDomain) {
-      return true;
-    }
-
-    const message = browser.i18n.getMessage('autofill_cross_domain_warning')
-      .replace('CURRENT_DOMAIN', currentFrameDomain)
-      .replace('TOP_DOMAIN', topFrameDomain);
-
-    return window.confirm(message);
-  } catch {
-    const message = browser.i18n.getMessage('autofill_cross_domain_warning_no_access')
-      .replace('CURRENT_DOMAIN', currentFrameDomain);
-
-    return window.confirm(message);
-  }
-};
-
-/**
 * Decrypts an encrypted password using the local key.
 * @param {string} encryptedPassword - The base64 encoded encrypted password.
 * @return {Promise<{status: string, data?: string, message?: string}>} Decryption result.
@@ -117,6 +79,7 @@ const decryptPassword = async encryptedPassword => {
 * @param {boolean} [request.noUsername] - Flag indicating no username is available.
 * @param {boolean} [request.noPassword] - Flag indicating no password is available.
 * @param {boolean} [request.cryptoAvailable] - Flag indicating password is encrypted.
+* @param {boolean} [request.iframePermissionGranted] - Flag indicating cross-domain permission was granted.
 * @return {Promise<{status: string, message?: string}>} The status of the autofill operation.
 */
 const autofill = async request => {
@@ -143,10 +106,8 @@ const autofill = async request => {
     return { status: 'error', message: 'No input fields found' };
   }
 
-  const userAllowed = await checkIframePermission();
-
-  if (!userAllowed) {
-    return { status: 'cancelled', message: 'User cancelled cross-domain autofill' };
+  if (!request.iframePermissionGranted) {
+    return { status: 'cancelled', message: 'Cross-domain autofill not permitted' };
   }
 
   if (canFillUsername) {

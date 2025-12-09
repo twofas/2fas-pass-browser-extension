@@ -6,6 +6,7 @@
 
 import checkAutofillInputs from '../functions/checkAutofillInputs';
 import checkAutofillInputsCard from '../functions/checkAutofillInputsCard';
+import checkIframePermission from '../functions/checkIframePermission';
 import autofill from '../functions/autofill';
 import autofillCard from '../functions/autofillCard';
 import getDomainInfo from '../functions/getDomainInfo';
@@ -32,10 +33,11 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
     // IS TOP FRAME CHECK
     if (
       // request?.action === REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK ||
-      request?.action === REQUEST_ACTIONS.MATCHING_LOGINS || 
-      request?.action === REQUEST_ACTIONS.NOTIFICATION || 
+      request?.action === REQUEST_ACTIONS.MATCHING_LOGINS ||
+      request?.action === REQUEST_ACTIONS.NOTIFICATION ||
       request?.action === REQUEST_ACTIONS.SAVE_PROMPT ||
-      request?.action === REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE
+      request?.action === REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE ||
+      request?.action === REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM
     ) {
       if (!isTopFrame) {
         return false;
@@ -63,6 +65,14 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
 
       case REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS_CARD: {
         sendResponse(checkAutofillInputsCard());
+        break;
+      }
+
+      case REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION: {
+        checkIframePermission(request.autofillType)
+          .then(result => { sendResponse(result); })
+          .catch(() => { sendResponse({ needsPermission: false, frameInfo: {} }); });
+
         break;
       }
 
@@ -99,7 +109,14 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
         sendResponse({ status: 'ok', cryptoAvailable });
         break;
       }
-  
+
+      case REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM: {
+        const message = request.message || '';
+        const userConfirmed = window.confirm(message);
+        sendResponse({ status: 'ok', confirmed: userConfirmed });
+        break;
+      }
+
       default: {
         sendResponse({ status: 'error', message: 'Wrong action' });
         break;
