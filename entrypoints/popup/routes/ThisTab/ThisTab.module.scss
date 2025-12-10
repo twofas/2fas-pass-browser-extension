@@ -434,6 +434,10 @@
       @include m.darkMode {
         background-color: v.$primary-box-bg-dark;
       }
+
+      &-tags {
+        position: relative;
+      }
     }
 
     &-search {
