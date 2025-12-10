@@ -36,6 +36,7 @@ import NoMatch from './components/NoMatch';
 import ModelFilter from './components/ModelFilter';
 import Filters from './components/Filters';
 import Sort from './components/Sort';
+import TagsInfo from './components/TagsInfo';
 import UpdateComponent from './components/UpdateComponent';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
@@ -149,7 +150,7 @@ function ThisTab (props) {
     setBatchData({ searchValue: '', searchActive: false });
   }, [setBatchData]);
 
-  const { handleTagChange, clearTagFilter } = useTagFilter();
+  const { handleTagChange } = useTagFilter();
 
   const handleKeepPassword = useCallback(async () => {
     await keepPassword(state);
@@ -553,20 +554,11 @@ function ThisTab (props) {
                   />
                 </div>
 
-                <div className={`${S.thisTabAllLoginsTagsInfo} ${currentTagInfo && data.selectedTag ? S.active : ''}`}>
-                  <div
-                    className={S.thisTabAllLoginsTagsInfoBox}
-                    title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', filteredItemsCount).replace('TAG_NAME', currentTagInfo?.name || '')}
-                  >
-                    <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', filteredItemsCount).replace('TAG_NAME', currentTagInfo?.name || '')}</p>
-                    <button
-                      onClick={clearTagFilter}
-                      title={browser.i18n.getMessage('this_tab_clear_tag_filter')}
-                    >
-                      <ClearIcon />
-                    </button>
-                  </div>
-                </div>
+                <TagsInfo
+                  currentTagInfo={currentTagInfo}
+                  isActive={currentTagInfo && data.selectedTag}
+                  filteredItemsCount={filteredItemsCount}
+                />
 
                 {memoizedAllItemsList}
               </div>
