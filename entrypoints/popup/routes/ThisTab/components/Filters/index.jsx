@@ -6,7 +6,7 @@
 
 import S from '../../ThisTab.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { lazy, useState, useRef, useEffect, useMemo, useCallback, memo, Suspense } from 'react';
+import { lazy, useState, useRef, useMemo, useCallback, memo, Suspense } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import IconFallback from '@/entrypoints/popup/components/IconFallback';
 import FiltersCustomOption from './components/FiltersCustomOption';
@@ -21,10 +21,9 @@ const selectComponents = { Option: FiltersCustomOption };
 * @param {Array} props.tags - Array of tag objects with id, name, and amount.
 * @param {Object} props.selectedTag - Currently selected tag object or null.
 * @param {Function} props.onTagChange - Callback when tag selection changes.
-* @param {boolean} props.forceClose - Flag to force close the dropdown menu.
 * @return {JSX.Element} The rendered filter dropdown component.
 */
-const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
+const Filters = ({ tags, selectedTag, onTagChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const selectRef = useRef(null);
   const buttonRef = useRef(null);
@@ -80,12 +79,6 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
   const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
 
   const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
-
-  useEffect(() => {
-    if (forceClose) {
-      setIsMenuOpen(false);
-    }
-  }, [forceClose]);
 
   return (
     <div className={S.thisTabAllLoginsSearchContainerTags}>
