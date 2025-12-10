@@ -5,42 +5,26 @@
 // See LICENSE file for full terms
 
 import S from '../../ThisTab.module.scss';
-import { useState, useRef, lazy, useEffect, memo, useCallback } from 'react';
+import { useState, useRef, lazy, useEffect, useCallback, useMemo } from 'react';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
-import { components } from 'react-select';
 import { getSupportedFeatures } from '@/partials/functions';
 import generateItemModelsOptions from './functions/generateItemModelsOptions';
 import { supportedFeatures } from '@/constants';
+import ModelFilterCustomOption from './components/ModelFilterCustomOption';
 
 const AllIcon = lazy(() => import('@/assets/popup-window/items/all.svg?react'));
-
-const handleNoOp = () => {};
-
-const ModelFilterCustomOption = memo(function ModelFilterCustomOption (option) {
-  return (
-    <components.Option
-      {...option}
-      className={`react-select-model-filter__option ${option.isSelected || (!option?.selectProps?.itemModelFilter && option.data.value === null) ? 'react-select-model-filter__option--is-selected' : ''}`}
-      title={option.data.label}
-      onClick={handleNoOp}
-    >
-      <span className={`react-select-model-filter__option-icon ${option.data.className}`}>{option.data.icon}</span>
-      <span className='react-select-model-filter__option-label'>{option.data.label}</span>
-    </components.Option>
-  );
-});
 
 const selectComponents = { Option: ModelFilterCustomOption };
 const noOptionsMessage = () => null;
 
-/** 
-* Function to render the ModelFilter component.
+/**
+* Renders a filter dropdown for selecting item model types (Login, SecureNote, PaymentCard).
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-const ModelFilter = () => {
+const ModelFilter = props => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [itemModelsOptions, setItemModelsOptions] = useState([]);
   const [deviceSupportedFeatures, setDeviceSupportedFeatures] = useState([]);
@@ -50,30 +34,52 @@ const ModelFilter = () => {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
 
-  const generateModelIcon = () => {
-    const selectedModel = itemModelsOptions.find(option => option.value === data.itemModelFilter);
+  const hasMultipleItemTypes = useMemo(() => {
+    return deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) ||
+      deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard);
+  }, [deviceSupportedFeatures]);
 
+  const selectedOption = useMemo(() => {
+    return itemModelsOptions.find(option => option.value === data.itemModelFilter);
+  }, [itemModelsOptions, data.itemModelFilter]);
+
+  const modelIcon = useMemo(() => {
     return (
-      <span className={`${S.thisTabAllLoginsHeaderModelFilterIcon} ${selectedModel?.className || ''}`}>
-        {selectedModel?.icon || <AllIcon />}
+      <span className={`${S.thisTabAllLoginsHeaderModelFilterIcon} ${selectedOption?.className || ''}`}>
+        {selectedOption?.icon || <AllIcon />}
       </span>
     );
-  };
+  }, [selectedOption]);
 
-  const handleModelChange = selectedOption => {
-    const newValue = selectedOption ? selectedOption.value : null;
+  const buttonClassName = useMemo(() => {
+    return `${S.thisTabAllLoginsHeaderModelFilter} ${hasMultipleItemTypes ? '' : S.disabled}`;
+  }, [hasMultipleItemTypes]);
+
+  const chevronClassName = useMemo(() => {
+    return `${S.thisTabAllLoginsHeaderModelFilterChevron} ${isMenuOpen ? S.open : ''}`;
+  }, [isMenuOpen]);
+
+  const filterLabel = useMemo(() => {
+    if (props.loading) {
+      return browser.i18n.getMessage('this_tab_all_logins_header');
+    }
+
+    return selectedOption?.label || browser.i18n.getMessage('this_tab_all_logins_header');
+  }, [selectedOption, props.loading]);
+
+  const handleModelChange = useCallback(selectedOpt => {
+    const newValue = selectedOpt ? selectedOpt.value : null;
     setData('itemModelFilter', newValue);
-  };
+  }, [setData]);
 
   const handleModelBtnClick = useCallback(() => {
-    if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
+    if (hasMultipleItemTypes) {
       setIsMenuOpen(prevState => !prevState);
     }
-  }, [deviceSupportedFeatures]);
+  }, [hasMultipleItemTypes]);
 
   const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
   const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
-  const handleChange = useCallback(selectedOption => handleModelChange(selectedOption), []);
 
   useEffect(() => {
     getSupportedFeatures()
@@ -88,31 +94,23 @@ const ModelFilter = () => {
   }, [deviceSupportedFeatures]);
 
   return (
-    <>
+    <div className={S.thisTabAllLoginsHeader}>
       <button
         ref={buttonRef}
-        className={`${S.thisTabAllLoginsHeaderModelFilter} ${deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) || deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard) ? '' : S.disabled}`}
+        className={buttonClassName}
         onClick={handleModelBtnClick}
-      > 
-        {
-          deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) || deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard) ? (
-            <>
-              {generateModelIcon()}
-              <span className={S.thisTabAllLoginsHeaderModelFilterText}>{itemModelsOptions.find(option => option.value === data.itemModelFilter)?.label || browser.i18n.getMessage('this_tab_all_logins_header')}</span>
-              <ChevronIcon className={`${S.thisTabAllLoginsHeaderModelFilterChevron} ${isMenuOpen ? S.open : ''}`} />
-            </>
-          ) : (
-            <span className={S.thisTabAllLoginsHeaderModelFilterText}>{browser.i18n.getMessage('this_tab_all_logins_header')}</span>
-          )
-        }
+      >
+        {hasMultipleItemTypes && !props.loading && modelIcon}
+        <span className={S.thisTabAllLoginsHeaderModelFilterText}>{filterLabel}</span>
+        {hasMultipleItemTypes && !props.loading && <ChevronIcon className={chevronClassName} />}
       </button>
       <AdvancedSelect
         options={itemModelsOptions}
-        value={itemModelsOptions.find(option => option.value === data.itemModelFilter)}
+        value={selectedOption}
         menuIsOpen={isMenuOpen}
         onMenuClose={handleMenuClose}
         onMenuOpen={handleMenuOpen}
-        onChange={handleChange}
+        onChange={handleModelChange}
         className='react-select-pass-dropdown'
         classNamePrefix='react-select-model-filter'
         isClearable={false}
@@ -122,7 +120,7 @@ const ModelFilter = () => {
         itemModelFilter={data.itemModelFilter}
         components={selectComponents}
       />
-    </>
+    </div>
   );
 };
 

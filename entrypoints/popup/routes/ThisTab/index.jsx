@@ -446,7 +446,7 @@ function ThisTab (props) {
           <section className={S.thisTab}>
             <div className={autofillPopupClass}>
               <div className={S.thisTabAutofillPopupBox}>
-                <h2>Password for the following service successfully fetched.</h2>
+                <h2>Password for the following service successfully fetched.</h2> {/* @TODO: i18n */}
                 <div className={S.thisTabAutofillPopupBoxLoginItem}>
                   <SmallLoginItem
                     deviceId={state?.deviceId}
@@ -461,13 +461,13 @@ function ThisTab (props) {
                     className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
                     onClick={handleKeepPassword}
                   >
-                    Keep it for 3 minutes
+                    Keep it for 3 minutes {/* @TODO: i18n */}
                   </button>
                   <button
                     className={`${bS.btn} ${bS.btnClear}`}
                     onClick={handleDontKeepPassword}
                   >
-                    Don't keep it
+                    Don't keep it {/* @TODO: i18n */}
                   </button>
                 </div>
               </div>
@@ -521,9 +521,7 @@ function ThisTab (props) {
               </m.div>
 
               <div className={allLoginsClass}>
-                <div className={S.thisTabAllLoginsHeader}>
-                  <ModelFilter />
-                </div>
+                <ModelFilter loading={loading} />
 
                 <div className={S.thisTabAllLoginsSearchContainer}>
                   <div className={searchClass}>
