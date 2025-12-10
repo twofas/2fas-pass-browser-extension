@@ -12,7 +12,7 @@ import saveItems from '@/partials/WebSocket/utils/saveItems';
 import { generateNonce } from '@/partials/functions';
 import { ENCRYPTION_KEYS } from '@/constants';
 
-/** 
+/**
 * Function to keep the password.
 * @async
 * @param {Object} state - The current state.
@@ -72,7 +72,7 @@ const keepPassword = async state => {
 
   // saveItems
   await saveItems(items, state.deviceId, state.vaultId);
-  
+
   // Set alarm for reset T2 SIF
   await browser.alarms.create(`sifT2Reset-${state.deviceId}|${state.vaultId}|${state.itemId}`, { delayInMinutes: sifResetTime });
 };

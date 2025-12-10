@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 import S from './ThisTab.module.scss';
-import bS from '@/partials/global-styles/buttons.module.scss';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { useEffect, useState, useRef, useCallback, useMemo, memo, useContext } from 'react';
@@ -19,15 +18,13 @@ import { filterXSS } from 'xss';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
 import getDomainFromMessage from './functions/getDomainFromMessage';
 import { useLocation } from 'react-router';
-import keepPassword from './functions/keepPassword';
-import { toast } from 'react-toastify';
 import isItemsCorrect from './functions/isItemsCorrect';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import { useTagFilter } from './components/Filters/hooks/useTagFilter';
 import { useSortFilter } from './components/Sort/hooks/useSortFilter';
 import DomainIcon from '@/assets/popup-window/domain.svg?react';
-import { AllItemsList, Filters, MatchingItemsList, ModelFilter, NoMatch, Search, SmallLoginItem, Sort, TagsInfo, UpdateComponent } from './components';
+import { AllItemsList, Filters, KeepPassword, MatchingItemsList, ModelFilter, NoMatch, Search, Sort, TagsInfo, UpdateComponent } from './components';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
@@ -122,25 +119,6 @@ function ThisTab (props) {
 
   const { handleSortChange } = useSortFilter();
   const { handleTagChange } = useTagFilter();
-
-  const handleKeepPassword = useCallback(async () => {
-    await keepPassword(state);
-    window.history.replaceState({}, '');
-    setAutofillFailed(false);
-
-    if (state?.toastId) {
-      toast.dismiss(state?.toastId);
-    }
-  }, [state]);
-
-  const handleDontKeepPassword = useCallback(() => {
-    setAutofillFailed(false);
-    window.history.replaceState({}, '');
-    
-    if (state?.toastId) {
-      toast.dismiss(state?.toastId);
-    }
-  }, [state]);
 
   const sendUrl = useCallback(async request => {
     const d = getDomainFromMessage(request);
@@ -308,7 +286,6 @@ function ThisTab (props) {
   const filteredItemsByModel = filteredItemsData.filteredByModel;
   const tagsWithFilteredAmounts = filteredItemsData.tagsWithAmounts;
 
-  const autofillPopupClass = `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`;
   const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
   const allLoginsClass = `${S.thisTabAllLogins} ${!hasLogins && !loading ? S.hidden : ''}`;
 
@@ -378,34 +355,11 @@ function ThisTab (props) {
       <div className={`${props.className ? props.className : ''}`}>
         <div ref={scrollableRef}>
           <section className={S.thisTab}>
-            <div className={autofillPopupClass}>
-              <div className={S.thisTabAutofillPopupBox}>
-                <h2>Password for the following service successfully fetched.</h2> {/* @TODO: i18n */}
-                <div className={S.thisTabAutofillPopupBoxLoginItem}>
-                  <SmallLoginItem
-                    deviceId={state?.deviceId}
-                    vaultId={state?.vaultId}
-                    itemId={state?.itemId}
-                    state={state}
-                    setAutofillFailed={setAutofillFailed}
-                  />
-                </div>
-                <div className={S.thisTabAutofillPopupBoxButtons}>
-                  <button
-                    className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-                    onClick={handleKeepPassword}
-                  >
-                    Keep it for 3 minutes {/* @TODO: i18n */}
-                  </button>
-                  <button
-                    className={`${bS.btn} ${bS.btnClear}`}
-                    onClick={handleDontKeepPassword}
-                  >
-                    Don't keep it {/* @TODO: i18n */}
-                  </button>
-                </div>
-              </div>
-            </div>
+            <KeepPassword
+              isActive={autofillFailed}
+              state={state}
+              setAutofillFailed={setAutofillFailed}
+            />
 
             <div className={S.thisTabContainer}>
               <m.div
