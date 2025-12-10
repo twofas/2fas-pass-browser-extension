@@ -220,6 +220,20 @@ function ThisTab (props) {
 
   const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl, setUpdateAvailable), [sendUrl, setUpdateAvailable]);
 
+  const handleAnimationComplete = useCallback(e => {
+    if (e === 'visible') {
+      thisTabTopRef.current.style.overflow = 'visible';
+    } else if (e === 'hidden') {
+      thisTabTopRef.current.style.overflow = 'clip';
+    }
+  }, []);
+
+  const handleAnimationUpdate = useCallback(() => {
+    if (data?.searchActive || data?.selectedTag) {
+      scrollableRef.current.scrollTo(0, 0);
+    }
+  }, [data?.searchActive, data?.selectedTag]);
+
   const hasMatchingLogins = useMemo(() => isItemsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
   const hasLogins = useMemo(() => isItemsCorrect(items) && items?.length > 0, [items]);
 
@@ -368,19 +382,8 @@ function ThisTab (props) {
                 variants={thisTabTopVariants}
                 initial="visible"
                 animate={data?.searchActive || data?.selectedTag ? 'hidden' : 'visible'}
-                onAnimationComplete={e => {
-                  if (e === 'visible') {
-                    thisTabTopRef.current.style.overflow = 'visible';
-                  } else if (e === 'hidden') {
-                    thisTabTopRef.current.style.overflow = 'clip';
-                  }
-                }}
-                onUpdate={() => {
-                  if (data?.searchActive || data?.selectedTag) {
-                    scrollableRef.current.scrollTo(0, 0);
-                  }
-                }}
-                style={{ opacity: '1 !important'}}
+                onAnimationComplete={handleAnimationComplete}
+                onUpdate={handleAnimationUpdate}
               >
                 <UpdateComponent updateAvailable={updateAvailable} />
 
