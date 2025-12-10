@@ -7,6 +7,7 @@
 export { default as AllItemsList } from './AllItemsList';
 export { default as Filters } from './Filters';
 export { default as Item } from './Item';
+export { default as KeepPassword } from './KeepPassword';
 export { default as MatchingItemsList } from './MatchingItemsList';
 export { default as ModelFilter } from './ModelFilter';
 export { default as NoMatch } from './NoMatch';
