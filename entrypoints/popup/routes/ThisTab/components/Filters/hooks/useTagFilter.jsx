@@ -9,7 +9,7 @@ import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 
 /**
 * Hook for managing tag filter selection in popup state.
-* @return {Object} Object containing handleTagChange callback function.
+* @return {Object} Object containing handleTagChange and clearTagFilter callback functions.
 */
 export const useTagFilter = () => {
   const setData = usePopupStateStore(state => state.setData);
@@ -24,5 +24,9 @@ export const useTagFilter = () => {
     }
   }, [setBatchData, setData]);
 
-  return { handleTagChange };
+  const clearTagFilter = useCallback(() => {
+    setData('selectedTag', null);
+  }, [setData]);
+
+  return { handleTagChange, clearTagFilter };
 };

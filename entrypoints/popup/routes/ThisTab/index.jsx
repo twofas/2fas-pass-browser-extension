@@ -67,7 +67,6 @@ function ThisTab (props) {
   const [forceCloseFilters, setForceCloseFilters] = useState(false);
 
   const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
   const setBatchData = usePopupStateStore(state => state.setBatchData);
   const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
   const setHref = usePopupStateStore(state => state.setHref);
@@ -150,7 +149,7 @@ function ThisTab (props) {
     setBatchData({ searchValue: '', searchActive: false });
   }, [setBatchData]);
 
-  const { handleTagChange } = useTagFilter();
+  const { handleTagChange, clearTagFilter } = useTagFilter();
 
   const handleKeepPassword = useCallback(async () => {
     await keepPassword(state);
@@ -561,7 +560,7 @@ function ThisTab (props) {
                   >
                     <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', filteredItemsCount).replace('TAG_NAME', currentTagInfo?.name || '')}</p>
                     <button
-                      onClick={() => setData('selectedTag', null)}
+                      onClick={clearTagFilter}
                       title={browser.i18n.getMessage('this_tab_clear_tag_filter')}
                     >
                       <ClearIcon />
