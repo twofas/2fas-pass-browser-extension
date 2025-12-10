@@ -26,6 +26,8 @@ import { toast } from 'react-toastify';
 import isItemsCorrect from './functions/isItemsCorrect';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
+import { useTagFilter } from './components/Filters/hooks/useTagFilter';
+import { useSortFilter } from './components/Sort/hooks/useSortFilter';
 import SmallLoginItem from './components/SmallLoginItem';
 import DomainIcon from '@/assets/popup-window/domain.svg?react';
 import SearchIcon from '@/assets/popup-window/search-icon.svg?react';
@@ -129,9 +131,7 @@ function ThisTab (props) {
     }
   }, [location.state, location.pathname, setScrollPosition, setHref]);
 
-  const handleSortChange = useCallback(async newSort => {
-    setData('selectedSort', newSort);
-  }, []);
+  const { handleSortChange } = useSortFilter();
 
   const handleSearchChange = useCallback(e => {
     const value = e?.target?.value;
@@ -150,14 +150,7 @@ function ThisTab (props) {
     setBatchData({ searchValue: '', searchActive: false });
   }, [setBatchData]);
 
-  const handleTagChange = useCallback(tag => {
-    if (tag) {
-      const tagInfo = { name: tag.name, amount: tag.amount };
-      setBatchData({ selectedTag: tag, lastSelectedTagInfo: tagInfo });
-    } else {
-      setData('selectedTag', null);
-    }
-  }, [setBatchData, setData]);
+  const { handleTagChange } = useTagFilter();
 
   const handleKeepPassword = useCallback(async () => {
     await keepPassword(state);
