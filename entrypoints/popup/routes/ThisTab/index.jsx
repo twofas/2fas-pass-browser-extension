@@ -12,8 +12,6 @@ import { useEffect, useState, useRef, useCallback, useMemo, memo, useContext } f
 import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
 import getDomainFromTab from './functions/getDomainFromTab';
 import onMessage from './events/onMessage';
-import generateAllItemsList from './functions/generateAllItemsList';
-import generateMatchingItemsList from './functions/generateMatchingItemsList';
 import URIMatcher from '@/partials/URIMatcher';
 import getItems from '@/partials/sessionStorage/getItems';
 import getTags from '@/partials/sessionStorage/getTags';
@@ -28,15 +26,8 @@ import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import { useTagFilter } from './components/Filters/hooks/useTagFilter';
 import { useSortFilter } from './components/Sort/hooks/useSortFilter';
-import SmallLoginItem from './components/SmallLoginItem';
 import DomainIcon from '@/assets/popup-window/domain.svg?react';
-import NoMatch from './components/NoMatch';
-import ModelFilter from './components/ModelFilter';
-import Search from './components/Search';
-import Filters from './components/Filters';
-import Sort from './components/Sort';
-import TagsInfo from './components/TagsInfo';
-import UpdateComponent from './components/UpdateComponent';
+import { AllItemsList, Filters, MatchingItemsList, ModelFilter, NoMatch, Search, SmallLoginItem, Sort, TagsInfo, UpdateComponent } from './components';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
@@ -321,9 +312,6 @@ function ThisTab (props) {
   const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
   const allLoginsClass = `${S.thisTabAllLogins} ${!hasLogins && !loading ? S.hidden : ''}`;
 
-  const memoizedMatchingItemsList = useMemo(() => generateMatchingItemsList(matchingLogins, loading), [matchingLogins, loading]);
-  const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter), [items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter]);
-
   const filteredItemsCount = filteredItemsData.filteredCount;
 
   useEffect(() => {
@@ -454,7 +442,7 @@ function ThisTab (props) {
 
                 <div className={S.thisTabMatchingLogins}>
                   <div className={matchingLoginsListClass}>
-                    {memoizedMatchingItemsList}
+                    <MatchingItemsList items={matchingLogins} loading={loading} />
                   </div>
 
                   <NoMatch
@@ -490,7 +478,14 @@ function ThisTab (props) {
                   filteredItemsCount={filteredItemsCount}
                 />
 
-                {memoizedAllItemsList}
+                <AllItemsList
+                  items={items}
+                  sort={data.selectedSort}
+                  search={data?.searchValue}
+                  loading={loading}
+                  selectedTag={data?.selectedTag}
+                  itemModelFilter={data?.itemModelFilter}
+                />
               </div>
             </div>
           </section>
