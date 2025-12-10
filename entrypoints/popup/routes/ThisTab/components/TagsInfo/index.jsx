@@ -6,19 +6,35 @@
 
 import S from '../../ThisTab.module.scss';
 import { useMemo, memo } from 'react';
+import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import { useTagFilter } from '../Filters/hooks/useTagFilter';
 import ClearIcon from '@/assets/popup-window/clear.svg?react';
 
 /**
 * Component displaying active tag filter info with clear button.
 * @param {Object} props - The component props.
-* @param {Object} props.currentTagInfo - Object with tag name and filtered amount.
-* @param {boolean} props.isActive - Whether a tag filter is currently active.
+* @param {Array} props.tagsWithFilteredAmounts - Tags array with filtered amounts.
 * @param {number} props.filteredItemsCount - Number of items matching the filter.
 * @return {JSX.Element} The rendered tag info component.
 */
-function TagsInfo ({ currentTagInfo, isActive, filteredItemsCount }) {
+function TagsInfo ({ tagsWithFilteredAmounts, filteredItemsCount }) {
+  const data = usePopupStateStore(state => state.data);
   const { clearTagFilter } = useTagFilter();
+
+  const currentTagInfo = useMemo(() => {
+    if (!data?.selectedTag || !data?.lastSelectedTagInfo) {
+      return null;
+    }
+
+    const tagWithFilteredAmount = tagsWithFilteredAmounts.find(t => t.id === data.selectedTag.id);
+
+    return {
+      name: data.lastSelectedTagInfo.name,
+      amount: tagWithFilteredAmount?.amount || 0
+    };
+  }, [data?.selectedTag, data?.lastSelectedTagInfo, tagsWithFilteredAmounts]);
+
+  const isActive = currentTagInfo && data?.selectedTag;
 
   const containerClass = useMemo(() => {
     return `${S.thisTabAllLoginsTagsInfo} ${isActive ? S.active : ''}`;

@@ -30,10 +30,9 @@ import { useTagFilter } from './components/Filters/hooks/useTagFilter';
 import { useSortFilter } from './components/Sort/hooks/useSortFilter';
 import SmallLoginItem from './components/SmallLoginItem';
 import DomainIcon from '@/assets/popup-window/domain.svg?react';
-import SearchIcon from '@/assets/popup-window/search-icon.svg?react';
-import ClearIcon from '@/assets/popup-window/clear.svg?react';
 import NoMatch from './components/NoMatch';
 import ModelFilter from './components/ModelFilter';
+import Search from './components/Search';
 import Filters from './components/Filters';
 import Sort from './components/Sort';
 import TagsInfo from './components/TagsInfo';
@@ -65,7 +64,6 @@ function ThisTab (props) {
   const [storageVersion, setStorageVersion] = useState(null);
   const [autofillFailed, setAutofillFailed] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [forceCloseFilters, setForceCloseFilters] = useState(false);
 
   const data = usePopupStateStore(state => state.data);
   const setBatchData = usePopupStateStore(state => state.setBatchData);
@@ -132,24 +130,6 @@ function ThisTab (props) {
   }, [location.state, location.pathname, setScrollPosition, setHref]);
 
   const { handleSortChange } = useSortFilter();
-
-  const handleSearchChange = useCallback(e => {
-    const value = e?.target?.value;
-
-    setForceCloseFilters(true);
-    setTimeout(() => setForceCloseFilters(false), 100);
-
-    if (value.trim().length > 0) {
-      setBatchData({ searchActive: true, searchValue: value });
-    } else {
-      setBatchData({ searchActive: false, searchValue: '' });
-    }
-  }, [setBatchData]);
-
-  const handleSearchClear = useCallback(() => {
-    setBatchData({ searchValue: '', searchActive: false });
-  }, [setBatchData]);
-
   const { handleTagChange } = useTagFilter();
 
   const handleKeepPassword = useCallback(async () => {
@@ -337,36 +317,9 @@ function ThisTab (props) {
   const filteredItemsByModel = filteredItemsData.filteredByModel;
   const tagsWithFilteredAmounts = filteredItemsData.tagsWithAmounts;
 
-  const searchPlaceholder = useMemo(() => {
-    let amount;
-
-    if (data?.selectedTag) {
-      const tagWithFilteredAmount = tagsWithFilteredAmounts.find(t => t.id === data.selectedTag.id);
-      amount = tagWithFilteredAmount?.amount || 0;
-    } else {
-      amount = filteredItemsByModel?.length || 0;
-    }
-
-    return browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', amount);
-  }, [data?.selectedTag, filteredItemsByModel?.length, tagsWithFilteredAmounts]);
-
-  const currentTagInfo = useMemo(() => {
-    if (!data?.selectedTag || !data?.lastSelectedTagInfo) {
-      return null;
-    }
-
-    const tagWithFilteredAmount = tagsWithFilteredAmounts.find(t => t.id === data.selectedTag.id);
-
-    return {
-      name: data.lastSelectedTagInfo.name,
-      amount: tagWithFilteredAmount?.amount || 0
-    };
-  }, [data?.selectedTag, data?.lastSelectedTagInfo, tagsWithFilteredAmounts]);
-
   const autofillPopupClass = `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`;
   const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
   const allLoginsClass = `${S.thisTabAllLogins} ${!hasLogins && !loading ? S.hidden : ''}`;
-  const searchClass = `${S.thisTabAllLoginsSearch} ${data?.searchActive ? S.active : ''}`;
 
   const memoizedMatchingItemsList = useMemo(() => generateMatchingItemsList(matchingLogins, loading), [matchingLogins, loading]);
   const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter), [items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter]);
@@ -517,36 +470,14 @@ function ThisTab (props) {
                 <ModelFilter loading={loading} />
 
                 <div className={S.thisTabAllLoginsSearchContainer}>
-                  <div className={searchClass}>
-                    <SearchIcon />
-                    <input
-                      id="search"
-                      name="search"
-                      type="search"
-                      placeholder={searchPlaceholder}
-                      dir="ltr"
-                      spellCheck="false"
-                      autoCorrect="off"
-                      autoComplete="off"
-                      autoCapitalize="off"
-                      maxLength="2048"
-                      onChange={handleSearchChange}
-                      value={data.searchValue || ''}
-                      className={data?.searchValue && data?.searchValue?.length > 0 ? S.withValue : ''}
-                    />
-        
-                    <button
-                      className={`${S.thisTabAllLoginsSearchClear} ${!data?.searchValue || data?.searchValue?.length <= 0 ? S.hidden : ''}`}
-                      onClick={handleSearchClear}
-                    >
-                      <ClearIcon />
-                    </button>
-                  </div>
+                  <Search
+                    tagsWithFilteredAmounts={tagsWithFilteredAmounts}
+                    filteredItemsByModelLength={filteredItemsByModel?.length}
+                  />
                   <Filters
                     tags={tagsWithFilteredAmounts}
                     selectedTag={data.selectedTag}
                     onTagChange={handleTagChange}
-                    forceClose={forceCloseFilters}
                   />
                   <Sort
                     selectedSort={data.selectedSort || 'az'}
@@ -555,8 +486,7 @@ function ThisTab (props) {
                 </div>
 
                 <TagsInfo
-                  currentTagInfo={currentTagInfo}
-                  isActive={currentTagInfo && data.selectedTag}
+                  tagsWithFilteredAmounts={tagsWithFilteredAmounts}
                   filteredItemsCount={filteredItemsCount}
                 />
 
