@@ -32,7 +32,7 @@ function Search ({ tagsWithFilteredAmounts, filteredItemsByModelLength }) {
       amount = filteredItemsByModelLength || 0;
     }
 
-    return browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', amount);
+    return browser.i18n.getMessage('search_placeholder').replace('%AMOUNT%', amount);
   }, [data?.selectedTag, filteredItemsByModelLength, tagsWithFilteredAmounts]);
 
   const containerClass = useMemo(() => {

@@ -1,0 +1,14 @@
+{
+  "keep_password_popup_header": {
+    "message": "Password for the following service successfully fetched.",
+    "description": "Header message in popup after fetching password for autofill"
+  },
+  "keep_password_popup_keep": {
+    "message": "Keep it for 3 minutes",
+    "description": "Button label to keep the fetched password for a limited time"
+  },
+  "keep_password_popup_dont_keep": {
+    "message": "Don't keep it",
+    "description": "Button label to not keep the fetched password for a limited time"
+  }
+}

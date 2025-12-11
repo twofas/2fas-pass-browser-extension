@@ -47,7 +47,7 @@ function UpdateComponent () {
       } else if (browser?.runtime?.restart) {
         await browser.runtime.restart();
       } else {
-        showToast(browser.i18n.getMessage('this_tab_update_manual_required'), 'error');
+        showToast(browser.i18n.getMessage('update_manual_required'), 'error');
       }
     } catch (e) {
       await CatchError(e);
@@ -97,16 +97,16 @@ function UpdateComponent () {
         <div className={S.updateContainerBox}>
           <div className={S.updateContainerBoxContent}>
             <span className={S.updateContainerBoxText}>
-              {browser.i18n.getMessage('this_tab_update_available')}
+              {browser.i18n.getMessage('update_available')}
             </span>
           </div>
           <button 
             className={S.updateContainerBoxButton}
             onClick={handleUpdate}
-            title={browser.i18n.getMessage('this_tab_update_button_title')}
+            title={browser.i18n.getMessage('update_button_title')}
           >
             <RefreshIcon />
-            {browser.i18n.getMessage('this_tab_update_button')}
+            {browser.i18n.getMessage('update_button')}
           </button>
         </div>
       </m.div>

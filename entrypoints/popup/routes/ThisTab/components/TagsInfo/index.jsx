@@ -41,13 +41,13 @@ function TagsInfo ({ tagsWithFilteredAmounts, filteredItemsCount }) {
   }, [isActive]);
 
   const infoText = useMemo(() => {
-    return browser.i18n.getMessage('this_tab_tag_info_text')
+    return browser.i18n.getMessage('tags_info_text')
       .replace('AMOUNT', filteredItemsCount)
       .replace('TAG_NAME', currentTagInfo?.name || '');
   }, [filteredItemsCount, currentTagInfo?.name]);
 
   const clearButtonTitle = useMemo(() => {
-    return browser.i18n.getMessage('this_tab_clear_tag_filter');
+    return browser.i18n.getMessage('tags_info_clear_filter');
   }, []);
 
   return (
