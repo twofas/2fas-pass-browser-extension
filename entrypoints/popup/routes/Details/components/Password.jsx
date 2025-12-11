@@ -22,7 +22,6 @@ const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
 const ExternalLinkIcon = lazy(() => import('@/assets/popup-window/new-tab.svg?react'));
-const PasswordInput = lazy(() => import('@/entrypoints/popup/components/PasswordInput'));
 
 const passwordMobileVariants = {
   hidden: { maxHeight: '0px' },
@@ -221,15 +220,12 @@ function Password (props) {
               </button>
             </div>
             <div className={pI.passInputBottom}>
-              <PasswordInput
+              <input
                 value={getPasswordValue()}
                 type={data?.passwordVisible ? 'text' : 'password'}
                 placeholder={!sifDecryptError && (!data?.passwordMobile && originalItem?.isT3orT2WithSif || data?.passwordEditable) ? browser.i18n.getMessage('placeholder_password') : ''}
                 id='editedSif'
                 onChange={handlePasswordChange}
-                showPassword={data?.passwordVisible}
-                isDecrypted={data.item.isSifDecrypted || data.item.internalData.editedSif !== null}
-                state={!originalItem?.isT3orT2WithSif ? 'nonFetched' : ''}
                 disabled={!data?.passwordEditable || data?.passwordMobile || sifDecryptError}
                 dir="ltr"
                 spellCheck="false"
