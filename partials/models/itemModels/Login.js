@@ -140,8 +140,8 @@ export default class Login extends Item {
     }
 
     for (const item of sifData) {
-      if (Object.prototype.hasOwnProperty.call(item, 'password')) {
-        this.#s_password = await this.encryptSif(item.password, this?.internalData?.type);
+      if (Object.prototype.hasOwnProperty.call(item, 's_password')) {
+        this.#s_password = await this.encryptSif(item.s_password, this?.internalData?.type);
       }
     }
   }
