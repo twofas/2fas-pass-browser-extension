@@ -15,7 +15,6 @@ class SecureNote extends Item {
   static contentVersion = 1;
 
   #s_text;
-  #s_sifDecrypted;
 
   constructor (secureNoteData, deviceId = null, vaultId = null) {
     if (secureNoteData.constructor.name === SecureNote.name) {
@@ -37,7 +36,6 @@ class SecureNote extends Item {
 
     this.content = {
       name: secureNoteData.content.name,
-      s_text: secureNoteData.content.s_text,
       additionalInfo: secureNoteData.content.additionalInfo || null
     };
 
@@ -45,14 +43,11 @@ class SecureNote extends Item {
       ...this.internalData,
       uiName: browser.i18n.getMessage('secure_note'),
       type: secureNoteData.internalData?.type || null,
-      sifResetTime: secureNoteData.internalData?.sifResetTime || null,
-      editedSif: secureNoteData.internalData?.editedSif ?? null,
-      cachedSifDecrypted: secureNoteData.internalData?.cachedSifDecrypted ?? null
+      sifResetTime: secureNoteData.internalData?.sifResetTime || null
     };
 
     // Secure Input Fields
     this.#s_text = secureNoteData.content.s_text;
-    this.#s_sifDecrypted = secureNoteData.internalData?.cachedSifDecrypted ?? null;
   }
 
   removeSif () {
@@ -69,34 +64,16 @@ class SecureNote extends Item {
     };
   }
 
-  setSif (sifData) {
+  async setSif (sifData) {
     if (!Array.isArray(sifData)) {
       throw new Error('Invalid SIF data: must be an array');
     }
 
-    sifData.forEach(item => {
-      if (Object.prototype.hasOwnProperty.call(item, 's_text')) {
-        this.#s_text = item.s_text;
+    for (const item of sifData) {
+      if (Object.prototype.hasOwnProperty.call(item, 'text')) {
+        this.#s_text = await this.encryptSif(item.text, this?.internalData?.type);
       }
-    });
-  }
-
-  setSifDecrypted (decryptedSif) {
-    this.#s_sifDecrypted = decryptedSif;
-    this.internalData.cachedSifDecrypted = decryptedSif;
-  }
-
-  removeSifDecrypted () {
-    this.#s_sifDecrypted = null;
-    this.internalData.cachedSifDecrypted = null;
-  }
-
-  get sifDecrypted () {
-    return this.#s_sifDecrypted;
-  }
-
-  get isSifDecrypted () {
-    return this.#s_sifDecrypted !== null;
+    }
   }
 
   get dropdownList () {

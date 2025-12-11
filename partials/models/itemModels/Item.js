@@ -6,6 +6,7 @@
 
 import { HEX_REGEX, ENCRYPTION_KEYS } from '@/constants';
 import getKey from '@/partials/sessionStorage/getKey';
+import { generateNonce } from '@/partials/functions';
 
 /**
 * Class representing an item.
@@ -118,7 +119,7 @@ class Item {
     let itemKey;
 
     try {
-      if (this.securityType === SECURITY_TIER.SECRET) {
+      if (this.internalData.originalSecurityType === SECURITY_TIER.SECRET) {
         if (internalType && internalType === 'added') {
           itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { deviceId: this.deviceId, itemId: this.id });
         } else {
@@ -193,7 +194,98 @@ class Item {
     return result;
   }
 
-  /** 
+  /**
+  * Encrypts a plain text value into a secure item field (sif) using the appropriate encryption key.
+  * @async
+  * @param {string} plainTextValue - The plain text value to encrypt.
+  * @return {Promise<string>} The encrypted secure item value as a base64 string.
+  * @throws Will throw an error if encryption fails at any step.
+  */
+  async encryptSif (plainTextValue, internalType = null) {
+    if (typeof plainTextValue !== 'string') {
+      throw new Error('Invalid plain text value');
+    }
+
+    let itemKey;
+
+    try {
+      if (this.internalData.originalSecurityType === SECURITY_TIER.SECRET) {
+        if (internalType && internalType === 'added') {
+          itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3_NEW.sK, { deviceId: this.deviceId, itemId: this.id });
+        } else {
+          itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T3.sK, { deviceId: this.deviceId });
+        }
+      } else {
+        itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: this.deviceId, itemId: this.id });
+      }
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.encryptSifGetKey, {
+        event: e,
+        additional: {
+          func: 'encryptSif',
+          deviceId: this?.deviceId || null
+        }
+      });
+    }
+
+    let encryptionItemKey;
+
+    try {
+      encryptionItemKey = await storage.getItem(`session:${itemKey}`);
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.encryptSifStorageGetKey, { event: e, additional: { func: 'encryptSif' } });
+    }
+
+    itemKey = null;
+    let encryptionKey;
+
+    try {
+      const encryptionItemKeyAB = Base64ToArrayBuffer(encryptionItemKey);
+      encryptionKey = await crypto.subtle.importKey(
+        'raw',
+        encryptionItemKeyAB,
+        { name: 'AES-GCM' },
+        false,
+        ['encrypt']
+      );
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.encryptSifImportKey, { event: e, additional: { func: 'encryptSif' } });
+    }
+
+    encryptionItemKey = null;
+    let encryptedSifAB;
+    let nonce;
+
+    try {
+      nonce = generateNonce();
+      const plainTextAB = StringToArrayBuffer(plainTextValue);
+      encryptedSifAB = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: nonce.ArrayBuffer },
+        encryptionKey,
+        plainTextAB
+      );
+    } catch (e) {
+      encryptionKey = null;
+      nonce = null;
+
+      throw new TwoFasError(TwoFasError.internalErrors.encryptSifEncrypt, {
+        event: e,
+        additional: { func: 'encryptSif' }
+      });
+    }
+
+    encryptionKey = null;
+
+    const encryptedBytes = EncryptBytes(nonce.ArrayBuffer, encryptedSifAB);
+    nonce = null;
+    encryptedSifAB = null;
+
+    const result = ArrayBufferToBase64(encryptedBytes);
+
+    return result;
+  }
+
+  /**
   * Gets the text color based on the item label color.
   * @return {string} The text color (black or white) based on the label color.
   */
