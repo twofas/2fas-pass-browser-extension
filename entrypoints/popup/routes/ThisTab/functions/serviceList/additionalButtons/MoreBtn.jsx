@@ -4,10 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
+import S from '../../../components/Item/styles/Item.module.scss';
 import { lazy } from 'react';
 
-const ServiceMoreIcon = lazy(() => import('@/assets/popup-window/service-more.svg?react'));
+const ItemMoreIcon = lazy(() => import('@/assets/popup-window/service-more.svg?react'));
 
 /** 
 * Function to render the more actions button.
@@ -28,13 +28,13 @@ const MoreBtn = ({ more, setMore, ref }) => {
 
   return (
     <button
-      className={`${S.serviceMoreBtn} ${more ? S.active : ''}`}
+      className={`${S.itemMoreBtn} ${more ? S.active : ''}`}
       onClick={handleClick}
       onMouseDown={handleMouseDown}
       title={browser.i18n.getMessage('this_tab_more_actions')}
       ref={ref}
     >
-      <ServiceMoreIcon className={S.serviceMore} />
+      <ItemMoreIcon className={S.itemMore} />
     </button>
   );
 };

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
+import S from '../styles/Item.module.scss';
 import { memo, lazy, useRef, useMemo } from 'react';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
@@ -24,7 +24,7 @@ function SecureNoteItemView (props) {
   return (
     <>
       <div
-        className={S.servicesListItemAutofill}
+        className={S.itemAutofill}
         ref={props.autofillBtnRef}
       >
         {generateIcon(props.data, null, null, props.loading)}
@@ -32,7 +32,7 @@ function SecureNoteItemView (props) {
           {props.loading ? <Skeleton /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
         </span>
       </div>
-      <div className={S.servicesListItemAdditionalButtons}>
+      <div className={S.itemAdditionalButtons}>
         <CopySecureNoteBtn item={props.data} more={props.more} setMore={props.setMore} />
         <CopyNameBtn item={props.data} more={props.more} setMore={props.setMore} />
         <MoreBtn item={props.data} more={props.more} setMore={props.setMore} ref={moreBtnRef} />

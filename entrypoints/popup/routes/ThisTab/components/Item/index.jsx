@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/Item.module.scss';
 
 import { useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import { useItemList } from '../../context/ItemListContext';
@@ -65,7 +65,7 @@ function Item (props) {
   }, [more]);
 
   const itemClassName = useMemo(() =>
-    `${S.servicesListItem} ${more ? S.hover : ''} ${props.loading === true ? S.loading : ''}`,
+    `${S.item} ${more ? S.hover : ''} ${props.loading === true ? S.loading : ''}`,
     [more, props.loading]
   );
 

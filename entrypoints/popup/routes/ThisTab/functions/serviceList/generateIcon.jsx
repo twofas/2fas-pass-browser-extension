@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from '../../components/Item/styles/Item.module.scss';
 import { lazy } from 'react';
 import { getDomain } from '@/partials/functions';
 import { HEX_REGEX } from '@/constants';

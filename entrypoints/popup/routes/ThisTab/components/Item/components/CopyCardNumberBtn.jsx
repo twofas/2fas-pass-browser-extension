@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
+import S from '../styles/Item.module.scss';
 import handleCardNumber from '../../../functions/serviceList/handleCardNumber';
 import { Link } from 'react-router';
 import { useState, useRef, lazy, useLayoutEffect } from 'react';
@@ -12,8 +12,8 @@ import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 
-const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
-const ServiceCopyIcon = lazy(() => import('@/assets/popup-window/card-number.svg?react'));
+const ItemFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
+const ItemCopyIcon = lazy(() => import('@/assets/popup-window/card-number.svg?react'));
 
 /**
 * Renders the copy card number button for payment card items.
@@ -90,7 +90,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
         onClick={async () => await handleCardNumber(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_card_number')}
       >
-        <ServiceCopyIcon className={S.serviceCopyCardNumber} />
+        <ItemCopyIcon className={S.itemCopyCardNumber} />
       </button>
     );
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
@@ -98,19 +98,19 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
       <button
         onClick={async () => await handleCardNumber(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_card_number')}
-        className={S.servicePasswordLoader}
+        className={S.itemPasswordLoader}
       >
         <svg
           ref={loaderRef}
-          className={S.serviceLoader}
+          className={S.itemLoader}
           viewBox="0 0 96 96"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <circle cx="48" cy="48" r="42" className={S.serviceLoaderBg} />
+          <circle cx="48" cy="48" r="42" className={S.itemLoaderBg} />
           <circle cx="48" cy="48" r="42" />
         </svg>
 
-        <ServiceCopyIcon className={S.serviceCopyCardNumber} />
+        <ItemCopyIcon className={S.itemCopyCardNumber} />
       </button>
     );
   } else {
@@ -130,7 +130,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
         title={browser.i18n.getMessage('this_tab_fetch_card_info')}
         prefetch='intent'
       >
-        <ServiceFetchIcon className={S.serviceFetch} />
+        <ItemFetchIcon className={S.itemFetch} />
       </Link>
     );
   }

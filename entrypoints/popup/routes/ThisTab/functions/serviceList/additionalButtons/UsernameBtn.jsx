@@ -4,11 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
+import S from '../../../components/Item/styles/Item.module.scss';
 import handleUsername from '../handleUsername';
 import { lazy } from 'react';
 
-const ServiceUsernameIcon = lazy(() => import('@/assets/popup-window/service-username.svg?react'));
+const ItemUsernameIcon = lazy(() => import('@/assets/popup-window/service-username.svg?react'));
 
 /** 
 * Function to render the username button.
@@ -26,7 +26,7 @@ const UsernameBtn = ({ deviceId, vaultId, itemId, more, setMore }) => {
       onClick={async () => await handleUsername(deviceId, vaultId, itemId, more, setMore)}
       title={browser.i18n.getMessage('this_tab_copy_username')}
     >
-      <ServiceUsernameIcon className={S.serviceUsername} />
+      <ItemUsernameIcon className={S.itemUsername} />
     </button>
   );
 };

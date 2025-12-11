@@ -4,11 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
+import S from '../styles/Item.module.scss';
 import { lazy } from 'react';
 import handleName from '../../../functions/serviceList/handleName';
 
-const CopyNameIcon = lazy(() => import('@/assets/popup-window/copy-name.svg?react'));
+const ItemCopyNameIcon = lazy(() => import('@/assets/popup-window/copy-name.svg?react'));
 
 const CopyNameBtn = ({ item, more, setMore }) => {
   return (
@@ -16,7 +16,7 @@ const CopyNameBtn = ({ item, more, setMore }) => {
       onClick={async () => await handleName(item.deviceId, item.vaultId, item.id, more, setMore)}
       title={browser.i18n.getMessage('this_tab_copy_name')}
     >
-      <CopyNameIcon className={S.serviceName} />
+      <ItemCopyNameIcon className={S.itemName} />
     </button>
   );
 };

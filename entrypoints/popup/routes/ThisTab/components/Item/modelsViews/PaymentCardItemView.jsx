@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
+import S from '../styles/Item.module.scss';
 import { memo, lazy, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
@@ -37,7 +37,7 @@ function PaymentCardItemView (props) {
   return (
     <>
       <button
-        className={S.servicesListItemAutofill}
+        className={S.itemAutofill}
         onClick={handleAutofillClick}
         ref={props.autofillBtnRef}
       >
@@ -47,7 +47,7 @@ function PaymentCardItemView (props) {
           {props.loading ? <Skeleton /> : <span>{props?.data?.content?.cardNumberMask ? `**** ${props?.data?.content?.cardNumberMask}` : browser.i18n.getMessage('no_item_name')}</span>}
         </span>
       </button>
-      <div className={S.servicesListItemAdditionalButtons}>
+      <div className={S.itemAdditionalButtons}>
         <CopyCardNumberBtn item={props.data} more={props.more} setMore={props.setMore} />
         <CopyCardSecurityCodeBtn item={props.data} more={props.more} setMore={props.setMore} />
         <MoreBtn item={props.data} more={props.more} setMore={props.setMore} ref={moreBtnRef} />

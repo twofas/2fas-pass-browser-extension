@@ -4,11 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
+import S from '../styles/Item.module.scss';
 import handleCardSecurityCode from '../../../functions/serviceList/handleCardSecurityCode';
 import { lazy } from 'react';
 
-const ServiceCopyIcon = lazy(() => import('@/assets/popup-window/card-security-code.svg?react'));
+const ItemCopyIcon = lazy(() => import('@/assets/popup-window/card-security-code.svg?react'));
 
 /**
 * Renders the copy security code button for payment card items.
@@ -25,7 +25,7 @@ const CopyCardSecurityCodeBtn = ({ item, more, setMore }) => {
         onClick={async () => await handleCardSecurityCode(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_card_security_code')}
       >
-        <ServiceCopyIcon className={S.serviceCopySecurityCode} />
+        <ItemCopyIcon className={S.itemCopySecurityCode} />
       </button>
     );
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
@@ -34,7 +34,7 @@ const CopyCardSecurityCodeBtn = ({ item, more, setMore }) => {
         onClick={async () => await handleCardSecurityCode(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_card_security_code')}
       >
-        <ServiceCopyIcon className={S.serviceCopySecurityCode} />
+        <ItemCopyIcon className={S.itemCopySecurityCode} />
       </button>
     );
   } else {
