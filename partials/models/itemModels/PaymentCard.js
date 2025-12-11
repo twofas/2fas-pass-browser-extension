@@ -133,16 +133,16 @@ export default class PaymentCard extends Item {
     }
 
     for (const item of sifData) {
-      if (Object.prototype.hasOwnProperty.call(item, 'cardNumber')) {
-        this.#s_cardNumber = await this.encryptSif(item.cardNumber, this?.internalData?.type);
+      if (Object.prototype.hasOwnProperty.call(item, 's_cardNumber')) {
+        this.#s_cardNumber = await this.encryptSif(item.s_cardNumber, this?.internalData?.type);
       }
 
-      if (Object.prototype.hasOwnProperty.call(item, 'expirationDate')) {
-        this.#s_expirationDate = await this.encryptSif(item.expirationDate, this?.internalData?.type);
+      if (Object.prototype.hasOwnProperty.call(item, 's_expirationDate')) {
+        this.#s_expirationDate = await this.encryptSif(item.s_expirationDate, this?.internalData?.type);
       }
 
-      if (Object.prototype.hasOwnProperty.call(item, 'securityCode')) {
-        this.#s_securityCode = await this.encryptSif(item.securityCode, this?.internalData?.type);
+      if (Object.prototype.hasOwnProperty.call(item, 's_securityCode')) {
+        this.#s_securityCode = await this.encryptSif(item.s_securityCode, this?.internalData?.type);
       }
     }
   }

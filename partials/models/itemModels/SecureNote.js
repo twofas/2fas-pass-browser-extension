@@ -70,8 +70,8 @@ class SecureNote extends Item {
     }
 
     for (const item of sifData) {
-      if (Object.prototype.hasOwnProperty.call(item, 'text')) {
-        this.#s_text = await this.encryptSif(item.text, this?.internalData?.type);
+      if (Object.prototype.hasOwnProperty.call(item, 's_text')) {
+        this.#s_text = await this.encryptSif(item.s_text, this?.internalData?.type);
       }
     }
   }
