@@ -40,7 +40,6 @@ const thisTabTopVariants = {
 */
 function ThisTab (props) {
   const location = useLocation();
-  const { state } = location;
   const { changeMatchingLoginsLength } = useMatchingLogins();
   const scrollableRefContext = useContext(ScrollableRefContext);
   const [loading, setLoading] = useState(true);
@@ -50,7 +49,6 @@ function ThisTab (props) {
   const [tags, setTags] = useState([]);
   const [matchingLogins, setMatchingLogins] = useState([]);
   const [storageVersion, setStorageVersion] = useState(null);
-  const [autofillFailed, setAutofillFailed] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const data = usePopupStateStore(state => state.data);
@@ -351,12 +349,6 @@ function ThisTab (props) {
   }, [storageVersion]);
 
   useEffect(() => {
-    if (location?.state?.action === 'autofillT2Failed') {
-      setAutofillFailed(true);
-    } else {
-      setAutofillFailed(false);
-    }
-
     if (location.state?.from === 'details') {
       setTimeout(() => {
         syncState();
@@ -369,11 +361,7 @@ function ThisTab (props) {
       <div className={`${props.className ? props.className : ''}`}>
         <div ref={scrollableRef}>
           <section className={S.thisTab}>
-            <KeepPassword
-              isActive={autofillFailed}
-              state={state}
-              setAutofillFailed={setAutofillFailed}
-            />
+            <KeepPassword />
 
             <div className={S.thisTabContainer}>
               <m.div
