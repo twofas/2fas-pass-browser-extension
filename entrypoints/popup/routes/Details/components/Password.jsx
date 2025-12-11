@@ -225,15 +225,12 @@ function Password (props) {
               </button>
             </div>
             <div className={pI.passInputBottom}>
-              <PasswordInput
+              <input
                 value={getPasswordValue()}
                 type={data?.passwordVisible ? 'text' : 'password'}
                 placeholder={!sifDecryptError && (!data?.passwordMobile && originalItem?.isT3orT2WithSif || data?.passwordEditable) ? browser.i18n.getMessage('placeholder_password') : ''}
                 id='editedSif'
                 onChange={handlePasswordChange}
-                showPassword={data?.passwordVisible}
-                isDecrypted={data.item.isSifDecrypted || data.item.internalData.editedSif !== null}
-                state={!originalItem?.isT3orT2WithSif ? 'nonFetched' : ''}
                 disabled={!data?.passwordEditable || data?.passwordMobile || sifDecryptError}
                 dir="ltr"
                 spellCheck="false"
