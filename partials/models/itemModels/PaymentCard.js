@@ -36,9 +36,6 @@ export default class PaymentCard extends Item {
 
     validateOptional(paymentCardData?.content?.notes, isValidString, 'Invalid paymentCardData.content.notes: must be a string');
 
-    validateOptional(paymentCardData?.internalData, data => typeof data === 'object', 'Invalid paymentCardData.internalData: must be an object');
-    validateOptional(paymentCardData?.internalData?.type, isValidString, 'Invalid paymentCardData.internalData.type: must be a string');
-
     this.contentType = PaymentCard.contentType;
     this.contentVersion = PaymentCard.contentVersion;
 
@@ -55,9 +52,7 @@ export default class PaymentCard extends Item {
 
     this.internalData = {
       ...this.internalData,
-      uiName: browser.i18n.getMessage('payment_card'),
-      type: paymentCardData.internalData?.type || null,
-      sifResetTime: paymentCardData.internalData?.sifResetTime || null
+      uiName: browser.i18n.getMessage('payment_card')
     };
 
     // Secure Input Fields

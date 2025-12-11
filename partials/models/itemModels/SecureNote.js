@@ -28,9 +28,6 @@ class SecureNote extends Item {
     validateOptional(secureNoteData?.content?.s_text, isValidBase64, 'Invalid content.s_text: must be a base64 string');
     validateOptional(secureNoteData?.content?.additionalInfo, isValidString, 'Invalid content.additionalInfo: must be a string');
 
-    validateOptional(secureNoteData?.internalData, data => typeof data === 'object', 'Invalid secureNoteData.internalData: must be an object');
-    validateOptional(secureNoteData?.internalData?.type, isValidString, 'Invalid secureNoteData.internalData.type: must be a string');
-
     this.contentType = SecureNote.contentType;
     this.contentVersion = SecureNote.contentVersion;
 
@@ -41,9 +38,7 @@ class SecureNote extends Item {
 
     this.internalData = {
       ...this.internalData,
-      uiName: browser.i18n.getMessage('secure_note'),
-      type: secureNoteData.internalData?.type || null,
-      sifResetTime: secureNoteData.internalData?.sifResetTime || null
+      uiName: browser.i18n.getMessage('secure_note')
     };
 
     // Secure Input Fields
