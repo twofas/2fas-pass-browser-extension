@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './UpdateComponent.module.scss';
-import { useCallback, lazy } from 'react';
+import { useCallback, useState, useEffect, lazy } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 
@@ -13,33 +13,33 @@ const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react')
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const updateBarVariants = {
-  visible: { 
+  visible: {
     maxHeight: '60px',
     opacity: 1,
     padding: '8px',
-    transition: { 
+    transition: {
       maxHeight: { duration: 0.2, ease: 'easeOut' },
       opacity: { duration: 0.1, delay: 0.1 }
     }
   },
-  hidden: { 
+  hidden: {
     maxHeight: 0,
     opacity: 0,
     padding: '0',
-    transition: { 
+    transition: {
       maxHeight: { duration: 0.2, ease: 'easeOut', delay: 0.1 },
       opacity: { duration: 0.1 }
     }
   }
 };
 
-/** 
-* Function to render the update notification component.
-* @param {Object} props - Component props
-* @param {boolean} props.updateAvailable - Whether an update is available
+/**
+* Component displaying update notification when extension update is available.
 * @return {JSX.Element} Element representing the UpdateComponent.
 */
-function UpdateComponent({ updateAvailable }) {
+function UpdateComponent () {
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+
   const handleUpdate = useCallback(async () => {
     try {
       if (browser?.runtime?.reload) {
@@ -53,6 +53,38 @@ function UpdateComponent({ updateAvailable }) {
       await CatchError(e);
     }
   }, []);
+
+  const messageListener = useCallback((request, sender, sendResponse) => {
+    if (!request || !request?.action || request?.target !== REQUEST_TARGETS.POPUP_THIS_TAB) {
+      return false;
+    }
+
+    if (request.action === REQUEST_ACTIONS.UPDATE_AVAILABLE) {
+      setUpdateAvailable(true);
+      sendResponse({ status: 'ok' });
+      return true;
+    }
+
+    return false;
+  }, []);
+
+  useEffect(() => {
+    browser.runtime.onMessage.addListener(messageListener);
+
+    if (browser?.runtime?.requestUpdateCheck && typeof browser?.runtime?.requestUpdateCheck === 'function') {
+      browser.runtime.requestUpdateCheck()
+        .then(([status]) => {
+          if (status === 'update_available') {
+            setUpdateAvailable(true);
+          }
+        })
+        .catch(() => {});
+    }
+
+    return () => {
+      browser.runtime.onMessage.removeListener(messageListener);
+    };
+  }, [messageListener]);
 
   return (
     <LazyMotion features={loadDomAnimation}>
