@@ -25,6 +25,7 @@ import { useTagFilter } from './components/Filters/hooks/useTagFilter';
 import { useSortFilter } from './components/Sort/hooks/useSortFilter';
 import DomainIcon from '@/assets/popup-window/domain.svg?react';
 import { AllItemsList, Filters, KeepPassword, MatchingItemsList, ModelFilter, NoMatch, Search, Sort, TagsInfo, UpdateComponent } from './components';
+import { ItemListProvider } from './context/ItemListContext';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
@@ -383,7 +384,12 @@ function ThisTab (props) {
 
                 <div className={S.thisTabMatchingLogins}>
                   <div className={matchingLoginsListClass}>
-                    <MatchingItemsList items={matchingLogins} loading={loading} />
+                    <ItemListProvider>
+                      <MatchingItemsList
+                        items={matchingLogins}
+                        loading={loading}
+                      />
+                    </ItemListProvider>
                   </div>
 
                   <NoMatch
@@ -419,14 +425,16 @@ function ThisTab (props) {
                   filteredItemsCount={filteredItemsCount}
                 />
 
-                <AllItemsList
-                  items={items}
-                  sort={data.selectedSort}
-                  search={data?.searchValue}
-                  loading={loading}
-                  selectedTag={data?.selectedTag}
-                  itemModelFilter={data?.itemModelFilter}
-                />
+                <ItemListProvider>
+                  <AllItemsList
+                    items={items}
+                    sort={data.selectedSort}
+                    search={data?.searchValue}
+                    loading={loading}
+                    selectedTag={data?.selectedTag}
+                    itemModelFilter={data?.itemModelFilter}
+                  />
+                </ItemListProvider>
               </div>
             </div>
           </section>
