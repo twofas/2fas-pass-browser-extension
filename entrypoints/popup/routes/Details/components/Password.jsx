@@ -12,8 +12,9 @@ import * as m from 'motion/react-m';
 import { Link } from 'react-router';
 import { copyValue, isText } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import usePopupStateStore from '../../../store/popupState';
+import Login from '@/partials/models/itemModels/Login';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
@@ -43,23 +44,56 @@ function Password (props) {
 
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
+  const [localDecryptedPassword, setLocalDecryptedPassword] = useState(null);
+  const [localEditedPassword, setLocalEditedPassword] = useState(null);
+  const [isDecrypting, setIsDecrypting] = useState(false);
   const previousPasswordValueRef = useRef(null);
 
+  const decryptPasswordOnDemand = useCallback(async () => {
+    if (localDecryptedPassword !== null || isDecrypting || sifDecryptError) {
+      return localDecryptedPassword;
+    }
+
+    if (!data.item?.sifExists) {
+      return null;
+    }
+
+    setIsDecrypting(true);
+
+    try {
+      const decryptedData = await data.item.decryptSif();
+      setLocalDecryptedPassword(decryptedData.password);
+      setData('sifDecryptError', false);
+      return decryptedData.password;
+    } catch (e) {
+      setData('sifDecryptError', true);
+      CatchError(e);
+      return null;
+    } finally {
+      setIsDecrypting(false);
+    }
+  }, [localDecryptedPassword, isDecrypting, sifDecryptError, data.item, setData]);
+
+  const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
+
   const getPasswordValue = () => {
-    if (sifDecryptError) {
+    if (sifDecryptError || isHighlySecretWithoutSif) {
       return '';
     }
 
-    if (isText(data.item.internalData.editedSif)) {
-      return data.item.internalData.editedSif;
+    if (isText(localEditedPassword)) {
+      return localEditedPassword;
     }
 
-    if (data.item.isSifDecrypted) {
-      return data.item.sifDecrypted;
+    if (isText(localDecryptedPassword)) {
+      return localDecryptedPassword;
+    }
+
+    if (data.item?.sifExists && !data?.passwordEditable && !data?.passwordVisible) {
+      return '******';
     }
 
     return '';
@@ -72,7 +106,18 @@ function Password (props) {
       form.change('editedSif', currentPasswordValue);
       previousPasswordValueRef.current = currentPasswordValue;
     }
-  }, [data.item.internalData.editedSif, data.item.sifDecrypted, form]);
+  }, [localEditedPassword, localDecryptedPassword, form]);
+
+  useEffect(() => {
+    const needsDecryption = (data?.passwordVisible || data?.passwordEditable) &&
+                           localDecryptedPassword === null &&
+                           !isDecrypting &&
+                           data.item?.sifExists;
+
+    if (needsDecryption) {
+      decryptPasswordOnDemand();
+    }
+  }, [data?.passwordVisible, data?.passwordEditable, localDecryptedPassword, isDecrypting, data.item?.sifExists, decryptPasswordOnDemand]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -114,14 +159,12 @@ function Password (props) {
     try {
       let passwordToCopy;
 
-      if (data.item.internalData.editedSif !== null) {
-        passwordToCopy = data.item.internalData.editedSif;
-      } else if (data.item.isSifDecrypted) {
-        passwordToCopy = data.item.sifDecrypted;
+      if (isText(localEditedPassword)) {
+        passwordToCopy = localEditedPassword;
+      } else if (isText(localDecryptedPassword)) {
+        passwordToCopy = localDecryptedPassword;
       } else if (data.item.sifExists) {
-        let decryptedData = await data.item.decryptSif();
-        passwordToCopy = decryptedData.password;
-        decryptedData = null;
+        passwordToCopy = await decryptPasswordOnDemand();
       } else {
         passwordToCopy = '';
       }
@@ -152,30 +195,22 @@ function Password (props) {
     setData('passwordMobile', !data?.passwordMobile);
   };
 
-  const handleEditableClick = () => {
+  const handleEditableClick = async () => {
     if (data?.passwordEditable) {
-      const itemData = data.item.toJSON();
-      itemData.internalData = { ...data.item.internalData };
-      const updatedItem = new (data.item.constructor)(itemData);
-
-      if (data.item.isSifDecrypted) {
-        updatedItem.setSifDecrypted(data.item.sifDecrypted);
-      }
-
-      updatedItem.internalData.editedSif = null;
-
-      setBatchData({
-        item: updatedItem,
-        passwordEdited: false,
-        passwordEditable: false
-      });
-      form.change('editedSif', data.item.isSifDecrypted ? data.item.sifDecrypted : '');
+      setLocalEditedPassword(null);
+      setData('passwordEditable', false);
+      form.change('editedSif', isText(localDecryptedPassword) ? localDecryptedPassword : '');
     } else {
+      await decryptPasswordOnDemand();
       setData('passwordEditable', true);
     }
   };
 
-  const handlePasswordVisibleClick = () => {
+  const handlePasswordVisibleClick = async () => {
+    if (!data?.passwordVisible) {
+      await decryptPasswordOnDemand();
+    }
+
     setData('passwordVisible', !data?.passwordVisible);
   };
   
@@ -190,20 +225,16 @@ function Password (props) {
     await browser.tabs.create({ url: changePasswordUrl });
   };
 
-  const handlePasswordChange = e => {
+  const handlePasswordChange = async e => {
     const newValue = e.target.value;
-    const itemData = data.item.toJSON();
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isSifDecrypted) {
-      updatedItem.setSifDecrypted(data.item.sifDecrypted);
-    }
-
-    updatedItem.internalData.editedSif = newValue;
-
-    setData('item', updatedItem);
+    setLocalEditedPassword(newValue);
     form.change('editedSif', newValue);
+
+    const itemData = data.item.toJSON();
+    const localItem = new Login(itemData);
+    await localItem.setSif([{ s_password: newValue }]);
+    setData('item', localItem);
   };
 
   return (
@@ -254,7 +285,7 @@ function Password (props) {
                 >
                   <VisibleIcon />
                 </button>
-                {((originalItem?.securityType === SECURITY_TIER.SECRET || (data.item.passwordEncrypted && data.item.passwordEncrypted.length > 0)) && !sifDecryptError) && (
+                {((originalItem?.securityType === SECURITY_TIER.SECRET || data.item.sifExists) && !sifDecryptError) && (
                   <button
                     type='button'
                     className={`${bS.btn} ${pI.iconButton}`}

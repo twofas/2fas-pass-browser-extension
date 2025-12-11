@@ -7,9 +7,10 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { copyValue, isText } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
+import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 import PaymentCardNumberInput from '@/entrypoints/popup/components/PaymentCardNumberInput';
 import getCardNumberMask from '@/entrypoints/popup/components/PaymentCardNumberInput/getCardNumberMask';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
@@ -32,20 +33,48 @@ function CardNumber (props) {
   const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const previousCardNumberRef = useRef(null);
+  const [localDecryptedCardNumber, setLocalDecryptedCardNumber] = useState(null);
+  const [localEditedCardNumber, setLocalEditedCardNumber] = useState(null);
+  const [isDecrypting, setIsDecrypting] = useState(false);
 
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
+
+  const decryptCardNumberOnDemand = useCallback(async () => {
+    if (localDecryptedCardNumber !== null || isDecrypting || sifDecryptError) {
+      return localDecryptedCardNumber;
+    }
+
+    if (!data.item?.cardNumberExists) {
+      return null;
+    }
+
+    setIsDecrypting(true);
+
+    try {
+      const decryptedData = await data.item.decryptCardNumber();
+      setLocalDecryptedCardNumber(decryptedData);
+      setData('sifDecryptError', false);
+      return decryptedData;
+    } catch (e) {
+      setData('sifDecryptError', true);
+      CatchError(e);
+      return null;
+    } finally {
+      setIsDecrypting(false);
+    }
+  }, [localDecryptedCardNumber, isDecrypting, sifDecryptError, data.item, setData]);
 
   const getCardNumberValue = () => {
     if (sifDecryptError || isHighlySecretWithoutSif) {
       return '';
     }
 
-    if (isText(data.item.internalData.editedCardNumber)) {
-      return data.item.internalData.editedCardNumber;
+    if (isText(localEditedCardNumber)) {
+      return localEditedCardNumber;
     }
 
-    if (data.item.isSifDecrypted && data.item.sifDecrypted?.cardNumber) {
-      return data.item.sifDecrypted.cardNumber;
+    if (isText(localDecryptedCardNumber)) {
+      return localDecryptedCardNumber;
     }
 
     return '';
@@ -58,7 +87,18 @@ function CardNumber (props) {
       form.change('editedCardNumber', currentCardNumber);
       previousCardNumberRef.current = currentCardNumber;
     }
-  }, [data.item.internalData.editedCardNumber, data.item.sifDecrypted, data.item.isSifDecrypted, sifDecryptError, form]);
+  }, [localEditedCardNumber, localDecryptedCardNumber, sifDecryptError, form]);
+
+  useEffect(() => {
+    const needsDecryption = (data?.cardNumberEditable || data?.cardNumberVisible) &&
+                           localDecryptedCardNumber === null &&
+                           !isDecrypting &&
+                           data.item?.cardNumberExists;
+
+    if (needsDecryption) {
+      decryptCardNumberOnDemand();
+    }
+  }, [data?.cardNumberEditable, data?.cardNumberVisible, localDecryptedCardNumber, isDecrypting, data.item?.cardNumberExists, decryptCardNumberOnDemand]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -85,25 +125,16 @@ function CardNumber (props) {
     );
   };
 
-  const handleEditableClick = () => {
+  const handleEditableClick = async () => {
     if (data?.cardNumberEditable) {
-      const itemData = data.item.toJSON();
-      itemData.internalData = { ...data.item.internalData };
-      const updatedItem = new (data.item.constructor)(itemData);
-
-      if (data.item.isSifDecrypted) {
-        updatedItem.setSifDecrypted(data.item.sifDecrypted);
-      }
-
-      updatedItem.internalData.editedCardNumber = null;
-
+      setLocalEditedCardNumber(null);
       setBatchData({
-        item: updatedItem,
         cardNumberEdited: false,
         cardNumberEditable: false
       });
-      form.change('editedCardNumber', data.item.isSifDecrypted ? data.item.sifDecrypted?.cardNumber : '');
+      form.change('editedCardNumber', isText(localDecryptedCardNumber) ? localDecryptedCardNumber : '');
     } else {
+      await decryptCardNumberOnDemand();
       setData('cardNumberEditable', true);
     }
   };
@@ -112,14 +143,12 @@ function CardNumber (props) {
     try {
       let cardNumberToCopy;
 
-      if (data.item.internalData.editedCardNumber !== null) {
-        cardNumberToCopy = data.item.internalData.editedCardNumber;
-      } else if (data.item.isSifDecrypted && data.item.sifDecrypted?.cardNumber) {
-        cardNumberToCopy = data.item.sifDecrypted.cardNumber;
+      if (isText(localEditedCardNumber)) {
+        cardNumberToCopy = localEditedCardNumber;
+      } else if (isText(localDecryptedCardNumber)) {
+        cardNumberToCopy = localDecryptedCardNumber;
       } else if (data.item.cardNumberExists) {
-        let decryptedData = await data.item.decryptCardNumber();
-        cardNumberToCopy = decryptedData;
-        decryptedData = null;
+        cardNumberToCopy = await decryptCardNumberOnDemand();
       } else {
         cardNumberToCopy = '';
       }
@@ -132,29 +161,35 @@ function CardNumber (props) {
     }
   };
 
-  const handleCardNumberVisibleClick = () => {
+  const handleCardNumberVisibleClick = async () => {
+    if (!data?.cardNumberVisible) {
+      await decryptCardNumberOnDemand();
+    }
+
     setData('cardNumberVisible', !data?.cardNumberVisible);
   };
 
-  const handleCardNumberChange = e => {
+  const handleCardNumberChange = async e => {
     const newValue = e.target.value;
-    const itemData = data.item.toJSON();
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isSifDecrypted) {
-      updatedItem.setSifDecrypted(data.item.sifDecrypted);
-    }
-
-    updatedItem.internalData.editedCardNumber = newValue;
-
-    setData('item', updatedItem);
+    setLocalEditedCardNumber(newValue);
     form.change('editedCardNumber', newValue);
+
+    const itemData = data.item.toJSON();
+    const localItem = new PaymentCard(itemData);
+    await localItem.setSif([{ s_cardNumber: newValue }]);
+    setData('item', localItem);
   };
 
   const getHiddenMaskValue = () => {
     if (isHighlySecretWithoutSif) {
       return '';
+    }
+
+    const cardNumberMask = data.item?.content?.cardNumberMask;
+
+    if (isText(cardNumberMask)) {
+      return `**** ${cardNumberMask}`;
     }
 
     return '********';
@@ -166,20 +201,16 @@ function CardNumber (props) {
     return cardNumber.replace(/\D/g, '');
   };
 
-  const handleRawCardNumberChange = e => {
+  const handleRawCardNumberChange = async e => {
     const newValue = e.target.value.replace(/\D/g, '');
-    const itemData = data.item.toJSON();
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isSifDecrypted) {
-      updatedItem.setSifDecrypted(data.item.sifDecrypted);
-    }
-
-    updatedItem.internalData.editedCardNumber = newValue;
-
-    setData('item', updatedItem);
+    setLocalEditedCardNumber(newValue);
     form.change('editedCardNumber', newValue);
+
+    const itemData = data.item.toJSON();
+    const localItem = new PaymentCard(itemData);
+    await localItem.setSif([{ s_cardNumber: newValue }]);
+    setData('item', localItem);
   };
 
   const renderInput = () => {
@@ -190,7 +221,7 @@ function CardNumber (props) {
     if (!isEditable && !isVisible) {
       return (
         <input
-          type='password'
+          type='text'
           id='editedCardNumber'
           value={getHiddenMaskValue()}
           disabled

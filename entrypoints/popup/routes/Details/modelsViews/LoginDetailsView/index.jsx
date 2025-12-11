@@ -101,8 +101,9 @@ function LoginDetailsView(props) {
       if (data.passwordMobile) {
         stateData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       } else {
+        const itemJSON = data.item.toJSON();
         stateData.content.s_password = {
-          value: data?.item?.internalData?.editedSif ? data.item.internalData.editedSif : (data?.item?.sifDecrypted ? data.item.sifDecrypted : ''),
+          value: itemJSON.content.s_password,
           action: REQUEST_STRING_ACTIONS.SET
         };
       }
@@ -148,7 +149,6 @@ function LoginDetailsView(props) {
       nameEditable: data.nameEditable,
       usernameEditable: data.usernameEditable,
       passwordEditable: data.passwordEditable,
-      passwordEdited: data.passwordEdited,
       passwordVisible: data.passwordVisible,
       passwordMobile: data.passwordMobile,
       usernameMobile: data.usernameMobile,

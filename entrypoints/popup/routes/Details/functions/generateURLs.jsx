@@ -46,14 +46,6 @@ const generateURLs = props => {
     };
     const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isSifDecrypted) {
-      updatedItem.setSifDecrypted(data.item.sifDecrypted);
-    }
-
-    if (data.item.internalData.editedSif !== null) {
-      updatedItem.internalData.editedSif = data.item.internalData.editedSif;
-    }
-
     setData('item', updatedItem);
 
     const currentDomainsEditable = data?.domainsEditable || {};
