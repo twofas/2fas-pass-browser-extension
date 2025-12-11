@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
+import S from '../styles/Item.module.scss';
 import { memo, useMemo, useState, lazy, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
@@ -27,7 +27,7 @@ function LoginItemView (props) {
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
 
   const autofillClassName = useMemo(() =>
-    `${S.servicesListItemAutofill} ${props.more ? S.hover : ''}`,
+    `${S.itemAutofill} ${props.more ? S.hover : ''}`,
     [props.more]
   );
 
@@ -52,7 +52,7 @@ function LoginItemView (props) {
           {props.loading ? <Skeleton /> : (props?.data?.content?.username && props?.data?.content?.username?.length > 0 ? <span>{props.data.content.username}</span> : null)}
         </span>
       </button>
-      <div className={S.servicesListItemAdditionalButtons}>
+      <div className={S.itemAdditionalButtons}>
         <PasswordBtn item={props.data} more={props.more} setMore={props.setMore} />
         <UsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={props.setMore} />
         <MoreBtn more={props.more} setMore={props.setMore} ref={moreBtnRef} />

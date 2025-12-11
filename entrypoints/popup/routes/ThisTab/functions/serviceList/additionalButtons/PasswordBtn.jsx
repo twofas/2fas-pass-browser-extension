@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
+import S from '../../../components/Item/styles/Item.module.scss';
 import handlePassword from '../handlePassword';
 import { Link } from 'react-router';
 import { useState, useRef, lazy, useLayoutEffect } from 'react';
@@ -12,8 +12,8 @@ import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import Login from '@/partials/models/itemModels/Login';
 
-const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
-const ServicePasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));
+const ItemFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
+const ItemPasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));
 
 /**
 * Function to render the password button.
@@ -107,7 +107,7 @@ const PasswordBtn = ({ item, more, setMore }) => {
         onClick={async () => await handlePassword(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_password')}
       >
-        <ServicePasswordIcon className={S.servicePassword} />
+        <ItemPasswordIcon className={S.itemPassword} />
       </button>
     );
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
@@ -115,18 +115,18 @@ const PasswordBtn = ({ item, more, setMore }) => {
       <button
         onClick={async () => await handlePassword(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_password')}
-        className={S.servicePasswordLoader}
+        className={S.itemPasswordLoader}
       >
         <svg
           ref={loaderRef}
-          className={S.serviceLoader}
+          className={S.itemLoader}
           viewBox="0 0 96 96"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <circle cx="48" cy="48" r="42" className={S.serviceLoaderBg} />
+          <circle cx="48" cy="48" r="42" className={S.itemLoaderBg} />
           <circle cx="48" cy="48" r="42" />
         </svg>
-        <ServicePasswordIcon className={S.servicePassword} />
+        <ItemPasswordIcon className={S.itemPassword} />
       </button>
     );
   } else {
@@ -147,7 +147,7 @@ const PasswordBtn = ({ item, more, setMore }) => {
         title={browser.i18n.getMessage('this_tab_fetch_password')}
         prefetch='intent'
       >
-        <ServiceFetchIcon className={S.serviceFetch} />
+        <ItemFetchIcon className={S.itemFetch} />
       </Link>
     );
   }

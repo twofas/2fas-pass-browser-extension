@@ -4,14 +4,14 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
+import S from '../../../components/Item/styles/Item.module.scss';
 import copyValue from '@/partials/functions/copyValue';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import { toast } from 'react-toastify';
 import { lazy } from 'react';
 import { ENCRYPTION_KEYS } from '@/constants';
 
-const ServicePasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));
+const ItemPasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));
 
 /** 
 * Function to handle autofill failed password.
@@ -55,7 +55,7 @@ const PasswordCopyOnlyBtn = ({ state, setAutofillFailed }) => {
       onClick={async () => await handleAutofillFailedPassword(state, setAutofillFailed)}
       title={browser.i18n.getMessage('this_tab_copy_password')}
     >
-      <ServicePasswordIcon className={S.servicePassword} />
+      <ItemPasswordIcon className={S.itemPassword} />
     </button>
   );
 };
