@@ -134,16 +134,16 @@ export default class Login extends Item {
     };
   }
 
-  setSif (sifData) {
+  async setSif (sifData) {
     if (!Array.isArray(sifData)) {
       throw new Error('Invalid SIF data: must be an array');
     }
 
-    sifData.forEach(item => {
-      if (Object.prototype.hasOwnProperty.call(item, 's_password')) {
-        this.#s_password = item.s_password;
+    for (const item of sifData) {
+      if (Object.prototype.hasOwnProperty.call(item, 'password')) {
+        this.#s_password = await this.encryptSif(item.password, this?.internalData?.type);
       }
-    });
+    }
   }
 
   setSifDecrypted (decryptedSif) {

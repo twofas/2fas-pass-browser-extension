@@ -127,24 +127,24 @@ export default class PaymentCard extends Item {
     return await super.decryptSif(this.#s_securityCode, this?.internalData?.type);
   }
 
-  setSif (sifData) {
+  async setSif (sifData) {
     if (!Array.isArray(sifData)) {
       throw new Error('Invalid SIF data: must be an array');
     }
 
-    sifData.forEach(item => {
-      if (Object.prototype.hasOwnProperty.call(item, 's_cardNumber')) {
-        this.#s_cardNumber = item.s_cardNumber;
+    for (const item of sifData) {
+      if (Object.prototype.hasOwnProperty.call(item, 'cardNumber')) {
+        this.#s_cardNumber = await this.encryptSif(item.cardNumber, this?.internalData?.type);
       }
 
-      if (Object.prototype.hasOwnProperty.call(item, 's_expirationDate')) {
-        this.#s_expirationDate = item.s_expirationDate;
+      if (Object.prototype.hasOwnProperty.call(item, 'expirationDate')) {
+        this.#s_expirationDate = await this.encryptSif(item.expirationDate, this?.internalData?.type);
       }
 
-      if (Object.prototype.hasOwnProperty.call(item, 's_securityCode')) {
-        this.#s_securityCode = item.s_securityCode;
+      if (Object.prototype.hasOwnProperty.call(item, 'securityCode')) {
+        this.#s_securityCode = await this.encryptSif(item.securityCode, this?.internalData?.type);
       }
-    });
+    }
   }
 
   setSifDecrypted (decryptedSif) {
