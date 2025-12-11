@@ -1879,6 +1879,18 @@
     "message": "The expiry date is not available in the form options",
     "description": "Message displayed when the card expiry date doesn't match any available option in the form's dropdown"
   },
+  "this_tab_autofill_password_popup_header": {
+    "message": "Password for the following service successfully fetched.",
+    "description": "Header message in popup after fetching password for autofill"
+  },
+  "this_tab_autofill_password_popup_keep": {
+    "message": "Keep it for 3 minutes",
+    "description": "Button label to keep the fetched password for a limited time"
+  },
+  "this_tab_autofill_password_popup_dont_keep": {
+    "message": "Don't keep it",
+    "description": "Button label to not keep the fetched password for a limited time"
+  },
   "filters_no_tags": {
     "message": "No Tags available",
     "description": "Message shown in the tag filter dropdown when there are no tags created yet"

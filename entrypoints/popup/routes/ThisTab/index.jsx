@@ -152,23 +152,21 @@ function ThisTab (props) {
     return uSV;
   }, []);
 
-  const getDomain = useCallback(async () => {
-    const d = await getDomainFromTab();
-    setDomain(filterXSS(d.domain));
-    setUrl(filterXSS(d.url));
-    return filterXSS(d.url);
-  }, []);
+  const fetchInitialData = useCallback(async () => {
+    const [domainData, fetchedItems, fetchedTags] = await Promise.all([
+      getDomainFromTab(),
+      getItems(),
+      getTags()
+    ]);
 
-  const getStorageItems = useCallback(async () => {
-    const i = await getItems();
-    setItems(i);
+    const sanitizedDomain = filterXSS(domainData.domain);
+    const sanitizedUrl = filterXSS(domainData.url);
 
-    return i;
-  }, []);
+    setDomain(sanitizedDomain);
+    setUrl(sanitizedUrl);
+    setItems(fetchedItems);
 
-  const getStorageTags = useCallback(async () => {
-    const t = await getTags();
-    return t;
+    return { url: sanitizedUrl, items: fetchedItems, tags: fetchedTags };
   }, []);
 
   const getTagsAmount = useCallback(async (tags, services) => {
@@ -216,6 +214,37 @@ function ThisTab (props) {
   }, [changeMatchingLoginsLength]);
 
   const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl), [sendUrl]);
+
+  const playEmptyStateAnimation = useCallback(() => {
+    setTimeout(() => {
+      if (boxAnimationRef?.current?.play) {
+        boxAnimationRef.current.play();
+      }
+
+      if (boxAnimationDarkRef?.current?.play) {
+        boxAnimationDarkRef.current.play();
+      }
+    }, 600);
+  }, []);
+
+  const initializeData = useCallback(async () => {
+    try {
+      const { url, items: fetchedItems, tags: fetchedTags } = await fetchInitialData();
+
+      await Promise.all([
+        getMatchingLogins(fetchedItems, url),
+        getTagsAmount(fetchedTags, fetchedItems)
+      ]);
+
+      if (fetchedItems.length === 0) {
+        playEmptyStateAnimation();
+      }
+
+      unwatchStorageVersion.current = watchStorageVersion();
+    } catch (e) {
+      await CatchError(e);
+    }
+  }, [fetchInitialData, getMatchingLogins, getTagsAmount, playEmptyStateAnimation, watchStorageVersion]);
 
   const handleAnimationComplete = useCallback(e => {
     if (e === 'visible') {
@@ -304,29 +333,7 @@ function ThisTab (props) {
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
-
-    Promise.all([ getDomain(), getStorageItems(), getStorageTags() ])
-      .then(([domain, items, tags]) => Promise.all([
-        getMatchingLogins(items, domain),
-        getTagsAmount(tags, items)
-      ]))
-      .then(() => {
-        if (items.length === 0) {
-          setTimeout(() => {
-            if (boxAnimationRef?.current?.play) {
-              boxAnimationRef.current.play();
-            }
-
-            if (boxAnimationDarkRef?.current?.play) {
-              boxAnimationDarkRef.current.play();
-            }
-          }, 600);
-        }
-
-        return watchStorageVersion();
-      })
-      .then(unwatch => { unwatchStorageVersion.current = unwatch; })
-      .catch(async e => { await CatchError(e); });
+    initializeData();
 
     return () => {
       browser.runtime.onMessage.removeListener(messageListener);
@@ -335,7 +342,7 @@ function ThisTab (props) {
         unwatchStorageVersion.current();
       }
     };
-  }, [storageVersion]);
+  }, [storageVersion, messageListener, initializeData]);
 
   useEffect(() => {
     if (location.state?.from === 'details') {
