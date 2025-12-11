@@ -1,0 +1,138 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.search {
+  align-items: center;
+  background-color: v.$additional-light;
+  border: 1.5px solid rgba(v.$primary-color-light, 0);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: row;
+  gap: 0 6px;
+  height: 38px;
+  padding: 0 12px;
+  position: relative;
+  transition: border v.$anim;
+  width: 100%;
+
+  @include m.darkMode {
+    background-color: v.$additional-dark;
+    border-color: rgba(v.$primary-color-dark, 0);
+  }
+
+  &:hover,
+  &.active {
+    border: 1.5px solid rgba(v.$primary-color-light, 1);
+
+    @include m.darkMode {
+      border-color: rgba(v.$primary-color-dark, 1);
+    }
+  }
+
+  &-clear {
+    font-size: 0;
+    opacity: 1;
+    padding: 0;
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: opacity v.$anim !important;
+
+    &.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    > svg {
+      fill: v.$primary-color-light;
+      height: 16px;
+      width: auto;
+
+      @include m.darkMode {
+        fill: v.$primary-color-dark;
+      }
+    }
+  }
+
+  input {
+    appearance: none;
+    background-color: transparent;
+    border: 0;
+    color: v.$primary-text-light;
+    font-size: 14px;
+    font-weight: 400;
+    height: 100%;
+    outline: none;
+    padding-right: 0;
+    width: 100%;
+
+    @include m.darkMode {
+      color: v.$primary-text-dark;
+    }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      -webkit-background-clip: text !important;
+      -webkit-box-shadow: 0 0 0 0 transparent inset !important;
+      -webkit-text-fill-color: v.$primary-text-light !important;
+      box-shadow: inset 0 0 0 0 transparent;
+      transition: background-color 5000s ease-out 0s !important;
+
+      @include m.darkMode {
+        -webkit-text-fill-color: v.$primary-text-dark !important;
+      }
+    }
+
+    &::-webkit-input-placeholder {
+      color: v.$secondary-text-light;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+
+    &::-moz-placeholder {
+      color: v.$secondary-text-light;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+
+    &:-ms-input-placeholder {
+      color: v.$secondary-text-light;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+
+    &:-moz-placeholder {
+      color: v.$secondary-text-light;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+
+    &::-webkit-search-cancel-button {
+      appearance: none;
+      display: none;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    &.with-value {
+      padding-right: 24px;
+    }
+  }
+}

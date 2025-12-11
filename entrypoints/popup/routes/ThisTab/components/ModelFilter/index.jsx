@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/ModelFilter.module.scss';
 import { useState, useRef, lazy, useEffect, useCallback, useMemo } from 'react';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
@@ -45,18 +45,18 @@ const ModelFilter = props => {
 
   const modelIcon = useMemo(() => {
     return (
-      <span className={`${S.thisTabAllLoginsHeaderModelFilterIcon} ${selectedOption?.className || ''}`}>
+      <span className={`${S.modelFilterButtonIcon} ${selectedOption?.className || ''}`}>
         {selectedOption?.icon || <AllIcon />}
       </span>
     );
   }, [selectedOption]);
 
   const buttonClassName = useMemo(() => {
-    return `${S.thisTabAllLoginsHeaderModelFilter} ${hasMultipleItemTypes ? '' : S.disabled}`;
+    return `${S.modelFilterButton} ${hasMultipleItemTypes ? '' : S.disabled}`;
   }, [hasMultipleItemTypes]);
 
   const chevronClassName = useMemo(() => {
-    return `${S.thisTabAllLoginsHeaderModelFilterChevron} ${isMenuOpen ? S.open : ''}`;
+    return `${S.modelFilterButtonChevron} ${isMenuOpen ? S.open : ''}`;
   }, [isMenuOpen]);
 
   const filterLabel = useMemo(() => {
@@ -94,14 +94,14 @@ const ModelFilter = props => {
   }, [deviceSupportedFeatures]);
 
   return (
-    <div className={S.thisTabAllLoginsHeader}>
+    <div className={S.modelFilter}>
       <button
         ref={buttonRef}
         className={buttonClassName}
         onClick={handleModelBtnClick}
       >
         {hasMultipleItemTypes && !props.loading && modelIcon}
-        <span className={S.thisTabAllLoginsHeaderModelFilterText}>{filterLabel}</span>
+        <span className={S.modelFilterButtonText}>{filterLabel}</span>
         {hasMultipleItemTypes && !props.loading && <ChevronIcon className={chevronClassName} />}
       </button>
       <AdvancedSelect

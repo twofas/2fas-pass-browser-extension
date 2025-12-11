@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/KeepPassword.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useMemo, useState, useEffect, memo } from 'react';
 import { useLocation } from 'react-router';
@@ -22,7 +22,7 @@ function KeepPassword () {
   const { handleKeepPassword, handleDontKeepPassword } = useKeepPassword(state, setAutofillFailed);
 
   const containerClass = useMemo(() => {
-    return `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`;
+    return `${S.keepPassword} ${autofillFailed ? S.active : ''}`;
   }, [autofillFailed]);
 
   useEffect(() => {
@@ -35,9 +35,9 @@ function KeepPassword () {
 
   return (
     <div className={containerClass}>
-      <div className={S.thisTabAutofillPopupBox}>
+      <div className={S.keepPasswordBox}>
         <h2>{browser.i18n.getMessage('keep_password_popup_header')}</h2>
-        <div className={S.thisTabAutofillPopupBoxLoginItem}>
+        <div className={S.keepPasswordBoxLoginItem}>
           <SmallLoginItem
             deviceId={state?.deviceId}
             vaultId={state?.vaultId}
@@ -46,7 +46,7 @@ function KeepPassword () {
             setAutofillFailed={setAutofillFailed}
           />
         </div>
-        <div className={S.thisTabAutofillPopupBoxButtons}>
+        <div className={S.keepPasswordBoxButtons}>
           <button
             className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
             onClick={handleKeepPassword}

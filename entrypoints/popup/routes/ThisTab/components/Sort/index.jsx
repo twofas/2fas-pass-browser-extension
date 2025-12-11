@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/Sort.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useRef, useEffect, useMemo, memo, useCallback } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
@@ -68,7 +68,7 @@ const Sort = ({ selectedSort, onSortChange, forceClose }) => {
   }, [forceClose]);
 
   return (
-    <div className={S.thisTabAllLoginsSearchContainerTags}>
+    <div className={S.sort}>
       <button
         ref={buttonRef}
         className={`${bS.btn} ${bS.btnFilter} ${bS.sort} ${isMenuOpen ? bS.btnFilterActive : ''}`}

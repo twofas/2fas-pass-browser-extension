@@ -1,0 +1,199 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use 'sass:color';
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.small-login-item {
+  margin: 0 auto;
+  padding-bottom: 0;
+  position: relative;
+  width: 267px;
+
+  &-autofill {
+    align-items: center;
+    background-color: rgba(v.$hover-color-light, 0);
+    border: 1px solid v.$primary-box-stroke-light;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    height: 58px;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 12px 12px;
+    transition: background-color v.$anim;
+    width: 100%;
+
+    @include m.darkMode {
+      background-color: rgba(v.$hover-color-dark, 0);
+      border-color: v.$primary-box-stroke-dark;
+    }
+
+    > span {
+      &:first-of-type {
+        align-items: center;
+        background-color: v.$primary-box-bg-light;
+        border-radius: 4px;
+        color: v.$tertiary-text-light;
+        display: inline-flex;
+        flex-shrink: 0;
+        height: 32px;
+        justify-content: center;
+        margin-right: 8px;
+        overflow: hidden;
+        width: 32px;
+
+        @include m.darkMode {
+          background-color: v.$primary-box-bg-dark;
+          color: v.$tertiary-text-dark;
+        }
+
+        &.icon-label {
+          background: v.$login-item-bg-light;
+          background: linear-gradient(135deg,v.$login-item-bg-light 0%, color.adjust(v.$login-item-bg-dark, $blackness: -143%) 100%);
+          color: v.$login-item-light;
+          font-size: 10px;
+          font-weight: 700;
+          line-height: 1.2;
+          text-align: center;
+
+          @include m.darkMode {
+            background: v.$login-item-bg-dark;
+            background: linear-gradient(135deg,v.$login-item-bg-dark 0%, color.adjust(v.$login-item-bg-dark, $lightness: 5%) 100%);
+            color: v.$login-item-dark;
+          }
+        }
+
+        &.icon-image {
+          background-color: v.$primary-box-bg-light;
+          overflow: hidden;
+          position: relative;
+
+          @include m.darkMode {
+            background-color: v.$primary-box-bg-dark;
+          }
+
+          img {
+            height: 26px;
+            object-fit: fill;
+            opacity: 0;
+            padding: 3px;
+            position: relative;
+            transition: opacity v.$anim;
+            width: 26px;
+            z-index: 2;
+
+            &.icon-image-blur {
+              filter: blur(12px) saturate(2);
+              position: absolute;
+              transform: scale(1.4);
+              z-index: 1;
+            }
+          }
+        }
+      }
+
+      &:nth-of-type(2) {
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        gap: 3px 0;
+        max-width: 255px;
+        overflow: hidden;
+        transition: max-width v.$anim;
+
+        > span {
+          line-height: 1.2;
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+
+          &:first-of-type,
+          &:first-of-type:last-of-type {
+            color: v.$primary-text-light;
+            font-size: 14px;
+            font-weight: 500;
+
+            @include m.darkMode {
+              color: v.$primary-text-dark;
+            }
+          }
+
+          &:last-of-type {
+            color: v.$secondary-text-light;
+            font-size: 12px;
+            font-weight: 400;
+          }
+        }
+      }
+    }
+  }
+
+  &-additional-buttons {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0 2px;
+    margin-left: auto;
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+
+    a,
+    button {
+      background-color: rgba(v.$hover-on-hover-light, 0);
+      align-items: center;
+      border-radius: 4px;
+      display: inline-flex;
+      height: 32px;
+      justify-content: center;
+      opacity: 1;
+      padding: 0;
+      transition: background-color v.$anim, opacity v.$anim;
+      width: 32px;
+
+      @include m.darkMode {
+        background-color: rgba(v.$hover-on-hover-dark, 0);
+      }
+
+      &:hover {
+        background-color: rgba(v.$hover-on-hover-light, 1);
+
+        @include m.darkMode {
+          background-color: rgba(v.$hover-on-hover-dark, 1);
+        }
+
+        svg {
+          &.service-password {
+            fill: v.$primary-color-light;
+            transition: fill v.$anim;
+
+            @include m.darkMode {
+              fill: v.$primary-color-dark;
+            }
+          }
+        }
+      }
+
+      svg {
+        height: auto;
+
+        &.service-password {
+          fill: v.$object-light;
+          width: 24px;
+
+          @include m.darkMode {
+            fill: v.$object-dark;
+          }
+        }
+      }
+    }
+  }
+}

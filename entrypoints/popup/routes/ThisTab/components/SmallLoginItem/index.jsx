@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/SmallLoginItem.module.scss';
 import PasswordCopyOnlyBtn from '../../functions/serviceList/additionalButtons/PasswordCopyOnlyBtn';
 import generateIcon from '../../functions/serviceList/generateIcon';
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
@@ -40,17 +40,17 @@ function SmallLoginItem (props) {
   return (
     <div
       key={item.id}
-      className={`${S.servicesListItem} ${S.small}`}
+      className={S.smallLoginItem}
       ref={ref}
     >
-      <div className={S.servicesListItemAutofill}>
+      <div className={S.smallLoginItemAutofill}>
         {generateIcon(item, faviconError, setFaviconError)}
         <span>
           <span>{item?.content?.name || browser.i18n.getMessage('no_item_name')}</span>
           <span>{item?.content?.username || ''}</span>
         </span>
       </div>
-      <div className={S.servicesListItemAdditionalButtons}>
+      <div className={S.smallLoginItemAdditionalButtons}>
         <PasswordCopyOnlyBtn state={props.state} setAutofillFailed={props.setAutofillFailed} />
       </div>
     </div>

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/AllItemsList.module.scss';
 import Item from '../Item';
 import SafariViewportList from '@/entrypoints/popup/components/SafariViewportList';
 import { lazy, useMemo, memo } from 'react';
@@ -90,7 +90,7 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
 
   if (itemsData.type === 'loading') {
     return (
-      <div className={S.thisTabAllLoginsList}>
+      <div className={S.allItemsList}>
         <SafariViewportList items={itemsData.data} overscan={3}>
           {item => <Item data={item} key={item.id} loading={loading} />}
         </SafariViewportList>
@@ -100,9 +100,9 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
 
   if (itemsData.type === 'empty') {
     return (
-      <div className={`${S.thisTabAllLoginsList} ${S.noData}`}>
+      <div className={`${S.allItemsList} ${S.noData}`}>
         <div>
-          <EmptyListIcon className={S.noDataIcon} />
+          <EmptyListIcon />
           <span>{browser.i18n.getMessage('all_items_list_no_search_results')}</span>
         </div>
       </div>
@@ -110,7 +110,7 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
   }
 
   return (
-    <div className={S.thisTabAllLoginsList}>
+    <div className={S.allItemsList}>
       <SafariViewportList items={itemsData.data} overscan={10}>
         {item => <Item data={item} key={item.id} loading={loading} />}
       </SafariViewportList>
