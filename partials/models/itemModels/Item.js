@@ -41,6 +41,8 @@ class Item {
     validate(isValidInteger(data.securityType, 0, 2), 'Invalid or missing securityType: must be an integer between 0 and 2');
 
     validateOptional(data.tags, tags => isValidArray(tags, tag => isValidString(tag)), 'Invalid tags: must be an array of strings');
+    validateOptional(data?.internalData, internalData => typeof internalData === 'object', 'Invalid internalData: must be an object');
+    validateOptional(data?.internalData?.type, isValidString, 'Invalid internalData.type: must be a string');
 
     this.id = data.id;
     this.createdAt = data.createdAt;
@@ -49,7 +51,9 @@ class Item {
     this.tags = data.tags || [];
 
     this.internalData = {
-      originalSecurityType: data.internalData?.originalSecurityType || this.securityType
+      originalSecurityType: data.internalData?.originalSecurityType || this.securityType,
+      type: data.internalData?.type || null,
+      sifResetTime: data.internalData?.sifResetTime || null
     };
   }
 
@@ -315,7 +319,12 @@ class Item {
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       securityType: this.securityType,
-      tags: this.tags
+      tags: this.tags,
+      internalData: {
+        originalSecurityType: this.internalData.originalSecurityType,
+        type: this.internalData.type,
+        sifResetTime: this.internalData.sifResetTime
+      }
     };
   }
 }

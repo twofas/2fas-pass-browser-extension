@@ -56,9 +56,6 @@ export default class Login extends Item {
     validateOptional(loginData?.content?.customImageUrl, isValidString, 'Invalid loginData.content.customImageUrl: must be a string');
     validateOptional(loginData?.content?.notes, isValidString, 'Invalid loginData.content.notes: must be a string');
 
-    validateOptional(loginData?.internalData, data => typeof data === 'object', 'Invalid loginData.internalData: must be an object');
-    validateOptional(loginData?.internalData?.type, isValidString, 'Invalid loginData.internalData.type: must be a string');
-
     this.contentType = Login.contentType;
     this.contentVersion = Login.contentVersion;
 
@@ -79,9 +76,7 @@ export default class Login extends Item {
       ...this.internalData,
       uiName: browser.i18n.getMessage('login'),
       urisWithTempIds: loginData.internalData?.urisWithTempIds || this.#urisWithTempIds(loginData.content.uris) || [],
-      normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || [],
-      type: loginData.internalData?.type || null,
-      sifResetTime: loginData.internalData?.sifResetTime || null
+      normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || []
     };
 
     // Secure Input Fields
