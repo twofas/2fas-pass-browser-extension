@@ -36,7 +36,7 @@ function KeepPassword () {
   return (
     <div className={containerClass}>
       <div className={S.thisTabAutofillPopupBox}>
-        <h2>{browser.i18n.getMessage('this_tab_autofill_password_popup_header')}</h2>
+        <h2>{browser.i18n.getMessage('keep_password_popup_header')}</h2>
         <div className={S.thisTabAutofillPopupBoxLoginItem}>
           <SmallLoginItem
             deviceId={state?.deviceId}
@@ -51,13 +51,13 @@ function KeepPassword () {
             className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
             onClick={handleKeepPassword}
           >
-            {browser.i18n.getMessage('this_tab_autofill_password_popup_keep')}
+            {browser.i18n.getMessage('keep_password_popup_keep')}
           </button>
           <button
             className={`${bS.btn} ${bS.btnClear}`}
             onClick={handleDontKeepPassword}
           >
-            {browser.i18n.getMessage('this_tab_autofill_password_popup_dont_keep')}
+            {browser.i18n.getMessage('keep_password_popup_dont_keep')}
           </button>
         </div>
       </div>

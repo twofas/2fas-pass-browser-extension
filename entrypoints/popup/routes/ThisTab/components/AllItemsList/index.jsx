@@ -106,7 +106,7 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
       <div className={`${S.thisTabAllLoginsList} ${S.noData}`}>
         <div>
           <EmptyListIcon className={S.noDataIcon} />
-          <span>{browser.i18n.getMessage('this_tab_no_search_results')}</span>
+          <span>{browser.i18n.getMessage('all_items_list_no_search_results')}</span>
         </div>
       </div>
     );

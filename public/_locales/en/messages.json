@@ -1727,10 +1727,6 @@
     "message": "Sort",
     "description": "Label for the sort functionality"
   },
-  "this_tab_search_placeholder": {
-    "message": "Search among %AMOUNT% Items",
-    "description": "Placeholder text for the search input showing the number of available items"
-  },
   "this_tab_more_details": {
     "message": "View details",
     "description": "Button label to view more details about a login item"
@@ -1754,10 +1750,6 @@
   "this_tab_copy_to_clipboard": {
     "message": "Copy to clipboard",
     "description": "Button label to copy data to the clipboard"
-  },
-  "this_tab_no_search_results": {
-    "message": "No search results. Please try again.",
-    "description": "Message displayed when no search results are found"
   },
   "this_tab_autofill_success": {
     "message": "Autofill successful",
@@ -1784,7 +1776,7 @@
     "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
   },
   "this_tab_can_t_autofill_t2_failed": {
-    "message": "Browser Extension can’t autofill the form.",
+    "message": "Browser Extension can't autofill the form.",
     "description": "Message displayed when autofill operation fails completely"
   },
   "this_tab_can_t_find_inputs": {
@@ -1835,30 +1827,6 @@
     "message": "More actions",
     "description": "Label for a dropdown or menu containing additional actions"
   },
-  "this_tab_tag_info_text": {
-    "message": "Showing AMOUNT Items Tagged: TAG_NAME",
-    "description": "Information text displaying the number of items with a specific tag"
-  },
-  "this_tab_clear_tag_filter": {
-    "message": "Clear Tag filter",
-    "description": "Button label to clear the selected tag filter"
-  },
-  "this_tab_update_available": {
-    "message": "A new version of the extension is available!",
-    "description": "Notification message when a new extension update is available"
-  },
-  "this_tab_update_button": {
-    "message": "Update",
-    "description": "Button label to update the extension"
-  },
-  "this_tab_update_button_title": {
-    "message": "Update the extension to the latest version",
-    "description": "Tooltip for the update button"
-  },
-  "this_tab_update_manual_required": {
-    "message": "Please update the extension manually from your browser's extension settings",
-    "description": "Error message when automatic update is not available"
-  },
   "this_tab_autofill_fetch_card_data": {
     "message": "Cardholder name autofilled. Fetch card details from device to complete.",
     "description": "Message displayed when cardholder name is autofilled for a Highly Secret item that requires fetching card data from device"
@@ -1879,17 +1847,9 @@
     "message": "The expiry date is not available in the form options",
     "description": "Message displayed when the card expiry date doesn't match any available option in the form's dropdown"
   },
-  "this_tab_autofill_password_popup_header": {
-    "message": "Password for the following service successfully fetched.",
-    "description": "Header message in popup after fetching password for autofill"
-  },
-  "this_tab_autofill_password_popup_keep": {
-    "message": "Keep it for 3 minutes",
-    "description": "Button label to keep the fetched password for a limited time"
-  },
-  "this_tab_autofill_password_popup_dont_keep": {
-    "message": "Don't keep it",
-    "description": "Button label to not keep the fetched password for a limited time"
+  "all_items_list_no_search_results": {
+    "message": "No search results. Please try again.",
+    "description": "Message displayed when no search results are found"
   },
   "filters_no_tags": {
     "message": "No Tags available",
@@ -1902,6 +1862,22 @@
   "filters_clear_choice": {
     "message": "Clear filters",
     "description": "Option text to clear the selected tag filter"
+  },
+  "keep_password_popup_header": {
+    "message": "Password for the following service successfully fetched.",
+    "description": "Header message in popup after fetching password for autofill"
+  },
+  "keep_password_popup_keep": {
+    "message": "Keep it for 3 minutes",
+    "description": "Button label to keep the fetched password for a limited time"
+  },
+  "keep_password_popup_dont_keep": {
+    "message": "Don't keep it",
+    "description": "Button label to not keep the fetched password for a limited time"
+  },
+  "search_placeholder": {
+    "message": "Search among %AMOUNT% Items",
+    "description": "Placeholder text for the search input showing the number of available items"
   },
   "sort_az": {
     "message": "A-Z",
@@ -1918,5 +1894,29 @@
   "sort_oldest": {
     "message": "Oldest",
     "description": "Sort option for sorting items by least recently updated first"
+  },
+  "tags_info_text": {
+    "message": "Showing AMOUNT Items Tagged: TAG_NAME",
+    "description": "Information text displaying the number of items with a specific tag"
+  },
+  "tags_info_clear_filter": {
+    "message": "Clear Tag filter",
+    "description": "Button label to clear the selected tag filter"
+  },
+  "update_available": {
+    "message": "A new version of the extension is available!",
+    "description": "Notification message when a new extension update is available"
+  },
+  "update_button": {
+    "message": "Update",
+    "description": "Button label to update the extension"
+  },
+  "update_button_title": {
+    "message": "Update the extension to the latest version",
+    "description": "Tooltip for the update button"
+  },
+  "update_manual_required": {
+    "message": "Please update the extension manually from your browser's extension settings",
+    "description": "Error message when automatic update is not available"
   }
 }
