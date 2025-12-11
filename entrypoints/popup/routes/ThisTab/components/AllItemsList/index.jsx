@@ -10,7 +10,6 @@ import SafariViewportList from '@/entrypoints/popup/components/SafariViewportLis
 import { lazy, useMemo, memo } from 'react';
 import { sortFunction } from '@/partials/functions';
 import isItemsCorrect from '../../functions/isItemsCorrect';
-import { ItemListProvider } from '../../context/ItemListContext';
 
 const EmptyListIcon = lazy(() => import('@/assets/popup-window/empty-list.svg?react'));
 
@@ -92,11 +91,9 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
   if (itemsData.type === 'loading') {
     return (
       <div className={S.thisTabAllLoginsList}>
-        <ItemListProvider>
-          <SafariViewportList items={itemsData.data} overscan={3}>
-            {item => <Item data={item} key={item.id} loading={loading} />}
-          </SafariViewportList>
-        </ItemListProvider>
+        <SafariViewportList items={itemsData.data} overscan={3}>
+          {item => <Item data={item} key={item.id} loading={loading} />}
+        </SafariViewportList>
       </div>
     );
   }
@@ -114,11 +111,9 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
 
   return (
     <div className={S.thisTabAllLoginsList}>
-      <ItemListProvider>
-        <SafariViewportList items={itemsData.data} overscan={10}>
-          {item => <Item data={item} key={item.id} loading={loading} />}
-        </SafariViewportList>
-      </ItemListProvider>
+      <SafariViewportList items={itemsData.data} overscan={10}>
+        {item => <Item data={item} key={item.id} loading={loading} />}
+      </SafariViewportList>
     </div>
   );
 }
