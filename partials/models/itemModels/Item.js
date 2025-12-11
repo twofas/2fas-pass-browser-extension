@@ -46,6 +46,10 @@ class Item {
     this.updatedAt = data.updatedAt;
     this.securityType = data.securityType;
     this.tags = data.tags || [];
+
+    this.internalData = {
+      originalSecurityType: data.internalData?.originalSecurityType || this.securityType
+    };
   }
 
   /** 
@@ -204,6 +208,11 @@ class Item {
     } else {
       return '#fff';
     }
+  }
+
+  get isT3orT2WithSif () {
+    return this.securityType === SECURITY_TIER.SECRET
+      || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
   }
 
   toJSON () {

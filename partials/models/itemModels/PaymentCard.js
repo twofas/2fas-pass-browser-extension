@@ -55,6 +55,7 @@ export default class PaymentCard extends Item {
     };
 
     this.internalData = {
+      ...this.internalData,
       uiName: browser.i18n.getMessage('payment_card'),
       type: paymentCardData.internalData?.type || null,
       sifResetTime: paymentCardData.internalData?.sifResetTime || null,
@@ -236,11 +237,6 @@ export default class PaymentCard extends Item {
     return this.#s_securityCode && this.#s_securityCode.length > 0;
   }
 
-  get isT3orT2WithSif () {
-    return this.securityType === SECURITY_TIER.SECRET
-      || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
-  }
-
   /**
    * Validates a card number using the Luhn algorithm (mod 10 checksum).
    * @param {string} cardNumber - The card number to validate (digits only, no spaces).
@@ -290,12 +286,7 @@ export default class PaymentCard extends Item {
         s_securityCode: this.#s_securityCode
       },
       internalData: {
-        uiName: this.internalData.uiName,
-        type: this.internalData.type,
-        sifResetTime: this.internalData.sifResetTime,
-        editedCardNumber: this.internalData.editedCardNumber,
-        editedExpirationDate: this.internalData.editedExpirationDate,
-        editedSecurityCode: this.internalData.editedSecurityCode
+        ...this.internalData
       }
     };
   }

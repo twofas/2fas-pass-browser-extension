@@ -42,6 +42,7 @@ class SecureNote extends Item {
     };
 
     this.internalData = {
+      ...this.internalData,
       uiName: browser.i18n.getMessage('secure_note'),
       type: secureNoteData.internalData?.type || null,
       sifResetTime: secureNoteData.internalData?.sifResetTime || null,
@@ -122,11 +123,6 @@ class SecureNote extends Item {
     return this.#s_text && this.#s_text.length > 0;
   }
 
-  get isT3orT2WithSif () {
-    return this.securityType === SECURITY_TIER.SECRET
-      || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
-  }
-
   toJSON () {
     return {
       ...super.toJSON(),
@@ -138,11 +134,7 @@ class SecureNote extends Item {
         additionalInfo: this.content.additionalInfo || null
       },
       internalData: {
-        uiName: this.internalData.uiName,
-        type: this.internalData.type,
-        sifResetTime: this.internalData.sifResetTime,
-        editedSif: this.internalData.editedSif,
-        cachedSifDecrypted: this.internalData.cachedSifDecrypted
+        ...this.internalData
       }
     };
   }

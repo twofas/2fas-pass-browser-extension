@@ -77,6 +77,7 @@ export default class Login extends Item {
     };
 
     this.internalData = {
+      ...this.internalData,
       uiName: browser.i18n.getMessage('login'),
       urisWithTempIds: loginData.internalData?.urisWithTempIds || this.#urisWithTempIds(loginData.content.uris) || [],
       normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || [],
@@ -255,11 +256,6 @@ export default class Login extends Item {
     return this.#s_password && this.#s_password !== '';
   }
 
-  get isT3orT2WithSif () {
-    return this.securityType === SECURITY_TIER.SECRET
-      || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
-  }
-
   toJSON () {
     return {
       ...super.toJSON(),
@@ -270,11 +266,7 @@ export default class Login extends Item {
         s_password: this.#s_password
       },
       internalData: {
-        uiName: this.internalData.uiName,
-        type: this.internalData.type,
-        sifResetTime: this.internalData.sifResetTime,
-        editedSif: this.internalData.editedSif,
-        cachedSifDecrypted: this.internalData.cachedSifDecrypted
+        ...this.internalData
       }
     };
   }
