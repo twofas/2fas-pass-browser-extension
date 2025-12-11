@@ -7,9 +7,10 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { copyValue, isText, paymentCardExpirationDateValidation } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
+import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
@@ -30,20 +31,48 @@ function CardExpirationDate (props) {
   const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const previousExpirationDateRef = useRef(null);
+  const [localDecryptedExpirationDate, setLocalDecryptedExpirationDate] = useState(null);
+  const [localEditedExpirationDate, setLocalEditedExpirationDate] = useState(null);
+  const [isDecrypting, setIsDecrypting] = useState(false);
 
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
+
+  const decryptExpirationDateOnDemand = useCallback(async () => {
+    if (localDecryptedExpirationDate !== null || isDecrypting || sifDecryptError) {
+      return localDecryptedExpirationDate;
+    }
+
+    if (!data.item?.expirationDateExists) {
+      return null;
+    }
+
+    setIsDecrypting(true);
+
+    try {
+      const decryptedData = await data.item.decryptExpirationDate();
+      setLocalDecryptedExpirationDate(decryptedData);
+      setData('sifDecryptError', false);
+      return decryptedData;
+    } catch (e) {
+      setData('sifDecryptError', true);
+      CatchError(e);
+      return null;
+    } finally {
+      setIsDecrypting(false);
+    }
+  }, [localDecryptedExpirationDate, isDecrypting, sifDecryptError, data.item, setData]);
 
   const getExpirationDateValue = () => {
     if (sifDecryptError || isHighlySecretWithoutSif) {
       return '';
     }
 
-    if (isText(data.item.internalData.editedExpirationDate)) {
-      return data.item.internalData.editedExpirationDate;
+    if (isText(localEditedExpirationDate)) {
+      return localEditedExpirationDate;
     }
 
-    if (data.item.isSifDecrypted && data.item.sifDecrypted?.expirationDate) {
-      return data.item.sifDecrypted.expirationDate;
+    if (isText(localDecryptedExpirationDate)) {
+      return localDecryptedExpirationDate;
     }
 
     return '';
@@ -56,7 +85,17 @@ function CardExpirationDate (props) {
       form.change('editedExpirationDate', currentExpirationDate);
       previousExpirationDateRef.current = currentExpirationDate;
     }
-  }, [data.item.internalData.editedExpirationDate, data.item.sifDecrypted, data.item.isSifDecrypted, sifDecryptError, form]);
+  }, [localEditedExpirationDate, localDecryptedExpirationDate, sifDecryptError, form]);
+
+  useEffect(() => {
+    const needsDecryption = localDecryptedExpirationDate === null &&
+                           !isDecrypting &&
+                           data.item?.expirationDateExists;
+
+    if (needsDecryption) {
+      decryptExpirationDateOnDemand();
+    }
+  }, [localDecryptedExpirationDate, isDecrypting, data.item?.expirationDateExists, decryptExpirationDateOnDemand]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -83,25 +122,16 @@ function CardExpirationDate (props) {
     );
   };
 
-  const handleEditableClick = () => {
+  const handleEditableClick = async () => {
     if (data?.expirationDateEditable) {
-      const itemData = data.item.toJSON();
-      itemData.internalData = { ...data.item.internalData };
-      const updatedItem = new (data.item.constructor)(itemData);
-
-      if (data.item.isSifDecrypted) {
-        updatedItem.setSifDecrypted(data.item.sifDecrypted);
-      }
-
-      updatedItem.internalData.editedExpirationDate = null;
-
+      setLocalEditedExpirationDate(null);
       setBatchData({
-        item: updatedItem,
         expirationDateEdited: false,
         expirationDateEditable: false
       });
-      form.change('editedExpirationDate', data.item.isSifDecrypted ? data.item.sifDecrypted?.expirationDate : '');
+      form.change('editedExpirationDate', isText(localDecryptedExpirationDate) ? localDecryptedExpirationDate : '');
     } else {
+      await decryptExpirationDateOnDemand();
       setData('expirationDateEditable', true);
     }
   };
@@ -110,14 +140,12 @@ function CardExpirationDate (props) {
     try {
       let expirationDateToCopy;
 
-      if (data.item.internalData.editedExpirationDate !== null) {
-        expirationDateToCopy = data.item.internalData.editedExpirationDate;
-      } else if (data.item.isSifDecrypted && data.item.sifDecrypted?.expirationDate) {
-        expirationDateToCopy = data.item.sifDecrypted.expirationDate;
+      if (isText(localEditedExpirationDate)) {
+        expirationDateToCopy = localEditedExpirationDate;
+      } else if (isText(localDecryptedExpirationDate)) {
+        expirationDateToCopy = localDecryptedExpirationDate;
       } else if (data.item.expirationDateExists) {
-        let decryptedData = await data.item.decryptExpirationDate();
-        expirationDateToCopy = decryptedData;
-        decryptedData = null;
+        expirationDateToCopy = await decryptExpirationDateOnDemand();
       } else {
         expirationDateToCopy = '';
       }
@@ -130,19 +158,14 @@ function CardExpirationDate (props) {
     }
   };
 
-  const handleExpirationDateChange = formattedValue => {
-    const itemData = data.item.toJSON();
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
-
-    if (data.item.isSifDecrypted) {
-      updatedItem.setSifDecrypted(data.item.sifDecrypted);
-    }
-
-    updatedItem.internalData.editedExpirationDate = formattedValue;
-
-    setData('item', updatedItem);
+  const handleExpirationDateChange = async formattedValue => {
+    setLocalEditedExpirationDate(formattedValue);
     form.change('editedExpirationDate', formattedValue);
+
+    const itemData = data.item.toJSON();
+    const localItem = new PaymentCard(itemData);
+    await localItem.setSif([{ s_expirationDate: formattedValue }]);
+    setData('item', localItem);
   };
 
   return (

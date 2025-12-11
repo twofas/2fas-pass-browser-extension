@@ -17,7 +17,6 @@ export default class PaymentCard extends Item {
   #s_cardNumber;
   #s_expirationDate;
   #s_securityCode;
-  #s_sifDecrypted;
 
   constructor (paymentCardData, deviceId = null, vaultId = null) {
     if (paymentCardData.constructor.name === paymentCardData.name) {
@@ -58,17 +57,13 @@ export default class PaymentCard extends Item {
       ...this.internalData,
       uiName: browser.i18n.getMessage('payment_card'),
       type: paymentCardData.internalData?.type || null,
-      sifResetTime: paymentCardData.internalData?.sifResetTime || null,
-      editedCardNumber: paymentCardData.internalData?.editedCardNumber,
-      editedExpirationDate: paymentCardData.internalData?.editedExpirationDate,
-      editedSecurityCode: paymentCardData.internalData?.editedSecurityCode
+      sifResetTime: paymentCardData.internalData?.sifResetTime || null
     };
 
     // Secure Input Fields
     this.#s_cardNumber = paymentCardData.content.s_cardNumber ?? null;
     this.#s_expirationDate = paymentCardData.content.s_expirationDate ?? null;
     this.#s_securityCode = paymentCardData.content.s_securityCode ?? null;
-    this.#s_sifDecrypted = null;
   }
 
   removeSif () {
@@ -145,22 +140,6 @@ export default class PaymentCard extends Item {
         this.#s_securityCode = await this.encryptSif(item.s_securityCode, this?.internalData?.type);
       }
     }
-  }
-
-  setSifDecrypted (decryptedSif) {
-    this.#s_sifDecrypted = decryptedSif;
-  }
-
-  removeSifDecrypted () {
-    this.#s_sifDecrypted = null;
-  }
-
-  get sifDecrypted () {
-    return this.#s_sifDecrypted;
-  }
-
-  get isSifDecrypted () {
-    return this.#s_sifDecrypted !== null;
   }
 
   get dropdownList () {

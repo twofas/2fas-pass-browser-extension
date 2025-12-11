@@ -13,6 +13,7 @@ import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import matchModel from '@/partials/models/itemModels/matchModel';
+import Login from '@/partials/models/itemModels/Login';
 import { PULL_REQUEST_TYPES } from '@/constants';
 
 // Model Views
@@ -66,8 +67,6 @@ function Details(props) {
 
           if (location.state.data.item.content) {
             const stateContent = { ...location.state.data.item.content };
-            delete stateContent.s_text;
-            delete stateContent.s_password;
 
             mergedItem.content = { ...originalItemData.content, ...stateContent };
           }
@@ -107,30 +106,6 @@ function Details(props) {
         return;
       }
 
-      const hasEditedSifFromState = location.state?.data?.editedSif !== undefined;
-      const hasEditedPaymentCardSifFromState = location.state?.data?.editedCardNumber !== undefined
-        || location.state?.data?.editedExpirationDate !== undefined
-        || location.state?.data?.editedSecurityCode !== undefined;
-
-      if (item.sifExists && !item.isSifDecrypted && !item.internalData?.editedSif && !hasEditedSifFromState && !hasEditedPaymentCardSifFromState) {
-        try {
-          const decryptedData = await item.decryptSif();
-
-          if (item.constructor.name === 'Login') {
-            item.setSifDecrypted(decryptedData.password);
-          } else if (item.constructor.name === 'SecureNote') {
-            item.setSifDecrypted(decryptedData.text);
-          } else if (item.constructor.name === 'PaymentCard') {
-            item.setSifDecrypted(decryptedData);
-          }
-
-          setData('sifDecryptError', false);
-        } catch (e) {
-          setData('sifDecryptError', true);
-          CatchError(e);
-        }
-      }
-
       if (editedSecurityType !== undefined && item.securityType !== editedSecurityType) {
         item.securityType = editedSecurityType;
       }
@@ -143,22 +118,10 @@ function Details(props) {
         const stateData = location.state.data;
 
         Object.keys(stateData).forEach(field => {
-          if (field !== 'item' && field !== 'editedSif') {
+          if (field !== 'item') {
             setData(field, stateData[field]);
           }
         });
-
-        if (stateData.editedSif !== undefined && item) {
-          if (item.constructor.name === 'Login') {
-            item.setSifDecrypted(stateData.editedSif);
-            item.internalData.editedSif = stateData.editedSif;
-          } else if (item.constructor.name === 'SecureNote') {
-            item.setSifDecrypted(stateData.editedSif);
-            item.internalData.editedSif = stateData.editedSif;
-          }
-
-          setData('sifDecryptError', false);
-        }
 
         if (stateData.domainsEditable && item && item.internalData?.urisWithTempIds) {
           const newDomainsEditable = {};
@@ -172,18 +135,18 @@ function Details(props) {
           if (stateData.passwordEditable !== undefined) {
             setData('passwordEditable', stateData.passwordEditable);
           }
-
-          if (stateData.passwordEdited !== undefined) {
-            setData('passwordEdited', stateData.passwordEdited);
-          }
         }
       }
 
-      if (location.state?.generatedPassword) {
-        item.internalData.editedSif = location.state.generatedPassword;
+      if (location.state?.generatedPassword && item instanceof Login) {
+        const itemData = item.toJSON();
+        const updatedItem = new Login(itemData);
+        await updatedItem.setSif([{ s_password: location.state.generatedPassword }]);
+        item = updatedItem;
+
         setBatchData({
           passwordEditable: true,
-          passwordEdited: true
+          passwordVisible: location.state?.data?.passwordVisible || false
         });
       }
 

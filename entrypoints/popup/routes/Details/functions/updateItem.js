@@ -54,15 +54,6 @@ const updateItem = (baseItem, overwrites = {}) => {
   const updatedData = deepMerge(itemData, overwrites);
   const updatedItem = new (baseItem.constructor)(updatedData);
 
-  // Preserve decrypted password if applicable
-  if (baseItem.isSifDecrypted) {
-    updatedItem.setSifDecrypted(baseItem.sifDecrypted);
-  }
-
-  if (baseItem.internalData.editedPassword !== null) {
-    updatedItem.internalData.editedPassword = baseItem.internalData.editedPassword;
-  }
-
   return updatedItem;
 };
 

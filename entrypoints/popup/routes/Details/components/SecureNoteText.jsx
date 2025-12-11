@@ -8,11 +8,12 @@ import S from '../Details.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { lazy, useState } from 'react';
+import { lazy, useState, useCallback } from 'react';
 import { LazyMotion, animate } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { isText } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
+import SecureNote from '@/partials/models/itemModels/SecureNote';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
@@ -35,18 +36,46 @@ function SecureNoteText (props) {
   const previousSifValueRef = useRef(null);
   const textareaRef = useRef(null);
   const [showTextarea, setShowTextarea] = useState(false);
+  const [localDecryptedText, setLocalDecryptedText] = useState(null);
+  const [localEditedText, setLocalEditedText] = useState(null);
+  const [isDecrypting, setIsDecrypting] = useState(false);
+
+  const decryptTextOnDemand = useCallback(async () => {
+    if (localDecryptedText !== null || isDecrypting || sifDecryptError) {
+      return localDecryptedText;
+    }
+
+    if (!data.item?.sifExists) {
+      return null;
+    }
+
+    setIsDecrypting(true);
+
+    try {
+      const decryptedData = await data.item.decryptSif();
+      setLocalDecryptedText(decryptedData.text);
+      setData('sifDecryptError', false);
+      return decryptedData.text;
+    } catch (e) {
+      setData('sifDecryptError', true);
+      CatchError(e);
+      return null;
+    } finally {
+      setIsDecrypting(false);
+    }
+  }, [localDecryptedText, isDecrypting, sifDecryptError, data.item, setData]);
 
   const getTextValue = () => {
     if (sifDecryptError) {
       return '';
     }
 
-    if (isText(data.item.internalData.editedSif)) {
-      return data.item.internalData.editedSif;
+    if (isText(localEditedText)) {
+      return localEditedText;
     }
 
-    if (data.item.isSifDecrypted) {
-      return data.item.sifDecrypted;
+    if (isText(localDecryptedText)) {
+      return localDecryptedText;
     }
 
     return '';
@@ -59,7 +88,18 @@ function SecureNoteText (props) {
       form.change('editedSif', currentTextValue);
       previousSifValueRef.current = currentTextValue;
     }
-  }, [data.item.internalData.editedSif, data.item.sifDecrypted, data.item.isSifDecrypted, sifDecryptError, form]);
+  }, [localEditedText, localDecryptedText, sifDecryptError, form]);
+
+  useEffect(() => {
+    const needsDecryption = (data?.sifEditable || data?.revealSecureNote) &&
+                           localDecryptedText === null &&
+                           !isDecrypting &&
+                           data.item?.sifExists;
+
+    if (needsDecryption) {
+      decryptTextOnDemand();
+    }
+  }, [data?.sifEditable, data?.revealSecureNote, localDecryptedText, isDecrypting, data.item?.sifExists, decryptTextOnDemand]);
 
   useEffect(() => {
     if (data?.revealSecureNote) {
@@ -150,26 +190,17 @@ function SecureNoteText (props) {
     );
   };
 
-  const handleEditableClick = () => {
+  const handleEditableClick = async () => {
     if (data?.sifEditable) {
-      const itemData = data.item.toJSON();
-      itemData.internalData = { ...data.item.internalData };
-      const updatedItem = new (data.item.constructor)(itemData);
-
-      if (data.item.isSifDecrypted) {
-        updatedItem.setSifDecrypted(data.item.sifDecrypted);
-      }
-
-      updatedItem.internalData.editedSif = null;
-
+      setLocalEditedText(null);
       setBatchData({
-        item: updatedItem,
         sifEdited: false,
         sifEditable: false,
         revealSecureNote: false
       });
-      form.change('editedSif', data.item.isSifDecrypted ? data.item.sifDecrypted : '');
+      form.change('editedSif', isText(localDecryptedText) ? localDecryptedText : '');
     } else {
+      await decryptTextOnDemand();
       setBatchData({
         sifEditable: true,
         revealSecureNote: true
@@ -177,23 +208,23 @@ function SecureNoteText (props) {
     }
   };
 
-  const handleTextChange = e => {
+  const handleTextChange = async e => {
     const newValue = e.target.value;
-    const itemData = data.item.toJSON();
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isSifDecrypted) {
-      updatedItem.setSifDecrypted(data.item.sifDecrypted);
-    }
-
-    updatedItem.internalData.editedSif = newValue;
-
-    setData('item', updatedItem);
+    setLocalEditedText(newValue);
     form.change('editedSif', newValue);
+
+    const itemData = data.item.toJSON();
+    const localItem = new SecureNote(itemData);
+    await localItem.setSif([{ s_text: newValue }]);
+    setData('item', localItem);
   };
 
-  const handleRevealToggle = () => {
+  const handleRevealToggle = async () => {
+    if (!data?.revealSecureNote) {
+      await decryptTextOnDemand();
+    }
+
     setData('revealSecureNote', !data?.revealSecureNote);
   };
 

@@ -8,9 +8,10 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import S from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/PaymentCardSecurityCodeInput.module.scss';
 import { Field } from 'react-final-form';
-import { lazy, useEffect, useRef } from 'react';
+import { lazy, useEffect, useRef, useState, useCallback } from 'react';
 import { copyValue, isText } from '@/partials/functions';
 import usePopupStateStore from '../../../store/popupState';
+import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 import PaymentCardSecurityCodeInput from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput';
 import getSecurityCodeMask from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/getSecurityCodeMask';
 
@@ -34,32 +35,59 @@ function CardSecurityCode (props) {
   const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const previousSecurityCodeRef = useRef(null);
+  const [localDecryptedSecurityCode, setLocalDecryptedSecurityCode] = useState(null);
+  const [localEditedSecurityCode, setLocalEditedSecurityCode] = useState(null);
+  const [isDecrypting, setIsDecrypting] = useState(false);
 
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
+
+  const decryptSecurityCodeOnDemand = useCallback(async () => {
+    if (localDecryptedSecurityCode !== null || isDecrypting || sifDecryptError) {
+      return localDecryptedSecurityCode;
+    }
+
+    if (!data.item?.securityCodeExists) {
+      return null;
+    }
+
+    setIsDecrypting(true);
+
+    try {
+      const decryptedData = await data.item.decryptSecurityCode();
+      setLocalDecryptedSecurityCode(decryptedData);
+      setData('sifDecryptError', false);
+      return decryptedData;
+    } catch (e) {
+      setData('sifDecryptError', true);
+      CatchError(e);
+      return null;
+    } finally {
+      setIsDecrypting(false);
+    }
+  }, [localDecryptedSecurityCode, isDecrypting, sifDecryptError, data.item, setData]);
 
   const getSecurityCodeValue = () => {
     if (sifDecryptError || isHighlySecretWithoutSif) {
       return '';
     }
 
-    if (isText(data.item.internalData.editedSecurityCode)) {
-      return data.item.internalData.editedSecurityCode;
+    if (isText(localEditedSecurityCode)) {
+      return localEditedSecurityCode;
     }
 
-    if (data.item.isSifDecrypted && data.item.sifDecrypted?.securityCode) {
-      return data.item.sifDecrypted.securityCode;
+    if (isText(localDecryptedSecurityCode)) {
+      return localDecryptedSecurityCode;
     }
 
     return '';
   };
 
   const getCardNumberValue = () => {
-    if (isText(data.item.internalData.editedCardNumber)) {
-      return data.item.internalData.editedCardNumber;
-    }
+    const formState = form.getState();
+    const cardNumber = formState?.values?.editedCardNumber;
 
-    if (data.item.isSifDecrypted && data.item.sifDecrypted?.cardNumber) {
-      return data.item.sifDecrypted.cardNumber;
+    if (isText(cardNumber)) {
+      return cardNumber;
     }
 
     return '';
@@ -72,7 +100,18 @@ function CardSecurityCode (props) {
       form.change('editedSecurityCode', currentSecurityCode);
       previousSecurityCodeRef.current = currentSecurityCode;
     }
-  }, [data.item.internalData.editedSecurityCode, data.item.sifDecrypted, data.item.isSifDecrypted, sifDecryptError, form]);
+  }, [localEditedSecurityCode, localDecryptedSecurityCode, sifDecryptError, form]);
+
+  useEffect(() => {
+    const needsDecryption = (data?.securityCodeEditable || data?.securityCodeVisible) &&
+                           localDecryptedSecurityCode === null &&
+                           !isDecrypting &&
+                           data.item?.securityCodeExists;
+
+    if (needsDecryption) {
+      decryptSecurityCodeOnDemand();
+    }
+  }, [data?.securityCodeEditable, data?.securityCodeVisible, localDecryptedSecurityCode, isDecrypting, data.item?.securityCodeExists, decryptSecurityCodeOnDemand]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -99,25 +138,16 @@ function CardSecurityCode (props) {
     );
   };
 
-  const handleEditableClick = () => {
+  const handleEditableClick = async () => {
     if (data?.securityCodeEditable) {
-      const itemData = data.item.toJSON();
-      itemData.internalData = { ...data.item.internalData };
-      const updatedItem = new (data.item.constructor)(itemData);
-
-      if (data.item.isSifDecrypted) {
-        updatedItem.setSifDecrypted(data.item.sifDecrypted);
-      }
-
-      updatedItem.internalData.editedSecurityCode = null;
-
+      setLocalEditedSecurityCode(null);
       setBatchData({
-        item: updatedItem,
         securityCodeEdited: false,
         securityCodeEditable: false
       });
-      form.change('editedSecurityCode', data.item.isSifDecrypted ? data.item.sifDecrypted?.securityCode : '');
+      form.change('editedSecurityCode', isText(localDecryptedSecurityCode) ? localDecryptedSecurityCode : '');
     } else {
+      await decryptSecurityCodeOnDemand();
       setData('securityCodeEditable', true);
     }
   };
@@ -126,14 +156,12 @@ function CardSecurityCode (props) {
     try {
       let securityCodeToCopy;
 
-      if (data.item.internalData.editedSecurityCode !== null) {
-        securityCodeToCopy = data.item.internalData.editedSecurityCode;
-      } else if (data.item.isSifDecrypted && data.item.sifDecrypted?.securityCode) {
-        securityCodeToCopy = data.item.sifDecrypted.securityCode;
+      if (isText(localEditedSecurityCode)) {
+        securityCodeToCopy = localEditedSecurityCode;
+      } else if (isText(localDecryptedSecurityCode)) {
+        securityCodeToCopy = localDecryptedSecurityCode;
       } else if (data.item.securityCodeExists) {
-        let decryptedData = await data.item.decryptSecurityCode();
-        securityCodeToCopy = decryptedData;
-        decryptedData = null;
+        securityCodeToCopy = await decryptSecurityCodeOnDemand();
       } else {
         securityCodeToCopy = '';
       }
@@ -146,24 +174,24 @@ function CardSecurityCode (props) {
     }
   };
 
-  const handleSecurityCodeVisibleClick = () => {
+  const handleSecurityCodeVisibleClick = async () => {
+    if (!data?.securityCodeVisible) {
+      await decryptSecurityCodeOnDemand();
+    }
+
     setData('securityCodeVisible', !data?.securityCodeVisible);
   };
 
-  const handleSecurityCodeChange = e => {
+  const handleSecurityCodeChange = async e => {
     const newValue = e.target.value;
-    const itemData = data.item.toJSON();
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isSifDecrypted) {
-      updatedItem.setSifDecrypted(data.item.sifDecrypted);
-    }
-
-    updatedItem.internalData.editedSecurityCode = newValue;
-
-    setData('item', updatedItem);
+    setLocalEditedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
+
+    const itemData = data.item.toJSON();
+    const localItem = new PaymentCard(itemData);
+    await localItem.setSif([{ s_securityCode: newValue }]);
+    setData('item', localItem);
   };
 
   const getHiddenMaskValue = () => {
@@ -180,20 +208,16 @@ function CardSecurityCode (props) {
     return securityCode.replace(/\D/g, '');
   };
 
-  const handleRawSecurityCodeChange = e => {
+  const handleRawSecurityCodeChange = async e => {
     const newValue = e.target.value.replace(/\D/g, '');
-    const itemData = data.item.toJSON();
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isSifDecrypted) {
-      updatedItem.setSifDecrypted(data.item.sifDecrypted);
-    }
-
-    updatedItem.internalData.editedSecurityCode = newValue;
-
-    setData('item', updatedItem);
+    setLocalEditedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
+
+    const itemData = data.item.toJSON();
+    const localItem = new PaymentCard(itemData);
+    await localItem.setSif([{ s_securityCode: newValue }]);
+    setData('item', localItem);
   };
 
   const renderInput = () => {

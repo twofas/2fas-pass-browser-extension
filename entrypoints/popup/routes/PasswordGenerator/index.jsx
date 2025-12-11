@@ -180,13 +180,13 @@ function PasswordGenerator (props) {
             nameEditable: data.nameEditable,
             usernameEditable: data.usernameEditable,
             passwordEditable: data.passwordEditable,
+            passwordVisible: data.passwordVisible,
             domainsEditable: data.domainsEditable,
             tierEditable: data.tierEditable,
             tagsEditable: data.tagsEditable,
             notesEditable: data.notesEditable,
             usernameMobile: data.usernameMobile,
-            passwordMobile: data.passwordMobile,
-            passwordEdited: data.passwordEdited
+            passwordMobile: data.passwordMobile
           }
         }
       });
@@ -219,13 +219,13 @@ function PasswordGenerator (props) {
             nameEditable: data.nameEditable,
             usernameEditable: data.usernameEditable,
             passwordEditable: data.passwordEditable,
+            passwordVisible: data.passwordVisible,
             domainsEditable: data.domainsEditable,
             tierEditable: data.tierEditable,
             tagsEditable: data.tagsEditable,
             notesEditable: data.notesEditable,
             usernameMobile: data.usernameMobile,
-            passwordMobile: data.passwordMobile,
-            passwordEdited: data.passwordEdited
+            passwordMobile: data.passwordMobile
           }
         };
       }

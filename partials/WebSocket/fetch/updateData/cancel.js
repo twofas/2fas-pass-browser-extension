@@ -38,6 +38,7 @@ const updateDataCancel = async (deviceId, vaultId, itemId, messageId, state) => 
         if (restoredItem.content) {
           if (restoredItem.content.name !== undefined) uiFlags.nameEditable = true;
           if (restoredItem.content.notes !== undefined) uiFlags.notesEditable = true;
+          if (restoredItem.content.additionalInfo !== undefined) uiFlags.additionalInfoEditable = true;
           if (restoredItem.tags !== undefined) uiFlags.tagsEditable = true;
           if (restoredItem.securityType !== undefined) uiFlags.tierEditable = true;
         }
@@ -49,43 +50,21 @@ const updateDataCancel = async (deviceId, vaultId, itemId, messageId, state) => 
           uiFlags.usernameEditable = true;
         }
 
-        if (restoredItem.content.s_password && typeof restoredItem.content.s_password === 'object' && restoredItem.content.s_password.value !== undefined) {
-          const passwordValue = restoredItem.content.s_password.value;
-
-          if (restoredItem.contentType === 'login') {
-            if (!restoredItem.internalData) {
-              restoredItem.internalData = {};
-            }
-
-            restoredItem.internalData.editedSif = passwordValue;
-            delete restoredItem.content.s_password;
-          } else {
-            restoredItem.content.s_password = passwordValue;
+        if (restoredItem.content.s_password !== undefined) {
+          if (typeof restoredItem.content.s_password === 'object' && restoredItem.content.s_password.value !== undefined) {
+            restoredItem.content.s_password = restoredItem.content.s_password.value;
           }
 
           uiFlags.passwordEditable = true;
-          uiFlags.passwordEdited = true;
         }
 
         if (restoredItem.content.s_text !== undefined) {
-          let textValue;
-
           if (typeof restoredItem.content.s_text === 'object' && restoredItem.content.s_text.value !== undefined) {
-            textValue = restoredItem.content.s_text.value;
-          } else if (typeof restoredItem.content.s_text === 'string') {
-            textValue = restoredItem.content.s_text;
+            restoredItem.content.s_text = restoredItem.content.s_text.value;
           }
 
-          if (textValue !== undefined) {
-            if (!restoredItem.internalData) {
-              restoredItem.internalData = {};
-            }
-            restoredItem.internalData.editedSif = textValue;
-            delete restoredItem.content.s_text;
-            uiFlags.sifEditable = true;
-            uiFlags.sifVisible = true;
-            uiFlags.revealSecureNote = true;
-          }
+          uiFlags.sifEditable = true;
+          uiFlags.revealSecureNote = true;
         }
       }
 
@@ -93,9 +72,7 @@ const updateDataCancel = async (deviceId, vaultId, itemId, messageId, state) => 
         restoredItem.id = restoredItem.itemId;
       }
 
-      let editedSifToPreserve;
       if (restoredItem.internalData) {
-        editedSifToPreserve = restoredItem.internalData.editedSif;
         delete restoredItem.internalData;
       }
 
@@ -106,10 +83,6 @@ const updateDataCancel = async (deviceId, vaultId, itemId, messageId, state) => 
         },
         from: 'fetch'
       };
-
-      if (editedSifToPreserve !== undefined) {
-        navigationOptions.returnState.data.editedSif = editedSifToPreserve;
-      }
     }
 
     return navigationOptions;

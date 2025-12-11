@@ -34,9 +34,6 @@ function AdditionalInfo (props) {
   const { formData } = props;
   const { inputError } = formData;
 
-  const { formData } = props;
-  const { inputError } = formData;
-
   const handleAdditionalInfoEditable = async () => {
     if (data.additionalInfoEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
