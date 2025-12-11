@@ -49,7 +49,6 @@ function ThisTab (props) {
   const [tags, setTags] = useState([]);
   const [matchingLogins, setMatchingLogins] = useState([]);
   const [storageVersion, setStorageVersion] = useState(null);
-  const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const data = usePopupStateStore(state => state.data);
   const setBatchData = usePopupStateStore(state => state.setBatchData);
@@ -216,7 +215,7 @@ function ThisTab (props) {
     setLoading(false);
   }, [changeMatchingLoginsLength]);
 
-  const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl, setUpdateAvailable), [sendUrl, setUpdateAvailable]);
+  const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl), [sendUrl]);
 
   const handleAnimationComplete = useCallback(e => {
     if (e === 'visible') {
@@ -306,16 +305,6 @@ function ThisTab (props) {
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
 
-    if (browser?.runtime?.requestUpdateCheck && typeof browser?.runtime?.requestUpdateCheck === 'function') {
-      browser.runtime.requestUpdateCheck()
-        .then(([status]) => {
-          if (status === 'update_available') {
-            setUpdateAvailable(true);
-          }
-      })
-      .catch(() => {});
-    }
-
     Promise.all([ getDomain(), getStorageItems(), getStorageTags() ])
       .then(([domain, items, tags]) => Promise.all([
         getMatchingLogins(items, domain),
@@ -373,7 +362,7 @@ function ThisTab (props) {
                 onAnimationComplete={handleAnimationComplete}
                 onUpdate={handleAnimationUpdate}
               >
-                <UpdateComponent updateAvailable={updateAvailable} />
+                <UpdateComponent />
 
                 <div className={S.thisTabHeader}>
                   <h1>
