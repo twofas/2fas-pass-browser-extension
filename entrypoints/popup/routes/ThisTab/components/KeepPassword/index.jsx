@@ -6,24 +6,32 @@
 
 import S from '../../ThisTab.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { useMemo, memo } from 'react';
+import { useMemo, useState, useEffect, memo } from 'react';
+import { useLocation } from 'react-router';
 import { useKeepPassword } from './hooks/useKeepPassword';
 import SmallLoginItem from '../SmallLoginItem';
 
 /**
-* Component displaying keep password popup after successful autofill.
-* @param {Object} props - The component props.
-* @param {boolean} props.isActive - Whether the popup is active/visible.
-* @param {Object} props.state - The location state containing password data.
-* @param {Function} props.setAutofillFailed - Function to set autofill failed state.
+* Component displaying keep password popup after failed autofill.
 * @return {JSX.Element} The rendered keep password popup component.
 */
-function KeepPassword ({ isActive, state, setAutofillFailed }) {
+function KeepPassword () {
+  const location = useLocation();
+  const { state } = location;
+  const [autofillFailed, setAutofillFailed] = useState(false);
   const { handleKeepPassword, handleDontKeepPassword } = useKeepPassword(state, setAutofillFailed);
 
   const containerClass = useMemo(() => {
-    return `${S.thisTabAutofillPopup} ${isActive ? S.active : ''}`;
-  }, [isActive]);
+    return `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`;
+  }, [autofillFailed]);
+
+  useEffect(() => {
+    if (location?.state?.action === 'autofillT2Failed') {
+      setAutofillFailed(true);
+    } else {
+      setAutofillFailed(false);
+    }
+  }, [location?.state]);
 
   return (
     <div className={containerClass}>
