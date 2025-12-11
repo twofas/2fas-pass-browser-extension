@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/Search.module.scss';
 import { useMemo, memo } from 'react';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import { useSearchFilter } from './hooks/useSearchFilter';
@@ -36,7 +36,7 @@ function Search ({ tagsWithFilteredAmounts, filteredItemsByModelLength }) {
   }, [data?.selectedTag, filteredItemsByModelLength, tagsWithFilteredAmounts]);
 
   const containerClass = useMemo(() => {
-    return `${S.thisTabAllLoginsSearch} ${data?.searchActive ? S.active : ''}`;
+    return `${S.search} ${data?.searchActive ? S.active : ''}`;
   }, [data?.searchActive]);
 
   const inputClass = useMemo(() => {
@@ -46,7 +46,7 @@ function Search ({ tagsWithFilteredAmounts, filteredItemsByModelLength }) {
   const clearButtonClass = useMemo(() => {
     const isHidden = !data?.searchValue || data?.searchValue?.length <= 0;
 
-    return `${S.thisTabAllLoginsSearchClear} ${isHidden ? S.hidden : ''}`;
+    return `${S.searchClear} ${isHidden ? S.hidden : ''}`;
   }, [data?.searchValue]);
 
   return (

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/Filters.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { lazy, useState, useRef, useMemo, useCallback, memo, Suspense } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
@@ -81,7 +81,7 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
   const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
 
   return (
-    <div className={S.thisTabAllLoginsSearchContainerTags}>
+    <div className={S.filters}>
       <button
         ref={buttonRef}
         className={`${bS.btn} ${bS.btnFilter} ${isMenuOpen ? bS.btnFilterActive : ''}`}

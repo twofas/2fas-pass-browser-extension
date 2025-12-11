@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/TagsInfo.module.scss';
 import { useMemo, memo } from 'react';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import { useTagFilter } from '../Filters/hooks/useTagFilter';
@@ -37,7 +37,7 @@ function TagsInfo ({ tagsWithFilteredAmounts, filteredItemsCount }) {
   const isActive = currentTagInfo && data?.selectedTag;
 
   const containerClass = useMemo(() => {
-    return `${S.thisTabAllLoginsTagsInfo} ${isActive ? S.active : ''}`;
+    return `${S.tagsInfo} ${isActive ? S.active : ''}`;
   }, [isActive]);
 
   const infoText = useMemo(() => {
@@ -52,7 +52,7 @@ function TagsInfo ({ tagsWithFilteredAmounts, filteredItemsCount }) {
 
   return (
     <div className={containerClass}>
-      <div className={S.thisTabAllLoginsTagsInfoBox} title={infoText}>
+      <div className={S.tagsInfoBox} title={infoText}>
         <p>{infoText}</p>
         <button onClick={clearTagFilter} title={clearButtonTitle}>
           <ClearIcon />
