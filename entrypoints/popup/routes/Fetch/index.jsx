@@ -253,11 +253,14 @@ function Fetch(props) {
         restoredItem.id = restoredItem.itemId;
       }
 
+      const preservedUiState = state.data.uiState || {};
+
       navigate(`/details/${state.data.deviceId}/${state.data.vaultId}/${state.data.itemId}`, {
         state: {
           data: {
             item: restoredItem,
-            ...uiFlags
+            ...uiFlags,
+            ...preservedUiState
           },
           from: 'fetch'
         }

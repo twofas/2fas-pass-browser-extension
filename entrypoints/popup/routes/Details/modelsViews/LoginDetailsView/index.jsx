@@ -8,12 +8,13 @@ import S from '../../Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useNavigate } from 'react-router';
 import { useState, lazy } from 'react';
-import generateURLs from '../../functions/generateURLs';
+import GenerateURLs from '../../functions/generateURLs';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 import Login from '@/partials/models/itemModels/Login';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
+import { UriTempIdsProvider } from '../../context/UriTempIdsContext';
 
 const Name = lazy(() => import('../../components/Name'));
 const Username = lazy(() => import('../../components/Username'));
@@ -23,7 +24,7 @@ const Tags = lazy(() => import('../../components/Tags'));
 const Notes = lazy(() => import('../../components/Notes'));
 const DangerZone = lazy(() => import('../../components/DangerZone'));
 
-/** 
+/**
 * Function to render the details component for Login.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
@@ -153,6 +154,7 @@ function LoginDetailsView(props) {
       passwordMobile: data.passwordMobile,
       usernameMobile: data.usernameMobile,
       domainsEditable: data.domainsEditable,
+      urisWithTempIds: data.urisWithTempIds,
       tierEditable: data.tierEditable,
       tagsEditable: data.tagsEditable,
       notesEditable: data.notesEditable,
@@ -170,45 +172,47 @@ function LoginDetailsView(props) {
   };
 
   return (
-    <Form
-      onSubmit={onSubmit}
-      initialValues={data.item}
-      render={({ handleSubmit, form, submitting }) => ( // form, values
-        <form onSubmit={handleSubmit}>
-          <Name
-            key={`name-${data.item.id}`}
-            formData={{ inputError }}
-          />
-          <Username
-            key={`username-${data.item.id}`}
-            formData={{ inputError }}
-          />
-          <Password
-            key={`password-${data.item.id}`}
-            formData={{ form, originalItem: props.originalItem }}
-            sifDecryptError={data.sifDecryptError}
-          />
-          {generateURLs({ formData: { inputError } })}
-          <SecurityType key={`security-type-${data.item.id}`} />
-          <Tags key={`tags-${data.item.id}`} />
-          <Notes key={`notes-${data.item.id}`} />
-          <div className={S.detailsButton}>
-            <button
-              type="submit"
-              className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-              disabled={(getEditableAmount().amount <= 0 || submitting) ? 'disabled' : ''}
-            >
-              {browser.i18n.getMessage('update')}{getEditableAmount().text}
-            </button>
-          </div>
+    <UriTempIdsProvider initialUris={data.item.content?.uris}>
+      <Form
+        onSubmit={onSubmit}
+        initialValues={data.item}
+        render={({ handleSubmit, form, submitting }) => (
+          <form onSubmit={handleSubmit}>
+            <Name
+              key={`name-${data.item.id}`}
+              formData={{ inputError }}
+            />
+            <Username
+              key={`username-${data.item.id}`}
+              formData={{ inputError }}
+            />
+            <Password
+              key={`password-${data.item.id}`}
+              formData={{ form, originalItem: props.originalItem }}
+              sifDecryptError={data.sifDecryptError}
+            />
+            <GenerateURLs formData={{ inputError }} />
+            <SecurityType key={`security-type-${data.item.id}`} />
+            <Tags key={`tags-${data.item.id}`} />
+            <Notes key={`notes-${data.item.id}`} />
+            <div className={S.detailsButton}>
+              <button
+                type="submit"
+                className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
+                disabled={(getEditableAmount().amount <= 0 || submitting) ? 'disabled' : ''}
+              >
+                {browser.i18n.getMessage('update')}{getEditableAmount().text}
+              </button>
+            </div>
 
-          <DangerZone
-            key={`danger-zone-${data.item.id}`}
-            formData={{ submitting }}
-          />
-        </form>
-      )}
-    />
+            <DangerZone
+              key={`danger-zone-${data.item.id}`}
+              formData={{ submitting }}
+            />
+          </form>
+        )}
+      />
+    </UriTempIdsProvider>
   );
 }
 
