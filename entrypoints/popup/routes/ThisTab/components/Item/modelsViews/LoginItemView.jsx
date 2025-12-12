@@ -10,8 +10,8 @@ import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import handleAutofill from '../../../functions/serviceList/handleAutofill';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
+import Skeleton from '../../Skeleton';
 
-const Skeleton = lazy(() => import('../../Skeleton'));
 const PasswordBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/PasswordBtn'));
 const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
 const UsernameBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/UsernameBtn'));
@@ -48,8 +48,8 @@ function LoginItemView (props) {
       >
         {generateIcon(props.data, faviconError, setFaviconError, props.loading)}
         <span>
-          {props.loading ? <Skeleton /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
-          {props.loading ? <Skeleton /> : (props?.data?.content?.username && props?.data?.content?.username?.length > 0 ? <span>{props.data.content.username}</span> : null)}
+          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={{ width: '60px' }} /> : (props?.data?.content?.username && props?.data?.content?.username?.length > 0 ? <span>{props.data.content.username}</span> : null)}
         </span>
       </button>
       <div className={S.itemAdditionalButtons}>
