@@ -10,8 +10,8 @@ import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import handleAutofill from '../../../functions/serviceList/handleAutofill';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
+import Skeleton from '../../Skeleton';
 
-const Skeleton = lazy(() => import('../../Skeleton'));
 const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
 const CopyCardNumberBtn = lazy(() => import('../components/CopyCardNumberBtn'));
 const CopyCardSecurityCodeBtn = lazy(() => import('../components/CopyCardSecurityCodeBtn'));
@@ -43,8 +43,8 @@ function PaymentCardItemView (props) {
       >
         {generateIcon(props.data, null, null, props.loading)}
         <span>
-          {props.loading ? <Skeleton /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
-          {props.loading ? <Skeleton /> : <span>{props?.data?.content?.cardNumberMask ? `**** ${props?.data?.content?.cardNumberMask}` : browser.i18n.getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={{ width: '60px' }} /> : <span>{props?.data?.content?.cardNumberMask ? `**** ${props?.data?.content?.cardNumberMask}` : browser.i18n.getMessage('no_item_name')}</span>}
         </span>
       </button>
       <div className={S.itemAdditionalButtons}>

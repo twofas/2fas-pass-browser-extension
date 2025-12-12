@@ -6,12 +6,15 @@
 
 import S from './styles/Skeleton.module.scss';
 
-/** 
-* Function to render a skeleton component.
-* @return {JSX.Element} The rendered component.
-*/
-function Skeleton (props) {
-  return <span className={`${S.skeleton} ${props.type ? S[props.type] : ''}`}>&nbsp;</span>;
+/**
+ * Renders a skeleton loading placeholder
+ * @param {Object} props - Component props
+ * @param {string} props.type - Optional type for additional styling (e.g., 'icon')
+ * @param {Object} props.style - Optional inline styles (e.g., { width: '100px' })
+ * @returns {JSX.Element} The skeleton element
+ */
+function Skeleton ({ type, style }) {
+  return <span className={`${S.skeleton} ${type ? S[type] : ''}`} style={style}>&nbsp;</span>;
 }
 
 export default Skeleton;

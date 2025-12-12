@@ -11,8 +11,9 @@
   animation: skeleton 1s ease-in-out forwards infinite;
   animation-direction: alternate;
   background-color: v.$secondary-text-light;
-  border-radius: 6px;
+  border-radius: 4px;
   display: inline-block;
+  transform: scaleY(0.8);
   width: 100%;
 
   @include m.darkMode {
@@ -20,21 +21,21 @@
   }
 
   &.icon {
-    animation: none;
-    border: 1px solid v.$object-stroke-light;
+    background-color: v.$primary-color-light !important;
+    transform: scaleY(1) !important;
 
     @include m.darkMode {
-      border-color: v.$object-stroke-dark;
+      background-color: v.$primary-color-dark !important;
     }
   }
 }
 
 @keyframes skeleton {
   0% {
-    opacity: .1;
+    opacity: .05;
   }
 
   85%, 100% {
-    opacity: .2;
+    opacity: .1;
   }
 }

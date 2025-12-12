@@ -8,8 +8,8 @@ import S from '../styles/Item.module.scss';
 import { memo, lazy, useRef, useMemo } from 'react';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
+import Skeleton from '../../Skeleton';
 
-const Skeleton = lazy(() => import('../../Skeleton'));
 const CopyNameBtn = lazy(() => import('../components/CopyNameBtn'));
 const CopySecureNoteBtn = lazy(() => import('../components/CopySecureNoteBtn'));
 const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
@@ -29,7 +29,7 @@ function SecureNoteItemView (props) {
       >
         {generateIcon(props.data, null, null, props.loading)}
         <span>
-          {props.loading ? <Skeleton /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
         </span>
       </div>
       <div className={S.itemAdditionalButtons}>
