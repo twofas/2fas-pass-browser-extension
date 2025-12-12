@@ -19,8 +19,8 @@ import dinnersLight from '@/assets/popup-window/payment-cards/dinners_light.svg'
 import dinnersDark from '@/assets/popup-window/payment-cards/dinners_dark.svg';
 import jcb from '@/assets/popup-window/payment-cards/jcb.png';
 import unionPay from '@/assets/popup-window/payment-cards/unionPay.svg';
+import Skeleton from '../../components/Skeleton';
 
-const Skeleton = lazy(() => import('../../components/Skeleton'));
 const SecureNoteIcon = lazy(() => import('@/assets/popup-window/items/secure-note.svg?react'));
 const PaymentCardIcon = lazy(() => import('@/assets/popup-window/items/payment-card.svg?react'));
 

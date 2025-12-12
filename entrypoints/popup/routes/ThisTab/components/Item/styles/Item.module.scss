@@ -150,7 +150,7 @@
     object-fit: fill;
     opacity: 0;
     padding: 3px;
-    position: relative;
+    position: absolute;
     transition: opacity v.$anim;
     width: 26px;
     z-index: 2;

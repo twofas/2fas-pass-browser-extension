@@ -5,9 +5,5 @@
 // See LICENSE file for full terms
 
 .safari-viewport-list {
-  -webkit-overflow-scrolling: touch;
-
-  &::-webkit-scrollbar {
-    -webkit-appearance: none;
-  }
+  contain: layout style;
 }
