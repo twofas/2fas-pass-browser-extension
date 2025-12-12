@@ -53,6 +53,7 @@
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "@splidejs/react-splide": "^0.7.12",
+    "@tanstack/react-virtual": "^3.13.13",
     "final-form": "^5.0.0",
     "motion": "^12.23.26",
     "parse-domain": "^8.2.2",
@@ -65,7 +66,6 @@
     "react-router": "^7.10.1",
     "react-select": "^5.10.2",
     "react-toastify": "^11.0.5",
-    "react-viewport-list": "^7.1.2",
     "universal-base64url": "^1.1.0",
     "uuid": "^13.0.0",
     "vite-plugin-svgr": "^4.5.0",
