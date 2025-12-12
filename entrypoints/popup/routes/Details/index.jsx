@@ -30,7 +30,7 @@ const DetailsViews = {
   'PaymentCard': PaymentCardDetailsView
 };
 
-/** 
+/**
 * Function to render the details component.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
@@ -123,14 +123,6 @@ function Details(props) {
           }
         });
 
-        if (stateData.domainsEditable && item && item.internalData?.urisWithTempIds) {
-          const newDomainsEditable = {};
-          item.internalData.urisWithTempIds.forEach((uri) => {
-            newDomainsEditable[uri._tempId] = true;
-          });
-          setData('domainsEditable', newDomainsEditable);
-        }
-
         if (!location.state?.generatedPassword) {
           if (stateData.passwordEditable !== undefined) {
             setData('passwordEditable', stateData.passwordEditable);
@@ -148,19 +140,6 @@ function Details(props) {
           passwordEditable: true,
           passwordVisible: location.state?.data?.passwordVisible || false
         });
-      }
-
-      if (!location.state?.data && item && item.internalData?.urisWithTempIds && item.internalData.urisWithTempIds.length > 0) {
-        const currentDomainsEditable = data.domainsEditable || {};
-        const hasEditableDomains = Object.keys(currentDomainsEditable).length > 0;
-
-        if (hasEditableDomains) {
-          const newDomainsEditable = {};
-          item.internalData.urisWithTempIds.forEach((uri) => {
-            newDomainsEditable[uri._tempId] = true;
-          });
-          setData('domainsEditable', newDomainsEditable);
-        }
       }
 
       setData('item', item);

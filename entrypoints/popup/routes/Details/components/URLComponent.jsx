@@ -16,6 +16,7 @@ import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import URIMatcher from '@/partials/URIMatcher';
 import updateItem from '../functions/updateItem';
+import { useUriTempIds } from '../context/UriTempIdsContext';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
@@ -44,24 +45,25 @@ const urlVariants = {
   }
 };
 
-/** 
-* Function to render the URL input field.
+/**
+* Component to render the URL input field.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
 function URLComponent (props) {
   const data = usePopupStateStore(state => state.data);
   const setData = usePopupStateStore(state => state.setData);
+  const { urisWithTempIds, updateUri, removeUri, resetUri } = useUriTempIds();
 
   const { inputError, uri, index } = props;
 
   const isEditable = data?.domainsEditable?.[uri._tempId];
   const buttonText = isEditable === true ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit');
-  const isNew = data.item.content.uris && data.item.content.uris[index] && data.item.content.uris[index].new;
+  const isNew = uri.new;
 
   const handleCopyUri = useCallback(async index => {
-    const uri = data?.item?.content?.uris && data?.item?.content?.uris?.[index] ? data.item.content.uris[index].text : '';
-    await copyValue(uri, data.item.deviceId, data.item.vaultId, data.item.id, 'uri');
+    const uriText = data?.item?.content?.uris && data?.item?.content?.uris?.[index] ? data.item.content.uris[index].text : '';
+    await copyValue(uriText, data.item.deviceId, data.item.vaultId, data.item.id, 'uri');
     showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
   }, [data.item]);
 
@@ -78,35 +80,25 @@ function URLComponent (props) {
     } else {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
-      const newUrisWithTempIds = [...data.item.internalData.urisWithTempIds];
+      const originalUri = item?.content?.uris?.[index];
       const newContentUris = [...data.item.content.uris];
-      const currentUri = newUrisWithTempIds[index];
 
-      if (item.internalData.urisWithTempIds && item.internalData.urisWithTempIds[index]) {
-        newUrisWithTempIds[index] = {
-          text: item.internalData.urisWithTempIds[index].text,
-          matcher: item.internalData.urisWithTempIds[index].matcher,
-          _tempId: currentUri._tempId
-        };
+      if (originalUri) {
         newContentUris[index] = {
-          text: item.internalData.urisWithTempIds[index].text,
-          matcher: item.internalData.urisWithTempIds[index].matcher
+          text: originalUri.text,
+          matcher: originalUri.matcher
         };
+        resetUri(uri._tempId, originalUri);
       } else {
-        newUrisWithTempIds[index] = {
-          text: '',
-          matcher: URIMatcher.M_DOMAIN_TYPE,
-          _tempId: currentUri._tempId
-        };
         newContentUris[index] = {
           text: '',
           matcher: URIMatcher.M_DOMAIN_TYPE
         };
+        resetUri(uri._tempId, { text: '', matcher: URIMatcher.M_DOMAIN_TYPE });
       }
 
       const updatedItem = updateItem(data.item, {
-        content: { uris: newContentUris },
-        internalData: { ...data.item.internalData, urisWithTempIds: newUrisWithTempIds }
+        content: { uris: newContentUris }
       });
 
       item = null;
@@ -123,20 +115,14 @@ function URLComponent (props) {
   };
 
   const handleRemoveUri = useCallback(() => {
-    const newUrisWithTempIds = [...data.item.internalData.urisWithTempIds];
-    const newContentUris = [...data.item.content.uris];
-    const removedUri = newUrisWithTempIds.find(u => u._tempId === uri._tempId);
+    const uriIndex = urisWithTempIds.findIndex(u => u._tempId === uri._tempId);
 
-    if (!removedUri) {
+    if (uriIndex === -1) {
       return;
     }
 
-    const removedIndex = newUrisWithTempIds.indexOf(removedUri);
-
-    if (removedIndex > -1) {
-      newUrisWithTempIds.splice(removedIndex, 1);
-      newContentUris.splice(removedIndex, 1);
-    }
+    const newContentUris = [...data.item.content.uris];
+    newContentUris.splice(uriIndex, 1);
 
     const newIconUriIndex = data.item.content.iconUriIndex > 0 ? data.item.content.iconUriIndex - 1 : 0;
 
@@ -144,14 +130,11 @@ function URLComponent (props) {
       content: {
         uris: newContentUris,
         iconUriIndex: newIconUriIndex
-      },
-      internalData: {
-        ...data.item.internalData,
-        urisWithTempIds: newUrisWithTempIds
       }
     });
 
     setData('item', updatedItem);
+    removeUri(uri._tempId);
 
     if (data?.domainsEditable && data.domainsEditable[uri._tempId] !== undefined) {
       // eslint-disable-next-line no-unused-vars
@@ -161,33 +144,28 @@ function URLComponent (props) {
 
     const currentUrisRemoved = data?.urisRemoved || 0;
     setData('urisRemoved', currentUrisRemoved + 1);
-  }, [data, uri._tempId, setData]);
+  }, [data, uri._tempId, setData, urisWithTempIds, removeUri]);
 
   const handleUriChange = useCallback(e => {
-    const newUri = e.target.value;
-    const newUrisWithTempIds = [...data.item.internalData.urisWithTempIds];
-    const newContentUris = [...data.item.content.uris];
+    const newUriText = e.target.value;
 
-    const uriToUpdate = newUrisWithTempIds.find(u => u._tempId === uri._tempId);
+    const uriIndex = urisWithTempIds.findIndex(u => u._tempId === uri._tempId);
 
-    if (!uriToUpdate) {
+    if (uriIndex === -1) {
       return;
     }
 
-    const uriIndex = newUrisWithTempIds.indexOf(uriToUpdate);
-
-    if (uriIndex > -1) {
-      newUrisWithTempIds[uriIndex] = { ...uriToUpdate, text: newUri };
-      newContentUris[uriIndex] = { text: newUri, matcher: uriToUpdate.matcher };
-    }
+    const currentUri = urisWithTempIds[uriIndex];
+    const newContentUris = [...data.item.content.uris];
+    newContentUris[uriIndex] = { text: newUriText, matcher: currentUri.matcher };
 
     const updatedItem = updateItem(data.item, {
-      content: { uris: newContentUris },
-      internalData: { ...data.item.internalData, urisWithTempIds: newUrisWithTempIds }
+      content: { uris: newContentUris }
     });
 
     setData('item', updatedItem);
-  });
+    updateUri(uri._tempId, { text: newUriText });
+  }, [data.item, setData, uri._tempId, urisWithTempIds, updateUri]);
 
   return (
     <LazyMotion features={loadDomAnimation}>

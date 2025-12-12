@@ -6,7 +6,6 @@
 
 import URIMatcher from '../../URIMatcher';
 import Item from './Item';
-import { v4 as uuidv4 } from 'uuid';
 
 /**
 * Class representing a login.
@@ -75,7 +74,6 @@ export default class Login extends Item {
     this.internalData = {
       ...this.internalData,
       uiName: browser.i18n.getMessage('login'),
-      urisWithTempIds: loginData.internalData?.urisWithTempIds || this.#urisWithTempIds(loginData.content.uris) || [],
       normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || []
     };
 
@@ -89,23 +87,8 @@ export default class Login extends Item {
 
       return filteredUris.map(uri => ({
         text: URIMatcher.normalizeUrl(uri.text, true),
-        matcher: uri.matcher,
-        _tempId: uuidv4()
+        matcher: uri.matcher
       }));
-    }
-
-    return uris;
-  }
-
-  #urisWithTempIds (uris) {
-    if (uris && uris.length > 0) {
-      uris = uris.map(uri => {
-        return {
-          text: uri.text,
-          matcher: uri.matcher,
-          _tempId: uri._tempId || uuidv4()
-        };
-      });
     }
 
     return uris;
