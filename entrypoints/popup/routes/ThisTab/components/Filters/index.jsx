@@ -6,12 +6,11 @@
 
 import S from './styles/Filters.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { lazy, useState, useRef, useMemo, useCallback, memo, Suspense } from 'react';
+import { useState, useRef, useMemo, useCallback, memo, Suspense } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import IconFallback from '@/entrypoints/popup/components/IconFallback';
 import FiltersCustomOption from './components/FiltersCustomOption';
-
-const FiltersIcon = lazy(() => import('@/assets/popup-window/filters.svg?react'));
+import FiltersIcon from '@/assets/popup-window/filters.svg?react';
 
 const selectComponents = { Option: FiltersCustomOption };
 
