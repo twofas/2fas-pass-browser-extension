@@ -10,7 +10,7 @@ import { Field } from 'react-final-form';
 import { useCallback } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import CustomTierOption from './CustomTierOption';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
 
@@ -27,9 +27,7 @@ const securityTiersOptions = [
 * @return {JSX.Element} The rendered component.
 */
 function SecurityType () {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setBatchData } = usePopupState();
 
   const handleTierEditable = async () => {
     if (data.tierEditable) {

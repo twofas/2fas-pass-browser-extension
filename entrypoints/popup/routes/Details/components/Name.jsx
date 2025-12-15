@@ -9,7 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { useCallback } from 'react';
 import copyValue from '@/partials/functions/copyValue';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
@@ -20,9 +20,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function Name (props) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setBatchData } = usePopupState();
 
   const { formData } = props;
   const { inputError } = formData;

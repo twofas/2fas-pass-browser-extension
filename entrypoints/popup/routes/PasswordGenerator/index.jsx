@@ -15,16 +15,14 @@ import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import PasswordInput from '@/entrypoints/popup/components/PasswordInput';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
-import usePopupStateStore from '../../store/popupState';
+import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 
 function PasswordGenerator (props) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const data = usePopupStateStore(state => state.data);
-  const popupHref = usePopupStateStore(state => state.href);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData, href: popupHref } = usePopupState();
 
   const scrollableRef = useRef(null);
   const initialPasswordRef = useRef(null);

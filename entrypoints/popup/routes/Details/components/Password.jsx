@@ -13,7 +13,7 @@ import { Link } from 'react-router';
 import { copyValue, isText } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import Login from '@/partials/models/itemModels/Login';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
@@ -42,8 +42,7 @@ function Password (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData } = usePopupState();
 
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);

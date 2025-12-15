@@ -4,14 +4,14 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 
 /**
 * Function to get the editable amount for PaymentCard details.
 * @return {Object} An object containing the editable amount and a text description.
 */
 const getEditableAmount = () => {
-  const data = usePopupStateStore(state => state.data);
+  const { data } = usePopupState();
 
   let amount = 0;
 

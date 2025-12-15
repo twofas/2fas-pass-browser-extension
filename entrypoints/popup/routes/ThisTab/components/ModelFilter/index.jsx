@@ -6,7 +6,7 @@
 
 import S from './styles/ModelFilter.module.scss';
 import { useState, useRef, lazy, useEffect, useCallback, useMemo } from 'react';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import { getSupportedFeatures } from '@/partials/functions';
@@ -31,8 +31,7 @@ const ModelFilter = props => {
 
   const buttonRef = useRef(null);
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData } = usePopupState();
 
   const hasMultipleItemTypes = useMemo(() => {
     return deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) ||

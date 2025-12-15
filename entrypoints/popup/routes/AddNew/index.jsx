@@ -8,7 +8,7 @@ import S from './AddNew.module.scss';
 import { LazyMotion } from 'motion/react';
 import { useRef } from 'react';
 import { useParams } from 'react-router';
-import usePopupStateStore from '../../store/popupState';
+import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import { itemsUiData } from '../../constants';
@@ -31,7 +31,7 @@ const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => 
 function AddNew(props) {
   const params = useParams();
   const scrollableRef = useRef(null);
-  const data = usePopupStateStore(state => state.data);
+  const { data } = usePopupState();
 
   useScrollPosition(scrollableRef, true);
 

@@ -10,15 +10,14 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useEffect, useState, useCallback } from 'react';
 import { Form, Field } from 'react-final-form';
 import { filterXSS } from 'xss';
-import usePopupStateStore from '../../../../store/popupState';
+import usePopupState from '../../../../store/popupState/usePopupState';
 
 /**
 * Function to render the Extension Name component.
 * @return {JSX.Element} The rendered component.
 */
 function ExtensionName () {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData } = usePopupState();
 
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -85,7 +84,7 @@ function ExtensionName () {
     }
 
     return true;
-  }, [validate]);
+  }, [validate, setData]);
 
   return (
     <Form

@@ -9,7 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { copyValue, isText, paymentCardExpirationDateValidation } from '@/partials/functions';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
@@ -26,9 +26,7 @@ function CardExpirationDate (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setBatchData } = usePopupState();
 
   const previousExpirationDateRef = useRef(null);
   const [localDecryptedExpirationDate, setLocalDecryptedExpirationDate] = useState(null);

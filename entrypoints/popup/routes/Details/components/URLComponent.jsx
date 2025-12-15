@@ -12,7 +12,7 @@ import { lazy, useCallback } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import copyValue from '@/partials/functions/copyValue';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import URIMatcher from '@/partials/URIMatcher';
 import updateItem from '../functions/updateItem';
@@ -51,8 +51,7 @@ const urlVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function URLComponent (props) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData } = usePopupState();
   const { urisWithTempIds, updateUri, removeUri, resetUri } = useUriTempIds();
 
   const { inputError, uri, index } = props;

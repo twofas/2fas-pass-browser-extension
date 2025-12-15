@@ -10,7 +10,7 @@ import { useState, useEffect, lazy } from 'react';
 import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import ConfirmDialog from '@/entrypoints/popup/components/ConfirmDialog';
 
@@ -24,14 +24,12 @@ const CancelIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSaveLoginExcludedDomains (props) {
+  const { data, setData, setBatchData } = usePopupState();
+
   const [loading, setLoading] = useState(true);
   const [excludedDomains, setExcludedDomains] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [domainToRemove, setDomainToRemove] = useState(null);
-
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const removeExcludedDomain = async domain => {
     const updatedDomains = excludedDomains.filter((d) => d !== domain);

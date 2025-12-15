@@ -6,7 +6,7 @@
 
 import S from './styles/TagsInfo.module.scss';
 import { useMemo, memo } from 'react';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import { useTagFilter } from '../Filters/hooks/useTagFilter';
 import ClearIcon from '@/assets/popup-window/clear.svg?react';
 
@@ -18,7 +18,7 @@ import ClearIcon from '@/assets/popup-window/clear.svg?react';
 * @return {JSX.Element} The rendered tag info component.
 */
 function TagsInfo ({ tagsWithFilteredAmounts, filteredItemsCount }) {
-  const data = usePopupStateStore(state => state.data);
+  const { data } = usePopupState();
   const { clearTagFilter } = useTagFilter();
 
   const currentTagInfo = useMemo(() => {

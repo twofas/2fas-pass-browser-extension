@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router';
 import { useState, lazy } from 'react';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import SecureNote from '@/partials/models/itemModels/SecureNote';
 import { PULL_REQUEST_TYPES } from '@/constants';
 
@@ -27,7 +27,7 @@ const DangerZone = lazy(() => import('../../components/DangerZone'));
 * @return {JSX.Element} The rendered component.
 */
 function SecureNoteDetailsView(props) {
-  const data = usePopupStateStore(state => state.data);
+  const { data } = usePopupState();
   const [inputError, setInputError] = useState(undefined);
 
   const navigate = useNavigate();

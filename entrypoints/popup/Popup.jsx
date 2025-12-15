@@ -18,6 +18,7 @@ import ToastsContent from './components/ToastsContent';
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
 import usePopupStateStore from './store/popupState';
+import usePopupState from './store/popupState/usePopupState';
 import usePopupHref from './hooks/usePopupHref';
 import { addToNavigationHistory } from './utils/navigationHistory';
 import { ScrollableRefProvider } from './context/ScrollableRefProvider';
@@ -86,7 +87,7 @@ const RouteGuard = memo(({ configured, blocked, isProtectedRoute, children }) =>
 const AuthRoutes = memo(({ blocked, configured }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const storedHref = usePopupStateStore(state => state.href);
+  const { href: storedHref } = usePopupState();
   const [initialCheckDone, setInitialCheckDone] = useState(false);
   const [hydrationComplete, setHydrationComplete] = useState(false);
   const hasNavigated = useRef(false);

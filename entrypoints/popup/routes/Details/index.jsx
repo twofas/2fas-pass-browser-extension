@@ -9,7 +9,7 @@ import { LazyMotion } from 'motion/react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router';
 import { useState, useEffect, useCallback, useRef, useMemo, lazy } from 'react';
 import getItem from '@/partials/sessionStorage/getItem';
-import usePopupStateStore from '../../store/popupState';
+import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import matchModel from '@/partials/models/itemModels/matchModel';
@@ -44,12 +44,9 @@ function Details(props) {
   const [originalItem, setOriginalItem] = useState(null);
   const scrollableRef = useRef(null);
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
-  const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
+  const { data, setData, setBatchData, setScrollPosition } = usePopupState();
 
-  const getData = useCallback(async originalItem => {
+  const fetchItemData = useCallback(async originalItem => {
     try {
       if (location.state?.from === 'thisTab') {
         setScrollPosition(0);
@@ -148,7 +145,7 @@ function Details(props) {
       CatchError(e);
       navigate('/');
     }
-  }, [params.deviceId, params.vaultId, params.id, navigate, setData, setScrollPosition, location.state]);
+  }, [params.deviceId, params.vaultId, params.id, navigate, setData, setBatchData, setScrollPosition, location.state]);
 
   const getOriginalItem = useCallback(async () => {
     try {
@@ -188,8 +185,8 @@ function Details(props) {
   }, [loading, constructorName, props, originalItem]);
 
   useEffect(() => {
-    getOriginalItem().then(getData);
-  }, [getData, getOriginalItem]);
+    getOriginalItem().then(fetchItemData);
+  }, [fetchItemData, getOriginalItem]);
 
   useEffect(() => {
     if (!loading && constructorName && !DetailsViews[constructorName]) {

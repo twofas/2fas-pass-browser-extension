@@ -12,7 +12,7 @@ import { lazy, useState, useCallback } from 'react';
 import { LazyMotion, animate } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { isText } from '@/partials/functions';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import SecureNote from '@/partials/models/itemModels/SecureNote';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
@@ -29,9 +29,7 @@ function SecureNoteText (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem, inputError } = formData;
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setBatchData } = usePopupState();
 
   const previousSifValueRef = useRef(null);
   const textareaRef = useRef(null);

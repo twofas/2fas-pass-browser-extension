@@ -11,7 +11,7 @@ import { useState, lazy } from 'react';
 import GenerateURLs from '../../functions/generateURLs';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import Login from '@/partials/models/itemModels/Login';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import { UriTempIdsProvider } from '../../context/UriTempIdsContext';
@@ -30,7 +30,7 @@ const DangerZone = lazy(() => import('../../components/DangerZone'));
 * @return {JSX.Element} The rendered component.
 */
 function LoginDetailsView(props) {
-  const data = usePopupStateStore(state => state.data);
+  const { data } = usePopupState();
   const [inputError, setInputError] = useState(undefined);
 
   const navigate = useNavigate();

@@ -13,7 +13,7 @@ import * as m from 'motion/react-m';
 import { useState, useEffect, useRef, useCallback, useMemo, lazy, memo } from 'react';
 import getTags from '@/partials/sessionStorage/getTags';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
-import usePopupStateStore from '../../../../store/popupState';
+import usePopupState from '../../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../../functions/updateItem';
 
@@ -56,9 +56,7 @@ const getTagName = (tagID, availableTags) => {
 * @return {JSX.Element} The rendered component.
 */
 function Tags () {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setBatchData } = usePopupState();
 
   const [availableTags, setAvailableTags] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);

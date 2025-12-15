@@ -6,7 +6,7 @@
 
 import S from './styles/Search.module.scss';
 import { useMemo, memo } from 'react';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import { useSearchFilter } from './hooks/useSearchFilter';
 import SearchIcon from '@/assets/popup-window/search-icon.svg?react';
 import ClearIcon from '@/assets/popup-window/clear.svg?react';
@@ -19,7 +19,7 @@ import ClearIcon from '@/assets/popup-window/clear.svg?react';
 * @return {JSX.Element} The rendered search component.
 */
 function Search ({ tagsWithFilteredAmounts, filteredItemsByModelLength }) {
-  const data = usePopupStateStore(state => state.data);
+  const { data } = usePopupState();
   const { handleSearchChange, clearSearch } = useSearchFilter();
 
   const placeholder = useMemo(() => {
