@@ -8,7 +8,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { useCallback } from 'react';
-import Select from 'react-select';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import CustomTierOption from './CustomTierOption';
 import usePopupStateStore from '../../../store/popupState';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -72,9 +72,10 @@ function SecurityType () {
             </button>
           </div>
           <div className={`${pI.passInputBottom} ${pI.switch}`}>
-            <Select
-              className='react-select-container react-select-security-tier-container'
+            <AdvancedSelect
+              className='react-select-container'
               classNamePrefix='react-select'
+              classNames={{ menuPortal: () => 'react-select-security-type__menu-portal' }}
               isSearchable={false}
               options={securityTiersOptions}
               value={securityTiersOptions.find(option => option.value === input.value)}

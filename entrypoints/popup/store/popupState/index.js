@@ -32,6 +32,7 @@ const usePopupStateStore = create(
         newData[name] = data;
         return { data: newData };
       }),
+      clearData: () => set({ data: {} }),
       scrollPosition: 0,
       setScrollPosition: position => set({ scrollPosition: position }),
     }),

@@ -118,7 +118,7 @@
     color: v.$primary-color-light;
     font-size: 14px;
     font-weight: 600;
-    line-height: .8571;
+    line-height: 1;
 
     @include m.darkMode {
       color: v.$primary-color-dark;
@@ -411,6 +411,12 @@
       }
     }
 
+    &.sort {
+      svg {
+        stroke-width: 2;
+      }
+    }
+
     svg {
       height: 16px;
       stroke: v.$primary-color-light;
@@ -423,6 +429,10 @@
         stroke: v.$primary-color-dark;
       }
     }
+  }
+
+  &.btn-error-fallback {
+    padding: 0 40px;
   }
 
   // INSTALL PAGE
@@ -579,6 +589,7 @@
             cursor: not-allowed !important;
 
             .pass-toggle-box {
+              cursor: not-allowed !important;
               background-color: v.$primary-color-light !important;
 
               @include m.darkMode {
@@ -587,6 +598,8 @@
             }
 
             .pass-toggle-text {
+              cursor: not-allowed !important;
+              
               > span {
                 color: v.$secondary-text-light !important;
 
@@ -626,6 +639,7 @@
 
         .pass-toggle-box {
           background-color: v.$secondary-text-light !important;
+          cursor: not-allowed !important;
 
           @include m.darkMode {
             background-color: v.$secondary-text-dark !important;
@@ -633,6 +647,8 @@
         }
 
         .pass-toggle-text {
+          cursor: not-allowed !important;
+          
           > span {
             color: v.$secondary-text-light !important;
 
@@ -653,7 +669,6 @@
     gap: 0 8px;
     letter-spacing: 0;
     text-transform: none;
-    user-select: none;
 
     .pass-toggle-box {
       border-radius: 9px;
@@ -663,7 +678,6 @@
       height: 18px;
       position: relative;
       transition: background-color .3s ease-in-out;
-      user-select: none;
       width: 32px;
 
       @include m.darkMode {
@@ -688,8 +702,6 @@
     }
 
     .pass-toggle-text {
-      user-select: none;
-
       > span {
         color: v.$primary-text-light;
         font-size: 12px;

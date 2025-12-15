@@ -15,7 +15,7 @@ const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
 * Function to render the Settings Back component.
 * @return {JSX.Element} The rendered component.
 */
-function NavigationButton (props) {
+function NavigationButton(props) {
   const navigate = useNavigate();
   const location = useLocation();
   const previousPath = getPreviousPath();
@@ -68,10 +68,9 @@ function NavigationButton (props) {
           } catch {
             navigate('/', { state: props.state });
           }
-        } else {
-          if (props?.onClick && typeof props?.onClick === 'function') {
-            props.onClick(e);
-          }
+        } else if (props?.onClick && typeof props?.onClick === 'function') {
+          e.preventDefault();
+          props.onClick(e);
         }
       }}
       title={props?.type ? browser.i18n.getMessage(props.type) : ''}

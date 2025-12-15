@@ -6,11 +6,17 @@
 
 import S from './TopBar.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { Link, useLocation } from 'react-router';
-import { useEffect, useRef, lazy, useCallback, useMemo, memo } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router';
+import { useEffect, useRef, useState, lazy, useCallback, useMemo, memo, useContext } from 'react';
 import { useAuthActions, useAuthState } from '@/hooks/useAuth';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
+import AddNewCustomOption from './components/AddNewCustomOption';
+import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
+import generateAddNewOptions from './functions/generateAddNewOptions';
+import { getSupportedFeatures } from '@/partials/functions';
+import { supportedFeatures } from '@/constants';
 
 const Logo = lazy(() => import('@/assets/logo.svg?react'));
 const LogoDark = lazy(() => import('@/assets/logo-dark.svg?react'));
@@ -22,12 +28,22 @@ const AddNewIcon = lazy(() => import('@/assets/popup-window/add-new.svg?react'))
 * Function component for the TopBar.
 * @return {JSX.Element} The rendered component.
 */
-function TopBar () {
+function TopBar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const { logout } = useAuthActions();
   const { configured } = useAuthState();
   const { matchingLoginsLength } = useMatchingLogins();
+  const scrollableRefContext = useContext(ScrollableRefContext);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [addNewOptions, setAddNewOptions] = useState([]);
+  const [deviceSupportedFeatures, setDeviceSupportedFeatures] = useState([]);
+
   const unwatchConfigured = useRef(null);
+  const addNewContainerRef = useRef(null);
+  const addNewBtnRef = useRef(null);
 
   const watchConfigured = useCallback(async () => {
     const configuredKey = await getKey('configured');
@@ -51,8 +67,18 @@ function TopBar () {
     await logout();
   }, [logout]);
 
-  const logoClass = useMemo(() => 
-    `${S.topbarLogo} ${(location.pathname === '/blocked' || location.pathname === '/' || location.pathname === '/connect') ? S.disabled : ''}`,
+  const handleLogoClick = useCallback(() => {
+    if (location.pathname === '/' && scrollableRefContext?.ref?.current) {
+      scrollableRefContext.ref.current.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
+    }
+  }, [location.pathname, scrollableRefContext]);
+
+  const logoClass = useMemo(() =>
+    `${S.topbarLogo} ${(location.pathname === '/blocked' || location.pathname === '/connect') ? S.disabled : ''}`,
     [location.pathname]
   );
 
@@ -74,7 +100,6 @@ function TopBar () {
     let returnClass = S.topbarAddNewBtn;
 
     if (
-      path === '/add-new/Login' ||
       path === '/fetch' ||
       path.startsWith('/fetch/') ||
       path === '/fetch-external' ||
@@ -87,16 +112,20 @@ function TopBar () {
     return returnClass;
   }, [configured, location.pathname]);
 
-  const homePageTitle = useMemo(() => browser.i18n.getMessage('go_to_home_page'), []);
-  const lockedText = useMemo(() => browser.i18n.getMessage('top_bar_locked'), []);
-  const lockText = useMemo(() => browser.i18n.getMessage('top_bar_lock'), []);
-  const addNewText = useMemo(() => browser.i18n.getMessage('top_bar_add_new'), []);
+  const handleAddNewClick = useCallback(async () => {
+    if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
+      setAddNewOptions(generateAddNewOptions(deviceSupportedFeatures));
+      setIsMenuOpen(!isMenuOpen);
+    } else {
+      navigate('/add-new/Login');
+    }
+  }, [isMenuOpen, deviceSupportedFeatures, navigate]);
 
   useEffect(() => {
     watchConfigured().then(unwatch => {
       unwatchConfigured.current = unwatch;
     });
-    
+
     return () => {
       if (unwatchConfigured.current) {
         unwatchConfigured.current();
@@ -104,18 +133,35 @@ function TopBar () {
     };
   }, [watchConfigured]);
 
+  useEffect(() => {
+    getSupportedFeatures()
+      .then(features => setDeviceSupportedFeatures(features))
+      .catch(() => setDeviceSupportedFeatures([]));
+  }, [configured]);
+
   return (
     <>
       <header className={S.topbar}>
         <div className={logoClass}>
-          <Link
-            to='/'
-            title={homePageTitle}
-            prefetch='render'
-          >
-            <Logo className="theme-light" />
-            <LogoDark className="theme-dark" />
-          </Link>
+          {location.pathname === '/' ? (
+            <button
+              type='button'
+              onClick={handleLogoClick}
+              title={browser.i18n.getMessage('scroll_to_top')}
+            >
+              <Logo className="theme-light" />
+              <LogoDark className="theme-dark" />
+            </button>
+          ) : (
+            <Link
+              to='/'
+              title={browser.i18n.getMessage('go_to_home_page')}
+              prefetch='render'
+            >
+              <Logo className="theme-light" />
+              <LogoDark className="theme-dark" />
+            </Link>
+          )}
         </div>
 
         <div className={S.topbarLock}>
@@ -125,26 +171,46 @@ function TopBar () {
             onClick={handleLockClick}
           >
             <span className={bS.btnLockedDisabled}>
-              <span>{lockedText}</span>
+              <span>{browser.i18n.getMessage('top_bar_locked')}</span>
               <LockedIcon />
             </span>
-            
+
             <span className={bS.btnLockedActive}>
-              <span>{lockText}</span>
+              <span>{browser.i18n.getMessage('top_bar_lock')}</span>
               <LockIcon />
             </span>
           </button>
         </div>
 
-        <div className={`${S.topbarAddNew} ${addNewClass}`}>
-          <Link
-            to='/add-new/Login'
+        <div className={`${S.topbarAddNew} ${addNewClass}`} ref={addNewContainerRef}>
+          <button
+            ref={addNewBtnRef}
             className={addNewBtnClass}
-            prefetch='intent'
+            type='button'
+            onClick={handleAddNewClick}
           >
-            <span>{addNewText}</span>
+            <span>{browser.i18n.getMessage('top_bar_add_new')}</span>
             <AddNewIcon />
-          </Link>
+          </button>
+
+          <AdvancedSelect
+            options={addNewOptions}
+            value={null}
+            menuIsOpen={isMenuOpen}
+            onMenuClose={() => setIsMenuOpen(false)}
+            onMenuOpen={() => setIsMenuOpen(true)}
+            className='react-select-pass-dropdown'
+            classNamePrefix='react-select-add-new'
+            isClearable={false}
+            isSearchable={false}
+            noOptionsMessage={() => null}
+            triggerRef={addNewBtnRef}
+            setIsMenuOpen={setIsMenuOpen}
+            pathname={location.pathname}
+            components={{
+              Option: AddNewCustomOption
+            }}
+          />
         </div>
       </header>
     </>

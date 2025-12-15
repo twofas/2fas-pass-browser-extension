@@ -71,7 +71,7 @@ const shortcutAutofill = async () => {
   }
 
   if (matchingLogins.length === 1) {
-    if (!matchingLogins[0].isT3orT2WithPassword) {
+    if (!matchingLogins[0].isT3orT2WithSif) {
       const data = encodeURIComponent(JSON.stringify({
         action: PULL_REQUEST_TYPES.SIF_REQUEST,
         from: 'shortcut',

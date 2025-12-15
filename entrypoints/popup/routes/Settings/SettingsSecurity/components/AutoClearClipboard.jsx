@@ -5,8 +5,8 @@
 // See LICENSE file for full terms
 
 import S from '../../Settings.module.scss';
-import Select from 'react-select';
 import { useEffect, useState, lazy } from 'react';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
 
@@ -84,7 +84,7 @@ function AutoClearClipboard () {
       <p>{browser.i18n.getMessage('settings_auto_clear_clipboard_description')}</p>
     
       <form action="#" className={S.settingsClearClipboardForm}>
-        <Select
+        <AdvancedSelect
           className='react-select-container'
           classNamePrefix='react-select'
           isSearchable={false}

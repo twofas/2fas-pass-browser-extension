@@ -39,6 +39,10 @@
     "message": "Go to Home Page",
     "description": "Button label to navigate to the home page"
   },
+  "scroll_to_top": {
+    "message": "Scroll to top",
+    "description": "Button label to scroll to the top of the page"
+  },
   "cancel": {
     "message": "Cancel",
     "description": "Button label to cancel an action"
@@ -190,5 +194,65 @@
   "sync_title": {
     "message": "Sync with your 2FAS Pass mobile app",
     "description": "Title for the sync data section"
+  },
+  "login": {
+    "message": "Login",
+    "description": "Label for the login functionality"
+  },
+  "login_plural": {
+    "message": "Logins",
+    "description": "Label for multiple logins"
+  },
+  "credit_card": {
+    "message": "Credit Card",
+    "description": "Label for the credit card functionality"
+  },
+  "credit_card_plural": {
+    "message": "Credit Cards",
+    "description": "Label for multiple credit cards"
+  },
+  "secure_note": {
+    "message": "Secure Note",
+    "description": "Label for the secure note functionality"
+  },
+  "secure_note_note": {
+    "message": "Note",
+    "description": "Label for the secure note text field"
+  },
+  "secure_note_plural": {
+    "message": "Secure Notes",
+    "description": "Label for multiple secure notes"
+  },
+  "secure_note_placeholder": {
+    "message": "Add the Note",
+    "description": "Placeholder text for the secure note input field"
+  },
+  "secure_note_name": {
+    "message": "Name",
+    "description": "Placeholder text for the secure note name input field"
+  },
+  "secure_note_name_placeholder": {
+    "message": "Secure Note name",
+    "description": "Placeholder text for the secure note name input field"
+  },
+  "secure_note_name_required": {
+    "message": "Secure Note name is required.",
+    "description": "Validation message indicating that the secure note name is required"
+  },
+  "secure_note_name_max_length": {
+    "message": "Secure Note name must be less than 256 characters.",
+    "description": "Validation message indicating that the secure note title exceeds the maximum length"
+  },
+  "secure_note_text_max_length": {
+    "message": "Secure Note text must be less than 16384 characters.",
+    "description": "Validation message indicating that the secure note text exceeds the maximum length"
+  },
+  "ssh_key": {
+    "message": "SSH Key",
+    "description": "Label for the SSH key functionality"
+  },
+  "item": {
+    "message": "Item",
+    "description": "Generic label for an item"
   }
 }

@@ -85,6 +85,8 @@ const ConnectOnClose = async (event, data) => {
     case WEBSOCKET_STATES.CONNECTION_TIMEOUT: {
       if (data?.path === SOCKET_PATHS.CONNECT.QR) {
         eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
+      } else if (data?.path === SOCKET_PATHS.CONNECT.PUSH) {
+        eventBus.emit(eventBus.EVENTS.CONNECT.CHANGE_VIEW, CONNECT_VIEWS.DeviceSelect);
       }
 
       eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('error_timeout'), type: 'error' });

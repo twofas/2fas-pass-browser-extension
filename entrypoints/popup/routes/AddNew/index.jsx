@@ -11,6 +11,9 @@ import { useParams } from 'react-router';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
+import { itemsUiData } from '../../constants';
+import Login from '@/partials/models/itemModels/Login';
+import SecureNote from '@/partials/models/itemModels/SecureNote';
 
 // Model Views
 import LoginView from './modelsViews/LoginAddNewView';
@@ -23,7 +26,7 @@ const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => 
 * @param {Object} props - The properties passed to the component.
 * @return {JSX.Element} The rendered component.
 */
-function AddNew (props) {
+function AddNew(props) {
   const params = useParams();
   const scrollableRef = useRef(null);
   const data = usePopupStateStore(state => state.data);
@@ -35,16 +38,15 @@ function AddNew (props) {
 
     const modelData = {};
 
-    if (modelName === 'Login') {
-      return <LoginView {...props} {...modelData} />;
+    switch (modelName.toLowerCase()) {
+      case Login.contentType.toLowerCase():
+        return <LoginView {...props} {...modelData} />;
+      case SecureNote.contentType.toLowerCase():
+        return <SecureNoteView {...props} {...modelData} />;
+      default:
+        return null;
     }
-
-    if (modelName === 'SecureNote') {
-      return <SecureNoteView {...props} {...modelData} />;
-    }
-
-    return null;
-  }, [data?.item, props]);
+  }, [params.model, data?.item, props]);
 
   if (!modelComponent) {
     return null;
@@ -57,8 +59,8 @@ function AddNew (props) {
           <section className={S.addNew}>
             <div className={S.addNewContainer}>
               <NavigationButton type='cancel' />
-              
-              <h2>{browser.i18n.getMessage('add_new_header')}</h2>
+
+              <h2>{browser.i18n.getMessage('add_new_header').replace('ITEM', itemsUiData[params.model]?.label || browser.i18n.getMessage('item'))}</h2>
               <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
 
               {modelComponent}

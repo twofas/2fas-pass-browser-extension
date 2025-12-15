@@ -1,0 +1,18 @@
+{
+  "error_fallback_header": {
+    "message": "Error occurred",
+    "description": "Header message displayed on the error fallback screen"
+  },
+  "error_fallback_description": {
+    "message": "Sorry, an unexpected error has occurred. Click the button below to retry.",
+    "description": "Description message displayed on the error fallback screen"
+  },
+  "error_fallback_retry_button": {
+    "message": "Retry",
+    "description": "Label for the retry button on the error fallback screen"
+  },
+  "error_fallback_copy_error_title": {
+    "message": "Copy Error Message to clipboard",
+    "description": "Title for the copy error message button on the error fallback screen"
+  }
+}

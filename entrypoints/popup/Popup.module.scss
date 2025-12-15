@@ -108,6 +108,10 @@
     width: 400px !important;
   }
 
+  &.pass-error {
+    padding-bottom: 0 !important;
+  }
+
   &-screen {
     background-color: v.$primary-bg-light;
     flex-grow: 1;

@@ -380,7 +380,7 @@
     "description": "Confirmation message when disconnecting a trusted device"
   },
   "settings_devices_dialog_submessage_current_device": {
-    "message": "This is your current device! Disconnecting it will block any future actions, such as fetching passwords",
+    "message": "This is your current device! Disconnecting it will block any future actions, such as fetching passwords.",
     "description": "Warning sub-message when disconnecting the current trusted device"
   },
   "settings_devices_dialog_cancel_text": {

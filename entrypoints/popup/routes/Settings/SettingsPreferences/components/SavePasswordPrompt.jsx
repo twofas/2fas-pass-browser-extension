@@ -6,8 +6,8 @@
 
 import S from '../../Settings.module.scss';
 import { useEffect, useState, lazy, useCallback, Suspense } from 'react';
-import Select from 'react-select';
 import { Link } from 'react-router';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
 
@@ -87,9 +87,10 @@ function SavePasswordPrompt () {
       <p>{browser.i18n.getMessage('settings_save_prompt_description')}</p>
 
       <form action="#" className={S.settingsSavePasswordPromptForm}>
-        <Select
-          className='react-select-container react-select-save-prompt-container'
+        <AdvancedSelect
+          className='react-select-container'
           classNamePrefix='react-select'
+          classNames={{ menuPortal: () => 'react-select-save-prompt__menu-portal' }}
           isSearchable={false}
           options={promptOptions}
           value={promptOptions.find(el => el.value === sP)}

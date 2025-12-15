@@ -8,7 +8,7 @@ import removeSavePromptAction from './removeSavePromptAction';
 import decryptValues from './decryptValues';
 import openPopupWindowInNewWindow from '../openPopupWindowInNewWindow';
 import { SAVE_PROMPT_ACTIONS, PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
-import { valueToNFKD, getCurrentDevice } from '@/partials/functions';
+import { getCurrentDevice } from '@/partials/functions';
 import Login from '@/partials/models/itemModels/Login';
 
 // FUTURE - actions should be moved to a separate files
@@ -54,9 +54,9 @@ const handleSavePromptResponse = async (res, tabId, url, values, savePromptActio
         data: {
           contentType: Login.contentType,
           content: {
-            url: valueToNFKD(url),
-            username: { value: valueToNFKD(decryptedValues.username), action: REQUEST_STRING_ACTIONS.SET },
-            s_password: { value: valueToNFKD(decryptedValues.password), action: REQUEST_STRING_ACTIONS.SET }
+            url,
+            username: { value: decryptedValues.username, action: REQUEST_STRING_ACTIONS.SET },
+            s_password: { value: decryptedValues.password, action: REQUEST_STRING_ACTIONS.SET }
           }
         },
         deviceId: device.id

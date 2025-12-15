@@ -27,6 +27,10 @@
     "message": "Forget this password",
     "description": "Button label to forget the saved password for a login item"
   },
+  "this_tab_more_forget_secure_note": {
+    "message": "Forget this note",
+    "description": "Button label to forget the saved secure note"
+  },
   "this_tab_more_uris": {
     "message": "Website URL(s):",
     "description": "Label for displaying associated website URLs of a login item"
@@ -64,7 +68,7 @@
     "description": "Message displayed when autofill operation fails completely"
   },
   "this_tab_can_t_find_inputs": {
-    "message": "Browser Extension can't find the appropriate Item details. Use the context menu or copy and paste them manually.",
+    "message": "No input field found. Can't autofill Item details.",
     "description": "Message shown when input fields for autofill can't be found"
   },
   "this_tab_copy_password": {
@@ -78,6 +82,18 @@
   "this_tab_copy_username": {
     "message": "Copy username",
     "description": "Button label to copy the username to the clipboard"
+  },
+  "this_tab_copy_text": {
+    "message": "Copy note",
+    "description": "Button label to copy text from a secure note to the clipboard"
+  },
+  "this_tab_copy_name": {
+    "message": "Copy name",
+    "description": "Button label to copy the name of an item to the clipboard"
+  },
+  "this_tab_fetch_text": {
+    "message": "Fetch note",
+    "description": "Button label to fetch the text from the mobile app"
   },
   "this_tab_more_actions": {
     "message": "More actions",

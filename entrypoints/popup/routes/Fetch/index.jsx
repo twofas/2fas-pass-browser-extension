@@ -23,11 +23,40 @@ const ConnectionTimeout = lazy(() => import('./components/ConnectionTimeout'));
 const ContinueUpdate = lazy(() => import('./components/ContinueUpdate'));
 
 /**
+ * Generates a description message based on the pull request action type.
+ * @param {string} action - The action type from PULL_REQUEST_TYPES.
+ * @returns {string|undefined} The i18n description message or undefined for default action.
+ */
+const getPushNotificationDescription = action => {
+  switch (action) {
+    case PULL_REQUEST_TYPES.SIF_REQUEST: {
+      return browser.i18n.getMessage('fetch_sif_request_description');
+    }
+
+    case PULL_REQUEST_TYPES.DELETE_DATA: {
+      return browser.i18n.getMessage('fetch_delete_request_description');
+    }
+
+    case PULL_REQUEST_TYPES.FULL_SYNC: {
+      return browser.i18n.getMessage('fetch_full_sync_description');
+    }
+
+    case PULL_REQUEST_TYPES.ADD_DATA: {
+      return browser.i18n.getMessage('fetch_add_request_description');
+    }
+
+    default: {
+      return undefined;
+    }
+  }
+};
+
+/**
 * Function to handle the Fetch component.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function Fetch (props) {
+function Fetch(props) {
   const location = useLocation();
   const { state } = location;
 
@@ -140,11 +169,11 @@ function Fetch (props) {
 
     try {
       await deletePush(device.id, state.data.notificationId);
-    } catch {}
+    } catch { }
 
     try {
       socket = TwoFasWebSocket.getInstance();
-    } catch {}
+    } catch { }
 
     if (socket) {
       try {
@@ -155,7 +184,7 @@ function Fetch (props) {
         //   })
         // );
         socket.close();
-      } catch {}
+      } catch { }
     }
   };
 
@@ -179,6 +208,55 @@ function Fetch (props) {
       if (windowCloseTest) {
         navigate('/');
       }
+    } else if (state?.from === 'add-new' && state?.originalData && state?.model) {
+      navigate(`/add-new/${state.model}`, {
+        state: {
+          data: state.originalData,
+          from: 'fetch'
+        }
+      });
+    } else if (state?.from === 'details' && state?.data) {
+      const restoredItem = { ...state.data };
+      const uiFlags = {};
+
+      if (restoredItem.content) {
+        if (restoredItem.content.username && typeof restoredItem.content.username === 'object' && restoredItem.content.username.value !== undefined) {
+          restoredItem.content.username = restoredItem.content.username.value;
+          uiFlags.usernameEditable = true;
+        }
+
+        if (restoredItem.content.s_password && typeof restoredItem.content.s_password === 'object' && restoredItem.content.s_password.value !== undefined) {
+          restoredItem.content.s_password = restoredItem.content.s_password.value;
+          uiFlags.passwordEditable = true;
+          uiFlags.passwordEdited = true;
+        }
+        
+        if (restoredItem.content.s_text && typeof restoredItem.content.s_text === 'object' && restoredItem.content.s_text.value !== undefined) {
+          restoredItem.content.s_text = restoredItem.content.s_text.value;
+          uiFlags.sifEditable = true;
+        } else if (restoredItem.content.s_text !== undefined) {
+          uiFlags.sifEditable = true;
+        }
+
+        if (restoredItem.content.name !== undefined) uiFlags.nameEditable = true;
+        if (restoredItem.content.notes !== undefined) uiFlags.notesEditable = true;
+        if (restoredItem.tags !== undefined) uiFlags.tagsEditable = true;
+        if (restoredItem.securityType !== undefined) uiFlags.tierEditable = true;
+      }
+
+      if (restoredItem.itemId) {
+        restoredItem.id = restoredItem.itemId;
+      }
+
+      navigate(`/details/${state.data.deviceId}/${state.data.vaultId}/${state.data.itemId}`, {
+        state: {
+          data: {
+            item: restoredItem,
+            ...uiFlags
+          },
+          from: 'fetch'
+        }
+      });
     } else {
       if (fetchState === 1) {
         navigate('/');
@@ -189,7 +267,7 @@ function Fetch (props) {
   };
 
   // FUTURE - Refactor (useCallback?)
-  const handleNavigate = ({ path, options = {}}) => {
+  const handleNavigate = ({ path, options = {} }) => {
     return navigate(path, options);
   };
 
@@ -221,12 +299,12 @@ function Fetch (props) {
   return (
     <div className={`${props.className ? props.className : ''}`}>
       <div>
-        <section className={S.fetch}> 
+        <section className={S.fetch}>
           <div className={S.fetchContainer}>
             <NavigationButton type='cancel' onClick={cancelHandle} />
 
-            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} /> }
-            {fetchState === FETCH_STATE.CONNECTION_ERROR && <ConnectionError fetchState={fetchState} errorText={errorText} /> }
+            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} description={getPushNotificationDescription(state?.action)} />}
+            {fetchState === FETCH_STATE.CONNECTION_ERROR && <ConnectionError fetchState={fetchState} errorText={errorText} />}
             {fetchState === FETCH_STATE.CONNECTION_TIMEOUT && <ConnectionTimeout fetchState={fetchState} tryAgainHandle={tryAgainHandle} />}
             {fetchState === FETCH_STATE.CONTINUE_UPDATE && <ContinueUpdate fetchState={fetchState} />}
           </div>
