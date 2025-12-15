@@ -24,8 +24,24 @@
     "description": "Header prompting the user to continue updating in the mobile app"
   },
   "fetch_continue_updating_description": {
-    "message": "To finish adding this service, continue on your \nmobile phone. Don't close this window.",
+    "message": "To update this Item, continue on your \nmobile phone. Please keep this window open.",
     "description": "Explains that the user should continue the process on their mobile phone"
+  },
+  "fetch_full_sync_description": {
+    "message": "To complete the sync process, continue on your mobile device. Please keep this window open.",
+    "description": "Explains that the user should continue the full sync process on their mobile phone"
+  },
+  "fetch_sif_request_description": {
+    "message": "To fetch Item details, continue on your mobile device. Please keep this window open.",
+    "description": "Explains that the user should continue the SIF request process on their mobile phone"
+  },
+  "fetch_delete_request_description": {
+    "message": "To delete this Item, continue on your mobile device. Please keep this window open.",
+    "description": "Explains that the user should continue the login deletion process on their mobile phone"
+  },
+  "fetch_add_request_description": {
+    "message": "To add this Item, continue on your mobile device. Please keep this window open.",
+    "description": "Explains that the user should continue the login addition process on their mobile phone"
   },
   "fetch_delete_login_accept_toast": {
     "message": "Item deleted",
@@ -59,13 +75,25 @@
     "message": "Item adding canceled",
     "description": "Toast message displayed when the user cancels adding a new login item"
   },
-  "fetch_password_request_accept_toast": {
+  "fetch_generic_request_accept_toast": {
+    "message": "Data request accepted",
+    "description": "Toast message displayed when a unknown request is accepted"
+  },
+  "fetch_login_request_accept_toast": {
     "message": "Password request accepted",
     "description": "Toast message displayed when a password request is accepted"
   },
-  "fetch_password_request_cancel_toast": {
-    "message": "Password request rejected",
-    "description": "Toast message displayed when a password request is rejected"
+  "fetch_secureNote_request_accept_toast": {
+    "message": "Secure Note request accepted",
+    "description": "Toast message displayed when a secure note request is accepted"
+  },
+  "fetch_creditCard_request_accept_toast": {
+    "message": "Credit Card request accepted",
+    "description": "Toast message displayed when a credit card request is accepted"
+  },
+  "fetch_request_cancel_toast": {
+    "message": "Item request rejected",
+    "description": "Toast message displayed when a request is rejected"
   },
   "fetch_update_login_updated_toast": {
     "message": "Item updated",

@@ -14,5 +14,13 @@
   "placeholder_name": {
     "message": "Type your Item name",
     "description": "Placeholder text for the name input field"
+  },
+  "placeholder_secure_note": {
+    "message": "Type your Secure Note",
+    "description": "Placeholder text for the Secure Note text input field"
+  },
+  "placeholder_secure_note_empty": {
+    "message": "Note is empty",
+    "description": "Placeholder text when there is no Secure Note available"
   }
 }

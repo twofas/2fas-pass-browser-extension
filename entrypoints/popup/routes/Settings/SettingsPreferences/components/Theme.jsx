@@ -5,8 +5,8 @@
 // See LICENSE file for full terms
 
 import S from '../../Settings.module.scss';
-import Select from 'react-select';
 import { useEffect, useState, useCallback } from 'react';
+import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 /**
 * Function to render the Theme component.
@@ -78,7 +78,7 @@ function Theme () {
       <h4>{browser.i18n.getMessage('settings_theme')}</h4>
 
       <form action="#">
-        <Select
+        <AdvancedSelect
           className='react-select-container'
           classNamePrefix='react-select'
           isSearchable={false}

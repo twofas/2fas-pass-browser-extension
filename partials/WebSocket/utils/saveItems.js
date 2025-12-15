@@ -31,7 +31,8 @@ const saveItems = async (itemsData, deviceId, vaultId) => {
     throw new Error('Invalid vaultId: must be provided');
   }
 
-  const correctData = itemsData.map(item => mapModel(item, deviceId, vaultId)).filter(Boolean);
+  const mappedItems = await Promise.all(itemsData.map(item => mapModel(item, deviceId, vaultId)));
+  const correctData = mappedItems.filter(Boolean);
 
   const jsonString = JSON.stringify(correctData);
   const gzipDataAB = await compress(jsonString);

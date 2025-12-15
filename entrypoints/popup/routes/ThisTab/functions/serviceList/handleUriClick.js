@@ -16,8 +16,8 @@ const handleUriClick = (e, props) => {
     e.stopPropagation();
   }
 
-  if (props?.toggleMenu) {
-    props.toggleMenu(false);
+  if (props?.setMore) {
+    props.setMore(false);
   }
 
   if (import.meta.env.BROWSER === 'firefox') {

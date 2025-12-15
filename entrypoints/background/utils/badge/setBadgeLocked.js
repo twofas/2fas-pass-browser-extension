@@ -16,22 +16,20 @@ import getAllTabsIds from '../../tabs/getAllTabsIds';
 */
 const setBadgeLocked = async (tabId = null) => {
   if (!tabId) {
-    const tabsIds = getAllTabsIds();
+    const tabsIds = await getAllTabsIds();
 
     if (tabsIds.length > 0) {
       await Promise.all(
-        tabsIds.map(id => 
+        tabsIds.map(id =>
           Promise.all([
             setBadgeIcon(false, id).catch(() => {}),
             setBadgeText(false, [], '', id).catch(() => {})
           ])
         )
       );
-    } else {
-      return Promise.resolve();
     }
   } else {
-    return Promise.all([
+    await Promise.all([
       setBadgeIcon(false, tabId).catch(() => {}),
       setBadgeText(false, [], '', tabId).catch(() => {})
     ]);

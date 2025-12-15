@@ -46,12 +46,12 @@ const generateURLs = props => {
     };
     const updatedItem = new (data.item.constructor)(itemData);
 
-    if (data.item.isPasswordDecrypted) {
-      updatedItem.setPasswordDecrypted(data.item.passwordDecrypted);
+    if (data.item.isSifDecrypted) {
+      updatedItem.setSifDecrypted(data.item.sifDecrypted);
     }
 
-    if (data.item.internalData.editedPassword !== null) {
-      updatedItem.internalData.editedPassword = data.item.internalData.editedPassword;
+    if (data.item.internalData.editedSif !== null) {
+      updatedItem.internalData.editedSif = data.item.internalData.editedSif;
     }
 
     setData('item', updatedItem);

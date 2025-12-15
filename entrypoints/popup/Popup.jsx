@@ -20,9 +20,11 @@ import BottomBar from './components/BottomBar';
 import usePopupStateStore from './store/popupState';
 import usePopupHref from './hooks/usePopupHref';
 import { addToNavigationHistory } from './utils/navigationHistory';
+import { ScrollableRefProvider } from './context/ScrollableRefProvider';
 import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
 import Connect from './routes/Connect';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const AddNew = lazy(() => import('./routes/AddNew'));
 const Settings = lazy(() => import('./routes/Settings'));
@@ -37,8 +39,7 @@ const FetchExternal = lazy(() => import('./routes/FetchExternal'));
 const Details = lazy(() => import('./routes/Details'));
 const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
-
-const emptyFunc = () => {};
+const ErrorFallback = lazy(() => import('./routes/ErrorFallback'));
 
 const routeConfig = [
   { path: '/connect', component: Connect },
@@ -181,11 +182,11 @@ const AppContent = memo(({ blocked }) => {
   const { configured } = useAuthState();
 
   return (
-    <>
+    <ScrollableRefProvider>
       <TopBar />
       <AuthRoutes blocked={blocked} configured={configured} />
       <BottomBar />
-    </>
+    </ScrollableRefProvider>
   );
 });
 
@@ -237,7 +238,7 @@ const initializePopupOnce = async () => {
 
   initializationPromise = (async () => {
     try {
-      const [tab, otherPopupExists, ] = await Promise.all([
+      const [tab, otherPopupExists,] = await Promise.all([
         browser?.tabs?.getCurrent().catch(() => null),
         isPopupInSeparateWindowExists(),
         setTheme()
@@ -293,7 +294,7 @@ const PopupMain = memo(() => {
   const stateUpdated = useRef(false);
 
   const classNames = useMemo(() => {
-    const baseClass = `${S.pass} ${!state.isSeparateWindow ? S.passNonSeparateWindow: ''} ${import.meta.env.BROWSER}`;
+    const baseClass = `${S.pass} ${!state.isSeparateWindow ? S.passNonSeparateWindow : ''} ${import.meta.env.BROWSER}`;
     return {
       blocked: `${baseClass} ${S.passBlocked}`,
       main: baseClass
@@ -317,8 +318,8 @@ const PopupMain = memo(() => {
           stateUpdated.current = true;
           setState(prev => {
             if (prev.loaded === result.loaded &&
-                prev.blocked === result.blocked &&
-                prev.isSeparateWindow === result.isSeparateWindow) {
+              prev.blocked === result.blocked &&
+              prev.isSeparateWindow === result.isSeparateWindow) {
               return prev;
             }
 
@@ -339,23 +340,16 @@ const PopupMain = memo(() => {
 
     try {
       storageAutoClearActions();
-    } catch {}
+    } catch { }
 
     if (import.meta.env.BROWSER === 'safari') {
       document.addEventListener('click', safariBlankLinks);
     }
 
-    requestAnimationFrame(() => {
-      window.addEventListener('error', emptyFunc);
-      window.addEventListener('unhandledrejection', emptyFunc);
-    });
-
     return () => {
       browser.runtime.onMessage.removeListener(popupOnMessage);
       document.removeEventListener('keydown', lockShortcuts);
       document.removeEventListener('contextmenu', lockRMB);
-      window.removeEventListener('error', emptyFunc);
-      window.removeEventListener('unhandledrejection', emptyFunc);
       window.removeEventListener('focus', storageAutoClearActions);
 
       if (import.meta.env.BROWSER === 'safari') {
@@ -378,13 +372,22 @@ const PopupMain = memo(() => {
 * Popup component to render the main popup UI with HashRouter.
 * @return {JSX.Element} The rendered component.
 */
-function Popup () {
+function Popup() {
   return (
-    <HashRouter>
-      <AuthProvider>
-        <PopupMain />
-      </AuthProvider>
-    </HashRouter>
+    <ErrorBoundary
+      fallbackRender={props => <ErrorFallback {...props} className={`${S.pass} ${S.passScreen} ${S.passError}`} />}
+      onError={(error, info) => {
+        CatchError(new TwoFasError(TwoFasError.internalErrors.errorFallbackRenderError, {
+          additional: { error, info }
+        }));
+      }}
+    >
+      <HashRouter>
+        <AuthProvider>
+          <PopupMain />
+        </AuthProvider>
+      </HashRouter>
+    </ErrorBoundary>
   );
 }
 

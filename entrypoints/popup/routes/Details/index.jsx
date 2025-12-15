@@ -32,7 +32,7 @@ const DetailsViews = {
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function Details (props) {
+function Details(props) {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
@@ -56,12 +56,40 @@ function Details (props) {
 
       if (location.state?.data?.item) {
         editedSecurityType = location.state.data.item.securityType;
-        item = matchModel({ ...location.state.data.item, securityType: originalItem?.securityType });
+
+        if (location.state?.from === 'fetch' && originalItem) {
+          const originalItemData = originalItem.toJSON();
+          const mergedItem = { ...originalItemData };
+
+          if (location.state.data.item.content) {
+            const stateContent = { ...location.state.data.item.content };
+            delete stateContent.s_text;
+            delete stateContent.s_password;
+
+            mergedItem.content = { ...originalItemData.content, ...stateContent };
+          }
+
+          if (location.state.data.item.tags !== undefined) {
+            mergedItem.tags = location.state.data.item.tags;
+          }
+
+          delete mergedItem.internalData;
+
+          item = matchModel(mergedItem);
+        } else {
+          item = matchModel({ ...location.state.data.item, securityType: originalItem?.securityType });
+        }
       } else if (data?.item) {
-        try {
-          editedSecurityType = data.item.securityType;
-          item = matchModel({ ...data.item, securityType: originalItem?.securityType });
-        } catch {
+        if (location.state?.from !== 'thisTab') {
+          try {
+            editedSecurityType = data.item.securityType;
+            item = matchModel({ ...data.item, securityType: originalItem?.securityType });
+          } catch {
+            if (params.id) {
+              item = await getItem(params.deviceId, params.vaultId, params.id);
+            }
+          }
+        } else {
           if (params.id) {
             item = await getItem(params.deviceId, params.vaultId, params.id);
           }
@@ -76,13 +104,22 @@ function Details (props) {
         return;
       }
 
-      if (item.constructor.name === 'Login' && item.sifExists && !item.isPasswordDecrypted) {
+      const hasEditedSifFromState = location.state?.data?.editedSif !== undefined;
+
+      if (item.sifExists && !item.isSifDecrypted && !item.internalData?.editedSif && !hasEditedSifFromState) {
         try {
           const decryptedData = await item.decryptSif();
-          item.setPasswordDecrypted(decryptedData.password);
-          setData('passwordDecryptError', false);
+
+          // FUTURE - Refactor this
+          if (item.constructor.name === 'Login') {
+            item.setSifDecrypted(decryptedData.password);
+          } else if (item.constructor.name === 'SecureNote') {
+            item.setSifDecrypted(decryptedData.text);
+          }
+
+          setData('sifDecryptError', false);
         } catch (e) {
-          setData('passwordDecryptError', true);
+          setData('sifDecryptError', true);
           CatchError(e);
         }
       }
@@ -97,26 +134,32 @@ function Details (props) {
 
       if (location.state?.data) {
         const stateData = location.state.data;
-        const fieldsToSync = [
-          'nameEditable',
-          'usernameEditable',
-          'domainsEditable',
-          'tierEditable',
-          'tagsEditable',
-          'notesEditable',
-          'usernameMobile',
-          'passwordMobile',
-          'lastSelectedTagInfo',
-          'searchActive',
-          'searchValue',
-          'selectedTag'
-        ];
 
-        fieldsToSync.forEach(field => {
-          if (stateData[field] !== undefined) {
+        Object.keys(stateData).forEach(field => {
+          if (field !== 'item' && field !== 'editedSif') {
             setData(field, stateData[field]);
           }
         });
+
+        if (stateData.editedSif !== undefined && item) {
+          if (item.constructor.name === 'Login') {
+            item.setSifDecrypted(stateData.editedSif);
+            item.internalData.editedSif = stateData.editedSif;
+          } else if (item.constructor.name === 'SecureNote') {
+            item.setSifDecrypted(stateData.editedSif);
+            item.internalData.editedSif = stateData.editedSif;
+          }
+
+          setData('sifDecryptError', false);
+        }
+
+        if (stateData.domainsEditable && item && item.internalData?.urisWithTempIds) {
+          const newDomainsEditable = {};
+          item.internalData.urisWithTempIds.forEach((uri) => {
+            newDomainsEditable[uri._tempId] = true;
+          });
+          setData('domainsEditable', newDomainsEditable);
+        }
 
         if (!location.state?.generatedPassword) {
           if (stateData.passwordEditable !== undefined) {
@@ -130,9 +173,22 @@ function Details (props) {
       }
 
       if (location.state?.generatedPassword) {
-        item.internalData.editedPassword = location.state.generatedPassword;
+        item.internalData.editedSif = location.state.generatedPassword;
         setData('passwordEditable', true);
         setData('passwordEdited', true);
+      }
+
+      if (!location.state?.data && item && item.internalData?.urisWithTempIds && item.internalData.urisWithTempIds.length > 0) {
+        const currentDomainsEditable = data.domainsEditable || {};
+        const hasEditableDomains = Object.keys(currentDomainsEditable).length > 0;
+
+        if (hasEditableDomains) {
+          const newDomainsEditable = {};
+          item.internalData.urisWithTempIds.forEach((uri) => {
+            newDomainsEditable[uri._tempId] = true;
+          });
+          setData('domainsEditable', newDomainsEditable);
+        }
       }
 
       setData('item', item);
@@ -216,7 +272,7 @@ function Details (props) {
                   scrollPosition: data?.thisTabScrollPosition
                 }}
               />
-              <h2>{constructorName} {browser.i18n.getMessage('details_header')}</h2>
+              <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
 
               <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
                 <p>{browser.i18n.getMessage('details_fetch_text')}</p>

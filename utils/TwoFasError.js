@@ -188,6 +188,10 @@ class TwoFasError extends Error {
       message: TwoFasError.defaultErrorMessage,
       code: 2330
     },
+    newLoginWrongContentType: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2331
+    },
     updateLoginWrongData: {
       message: TwoFasError.defaultErrorMessage,
       code: 2340
@@ -195,6 +199,10 @@ class TwoFasError extends Error {
     updateLoginWrongSecurityType: {
       message: TwoFasError.defaultErrorMessage,
       code: 2341
+    },
+    updateLoginWrongContentType: {
+      message: TwoFasError.defaultErrorMessage,
+      code: 2342
     },
     pullRequestActionDataError: {
       message: TwoFasError.defaultErrorMessage,
@@ -451,15 +459,7 @@ class TwoFasError extends Error {
       message: 'No valid device UUID found for push notification',
       code: 9141
     },
-    // VALUE TO NFKD
-    valueToNFKDNotText: {
-      message: 'The value is not a text.',
-      code: 9170
-    },
-    valueToNFKDNotSupportNormalization: {
-      message: 'The value does not support normalization.',
-      code: 9171
-    },
+    // VALUE TO NFKD (DEPRECATED)
     // GET KEY
     getKeyNotFoundEnv: {
       message: 'Key %KEY_NAME% not found in persistentKeys or ephemeralKeys',
@@ -722,6 +722,16 @@ class TwoFasError extends Error {
     tagIndexError: {
       message: 'Tag not found in tags list',
       code: 9420
+    },
+    // HANDLE NAME
+    handleNameNoService: {
+      message: 'handleName: secure note not found',
+      code: 9430
+    },
+    // ERROR FALLBACK
+    errorFallbackRenderError: {
+      message: 'ErrorFallback: error rendering fallback component',
+      code: 9440
     }
   };
 }

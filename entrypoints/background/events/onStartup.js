@@ -4,6 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import setIdleInterval from '@/partials/functions/setIdleInterval';
+
 /**
 * Function to clean up old devices from local storage on startup and ensure migrations are marked as complete.
 * @async
@@ -16,6 +18,9 @@ const onStartup = async migrations => {
   if (migrations && !migrations.state) {
     migrations.state = true;
   }
+
+  const idleLockValue = await storage.getItem('local:autoIdleLock');
+  setIdleInterval(idleLockValue);
 
   const devices = await storage.getItem('local:devices');
 

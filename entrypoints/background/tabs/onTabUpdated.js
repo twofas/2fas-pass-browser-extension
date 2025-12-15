@@ -96,18 +96,37 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
 
       await injectCSIfNotAlready(tabID, REQUEST_TARGETS.CONTENT);
 
-      let actionUrlHostname = action.url || '';
-      let tabUrlHostname = tab.url || '';
-      let parsedActionUrl, parsedTabUrl;
+      let actionUrlHostname = null;
+      let tabUrlHostname = null;
+      let parsedActionUrl = null;
+      let parsedTabUrl = null;
+      let parsingFailed = false;
 
       try {
         actionUrlHostname = new URL(action.url).hostname;
         tabUrlHostname = new URL(tab.url).hostname;
         parsedActionUrl = parseDomain(actionUrlHostname);
         parsedTabUrl = parseDomain(tabUrlHostname);
-      } catch {}
 
-      if (`${parsedActionUrl.domain}.${parsedActionUrl.topLevelDomains[0]}` !== `${parsedTabUrl.domain}.${parsedTabUrl.topLevelDomains[0]}`) {
+        if (!parsedActionUrl || !parsedTabUrl ||
+            !parsedActionUrl.domain || !parsedTabUrl.domain ||
+            !parsedActionUrl.topLevelDomains || !parsedTabUrl.topLevelDomains ||
+            parsedActionUrl.topLevelDomains.length === 0 || parsedTabUrl.topLevelDomains.length === 0) {
+          parsingFailed = true;
+        }
+      } catch {
+        parsingFailed = true;
+      }
+
+      if (parsingFailed) {
+        removeSavePromptAction(tabID, action.url, savePromptActions);
+        return;
+      }
+
+      const actionDomain = `${parsedActionUrl.domain}.${parsedActionUrl.topLevelDomains[0]}`;
+      const tabDomain = `${parsedTabUrl.domain}.${parsedTabUrl.topLevelDomains[0]}`;
+
+      if (actionDomain !== tabDomain) {
         removeSavePromptAction(tabID, action.url, savePromptActions);
         return;
       }

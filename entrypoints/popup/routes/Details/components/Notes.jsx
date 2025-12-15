@@ -89,7 +89,7 @@ function Notes () {
                     input.onChange(e);
                     handleNotesChange(e);
                   }}
-                  placeholder='Notes are empty'
+                  placeholder={browser.i18n.getMessage('details_notes_placeholder')}
                   id="notes"
                   disabled={!data.notesEditable ? 'disabled' : ''}
                   dir="ltr"
