@@ -10,7 +10,7 @@ import S from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/Payme
 import { Field } from 'react-final-form';
 import { lazy, useEffect, useRef, useState, useCallback } from 'react';
 import { copyValue, isText } from '@/partials/functions';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import PaymentCard from '@/partials/models/itemModels/PaymentCard';
 import PaymentCardSecurityCodeInput from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput';
 import getSecurityCodeMask from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/getSecurityCodeMask';
@@ -30,9 +30,7 @@ function CardSecurityCode (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setBatchData } = usePopupState();
 
   const previousSecurityCodeRef = useRef(null);
   const [localDecryptedSecurityCode, setLocalDecryptedSecurityCode] = useState(null);

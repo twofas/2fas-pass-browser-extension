@@ -9,6 +9,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import * as m from 'motion/react-m';
 import { useNavigate, useLocation } from 'react-router';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getDomainInfo from '../functions/getDomainInfo';
 import { useEffect, useState } from 'react';
 import { Form, Field } from 'react-final-form';
@@ -16,7 +17,6 @@ import onMessage from '../events/onMessage';
 import { copyValue, getCurrentDevice } from '@/partials/functions';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
-import usePopupStateStore from '../../../store/popupState';
 import Tooltip from '@/entrypoints/popup/components/Tooltip';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
@@ -37,11 +37,9 @@ const additionalVariants = {
 function LoginAddNewView() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { data, setData } = usePopupState();
 
   const [loading, setLoading] = useState(true);
-
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
 
   useEffect(() => {
     const messageListener = async (request, sender, sendResponse) => onMessage(request, sender, sendResponse, value => setData('url', value));

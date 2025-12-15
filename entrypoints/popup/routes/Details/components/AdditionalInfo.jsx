@@ -9,7 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import { useCallback } from 'react';
 import updateItem from '../functions/updateItem';
@@ -27,9 +27,7 @@ const additionalInfoVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function AdditionalInfo (props) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setBatchData } = usePopupState();
 
   const { formData } = props;
   const { inputError } = formData;

@@ -10,7 +10,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import S from '../Details.module.scss';
 import { AnimatePresence } from 'motion/react';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import URIMatcher from '@/partials/URIMatcher';
 import { useUriTempIds } from '../context/UriTempIdsContext';
 import updateItem from './updateItem';
@@ -23,8 +23,7 @@ const AddIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
 * @return {JSX.Element} The rendered URLs or empty state.
 */
 function GenerateURLs (props) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData } = usePopupState();
   const { urisWithTempIds, addUri } = useUriTempIds();
 
   const { formData } = props;

@@ -8,16 +8,6 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router';
 import usePopupStateStore from '../store/popupState';
 
-const defaultData = {
-  '/password-generator': {
-    characters: 16,
-    includeLowercase: true,
-    includeUppercase: true,
-    includeNumbers: true,
-    includeSpecialChars: true
-  }
-};
-
 /**
  * Custom hook for tracking and storing current pathname in popup state.
  * Automatically updates the href in the store when the location changes.
@@ -42,20 +32,8 @@ const usePopupHref = (hydrationComplete = false) => {
     const excludedPaths = ['/fetch', '/blocked'];
     const isExcluded = excludedPaths.includes(pathname) || pathname.startsWith('/fetch/');
 
-    // For excluded paths, don't update href - preserve the previous path
-    // This ensures that if the popup closes while at /fetch, it will reopen to the previous page (e.g., /details)
     if (isExcluded) {
-      // Only clear data and scroll position, but keep the previous href
-      setScrollPosition(0);
-
-      const defaultDataForPath = defaultData['/'] || {};
-
-      usePopupStateStore.setState({
-        data: {
-          ...defaultDataForPath
-        }
-      });
-
+      setScrollPosition(pathname, 0);
       return;
     }
 
@@ -69,15 +47,7 @@ const usePopupHref = (hydrationComplete = false) => {
       setHref(pathname);
 
       if (isUserNavigation) {
-        setScrollPosition(0);
-
-        const defaultDataForPath = defaultData[pathname] || {};
-
-        usePopupStateStore.setState({
-          data: {
-            ...defaultDataForPath
-          }
-        });
+        setScrollPosition(pathname, 0);
       }
     }
   }, [location.pathname, location.state, setHref, setScrollPosition, hydrationComplete]);

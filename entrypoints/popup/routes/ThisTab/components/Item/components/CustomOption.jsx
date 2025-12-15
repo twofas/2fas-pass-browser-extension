@@ -9,21 +9,20 @@ import { lazy } from 'react';
 import handleUriCopyClick from '../../../functions/serviceList/handleUriCopyClick';
 import handleUriClick from '../../../functions/serviceList/handleUriClick';
 import handleForgetPassword from '../../../functions/serviceList/handleForgetPassword';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 const DetailsIcon = lazy(() => import('@/assets/popup-window/details.svg?react'));
 const MoreUrlIcon = lazy(() => import('@/assets/popup-window/more-url.svg?react'));
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
 
-/** 
+/**
 * Function to render a custom option in the dropdown.
 * @param {Object} option - The option data.
 * @return {JSX.Element} The rendered custom option.
 */
 const CustomOption = option => {
-  const data = usePopupStateStore(state => state.data);
-  const scrollPosition = usePopupStateStore(state => state.scrollPosition);
+  const { data, scrollPosition } = usePopupState();
 
   switch (option?.data?.type) {
     case 'details': {

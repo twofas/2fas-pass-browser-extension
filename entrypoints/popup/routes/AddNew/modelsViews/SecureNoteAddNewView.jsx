@@ -8,7 +8,7 @@ import S from '../AddNew.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { memo, useState } from 'react';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import { Form, Field } from 'react-final-form';
 import { getCurrentDevice } from '@/partials/functions';
 import SecureNote from '@/partials/models/itemModels/SecureNote';
@@ -22,12 +22,9 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 function SecureNoteAddNewView() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { data, setData, setBatchData } = usePopupState();
 
   const [inputError, setInputError] = useState(undefined);
-
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
 
   const validate = values => {
     const errors = {};

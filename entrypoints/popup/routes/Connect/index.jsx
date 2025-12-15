@@ -23,7 +23,7 @@ import NavigationButton from '../../components/NavigationButton';
 import { getNTPTime, sendPush, networkTest } from '@/partials/functions';
 import { PULL_REQUEST_TYPES, SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
-import usePopupStateStore from '../../store/popupState';
+import usePopupState from '../../store/popupState/usePopupState';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const PushNotification = lazy(() => import('../Fetch/components/PushNotification'));
@@ -63,8 +63,7 @@ function Connect (props) {
   const sliderRef = useRef(null);
   const previousViewRef = useRef(null);
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData } = usePopupState();
 
   const getReadyDevices = useCallback(async () => {
     const devices = await storage.getItem('local:devices') || [];
@@ -490,7 +489,7 @@ function Connect (props) {
     return () => {
       document.removeEventListener('keydown', handleKeyboardEnterClick);
     };
-  }, [handleKeyboardEnterClick]);
+  }, [handleKeyboardEnterClick, setData, data?.connectSliderIndex]);
 
   useEffect(() => {
     handleViewSwitch();
@@ -527,7 +526,7 @@ function Connect (props) {
         sliderRef.current.splide.off('move');
       }
     };
-  }, [readyDevices, sliderMounted]);
+  }, [readyDevices, sliderMounted, setData, data.connectSliderIndex]);
 
   return (
     <LazyMotion features={loadDomAnimation}>

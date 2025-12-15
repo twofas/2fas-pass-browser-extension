@@ -19,7 +19,7 @@ import sanitizeObject from '@/partials/functions/sanitizeObject';
 import getDomainFromMessage from './functions/getDomainFromMessage';
 import { useLocation } from 'react-router';
 import isItemsCorrect from './functions/isItemsCorrect';
-import usePopupStateStore from '../../store/popupState';
+import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import { useTagFilter } from './components/Filters/hooks/useTagFilter';
 import { useSortFilter } from './components/Sort/hooks/useSortFilter';
@@ -51,10 +51,7 @@ function ThisTab (props) {
   const [matchingLogins, setMatchingLogins] = useState([]);
   const [storageVersion, setStorageVersion] = useState(null);
 
-  const data = usePopupStateStore(state => state.data);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
-  const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
-  const setHref = usePopupStateStore(state => state.setHref);
+  const { data, setBatchData, setScrollPosition, setHref, pathname } = usePopupState();
 
   // Refs
   const boxAnimationRef = useRef(null);
@@ -95,14 +92,7 @@ function ThisTab (props) {
       });
 
       if (hasChanges) {
-        const currentData = usePopupStateStore.getState().data;
-
-        usePopupStateStore.setState({
-          data: {
-            ...currentData,
-            ...updates
-          }
-        });
+        setBatchData(updates);
       }
     }
 
@@ -111,9 +101,9 @@ function ThisTab (props) {
     }
 
     if (location.state?.from === 'details') {
-      setHref(location.pathname);
+      setHref(pathname);
     }
-  }, [location.state, location.pathname, setScrollPosition, setHref]);
+  }, [location.state, pathname, setScrollPosition, setHref, setBatchData]);
 
   const { handleSortChange } = useSortFilter();
   const { handleTagChange } = useTagFilter();

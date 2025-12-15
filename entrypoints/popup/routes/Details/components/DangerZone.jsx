@@ -9,7 +9,7 @@ import * as m from 'motion/react-m';
 import { Link } from 'react-router';
 import { lazy } from 'react';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 
 const ChevronIcon = lazy(() => import('@/assets/popup-window/chevron.svg?react'));
 
@@ -24,8 +24,7 @@ const dangerZoneVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function DangerZone (props) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData } = usePopupState();
 
   const { formData } = props;
   const { submitting } = formData;
