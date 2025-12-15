@@ -18,11 +18,26 @@ import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 
+const PASSWORD_GENERATOR_DEFAULTS = {
+  characters: 16,
+  includeUppercase: true,
+  includeNumbers: true,
+  includeSpecialChars: true
+};
+
 function PasswordGenerator (props) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { data, setData, href: popupHref } = usePopupState();
+  const { data: storeData, setData, href: popupHref } = usePopupState();
+
+  const data = {
+    ...storeData,
+    characters: storeData.characters ?? PASSWORD_GENERATOR_DEFAULTS.characters,
+    includeUppercase: storeData.includeUppercase ?? PASSWORD_GENERATOR_DEFAULTS.includeUppercase,
+    includeNumbers: storeData.includeNumbers ?? PASSWORD_GENERATOR_DEFAULTS.includeNumbers,
+    includeSpecialChars: storeData.includeSpecialChars ?? PASSWORD_GENERATOR_DEFAULTS.includeSpecialChars
+  };
 
   const scrollableRef = useRef(null);
   const initialPasswordRef = useRef(null);
