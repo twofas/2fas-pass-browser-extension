@@ -10,7 +10,6 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useEffect, useState, useCallback } from 'react';
 import { Form, Field } from 'react-final-form';
 import { filterXSS } from 'xss';
-import valueToNFKD from '@/partials/functions/valueToNFKD';
 import usePopupStateStore from '../../../../store/popupState';
 
 /**
@@ -73,7 +72,7 @@ function ExtensionName () {
 
     try {
       const browserInfo = await storage.getItem('local:browserInfo');
-      browserInfo.name = valueToNFKD(e['ext-name']);
+      browserInfo.name = e['ext-name'];
       await storage.setItem('local:browserInfo', browserInfo);
 
       // Update local state to reflect the change

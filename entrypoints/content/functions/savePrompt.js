@@ -10,64 +10,85 @@ import logoSrc from '@/assets/logo.svg?raw';
 import logoSrcDark from '@/assets/logo-dark.svg?raw';
 import closeSrc from '@/assets/popup-window/cancel.svg?raw';
 
-/** 
+/**
 * Function to close the notification.
 * @param {Object} n - The notification object.
+* @param {Object} timers - The timers object containing all timer IDs.
 * @return {void}
 */
-const closeNotification = n => {
-  n.item.classList.add('twofas-pass-hidden');
+const closeNotification = (n, timers) => {
+  if (timers.visible !== null) {
+    clearTimeout(timers.visible);
+    timers.visible = null;
+  }
 
-  setTimeout(() => {
-    n.item.classList.remove('twofas-pass-hidden');
-    n.item.classList.remove('twofas-pass-visible');
-    n.item.classList.add('twofas-pass-old');
-    n = null;
-  }, 300);
+  if (timers.cleanup !== null) {
+    clearTimeout(timers.cleanup);
+    timers.cleanup = null;
+  }
+
+  if (n && n.item) {
+    n.item.classList.add('twofas-pass-hidden');
+
+    timers.cleanup = setTimeout(() => {
+      if (n && n.item) {
+        n.item.classList.remove('twofas-pass-hidden');
+        n.item.classList.remove('twofas-pass-visible');
+        n.item.classList.add('twofas-pass-old');
+      }
+
+      n = null;
+      timers.cleanup = null;
+    }, 300);
+  }
 };
 
-/** 
+/**
 * Function to cancel the notification.
 * @param {Object} n - The notification object.
+* @param {Object} timers - The timers object containing all timer IDs.
 * @param {Function} sendResponse - The function to send the response back.
 * @return {void}
 */
-const cancel = (n, sendResponse) => {
-  closeNotification(n);
+const cancel = (n, timers, sendResponse) => {
+  closeNotification(n, timers);
   return sendResponse({ status: SAVE_PROMPT_ACTIONS.CANCEL });
 };
 
-/** 
+/**
 * Function to handle the "Do Not Ask" action.
 * @param {Object} n - The notification object.
+* @param {Object} timers - The timers object containing all timer IDs.
 * @param {Function} sendResponse - The function to send the response back.
 * @return {void}
 */
-const doNotAsk = (n, sendResponse) => {
-  closeNotification(n);
+const doNotAsk = (n, timers, sendResponse) => {
+  closeNotification(n, timers);
   return sendResponse({ status: SAVE_PROMPT_ACTIONS.DO_NOT_ASK });
 };
 
-/** 
+/**
 * Function to add a login.
 * @param {Object} n - The notification object.
+* @param {Object} timers - The timers object containing all timer IDs.
 * @param {Function} sendResponse - The function to send the response back.
 * @return {void}
 */
-const newLogin = (n, sendResponse) => {
-  closeNotification(n);
+const newLogin = (n, timers, sendResponse) => {
+  closeNotification(n, timers);
   return sendResponse({ status: SAVE_PROMPT_ACTIONS.NEW_LOGIN });
 };
 
-/** 
+/**
 * Function to update a login.
 * @param {Object} n - The notification object.
+* @param {Object} timers - The timers object containing all timer IDs.
 * @param {Object} itemData - The data related to the item to update.
 * @param {Function} sendResponse - The function to send the response back.
 * @return {void}
 */
-const updateLogin = (n, itemData, sendResponse) => {
-  closeNotification(n);
+const updateLogin = (n, timers, itemData, sendResponse) => {
+  closeNotification(n, timers);
   return sendResponse({ status: SAVE_PROMPT_ACTIONS.UPDATE_LOGIN, ...itemData });
 };
 
@@ -150,8 +171,13 @@ const savePrompt = (request, sendResponse, container) => {
     n.logoSvg = createSVGElement(isDarkMode ? logoSrcDark : logoSrc);
   }
 
+  const timers = {
+    visible: null,
+    cleanup: null
+  };
+
   n.close = createElement('button', 'twofas-pass-notification-save-prompt-top-close');
-  n.close.addEventListener('click', () => cancel(n, sendResponse));
+  n.close.addEventListener('click', () => cancel(n, timers, sendResponse));
   n.closeSvg = createSVGElement(closeSrc);
 
   n.close.appendChild(n.closeSvg);
@@ -170,7 +196,7 @@ const savePrompt = (request, sendResponse, container) => {
 
   const doNotAskButton = createTextElement('button', browser.i18n.getMessage('content_save_prompt_don_t_ask'));
   doNotAskButton.classList.add('twofas-pass-notification-save-prompt-buttons-do-not-ask');
-  doNotAskButton.addEventListener('click', () => doNotAsk(n, sendResponse));
+  doNotAskButton.addEventListener('click', () => doNotAsk(n, timers, sendResponse));
   n.buttons.appendChild(doNotAskButton);
 
   const addLoginButtonText = request?.serviceTypeData?.type === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_login') : browser.i18n.getMessage('content_save_prompt_update_login');
@@ -178,9 +204,9 @@ const savePrompt = (request, sendResponse, container) => {
   addLoginButton.classList.add('twofas-pass-notification-save-prompt-buttons-add-login');
   addLoginButton.addEventListener('click', () => {
     if (request?.serviceTypeData?.type === 'newService') {
-      return newLogin(n, sendResponse);
+      return newLogin(n, timers, sendResponse);
     } else {
-      return updateLogin(n, request?.serviceTypeData, sendResponse);
+      return updateLogin(n, timers, request?.serviceTypeData, sendResponse);
     }
   });
 
@@ -188,7 +214,13 @@ const savePrompt = (request, sendResponse, container) => {
   n.item.appendChild(n.buttons);
   n.container.appendChild(n.item);
 
-  setTimeout(() => n.item.classList.add('twofas-pass-visible'), 300);
+  timers.visible = setTimeout(() => {
+    if (n && n.item) {
+      n.item.classList.add('twofas-pass-visible');
+    }
+
+    timers.visible = null;
+  }, 300);
 };
 
 export default savePrompt;

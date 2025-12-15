@@ -1,0 +1,89 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.error-fallback-container {
+  height: 100%;
+  scrollbar-gutter: auto !important;
+  padding-bottom: 11px !important;
+  padding-right: 12px !important;
+}
+
+.error-fallback {
+  align-items: center;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  padding: 32px;
+  position: relative;
+  text-align: center;
+  width: 100%;
+
+  &-info {
+    margin-bottom: auto;
+    margin-top: auto;
+    
+    h1 {
+      color: v.$primary-text-light;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 4px;
+      text-align: center;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    p {
+      color: v.$secondary-text-light;
+      font-size: 12px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      text-align: center;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+  }
+
+  &-details {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    bottom: 12px;
+    gap: 0 8px;
+    margin-top: auto;
+    padding: 0 20px;
+    position: absolute;
+    width: 100%;
+
+    pre {
+      display: block;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    svg {
+      cursor: pointer;
+      stroke: v.$primary-color-light;
+      height: 16px;
+      width: auto;
+
+      @include m.darkMode {
+        stroke: v.$primary-color-dark;
+      }
+    }
+  }
+}

@@ -23,6 +23,11 @@ const sifT2Reset = async (deviceId, vaultId, itemId) => {
 
   // Update password
   const item = items.find(item => item.deviceId === deviceId && item.vaultId === vaultId && item.id === itemId);
+
+  if (!item) {
+    return;
+  }
+
   item.removeSif();
 
   // Get itemsKeys

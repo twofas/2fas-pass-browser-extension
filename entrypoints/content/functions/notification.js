@@ -63,30 +63,86 @@ const notification = (request, container) => {
 
   n.container.appendChild(n.item);
 
-  setTimeout(() => n.item.classList.add('twofas-pass-visible'), 300);
-  setTimeout(() => { n.item.style.maxHeight = `${n.item.offsetHeight}px`; }, 1300);
+  let visibleTimer = null;
+  let maxHeightTimer = null;
+  let beforeUnloadTimer = null;
+  let autoCloseTimer = null;
+  let cleanupTimer = null;
 
-  const closeNotification = () => {
-    n.item.classList.add('twofas-pass-hidden');
+  const handleBeforeUnload = () => {
+    if (n && n.item) {
+      n.item.classList.add('twofas-pass-hidden');
+    }
 
-    setTimeout(() => {
-      n.item.classList.remove('twofas-pass-hidden');
-      n.item.classList.remove('twofas-pass-visible');
-      n.item.classList.add('twofas-pass-old');
-      n = null;
-    }, 300);
-  };
-
-  window.addEventListener('beforeunload', () => {
-    n.item.classList.add('twofas-pass-hidden');
-
-    setTimeout(() => {
+    beforeUnloadTimer = setTimeout(() => {
       closeNotification();
     }, 1400);
-  });
+  };
+
+  const closeNotification = () => {
+    if (visibleTimer !== null) {
+      clearTimeout(visibleTimer);
+      visibleTimer = null;
+    }
+
+    if (maxHeightTimer !== null) {
+      clearTimeout(maxHeightTimer);
+      maxHeightTimer = null;
+    }
+
+    if (beforeUnloadTimer !== null) {
+      clearTimeout(beforeUnloadTimer);
+      beforeUnloadTimer = null;
+    }
+
+    if (autoCloseTimer !== null) {
+      clearTimeout(autoCloseTimer);
+      autoCloseTimer = null;
+    }
+
+    if (cleanupTimer !== null) {
+      clearTimeout(cleanupTimer);
+      cleanupTimer = null;
+    }
+
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+
+    if (n && n.item) {
+      n.item.classList.add('twofas-pass-hidden');
+
+      cleanupTimer = setTimeout(() => {
+        if (n && n.item) {
+          n.item.classList.remove('twofas-pass-hidden');
+          n.item.classList.remove('twofas-pass-visible');
+          n.item.classList.add('twofas-pass-old');
+        }
+
+        n = null;
+        cleanupTimer = null;
+      }, 300);
+    }
+  };
+
+  visibleTimer = setTimeout(() => {
+    if (n && n.item) {
+      n.item.classList.add('twofas-pass-visible');
+    }
+
+    visibleTimer = null;
+  }, 300);
+
+  maxHeightTimer = setTimeout(() => {
+    if (n && n.item) {
+      n.item.style.maxHeight = `${n.item.offsetHeight}px`;
+    }
+
+    maxHeightTimer = null;
+  }, 1300);
+
+  window.addEventListener('beforeunload', handleBeforeUnload);
 
   if (request.timeout) {
-    setTimeout(() => {
+    autoCloseTimer = setTimeout(() => {
       closeNotification();
     }, 6600);
   }

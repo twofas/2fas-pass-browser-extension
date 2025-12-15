@@ -11,9 +11,14 @@
 */
 const generateSessionID = async () => {
   try {
-    const nonceArray = new Uint32Array(16);
-    const nonce = [...crypto.getRandomValues(nonceArray)].map(m=>('0'+m.toString(16)).slice(-2)).join('');
-    return nonce;
+    const sessionIdArray = new Uint8Array(16);
+    crypto.getRandomValues(sessionIdArray);
+
+    const sessionId = Array.from(sessionIdArray)
+      .map(byte => byte.toString(16).padStart(2, '0'))
+      .join('');
+
+    return sessionId;
   } catch (e) {
     throw new TwoFasError(TwoFasError.errors.generateSessionID, { event: e });
   }

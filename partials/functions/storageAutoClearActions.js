@@ -72,6 +72,14 @@ const storageAutoClearActions = async () => {
       await storage.setItem('session:autoClearActions', []);
       return;
     }
+  } else if (action.itemType === 'text') {
+    try {
+      const decryptedSif = await item.decryptSif();
+      itemValue = decryptedSif.text;
+    } catch {
+      await storage.setItem('session:autoClearActions', []);
+      return;
+    }
   } else if (action.itemType === 'uri') {
     itemValue = item.content.uris || [];
   } else {

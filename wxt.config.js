@@ -84,10 +84,7 @@ export default defineConfig({
       },
       content_security_policy: {
         "extension_pages": "script-src 'self'; object-src 'self'"
-      },
-      optional_permissions: [
-        "clipboardRead"
-      ]
+      }
     };
 
     if (browser !== 'safari') {
@@ -104,6 +101,10 @@ export default defineConfig({
         "privacy",
         "scripting",
         "webRequest"
+      ];
+
+      manifestObj.optional_permissions = [
+        "clipboardRead",
       ];
 
       manifestObj.commands = {
@@ -161,12 +162,20 @@ export default defineConfig({
     'build:manifestGenerated': (wxt, manifest) => {
       delete manifest.background;
 
-      manifest.background = (wxt?.config?.browser === 'safari' || wxt?.config?.browser === 'firefox') ? {
-        scripts: ['background.js'],
-        type: 'module'
-      } : {
-        service_worker: 'background.js'
-      };
+      if (wxt?.config?.browser === 'safari') {
+        manifest.background = {
+          scripts: ['background.js']
+        };
+      } else if (wxt?.config?.browser === 'firefox') {
+        manifest.background = {
+          scripts: ['background.js'],
+          type: 'module'
+        };
+      } else {
+        manifest.background = {
+          service_worker: 'background.js'
+        };
+      }
     }
   },
   zip: {

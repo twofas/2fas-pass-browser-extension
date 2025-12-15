@@ -4,8 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import URIMatcher from './index.js';
 import { assert, expect, describe, it } from 'vitest';
+import URIMatcher from './index.js';
 
 describe('URIMatcher', () => {
   // Base methods

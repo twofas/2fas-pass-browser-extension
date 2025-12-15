@@ -8,7 +8,8 @@ import S from './ThisTab.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import { useEffect, useState, useRef, useCallback, useMemo, memo } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo, memo, useContext } from 'react';
+import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
 import getDomainFromTab from './functions/getDomainFromTab';
 import onMessage from './events/onMessage';
 import generateAllItemsList from './functions/generateAllItemsList';
@@ -29,10 +30,10 @@ import SmallLoginItem from './components/SmallLoginItem';
 import DomainIcon from '@/assets/popup-window/domain.svg?react';
 import SearchIcon from '@/assets/popup-window/search-icon.svg?react';
 import ClearIcon from '@/assets/popup-window/clear.svg?react';
-import SortUpIcon from '@/assets/popup-window/sort-up.svg?react';
-import SortDownIcon from '@/assets/popup-window/sort-down.svg?react';
 import NoMatch from './components/NoMatch';
+import ModelFilter from './components/ModelFilter';
 import Filters from './components/Filters';
+import Sort from './components/Sort';
 import UpdateComponent from './components/UpdateComponent';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
@@ -51,14 +52,13 @@ function ThisTab (props) {
   const location = useLocation();
   const { state } = location;
   const { changeMatchingLoginsLength } = useMatchingLogins();
+  const scrollableRefContext = useContext(ScrollableRefContext);
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('Unknown');
   const [url, setUrl] = useState('Unknown');
   const [items, setItems] = useState([]);
   const [tags, setTags] = useState([]);
   const [matchingLogins, setMatchingLogins] = useState([]);
-  const [sort, setSort] = useState(false); // false - asc, true - desc
-  const [sortDisabled, setSortDisabled] = useState(true);
   const [storageVersion, setStorageVersion] = useState(null);
   const [autofillFailed, setAutofillFailed] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -77,6 +77,12 @@ function ThisTab (props) {
   const thisTabTopRef = useRef(null);
 
   useScrollPosition(scrollableRef, loading);
+
+  useEffect(() => {
+    if (scrollableRefContext?.setRef && scrollableRef.current) {
+      scrollableRefContext.setRef(scrollableRef.current);
+    }
+  }, [scrollableRefContext]);
 
   const syncState = useCallback(() => {
     if (!location.state?.from) {
@@ -122,19 +128,9 @@ function ThisTab (props) {
     }
   }, [location.state, location.pathname, setScrollPosition, setHref]);
 
-  const handleSortClick = useCallback(async () => {
-    setSortDisabled(true);
-
-    try {
-      const newSort = !sort;
-      setSort(newSort);
-      await storage.setItem('local:allLoginsSort', newSort);
-    } catch (e) {
-      await CatchError(e);
-    } finally {
-      setSortDisabled(false);
-    }
-  }, [sort]);
+  const handleSortChange = useCallback(async newSort => {
+    setData('selectedSort', newSort);
+  }, []);
 
   const handleSearchChange = useCallback(e => {
     const value = e?.target?.value;
@@ -240,6 +236,11 @@ function ThisTab (props) {
   }, []);
 
   const getTagsAmount = useCallback(async (tags, services) => {
+    if (!Array.isArray(tags) || tags.length === 0) {
+      setTags([]);
+      return false;
+    }
+
     const servicesWithTags = services.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
 
     for (const service of servicesWithTags) {
@@ -277,20 +278,65 @@ function ThisTab (props) {
     setLoading(false);
   }, [changeMatchingLoginsLength]);
 
-  const getSort = useCallback(async () => {
-    const s = await storage.getItem('local:allLoginsSort');
-    setSort(s);
-    return null;
-  }, []);
-
   const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl, setUpdateAvailable), [sendUrl, setUpdateAvailable]);
 
   const hasMatchingLogins = useMemo(() => isItemsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
   const hasLogins = useMemo(() => isItemsCorrect(items) && items?.length > 0, [items]);
+
+  const filteredItemsByModel = useMemo(() => {
+    if (!data?.itemModelFilter) {
+      return items;
+    }
+
+    return items.filter(item => item?.constructor?.name === data.itemModelFilter);
+  }, [items, data?.itemModelFilter]);
+
+  const tagsWithFilteredAmounts = useMemo(() => {
+    if (!Array.isArray(tags) || tags.length === 0) {
+      return [];
+    }
+
+    const itemsToCount = filteredItemsByModel;
+    const servicesWithTags = itemsToCount.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
+
+    return tags.map(tag => {
+      let amount = 0;
+
+      for (const service of servicesWithTags) {
+        if (service.tags.includes(tag.id)) {
+          amount += 1;
+        }
+      }
+
+      return { ...tag, amount };
+    });
+  }, [tags, filteredItemsByModel]);
+
   const searchPlaceholder = useMemo(() => {
-    const amount = data?.selectedTag ? (data.selectedTag.amount || 0) : (items?.length || 0);
+    let amount;
+
+    if (data?.selectedTag) {
+      const tagWithFilteredAmount = tagsWithFilteredAmounts.find(t => t.id === data.selectedTag.id);
+      amount = tagWithFilteredAmount?.amount || 0;
+    } else {
+      amount = filteredItemsByModel?.length || 0;
+    }
+
     return browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', amount);
-  }, [data?.selectedTag, items?.length]);
+  }, [data?.selectedTag, filteredItemsByModel?.length, tagsWithFilteredAmounts]);
+
+  const currentTagInfo = useMemo(() => {
+    if (!data?.selectedTag || !data?.lastSelectedTagInfo) {
+      return null;
+    }
+
+    const tagWithFilteredAmount = tagsWithFilteredAmounts.find(t => t.id === data.selectedTag.id);
+
+    return {
+      name: data.lastSelectedTagInfo.name,
+      amount: tagWithFilteredAmount?.amount || 0
+    };
+  }, [data?.selectedTag, data?.lastSelectedTagInfo, tagsWithFilteredAmounts]);
 
   const autofillPopupClass = `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`;
   const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
@@ -298,7 +344,46 @@ function ThisTab (props) {
   const searchClass = `${S.thisTabAllLoginsSearch} ${data?.searchActive ? S.active : ''}`;
 
   const memoizedMatchingItemsList = useMemo(() => generateMatchingItemsList(matchingLogins, loading), [matchingLogins, loading]);
-  const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, sort, data?.searchValue, loading, tags, data?.selectedTag), [items, sort, data?.searchValue, loading, tags, data?.selectedTag]);
+  const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter), [items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter]);
+
+  const filteredItemsCount = useMemo(() => {
+    if (!isItemsCorrect(items)) {
+      return 0;
+    }
+
+    let itemsData = items;
+
+    if (data?.selectedTag) {
+      itemsData = itemsData.filter(item => {
+        if (!item?.tags || !Array.isArray(item?.tags)) {
+          return false;
+        }
+
+        const tagsSet = new Set(item.tags);
+        return tagsSet.has(data.selectedTag.id);
+      });
+    }
+
+    if (data?.itemModelFilter) {
+      itemsData = itemsData.filter(item => item?.constructor?.name === data.itemModelFilter);
+    }
+
+    if (data?.searchValue && data.searchValue.length > 0) {
+      itemsData = itemsData.filter(item => {
+        let urisTexts = [];
+
+        if (item?.content && item?.content?.uris && Array.isArray(item?.content?.uris)) {
+          urisTexts = item.content.uris.map(uri => uri?.text).filter(Boolean);
+        }
+
+        return item?.content?.name?.toLowerCase().includes(data.searchValue?.toLowerCase()) ||
+          item?.content?.username?.toLowerCase().includes(data.searchValue?.toLowerCase()) ||
+          urisTexts.some(uriText => uriText?.toLowerCase().includes(data.searchValue?.toLowerCase()));
+      });
+    }
+
+    return itemsData.length;
+  }, [items, data?.selectedTag, data?.itemModelFilter, data?.searchValue]);
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
@@ -313,14 +398,12 @@ function ThisTab (props) {
       .catch(() => {});
     }
 
-    Promise.all([ getDomain(), getStorageItems(), getSort(), getStorageTags() ])
-      .then(([domain, items, , tags]) => Promise.all([
+    Promise.all([ getDomain(), getStorageItems(), getStorageTags() ])
+      .then(([domain, items, tags]) => Promise.all([
         getMatchingLogins(items, domain),
         getTagsAmount(tags, items)
       ]))
       .then(() => {
-        setSortDisabled(false);
-
         if (items.length === 0) {
           setTimeout(() => {
             if (boxAnimationRef?.current?.play) {
@@ -444,15 +527,7 @@ function ThisTab (props) {
 
               <div className={allLoginsClass}>
                 <div className={S.thisTabAllLoginsHeader}>
-                  <h3>{browser.i18n.getMessage('this_tab_all_logins_header')}</h3>
-
-                  <div className={S.thisTabAllLoginsHeaderSort}>
-                    <span>{browser.i18n.getMessage('this_tab_sort')}:</span>
-                    <button className={`${sort ? S.desc : S.asc}`} onClick={handleSortClick} disabled={sortDisabled}>
-                      <SortUpIcon />
-                      <SortDownIcon />
-                    </button>
-                  </div>
+                  <ModelFilter />
                 </div>
 
                 <div className={S.thisTabAllLoginsSearchContainer}>
@@ -471,6 +546,7 @@ function ThisTab (props) {
                       maxLength="2048"
                       onChange={handleSearchChange}
                       value={data.searchValue || ''}
+                      className={data?.searchValue && data?.searchValue?.length > 0 ? S.withValue : ''}
                     />
         
                     <button
@@ -481,19 +557,23 @@ function ThisTab (props) {
                     </button>
                   </div>
                   <Filters
-                    tags={tags}
+                    tags={tagsWithFilteredAmounts}
                     selectedTag={data.selectedTag}
                     onTagChange={handleTagChange}
                     forceClose={forceCloseFilters}
                   />
+                  <Sort
+                    selectedSort={data.selectedSort || 'az'}
+                    onSortChange={handleSortChange}
+                  />
                 </div>
 
-                <div className={`${S.thisTabAllLoginsTagsInfo} ${data.lastSelectedTagInfo && data.selectedTag ? S.active : ''}`}>
-                  <div 
+                <div className={`${S.thisTabAllLoginsTagsInfo} ${currentTagInfo && data.selectedTag ? S.active : ''}`}>
+                  <div
                     className={S.thisTabAllLoginsTagsInfoBox}
-                    title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', data.lastSelectedTagInfo?.amount || '').replace('TAG_NAME', data.lastSelectedTagInfo?.name || '')}
+                    title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', filteredItemsCount).replace('TAG_NAME', currentTagInfo?.name || '')}
                   >
-                    <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', data.lastSelectedTagInfo?.amount || '').replace('TAG_NAME', data.lastSelectedTagInfo?.name || '')}</p>
+                    <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', filteredItemsCount).replace('TAG_NAME', currentTagInfo?.name || '')}</p>
                     <button
                       onClick={() => setData('selectedTag', null)}
                       title={browser.i18n.getMessage('this_tab_clear_tag_filter')}

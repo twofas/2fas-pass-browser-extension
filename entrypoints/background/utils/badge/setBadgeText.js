@@ -61,11 +61,27 @@ const setBadgeText = async (configured, services, url, tabId) => {
   } else {
     const text = matchingLogins.length > 9 ? '9+' : matchingLogins.length.toString();
 
-    await Promise.all([
-      browser?.action?.setBadgeTextColor && typeof browser.action.setBadgeTextColor === 'function' ? browser.action.setBadgeTextColor({ color: [255, 255, 255, 255] }) : () => {},
-      browser?.action?.setBadgeBackgroundColor && typeof browser.action.setBadgeBackgroundColor === 'function' ? browser.action.setBadgeBackgroundColor({ color: [13, 47, 170, 255] }) : () => {},
-      tabId ? browser?.action?.setBadgeText && typeof browser.action.setBadgeText === 'function' ? browser.action.setBadgeText({ text, tabId }) : () => {} : browser?.action?.setBadgeText && typeof browser.action.setBadgeText === 'function' ? browser.action.setBadgeText({ text }) : () => {}
-    ]);
+    const promises = [];
+
+    if (browser?.action?.setBadgeTextColor && typeof browser.action.setBadgeTextColor === 'function') {
+      promises.push(browser.action.setBadgeTextColor({ color: [255, 255, 255, 255] }));
+    }
+
+    if (browser?.action?.setBadgeBackgroundColor && typeof browser.action.setBadgeBackgroundColor === 'function') {
+      promises.push(browser.action.setBadgeBackgroundColor({ color: [13, 47, 170, 255] }));
+    }
+
+    if (browser?.action?.setBadgeText && typeof browser.action.setBadgeText === 'function') {
+      if (tabId) {
+        promises.push(browser.action.setBadgeText({ text, tabId }));
+      } else {
+        promises.push(browser.action.setBadgeText({ text }));
+      }
+    }
+
+    if (promises.length > 0) {
+      await Promise.all(promises);
+    }
   }
 };
 
