@@ -1,0 +1,707 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3780B08A2EE2FD7A00D68A1E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3780B0892EE2FD7A00D68A1E /* AppDelegate.swift */; };
+		3780B08D2EE2FD7A00D68A1E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3780B08B2EE2FD7A00D68A1E /* Main.storyboard */; };
+		3780B09E2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3780B09D2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		3780B0A42EE2FD7A00D68A1E /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0682EE2FD7A00D68A1E /* Main.html */; };
+		3780B0A62EE2FD7A00D68A1E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 3780B06A2EE2FD7A00D68A1E /* Icon.png */; };
+		3780B0A82EE2FD7A00D68A1E /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 3780B06B2EE2FD7A00D68A1E /* Style.css */; };
+		3780B0AA2EE2FD7A00D68A1E /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 3780B06C2EE2FD7A00D68A1E /* Script.js */; };
+		3780B0AC2EE2FD7A00D68A1E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3780B06D2EE2FD7A00D68A1E /* ViewController.swift */; };
+		3780B0AE2EE2FD7A00D68A1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3780B06E2EE2FD7A00D68A1E /* Assets.xcassets */; };
+		3780B0B02EE2FD7A00D68A1E /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3780B0702EE2FD7A00D68A1E /* SafariWebExtensionHandler.swift */; };
+		3780B0CE2EE2FD7B00D68A1E /* install.html in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C22EE2FD7B00D68A1E /* install.html */; };
+		3780B0CF2EE2FD7B00D68A1E /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C32EE2FD7B00D68A1E /* background.js */; };
+		3780B0D02EE2FD7B00D68A1E /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C42EE2FD7B00D68A1E /* popup.html */; };
+		3780B0D12EE2FD7B00D68A1E /* styles in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C52EE2FD7B00D68A1E /* styles */; };
+		3780B0D22EE2FD7B00D68A1E /* chunks in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C62EE2FD7B00D68A1E /* chunks */; };
+		3780B0D32EE2FD7B00D68A1E /* content-scripts in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C72EE2FD7B00D68A1E /* content-scripts */; };
+		3780B0D42EE2FD7B00D68A1E /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C82EE2FD7B00D68A1E /* icons */; };
+		3780B0D52EE2FD7B00D68A1E /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C92EE2FD7B00D68A1E /* manifest.json */; };
+		3780B0D62EE2FD7B00D68A1E /* _locales in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0CA2EE2FD7B00D68A1E /* _locales */; };
+		3780B0D72EE2FD7B00D68A1E /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0CB2EE2FD7B00D68A1E /* fonts */; };
+		3780B0D82EE2FD7B00D68A1E /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0CC2EE2FD7B00D68A1E /* assets */; };
+		3780B0D92EE2FD7B00D68A1E /* animations in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0CD2EE2FD7B00D68A1E /* animations */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3780B09F2EE2FD7A00D68A1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3780B0622EE2FD7900D68A1E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3780B09C2EE2FD7A00D68A1E;
+			remoteInfo = "2FAS Pass BE - Dev Extension (macOS)";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3780B0BD2EE2FD7A00D68A1E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				3780B09E2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		3780B0692EE2FD7A00D68A1E /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = Base.lproj/Main.html; sourceTree = "<group>"; };
+		3780B06A2EE2FD7A00D68A1E /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		3780B06B2EE2FD7A00D68A1E /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		3780B06C2EE2FD7A00D68A1E /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		3780B06D2EE2FD7A00D68A1E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		3780B06E2EE2FD7A00D68A1E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		3780B0702EE2FD7A00D68A1E /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		3780B0782EE2FD7A00D68A1E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3780B07A2EE2FD7A00D68A1E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		3780B07D2EE2FD7A00D68A1E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		3780B0802EE2FD7A00D68A1E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		3780B0822EE2FD7A00D68A1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3780B0872EE2FD7A00D68A1E /* 2FAS Pass BE - Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "2FAS Pass BE - Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3780B0892EE2FD7A00D68A1E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		3780B08C2EE2FD7A00D68A1E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		3780B08E2EE2FD7A00D68A1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3780B0982EE2FD7A00D68A1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3780B09D2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "2FAS Pass BE - Dev Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3780B0A22EE2FD7A00D68A1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3780B0C22EE2FD7B00D68A1E /* install.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = install.html; path = "../../.output/safari-mv3-dev/install.html"; sourceTree = "<group>"; };
+		3780B0C32EE2FD7B00D68A1E /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = "../../.output/safari-mv3-dev/background.js"; sourceTree = "<group>"; };
+		3780B0C42EE2FD7B00D68A1E /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = "../../.output/safari-mv3-dev/popup.html"; sourceTree = "<group>"; };
+		3780B0C52EE2FD7B00D68A1E /* styles */ = {isa = PBXFileReference; lastKnownFileType = folder; name = styles; path = "../../.output/safari-mv3-dev/styles"; sourceTree = "<group>"; };
+		3780B0C62EE2FD7B00D68A1E /* chunks */ = {isa = PBXFileReference; lastKnownFileType = folder; name = chunks; path = "../../.output/safari-mv3-dev/chunks"; sourceTree = "<group>"; };
+		3780B0C72EE2FD7B00D68A1E /* content-scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "content-scripts"; path = "../../.output/safari-mv3-dev/content-scripts"; sourceTree = "<group>"; };
+		3780B0C82EE2FD7B00D68A1E /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = "../../.output/safari-mv3-dev/icons"; sourceTree = "<group>"; };
+		3780B0C92EE2FD7B00D68A1E /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = "../../.output/safari-mv3-dev/manifest.json"; sourceTree = "<group>"; };
+		3780B0CA2EE2FD7B00D68A1E /* _locales */ = {isa = PBXFileReference; lastKnownFileType = folder; name = _locales; path = "../../.output/safari-mv3-dev/_locales"; sourceTree = "<group>"; };
+		3780B0CB2EE2FD7B00D68A1E /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = "../../.output/safari-mv3-dev/fonts"; sourceTree = "<group>"; };
+		3780B0CC2EE2FD7B00D68A1E /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = "../../.output/safari-mv3-dev/assets"; sourceTree = "<group>"; };
+		3780B0CD2EE2FD7B00D68A1E /* animations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = animations; path = "../../.output/safari-mv3-dev/animations"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3780B0842EE2FD7A00D68A1E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3780B09A2EE2FD7A00D68A1E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3780B0612EE2FD7900D68A1E = {
+			isa = PBXGroup;
+			children = (
+				3780B0662EE2FD7900D68A1E /* Shared (App) */,
+				3780B06F2EE2FD7A00D68A1E /* Shared (Extension) */,
+				3780B0772EE2FD7A00D68A1E /* iOS (App) */,
+				3780B0882EE2FD7A00D68A1E /* macOS (App) */,
+				3780B0972EE2FD7A00D68A1E /* iOS (Extension) */,
+				3780B0A12EE2FD7A00D68A1E /* macOS (Extension) */,
+				3780B0762EE2FD7A00D68A1E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3780B0662EE2FD7900D68A1E /* Shared (App) */ = {
+			isa = PBXGroup;
+			children = (
+				3780B06D2EE2FD7A00D68A1E /* ViewController.swift */,
+				3780B06E2EE2FD7A00D68A1E /* Assets.xcassets */,
+				3780B0672EE2FD7900D68A1E /* Resources */,
+			);
+			path = "Shared (App)";
+			sourceTree = "<group>";
+		};
+		3780B0672EE2FD7900D68A1E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3780B0682EE2FD7A00D68A1E /* Main.html */,
+				3780B06A2EE2FD7A00D68A1E /* Icon.png */,
+				3780B06B2EE2FD7A00D68A1E /* Style.css */,
+				3780B06C2EE2FD7A00D68A1E /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		3780B06F2EE2FD7A00D68A1E /* Shared (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				3780B0C12EE2FD7B00D68A1E /* Resources */,
+				3780B0702EE2FD7A00D68A1E /* SafariWebExtensionHandler.swift */,
+			);
+			path = "Shared (Extension)";
+			sourceTree = "<group>";
+		};
+		3780B0762EE2FD7A00D68A1E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3780B0872EE2FD7A00D68A1E /* 2FAS Pass BE - Dev.app */,
+				3780B09D2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3780B0772EE2FD7A00D68A1E /* iOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				3780B0782EE2FD7A00D68A1E /* AppDelegate.swift */,
+				3780B07A2EE2FD7A00D68A1E /* SceneDelegate.swift */,
+				3780B07C2EE2FD7A00D68A1E /* LaunchScreen.storyboard */,
+				3780B07F2EE2FD7A00D68A1E /* Main.storyboard */,
+				3780B0822EE2FD7A00D68A1E /* Info.plist */,
+			);
+			path = "iOS (App)";
+			sourceTree = "<group>";
+		};
+		3780B0882EE2FD7A00D68A1E /* macOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				3780B0892EE2FD7A00D68A1E /* AppDelegate.swift */,
+				3780B08B2EE2FD7A00D68A1E /* Main.storyboard */,
+				3780B08E2EE2FD7A00D68A1E /* Info.plist */,
+			);
+			path = "macOS (App)";
+			sourceTree = "<group>";
+		};
+		3780B0972EE2FD7A00D68A1E /* iOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				3780B0982EE2FD7A00D68A1E /* Info.plist */,
+			);
+			path = "iOS (Extension)";
+			sourceTree = "<group>";
+		};
+		3780B0A12EE2FD7A00D68A1E /* macOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				3780B0A22EE2FD7A00D68A1E /* Info.plist */,
+			);
+			path = "macOS (Extension)";
+			sourceTree = "<group>";
+		};
+		3780B0C12EE2FD7B00D68A1E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3780B0C22EE2FD7B00D68A1E /* install.html */,
+				3780B0C32EE2FD7B00D68A1E /* background.js */,
+				3780B0C42EE2FD7B00D68A1E /* popup.html */,
+				3780B0C52EE2FD7B00D68A1E /* styles */,
+				3780B0C62EE2FD7B00D68A1E /* chunks */,
+				3780B0C72EE2FD7B00D68A1E /* content-scripts */,
+				3780B0C82EE2FD7B00D68A1E /* icons */,
+				3780B0C92EE2FD7B00D68A1E /* manifest.json */,
+				3780B0CA2EE2FD7B00D68A1E /* _locales */,
+				3780B0CB2EE2FD7B00D68A1E /* fonts */,
+				3780B0CC2EE2FD7B00D68A1E /* assets */,
+				3780B0CD2EE2FD7B00D68A1E /* animations */,
+			);
+			name = Resources;
+			path = "Shared (Extension)";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3780B0862EE2FD7A00D68A1E /* 2FAS Pass BE - Dev (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3780B0BE2EE2FD7A00D68A1E /* Build configuration list for PBXNativeTarget "2FAS Pass BE - Dev (macOS)" */;
+			buildPhases = (
+				3780B0832EE2FD7A00D68A1E /* Sources */,
+				3780B0842EE2FD7A00D68A1E /* Frameworks */,
+				3780B0852EE2FD7A00D68A1E /* Resources */,
+				3780B0BD2EE2FD7A00D68A1E /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3780B0A02EE2FD7A00D68A1E /* PBXTargetDependency */,
+			);
+			name = "2FAS Pass BE - Dev (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "2FAS Pass BE - Dev (macOS)";
+			productReference = 3780B0872EE2FD7A00D68A1E /* 2FAS Pass BE - Dev.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3780B09C2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3780B0BA2EE2FD7A00D68A1E /* Build configuration list for PBXNativeTarget "2FAS Pass BE - Dev Extension (macOS)" */;
+			buildPhases = (
+				3780B0992EE2FD7A00D68A1E /* Sources */,
+				3780B09A2EE2FD7A00D68A1E /* Frameworks */,
+				3780B09B2EE2FD7A00D68A1E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "2FAS Pass BE - Dev Extension (macOS)";
+			packageProductDependencies = (
+			);
+			productName = "2FAS Pass BE - Dev Extension (macOS)";
+			productReference = 3780B09D2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3780B0622EE2FD7900D68A1E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2610;
+				LastUpgradeCheck = 2610;
+				TargetAttributes = {
+					3780B0862EE2FD7A00D68A1E = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					3780B09C2EE2FD7A00D68A1E = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 3780B0652EE2FD7900D68A1E /* Build configuration list for PBXProject "2FAS Pass BE - Dev" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3780B0612EE2FD7900D68A1E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 3780B0762EE2FD7A00D68A1E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3780B0862EE2FD7A00D68A1E /* 2FAS Pass BE - Dev (macOS) */,
+				3780B09C2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension (macOS) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3780B0852EE2FD7A00D68A1E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3780B0A62EE2FD7A00D68A1E /* Icon.png in Resources */,
+				3780B0A82EE2FD7A00D68A1E /* Style.css in Resources */,
+				3780B08D2EE2FD7A00D68A1E /* Main.storyboard in Resources */,
+				3780B0AA2EE2FD7A00D68A1E /* Script.js in Resources */,
+				3780B0AE2EE2FD7A00D68A1E /* Assets.xcassets in Resources */,
+				3780B0A42EE2FD7A00D68A1E /* Main.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3780B09B2EE2FD7A00D68A1E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3780B0D62EE2FD7B00D68A1E /* _locales in Resources */,
+				3780B0D72EE2FD7B00D68A1E /* fonts in Resources */,
+				3780B0D22EE2FD7B00D68A1E /* chunks in Resources */,
+				3780B0D32EE2FD7B00D68A1E /* content-scripts in Resources */,
+				3780B0CF2EE2FD7B00D68A1E /* background.js in Resources */,
+				3780B0D02EE2FD7B00D68A1E /* popup.html in Resources */,
+				3780B0D52EE2FD7B00D68A1E /* manifest.json in Resources */,
+				3780B0D12EE2FD7B00D68A1E /* styles in Resources */,
+				3780B0D42EE2FD7B00D68A1E /* icons in Resources */,
+				3780B0D92EE2FD7B00D68A1E /* animations in Resources */,
+				3780B0CE2EE2FD7B00D68A1E /* install.html in Resources */,
+				3780B0D82EE2FD7B00D68A1E /* assets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3780B0832EE2FD7A00D68A1E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3780B0AC2EE2FD7A00D68A1E /* ViewController.swift in Sources */,
+				3780B08A2EE2FD7A00D68A1E /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3780B0992EE2FD7A00D68A1E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3780B0B02EE2FD7A00D68A1E /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3780B0A02EE2FD7A00D68A1E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3780B09C2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension (macOS) */;
+			targetProxy = 3780B09F2EE2FD7A00D68A1E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		3780B0682EE2FD7A00D68A1E /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3780B0692EE2FD7A00D68A1E /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		3780B07C2EE2FD7A00D68A1E /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3780B07D2EE2FD7A00D68A1E /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		3780B07F2EE2FD7A00D68A1E /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3780B0802EE2FD7A00D68A1E /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		3780B08B2EE2FD7A00D68A1E /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3780B08C2EE2FD7A00D68A1E /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		3780B0B12EE2FD7A00D68A1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3780B0B22EE2FD7A00D68A1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		3780B0BB2EE2FD7A00D68A1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 51;
+				DEVELOPMENT_TEAM = ZY8UR5ADFW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "2FAS Pass BE - Dev Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MARKETING_VERSION = 1.3.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.twofas.org.passbrowser.dev.extension;
+				PRODUCT_NAME = "2FAS Pass BE - Dev Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		3780B0BC2EE2FD7A00D68A1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 51;
+				DEVELOPMENT_TEAM = ZY8UR5ADFW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "2FAS Pass BE - Dev Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.4;
+				MARKETING_VERSION = 1.3.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.twofas.org.passbrowser.dev.extension;
+				PRODUCT_NAME = "2FAS Pass BE - Dev Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		3780B0BF2EE2FD7A00D68A1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 51;
+				DEVELOPMENT_TEAM = ZY8UR5ADFW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "2FAS Pass BE - Dev";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.3.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.twofas.org.passbrowser.dev;
+				PRODUCT_NAME = "2FAS Pass BE - Dev";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		3780B0C02EE2FD7A00D68A1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 51;
+				DEVELOPMENT_TEAM = ZY8UR5ADFW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "2FAS Pass BE - Dev";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.3.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.twofas.org.passbrowser.dev;
+				PRODUCT_NAME = "2FAS Pass BE - Dev";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3780B0652EE2FD7900D68A1E /* Build configuration list for PBXProject "2FAS Pass BE - Dev" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3780B0B12EE2FD7A00D68A1E /* Debug */,
+				3780B0B22EE2FD7A00D68A1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3780B0BA2EE2FD7A00D68A1E /* Build configuration list for PBXNativeTarget "2FAS Pass BE - Dev Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3780B0BB2EE2FD7A00D68A1E /* Debug */,
+				3780B0BC2EE2FD7A00D68A1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3780B0BE2EE2FD7A00D68A1E /* Build configuration list for PBXNativeTarget "2FAS Pass BE - Dev (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3780B0BF2EE2FD7A00D68A1E /* Debug */,
+				3780B0C02EE2FD7A00D68A1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3780B0622EE2FD7900D68A1E /* Project object */;
+}

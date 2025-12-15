@@ -167,7 +167,9 @@
       &.service-url,
       &.service-username,
       &.service-more,
-      &.service-fetch {
+      &.service-fetch,
+      &.serivce-copy-2,
+      &.service-name {
         stroke: v.$object-light;
         stroke-width: 1.5;
         stroke-linecap: round;
@@ -177,6 +179,10 @@
         @include m.darkMode {
           stroke: v.$object-dark;
         }
+      }
+
+      &.service-copy-2 {
+        stroke-width: 1.6;
       }
 
       &.service-password {
@@ -260,7 +266,7 @@
 
     &-header {
       background-color: v.$primary-box-bg-light;
-      padding: 24px 8px 16px;
+      padding: 20px 8px 8px;
       position: sticky;
       text-align: center;
       top: -20px;
@@ -270,104 +276,108 @@
         background-color: v.$primary-box-bg-dark;
       }
 
-      &-sort {
+      &-model-filter {
         align-items: center;
-        bottom: 16px;
-        display: flex;
-        gap: 0 6px;
-        position: absolute;
-        right: 12px;
+        border-radius: 6px;
+        display: inline-flex;
+        gap: 0 8px;
+        padding: 8px 10px;
+        z-index: 9999;
 
-        span {
-          color: v.$secondary-text-light;
-          font-size: 12px;
-          font-weight: 400;
-          line-height: 1;
+        &:hover {
+          background-color: v.$hover-color-light;
 
           @include m.darkMode {
-            color: v.$secondary-text-dark;
+            background-color: v.$hover-color-dark;
           }
         }
 
-        button {
-          display: flex;
-          padding: 0;
+        &.disabled {
+          pointer-events: none;
+        }
 
-          &.asc {
+        &-icon {
+          align-items: center;
+          background-color: v.$primary-color-light;
+          border-radius: 6px;
+          display: inline-flex;
+          height: 24px;
+          justify-content: center;
+          width: 24px;
+
+          @include m.darkMode {
+            background-color: v.$primary-color-dark;
+          }
+
+          &:global(.logins) {
+            background-color: v.$login-item-bg-light;
+
+            @include m.darkMode {
+              background-color: v.$login-item-bg-dark;
+            }
+
             svg {
-              &:first-of-type {
-                stroke: v.$primary-color-light;
-                z-index: 2;
+              stroke: v.$login-item-light !important;
+              stroke-width: 1;
 
-                @include m.darkMode {
-                  stroke: v.$primary-color-dark;
-                }
+              @include m.darkMode {
+                stroke: v.$login-item-dark;
               }
             }
           }
 
-          &.desc {
-            svg {
-              &:last-of-type {
-                stroke: v.$primary-color-light;
-                z-index: 2;
+          &:global(.secure-notes) {
+            background-color: v.$secure-note-item-bg-light;
 
-                @include m.darkMode {
-                  stroke: v.$primary-color-dark;
-                }
+            @include m.darkMode {
+              background-color: v.$secure-note-item-bg-dark;
+            }
+
+            svg {
+              fill: v.$secure-note-item-light;
+              stroke: transparent !important;
+              stroke-width: 1;
+
+              @include m.darkMode {
+                fill: v.$secure-note-item-dark;
               }
             }
           }
 
           svg {
-            background-color: rgba(v.$hover-color-light, 0);
-            overflow: hidden;
-            stroke: rgba(v.$object-stroke-light, .5);
-            stroke-width: 1.5;
+            height: 16px;
+            stroke: v.$primary-box-bg-light;
             stroke-linecap: round;
             stroke-linejoin: round;
-            height: 20px;
-            position: relative;
-            transition: stroke .3s ease-in-out, background-color .3s ease-in-out;
+            stroke-width: 1.5;
+            width: auto;
 
             @include m.darkMode {
-              background-color: rgba(v.$hover-color-dark, 0);
-              stroke: rgba(v.$object-stroke-dark, .5);
+              stroke: v.$primary-box-bg-dark;
             }
+          }
+        }
 
-            &:hover {
-              background-color: rgba(v.$hover-color-light, 1);
-  
-              @include m.darkMode {
-                background-color: rgba(v.$hover-color-dark, 1);
-              }
-            }
+        &-chevron {
+          fill: v.$object-light;
+          height: 7px;
+          margin-left: -2px;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 1.5;
+          width: auto;
 
-            &:first-of-type {
-              border-bottom-left-radius: 4px;
-              border-top-left-radius: 4px;
-              transform: translateX(1px);
-            }
+          @include m.darkMode {
+            fill: v.$object-dark;
+          }
 
-            &:last-of-type {
-              border-bottom-right-radius: 4px;
-              border-top-right-radius: 4px;
-            }
-
-            :global(.arrow) {
-              stroke: v.$primary-color-light;
-              stroke-linecap: round;
-              stroke-linejoin: round;
-              stroke-width: 1.5;
-
-              @include m.darkMode {
-                stroke: v.$primary-color-dark;
-              }
-            }
+          &.open {
+            transform: rotate(180deg);
           }
         }
       }
 
+      &-model-filter-text,
       h3 {
         color: v.$primary-text-light;
         font-size: 16px;
@@ -433,7 +443,6 @@
         top: 50%;
         transform: translateY(-50%);
         transition: opacity .3s ease-in-out !important;
-        user-select: none;
 
         &.hidden {
           opacity: 0;
@@ -460,7 +469,7 @@
         font-weight: 400;
         height: 100%;
         outline: none;
-        padding-right: 24px;
+        padding-right: 0;
         width: 100%;
 
         @include m.darkMode {
@@ -519,6 +528,10 @@
           display: none;
           opacity: 0;
           pointer-events: none;
+        }
+
+        &.with-value {
+          padding-right: 24px;
         }
       }
     }
@@ -775,7 +788,10 @@
             &.service-url,
             &.service-username,
             &.service-more,
-            &.service-fetch {
+            &.service-fetch,
+            &.service-details,
+            &.service-copy-2,
+            &.service-name {
               stroke: v.$primary-color-light;
   
               @include m.darkMode {
@@ -814,16 +830,18 @@
           }
 
           &.icon-label {
-            background-color: v.$primary-color-light;
-            border: 1px solid v.$primary-color-light;
+            background-color: v.$login-item-bg-light;
+            border: 1px solid v.$login-item-bg-light;
+            color: v.$login-item-light;
             font-size: 10px;
             font-weight: 700;
             line-height: 1.2;
             text-align: center;
 
             @include m.darkMode {
-              background-color: v.$primary-color-dark;
-              border-color: v.$primary-color-dark;
+              background-color: v.$login-item-bg-dark;
+              border-color: v.$login-item-bg-dark;
+              color: v.$login-item-dark;
             }
           }
 
@@ -850,18 +868,39 @@
               }
             }
           }
+
+          &.icon-secure-note {
+            background-color: v.$secure-note-item-bg-light;
+            border: 1px solid v.$secure-note-item-bg-light;
+
+            @include m.darkMode {
+              background-color: v.$secure-note-item-bg-dark;
+              border-color: v.$secure-note-item-bg-dark;
+            }
+
+            svg {
+              fill: v.$secure-note-item-light;
+              height: 16px;
+              width: auto;
+
+              @include m.darkMode {
+                fill: v.$secure-note-item-dark;
+              }
+            }
+          }
         }
         
         &:nth-of-type(2) { // Account data
           align-items: flex-start;
           display: flex;
           flex-direction: column;
-          gap: 5px 0;
+          gap: 3px 0;
           max-width: 255px;
           overflow: hidden;
           transition: max-width .3s ease-in-out;
 
           > span {
+            line-height: 1.2;
             max-width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -872,9 +911,6 @@
               color: v.$primary-text-light;
               font-size: 14px;
               font-weight: 500;
-              height: 16px;
-              line-height: .86;
-              padding-bottom: 3px;
 
               @include m.darkMode {
                 color: v.$primary-text-dark;
@@ -889,9 +925,6 @@
               color: v.$secondary-text-light;
               font-size: 12px;
               font-weight: 400;
-              height: 13px;
-              line-height: .83;
-              padding-bottom: 3px;
 
               &.skeleton {
                 width: 195px;
@@ -941,7 +974,9 @@
           svg {
             &.service-more,
             &.service-username,
-            &.service-fetch {
+            &.service-fetch,
+            &.service-copy-2,
+            &.service-name {
               stroke: v.$primary-color-light;
               transition: stroke .3s ease-in-out;
 
@@ -979,6 +1014,10 @@
               }
             }
           }
+        }
+
+        &.service-details-btn {
+          opacity: 1;
         }
 
         &.service-password-loader {
@@ -1027,7 +1066,8 @@
 
           &.service-more,
           &.service-fetch,
-          &.service-username {
+          &.service-username,
+          &.service-details {
             stroke: v.$object-light;
             stroke-width: 1.5;
             stroke-linecap: round;
@@ -1057,6 +1097,28 @@
 
           &.service-fetch {
             width: 24px;
+          }
+
+          &.service-details {
+            width: 14px;
+          }
+
+          &.service-name {
+            stroke: v.$object-light;
+            width: 20px;
+
+            @include m.darkMode {
+              stroke: v.$object-dark;
+            }
+          }
+
+          &.service-copy-2 {
+            stroke: v.$object-light;
+            width: 19px;
+
+            @include m.darkMode {
+              stroke: v.$object-dark;
+            }
           }
         }
       }

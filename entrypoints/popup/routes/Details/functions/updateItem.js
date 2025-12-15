@@ -55,8 +55,8 @@ const updateItem = (baseItem, overwrites = {}) => {
   const updatedItem = new (baseItem.constructor)(updatedData);
 
   // Preserve decrypted password if applicable
-  if (baseItem.isPasswordDecrypted) {
-    updatedItem.setPasswordDecrypted(baseItem.passwordDecrypted);
+  if (baseItem.isSifDecrypted) {
+    updatedItem.setSifDecrypted(baseItem.sifDecrypted);
   }
 
   if (baseItem.internalData.editedPassword !== null) {

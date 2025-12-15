@@ -12,7 +12,7 @@
     "description": "Message displayed while the connection process is ongoing"
   },
   "connect_connection_opened": {
-    "message": "Connection is opened.\nDon't close this window",
+    "message": "Connection is opened.\nPlease keep this window open",
     "description": "Message displayed when the connection is successfully opened"
   },
   "connect_push_cancelled": {

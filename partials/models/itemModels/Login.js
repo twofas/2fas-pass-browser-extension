@@ -17,14 +17,14 @@ export default class Login extends Item {
   static contentVersion = 1;
 
   #s_password;
-  #s_passwordDecrypted;
+  #s_sifDecrypted;
 
   constructor (loginData, deviceId = null, vaultId = null) {
     if (loginData.constructor.name === Login.name) {
       return loginData;
     }
 
-    super (loginData, deviceId, vaultId);
+    super(loginData, deviceId, vaultId);
 
     validate(loginData.content && typeof loginData.content === 'object', 'Invalid login data');
 
@@ -62,6 +62,7 @@ export default class Login extends Item {
 
     this.contentType = Login.contentType;
     this.contentVersion = Login.contentVersion;
+
     this.content = {
       name: loginData.content.name,
       username: loginData.content.username,
@@ -76,16 +77,18 @@ export default class Login extends Item {
     };
 
     this.internalData = {
+      uiName: 'Login',
       urisWithTempIds: loginData.internalData?.urisWithTempIds || this.#urisWithTempIds(loginData.content.uris) || [],
       normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || [],
       type: loginData.internalData?.type || null,
       sifResetTime: loginData.internalData?.sifResetTime || null,
-      editedPassword: loginData.internalData?.editedPassword ?? null
+      editedSif: loginData.internalData?.editedSif ?? null,
+      cachedSifDecrypted: loginData.internalData?.cachedSifDecrypted ?? null
     };
 
     // Secure Input Fields
     this.#s_password = loginData.content.s_password ?? null;
-    this.#s_passwordDecrypted = null;
+    this.#s_sifDecrypted = loginData.internalData?.cachedSifDecrypted ?? null;
   }
 
   #normalizeUris (uris) {
@@ -142,20 +145,22 @@ export default class Login extends Item {
     });
   }
 
-  setPasswordDecrypted (decryptedPassword) {
-    this.#s_passwordDecrypted = decryptedPassword;
+  setSifDecrypted (decryptedSif) {
+    this.#s_sifDecrypted = decryptedSif;
+    this.internalData.cachedSifDecrypted = decryptedSif;
   }
 
-  removePasswordDecrypted () {
-    this.#s_passwordDecrypted = null;
+  removeSifDecrypted () {
+    this.#s_sifDecrypted = null;
+    this.internalData.cachedSifDecrypted = null;
   }
 
-  get passwordDecrypted () {
-    return this.#s_passwordDecrypted;
+  get sifDecrypted () {
+    return this.#s_sifDecrypted;
   }
 
-  get isPasswordDecrypted () {
-    return this.#s_passwordDecrypted !== null;
+  get isSifDecrypted () {
+    return this.#s_sifDecrypted !== null;
   }
 
   get dropdownList () {
@@ -250,7 +255,7 @@ export default class Login extends Item {
     return this.#s_password && this.#s_password !== '';
   }
 
-  get isT3orT2WithPassword () {
+  get isT3orT2WithSif () {
     return this.securityType === SECURITY_TIER.SECRET
       || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
   }
@@ -265,9 +270,11 @@ export default class Login extends Item {
         s_password: this.#s_password
       },
       internalData: {
+        uiName: this.internalData.uiName,
         type: this.internalData.type,
         sifResetTime: this.internalData.sifResetTime,
-        editedPassword: this.internalData.editedPassword
+        editedSif: this.internalData.editedSif,
+        cachedSifDecrypted: this.internalData.cachedSifDecrypted
       }
     };
   }

@@ -105,11 +105,6 @@ const defaultStorage = async () => {
     itemsToSet.push({ key: 'local:nativePush', value: import.meta.env.BROWSER === 'safari' ? false : true });
   }
 
-  // ALL LOGINS SORT
-  if (storageData?.allLoginsSort === undefined) {
-    itemsToSet.push({ key: 'local:allLoginsSort', value: false });
-  }
-
   // DEVICES
   if (
     !storageData?.devices ||

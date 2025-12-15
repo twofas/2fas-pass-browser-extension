@@ -63,6 +63,10 @@
     "message": "Something went wrong. Item not found.",
     "description": "Error message displayed when the requested login item is not found"
   },
+  "error_secure_note_not_found": {
+    "message": "Something went wrong. Secure Note not found.",
+    "description": "Error message displayed when the requested secure note is not found"
+  },
   "error_username_copy_failed": {
     "message": "Failed to copy username to clipboard.",
     "description": "Error message displayed when copying the username to the clipboard fails"
@@ -78,6 +82,10 @@
   "error_autofill_failed": {
     "message": "Failed to autofill. Please try again.",
     "description": "Error message displayed when the autofill operation fails"
+  },
+  "error_secure_note_name_copy_failed": {
+    "message": "Failed to copy Name to clipboard.",
+    "description": "Error message displayed when copying the secure note name to the clipboard fails"
   },
   "error_no_response_from_tab": {
     "message": "No response from tab",
@@ -114,6 +122,10 @@
   "error_connection_error": {
     "message": "Connection error. Please check your Internet connection and try again.",
     "description": "Error message displayed when a connection error occurs"
+  },
+  "error_error_message_copy_failed": {
+    "message": "Failed to copy error message to clipboard.",
+    "description": "Error message displayed when copying the error message to the clipboard fails"
   },
   "appDesc": {
     "message": "2FAS Pass is a next-gen password manager with no compromises in security and full control over your data.",
@@ -154,6 +166,10 @@
   "go_to_home_page": {
     "message": "Go to Home Page",
     "description": "Button label to navigate to the home page"
+  },
+  "scroll_to_top": {
+    "message": "Scroll to top",
+    "description": "Button label to scroll to the top of the page"
   },
   "cancel": {
     "message": "Cancel",
@@ -307,6 +323,66 @@
     "message": "Sync with your 2FAS Pass mobile app",
     "description": "Title for the sync data section"
   },
+  "login": {
+    "message": "Login",
+    "description": "Label for the login functionality"
+  },
+  "login_plural": {
+    "message": "Logins",
+    "description": "Label for multiple logins"
+  },
+  "credit_card": {
+    "message": "Credit Card",
+    "description": "Label for the credit card functionality"
+  },
+  "credit_card_plural": {
+    "message": "Credit Cards",
+    "description": "Label for multiple credit cards"
+  },
+  "secure_note": {
+    "message": "Secure Note",
+    "description": "Label for the secure note functionality"
+  },
+  "secure_note_note": {
+    "message": "Note",
+    "description": "Label for the secure note text field"
+  },
+  "secure_note_plural": {
+    "message": "Secure Notes",
+    "description": "Label for multiple secure notes"
+  },
+  "secure_note_placeholder": {
+    "message": "Add the Note",
+    "description": "Placeholder text for the secure note input field"
+  },
+  "secure_note_name": {
+    "message": "Name",
+    "description": "Placeholder text for the secure note name input field"
+  },
+  "secure_note_name_placeholder": {
+    "message": "Secure Note name",
+    "description": "Placeholder text for the secure note name input field"
+  },
+  "secure_note_name_required": {
+    "message": "Secure Note name is required.",
+    "description": "Validation message indicating that the secure note name is required"
+  },
+  "secure_note_name_max_length": {
+    "message": "Secure Note name must be less than 256 characters.",
+    "description": "Validation message indicating that the secure note title exceeds the maximum length"
+  },
+  "secure_note_text_max_length": {
+    "message": "Secure Note text must be less than 16384 characters.",
+    "description": "Validation message indicating that the secure note text exceeds the maximum length"
+  },
+  "ssh_key": {
+    "message": "SSH Key",
+    "description": "Label for the SSH key functionality"
+  },
+  "item": {
+    "message": "Item",
+    "description": "Generic label for an item"
+  },
   "notification_send_autofill_to_tab_lack_of_service_title": {
     "message": "Error",
     "description": "Title for the notification when the autofill service is not found"
@@ -407,6 +483,18 @@
     "message": "Password copied to clipboard",
     "description": "Notification message when the password is successfully copied to the clipboard"
   },
+  "notification_secure_note_name_copied": {
+    "message": "Name copied to clipboard",
+    "description": "Notification message when the secure note name is successfully copied to the clipboard"
+  },
+  "notification_secure_note_text_copied": {
+    "message": "Note copied to clipboard",
+    "description": "Notification message when the secure note text is successfully copied to the clipboard"
+  },
+  "notification_error_message_copied": {
+    "message": "Error message copied to clipboard",
+    "description": "Notification message when the error message is successfully copied to the clipboard"
+  },
   "placeholder_domain_uri": {
     "message": "e.g., https://2fas.com",
     "description": "Placeholder text for the domain or URI input field"
@@ -422,6 +510,14 @@
   "placeholder_name": {
     "message": "Type your Item name",
     "description": "Placeholder text for the name input field"
+  },
+  "placeholder_secure_note": {
+    "message": "Type your Secure Note",
+    "description": "Placeholder text for the Secure Note text input field"
+  },
+  "placeholder_secure_note_empty": {
+    "message": "Note is empty",
+    "description": "Placeholder text when there is no Secure Note available"
   },
   "background_contextMenuConfigured_no_accounts": {
     "message": "There are no matching Items for this domain",
@@ -579,6 +675,10 @@
     "message": "Add new",
     "description": "Button to add a new item"
   },
+  "top_bar_create_new": {
+    "message": "Create new",
+    "description": "Link to create a new item of a specific type"
+  },
   "add_new_validate_require": {
     "message": "Please enter the Domain (URI)",
     "description": "Validation message displayed when the Domain (URI) field is empty"
@@ -592,7 +692,7 @@
     "description": "Validation message displayed when the Domain (URI) entered is invalid"
   },
   "add_new_header": {
-    "message": "Adding a new Item to \n2FAS Pass",
+    "message": "Adding a new ITEM to \n2FAS Pass",
     "description": "Header for the section to add a new item"
   },
   "add_new_subheader": {
@@ -632,7 +732,7 @@
     "description": "Message displayed while the connection process is ongoing"
   },
   "connect_connection_opened": {
-    "message": "Connection is opened.\nDon't close this window",
+    "message": "Connection is opened.\nPlease keep this window open",
     "description": "Message displayed when the connection is successfully opened"
   },
   "connect_push_cancelled": {
@@ -690,6 +790,10 @@
   "details_password_decrypt_error": {
     "message": "Decrypting password error. Please resync with your mobile app.",
     "description": "Error message displayed when decrypting the password fails"
+  },
+  "details_secure_note_decrypt_error": {
+    "message": "Decrypting secure note error. Please resync with your mobile app.",
+    "description": "Error message displayed when decrypting the secure note fails"
   },
   "details_delete_header": {
     "message": "No longer need this Item?",
@@ -771,6 +875,30 @@
     "message": "Fetch Highly Secret data",
     "description": "Title for the fetch highly secret data link"
   },
+  "details_sif_not_fetched": {
+    "message": "This information is only available on your mobile phone. Click the \"Fetch\" button at the top of this window to retrieve it.",
+    "description": "Message indicating that the highly secret data has not been fetched yet"
+  },
+  "details_notes_placeholder": {
+    "message": "Notes are empty",
+    "description": "Placeholder text for the notes input field"
+  },
+  "details_reveal_secure_note": {
+    "message": "Reveal Note",
+    "description": "Button label to reveal the secure note content"
+  },
+  "details_additional_info": {
+    "message": "Additional info",
+    "description": "Label for the additional info field in the item details"
+  },
+  "details_additional_info_placeholder": {
+    "message": "Additional info is empty",
+    "description": "Placeholder text for the additional info input field"
+  },
+  "details_additional_info_max_length": {
+    "message": "Additional info must be less than 16384 characters.",
+    "description": "Validation message indicating the maximum length for the additional info field"
+  },
   "details_tags_label": {
     "message": "Tags",
     "description": "Label for the tags field in details view"
@@ -788,12 +916,28 @@
     "description": "Tooltip for add tag button"
   },
   "details_tags_no_available": {
-    "message": "No Tags available",
+    "message": "Create Tags in the mobile app",
     "description": "Message shown when there are no more tags to add"
   },
   "details_tags_select_tag": {
     "message": "Select Tag",
     "description": "Placeholder text for the tag selection dropdown"
+  },
+  "error_fallback_header": {
+    "message": "Error occurred",
+    "description": "Header message displayed on the error fallback screen"
+  },
+  "error_fallback_description": {
+    "message": "Sorry, an unexpected error has occurred. Click the button below to retry.",
+    "description": "Description message displayed on the error fallback screen"
+  },
+  "error_fallback_retry_button": {
+    "message": "Retry",
+    "description": "Label for the retry button on the error fallback screen"
+  },
+  "error_fallback_copy_error_title": {
+    "message": "Copy Error Message to clipboard",
+    "description": "Title for the copy error message button on the error fallback screen"
   },
   "fetch_push_header": {
     "message": "Check the 2FAS Pass push notification on your mobile device.",
@@ -820,8 +964,24 @@
     "description": "Header prompting the user to continue updating in the mobile app"
   },
   "fetch_continue_updating_description": {
-    "message": "To finish adding this service, continue on your \nmobile phone. Don't close this window.",
+    "message": "To update this Item, continue on your \nmobile phone. Please keep this window open.",
     "description": "Explains that the user should continue the process on their mobile phone"
+  },
+  "fetch_full_sync_description": {
+    "message": "To complete the sync process, continue on your mobile device. Please keep this window open.",
+    "description": "Explains that the user should continue the full sync process on their mobile phone"
+  },
+  "fetch_sif_request_description": {
+    "message": "To fetch Item details, continue on your mobile device. Please keep this window open.",
+    "description": "Explains that the user should continue the SIF request process on their mobile phone"
+  },
+  "fetch_delete_request_description": {
+    "message": "To delete this Item, continue on your mobile device. Please keep this window open.",
+    "description": "Explains that the user should continue the login deletion process on their mobile phone"
+  },
+  "fetch_add_request_description": {
+    "message": "To add this Item, continue on your mobile device. Please keep this window open.",
+    "description": "Explains that the user should continue the login addition process on their mobile phone"
   },
   "fetch_delete_login_accept_toast": {
     "message": "Item deleted",
@@ -855,13 +1015,25 @@
     "message": "Item adding canceled",
     "description": "Toast message displayed when the user cancels adding a new login item"
   },
-  "fetch_password_request_accept_toast": {
+  "fetch_generic_request_accept_toast": {
+    "message": "Data request accepted",
+    "description": "Toast message displayed when a unknown request is accepted"
+  },
+  "fetch_login_request_accept_toast": {
     "message": "Password request accepted",
     "description": "Toast message displayed when a password request is accepted"
   },
-  "fetch_password_request_cancel_toast": {
-    "message": "Password request rejected",
-    "description": "Toast message displayed when a password request is rejected"
+  "fetch_secureNote_request_accept_toast": {
+    "message": "Secure Note request accepted",
+    "description": "Toast message displayed when a secure note request is accepted"
+  },
+  "fetch_creditCard_request_accept_toast": {
+    "message": "Credit Card request accepted",
+    "description": "Toast message displayed when a credit card request is accepted"
+  },
+  "fetch_request_cancel_toast": {
+    "message": "Item request rejected",
+    "description": "Toast message displayed when a request is rejected"
   },
   "fetch_update_login_updated_toast": {
     "message": "Item updated",
@@ -1312,7 +1484,7 @@
     "description": "Confirmation message when disconnecting a trusted device"
   },
   "settings_devices_dialog_submessage_current_device": {
-    "message": "This is your current device! Disconnecting it will block any future actions, such as fetching passwords",
+    "message": "This is your current device! Disconnecting it will block any future actions, such as fetching passwords.",
     "description": "Warning sub-message when disconnecting the current trusted device"
   },
   "settings_devices_dialog_cancel_text": {
@@ -1351,6 +1523,10 @@
     "message": "Forget this password",
     "description": "Button label to forget the saved password for a login item"
   },
+  "this_tab_more_forget_secure_note": {
+    "message": "Forget this note",
+    "description": "Button label to forget the saved secure note"
+  },
   "this_tab_more_uris": {
     "message": "Website URL(s):",
     "description": "Label for displaying associated website URLs of a login item"
@@ -1388,7 +1564,7 @@
     "description": "Message displayed when autofill operation fails completely"
   },
   "this_tab_can_t_find_inputs": {
-    "message": "Browser Extension can't find the appropriate Item details. Use the context menu or copy and paste them manually.",
+    "message": "No input field found. Can't autofill Item details.",
     "description": "Message shown when input fields for autofill can't be found"
   },
   "this_tab_copy_password": {
@@ -1402,6 +1578,18 @@
   "this_tab_copy_username": {
     "message": "Copy username",
     "description": "Button label to copy the username to the clipboard"
+  },
+  "this_tab_copy_text": {
+    "message": "Copy note",
+    "description": "Button label to copy text from a secure note to the clipboard"
+  },
+  "this_tab_copy_name": {
+    "message": "Copy name",
+    "description": "Button label to copy the name of an item to the clipboard"
+  },
+  "this_tab_fetch_text": {
+    "message": "Fetch note",
+    "description": "Button label to fetch the text from the mobile app"
   },
   "this_tab_more_actions": {
     "message": "More actions",
@@ -1442,5 +1630,21 @@
   "filters_clear_choice": {
     "message": "Clear filters",
     "description": "Option text to clear the selected tag filter"
+  },
+  "sort_az": {
+    "message": "A-Z",
+    "description": "Sort option for sorting items from A to Z"
+  },
+  "sort_za": {
+    "message": "Z-A",
+    "description": "Sort option for sorting items from Z to A"
+  },
+  "sort_newest": {
+    "message": "Newest",
+    "description": "Sort option for sorting items by most recently updated first"
+  },
+  "sort_oldest": {
+    "message": "Oldest",
+    "description": "Sort option for sorting items by least recently updated first"
   }
 }

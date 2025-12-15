@@ -92,7 +92,6 @@
       pointer-events: none;
       text-overflow: ellipsis;
       transition: color .3s ease-in-out;
-      user-select: none;
       white-space: nowrap;
 
       @include m.darkMode {

@@ -89,7 +89,6 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
       const allInputsNew = passwordInputs.concat(usernameInputs);
 
       if (isElementInArray(input, allInputsNew)) {
-        allInputs = allInputsNew;
         const inputId = generateInputId();
         // FUTURE - Check if the ID is unique
         input.setAttribute('twofas-pass-id', inputId);

@@ -19,6 +19,7 @@ export default defineConfig([
     '.wxt/**/*',
     'mobile-mock/**/*',
     '2FAS Pass Browser Extension/**/*',
+    '2FAS Pass BE - Dev/**/*',
     'testFiles/**/*'
   ]),
   autoImports,

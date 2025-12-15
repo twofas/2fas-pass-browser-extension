@@ -11,19 +11,23 @@
 */
 const generateNonce = (type = null) => {
   try {
-    const nonceArray = new Uint32Array(6);
-    const nonce = [...crypto.getRandomValues(nonceArray)].map(m=>('0'+m.toString(16)).slice(-2)).join('');
+    const nonceArray = new Uint8Array(12);
+    crypto.getRandomValues(nonceArray);
+
+    const nonce = Array.from(nonceArray)
+      .map(byte => byte.toString(16).padStart(2, '0'))
+      .join('');
 
     const nonceObj = {
       String: nonce
     };
 
     if (!type || type === 'base64') {
-      nonceObj.Base64 = btoa(nonce);
+      nonceObj.Base64 = btoa(String.fromCharCode(...nonceArray));
     }
 
     if (!type || type === 'arraybuffer') {
-      nonceObj.ArrayBuffer = StringToArrayBuffer(nonce);
+      nonceObj.ArrayBuffer = nonceArray.buffer;
     }
 
     return nonceObj;

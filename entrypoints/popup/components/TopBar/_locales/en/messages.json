@@ -10,5 +10,9 @@
   "top_bar_add_new": {
     "message": "Add new",
     "description": "Button to add a new item"
+  },
+  "top_bar_create_new": {
+    "message": "Create new",
+    "description": "Link to create a new item of a specific type"
   }
 }

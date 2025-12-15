@@ -16,7 +16,7 @@
     "description": "Tooltip for add tag button"
   },
   "details_tags_no_available": {
-    "message": "No Tags available",
+    "message": "Create Tags in the mobile app",
     "description": "Message shown when there are no more tags to add"
   },
   "details_tags_select_tag": {

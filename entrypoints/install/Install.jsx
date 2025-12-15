@@ -44,8 +44,6 @@ const stepVariants = {
   visible: { opacity: 1, display: 'block', transition: { duration: 0.3, ease: 'easeInOut' } }
 };
 
-const emptyFunc = () => {};
-
 /** 
 * Function component for the Install page.
 * @return {JSX.Element} The rendered component.
@@ -225,9 +223,6 @@ function Install () {
 
     browser.storage.onChanged.addListener(onStorageChange);
 
-    window.addEventListener('error', emptyFunc);
-    window.addEventListener('unhandledrejection', emptyFunc);
-
     return () => {
       unwatchTheme();
 
@@ -240,9 +235,6 @@ function Install () {
       if (import.meta.env.BROWSER === 'safari') {
         document.removeEventListener('click', safariBlankLinks);
       }
-
-      window.removeEventListener('error', emptyFunc);
-      window.removeEventListener('unhandledrejection', emptyFunc);
     };
   }, []);
 

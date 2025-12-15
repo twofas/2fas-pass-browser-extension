@@ -15,7 +15,11 @@ const DecryptBytes = bytesData => {
   }
 
   const ivSize = 12;
-  
+
+  if (bytesData.byteLength < ivSize) {
+    throw new TypeError('DecryptBytes: Insufficient data length');
+  }
+
   return {
     iv: new Uint8Array(bytesData.slice(0, ivSize)).buffer,
     data: new Uint8Array(bytesData.slice(ivSize, bytesData.length)).buffer
