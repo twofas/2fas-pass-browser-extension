@@ -8,7 +8,7 @@ import S from './ErrorFallback.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import ToastsContent from '../../components/ToastsContent';
-import usePopupState from '../../store/popupState/usePopupState';
+import usePopupStateStore from '../../store/popupState';
 
 /**
 * Function to render the Not Found component.
@@ -16,7 +16,7 @@ import usePopupState from '../../store/popupState/usePopupState';
 * @return {JSX.Element} The rendered component.
 */
 function ErrorFallback (props) {
-  const { clearAllData } = usePopupState();
+  const clearAllData = usePopupStateStore(state => state.clearAllData);
 
   const handleRetry = () => {
     clearAllData();
