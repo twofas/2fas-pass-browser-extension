@@ -274,10 +274,7 @@ function PasswordGenerator (props) {
                           <div className={pI.passInputBottom}>
                             <PasswordInput
                               {...input}
-                              showPassword={true}
-                              isDecrypted={true}
                               disabled={true}
-                              disabledColors={true}
                             />
                             <div className={pI.passInputBottomButtons}>
                               <button
