@@ -107,10 +107,6 @@ function Details(props) {
         item.securityType = editedSecurityType;
       }
 
-      if (location.state?.scrollPosition !== undefined) {
-        setData('thisTabScrollPosition', location.state.scrollPosition);
-      }
-
       if (location.state?.data) {
         const stateData = location.state.data;
 
@@ -207,19 +203,7 @@ function Details(props) {
         <div ref={scrollableRef}>
           <section className={S.details}>
             <div className={S.detailsContainer}>
-              <NavigationButton
-                type='cancel'
-                state={{
-                  from: 'details',
-                  data: {
-                    lastSelectedTagInfo: data?.lastSelectedTagInfo,
-                    searchActive: data?.searchActive,
-                    searchValue: data?.searchValue,
-                    selectedTag: data?.selectedTag
-                  },
-                  scrollPosition: data?.thisTabScrollPosition
-                }}
-              />
+              <NavigationButton type='cancel' />
               <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
 
               <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
