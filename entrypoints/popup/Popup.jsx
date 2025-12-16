@@ -20,7 +20,6 @@ import BottomBar from './components/BottomBar';
 import usePopupStateStore from './store/popupState';
 import usePopupState from './store/popupState/usePopupState';
 import usePopupHref from './hooks/usePopupHref';
-import { addToNavigationHistory } from './utils/navigationHistory';
 import { ScrollableRefProvider } from './context/ScrollableRefProvider';
 import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
@@ -87,14 +86,12 @@ const RouteGuard = memo(({ configured, blocked, isProtectedRoute, children }) =>
 const AuthRoutes = memo(({ blocked, configured }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { href: storedHref } = usePopupState();
+  const { href: storedHrefArray } = usePopupState();
   const [initialCheckDone, setInitialCheckDone] = useState(false);
   const [hydrationComplete, setHydrationComplete] = useState(false);
   const hasNavigated = useRef(false);
 
-  useEffect(() => {
-    addToNavigationHistory(location.pathname);
-  }, [location.pathname]);
+  const lastHref = storedHrefArray.length > 0 ? storedHrefArray[storedHrefArray.length - 1] : null;
 
   useEffect(() => {
     const unsubHydrate = usePopupStateStore.persist.onFinishHydration(() => {
@@ -127,15 +124,15 @@ const AuthRoutes = memo(({ blocked, configured }) => {
 
     const excludedRoutes = ['/connect', '/', '/fetch', '/blocked'];
 
-    if (storedHref && location.pathname === '/' && !excludedRoutes.includes(storedHref)) {
-      if (!storedHref.startsWith('/fetch/')) {
+    if (lastHref && location.pathname === '/' && !excludedRoutes.includes(lastHref)) {
+      if (!lastHref.startsWith('/fetch/')) {
         hasNavigated.current = true;
-        navigate(storedHref, { replace: true });
+        navigate(lastHref, { replace: true });
       }
     }
 
     setInitialCheckDone(true);
-  }, [navigate, storedHref, location.pathname, configured, hydrationComplete, initialCheckDone]);
+  }, [navigate, lastHref, location.pathname, configured, hydrationComplete, initialCheckDone]);
 
   const routeElements = useMemo(() => {
     return routeConfig.map(route => {
