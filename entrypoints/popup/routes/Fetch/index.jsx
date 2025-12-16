@@ -211,7 +211,7 @@ function Fetch(props) {
     } else if (state?.from === 'add-new' && state?.originalData && state?.model) {
       navigate(`/add-new/${state.model}`, {
         state: {
-          data: state.originalData,
+          data: state.originalData, // @TODO: verify if this is needed
           from: 'fetch'
         }
       });
@@ -253,14 +253,11 @@ function Fetch(props) {
         restoredItem.id = restoredItem.itemId;
       }
 
-      const preservedUiState = state.data.uiState || {};
-
       navigate(`/details/${state.data.deviceId}/${state.data.vaultId}/${state.data.itemId}`, {
         state: {
           data: {
             item: restoredItem,
-            ...uiFlags,
-            ...preservedUiState
+            ...uiFlags
           },
           from: 'fetch'
         }

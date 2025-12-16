@@ -159,22 +159,10 @@ function PasswordGenerator (props) {
     }
 
     if (returnTo === 'addNew') {
-      const navigationData = {
-        url: data.url,
-        username: data.username,
-        s_password: values.password,
-        minLength: data.minLength,
-        maxLength: data.maxLength,
-        pattern: data.pattern,
-        onMobile: data.onMobile,
-        additionalOverflow: data.additionalOverflow,
-        passwordVisible: data.passwordVisible
-      };
-
       return navigate(`/add-new/Login`, {
         state: {
           from: 'passwordGenerator',
-          data: navigationData
+          data: { s_password: values.password }
         }
       });
     } else if (returnTo === 'details') {
@@ -188,19 +176,7 @@ function PasswordGenerator (props) {
       return navigate(`/details/${item.deviceId}/${item.vaultId}/${item.id}`, {
         state: {
           from: 'passwordGenerator',
-          generatedPassword: values.password,
-          data: {
-            nameEditable: data.nameEditable,
-            usernameEditable: data.usernameEditable,
-            passwordEditable: data.passwordEditable,
-            passwordVisible: data.passwordVisible,
-            domainsEditable: data.domainsEditable,
-            tierEditable: data.tierEditable,
-            tagsEditable: data.tagsEditable,
-            notesEditable: data.notesEditable,
-            usernameMobile: data.usernameMobile,
-            passwordMobile: data.passwordMobile
-          }
+          generatedPassword: values.password
         }
       });
     } else {
@@ -209,54 +185,12 @@ function PasswordGenerator (props) {
     }
   };
 
-  const returnState = () => {
-    switch (data.returnTo) {
-      case 'addNew': {
-        return {
-          data: {
-            url: data.url,
-            username: data.username,
-            minLength: data.minLength,
-            maxLength: data.maxLength,
-            pattern: data.pattern,
-            onMobile: data.onMobile,
-            additionalOverflow: data.additionalOverflow,
-            passwordVisible: data.passwordVisible
-          }
-        };
-      }
-
-      case 'details': {
-        return {
-          data: {
-            nameEditable: data.nameEditable,
-            usernameEditable: data.usernameEditable,
-            passwordEditable: data.passwordEditable,
-            passwordVisible: data.passwordVisible,
-            domainsEditable: data.domainsEditable,
-            tierEditable: data.tierEditable,
-            tagsEditable: data.tagsEditable,
-            notesEditable: data.notesEditable,
-            usernameMobile: data.usernameMobile,
-            passwordMobile: data.passwordMobile
-          }
-        };
-      }
-
-      default:
-        return {};
-    }
-  };
-
   return (
     <div className={`${props.className ? props.className : ''}`}>
       <div ref={scrollableRef}>
         <section className={S.passwordGenerator}>
           <div className={S.passwordGeneratorContainer}>
-            <NavigationButton
-              type='back'
-              state={returnState()}
-            />
+            <NavigationButton type='back' />
             <h2>{browser.i18n.getMessage('password_generator_title')}</h2>
 
             <Form

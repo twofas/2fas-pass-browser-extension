@@ -153,34 +153,8 @@ function LoginAddNewView() {
     }
   };
 
-  const handleGeneratePassword = form => {
-    const formState = form.getState();
-    const currentValues = formState.values;
-
-    const navigationData = {
-      url: currentValues.url || data.url,
-      username: currentValues.username || data.username,
-      s_password: currentValues.s_password || data.s_password,
-      minLength: currentValues['password-minlength'] || data.minLength,
-      maxLength: currentValues['password-maxlength'] || data.maxLength,
-      pattern: currentValues['password-pattern'] || data.pattern,
-      onMobile: currentValues.onMobile !== undefined ? currentValues.onMobile : data.onMobile,
-      additionalOverflow: data.additionalOverflow,
-      passwordVisible: data.passwordVisible
-    };
-
-    Object.entries(navigationData).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        setData(key, value);
-      }
-    });
-
-    navigate('/password-generator', {
-      state: {
-        from: 'addNew',
-        data: navigationData
-      }
-    });
+  const handleGeneratePassword = () => {
+    navigate('/password-generator', { state: { from: 'addNew' } });
   };
 
   const onSubmit = async e => {
@@ -377,7 +351,7 @@ function LoginAddNewView() {
                     <button
                       type='button'
                       className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
-                      onClick={() => handleGeneratePassword(form)}
+                      onClick={handleGeneratePassword}
                       title={browser.i18n.getMessage('add_new_generate_password')}
                     >
                       <RefreshIcon />

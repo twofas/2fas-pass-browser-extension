@@ -166,21 +166,6 @@ function PaymentCardDetailsView(props) {
       stateData.tags = e.tags || [];
     }
 
-    stateData.uiState = {
-      nameEditable: data.nameEditable,
-      cardHolderEditable: data.cardHolderEditable,
-      cardNumberEditable: data.cardNumberEditable,
-      expirationDateEditable: data.expirationDateEditable,
-      securityCodeEditable: data.securityCodeEditable,
-      cardNumberVisible: data.cardNumberVisible,
-      expirationDateVisible: data.expirationDateVisible,
-      securityCodeVisible: data.securityCodeVisible,
-      notesEditable: data.notesEditable,
-      tierEditable: data.tierEditable,
-      tagsEditable: data.tagsEditable,
-      sifDecryptError: data.sifDecryptError
-    };
-
     return navigate('/fetch', {
       state: {
         action: PULL_REQUEST_TYPES.UPDATE_DATA,

@@ -271,7 +271,7 @@ function Password (props) {
                   to='/password-generator'
                   className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${!data?.passwordEditable || data?.passwordMobile || sifDecryptError ? pI.hiddenButton : ''}`}
                   title={browser.i18n.getMessage('details_generate_password')}
-                  state={{ from: 'details', data }}
+                  state={{ from: 'details', data: { item: data.item } }}
                 >
                   <RefreshIcon />
                 </ClearLink>
