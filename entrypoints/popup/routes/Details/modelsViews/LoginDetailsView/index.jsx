@@ -146,22 +146,6 @@ function LoginDetailsView(props) {
       stateData.content.notes = e?.content?.notes ? e.content.notes : '';
     }
 
-    stateData.uiState = {
-      nameEditable: data.nameEditable,
-      usernameEditable: data.usernameEditable,
-      passwordEditable: data.passwordEditable,
-      passwordVisible: data.passwordVisible,
-      passwordMobile: data.passwordMobile,
-      usernameMobile: data.usernameMobile,
-      domainsEditable: data.domainsEditable,
-      urisWithTempIds: data.urisWithTempIds,
-      tierEditable: data.tierEditable,
-      tagsEditable: data.tagsEditable,
-      notesEditable: data.notesEditable,
-      urisRemoved: data.urisRemoved,
-      sifDecryptError: data.sifDecryptError
-    };
-
     return navigate('/fetch', {
       state: {
         action: PULL_REQUEST_TYPES.UPDATE_DATA,

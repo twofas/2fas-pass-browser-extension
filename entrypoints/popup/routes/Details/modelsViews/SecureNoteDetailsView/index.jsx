@@ -134,16 +134,6 @@ function SecureNoteDetailsView(props) {
       stateData.tags = e.tags || [];
     }
 
-    stateData.uiState = {
-      nameEditable: data.nameEditable,
-      sifEditable: data.sifEditable,
-      sifVisible: data.sifVisible,
-      additionalInfoEditable: data.additionalInfoEditable,
-      tierEditable: data.tierEditable,
-      tagsEditable: data.tagsEditable,
-      sifDecryptError: data.sifDecryptError
-    };
-
     return navigate('/fetch', {
       state: {
         action: PULL_REQUEST_TYPES.UPDATE_DATA,
