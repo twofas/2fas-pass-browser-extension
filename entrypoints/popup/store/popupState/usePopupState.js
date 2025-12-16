@@ -23,6 +23,10 @@ const usePopupState = () => {
   const setScrollPositionToStore = usePopupStateStore(state => state.setScrollPosition);
   const href = usePopupStateStore(state => state.href);
   const setHref = usePopupStateStore(state => state.setHref);
+  const popHref = usePopupStateStore(state => state.popHref);
+  const getLastHref = usePopupStateStore(state => state.getLastHref);
+  const getPreviousHref = usePopupStateStore(state => state.getPreviousHref);
+  const clearHref = usePopupStateStore(state => state.clearHref);
 
   const pathDataForPathname = usePopupStateStore(state => state.pathData[pathname]);
 
@@ -56,7 +60,11 @@ const usePopupState = () => {
     scrollPosition,
     setScrollPosition,
     href,
-    setHref
+    setHref,
+    popHref,
+    getLastHref,
+    getPreviousHref,
+    clearHref
   };
 };
 

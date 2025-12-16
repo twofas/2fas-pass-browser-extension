@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { Link, useNavigate, useLocation } from 'react-router';
-import { getPreviousPath } from '../../utils/navigationHistory';
+import usePopupStateStore from '../../store/popupState';
 import BackIcon from '@/assets/popup-window/back.svg?react';
 import CancelIcon from '@/assets/popup-window/cancel.svg?react';
 
@@ -16,7 +16,24 @@ import CancelIcon from '@/assets/popup-window/cancel.svg?react';
 function NavigationButton(props) {
   const navigate = useNavigate();
   const location = useLocation();
-  const previousPath = getPreviousPath();
+  const hrefArray = usePopupStateStore(state => state.href);
+  const popHref = usePopupStateStore(state => state.popHref);
+
+  const currentPath = location.pathname;
+  let previousPath = null;
+  let popCount = 1;
+
+  for (let i = hrefArray.length - 2; i >= 0; i--) {
+    if (hrefArray[i] !== currentPath) {
+      if (hrefArray[i] === '/' && i === 0) {
+        continue;
+      }
+
+      previousPath = hrefArray[i];
+      popCount = hrefArray.length - 1 - i;
+      break;
+    }
+  }
 
   return (
     <Link
@@ -27,44 +44,24 @@ function NavigationButton(props) {
         if (props?.type === 'back') {
           e.preventDefault();
 
-          try {
-            const currentPath = location.pathname;
-            const currentSegments = currentPath.split('/').filter(segment => segment);
+          for (let i = 0; i < popCount; i++) {
+            popHref();
+          }
 
-            if (window.history.length > 1 && location.key !== 'default') {
-              if (previousPath && previousPath !== currentPath) {
-                const previousSegments = previousPath.split('/').filter(segment => segment);
+          const navState = { ...props.state, isBackNavigation: true };
 
-                if (previousSegments[0] === 'details' || previousSegments[0] === 'add-new') {
-                  navigate(previousPath, { state: props.state });
-                  return;
-                }
+          if (previousPath) {
+            navigate(previousPath, { state: navState });
+          } else {
+            const currentSegments = location.pathname.split('/').filter(segment => segment);
 
-                if (previousSegments.length > currentSegments.length) {
-                  if (currentSegments.length > 0) {
-                    currentSegments.pop();
-                    const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
-                    navigate(parentPath, { state: props.state });
-                  } else {
-                    navigate('/', { state: props.state });
-                  }
-
-                  return;
-                }
-              }
-
-              navigate(-1, { state: props.state });
+            if (currentSegments.length > 0) {
+              currentSegments.pop();
+              const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
+              navigate(parentPath, { state: navState });
             } else {
-              if (currentSegments.length > 0) {
-                currentSegments.pop();
-                const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
-                navigate(parentPath, { state: props.state });
-              } else {
-                navigate('/', { state: props.state });
-              }
+              navigate('/', { state: navState });
             }
-          } catch {
-            navigate('/', { state: props.state });
           }
         } else if (props?.onClick && typeof props?.onClick === 'function') {
           e.preventDefault();

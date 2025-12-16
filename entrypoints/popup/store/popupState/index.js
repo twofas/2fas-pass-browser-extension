@@ -23,11 +23,38 @@ const isDev = import.meta.env.DEV;
 * Optimized for performance with parallel async operations and explicit garbage collection.
 * @return {object} The Zustand store for popup state management.
 */
+const MAX_HREF_HISTORY = 20;
+
 const usePopupStateStore = create(
   persist(
     (set, get) => ({
-      href: '',
-      setHref: href => set({ href }),
+      href: [],
+      setHref: pathname => set(state => {
+        const currentHref = state.href;
+
+        if (currentHref[currentHref.length - 1] === pathname) {
+          return state;
+        }
+
+        const newHref = [...currentHref, pathname].slice(-MAX_HREF_HISTORY);
+        return { href: newHref };
+      }),
+      popHref: () => set(state => {
+        if (state.href.length <= 1) {
+          return { href: [] };
+        }
+
+        return { href: state.href.slice(0, -1) };
+      }),
+      getLastHref: () => {
+        const href = get().href;
+        return href.length > 0 ? href[href.length - 1] : null;
+      },
+      getPreviousHref: () => {
+        const href = get().href;
+        return href.length >= 2 ? href[href.length - 2] : null;
+      },
+      clearHref: () => set({ href: [] }),
       pathData: {},
       getData: pathname => get().pathData[pathname]?.data || {},
       setData: (pathname, name, data) => set(state => {
