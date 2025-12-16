@@ -64,17 +64,33 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
     }
 
     if (search && search.length > 0) {
-      result = result.filter(item => {
+      const searchLower = search.toLowerCase();
+      const nameMatches = [];
+      const otherMatches = [];
+
+      result.forEach(item => {
+        const nameMatch = item?.content?.name?.toLowerCase().includes(searchLower);
+
+        if (nameMatch) {
+          nameMatches.push(item);
+          return;
+        }
+
         let urisTexts = [];
 
         if (item?.content && item?.content?.uris && Array.isArray(item?.content?.uris)) {
           urisTexts = item.content.uris.map(uri => uri?.text).filter(Boolean);
         }
 
-        return item?.content?.name?.toLowerCase().includes(search?.toLowerCase()) ||
-          item?.content?.username?.toLowerCase().includes(search?.toLowerCase()) ||
-          urisTexts.some(uriText => uriText?.toLowerCase().includes(search?.toLowerCase()));
+        const usernameMatch = item?.content?.username?.toLowerCase().includes(searchLower);
+        const uriMatch = urisTexts.some(uriText => uriText?.toLowerCase().includes(searchLower));
+
+        if (usernameMatch || uriMatch) {
+          otherMatches.push(item);
+        }
       });
+
+      result = nameMatches.concat(otherMatches);
     }
 
     if ((!result || result.length <= 0) && !loading) {
