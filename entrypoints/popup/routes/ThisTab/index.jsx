@@ -17,7 +17,6 @@ import getTags from '@/partials/sessionStorage/getTags';
 import { filterXSS } from 'xss';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
 import getDomainFromMessage from './functions/getDomainFromMessage';
-import { useLocation } from 'react-router';
 import isItemsCorrect from './functions/isItemsCorrect';
 import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
@@ -40,7 +39,6 @@ const thisTabTopVariants = {
 * @return {JSX.Element} Element representing the ThisTab component.
 */
 function ThisTab (props) {
-  const location = useLocation();
   const { changeMatchingLoginsLength } = useMatchingLogins();
   const scrollableRefContext = useContext(ScrollableRefContext);
   const [loading, setLoading] = useState(true);
@@ -51,7 +49,7 @@ function ThisTab (props) {
   const [matchingLogins, setMatchingLogins] = useState([]);
   const [storageVersion, setStorageVersion] = useState(null);
 
-  const { data, setBatchData, setScrollPosition, setHref, pathname } = usePopupState();
+  const { data, setBatchData } = usePopupState();
 
   // Refs
   const boxAnimationRef = useRef(null);
@@ -67,43 +65,6 @@ function ThisTab (props) {
       scrollableRefContext.setRef(scrollableRef.current);
     }
   }, [scrollableRefContext]);
-
-  const syncState = useCallback(() => {
-    if (!location.state?.from) {
-      return;
-    }
-
-    if (location.state?.data) {
-      const fieldsToSync = [
-        'lastSelectedTagInfo',
-        'searchActive',
-        'searchValue',
-        'selectedTag'
-      ];
-
-      const updates = {};
-      let hasChanges = false;
-
-      fieldsToSync.forEach(field => {
-        if (Object.prototype.hasOwnProperty.call(location.state.data, field)) {
-          updates[field] = location.state.data[field];
-          hasChanges = true;
-        }
-      });
-
-      if (hasChanges) {
-        setBatchData(updates);
-      }
-    }
-
-    if (location.state?.scrollPosition !== undefined) {
-      setScrollPosition(location.state.scrollPosition);
-    }
-
-    if (location.state?.from === 'details') {
-      setHref(pathname);
-    }
-  }, [location.state, pathname, setScrollPosition, setHref, setBatchData]);
 
   const { handleSortChange } = useSortFilter();
   const { handleTagChange } = useTagFilter();
@@ -334,14 +295,6 @@ function ThisTab (props) {
       }
     };
   }, [storageVersion, messageListener, initializeData]);
-
-  useEffect(() => {
-    if (location.state?.from === 'details') {
-      setTimeout(() => {
-        syncState();
-      }, 0);
-    }
-  }, [location?.state, syncState]);
 
   return (
     <LazyMotion features={loadDomAnimation}>
