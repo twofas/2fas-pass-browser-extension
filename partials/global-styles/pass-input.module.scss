@@ -82,7 +82,12 @@
       }
 
       span {
+        color: v.$primary-text-light;
         font-size: 12px;
+
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
       }
     }
   }
