@@ -4,12 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { Link } from 'react-router';
 import { lazy } from 'react';
 import handleUriCopyClick from '../../../functions/serviceList/handleUriCopyClick';
 import handleUriClick from '../../../functions/serviceList/handleUriClick';
 import handleForgetPassword from '../../../functions/serviceList/handleForgetPassword';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
 
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 const DetailsIcon = lazy(() => import('@/assets/popup-window/details.svg?react'));
@@ -22,27 +21,18 @@ const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
 * @return {JSX.Element} The rendered custom option.
 */
 const ItemCustomOption = option => {
-  const clearData = usePopupStateStore(state => state.clearData);
-
   switch (option?.data?.type) {
     case 'details': {
-      const detailsPath = `/details/${option.data.deviceId}/${option.data.vaultId}/${option.data.id}`;
-
-      const handleDetailsClick = () => {
-        clearData(detailsPath);
-      };
-
       return (
         <div className='react-select-dropdown__option details'>
-          <Link
-            to={detailsPath}
-            onClick={handleDetailsClick}
+          <ClearLink
+            to={`/details/${option.data.deviceId}/${option.data.vaultId}/${option.data.id}`}
             className='react-select-dropdown__option--uri details'
             prefetch='intent'
           >
             <DetailsIcon />
             <span>{browser.i18n.getMessage('this_tab_more_details')}</span>
-          </Link>
+          </ClearLink>
         </div>
       );
     }

@@ -6,11 +6,11 @@
 
 import S from '../styles/Item.module.scss';
 import handleCardNumber from '../../../functions/serviceList/handleCardNumber';
-import { Link } from 'react-router';
 import { useState, useRef, lazy, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
 
 const ItemFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 const ItemCopyIcon = lazy(() => import('@/assets/popup-window/card-number.svg?react'));
@@ -115,7 +115,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
     );
   } else {
     return (
-      <Link
+      <ClearLink
         to='/fetch'
         state={{
           action: PULL_REQUEST_TYPES.SIF_REQUEST,
@@ -131,7 +131,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
         prefetch='intent'
       >
         <ItemFetchIcon className={S.itemFetch} />
-      </Link>
+      </ClearLink>
     );
   }
 };

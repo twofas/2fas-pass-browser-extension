@@ -5,15 +5,10 @@
 // See LICENSE file for full terms
 
 import { itemsUiData } from '@/entrypoints/popup/constants';
-import { Link } from 'react-router';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import ClearLink from '../../ClearLink';
 
 const AddNewCustomOption = option => {
-  const clearData = usePopupStateStore(state => state.clearData);
-
   const handleClick = () => {
-    clearData(option.data.value);
-
     if (option?.selectProps?.setIsMenuOpen) {
       option.selectProps.setIsMenuOpen(false);
     }
@@ -21,7 +16,7 @@ const AddNewCustomOption = option => {
 
   return (
     <div className={`react-select-add-new__option ${option?.selectProps?.pathname === option.data.value ? 'active' : ''}`}>
-      <Link
+      <ClearLink
         to={option.data.value}
         title={`${browser.i18n.getMessage('top_bar_create_new')} ${option.data.label}`}
         onClick={handleClick}
@@ -30,7 +25,7 @@ const AddNewCustomOption = option => {
           {itemsUiData[option.data.item].svg}
         </span>
         <span className='react-select-add-new__option-label'>{option.data.label}</span>
-      </Link>
+      </ClearLink>
     </div>
   );
 };

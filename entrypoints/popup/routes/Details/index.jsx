@@ -6,7 +6,7 @@
 
 import S from './Details.module.scss';
 import { LazyMotion } from 'motion/react';
-import { useParams, useNavigate, useLocation, Link } from 'react-router';
+import { useParams, useNavigate, useLocation } from 'react-router';
 import { useState, useEffect, useCallback, useRef, useMemo, lazy } from 'react';
 import getItem from '@/partials/sessionStorage/getItem';
 import usePopupState from '../../store/popupState/usePopupState';
@@ -15,6 +15,7 @@ import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import matchModel from '@/partials/models/itemModels/matchModel';
 import Login from '@/partials/models/itemModels/Login';
 import { PULL_REQUEST_TYPES } from '@/constants';
+import ClearLink from '../../components/ClearLink';
 
 // Model Views
 import LoginDetailsView from './modelsViews/LoginDetailsView';
@@ -208,7 +209,7 @@ function Details(props) {
 
               <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
                 <p>{browser.i18n.getMessage('details_fetch_text')}</p>
-                <Link
+                <ClearLink
                   to='/fetch'
                   state={{
                     action: PULL_REQUEST_TYPES.SIF_REQUEST,
@@ -224,7 +225,7 @@ function Details(props) {
                 >
                   <ServiceFetchIcon />
                   <span>{browser.i18n.getMessage('fetch')}</span>
-                </Link>
+                </ClearLink>
               </div>
 
               {modelComponent}

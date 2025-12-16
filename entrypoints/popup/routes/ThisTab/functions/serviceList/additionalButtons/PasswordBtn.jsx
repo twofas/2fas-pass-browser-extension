@@ -6,11 +6,11 @@
 
 import S from '../../../components/Item/styles/Item.module.scss';
 import handlePassword from '../handlePassword';
-import { Link } from 'react-router';
 import { useState, useRef, lazy, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import Login from '@/partials/models/itemModels/Login';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
 
 const ItemFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 const ItemPasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));
@@ -131,7 +131,7 @@ const PasswordBtn = ({ item, more, setMore }) => {
     );
   } else {
     return (
-      <Link
+      <ClearLink
         to='/fetch'
         state={{
           action: PULL_REQUEST_TYPES.SIF_REQUEST,
@@ -148,7 +148,7 @@ const PasswordBtn = ({ item, more, setMore }) => {
         prefetch='intent'
       >
         <ItemFetchIcon className={S.itemFetch} />
-      </Link>
+      </ClearLink>
     );
   }
 };

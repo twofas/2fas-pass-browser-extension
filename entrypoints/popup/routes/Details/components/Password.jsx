@@ -9,7 +9,6 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import { Link } from 'react-router';
 import { copyValue, isText } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -20,6 +19,7 @@ import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import ExternalLinkIcon from '@/assets/popup-window/new-tab.svg?react';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
@@ -267,14 +267,14 @@ function Password (props) {
                 autoCapitalize="off"
               />
               <div className={pI.passInputBottomButtons}>
-                <Link
+                <ClearLink
                   to='/password-generator'
                   className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${!data?.passwordEditable || data?.passwordMobile || sifDecryptError ? pI.hiddenButton : ''}`}
                   title={browser.i18n.getMessage('details_generate_password')}
                   state={{ from: 'details', data }}
                 >
                   <RefreshIcon />
-                </Link>
+                </ClearLink>
                 <button
                   type="button"
                   onClick={handlePasswordVisibleClick}
