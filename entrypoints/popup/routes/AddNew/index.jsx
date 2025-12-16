@@ -62,7 +62,7 @@ function AddNew(props) {
         <div ref={scrollableRef}>
           <section className={S.addNew}>
             <div className={S.addNewContainer}>
-              <NavigationButton type='cancel' />
+              <NavigationButton type='back' />
 
               <h2>{browser.i18n.getMessage('add_new_header').replace('ITEM', itemsUiData[params.model]?.label || browser.i18n.getMessage('item'))}</h2>
               <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
