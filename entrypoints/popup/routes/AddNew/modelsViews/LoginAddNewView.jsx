@@ -21,7 +21,6 @@ import Tooltip from '@/entrypoints/popup/components/Tooltip';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
-import PasswordInput from '@/entrypoints/popup/components/PasswordInput';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import Login from '@/partials/models/itemModels/Login';
 
@@ -358,7 +357,7 @@ function LoginAddNewView() {
                   <label htmlFor="s_password">{browser.i18n.getMessage('password')}</label>
                 </div>
                 <div className={pI.passInputBottom}>
-                  <PasswordInput
+                  <input
                     {...input}
                     type={data?.passwordVisible ? 'text' : 'password'}
                     placeholder={browser.i18n.getMessage('placeholder_password')}
