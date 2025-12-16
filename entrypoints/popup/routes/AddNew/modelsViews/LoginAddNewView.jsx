@@ -363,8 +363,6 @@ function LoginAddNewView() {
                     type={data?.passwordVisible ? 'text' : 'password'}
                     placeholder={browser.i18n.getMessage('placeholder_password')}
                     id="s_password"
-                    showPassword={data?.passwordVisible}
-                    isDecrypted={true}
                     disabled={data?.onMobile ? 'disabled' : ''}
                     dir="ltr"
                     spellCheck="false"
