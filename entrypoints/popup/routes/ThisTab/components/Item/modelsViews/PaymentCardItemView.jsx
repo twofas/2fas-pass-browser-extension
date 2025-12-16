@@ -16,9 +16,9 @@ const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButt
 const CopyCardNumberBtn = lazy(() => import('../components/CopyCardNumberBtn'));
 const CopyCardSecurityCodeBtn = lazy(() => import('../components/CopyCardSecurityCodeBtn'));
 const { useCallback } = await import('react');
-const CustomOption = lazy(() => import('../components/CustomOption'));
+const ItemCustomOption = lazy(() => import('../components/ItemCustomOption'));
 
-const selectComponents = { Option: CustomOption };
+const selectComponents = { Option: ItemCustomOption };
 
 function PaymentCardItemView (props) {
   const moreBtnRef = useRef(null);

@@ -9,7 +9,7 @@ import { lazy } from 'react';
 import handleUriCopyClick from '../../../functions/serviceList/handleUriCopyClick';
 import handleUriClick from '../../../functions/serviceList/handleUriClick';
 import handleForgetPassword from '../../../functions/serviceList/handleForgetPassword';
-import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
+import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 const DetailsIcon = lazy(() => import('@/assets/popup-window/details.svg?react'));
@@ -17,24 +17,26 @@ const MoreUrlIcon = lazy(() => import('@/assets/popup-window/more-url.svg?react'
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
 
 /**
-* Function to render a custom option in the dropdown.
+* Function to render a custom option in the item dropdown.
 * @param {Object} option - The option data.
 * @return {JSX.Element} The rendered custom option.
 */
-const CustomOption = option => {
-  const { data, scrollPosition } = usePopupState();
+const ItemCustomOption = option => {
+  const clearData = usePopupStateStore(state => state.clearData);
 
   switch (option?.data?.type) {
     case 'details': {
+      const detailsPath = `/details/${option.data.deviceId}/${option.data.vaultId}/${option.data.id}`;
+
+      const handleDetailsClick = () => {
+        clearData(detailsPath);
+      };
+
       return (
         <div className='react-select-dropdown__option details'>
           <Link
-            to={`/details/${option.data.deviceId}/${option.data.vaultId}/${option.data.id}`}
-            state={{
-              from: 'thisTab',
-              data: { ...data },
-              scrollPosition
-            }}
+            to={detailsPath}
+            onClick={handleDetailsClick}
             className='react-select-dropdown__option--uri details'
             prefetch='intent'
           >
@@ -98,4 +100,4 @@ const CustomOption = option => {
   }
 };
 
-export default CustomOption;
+export default ItemCustomOption;

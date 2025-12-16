@@ -15,9 +15,9 @@ import Skeleton from '../../Skeleton';
 const PasswordBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/PasswordBtn'));
 const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
 const UsernameBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/UsernameBtn'));
-const CustomOption = lazy(() => import('../components/CustomOption'));
+const ItemCustomOption = lazy(() => import('../components/ItemCustomOption'));
 
-const selectComponents = { Option: CustomOption };
+const selectComponents = { Option: ItemCustomOption };
 
 function LoginItemView (props) {
   const [faviconError, setFaviconError] = useState(false);

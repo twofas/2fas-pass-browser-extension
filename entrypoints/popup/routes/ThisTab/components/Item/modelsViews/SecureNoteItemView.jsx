@@ -13,9 +13,9 @@ import Skeleton from '../../Skeleton';
 const CopyNameBtn = lazy(() => import('../components/CopyNameBtn'));
 const CopySecureNoteBtn = lazy(() => import('../components/CopySecureNoteBtn'));
 const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
-const CustomOption = lazy(() => import('../components/CustomOption'));
+const ItemCustomOption = lazy(() => import('../components/ItemCustomOption'));
 
-const selectComponents = { Option: CustomOption };
+const selectComponents = { Option: ItemCustomOption };
 
 function SecureNoteItemView (props) {
   const moreBtnRef = useRef(null);
