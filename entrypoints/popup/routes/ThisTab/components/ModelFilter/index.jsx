@@ -39,7 +39,11 @@ const ModelFilter = props => {
   }, [deviceSupportedFeatures]);
 
   const selectedOption = useMemo(() => {
-    return itemModelsOptions.find(option => option.value === data.itemModelFilter);
+    if (data.itemModelFilter === undefined || data.itemModelFilter === null) {
+      return itemModelsOptions[0] || null;
+    }
+
+    return itemModelsOptions.find(option => option.value === data.itemModelFilter) || itemModelsOptions[0] || null;
   }, [itemModelsOptions, data.itemModelFilter]);
 
   const modelIcon = useMemo(() => {

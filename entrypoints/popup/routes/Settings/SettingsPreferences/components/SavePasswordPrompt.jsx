@@ -6,8 +6,8 @@
 
 import S from '../../Settings.module.scss';
 import { useEffect, useState, lazy, useCallback, Suspense } from 'react';
-import { Link } from 'react-router';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
 
 const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
 
@@ -100,7 +100,7 @@ function SavePasswordPrompt () {
       </form>
 
       {sP === 'default' || sP === 'default_encrypted' ? (
-        <Link
+        <ClearLink
           to='/settings/preferences/save-login-excluded-domains'
           className={S.settingsSavePasswordPromptExcludedDomainsLink}
           prefetch='intent'
@@ -109,7 +109,7 @@ function SavePasswordPrompt () {
           <Suspense fallback={null}>
             <MenuArrowIcon />
           </Suspense>
-        </Link>
+        </ClearLink>
       ) : null}
     </div>
   );

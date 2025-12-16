@@ -17,6 +17,7 @@ import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
 import generateAddNewOptions from './functions/generateAddNewOptions';
 import { getSupportedFeatures } from '@/partials/functions';
 import { supportedFeatures } from '@/constants';
+import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 
 const selectComponents = { Option: AddNewCustomOption };
 const noOptionsMessage = () => null;
@@ -39,6 +40,7 @@ function TopBar() {
   const { configured } = useAuthState();
   const { matchingLoginsLength } = useMatchingLogins();
   const scrollableRefContext = useContext(ScrollableRefContext);
+  const clearData = usePopupStateStore(state => state.clearData);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [addNewOptions, setAddNewOptions] = useState([]);
@@ -71,6 +73,8 @@ function TopBar() {
   }, [logout]);
 
   const handleLogoClick = useCallback(() => {
+    clearData(location.pathname);
+
     if (location.pathname === '/' && scrollableRefContext?.ref?.current) {
       scrollableRefContext.ref.current.scrollTo({
         top: 0,
@@ -78,7 +82,7 @@ function TopBar() {
         behavior: 'smooth'
       });
     }
-  }, [location.pathname, scrollableRefContext]);
+  }, [clearData, location.pathname, scrollableRefContext]);
 
   const logoClass = useMemo(() =>
     `${S.topbarLogo} ${(location.pathname === '/blocked' || location.pathname === '/connect') ? S.disabled : ''}`,

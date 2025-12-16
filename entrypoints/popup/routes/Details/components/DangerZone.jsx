@@ -6,10 +6,10 @@
 
 import S from '../Details.module.scss';
 import * as m from 'motion/react-m';
-import { Link } from 'react-router';
 import { lazy } from 'react';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import usePopupState from '../../../store/popupState/usePopupState';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
 
 const ChevronIcon = lazy(() => import('@/assets/popup-window/chevron.svg?react'));
 
@@ -49,7 +49,7 @@ function DangerZone (props) {
         animate={data.dangerZoneOpened ? 'visible' : 'hidden'}
       >
         <p>{browser.i18n.getMessage('details_delete_header')}</p>
-        <Link
+        <ClearLink
           to='/fetch'
           state={{
             action: PULL_REQUEST_TYPES.DELETE_DATA,
@@ -65,7 +65,7 @@ function DangerZone (props) {
           prefetch='intent'
         >
           <span>{browser.i18n.getMessage('details_delete')}</span>
-        </Link>
+        </ClearLink>
       </m.div>
     </div>
   );
