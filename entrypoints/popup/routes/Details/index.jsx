@@ -204,7 +204,7 @@ function Details(props) {
         <div ref={scrollableRef}>
           <section className={S.details}>
             <div className={S.detailsContainer}>
-              <NavigationButton type='cancel' />
+              <NavigationButton type='back' />
               <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
 
               <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
