@@ -502,6 +502,7 @@
 
         &.item-name {
           stroke: v.$object-light;
+          stroke-width: 1.5;
           width: 20px;
 
           @include m.darkMode {
@@ -513,6 +514,7 @@
         &.item-copy-security-code,
         &.item-copy-card-number {
           stroke: v.$object-light;
+          stroke-width: 1.5;
           width: 19px;
 
           @include m.darkMode {
