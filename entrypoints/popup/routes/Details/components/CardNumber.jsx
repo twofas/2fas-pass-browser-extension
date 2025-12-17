@@ -31,6 +31,7 @@ function CardNumber (props) {
   const { data, setData, setBatchData } = usePopupState();
 
   const previousCardNumberRef = useRef(null);
+  const inputRef = useRef(null);
   const [localDecryptedCardNumber, setLocalDecryptedCardNumber] = useState(null);
   const [localEditedCardNumber, setLocalEditedCardNumber] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
@@ -97,6 +98,12 @@ function CardNumber (props) {
       decryptCardNumberOnDemand();
     }
   }, [data?.cardNumberEditable, data?.cardNumberVisible, localDecryptedCardNumber, isDecrypting, data.item?.cardNumberExists, decryptCardNumberOnDemand]);
+
+  useEffect(() => {
+    if (data?.cardNumberEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [data?.cardNumberEditable]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -237,6 +244,7 @@ function CardNumber (props) {
         <input
           type='password'
           id='editedCardNumber'
+          ref={inputRef}
           value={rawCardNumber}
           onChange={handleRawCardNumberChange}
           disabled={sifDecryptError || isHighlySecretWithoutSif}
@@ -262,6 +270,7 @@ function CardNumber (props) {
 
     return (
       <PaymentCardNumberInput
+        ref={inputRef}
         value={getCardNumberValue()}
         id='editedCardNumber'
         onChange={handleCardNumberChange}

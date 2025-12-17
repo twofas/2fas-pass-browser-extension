@@ -33,6 +33,7 @@ function CardSecurityCode (props) {
   const { data, setData, setBatchData } = usePopupState();
 
   const previousSecurityCodeRef = useRef(null);
+  const inputRef = useRef(null);
   const [localDecryptedSecurityCode, setLocalDecryptedSecurityCode] = useState(null);
   const [localEditedSecurityCode, setLocalEditedSecurityCode] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
@@ -110,6 +111,12 @@ function CardSecurityCode (props) {
       decryptSecurityCodeOnDemand();
     }
   }, [data?.securityCodeEditable, data?.securityCodeVisible, localDecryptedSecurityCode, isDecrypting, data.item?.securityCodeExists, decryptSecurityCodeOnDemand]);
+
+  useEffect(() => {
+    if (data?.securityCodeEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [data?.securityCodeEditable]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -243,6 +250,7 @@ function CardSecurityCode (props) {
         <input
           type='password'
           id='editedSecurityCode'
+          ref={inputRef}
           className={S.paymentCardSecurityCodeInput}
           value={getRawSecurityCode()}
           onChange={handleRawSecurityCodeChange}
@@ -268,6 +276,7 @@ function CardSecurityCode (props) {
 
     return (
       <PaymentCardSecurityCodeInput
+        ref={inputRef}
         value={getSecurityCodeValue()}
         id='editedSecurityCode'
         cardNumber={getCardNumberValue()}

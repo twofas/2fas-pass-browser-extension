@@ -7,7 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { lazy, useCallback } from 'react';
+import { lazy, useCallback, useEffect, useRef } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -22,6 +22,7 @@ const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?
 */
 function CardHolder (props) {
   const { data, setData, setBatchData } = usePopupState();
+  const inputRef = useRef(null);
 
   const { formData } = props;
   const { inputError } = formData;
@@ -66,6 +67,12 @@ function CardHolder (props) {
     setData('item', updatedItem);
   }, [data.item, setData]);
 
+  useEffect(() => {
+    if (data.cardHolderEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [data.cardHolderEditable]);
+
   return (
     <Field name="content.cardHolder">
       {({ input }) => (
@@ -85,6 +92,7 @@ function CardHolder (props) {
             <input
               type='text'
               {...input}
+              ref={inputRef}
               onChange={e => {
                 input.onChange(e);
                 handleCardholderChange(e);

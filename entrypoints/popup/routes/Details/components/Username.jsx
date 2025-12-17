@@ -9,7 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import { lazy, useCallback } from 'react';
+import { lazy, useCallback, useEffect, useRef } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -30,6 +30,7 @@ const usernameMobileVariants = {
 */
 function Username (props) {
   const { data, setData, setBatchData } = usePopupState();
+  const inputRef = useRef(null);
 
   const { formData } = props;
   const { inputError } = formData;
@@ -92,6 +93,12 @@ function Username (props) {
     setData('item', updatedItem);
   }, [data.item, setData]);
 
+  useEffect(() => {
+    if (data.usernameEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [data.usernameEditable]);
+
   return (
     <Field name="content.username">
       {({ input }) => (
@@ -111,6 +118,7 @@ function Username (props) {
             <input
               type="text"
               {...input}
+              ref={inputRef}
               onChange={e => {
                 input.onChange(e);
                 handleUsernameChange(e);

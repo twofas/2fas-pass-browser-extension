@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardNumberInput.module.scss';
-import { memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
+import { forwardRef, memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
 import getCardNumberMask from './getCardNumberMask';
 
 /**
@@ -19,9 +19,10 @@ import getCardNumberMask from './getCardNumberMask';
 * @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
 * @param {string} props.placeholder - Optional placeholder text override.
 * @param {Object} props.inputProps - Additional props to spread on InputMask.
+* @param {Object} ref - Forwarded ref for the input element.
 * @return {JSX.Element} The rendered component.
 */
-function PaymentCardNumberInput ({ value, onChange, id, securityType, sifExists, placeholder, ...inputProps }) {
+const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, sifExists, placeholder, ...inputProps }, ref) => {
   const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
@@ -80,6 +81,7 @@ function PaymentCardNumberInput ({ value, onChange, id, securityType, sifExists,
     return (
       <input
         {...inputProps}
+        ref={ref}
         placeholder={effectivePlaceholder}
         className={S.paymentCardNumberInput}
         type='text'
@@ -94,6 +96,7 @@ function PaymentCardNumberInput ({ value, onChange, id, securityType, sifExists,
   return (
     <InputMask
       {...inputProps}
+      ref={ref}
       placeholder={effectivePlaceholder}
       className={S.paymentCardNumberInput}
       type='text'
@@ -106,6 +109,6 @@ function PaymentCardNumberInput ({ value, onChange, id, securityType, sifExists,
       onFocus={handleFocus}
     />
   );
-}
+});
 
 export default memo(PaymentCardNumberInput);

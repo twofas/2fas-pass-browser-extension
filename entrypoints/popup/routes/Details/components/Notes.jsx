@@ -11,7 +11,7 @@ import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import updateItem from '../functions/updateItem';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
@@ -27,6 +27,7 @@ const notesVariants = {
 */
 function Notes () {
   const { data, setData, setBatchData } = usePopupState();
+  const textareaRef = useRef(null);
 
   const handleNotesEditable = async () => {
     if (data.notesEditable) {
@@ -59,6 +60,13 @@ function Notes () {
     setData('item', updatedItem);
   }, [data.item, setData]);
 
+  useEffect(() => {
+    if (data.notesEditable && textareaRef.current) {
+      textareaRef.current.focus();
+      textareaRef.current.setSelectionRange(0, 0);
+    }
+  }, [data.notesEditable]);
+
   return (
     <Field name="content.notes">
       {({ input }) => (
@@ -87,6 +95,7 @@ function Notes () {
               >
                 <textarea
                   {...input}
+                  ref={textareaRef}
                   onChange={e => {
                     input.onChange(e);
                     handleNotesChange(e);

@@ -7,7 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -21,6 +21,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 */
 function Name (props) {
   const { data, setData, setBatchData } = usePopupState();
+  const inputRef = useRef(null);
 
   const { formData } = props;
   const { inputError } = formData;
@@ -65,6 +66,12 @@ function Name (props) {
     setData('item', updatedItem);
   }, [data.item, setData]);
 
+  useEffect(() => {
+    if (data.nameEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [data.nameEditable]);
+
   return (
     <Field name="content.name">
       {({ input }) => (
@@ -84,6 +91,7 @@ function Name (props) {
             <input
               type="text"
               {...input}
+              ref={inputRef}
               onChange={e => {
                 input.onChange(e);
                 handleNameChange(e);

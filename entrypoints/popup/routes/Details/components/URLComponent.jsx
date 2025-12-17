@@ -8,7 +8,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
-import { lazy, useCallback } from 'react';
+import { lazy, useCallback, useEffect, useRef } from 'react';
 import { LazyMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import copyValue from '@/partials/functions/copyValue';
@@ -55,6 +55,7 @@ function URLComponent (props) {
   const { urisWithTempIds, updateUri, removeUri, resetUri } = useUriTempIds();
 
   const { inputError, uri, index } = props;
+  const inputRef = useRef(null);
 
   const isEditable = data?.domainsEditable?.[uri._tempId];
   const buttonText = isEditable === true ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit');
@@ -166,6 +167,12 @@ function URLComponent (props) {
     updateUri(uri._tempId, { text: newUriText });
   }, [data.item, setData, uri._tempId, urisWithTempIds, updateUri]);
 
+  useEffect(() => {
+    if (isEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditable]);
+
   return (
     <LazyMotion features={loadDomAnimation}>
       <Field name={`content.uris[${index}].text`}>
@@ -185,6 +192,7 @@ function URLComponent (props) {
               <input
                 type="text"
                 {...input}
+                ref={inputRef}
                 value={uri.text}
                 onChange={e => {
                   input.onChange(e);
