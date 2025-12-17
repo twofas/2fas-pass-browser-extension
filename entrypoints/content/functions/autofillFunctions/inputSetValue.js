@@ -11,16 +11,26 @@ import getElementInitialScale from './getElementInitialScale';
 * Function to set the value of an input element with a smooth transition effect.
 * @param {HTMLInputElement} el - The input element to set the value for.
 * @param {string} value - The value to set for the input element.
+* @param {Object} options - Optional configuration object.
+* @param {boolean} options.respectSkipAttribute - Whether to respect the twofas-pass-skip attribute (default: true).
 * @return {void}
 */
-const inputSetValue = (el, value) => {
+const inputSetValue = (el, value, options = {}) => {
+  const { respectSkipAttribute = true } = options;
   const AUTOFILL_CLASS_DELAY = 10;
   const AUTOFILL_VALUE_DELAY = 20;
   const AUTOFILL_RESET_DELAY = 200;
-  const usernameSkipAttribute = el.getAttribute('twofas-pass-skip');
 
-  if (!isVisible(el) || usernameSkipAttribute === 'true') {
+  if (!isVisible(el)) {
     return;
+  }
+
+  if (respectSkipAttribute) {
+    const skipAttribute = el.getAttribute('twofas-pass-skip');
+
+    if (skipAttribute === 'true') {
+      return;
+    }
   }
 
   const initialElementScale = getElementInitialScale(el);

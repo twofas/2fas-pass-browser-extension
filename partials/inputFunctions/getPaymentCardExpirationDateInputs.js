@@ -9,6 +9,31 @@ import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 
+const conflictingAutocompleteValues = [
+  'cc-number',
+  'cc-name',
+  'cc-given-name',
+  'cc-additional-name',
+  'cc-family-name',
+  'cc-csc',
+  'cc-type'
+];
+
+/**
+* Filters out inputs that have autocomplete attributes indicating non-expiration-date fields.
+* @param {HTMLElement} input - The input or select element to check.
+* @return {boolean} True if the element should be kept, false otherwise.
+*/
+const filterConflictingAutocomplete = input => {
+  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
+
+  if (!autocomplete) {
+    return true;
+  }
+
+  return !conflictingAutocompleteValues.includes(autocomplete);
+};
+
 /**
 * Filters out inputs that contain denied keywords in their name or id.
 * @param {HTMLElement} input - The input or select element to check.
@@ -60,6 +85,7 @@ const getPaymentCardExpirationDateInputs = () => {
   const allElements = [...regularElements, ...shadowElements]
     .filter(element => isVisible(element))
     .filter(uniqueElementOnly)
+    .filter(filterConflictingAutocomplete)
     .filter(filterDeniedKeywords);
 
   return allElements.map(element => ({
