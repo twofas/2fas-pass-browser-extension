@@ -189,6 +189,54 @@ const setSelectValue = (select, value, alternateValues = []) => {
   return false;
 };
 
+const cardAutofillOptions = { respectSkipAttribute: false };
+
+/**
+* Splits a full name into given name (first name) and family name (last name).
+* @param {string} fullName - The full name string to split.
+* @return {{givenName: string, familyName: string}} Object with given and family name parts.
+*/
+const splitFullName = fullName => {
+  if (!fullName || typeof fullName !== 'string') {
+    return { givenName: '', familyName: '' };
+  }
+
+  const trimmedName = fullName.trim();
+  const nameParts = trimmedName.split(/\s+/);
+
+  if (nameParts.length === 0) {
+    return { givenName: '', familyName: '' };
+  }
+
+  if (nameParts.length === 1) {
+    return { givenName: nameParts[0], familyName: '' };
+  }
+
+  const givenName = nameParts[0];
+  const familyName = nameParts.slice(1).join(' ');
+
+  return { givenName, familyName };
+};
+
+/**
+* Sets cardholder name value for an input based on its type.
+* @param {{element: HTMLInputElement, type: string}} inputData - The input data object with element and type.
+* @param {string} fullName - The full cardholder name.
+* @param {{givenName: string, familyName: string}} splitName - The split name parts.
+* @return {void}
+*/
+const setCardholderNameValue = (inputData, fullName, splitName) => {
+  const { element, type } = inputData;
+
+  if (type === 'given') {
+    inputSetValue(element, splitName.givenName, cardAutofillOptions);
+  } else if (type === 'family') {
+    inputSetValue(element, splitName.familyName, cardAutofillOptions);
+  } else {
+    inputSetValue(element, fullName, cardAutofillOptions);
+  }
+};
+
 /**
 * Sets expiration date value for an input or select element.
 * @param {Object} inputData - The input data object with element, type, and isSelect properties.
@@ -208,14 +256,14 @@ const setExpirationDateValue = (inputData, parsedDate) => {
         monthName.substring(0, 3)
       ]);
     } else {
-      inputSetValue(element, parsedDate.month);
+      inputSetValue(element, parsedDate.month, cardAutofillOptions);
     }
   } else if (type === 'year') {
     if (isSelect) {
       success = setSelectValue(element, parsedDate.yearFull, [parsedDate.yearShort]);
     } else {
       const yearValue = element.maxLength === 2 ? parsedDate.yearShort : parsedDate.yearFull;
-      inputSetValue(element, yearValue);
+      inputSetValue(element, yearValue, cardAutofillOptions);
     }
   } else if (type === 'combined') {
     if (isSelect) {
@@ -238,7 +286,7 @@ const setExpirationDateValue = (inputData, parsedDate) => {
         combinedValue = `${parsedDate.month}/${parsedDate.yearShort}`;
       }
 
-      inputSetValue(element, combinedValue);
+      inputSetValue(element, combinedValue, cardAutofillOptions);
     }
   }
 
@@ -287,7 +335,7 @@ const setCardIssuerValue = (inputData, issuerValue) => {
   if (isSelect) {
     setSelectValue(element, issuerValue, variations);
   } else {
-    inputSetValue(element, issuerValue);
+    inputSetValue(element, issuerValue, cardAutofillOptions);
   }
 };
 
@@ -337,7 +385,8 @@ const autofillCard = async request => {
   }
 
   if (canFillCardholderName) {
-    cardholderNameInputs.forEach(input => inputSetValue(input, request.cardholderName));
+    const splitName = splitFullName(request.cardholderName);
+    cardholderNameInputs.forEach(inputData => setCardholderNameValue(inputData, request.cardholderName, splitName));
   }
 
   if (canFillCardNumber) {
@@ -355,7 +404,7 @@ const autofillCard = async request => {
       cardNumberValue = request.cardNumber;
     }
 
-    cardNumberInputs.forEach(input => inputSetValue(input, cardNumberValue));
+    cardNumberInputs.forEach(input => inputSetValue(input, cardNumberValue, cardAutofillOptions));
     cardNumberValue = null;
   }
 
@@ -398,7 +447,7 @@ const autofillCard = async request => {
       securityCodeValue = request.securityCode;
     }
 
-    securityCodeInputs.forEach(input => inputSetValue(input, securityCodeValue));
+    securityCodeInputs.forEach(input => inputSetValue(input, securityCodeValue, cardAutofillOptions));
     securityCodeValue = null;
   }
 

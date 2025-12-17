@@ -9,6 +9,33 @@ import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 
+const conflictingAutocompleteValues = [
+  'cc-name',
+  'cc-given-name',
+  'cc-additional-name',
+  'cc-family-name',
+  'cc-exp',
+  'cc-exp-month',
+  'cc-exp-year',
+  'cc-csc',
+  'cc-type'
+];
+
+/**
+* Filters out inputs that have autocomplete attributes indicating non-card-number fields.
+* @param {HTMLInputElement} input - The input element to check.
+* @return {boolean} True if the input should be kept, false otherwise.
+*/
+const filterConflictingAutocomplete = input => {
+  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
+
+  if (!autocomplete) {
+    return true;
+  }
+
+  return !conflictingAutocompleteValues.includes(autocomplete);
+};
+
 /**
 * Filters out inputs that contain denied keywords in their name or id.
 * @param {HTMLInputElement} input - The input element to check.
@@ -39,6 +66,7 @@ const getPaymentCardNumberInputs = () => {
   return [...regularInputs, ...shadowInputs]
     .filter(input => isVisible(input))
     .filter(uniqueElementOnly)
+    .filter(filterConflictingAutocomplete)
     .filter(filterDeniedKeywords);
 };
 
