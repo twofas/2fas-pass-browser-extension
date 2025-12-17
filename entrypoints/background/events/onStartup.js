@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import setIdleInterval from '@/partials/functions/setIdleInterval';
+import initContextMenu from '../contextMenu/initContextMenu';
 
 /**
 * Function to clean up old devices from local storage on startup and ensure migrations are marked as complete.
@@ -17,6 +18,14 @@ const onStartup = async migrations => {
   // This is critical because onInstalled only fires on install/update
   if (migrations && !migrations.state) {
     migrations.state = true;
+  }
+
+  // Recreate context menus on browser startup
+  // Firefox doesn't persist context menus between sessions unlike Chrome
+  try {
+    await initContextMenu();
+  } catch (e) {
+    await CatchError(e);
   }
 
   const idleLockValue = await storage.getItem('local:autoIdleLock');
