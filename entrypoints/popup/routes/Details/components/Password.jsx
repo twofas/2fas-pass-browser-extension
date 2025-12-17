@@ -14,6 +14,7 @@ import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import usePopupState from '../../../store/popupState/usePopupState';
 import Login from '@/partials/models/itemModels/Login';
+import getItem from '@/partials/sessionStorage/getItem';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
@@ -47,8 +48,8 @@ function Password (props) {
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
   const [localDecryptedPassword, setLocalDecryptedPassword] = useState(null);
-  const [localEditedPassword, setLocalEditedPassword] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const previousPasswordValueRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -84,16 +85,12 @@ function Password (props) {
       return '';
     }
 
-    if (isText(localEditedPassword)) {
-      return localEditedPassword;
+    if (!data?.passwordEditable && !data?.passwordVisible) {
+      return data.item?.sifExists ? '******' : '';
     }
 
     if (isText(localDecryptedPassword)) {
       return localDecryptedPassword;
-    }
-
-    if (data.item?.sifExists && !data?.passwordEditable && !data?.passwordVisible) {
-      return '******';
     }
 
     return '';
@@ -106,7 +103,7 @@ function Password (props) {
       form.change('editedSif', currentPasswordValue);
       previousPasswordValueRef.current = currentPasswordValue;
     }
-  }, [localEditedPassword, localDecryptedPassword, form]);
+  }, [localDecryptedPassword, form]);
 
   useEffect(() => {
     const needsDecryption = (data?.passwordVisible || data?.passwordEditable) &&
@@ -165,9 +162,7 @@ function Password (props) {
     try {
       let passwordToCopy;
 
-      if (isText(localEditedPassword)) {
-        passwordToCopy = localEditedPassword;
-      } else if (isText(localDecryptedPassword)) {
+      if (isText(localDecryptedPassword)) {
         passwordToCopy = localDecryptedPassword;
       } else if (data.item.sifExists) {
         passwordToCopy = await decryptPasswordOnDemand();
@@ -203,11 +198,21 @@ function Password (props) {
 
   const handleEditableClick = async () => {
     if (data?.passwordEditable) {
-      setLocalEditedPassword(null);
+      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
+
+      const itemData = item.toJSON();
+      const restoredItem = new Login(itemData);
+
+      item = null;
+
+      setLocalDecryptedPassword(null);
+      setIsFocused(false);
+      setData('item', restoredItem);
       setData('passwordEditable', false);
-      form.change('editedSif', isText(localDecryptedPassword) ? localDecryptedPassword : '');
+      form.change('editedSif', '');
     } else {
       await decryptPasswordOnDemand();
+      setData('passwordVisible', false);
       setData('passwordEditable', true);
     }
   };
@@ -234,7 +239,7 @@ function Password (props) {
   const handlePasswordChange = async e => {
     const newValue = e.target.value;
 
-    setLocalEditedPassword(newValue);
+    setLocalDecryptedPassword(newValue);
     form.change('editedSif', newValue);
 
     const itemData = data.item.toJSON();
@@ -263,10 +268,12 @@ function Password (props) {
               <input
                 ref={inputRef}
                 value={getPasswordValue()}
-                type={data?.passwordVisible ? 'text' : 'password'}
-                placeholder={!sifDecryptError && (!data?.passwordMobile && originalItem?.isT3orT2WithSif || data?.passwordEditable) ? browser.i18n.getMessage('placeholder_password') : ''}
+                type={data?.passwordVisible || (data?.passwordEditable && isFocused) ? 'text' : 'password'}
+                placeholder={!sifDecryptError && !isDecrypting && (!data?.passwordMobile && originalItem?.isT3orT2WithSif || data?.passwordEditable) ? browser.i18n.getMessage('placeholder_password') : ''}
                 id='editedSif'
                 onChange={handlePasswordChange}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 disabled={!data?.passwordEditable || data?.passwordMobile || sifDecryptError}
                 dir="ltr"
                 spellCheck="false"
@@ -286,7 +293,7 @@ function Password (props) {
                 <button
                   type="button"
                   onClick={handlePasswordVisibleClick}
-                  className={`${pI.iconButton} ${pI.visibleButton} ${!(originalItem?.isT3orT2WithSif || data?.passwordEditable) || sifDecryptError ? pI.hidden : ''}`}
+                  className={`${pI.iconButton} ${pI.visibleButton} ${!originalItem?.isT3orT2WithSif || data?.passwordEditable || sifDecryptError ? pI.hiddenButton : ''}`}
                   title={browser.i18n.getMessage('details_toggle_password_visibility')}
                   tabIndex={-1}
                 >
