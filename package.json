@@ -75,11 +75,11 @@
   "devDependencies": {
     "@wxt-dev/module-react": "^1.1.5",
     "dotenv": "^17.2.3",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
-    "sass-embedded": "1.96.0",
+    "sass-embedded": "1.97.0",
     "terser": "^5.44.1",
-    "vitest": "^4.0.15",
-    "wxt": "^0.20.11"
+    "vitest": "^4.0.16",
+    "wxt": "^0.20.13"
   }
 }
