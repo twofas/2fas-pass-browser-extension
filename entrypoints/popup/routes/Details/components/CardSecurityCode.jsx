@@ -33,10 +33,12 @@ function CardSecurityCode (props) {
   const { data, setData, setBatchData } = usePopupState();
 
   const previousSecurityCodeRef = useRef(null);
-  const inputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const inputMaskRef = useRef(null);
   const [localDecryptedSecurityCode, setLocalDecryptedSecurityCode] = useState(null);
-  const [localEditedSecurityCode, setLocalEditedSecurityCode] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [shouldFocusInputMask, setShouldFocusInputMask] = useState(false);
 
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
 
@@ -70,10 +72,6 @@ function CardSecurityCode (props) {
       return '';
     }
 
-    if (isText(localEditedSecurityCode)) {
-      return localEditedSecurityCode;
-    }
-
     if (isText(localDecryptedSecurityCode)) {
       return localDecryptedSecurityCode;
     }
@@ -92,6 +90,31 @@ function CardSecurityCode (props) {
     return '';
   };
 
+  const getRawSecurityCode = () => {
+    const securityCode = getSecurityCodeValue();
+
+    return securityCode.replace(/\D/g, '');
+  };
+
+  const focusInputMask = useCallback(() => {
+    const inputElement = inputMaskRef.current?.getInput?.() || inputMaskRef.current;
+
+    if (inputElement && !inputElement.disabled) {
+      inputElement.focus();
+      setShouldFocusInputMask(false);
+    } else {
+      setTimeout(focusInputMask, 50);
+    }
+  }, []);
+
+  const getHiddenMaskValue = () => {
+    if (isHighlySecretWithoutSif) {
+      return '';
+    }
+
+    return '***';
+  };
+
   useEffect(() => {
     const currentSecurityCode = getSecurityCodeValue();
 
@@ -99,7 +122,7 @@ function CardSecurityCode (props) {
       form.change('editedSecurityCode', currentSecurityCode);
       previousSecurityCodeRef.current = currentSecurityCode;
     }
-  }, [localEditedSecurityCode, localDecryptedSecurityCode, sifDecryptError, form]);
+  }, [localDecryptedSecurityCode, form]);
 
   useEffect(() => {
     const needsDecryption = (data?.securityCodeEditable || data?.securityCodeVisible) &&
@@ -113,10 +136,10 @@ function CardSecurityCode (props) {
   }, [data?.securityCodeEditable, data?.securityCodeVisible, localDecryptedSecurityCode, isDecrypting, data.item?.securityCodeExists, decryptSecurityCodeOnDemand]);
 
   useEffect(() => {
-    if (data?.securityCodeEditable && inputRef.current) {
-      inputRef.current.focus();
+    if (shouldFocusInputMask && data?.securityCodeEditable && isFocused) {
+      setTimeout(focusInputMask, 0);
     }
-  }, [data?.securityCodeEditable]);
+  }, [shouldFocusInputMask, data?.securityCodeEditable, isFocused, focusInputMask]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -145,14 +168,19 @@ function CardSecurityCode (props) {
 
   const handleEditableClick = async () => {
     if (data?.securityCodeEditable) {
-      setLocalEditedSecurityCode(null);
+      setLocalDecryptedSecurityCode(null);
+      setIsFocused(false);
+      setShouldFocusInputMask(false);
       setBatchData({
         securityCodeEdited: false,
         securityCodeEditable: false
       });
-      form.change('editedSecurityCode', isText(localDecryptedSecurityCode) ? localDecryptedSecurityCode : '');
+      form.change('editedSecurityCode', '');
     } else {
       await decryptSecurityCodeOnDemand();
+      setIsFocused(true);
+      setShouldFocusInputMask(true);
+      setData('securityCodeVisible', false);
       setData('securityCodeEditable', true);
     }
   };
@@ -161,9 +189,7 @@ function CardSecurityCode (props) {
     try {
       let securityCodeToCopy;
 
-      if (isText(localEditedSecurityCode)) {
-        securityCodeToCopy = localEditedSecurityCode;
-      } else if (isText(localDecryptedSecurityCode)) {
+      if (isText(localDecryptedSecurityCode)) {
         securityCodeToCopy = localDecryptedSecurityCode;
       } else if (data.item.securityCodeExists) {
         securityCodeToCopy = await decryptSecurityCodeOnDemand();
@@ -190,45 +216,41 @@ function CardSecurityCode (props) {
   const handleSecurityCodeChange = async e => {
     const newValue = e.target.value;
 
-    setLocalEditedSecurityCode(newValue);
+    setLocalDecryptedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
 
     const itemData = data.item.toJSON();
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_securityCode: newValue }]);
     setData('item', localItem);
-  };
-
-  const getHiddenMaskValue = () => {
-    if (isHighlySecretWithoutSif) {
-      return '';
-    }
-
-    return '***';
-  };
-
-  const getRawSecurityCode = () => {
-    const securityCode = getSecurityCodeValue();
-
-    return securityCode.replace(/\D/g, '');
   };
 
   const handleRawSecurityCodeChange = async e => {
     const newValue = e.target.value.replace(/\D/g, '');
 
-    setLocalEditedSecurityCode(newValue);
+    setLocalDecryptedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
 
     const itemData = data.item.toJSON();
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_securityCode: newValue }]);
     setData('item', localItem);
+  };
+
+  const handlePasswordInputFocus = () => {
+    setIsFocused(true);
+    setShouldFocusInputMask(true);
+  };
+
+  const handleInputMaskBlur = () => {
+    setIsFocused(false);
   };
 
   const renderInput = () => {
     const isEditable = data?.securityCodeEditable;
     const isVisible = data?.securityCodeVisible;
 
+    // Not editable and not visible - show masked value
     if (!isEditable && !isVisible) {
       return (
         <input
@@ -241,25 +263,7 @@ function CardSecurityCode (props) {
       );
     }
 
-    if (isEditable && !isVisible) {
-      const cardNumber = getCardNumberValue();
-      const securityCodeMaskData = getSecurityCodeMask(cardNumber);
-      const maxLength = securityCodeMaskData.mask.length;
-
-      return (
-        <input
-          type='password'
-          id='editedSecurityCode'
-          ref={inputRef}
-          className={S.paymentCardSecurityCodeInput}
-          value={getRawSecurityCode()}
-          onChange={handleRawSecurityCodeChange}
-          disabled={sifDecryptError}
-          maxLength={maxLength}
-        />
-      );
-    }
-
+    // Visible but not editable - show PaymentCardSecurityCodeInput disabled
     if (!isEditable && isVisible) {
       return (
         <PaymentCardSecurityCodeInput
@@ -274,14 +278,37 @@ function CardSecurityCode (props) {
       );
     }
 
+    // Editable - show password input when not focused, PaymentCardSecurityCodeInput when focused
+    if (isEditable && !isFocused) {
+      const cardNumber = getCardNumberValue();
+      const securityCodeMaskData = getSecurityCodeMask(cardNumber);
+      const maxLength = securityCodeMaskData.mask.length;
+
+      return (
+        <input
+          ref={passwordInputRef}
+          type='password'
+          id='editedSecurityCode'
+          className={S.paymentCardSecurityCodeInput}
+          value={getRawSecurityCode()}
+          onChange={handleRawSecurityCodeChange}
+          onFocus={handlePasswordInputFocus}
+          disabled={sifDecryptError || isHighlySecretWithoutSif}
+          maxLength={maxLength}
+        />
+      );
+    }
+
+    // Editable and focused - show PaymentCardSecurityCodeInput (InputMask)
     return (
       <PaymentCardSecurityCodeInput
-        ref={inputRef}
+        ref={inputMaskRef}
         value={getSecurityCodeValue()}
         id='editedSecurityCode'
         cardNumber={getCardNumberValue()}
         onChange={handleSecurityCodeChange}
-        disabled={sifDecryptError}
+        onBlur={handleInputMaskBlur}
+        disabled={sifDecryptError || isHighlySecretWithoutSif}
         securityType={originalItem?.securityType}
         sifExists={originalItem?.sifExists}
       />
@@ -310,7 +337,7 @@ function CardSecurityCode (props) {
               <button
                 type='button'
                 onClick={handleSecurityCodeVisibleClick}
-                className={`${pI.iconButton} ${pI.visibleButton} ${!(originalItem?.isT3orT2WithSif || data?.securityCodeEditable) || sifDecryptError ? pI.hidden : ''}`}
+                className={`${pI.iconButton} ${pI.visibleButton} ${!originalItem?.isT3orT2WithSif || data?.securityCodeEditable || sifDecryptError ? pI.hiddenButton : ''}`}
                 title={browser.i18n.getMessage('details_toggle_security_code_visibility')}
                 tabIndex={-1}
               >

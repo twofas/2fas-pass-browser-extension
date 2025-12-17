@@ -344,21 +344,33 @@
           }
 
           &.visible-button {
+            max-width: 16px;
+            opacity: 1;
+            overflow: hidden;
+            transition: opacity v.$anim, max-width v.$anim, margin-right v.$anim;
+
+            &.hidden-button {
+              margin-right: 0;
+              max-width: 0;
+              opacity: 0;
+              pointer-events: none;
+            }
+
             &:hover,
             &:focus {
               svg {
                 stroke: v.$focus-light !important;
-                 
+
                 @include m.darkMode {
                   stroke: v.$focus-dark !important;
                 }
               }
             }
-            
+
             &:active {
               svg {
                 stroke: v.$pressed-light !important;
-                
+
                 @include m.darkMode {
                   stroke: v.$pressed-dark !important;
                 }
