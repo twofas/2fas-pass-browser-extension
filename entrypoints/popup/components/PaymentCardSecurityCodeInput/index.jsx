@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardSecurityCodeInput.module.scss';
-import { memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
+import { forwardRef, memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
 import getSecurityCodeMask from './getSecurityCodeMask';
 
 /**
@@ -19,9 +19,10 @@ import getSecurityCodeMask from './getSecurityCodeMask';
 * @param {number} props.securityType - Security tier type (0=Top Secret, 1=Highly Secret, 2=Secret).
 * @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
 * @param {Object} props.inputProps - Additional props to spread on InputMask.
+* @param {Object} ref - Forwarded ref for the input element.
 * @return {JSX.Element} The rendered component.
 */
-function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, securityType, sifExists, ...inputProps }) {
+const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumber, securityType, sifExists, ...inputProps }, ref) => {
   const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
@@ -78,6 +79,7 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, securi
     return (
       <input
         {...inputProps}
+        ref={ref}
         className={S.paymentCardSecurityCodeInput}
         type='text'
         value={displayValue}
@@ -92,6 +94,7 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, securi
   return (
     <InputMask
       {...inputProps}
+      ref={ref}
       className={S.paymentCardSecurityCodeInput}
       type='text'
       mask={securityCodeMaskData.mask}
@@ -104,6 +107,6 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, securi
       onFocus={handleFocus}
     />
   );
-}
+});
 
 export default memo(PaymentCardSecurityCodeInput);

@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardExpirationDate.module.scss';
-import { memo, useCallback, useRef, useEffect, useState } from 'react';
+import { forwardRef, memo, useCallback, useRef, useEffect, useState } from 'react';
 import CalendarIcon from '@/assets/popup-window/calendar.svg?react';
 
 const PANEL_CLASS = 'payment-card-expiration-date-panel';
@@ -25,9 +25,10 @@ const MIN_SPACE_REQUIRED = 8;
 * @param {boolean} props.disabled - Whether the component is disabled.
 * @param {number} props.securityType - Security tier type (0=Top Secret, 1=Highly Secret, 2=Secret).
 * @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
+* @param {Object} ref - Forwarded ref for the input element.
 * @return {JSX.Element} The rendered component.
 */
-function PaymentCardExpirationDate ({ value, onChange, inputId, disabled, securityType, sifExists }) {
+const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabled, securityType, sifExists }, ref) => {
   const [primeReactComponents, setPrimeReactComponents] = useState({ InputMask: null, Calendar: null });
   const calendarRef = useRef(null);
   const buttonRef = useRef(null);
@@ -176,6 +177,7 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled, securi
     return (
       <div className={S.paymentCardExpirationDate}>
         <input
+          ref={ref}
           className={S.paymentCardExpirationDateInput}
           value={displayValue}
           onChange={e => onChange(e.target.value)}
@@ -200,6 +202,7 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled, securi
   return (
     <div className={S.paymentCardExpirationDate}>
       <InputMask
+        ref={ref}
         className={S.paymentCardExpirationDateInput}
         value={displayValue}
         onChange={handleInputChange}
@@ -236,6 +239,6 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled, securi
       />
     </div>
   );
-}
+});
 
 export default memo(PaymentCardExpirationDate);

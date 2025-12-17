@@ -50,6 +50,7 @@ function Password (props) {
   const [localEditedPassword, setLocalEditedPassword] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
   const previousPasswordValueRef = useRef(null);
+  const inputRef = useRef(null);
 
   const decryptPasswordOnDemand = useCallback(async () => {
     if (localDecryptedPassword !== null || isDecrypting || sifDecryptError) {
@@ -117,6 +118,12 @@ function Password (props) {
       decryptPasswordOnDemand();
     }
   }, [data?.passwordVisible, data?.passwordEditable, localDecryptedPassword, isDecrypting, data.item?.sifExists, decryptPasswordOnDemand]);
+
+  useEffect(() => {
+    if (data?.passwordEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [data?.passwordEditable]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -254,6 +261,7 @@ function Password (props) {
             </div>
             <div className={pI.passInputBottom}>
               <input
+                ref={inputRef}
                 value={getPasswordValue()}
                 type={data?.passwordVisible ? 'text' : 'password'}
                 placeholder={!sifDecryptError && (!data?.passwordMobile && originalItem?.isT3orT2WithSif || data?.passwordEditable) ? browser.i18n.getMessage('placeholder_password') : ''}

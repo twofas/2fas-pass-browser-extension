@@ -29,6 +29,7 @@ function CardExpirationDate (props) {
   const { data, setData, setBatchData } = usePopupState();
 
   const previousExpirationDateRef = useRef(null);
+  const inputRef = useRef(null);
   const [localDecryptedExpirationDate, setLocalDecryptedExpirationDate] = useState(null);
   const [localEditedExpirationDate, setLocalEditedExpirationDate] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
@@ -94,6 +95,12 @@ function CardExpirationDate (props) {
       decryptExpirationDateOnDemand();
     }
   }, [localDecryptedExpirationDate, isDecrypting, data.item?.expirationDateExists, decryptExpirationDateOnDemand]);
+
+  useEffect(() => {
+    if (data?.expirationDateEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [data?.expirationDateEditable]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -183,6 +190,7 @@ function CardExpirationDate (props) {
           </div>
           <div className={pI.passInputBottom}>
             <PaymentCardExpirationDate
+              ref={inputRef}
               value={getExpirationDateValue()}
               inputId='editedExpirationDate'
               onChange={handleExpirationDateChange}

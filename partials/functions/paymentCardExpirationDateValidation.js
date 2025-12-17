@@ -10,8 +10,6 @@
  * @return {boolean} Returns true if the card is expired, false otherwise or if format is invalid.
  */
 const isCardExpired = value => {
-  console.log(value);
-
   if (typeof value !== 'string') {
     return false;
   }

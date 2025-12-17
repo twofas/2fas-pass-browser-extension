@@ -128,6 +128,11 @@ function SecureNoteText (props) {
             }).then(() => {
               if (textareaRef.current) {
                 textareaRef.current.style.overflowY = 'auto';
+
+                if (data?.sifEditable) {
+                  textareaRef.current.focus();
+                  textareaRef.current.setSelectionRange(0, 0);
+                }
               }
             });
           }
