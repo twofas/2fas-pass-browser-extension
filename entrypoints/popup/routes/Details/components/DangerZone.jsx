@@ -37,7 +37,7 @@ function DangerZone (props) {
         onClick={() => setData('dangerZoneOpened', !data.dangerZoneOpened)}
         disabled={submitting ? 'disabled' : ''}
       >
-        <span>{browser.i18n.getMessage('danger_zone')}</span>
+        <span>{browser.i18n.getMessage('settings_danger_zone')}</span>
         <ChevronIcon />
       </button>
 

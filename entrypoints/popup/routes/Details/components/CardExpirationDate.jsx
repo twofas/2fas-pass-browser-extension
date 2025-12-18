@@ -10,7 +10,7 @@ import { Field } from 'react-final-form';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { copyValue, isText, paymentCardExpirationDateValidation } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';

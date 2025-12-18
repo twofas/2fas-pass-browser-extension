@@ -12,7 +12,7 @@ import GenerateURLs from '../../functions/generateURLs';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
-import Login from '@/partials/models/itemModels/Login';
+import Login from '@/models/itemModels/Login';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import { UriTempIdsProvider } from '../../context/UriTempIdsContext';
 

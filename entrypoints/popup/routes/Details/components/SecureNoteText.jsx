@@ -13,7 +13,7 @@ import { LazyMotion, animate } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { isText } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
+import SecureNote from '@/models/itemModels/SecureNote';
 
 const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));

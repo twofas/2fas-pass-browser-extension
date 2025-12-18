@@ -9,7 +9,7 @@ import handlePassword from '../handlePassword';
 import { useState, useRef, lazy, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import Login from '@/partials/models/itemModels/Login';
+import Login from '@/models/itemModels/Login';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
 
 const ItemFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));

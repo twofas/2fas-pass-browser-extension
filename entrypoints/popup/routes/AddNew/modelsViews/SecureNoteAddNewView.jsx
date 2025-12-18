@@ -11,7 +11,7 @@ import { memo, useState } from 'react';
 import usePopupState from '../../../store/popupState/usePopupState';
 import { Form, Field } from 'react-final-form';
 import { getCurrentDevice } from '@/partials/functions';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
+import SecureNote from '@/models/itemModels/SecureNote';
 import { useNavigate, useLocation } from 'react-router';
 import { PULL_REQUEST_TYPES } from '@/constants';
 

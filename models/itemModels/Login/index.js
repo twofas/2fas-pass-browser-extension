@@ -4,8 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import URIMatcher from '../../URIMatcher';
-import Item from './Item';
+import URIMatcher from '@/partials/URIMatcher';
+import Item from '@/models/itemModels/Item';
 
 /**
 * Class representing a login.

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import Item from './Item';
+import Item from '@/models/itemModels/Item';
 
 /**
 * Class representing a secure note.

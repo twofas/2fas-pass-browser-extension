@@ -12,7 +12,7 @@ import getKey from '@/partials/sessionStorage/getKey';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
 import saveTags from '@/partials/WebSocket/utils/saveTags';
 import { ENCRYPTION_KEYS } from '@/constants';
-import matchModel from '@/partials/models/itemModels/matchModel';
+import matchModel from '@/models/itemModels/matchModel';
 
 /** 
 * Handles the update of a item after it has been modified.

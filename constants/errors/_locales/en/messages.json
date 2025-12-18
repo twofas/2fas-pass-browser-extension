@@ -60,7 +60,7 @@
     "description": "Error message displayed when saving context menu settings fails"
   },
   "error_login_not_found": {
-    "message": "Something went wrong. Item not found.",
+    "message": "Something went wrong. Login not found.",
     "description": "Error message displayed when the requested login item is not found"
   },
   "error_secure_note_not_found": {

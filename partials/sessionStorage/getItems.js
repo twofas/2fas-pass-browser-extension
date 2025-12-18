@@ -7,7 +7,7 @@
 import decompress from '@/partials/gzip/decompress';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import getItemsKeys from './getItemsKeys';
-import matchModel from '../models/itemModels/matchModel';
+import matchModel from '@/models/itemModels/matchModel';
 
 /** 
 * Gets the items from session storage.

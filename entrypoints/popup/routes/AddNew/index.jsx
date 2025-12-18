@@ -12,9 +12,7 @@ import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import { itemsUiData } from '../../constants';
-import Login from '@/partials/models/itemModels/Login';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import { Login, SecureNote, PaymentCard } from '@/models/itemModels';
 
 // Model Views
 import LoginView from './modelsViews/LoginAddNewView';

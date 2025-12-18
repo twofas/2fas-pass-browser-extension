@@ -9,7 +9,7 @@ import handleCardNumber from '../../../functions/serviceList/handleCardNumber';
 import { useState, useRef, lazy, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import PaymentCard from '@/models/itemModels/PaymentCard';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
 
 const ItemFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));

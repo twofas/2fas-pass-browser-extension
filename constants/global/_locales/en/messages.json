@@ -95,10 +95,6 @@
     "message": "Update",
     "description": "Button label to update an item or data"
   },
-  "danger_zone": {
-    "message": "Danger Zone",
-    "description": "Label for a section with potentially risky actions"
-  },
   "try_again": {
     "message": "Try again",
     "description": "Button label to retry an action"
