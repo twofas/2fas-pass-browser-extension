@@ -12,8 +12,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import matchModel from '@/partials/models/itemModels/matchModel';
-import Login from '@/partials/models/itemModels/Login';
+import { matchModel, Login } from '@/models/itemModels';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import ClearLink from '../../components/ClearLink';
 

@@ -4,9 +4,9 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import Login from './Login.js';
-import SecureNote from './SecureNote.js';
-import PaymentCard from './PaymentCard.js';
+import Login from './Login/index.js';
+import SecureNote from './SecureNote/index.js';
+import PaymentCard from './PaymentCard/index.js';
 import supportedFeatures from '@/constants/supportedFeatures.js';
 import getSupportedFeatures from '@/partials/functions/getSupportedFeatures.js';
 

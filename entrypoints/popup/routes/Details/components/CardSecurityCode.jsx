@@ -11,7 +11,7 @@ import { Field } from 'react-final-form';
 import { lazy, useEffect, useRef, useState, useCallback } from 'react';
 import { copyValue, isText } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardSecurityCodeInput from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput';
 import getSecurityCodeMask from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/getSecurityCodeMask';
 

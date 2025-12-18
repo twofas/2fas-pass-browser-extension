@@ -22,7 +22,7 @@ import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
-import Login from '@/partials/models/itemModels/Login';
+import Login from '@/models/itemModels/Login';
 
 const additionalVariants = {
   hidden: { maxHeight: '0px' },

@@ -10,7 +10,7 @@ import { Field } from 'react-final-form';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { copyValue, isText } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardNumberInput from '@/entrypoints/popup/components/PaymentCardNumberInput';
 import getCardNumberMask from '@/entrypoints/popup/components/PaymentCardNumberInput/getCardNumberMask';
 import getItem from '@/partials/sessionStorage/getItem';

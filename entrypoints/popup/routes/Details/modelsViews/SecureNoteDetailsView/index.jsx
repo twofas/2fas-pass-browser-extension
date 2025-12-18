@@ -11,7 +11,7 @@ import { useState, lazy } from 'react';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
+import SecureNote from '@/models/itemModels/SecureNote';
 import { PULL_REQUEST_TYPES } from '@/constants';
 
 const Name = lazy(() => import('../../components/Name'));

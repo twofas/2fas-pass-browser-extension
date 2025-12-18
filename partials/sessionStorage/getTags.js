@@ -7,7 +7,7 @@
 import decompress from '@/partials/gzip/decompress';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import getKey from './getKey';
-import Tag from '../models/Tag';
+import Tag from '@/models/Tag';
 
 /** 
 * Gets the tags from session storage.

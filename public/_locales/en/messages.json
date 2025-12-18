@@ -60,7 +60,7 @@
     "description": "Error message displayed when saving context menu settings fails"
   },
   "error_login_not_found": {
-    "message": "Something went wrong. Item not found.",
+    "message": "Something went wrong. Login not found.",
     "description": "Error message displayed when the requested login item is not found"
   },
   "error_secure_note_not_found": {
@@ -238,10 +238,6 @@
   "update": {
     "message": "Update",
     "description": "Button label to update an item or data"
-  },
-  "danger_zone": {
-    "message": "Danger Zone",
-    "description": "Label for a section with potentially risky actions"
   },
   "try_again": {
     "message": "Try again",

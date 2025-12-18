@@ -13,7 +13,7 @@ import { copyValue, isText } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import usePopupState from '../../../store/popupState/usePopupState';
-import Login from '@/partials/models/itemModels/Login';
+import Login from '@/models/itemModels/Login';
 import getItem from '@/partials/sessionStorage/getItem';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';

@@ -11,7 +11,7 @@ import { memo, useState } from 'react';
 import usePopupState from '../../../store/popupState/usePopupState';
 import { Form, Field } from 'react-final-form';
 import { getCurrentDevice, paymentCardExpirationDateValidation } from '@/partials/functions';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import PaymentCard from '@/models/itemModels/PaymentCard';
 import { useNavigate, useLocation } from 'react-router';
 import { PULL_REQUEST_TYPES, PAYMENT_CARD_REGEX } from '@/constants';
 import PaymentCardNumberInput from '@/entrypoints/popup/components/PaymentCardNumberInput';
