@@ -21,8 +21,6 @@ import LoginDetailsView from './modelsViews/LoginDetailsView';
 import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
 import PaymentCardDetailsView from './modelsViews/PaymentCardDetailsView';
 
-console.log('🎭 [PERF] Details: NO motion wrapper needed at:', performance.now().toFixed(2), 'ms');
-
 const DetailsViews = {
   'Login': LoginDetailsView,
   'SecureNote': SecureNoteDetailsView,

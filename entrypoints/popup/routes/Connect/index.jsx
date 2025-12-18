@@ -33,7 +33,6 @@ import AndroidTabletIconLight from '@/assets/popup-window/device-select/device-a
 import AndroidTabletIconDark from '@/assets/popup-window/device-select/device-android-tablet-dark.svg?react';
 import ChevronIcon from '@/assets/popup-window/chevron2.svg?react';
 
-console.log('🎨 [PERF] Connect: Direct SVG imports done at:', performance.now().toFixed(2), 'ms');
 const PushNotification = lazy(() => import('../Fetch/components/PushNotification'));
 
 const viewVariants = {
