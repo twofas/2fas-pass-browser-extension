@@ -403,10 +403,6 @@
     "message": "This page contains forms from external domains:\nDOMAINS\n\nDo you want to autofill data in these frames?",
     "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
   },
-  "placeholder_domain_uri": {
-    "message": "e.g., https://2fas.com",
-    "description": "Placeholder text for the domain or URI input field"
-  },
   "placeholder_name": {
     "message": "Type your Item name",
     "description": "Placeholder text for the name input field"
@@ -1778,6 +1774,10 @@
   "error_password_copy_failed": {
     "message": "Failed to copy password to clipboard.",
     "description": "Error message displayed when copying the password to the clipboard fails"
+  },
+  "placeholder_domain_uri": {
+    "message": "e.g., https://2fas.com",
+    "description": "Placeholder text for the domain or URI input field"
   },
   "payment_card": {
     "message": "Card",
