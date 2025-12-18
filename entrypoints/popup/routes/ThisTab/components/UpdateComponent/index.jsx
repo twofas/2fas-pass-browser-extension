@@ -9,8 +9,6 @@ import { useCallback, useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 
-console.log('🎭 [PERF] UpdateComponent: motion (full) import done at:', performance.now().toFixed(2), 'ms');
-
 const updateBarVariants = {
   visible: {
     maxHeight: '60px',

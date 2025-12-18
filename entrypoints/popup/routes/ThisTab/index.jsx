@@ -25,8 +25,6 @@ import DomainIcon from '@/assets/popup-window/domain.svg?react';
 import { AllItemsList, Filters, KeepPassword, MatchingItemsList, ModelFilter, NoMatch, Search, Sort, TagsInfo, UpdateComponent } from './components';
 import { ItemListProvider } from './context/ItemListContext';
 
-console.log('🎭 [PERF] ThisTab: motion (full) import done at:', performance.now().toFixed(2), 'ms');
-
 const thisTabTopVariants = {
   visible: { height: 'auto', transition: { duration: 0.2, ease: 'easeOut' } },
   hidden: { height: '0', marginBottom: '-10px', borderWidth: '0', transition: { duration: 0, ease: 'easeOut' } }

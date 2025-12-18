@@ -24,8 +24,6 @@ import LockedIcon from '@/assets/popup-window/locked.svg?react';
 import LockIcon from '@/assets/popup-window/lock.svg?react';
 import AddNewIcon from '@/assets/popup-window/add-new.svg?react';
 
-console.log('🎨 [PERF] TopBar: Direct SVG imports done at:', performance.now().toFixed(2), 'ms');
-
 const selectComponents = { Option: AddNewCustomOption };
 const noOptionsMessage = () => null;
 
