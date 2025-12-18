@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useEffect, useRef, useMemo, useCallback, useLayoutEffect, memo } from 'react';
+import { useEffect, useRef, useMemo, useCallback, useLayoutEffect, memo, useState } from 'react';
 import styles from './SafariViewportList.module.scss';
 
 const ITEM_HEIGHT = 66;
@@ -27,7 +27,7 @@ const findScrollableParent = element => {
     const overflowY = style.overflowY;
     const isScrollable = overflowY === 'auto' || overflowY === 'scroll';
 
-    if (isScrollable && parent.scrollHeight > parent.clientHeight) {
+    if (isScrollable) {
       return parent;
     }
 
@@ -47,8 +47,8 @@ const findScrollableParent = element => {
  */
 const SafariViewportList = ({ items, children, overscan = 10, className }) => {
   const listRef = useRef(null);
-  const scrollElementRef = useRef(null);
-  const scrollMarginRef = useRef(0);
+  const [scrollElement, setScrollElement] = useState(null);
+  const [scrollMargin, setScrollMargin] = useState(0);
 
   const isSafari = useMemo(() => {
     const userAgent = navigator.userAgent.toLowerCase();
@@ -57,7 +57,7 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
 
   const safariOverscan = isSafari ? Math.max(overscan, 10) : overscan;
 
-  const getScrollElement = useCallback(() => scrollElementRef.current, []);
+  const getScrollElement = useCallback(() => scrollElement, [scrollElement]);
 
   const estimateSize = useCallback(() => ITEM_HEIGHT, []);
 
@@ -66,28 +66,29 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
     getScrollElement,
     estimateSize,
     overscan: safariOverscan,
-    scrollMargin: scrollMarginRef.current
+    scrollMargin
   });
 
   useLayoutEffect(() => {
     if (listRef.current) {
       const scrollParent = findScrollableParent(listRef.current);
-      scrollElementRef.current = scrollParent;
 
       if (scrollParent && listRef.current) {
         const parentRect = scrollParent.getBoundingClientRect();
         const listRect = listRef.current.getBoundingClientRect();
-        scrollMarginRef.current = listRect.top - parentRect.top + scrollParent.scrollTop;
-        virtualizer.options.scrollMargin = scrollMarginRef.current;
-      }
+        const margin = listRect.top - parentRect.top + scrollParent.scrollTop;
 
-      virtualizer.measure();
+        setScrollElement(scrollParent);
+        setScrollMargin(margin);
+      }
     }
   }, []);
 
   useEffect(() => {
-    virtualizer.measure();
-  }, [items.length]);
+    if (scrollElement) {
+      virtualizer.measure();
+    }
+  }, [items.length, scrollElement]);
 
   const virtualItems = virtualizer.getVirtualItems();
   const totalSize = virtualizer.getTotalSize();
@@ -114,7 +115,7 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
               left: 0,
               position: 'absolute',
               top: 0,
-              transform: `translateY(${virtualItem.start - scrollMarginRef.current}px)`,
+              transform: `translateY(${virtualItem.start - scrollMargin}px)`,
               width: '100%'
             }}
           >

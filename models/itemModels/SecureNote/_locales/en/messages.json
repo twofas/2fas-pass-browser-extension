@@ -1,3 +1,62 @@
 {
-
+  "secure_note": {
+    "message": "Secure Note",
+    "description": "Label for the secure note functionality"
+  },
+  "secure_note_note": {
+    "message": "Note",
+    "description": "Label for the secure note text field"
+  },
+  "secure_note_plural": {
+    "message": "Secure Notes",
+    "description": "Label for multiple secure notes"
+  },
+  "secure_note_placeholder": {
+    "message": "Add the Note",
+    "description": "Placeholder text for the secure note input field"
+  },
+  "secure_note_name": {
+    "message": "Name",
+    "description": "Placeholder text for the secure note name input field"
+  },
+  "secure_note_name_placeholder": {
+    "message": "Secure Note name",
+    "description": "Placeholder text for the secure note name input field"
+  },
+  "secure_note_name_required": {
+    "message": "Secure Note name is required.",
+    "description": "Validation message indicating that the secure note name is required"
+  },
+  "secure_note_name_max_length": {
+    "message": "Secure Note name must be less than 256 characters.",
+    "description": "Validation message indicating that the secure note title exceeds the maximum length"
+  },
+  "secure_note_text_max_length": {
+    "message": "Secure Note text must be less than 16384 characters.",
+    "description": "Validation message indicating that the secure note text exceeds the maximum length"
+  },
+  "placeholder_secure_note": {
+    "message": "Type your Secure Note",
+    "description": "Placeholder text for the Secure Note text input field"
+  },
+  "placeholder_secure_note_empty": {
+    "message": "Note is empty",
+    "description": "Placeholder text when there is no Secure Note available"
+  },
+  "notification_secure_note_name_copied": {
+    "message": "Name copied to clipboard",
+    "description": "Notification message when the secure note name is successfully copied to the clipboard"
+  },
+  "notification_secure_note_text_copied": {
+    "message": "Note copied to clipboard",
+    "description": "Notification message when the secure note text is successfully copied to the clipboard"
+  },
+  "error_secure_note_not_found": {
+    "message": "Something went wrong. Secure Note not found.",
+    "description": "Error message displayed when the requested secure note is not found"
+  },
+  "error_secure_note_name_copy_failed": {
+    "message": "Failed to copy Name to clipboard.",
+    "description": "Error message displayed when copying the secure note name to the clipboard fails"
+  }
 }
