@@ -6,14 +6,13 @@
 
 import S from '../../../components/Item/styles/Item.module.scss';
 import handlePassword from '../handlePassword';
-import { useState, useRef, lazy, useLayoutEffect } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import Login from '@/models/itemModels/Login';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
-
-const ItemFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
-const ItemPasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));
+import ItemFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
+import ItemPasswordIcon from '@/assets/popup-window/service-password.svg?react';
 
 /**
 * Function to render the password button.

@@ -8,7 +8,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
-import { lazy, useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupState from '../../../store/popupState/usePopupState';
@@ -16,9 +16,8 @@ import getItem from '@/partials/sessionStorage/getItem';
 import URIMatcher from '@/partials/URIMatcher';
 import updateItem from '../functions/updateItem';
 import { useUriTempIds } from '../context/UriTempIdsContext';
-
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
-const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import TrashIcon from '@/assets/popup-window/trash.svg?react';
 
 const urlVariants = {
   hidden: {

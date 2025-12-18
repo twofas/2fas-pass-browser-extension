@@ -6,14 +6,13 @@
 
 import S from '../styles/Item.module.scss';
 import handleSecureNoteText from '../../../functions/serviceList/handleSecureNoteText';
-import { useState, useRef, lazy, useLayoutEffect } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import SecureNote from '@/models/itemModels/SecureNote';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
-
-const ItemFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
-const ItemCopyIcon = lazy(() => import('@/assets/popup-window/copy2.svg?react'));
+import ItemFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
+import ItemCopyIcon from '@/assets/popup-window/copy2.svg?react';
 
 /**
 * Function to render the password button.

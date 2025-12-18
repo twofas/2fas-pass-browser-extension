@@ -6,7 +6,7 @@
 
 import S from './Details.module.scss';
 import { useParams, useNavigate, useLocation } from 'react-router';
-import { useState, useEffect, useCallback, useRef, useMemo, lazy } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import getItem from '@/partials/sessionStorage/getItem';
 import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
@@ -14,6 +14,7 @@ import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import { matchModel, Login } from '@/models/itemModels';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import ClearLink from '../../components/ClearLink';
+import ServiceFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
 
 // Model Views
 import LoginDetailsView from './modelsViews/LoginDetailsView';
@@ -21,7 +22,6 @@ import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
 import PaymentCardDetailsView from './modelsViews/PaymentCardDetailsView';
 
 console.log('🎭 [PERF] Details: NO motion wrapper needed at:', performance.now().toFixed(2), 'ms');
-const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 
 const DetailsViews = {
   'Login': LoginDetailsView,

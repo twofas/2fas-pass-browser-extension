@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 import S from '../../components/Item/styles/Item.module.scss';
-import { lazy } from 'react';
 import { getDomain } from '@/partials/functions';
 import { HEX_REGEX } from '@/constants';
 import URIMatcher from '@/partials/URIMatcher';
@@ -20,9 +19,8 @@ import dinnersDark from '@/assets/popup-window/payment-cards/dinners_dark.svg';
 import jcb from '@/assets/popup-window/payment-cards/jcb.png';
 import unionPay from '@/assets/popup-window/payment-cards/unionPay.svg';
 import Skeleton from '../../components/Skeleton';
-
-const SecureNoteIcon = lazy(() => import('@/assets/popup-window/items/secure-note.svg?react'));
-const PaymentCardIcon = lazy(() => import('@/assets/popup-window/items/payment-card.svg?react'));
+import SecureNoteIcon from '@/assets/popup-window/items/secure-note.svg?react';
+import PaymentCardIcon from '@/assets/popup-window/items/payment-card.svg?react';
 
 const CARD_ISSUER_ICONS = {
   Visa: { light: visaLight, dark: visaDark },

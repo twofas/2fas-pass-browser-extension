@@ -5,9 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../../components/Item/styles/Item.module.scss';
-import { lazy } from 'react';
-
-const ItemMoreIcon = lazy(() => import('@/assets/popup-window/service-more.svg?react'));
+import ItemMoreIcon from '@/assets/popup-window/service-more.svg?react';
 
 /** 
 * Function to render the more actions button.

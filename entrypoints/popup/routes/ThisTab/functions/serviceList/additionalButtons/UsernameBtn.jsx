@@ -6,9 +6,7 @@
 
 import S from '../../../components/Item/styles/Item.module.scss';
 import handleUsername from '../handleUsername';
-import { lazy } from 'react';
-
-const ItemUsernameIcon = lazy(() => import('@/assets/popup-window/service-username.svg?react'));
+import ItemUsernameIcon from '@/assets/popup-window/service-username.svg?react';
 
 /** 
 * Function to render the username button.

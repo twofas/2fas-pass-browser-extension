@@ -7,7 +7,7 @@
 import S from './TopBar.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { useEffect, useRef, useState, lazy, useCallback, useMemo, memo, useContext } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo, memo, useContext } from 'react';
 import { useAuthActions, useAuthState } from '@/hooks/useAuth';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
@@ -18,15 +18,16 @@ import generateAddNewOptions from './functions/generateAddNewOptions';
 import { getSupportedFeatures } from '@/partials/functions';
 import { supportedFeatures } from '@/constants';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import Logo from '@/assets/logo.svg?react';
+import LogoDark from '@/assets/logo-dark.svg?react';
+import LockedIcon from '@/assets/popup-window/locked.svg?react';
+import LockIcon from '@/assets/popup-window/lock.svg?react';
+import AddNewIcon from '@/assets/popup-window/add-new.svg?react';
+
+console.log('🎨 [PERF] TopBar: Direct SVG imports done at:', performance.now().toFixed(2), 'ms');
 
 const selectComponents = { Option: AddNewCustomOption };
 const noOptionsMessage = () => null;
-
-const Logo = lazy(() => import('@/assets/logo.svg?react'));
-const LogoDark = lazy(() => import('@/assets/logo-dark.svg?react'));
-const LockedIcon = lazy(() => import('@/assets/popup-window/locked.svg?react'));
-const LockIcon = lazy(() => import('@/assets/popup-window/lock.svg?react'));
-const AddNewIcon = lazy(() => import('@/assets/popup-window/add-new.svg?react'));
 
 /** 
 * Function component for the TopBar.

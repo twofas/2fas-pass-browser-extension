@@ -5,11 +5,10 @@
 // See LICENSE file for full terms
 
 import S from '../../Settings.module.scss';
-import { useEffect, useState, lazy, useCallback, Suspense } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
-
-const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
+import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
 
 /**
 * Function to render the Save Password Prompt component.
@@ -106,9 +105,7 @@ function SavePasswordPrompt () {
           prefetch='intent'
         >
           <span>{browser.i18n.getMessage('settings_excluded_domains')}</span>
-          <Suspense fallback={null}>
-            <MenuArrowIcon />
-          </Suspense>
+          <MenuArrowIcon />
         </ClearLink>
       ) : null}
     </div>

@@ -7,11 +7,10 @@
 import S from './styles/AllItemsList.module.scss';
 import Item from '../Item';
 import SafariViewportList from '@/entrypoints/popup/components/SafariViewportList';
-import { lazy, useMemo, memo } from 'react';
+import { useMemo, memo } from 'react';
 import { sortFunction } from '@/partials/functions';
 import isItemsCorrect from '../../functions/isItemsCorrect';
-
-const EmptyListIcon = lazy(() => import('@/assets/popup-window/empty-list.svg?react'));
+import EmptyListIcon from '@/assets/popup-window/empty-list.svg?react';
 
 /**
 * Component displaying a list of all items with sorting, filtering and search.

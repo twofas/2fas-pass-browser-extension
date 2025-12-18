@@ -5,13 +5,11 @@
 // See LICENSE file for full terms
 
 import S from '../Details.module.scss';
-import * as m from 'motion/react-m';
-import { lazy } from 'react';
+import { motion } from 'motion/react';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import usePopupState from '../../../store/popupState/usePopupState';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
-
-const ChevronIcon = lazy(() => import('@/assets/popup-window/chevron.svg?react'));
+import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
 
 const dangerZoneVariants = {
   hidden: { maxHeight: '0px' },
@@ -41,7 +39,7 @@ function DangerZone (props) {
         <ChevronIcon />
       </button>
 
-      <m.div
+      <motion.div
         className={S.detailsDangerZoneBody}
         variants={dangerZoneVariants}
         initial='hidden'
@@ -66,7 +64,7 @@ function DangerZone (props) {
         >
           <span>{browser.i18n.getMessage('details_delete')}</span>
         </ClearLink>
-      </m.div>
+      </motion.div>
     </div>
   );
 }
