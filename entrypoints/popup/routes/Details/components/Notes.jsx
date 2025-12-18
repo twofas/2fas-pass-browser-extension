@@ -7,14 +7,12 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import { useCallback, useEffect, useRef } from 'react';
 import updateItem from '../functions/updateItem';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const notesVariants = {
   hidden: { height: 'auto', minHeight: '20px', maxHeight: '600px' },
@@ -85,32 +83,30 @@ function Notes () {
             </button>
           </div>
           <div className={pI.passInputBottomMotion}>
-            <LazyMotion features={loadDomAnimation}>
-              <m.div
-                className={`${pI.passInputBottom} ${pI.note} ${data.notesEditable ? pI.noteEditable : ''}`}
-                variants={notesVariants}
-                initial="hidden"
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-                animate={input.value.length > 0 || data.notesEditable ? 'visible' : 'hidden'}
-              >
-                <textarea
-                  {...input}
-                  ref={textareaRef}
-                  onChange={e => {
-                    input.onChange(e);
-                    handleNotesChange(e);
-                  }}
-                  placeholder={browser.i18n.getMessage('details_notes_placeholder')}
-                  id="notes"
-                  disabled={!data.notesEditable ? 'disabled' : ''}
-                  dir="ltr"
-                  spellCheck="true"
-                  autoCorrect="off"
-                  autoComplete="off"
-                  autoCapitalize="off"
-                />
-              </m.div>
-            </LazyMotion>
+            <motion.div
+              className={`${pI.passInputBottom} ${pI.note} ${data.notesEditable ? pI.noteEditable : ''}`}
+              variants={notesVariants}
+              initial="hidden"
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              animate={input.value.length > 0 || data.notesEditable ? 'visible' : 'hidden'}
+            >
+              <textarea
+                {...input}
+                ref={textareaRef}
+                onChange={e => {
+                  input.onChange(e);
+                  handleNotesChange(e);
+                }}
+                placeholder={browser.i18n.getMessage('details_notes_placeholder')}
+                id="notes"
+                disabled={!data.notesEditable ? 'disabled' : ''}
+                dir="ltr"
+                spellCheck="true"
+                autoCorrect="off"
+                autoComplete="off"
+                autoCapitalize="off"
+              />
+            </motion.div>
           </div>
         </div>
       )}

@@ -7,14 +7,12 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import { useCallback } from 'react';
 import updateItem from '../functions/updateItem';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const additionalInfoVariants = {
   hidden: { height: 'auto', minHeight: '20px', maxHeight: '600px' },
@@ -81,31 +79,29 @@ function AdditionalInfo (props) {
             </button>
           </div>
           <div className={pI.passInputBottomMotion}>
-            <LazyMotion features={loadDomAnimation}>
-              <m.div
-                className={`${pI.passInputBottom} ${pI.note} ${data.additionalInfoEditable ? pI.noteEditable : ''}`}
-                variants={additionalInfoVariants}
-                initial="hidden"
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-                animate={input.value.length > 0 || data.additionalInfoEditable ? 'visible' : 'hidden'}
-              >
-                <textarea
-                  {...input}
-                  onChange={e => {
-                    input.onChange(e);
-                    handleAdditionalInfoChange(e);
-                  }}
-                  placeholder={browser.i18n.getMessage('details_additional_info_placeholder')}
-                  id="additional-info"
-                  disabled={!data.additionalInfoEditable ? 'disabled' : ''}
-                  dir="ltr"
-                  spellCheck="true"
-                  autoCorrect="off"
-                  autoComplete="off"
-                  autoCapitalize="off"
-                />
-              </m.div>
-            </LazyMotion>
+            <motion.div
+              className={`${pI.passInputBottom} ${pI.note} ${data.additionalInfoEditable ? pI.noteEditable : ''}`}
+              variants={additionalInfoVariants}
+              initial="hidden"
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              animate={input.value.length > 0 || data.additionalInfoEditable ? 'visible' : 'hidden'}
+            >
+              <textarea
+                {...input}
+                onChange={e => {
+                  input.onChange(e);
+                  handleAdditionalInfoChange(e);
+                }}
+                placeholder={browser.i18n.getMessage('details_additional_info_placeholder')}
+                id="additional-info"
+                disabled={!data.additionalInfoEditable ? 'disabled' : ''}
+                dir="ltr"
+                spellCheck="true"
+                autoCorrect="off"
+                autoComplete="off"
+                autoCapitalize="off"
+              />
+            </motion.div>
           </div>
         </div>
       )}

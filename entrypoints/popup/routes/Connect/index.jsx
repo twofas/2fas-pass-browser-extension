@@ -7,8 +7,7 @@
 import S from './Connect.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, useCallback, useRef, memo, lazy } from 'react';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import { useAuthActions } from '@/hooks/useAuth';
 import useConnectView from '../../hooks/useConnectView';
 import { generateSessionKeysNonces, generateEphemeralKeys, generateSessionID, calculateConnectSignature, generateQR } from './functions';
@@ -25,7 +24,7 @@ import { PULL_REQUEST_TYPES, SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import usePopupState from '../../store/popupState/usePopupState';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
+console.log('🎭 [PERF] Connect: motion (full) import done at:', performance.now().toFixed(2), 'ms');
 const PushNotification = lazy(() => import('../Fetch/components/PushNotification'));
 const IphoneIconLight = lazy(() => import('@/assets/popup-window/device-select/device-iphone-light.svg?react'));
 const IphoneIconDark = lazy(() => import('@/assets/popup-window/device-select/device-iphone-dark.svg?react'));
@@ -529,17 +528,16 @@ function Connect (props) {
   }, [readyDevices, sliderMounted, setData, data.connectSliderIndex]);
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <div className={`${props.className ? props.className : ''}`}>
-        <div>
-          {/* QR View */}
-          <m.section
-            className={S.connect}
-            variants={viewVariants}
-            initial="hidden"
-            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
-            animate={connectView === CONNECT_VIEWS.QrView ? 'visible' : 'hidden'}
-          >
+    <div className={`${props.className ? props.className : ''}`}>
+      <div>
+        {/* QR View */}
+        <motion.section
+          className={S.connect}
+          variants={viewVariants}
+          initial="hidden"
+          transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
+          animate={connectView === CONNECT_VIEWS.QrView ? 'visible' : 'hidden'}
+        >
             <div className={S.connectContainer}>
               <h1>{browser.i18n.getMessage('connect_header')}</h1>
 
@@ -563,10 +561,10 @@ function Connect (props) {
                 <p>{browser.i18n.getMessage('connect_description')}</p>
               </div>
             </div>
-          </m.section>
+          </motion.section>
 
           {/* Device Select */}
-          <m.section
+          <motion.section
             className={S.deviceSelect}
             variants={viewVariants}
             initial="hidden"
@@ -650,10 +648,10 @@ function Connect (props) {
                 </button>
               </div>
             </div>
-          </m.section>
+          </motion.section>
 
           {/* Progress */}
-          <m.section
+          <motion.section
             className={S.progress}
             variants={viewVariants}
             initial="hidden"
@@ -678,10 +676,10 @@ function Connect (props) {
                 <span>{deviceName}</span>
               </div>
             </div>
-          </m.section>
+          </motion.section>
 
           {/* Push Sent */}
-          <m.section
+          <motion.section
             className={S.push}
             variants={viewVariants}
             initial="hidden"
@@ -718,10 +716,9 @@ function Connect (props) {
                 </div>
               </div>
             </div>
-          </m.section>
+          </motion.section>
         </div>
       </div>
-    </LazyMotion>
   );
 }
 

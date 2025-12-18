@@ -4,6 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+console.log('📦 [PERF] Popup.jsx module LOADING at:', performance.now().toFixed(2), 'ms');
+
 import S from './Popup.module.scss';
 import { HashRouter, Route, Routes, Navigate, useNavigate, useLocation } from 'react-router';
 import { useEffect, useState, useMemo, memo, useRef, lazy, useCallback } from 'react';
@@ -40,6 +42,8 @@ const Details = lazy(() => import('./routes/Details'));
 const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
 const ErrorFallback = lazy(() => import('./routes/ErrorFallback'));
+
+console.log('📦 [PERF] Popup.jsx imports done at:', performance.now().toFixed(2), 'ms');
 
 const routeConfig = [
   { path: '/connect', component: Connect },
@@ -429,6 +433,8 @@ const PopupMain = memo(() => {
 * @return {JSX.Element} The rendered component.
 */
 function Popup() {
+  console.log('📦 [PERF] Popup function rendering at:', performance.now().toFixed(2), 'ms');
+
   return (
     <ErrorBoundary
       fallbackRender={props => <ErrorFallback {...props} className={`${S.pass} ${S.passScreen} ${S.passError}`} />}

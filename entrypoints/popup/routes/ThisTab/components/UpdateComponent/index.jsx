@@ -6,11 +6,11 @@
 
 import S from './UpdateComponent.module.scss';
 import { useCallback, useState, useEffect, lazy } from 'react';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
+
+console.log('🎭 [PERF] UpdateComponent: motion (full) import done at:', performance.now().toFixed(2), 'ms');
 
 const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const updateBarVariants = {
   visible: {
@@ -87,30 +87,28 @@ function UpdateComponent () {
   }, [messageListener]);
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <m.div
-        className={S.updateContainer}
-        variants={updateBarVariants}
-        initial='hidden'
-        animate={updateAvailable ? 'visible' : 'hidden'}
-      >
-        <div className={S.updateContainerBox}>
-          <div className={S.updateContainerBoxContent}>
-            <span className={S.updateContainerBoxText}>
-              {browser.i18n.getMessage('update_available')}
-            </span>
-          </div>
-          <button 
-            className={S.updateContainerBoxButton}
-            onClick={handleUpdate}
-            title={browser.i18n.getMessage('update_button_title')}
-          >
-            <RefreshIcon />
-            {browser.i18n.getMessage('update_button')}
-          </button>
+    <motion.div
+      className={S.updateContainer}
+      variants={updateBarVariants}
+      initial='hidden'
+      animate={updateAvailable ? 'visible' : 'hidden'}
+    >
+      <div className={S.updateContainerBox}>
+        <div className={S.updateContainerBoxContent}>
+          <span className={S.updateContainerBoxText}>
+            {browser.i18n.getMessage('update_available')}
+          </span>
         </div>
-      </m.div>
-    </LazyMotion>
+        <button
+          className={S.updateContainerBoxButton}
+          onClick={handleUpdate}
+          title={browser.i18n.getMessage('update_button_title')}
+        >
+          <RefreshIcon />
+          {browser.i18n.getMessage('update_button')}
+        </button>
+      </div>
+    </motion.div>
   );
 }
 

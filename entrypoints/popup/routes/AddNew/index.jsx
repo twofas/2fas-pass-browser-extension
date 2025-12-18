@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 import S from './AddNew.module.scss';
-import { LazyMotion } from 'motion/react';
 import { useRef } from 'react';
 import { useParams } from 'react-router';
 import usePopupState from '../../store/popupState/usePopupState';
@@ -19,7 +18,6 @@ import LoginView from './modelsViews/LoginAddNewView';
 import SecureNoteView from './modelsViews/SecureNoteAddNewView';
 import PaymentCardAddNewView from './modelsViews/PaymentCardAddNewView';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 /**
 * AddNew component for creating a new item entry.
@@ -55,22 +53,20 @@ function AddNew(props) {
   }
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <div className={`${props.className ? props.className : ''}`}>
-        <div ref={scrollableRef}>
-          <section className={S.addNew}>
-            <div className={S.addNewContainer}>
-              <NavigationButton type='back' />
+    <div className={`${props.className ? props.className : ''}`}>
+      <div ref={scrollableRef}>
+        <section className={S.addNew}>
+          <div className={S.addNewContainer}>
+            <NavigationButton type='back' />
 
-              <h2>{browser.i18n.getMessage('add_new_header').replace('ITEM', itemsUiData[params.model]?.label || browser.i18n.getMessage('item'))}</h2>
-              <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
+            <h2>{browser.i18n.getMessage('add_new_header').replace('ITEM', itemsUiData[params.model]?.label || browser.i18n.getMessage('item'))}</h2>
+            <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
 
-              {modelComponent}
-            </div>
-          </section>
-        </div>
+            {modelComponent}
+          </div>
+        </section>
       </div>
-    </LazyMotion>
+    </div>
   );
 }
 
