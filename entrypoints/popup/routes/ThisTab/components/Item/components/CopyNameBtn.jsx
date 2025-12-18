@@ -5,10 +5,8 @@
 // See LICENSE file for full terms
 
 import S from '../styles/Item.module.scss';
-import { lazy } from 'react';
 import handleName from '../../../functions/serviceList/handleName';
-
-const ItemCopyNameIcon = lazy(() => import('@/assets/popup-window/copy-name.svg?react'));
+import ItemCopyNameIcon from '@/assets/popup-window/copy-name.svg?react';
 
 const CopyNameBtn = ({ item, more, setMore }) => {
   return (

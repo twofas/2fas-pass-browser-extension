@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import URLComponent from '../components/URLComponent';
-import { lazy, useCallback } from 'react';
+import { useCallback } from 'react';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import S from '../Details.module.scss';
@@ -14,8 +14,7 @@ import usePopupState from '../../../store/popupState/usePopupState';
 import URIMatcher from '@/partials/URIMatcher';
 import { useUriTempIds } from '../context/UriTempIdsContext';
 import updateItem from './updateItem';
-
-const AddIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
+import AddIcon from '@/assets/popup-window/add-new-2.svg?react';
 
 /**
 * Component to generate and manage URL inputs.

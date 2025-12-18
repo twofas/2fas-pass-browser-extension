@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './styles/ModelFilter.module.scss';
-import { useState, useRef, lazy, useEffect, useCallback, useMemo } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
@@ -13,8 +13,7 @@ import { getSupportedFeatures } from '@/partials/functions';
 import generateItemModelsOptions from './functions/generateItemModelsOptions';
 import { supportedFeatures } from '@/constants';
 import ModelFilterCustomOption from './components/ModelFilterCustomOption';
-
-const AllIcon = lazy(() => import('@/assets/popup-window/items/all.svg?react'));
+import AllIcon from '@/assets/popup-window/items/all.svg?react';
 
 const selectComponents = { Option: ModelFilterCustomOption };
 const noOptionsMessage = () => null;

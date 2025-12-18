@@ -4,16 +4,14 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { lazy } from 'react';
 import handleUriCopyClick from '../../../functions/serviceList/handleUriCopyClick';
 import handleUriClick from '../../../functions/serviceList/handleUriClick';
 import handleForgetPassword from '../../../functions/serviceList/handleForgetPassword';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
-
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
-const DetailsIcon = lazy(() => import('@/assets/popup-window/details.svg?react'));
-const MoreUrlIcon = lazy(() => import('@/assets/popup-window/more-url.svg?react'));
-const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import DetailsIcon from '@/assets/popup-window/details.svg?react';
+import MoreUrlIcon from '@/assets/popup-window/more-url.svg?react';
+import TrashIcon from '@/assets/popup-window/trash.svg?react';
 
 /**
 * Function to render a custom option in the item dropdown.

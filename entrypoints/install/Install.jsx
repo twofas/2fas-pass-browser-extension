@@ -21,21 +21,22 @@ import Video2Dark from '@/assets/videos/install_video_2_dark.mp4?url';
 import VideoPoster from '@/assets/install-page/video-poster.png?url';
 import { openPopup, safariBlankLinks } from '@/partials/functions';
 import detectDefaultTheme from './functions/detectDefaultTheme';
+import Logo from '@/assets/logo.svg?react';
+import LogoDark from '@/assets/logo-dark.svg?react';
+import Domain from '@/assets/popup-window/domain.svg?react';
+import Check from '@/assets/install-page/check.svg?react';
+import Puzzle from '@/assets/install-page/puzzle.svg?react';
+import Pin from '@/assets/install-page/pin.svg?react';
+import Arrow from '@/assets/install-page/arrow.svg?react';
+import Shield from '@/assets/install-page/shield.svg?react';
+import Qr from '@/assets/install-page/qr.svg?react';
+import LogsIcon from '@/assets/install-page/logs.svg?react';
+import ArrowDecorLight from '@/assets/install-page/arrow-decor-light.svg?react';
+import ArrowDecorDark from '@/assets/install-page/arrow-decor-dark.svg?react';
+import PlayIcon from '@/assets/install-page/play.svg?react';
 
-const Logo = lazy(() => import('@/assets/logo.svg?react'));
-const LogoDark = lazy(() => import('@/assets/logo-dark.svg?react'));
-const Domain = lazy(() => import('@/assets/popup-window/domain.svg?react'));
-const Check = lazy(() => import('@/assets/install-page/check.svg?react'));
-const Puzzle = lazy(() => import('@/assets/install-page/puzzle.svg?react'));
-const Pin = lazy(() => import('@/assets/install-page/pin.svg?react'));
-const Arrow = lazy(() => import('@/assets/install-page/arrow.svg?react'));
-const Shield = lazy(() => import('@/assets/install-page/shield.svg?react'));
-const Qr = lazy(() => import('@/assets/install-page/qr.svg?react'));
-const LogsIcon = lazy(() => import('@/assets/install-page/logs.svg?react'));
-const ArrowDecorLight = lazy(() => import('@/assets/install-page/arrow-decor-light.svg?react'));
-const ArrowDecorDark = lazy(() => import('@/assets/install-page/arrow-decor-dark.svg?react'));
-const PlayIcon = lazy(() => import('@/assets/install-page/play.svg?react'));
-const DownloadMobileApp  = lazy(() => import('./components/DownloadMobileApp'));
+console.log('🎨 [PERF] Install: Direct SVG imports done at:', performance.now().toFixed(2), 'ms');
+const DownloadMobileApp = lazy(() => import('./components/DownloadMobileApp'));
 
 const stepVariants = {
   hidden: { opacity: 0, display: 'none', transition: { duration: 0.2, ease: 'easeOut' } },

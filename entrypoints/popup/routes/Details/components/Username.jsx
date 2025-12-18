@@ -8,13 +8,12 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { motion } from 'motion/react';
-import { lazy, useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
-
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 
 const usernameMobileVariants = {
   hidden: { maxHeight: '0px' },

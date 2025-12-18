@@ -23,18 +23,18 @@ import { getNTPTime, sendPush, networkTest } from '@/partials/functions';
 import { PULL_REQUEST_TYPES, SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import usePopupState from '../../store/popupState/usePopupState';
+import IphoneIconLight from '@/assets/popup-window/device-select/device-iphone-light.svg?react';
+import IphoneIconDark from '@/assets/popup-window/device-select/device-iphone-dark.svg?react';
+import AndroidIconLight from '@/assets/popup-window/device-select/device-android-light.svg?react';
+import AndroidIconDark from '@/assets/popup-window/device-select/device-android-dark.svg?react';
+import IpadIconLight from '@/assets/popup-window/device-select/device-ipad-light.svg?react';
+import IpadIconDark from '@/assets/popup-window/device-select/device-ipad-dark.svg?react';
+import AndroidTabletIconLight from '@/assets/popup-window/device-select/device-android-tablet-light.svg?react';
+import AndroidTabletIconDark from '@/assets/popup-window/device-select/device-android-tablet-dark.svg?react';
+import ChevronIcon from '@/assets/popup-window/chevron2.svg?react';
 
-console.log('🎭 [PERF] Connect: motion (full) import done at:', performance.now().toFixed(2), 'ms');
+console.log('🎨 [PERF] Connect: Direct SVG imports done at:', performance.now().toFixed(2), 'ms');
 const PushNotification = lazy(() => import('../Fetch/components/PushNotification'));
-const IphoneIconLight = lazy(() => import('@/assets/popup-window/device-select/device-iphone-light.svg?react'));
-const IphoneIconDark = lazy(() => import('@/assets/popup-window/device-select/device-iphone-dark.svg?react'));
-const AndroidIconLight = lazy(() => import('@/assets/popup-window/device-select/device-android-light.svg?react'));
-const AndroidIconDark = lazy(() => import('@/assets/popup-window/device-select/device-android-dark.svg?react'));
-const IpadIconLight = lazy(() => import('@/assets/popup-window/device-select/device-ipad-light.svg?react'));
-const IpadIconDark = lazy(() => import('@/assets/popup-window/device-select/device-ipad-dark.svg?react'));
-const AndroidTabletIconLight = lazy(() => import('@/assets/popup-window/device-select/device-android-tablet-light.svg?react'));
-const AndroidTabletIconDark = lazy(() => import('@/assets/popup-window/device-select/device-android-tablet-dark.svg?react'));
-const ChevronIcon = lazy(() => import('@/assets/popup-window/chevron2.svg?react'));
 
 const viewVariants = {
   visible: { opacity: 1, borderWidth: '1px', pointerEvents: 'auto' },

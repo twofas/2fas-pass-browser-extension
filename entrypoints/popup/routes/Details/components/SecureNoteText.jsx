@@ -8,14 +8,13 @@ import S from '../Details.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { lazy, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { animate } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { isText } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
 import SecureNote from '@/models/itemModels/SecureNote';
-
-const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
+import InfoIcon from '@/assets/popup-window/info.svg?react';
 
  /**
 * Function to render the Secure Note text input field.

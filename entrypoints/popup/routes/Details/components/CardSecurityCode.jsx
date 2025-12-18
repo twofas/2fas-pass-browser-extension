@@ -8,16 +8,15 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import S from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/PaymentCardSecurityCodeInput.module.scss';
 import { Field } from 'react-final-form';
-import { lazy, useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { copyValue, isText } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
 import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardSecurityCodeInput from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput';
 import getSecurityCodeMask from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/getSecurityCodeMask';
-
-const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
-const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+import VisibleIcon from '@/assets/popup-window/visible.svg?react';
+import InfoIcon from '@/assets/popup-window/info.svg?react';
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 
 /**
 * Renders the security code input field for PaymentCard details view.

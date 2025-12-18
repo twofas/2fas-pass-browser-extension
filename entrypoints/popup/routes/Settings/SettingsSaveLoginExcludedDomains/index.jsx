@@ -6,17 +6,16 @@
 
 import S from '../Settings.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
-import { useState, useEffect, lazy } from 'react';
+import { useState, useEffect } from 'react';
 import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
 import usePopupState from '../../../store/popupState/usePopupState';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import ConfirmDialog from '@/entrypoints/popup/components/ConfirmDialog';
-
-const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
-const AddNewIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
-const CancelIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
+import TrashIcon from '@/assets/popup-window/trash.svg?react';
+import AddNewIcon from '@/assets/popup-window/add-new-2.svg?react';
+import CancelIcon from '@/assets/popup-window/close.svg?react';
 
 /**
 * Function to render the Settings Save Login Excluded Domains component.

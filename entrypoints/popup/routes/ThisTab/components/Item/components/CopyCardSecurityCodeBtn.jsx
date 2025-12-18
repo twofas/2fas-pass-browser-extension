@@ -6,9 +6,7 @@
 
 import S from '../styles/Item.module.scss';
 import handleCardSecurityCode from '../../../functions/serviceList/handleCardSecurityCode';
-import { lazy } from 'react';
-
-const ItemCopyIcon = lazy(() => import('@/assets/popup-window/card-security-code.svg?react'));
+import ItemCopyIcon from '@/assets/popup-window/card-security-code.svg?react';
 
 /**
 * Renders the copy security code button for payment card items.

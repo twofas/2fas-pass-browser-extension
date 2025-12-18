@@ -6,12 +6,10 @@
 
 import S from '../../../ThisTab.module.scss';
 import { supportedFeatures } from '@/constants';
-import { lazy } from 'react';
-
-const AllIcon = lazy(() => import('@/assets/popup-window/items/all.svg?react'));
-const LoginIcon = lazy(() => import('@/assets/popup-window/items/login.svg?react'));
-const SecureNoteIcon = lazy(() => import('@/assets/popup-window/items/secure-note.svg?react'));
-const PaymentCardIcon = lazy(() => import('@/assets/popup-window/items/payment-card.svg?react'));
+import AllIcon from '@/assets/popup-window/items/all.svg?react';
+import LoginIcon from '@/assets/popup-window/items/login.svg?react';
+import SecureNoteIcon from '@/assets/popup-window/items/secure-note.svg?react';
+import PaymentCardIcon from '@/assets/popup-window/items/payment-card.svg?react';
 
 /** 
 * Function to generate item models options based on device supported features.

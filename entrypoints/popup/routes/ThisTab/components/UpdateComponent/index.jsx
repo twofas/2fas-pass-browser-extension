@@ -5,12 +5,11 @@
 // See LICENSE file for full terms
 
 import S from './UpdateComponent.module.scss';
-import { useCallback, useState, useEffect, lazy } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 
 console.log('🎭 [PERF] UpdateComponent: motion (full) import done at:', performance.now().toFixed(2), 'ms');
-
-const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
 
 const updateBarVariants = {
   visible: {

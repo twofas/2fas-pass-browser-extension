@@ -9,15 +9,14 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import { Field } from 'react-final-form';
 import { motion } from 'motion/react';
-import { useState, useEffect, useRef, useCallback, useMemo, lazy, memo } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import getTags from '@/partials/sessionStorage/getTags';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import usePopupState from '../../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../../functions/updateItem';
-
-const CloseIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
-const PlusIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
+import CloseIcon from '@/assets/popup-window/close.svg?react';
+import PlusIcon from '@/assets/popup-window/add-new-2.svg?react';
 
 const animationVariants = {
   initial: { opacity: 0, scale: 0.8 },

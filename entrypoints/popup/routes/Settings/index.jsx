@@ -5,15 +5,14 @@
 // See LICENSE file for full terms
 
 import S from './Settings.module.scss';
-import { useState, useEffect, lazy, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import getRatingLink from './functions/getRatingLink';
 import getRatingText from './functions/getRatingText';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import ClearLink from '../../components/ClearLink';
-
-const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
-const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
+import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
+import StarIcon from '@/assets/popup-window/star.svg?react';
 
 /**
 * Function to render the Settings component.

@@ -6,9 +6,8 @@
 
 import S from './styles/Filters.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { useState, useRef, useMemo, useCallback, memo, Suspense } from 'react';
+import { useState, useRef, useMemo, useCallback, memo } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
-import IconFallback from '@/entrypoints/popup/components/IconFallback';
 import FiltersCustomOption from './components/FiltersCustomOption';
 import FiltersIcon from '@/assets/popup-window/filters.svg?react';
 
@@ -87,9 +86,7 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
         onClick={handleButtonClick}
         title={browser.i18n.getMessage('filters_button_title')}
       >
-        <Suspense fallback={<IconFallback size={16} />}>
-          <FiltersIcon />
-        </Suspense>
+        <FiltersIcon />
       </button>
 
       <AdvancedSelect
