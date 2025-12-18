@@ -9,13 +9,12 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { lazy, useState, useCallback } from 'react';
-import { LazyMotion, animate } from 'motion/react';
+import { animate } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { isText } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
 import SecureNote from '@/models/itemModels/SecureNote';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
 
  /**
@@ -232,9 +231,8 @@ function SecureNoteText (props) {
   };
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <Field name='editedSif'>
-        {() => (
+    <Field name='editedSif'>
+      {() => (
           <div className={`${pI.passInput} ${!data?.sifEditable || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''} ${inputError === 'content.s_text' ? pI.error : ''}`}>
             <div className={pI.passInputTop}>
               <label htmlFor='editedSif'>{browser.i18n.getMessage('secure_note_note')}</label>
@@ -301,7 +299,6 @@ function SecureNoteText (props) {
           </div>
         )}
       </Field>
-    </LazyMotion>
   );
 }
 

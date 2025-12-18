@@ -12,8 +12,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, lazy, useCallback, useRef } from 'react';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import ToastsContent from '@/entrypoints/popup/components/ToastsContent';
 import Video1Light from '@/assets/videos/install_video_1_light.mp4?url';
 import Video1Dark from '@/assets/videos/install_video_1_dark.mp4?url';
@@ -23,7 +22,6 @@ import VideoPoster from '@/assets/install-page/video-poster.png?url';
 import { openPopup, safariBlankLinks } from '@/partials/functions';
 import detectDefaultTheme from './functions/detectDefaultTheme';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const Logo = lazy(() => import('@/assets/logo.svg?react'));
 const LogoDark = lazy(() => import('@/assets/logo-dark.svg?react'));
 const Domain = lazy(() => import('@/assets/popup-window/domain.svg?react'));
@@ -266,9 +264,8 @@ function Install () {
         <div className={S.installContainer}>
           <div className="container">
             <div className={S.installContainerContent}>
-              <LazyMotion features={loadDomAnimation}>
                 <div className={S.installContainerContentLeft}>
-                  <m.div
+                  <motion.div
                     className={`${S.installContainerContentLeftBox}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -308,8 +305,8 @@ function Install () {
                         <Arrow />
                       </button>
                     </div>
-                  </m.div>
-                  <m.div
+                  </motion.div>
+                  <motion.div
                     className={`${S.installContainerContentLeftBox}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -346,8 +343,8 @@ function Install () {
                     <div className={`${S.installContainerContentLeftBoxApps} ${appsVisible ? S.visible : ''}`}>
                       <DownloadMobileApp />
                     </div>
-                  </m.div>
-                  <m.div
+                  </motion.div>
+                  <motion.div
                     className={`${S.installContainerContentLeftBox}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -385,10 +382,10 @@ function Install () {
                         </label>
                       </form>
                     </div>
-                  </m.div>
+                  </motion.div>
                 </div>
                 <div className={S.installContainerContentRight}>
-                  <m.div
+                  <motion.div
                     className={`${S.installContainerContentRightBox}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -396,8 +393,8 @@ function Install () {
                   >
                     <video src={Video1Light} className="theme-light" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
                     <video src={Video1Dark} className="theme-dark" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
-                  </m.div>
-                  <m.div
+                  </motion.div>
+                  <motion.div
                     className={`${S.installContainerContentRightBox}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -405,8 +402,8 @@ function Install () {
                   >
                     <video src={Video2Light} className="theme-light" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
                     <video src={Video2Dark} className="theme-dark" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
-                  </m.div>
-                  <m.div
+                  </motion.div>
+                  <motion.div
                     className={`${S.installContainerContentRightBox} ${S.external}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -416,9 +413,8 @@ function Install () {
                       <PlayIcon />
                       <img src={VideoPoster} alt={browser.i18n.getMessage('install_3_get_started')} loading="lazy" />
                     </a>
-                  </m.div>
+                  </motion.div>
                 </div>
-              </LazyMotion>
             </div>
           </div>
         </div>

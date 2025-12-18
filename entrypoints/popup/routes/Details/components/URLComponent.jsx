@@ -9,8 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
 import { lazy, useCallback, useEffect, useRef } from 'react';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -18,7 +17,6 @@ import URIMatcher from '@/partials/URIMatcher';
 import updateItem from '../functions/updateItem';
 import { useUriTempIds } from '../context/UriTempIdsContext';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
 const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
 
@@ -174,16 +172,15 @@ function URLComponent (props) {
   }, [isEditable]);
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <Field name={`content.uris[${index}].text`}>
-        {({ input }) => (
-          <m.div
-            className={`${pI.passInput} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
-            variants={urlVariants}
-            initial={isNew ? 'hidden' : false}
-            animate={isNew ? 'visible' : false}
-            exit='hidden'
-          >
+    <Field name={`content.uris[${index}].text`}>
+      {({ input }) => (
+        <motion.div
+          className={`${pI.passInput} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
+          variants={urlVariants}
+          initial={isNew ? 'hidden' : false}
+          animate={isNew ? 'visible' : false}
+          exit='hidden'
+        >
             <div className={pI.passInputTop}>
               <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
               <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={handleUriEditable} tabIndex={-1}>{buttonText}</button>
@@ -231,10 +228,9 @@ function URLComponent (props) {
             <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
               {domainValidation(input.value)}
             </div>
-          </m.div>
+          </motion.div>
         )}
       </Field>
-    </LazyMotion>
   );
 }
 

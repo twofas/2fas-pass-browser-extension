@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 import S from './Details.module.scss';
-import { LazyMotion } from 'motion/react';
 import { useParams, useNavigate, useLocation } from 'react-router';
 import { useState, useEffect, useCallback, useRef, useMemo, lazy } from 'react';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -21,7 +20,7 @@ import LoginDetailsView from './modelsViews/LoginDetailsView';
 import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
 import PaymentCardDetailsView from './modelsViews/PaymentCardDetailsView';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
+console.log('🎭 [PERF] Details: NO motion wrapper needed at:', performance.now().toFixed(2), 'ms');
 const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 
 const DetailsViews = {
@@ -198,41 +197,39 @@ function Details(props) {
   }
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <div className={`${props.className ? props.className : ''}`}>
-        <div ref={scrollableRef}>
-          <section className={S.details}>
-            <div className={S.detailsContainer}>
-              <NavigationButton type='back' />
-              <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
+    <div className={`${props.className ? props.className : ''}`}>
+      <div ref={scrollableRef}>
+        <section className={S.details}>
+          <div className={S.detailsContainer}>
+            <NavigationButton type='back' />
+            <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
 
-              <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
-                <p>{browser.i18n.getMessage('details_fetch_text')}</p>
-                <ClearLink
-                  to='/fetch'
-                  state={{
-                    action: PULL_REQUEST_TYPES.SIF_REQUEST,
-                    from: 'details',
-                    data: {
-                      itemId: data.item.id,
-                      deviceId: data.item.deviceId,
-                      vaultId: data.item.vaultId,
-                      contentType: data.item.constructor.contentType
-                    }
-                  }}
-                  title={browser.i18n.getMessage('details_fetch_title')}
-                >
-                  <ServiceFetchIcon />
-                  <span>{browser.i18n.getMessage('fetch')}</span>
-                </ClearLink>
-              </div>
-
-              {modelComponent}
+            <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
+              <p>{browser.i18n.getMessage('details_fetch_text')}</p>
+              <ClearLink
+                to='/fetch'
+                state={{
+                  action: PULL_REQUEST_TYPES.SIF_REQUEST,
+                  from: 'details',
+                  data: {
+                    itemId: data.item.id,
+                    deviceId: data.item.deviceId,
+                    vaultId: data.item.vaultId,
+                    contentType: data.item.constructor.contentType
+                  }
+                }}
+                title={browser.i18n.getMessage('details_fetch_title')}
+              >
+                <ServiceFetchIcon />
+                <span>{browser.i18n.getMessage('fetch')}</span>
+              </ClearLink>
             </div>
-          </section>
-        </div>
+
+            {modelComponent}
+          </div>
+        </section>
       </div>
-    </LazyMotion>
+    </div>
   );
 }
 

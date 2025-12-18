@@ -7,8 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import { copyValue, isText } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -22,7 +21,6 @@ import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import ExternalLinkIcon from '@/assets/popup-window/new-tab.svg?react';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const passwordMobileVariants = {
   hidden: { maxHeight: '0px' },
@@ -249,9 +247,8 @@ function Password (props) {
   };
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <Field name="editedSif">
-        {() => (
+    <Field name="editedSif">
+      {() => (
           <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''}`}>
             <div className={pI.passInputTop}>
               <label htmlFor='editedSif'>{browser.i18n.getMessage('password')}</label>
@@ -315,7 +312,7 @@ function Password (props) {
               {generateSecurityTypeTooltip(originalItem)}
               {generateErrorOverlay()}
             </div>
-            <m.div
+            <motion.div
               className={`${pI.passInputAdditional} ${data?.passwordEditable ? '' : pI.removeMarginTop}`}
               variants={passwordMobileVariants}
               initial="hidden"
@@ -334,9 +331,9 @@ function Password (props) {
                   </span>
                 </label>
               </div>
-            </m.div>
+            </motion.div>
             {!checkingUrl && changePasswordUrl && (
-              <m.div
+              <motion.div
                 className={pI.passInputLink}
                 variants={changePasswordVariants}
                 initial="hidden"
@@ -352,12 +349,11 @@ function Password (props) {
                   <span>{browser.i18n.getMessage('details_change_password_in_service')}</span>
                   <ExternalLinkIcon />
                 </button>
-              </m.div>
+              </motion.div>
             )}
           </div>
         )}
       </Field>
-    </LazyMotion>
   );
 }
 

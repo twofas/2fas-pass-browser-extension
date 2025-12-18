@@ -5,8 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './ThisTab.module.scss';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import { useEffect, useState, useRef, useCallback, useMemo, memo, useContext } from 'react';
 import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
 import getDomainFromTab from './functions/getDomainFromTab';
@@ -26,7 +25,7 @@ import DomainIcon from '@/assets/popup-window/domain.svg?react';
 import { AllItemsList, Filters, KeepPassword, MatchingItemsList, ModelFilter, NoMatch, Search, Sort, TagsInfo, UpdateComponent } from './components';
 import { ItemListProvider } from './context/ItemListContext';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
+console.log('🎭 [PERF] ThisTab: motion (full) import done at:', performance.now().toFixed(2), 'ms');
 
 const thisTabTopVariants = {
   visible: { height: 'auto', transition: { duration: 0.2, ease: 'easeOut' } },
@@ -297,22 +296,21 @@ function ThisTab (props) {
   }, [storageVersion, messageListener, initializeData]);
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <div className={`${props.className ? props.className : ''}`}>
-        <div ref={scrollableRef}>
-          <section className={S.thisTab}>
-            <KeepPassword />
+    <div className={`${props.className ? props.className : ''}`}>
+      <div ref={scrollableRef}>
+        <section className={S.thisTab}>
+          <KeepPassword />
 
-            <div className={S.thisTabContainer}>
-              <m.div
-                ref={thisTabTopRef}
-                className={S.thisTabTop}
-                variants={thisTabTopVariants}
-                initial="visible"
-                animate={data?.searchActive || data?.selectedTag ? 'hidden' : 'visible'}
-                onAnimationComplete={handleAnimationComplete}
-                onUpdate={handleAnimationUpdate}
-              >
+          <div className={S.thisTabContainer}>
+            <motion.div
+              ref={thisTabTopRef}
+              className={S.thisTabTop}
+              variants={thisTabTopVariants}
+              initial="visible"
+              animate={data?.searchActive || data?.selectedTag ? 'hidden' : 'visible'}
+              onAnimationComplete={handleAnimationComplete}
+              onUpdate={handleAnimationUpdate}
+            >
                 <UpdateComponent />
 
                 <div className={S.thisTabHeader}>
@@ -342,7 +340,7 @@ function ThisTab (props) {
                     boxAnimationDarkRef={boxAnimationDarkRef}
                   />
                 </div>
-              </m.div>
+              </motion.div>
 
               <div className={allLoginsClass}>
                 <ModelFilter loading={loading} />
@@ -383,7 +381,6 @@ function ThisTab (props) {
           </section>
         </div>
       </div>
-    </LazyMotion>
   );
 }
 
