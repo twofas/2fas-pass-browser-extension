@@ -30,7 +30,7 @@ const getTags = async () => {
   const devicesData = devices.map(device => {
     return {
       deviceId: device?.id,
-      vaultsIds: device.vaults.map(vault => vault.id).filter(id => id) || [],
+      vaultsIds: device?.vaults?.map(vault => vault.id).filter(id => id) || [],
     };
   });
 
