@@ -90,7 +90,10 @@ const usePopupStateStore = create(
     {
       name: 'popupState',
       skipHydration: true,
-      storage: {
+      storage: (() => {
+        let writeQueue = Promise.resolve();
+
+        return {
         async getItem (name) {
           let activeTab = null;
           let tabId = null;
@@ -156,7 +159,11 @@ const usePopupStateStore = create(
             result = null;
           }
         },
-        async setItem (name, value) {
+        setItem (name, value) {
+          writeQueue = writeQueue.then(() => this._doSetItem(name, value)).catch(e => CatchError(e));
+          return writeQueue;
+        },
+        async _doSetItem (name, value) {
           let activeTab = null;
           let tabId = null;
           let popupStateKey = null;
@@ -314,7 +321,8 @@ const usePopupStateStore = create(
             stateToStore = null;
           }
         }
-      }
+      };
+      })()
     }
   )
 );

@@ -7,7 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { copyValue, isText, paymentCardExpirationDateValidation } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
 import PaymentCard from '@/models/itemModels/PaymentCard';
@@ -34,6 +34,23 @@ function CardExpirationDate (props) {
   const [localEditedExpirationDate, setLocalEditedExpirationDate] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
 
+  const itemInstance = useMemo(() => {
+    if (!data.item) {
+      return null;
+    }
+
+    if (data.item instanceof PaymentCard) {
+      return data.item;
+    }
+
+    try {
+      return new PaymentCard(data.item);
+    } catch (e) {
+      CatchError(e);
+      return null;
+    }
+  }, [data.item]);
+
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
 
   const decryptExpirationDateOnDemand = useCallback(async () => {
@@ -41,14 +58,14 @@ function CardExpirationDate (props) {
       return localDecryptedExpirationDate;
     }
 
-    if (!data.item?.expirationDateExists) {
+    if (!itemInstance?.expirationDateExists) {
       return null;
     }
 
     setIsDecrypting(true);
 
     try {
-      const decryptedData = await data.item.decryptExpirationDate();
+      const decryptedData = await itemInstance.decryptExpirationDate();
       setLocalDecryptedExpirationDate(decryptedData);
       setData('sifDecryptError', false);
       return decryptedData;
@@ -59,7 +76,7 @@ function CardExpirationDate (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedExpirationDate, isDecrypting, sifDecryptError, data.item, setData]);
+  }, [localDecryptedExpirationDate, isDecrypting, sifDecryptError, itemInstance, setData]);
 
   const getExpirationDateValue = () => {
     if (sifDecryptError || isHighlySecretWithoutSif) {
@@ -89,12 +106,12 @@ function CardExpirationDate (props) {
   useEffect(() => {
     const needsDecryption = localDecryptedExpirationDate === null &&
                            !isDecrypting &&
-                           data.item?.expirationDateExists;
+                           itemInstance?.expirationDateExists;
 
     if (needsDecryption) {
       decryptExpirationDateOnDemand();
     }
-  }, [localDecryptedExpirationDate, isDecrypting, data.item?.expirationDateExists, decryptExpirationDateOnDemand]);
+  }, [localDecryptedExpirationDate, isDecrypting, itemInstance?.expirationDateExists, decryptExpirationDateOnDemand]);
 
   useEffect(() => {
     if (data?.expirationDateEditable && inputRef.current) {
@@ -149,13 +166,13 @@ function CardExpirationDate (props) {
         expirationDateToCopy = localEditedExpirationDate;
       } else if (isText(localDecryptedExpirationDate)) {
         expirationDateToCopy = localDecryptedExpirationDate;
-      } else if (data.item.expirationDateExists) {
+      } else if (itemInstance?.expirationDateExists) {
         expirationDateToCopy = await decryptExpirationDateOnDemand();
       } else {
         expirationDateToCopy = '';
       }
 
-      await copyValue(expirationDateToCopy, data.item.deviceId, data.item.vaultId, data.item.id, 'expirationDate');
+      await copyValue(expirationDateToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'expirationDate');
       showToast(browser.i18n.getMessage('notification_expiration_date_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_expiration_date_copy_failed'), 'error');
@@ -167,10 +184,10 @@ function CardExpirationDate (props) {
     setLocalEditedExpirationDate(formattedValue);
     form.change('editedExpirationDate', formattedValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_expirationDate: formattedValue }]);
-    setData('item', localItem);
+    setData('item', localItem.toJSON());
   };
 
   return (
@@ -200,7 +217,7 @@ function CardExpirationDate (props) {
             />
 
             <div className={pI.passInputBottomButtons}>
-              {((originalItem?.securityType === SECURITY_TIER.SECRET || data.item.expirationDateExists) && !sifDecryptError) && (
+              {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.expirationDateExists) && !sifDecryptError) && (
                 <button
                   type='button'
                   className={`${bS.btn} ${pI.iconButton}`}

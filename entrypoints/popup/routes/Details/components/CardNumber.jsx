@@ -7,7 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { copyValue, isText } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
 import PaymentCard from '@/models/itemModels/PaymentCard';
@@ -39,6 +39,23 @@ function CardNumber (props) {
   const [isFocused, setIsFocused] = useState(false);
   const [shouldFocusInputMask, setShouldFocusInputMask] = useState(false);
 
+  const itemInstance = useMemo(() => {
+    if (!data.item) {
+      return null;
+    }
+
+    if (data.item instanceof PaymentCard) {
+      return data.item;
+    }
+
+    try {
+      return new PaymentCard(data.item);
+    } catch (e) {
+      CatchError(e);
+      return null;
+    }
+  }, [data.item]);
+
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
 
   const decryptCardNumberOnDemand = useCallback(async () => {
@@ -46,14 +63,14 @@ function CardNumber (props) {
       return localDecryptedCardNumber;
     }
 
-    if (!data.item?.cardNumberExists) {
+    if (!itemInstance?.cardNumberExists) {
       return null;
     }
 
     setIsDecrypting(true);
 
     try {
-      const decryptedData = await data.item.decryptCardNumber();
+      const decryptedData = await itemInstance.decryptCardNumber();
       setLocalDecryptedCardNumber(decryptedData);
       setData('sifDecryptError', false);
       return decryptedData;
@@ -64,14 +81,14 @@ function CardNumber (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedCardNumber, isDecrypting, sifDecryptError, data.item, setData]);
+  }, [localDecryptedCardNumber, isDecrypting, sifDecryptError, itemInstance, setData]);
 
   const getHiddenMaskValue = () => {
     if (isHighlySecretWithoutSif) {
       return '';
     }
 
-    const cardNumberMask = data.item?.content?.cardNumberMask;
+    const cardNumberMask = itemInstance?.content?.cardNumberMask;
 
     if (isText(cardNumberMask)) {
       return `**** ${cardNumberMask}`;
@@ -126,12 +143,12 @@ function CardNumber (props) {
     const needsDecryption = (data?.cardNumberEditable || data?.cardNumberVisible) &&
                            localDecryptedCardNumber === null &&
                            !isDecrypting &&
-                           data.item?.cardNumberExists;
+                           itemInstance?.cardNumberExists;
 
     if (needsDecryption) {
       decryptCardNumberOnDemand();
     }
-  }, [data?.cardNumberEditable, data?.cardNumberVisible, localDecryptedCardNumber, isDecrypting, data.item?.cardNumberExists, decryptCardNumberOnDemand]);
+  }, [data?.cardNumberEditable, data?.cardNumberVisible, localDecryptedCardNumber, isDecrypting, itemInstance?.cardNumberExists, decryptCardNumberOnDemand]);
 
   useEffect(() => {
     if (shouldFocusInputMask && data?.cardNumberEditable && isFocused) {
@@ -166,7 +183,7 @@ function CardNumber (props) {
 
   const handleEditableClick = async () => {
     if (data?.cardNumberEditable) {
-      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
+      let item = await getItem(itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id);
 
       const itemData = item.toJSON();
       const restoredItem = new PaymentCard(itemData);
@@ -176,7 +193,7 @@ function CardNumber (props) {
       setLocalDecryptedCardNumber(null);
       setIsFocused(false);
       setShouldFocusInputMask(false);
-      setData('item', restoredItem);
+      setData('item', restoredItem.toJSON());
       setData('cardNumberEditable', false);
       form.change('editedCardNumber', '');
     } else {
@@ -194,13 +211,13 @@ function CardNumber (props) {
 
       if (isText(localDecryptedCardNumber)) {
         cardNumberToCopy = localDecryptedCardNumber;
-      } else if (data.item.cardNumberExists) {
+      } else if (itemInstance?.cardNumberExists) {
         cardNumberToCopy = await decryptCardNumberOnDemand();
       } else {
         cardNumberToCopy = '';
       }
 
-      await copyValue(cardNumberToCopy, data.item.deviceId, data.item.vaultId, data.item.id, 'cardNumber');
+      await copyValue(cardNumberToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'cardNumber');
       showToast(browser.i18n.getMessage('notification_card_number_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_card_number_copy_failed'), 'error');
@@ -222,10 +239,10 @@ function CardNumber (props) {
     setLocalDecryptedCardNumber(newValue);
     form.change('editedCardNumber', newValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_cardNumber: newValue }]);
-    setData('item', localItem);
+    setData('item', localItem.toJSON());
   };
 
   const handleRawCardNumberChange = async e => {
@@ -234,10 +251,10 @@ function CardNumber (props) {
     setLocalDecryptedCardNumber(newValue);
     form.change('editedCardNumber', newValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_cardNumber: newValue }]);
-    setData('item', localItem);
+    setData('item', localItem.toJSON());
   };
 
   const handlePasswordInputFocus = () => {
@@ -347,7 +364,7 @@ function CardNumber (props) {
               >
                 <VisibleIcon />
               </button>
-              {((originalItem?.securityType === SECURITY_TIER.SECRET || data.item.cardNumberExists) && !sifDecryptError) && (
+              {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.cardNumberExists) && !sifDecryptError) && (
                 <button
                   type='button'
                   className={`${bS.btn} ${pI.iconButton}`}

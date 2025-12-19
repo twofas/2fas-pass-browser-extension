@@ -8,7 +8,7 @@ import S from '../Details.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { animate } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { isText } from '@/partials/functions';
@@ -36,19 +36,36 @@ function SecureNoteText (props) {
   const [localEditedText, setLocalEditedText] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
 
+  const itemInstance = useMemo(() => {
+    if (!data.item) {
+      return null;
+    }
+
+    if (data.item instanceof SecureNote) {
+      return data.item;
+    }
+
+    try {
+      return new SecureNote(data.item);
+    } catch (e) {
+      CatchError(e);
+      return null;
+    }
+  }, [data.item]);
+
   const decryptTextOnDemand = useCallback(async () => {
     if (localDecryptedText !== null || isDecrypting || sifDecryptError) {
       return localDecryptedText;
     }
 
-    if (!data.item?.sifExists) {
+    if (!itemInstance?.sifExists) {
       return null;
     }
 
     setIsDecrypting(true);
 
     try {
-      const decryptedData = await data.item.decryptSif();
+      const decryptedData = await itemInstance.decryptSif();
       setLocalDecryptedText(decryptedData.text);
       setData('sifDecryptError', false);
       return decryptedData.text;
@@ -59,7 +76,7 @@ function SecureNoteText (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedText, isDecrypting, sifDecryptError, data.item, setData]);
+  }, [localDecryptedText, isDecrypting, sifDecryptError, itemInstance, setData]);
 
   const getTextValue = () => {
     if (sifDecryptError) {
@@ -90,12 +107,12 @@ function SecureNoteText (props) {
     const needsDecryption = (data?.sifEditable || data?.revealSecureNote) &&
                            localDecryptedText === null &&
                            !isDecrypting &&
-                           data.item?.sifExists;
+                           itemInstance?.sifExists;
 
     if (needsDecryption) {
       decryptTextOnDemand();
     }
-  }, [data?.sifEditable, data?.revealSecureNote, localDecryptedText, isDecrypting, data.item?.sifExists, decryptTextOnDemand]);
+  }, [data?.sifEditable, data?.revealSecureNote, localDecryptedText, isDecrypting, itemInstance?.sifExists, decryptTextOnDemand]);
 
   useEffect(() => {
     if (data?.revealSecureNote) {
@@ -215,10 +232,10 @@ function SecureNoteText (props) {
     setLocalEditedText(newValue);
     form.change('editedSif', newValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new SecureNote(itemData);
     await localItem.setSif([{ s_text: newValue }]);
-    setData('item', localItem);
+    setData('item', localItem.toJSON());
   };
 
   const handleRevealToggle = async () => {
