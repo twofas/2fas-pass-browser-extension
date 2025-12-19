@@ -5,21 +5,24 @@
 // See LICENSE file for full terms
 
 import S from '../styles/Item.module.scss';
-import { memo, lazy, useRef, useMemo } from 'react';
+import { memo, useRef, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import handleAutofill from '../../../functions/serviceList/handleAutofill';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import Skeleton from '../../Skeleton';
-
-const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
-const CopyCardNumberBtn = lazy(() => import('../components/CopyCardNumberBtn'));
-const CopyCardSecurityCodeBtn = lazy(() => import('../components/CopyCardSecurityCodeBtn'));
-const { useCallback } = await import('react');
-const ItemCustomOption = lazy(() => import('../components/ItemCustomOption'));
+import MoreBtn from '../../../functions/serviceList/additionalButtons/MoreBtn';
+import CopyCardNumberBtn from '../components/CopyCardNumberBtn';
+import CopyCardSecurityCodeBtn from '../components/CopyCardSecurityCodeBtn';
+import ItemCustomOption from '../components/ItemCustomOption';
 
 const selectComponents = { Option: ItemCustomOption };
 
+/**
+* Payment card item view component.
+* @param {Object} props - The component props.
+* @return {JSX.Element} The rendered component.
+*/
 function PaymentCardItemView (props) {
   const moreBtnRef = useRef(null);
   const navigate = useNavigate();
@@ -67,4 +70,16 @@ function PaymentCardItemView (props) {
   );
 }
 
-export default memo(PaymentCardItemView);
+/**
+* Custom comparison function to prevent unnecessary re-renders.
+* @param {Object} prevProps - Previous props.
+* @param {Object} nextProps - Next props.
+* @return {boolean} True if props are equal (should not re-render).
+*/
+function arePropsEqual (prevProps, nextProps) {
+  return prevProps.data?.id === nextProps.data?.id &&
+         prevProps.more === nextProps.more &&
+         prevProps.loading === nextProps.loading;
+}
+
+export default memo(PaymentCardItemView, arePropsEqual);
