@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './Popup.module.scss';
-import { HashRouter, Route, Routes, Navigate, useNavigate, useLocation } from 'react-router';
+import { HashRouter, Route, Routes, Navigate } from 'react-router';
 import { useEffect, useState, useMemo, memo, useRef, lazy, useCallback } from 'react';
 import { AuthProvider, useAuthState } from '@/hooks/useAuth';
 import popupOnMessage from './events/popupOnMessage';
@@ -16,8 +16,6 @@ import { safariBlankLinks, storageAutoClearActions } from '@/partials/functions'
 import ToastsContent from './components/ToastsContent';
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
-import usePopupStateStore from './store/popupState';
-import usePopupState from './store/popupState/usePopupState';
 import usePopupHref from './hooks/usePopupHref';
 import { ScrollableRefProvider } from './context/ScrollableRefProvider';
 import Blocked from './routes/Blocked';
@@ -78,60 +76,12 @@ const RouteGuard = memo(({ configured, blocked, isProtectedRoute, children }) =>
 
 /**
 * AuthRoutes component that provides configured state to all routes.
-* Handles initial navigation based on stored href before rendering routes.
+* Initial route is set in main.jsx before React renders via pre-hydration.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered routes.
 */
 const AuthRoutes = memo(({ blocked, configured }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { href: storedHrefArray } = usePopupState();
-  const [initialCheckDone, setInitialCheckDone] = useState(false);
-  const [hydrationComplete, setHydrationComplete] = useState(false);
-  const hasNavigated = useRef(false);
-
-  const lastHref = storedHrefArray.length > 0 ? storedHrefArray[storedHrefArray.length - 1] : null;
-
-  useEffect(() => {
-    const unsubHydrate = usePopupStateStore.persist.onFinishHydration(() => {
-      setHydrationComplete(true);
-    });
-
-    if (usePopupStateStore.persist.hasHydrated()) {
-      setHydrationComplete(true);
-    }
-
-    return unsubHydrate;
-  }, []);
-
-  usePopupHref(hydrationComplete);
-
-  useEffect(() => {
-    if (!hydrationComplete) {
-      return;
-    }
-
-    if (hasNavigated.current || !configured) {
-      setInitialCheckDone(true);
-      return;
-    }
-
-    if (initialCheckDone) {
-      hasNavigated.current = true;
-      return;
-    }
-
-    const excludedRoutes = ['/connect', '/', '/fetch', '/blocked'];
-
-    if (lastHref && location.pathname === '/' && !excludedRoutes.includes(lastHref)) {
-      if (!lastHref.startsWith('/fetch/')) {
-        hasNavigated.current = true;
-        navigate(lastHref, { replace: true });
-      }
-    }
-
-    setInitialCheckDone(true);
-  }, [navigate, lastHref, location.pathname, configured, hydrationComplete, initialCheckDone]);
+  usePopupHref(true);
 
   const routeElements = useMemo(() => {
     return routeConfig.map(route => {
@@ -158,10 +108,6 @@ const AuthRoutes = memo(({ blocked, configured }) => {
       );
     });
   }, [configured, blocked]);
-
-  if (!initialCheckDone) {
-    return null;
-  }
 
   return (
     <Routes>
