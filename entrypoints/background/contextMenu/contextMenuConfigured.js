@@ -38,6 +38,10 @@ const contextMenuConfigured = async (items = null, retryAttempt = 0) => {
       contexts.push('page_action');
     }
 
+    if (import.meta.env.BROWSER === 'firefox') {
+      contexts.push('frame');
+    }
+
     let contextMenuSetting;
 
     try {

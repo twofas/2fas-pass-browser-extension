@@ -160,6 +160,10 @@ export default class PaymentCard extends Item {
       contexts.push('page_action');
     }
 
+    if (import.meta.env.BROWSER === 'firefox') {
+      contexts.push('frame');
+    }
+
     if (
       this.securityType === SECURITY_TIER.SECRET ||
       (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists)
