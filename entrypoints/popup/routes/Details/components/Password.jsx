@@ -10,7 +10,7 @@ import { Field } from 'react-final-form';
 import { motion } from 'motion/react';
 import { copyValue, isText } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import usePopupState from '../../../store/popupState/usePopupState';
 import Login from '@/models/itemModels/Login';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -20,7 +20,6 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import ExternalLinkIcon from '@/assets/popup-window/new-tab.svg?react';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
-
 
 const passwordMobileVariants = {
   hidden: { maxHeight: '0px' },
@@ -50,20 +49,40 @@ function Password (props) {
   const [isFocused, setIsFocused] = useState(false);
   const previousPasswordValueRef = useRef(null);
   const inputRef = useRef(null);
+  const latestItemRef = useRef(data.item);
+  const latestPasswordRef = useRef(null);
+  const updateTimeoutRef = useRef(null);
+
+  const itemInstance = useMemo(() => {
+    if (!data.item) {
+      return null;
+    }
+
+    if (data.item instanceof Login) {
+      return data.item;
+    }
+
+    try {
+      return new Login(data.item);
+    } catch (e) {
+      CatchError(e);
+      return null;
+    }
+  }, [data.item]);
 
   const decryptPasswordOnDemand = useCallback(async () => {
     if (localDecryptedPassword !== null || isDecrypting || sifDecryptError) {
       return localDecryptedPassword;
     }
 
-    if (!data.item?.sifExists) {
+    if (!itemInstance?.sifExists) {
       return null;
     }
 
     setIsDecrypting(true);
 
     try {
-      const decryptedData = await data.item.decryptSif();
+      const decryptedData = await itemInstance.decryptSif();
       setLocalDecryptedPassword(decryptedData.password);
       setData('sifDecryptError', false);
       return decryptedData.password;
@@ -74,7 +93,7 @@ function Password (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedPassword, isDecrypting, sifDecryptError, data.item, setData]);
+  }, [localDecryptedPassword, isDecrypting, sifDecryptError, itemInstance, setData]);
 
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
 
@@ -84,7 +103,7 @@ function Password (props) {
     }
 
     if (!data?.passwordEditable && !data?.passwordVisible) {
-      return data.item?.sifExists ? '******' : '';
+      return itemInstance?.sifExists ? '******' : '';
     }
 
     if (isText(localDecryptedPassword)) {
@@ -107,18 +126,22 @@ function Password (props) {
     const needsDecryption = (data?.passwordVisible || data?.passwordEditable) &&
                            localDecryptedPassword === null &&
                            !isDecrypting &&
-                           data.item?.sifExists;
+                           itemInstance?.sifExists;
 
     if (needsDecryption) {
       decryptPasswordOnDemand();
     }
-  }, [data?.passwordVisible, data?.passwordEditable, localDecryptedPassword, isDecrypting, data.item?.sifExists, decryptPasswordOnDemand]);
+  }, [data?.passwordVisible, data?.passwordEditable, localDecryptedPassword, isDecrypting, itemInstance?.sifExists, decryptPasswordOnDemand]);
 
   useEffect(() => {
     if (data?.passwordEditable && inputRef.current) {
       inputRef.current.focus();
     }
   }, [data?.passwordEditable]);
+
+  useEffect(() => {
+    latestItemRef.current = data.item;
+  }, [data.item]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -162,13 +185,13 @@ function Password (props) {
 
       if (isText(localDecryptedPassword)) {
         passwordToCopy = localDecryptedPassword;
-      } else if (data.item.sifExists) {
+      } else if (itemInstance?.sifExists) {
         passwordToCopy = await decryptPasswordOnDemand();
       } else {
         passwordToCopy = '';
       }
 
-      await copyValue(passwordToCopy, data.item.deviceId, data.item.vaultId, data.item.id, 'password');
+      await copyValue(passwordToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'password');
       showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
@@ -196,7 +219,7 @@ function Password (props) {
 
   const handleEditableClick = async () => {
     if (data?.passwordEditable) {
-      let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
+      let item = await getItem(itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id);
 
       const itemData = item.toJSON();
       const restoredItem = new Login(itemData);
@@ -234,16 +257,79 @@ function Password (props) {
     await browser.tabs.create({ url: changePasswordUrl });
   };
 
-  const handlePasswordChange = async e => {
+  const updateItemWithPassword = useCallback(async passwordValue => {
+    const currentItem = latestItemRef.current;
+
+    if (!currentItem) {
+      return;
+    }
+
+    try {
+      const itemData = typeof currentItem.toJSON === 'function' ? currentItem.toJSON() : currentItem;
+      const localItem = new Login(itemData);
+      await localItem.setSif([{ s_password: passwordValue }]);
+
+      if (latestPasswordRef.current !== passwordValue) {
+        return;
+      }
+
+      const localItemJSON = localItem.toJSON();
+      latestItemRef.current = localItemJSON;
+      setData('item', localItemJSON);
+
+      latestPasswordRef.current = null;
+    } catch (e) {
+      CatchError(e);
+    }
+  }, [setData]);
+
+  useEffect(() => {
+    const flushPendingUpdate = () => {
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+        updateTimeoutRef.current = null;
+
+        if (latestPasswordRef.current !== null) {
+          updateItemWithPassword(latestPasswordRef.current);
+        }
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      flushPendingUpdate();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        flushPendingUpdate();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      flushPendingUpdate();
+    };
+  }, [updateItemWithPassword]);
+
+  const handlePasswordChange = e => {
     const newValue = e.target.value;
 
+    latestPasswordRef.current = newValue;
     setLocalDecryptedPassword(newValue);
     form.change('editedSif', newValue);
 
-    const itemData = data.item.toJSON();
-    const localItem = new Login(itemData);
-    await localItem.setSif([{ s_password: newValue }]);
-    setData('item', localItem);
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
+    }
+
+    const debounceTime = 50;
+    updateTimeoutRef.current = setTimeout(() => {
+      updateItemWithPassword(newValue);
+    }, debounceTime);
   };
 
   return (
@@ -296,7 +382,7 @@ function Password (props) {
                 >
                   <VisibleIcon />
                 </button>
-                {((originalItem?.securityType === SECURITY_TIER.SECRET || data.item.sifExists) && !sifDecryptError) && (
+                {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.sifExists) && !sifDecryptError) && (
                   <button
                     type='button'
                     className={`${bS.btn} ${pI.iconButton}`}

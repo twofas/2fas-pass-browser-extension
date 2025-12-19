@@ -157,7 +157,19 @@ function Details(props) {
       return null;
     }
 
-    return data?.item?.constructor?.name;
+    const name = data?.item?.constructor?.name;
+
+    if (name && name !== 'Object') {
+      return name;
+    }
+
+    const contentTypeMap = {
+      'login': 'Login',
+      'secureNote': 'SecureNote',
+      'paymentCard': 'PaymentCard'
+    };
+
+    return contentTypeMap[data?.item?.contentType] || null;
   }, [loading, data?.item]);
 
   const modelComponent = useMemo(() => {

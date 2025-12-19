@@ -8,7 +8,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import S from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/PaymentCardSecurityCodeInput.module.scss';
 import { Field } from 'react-final-form';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { copyValue, isText } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
 import PaymentCard from '@/models/itemModels/PaymentCard';
@@ -39,6 +39,23 @@ function CardSecurityCode (props) {
   const [isFocused, setIsFocused] = useState(false);
   const [shouldFocusInputMask, setShouldFocusInputMask] = useState(false);
 
+  const itemInstance = useMemo(() => {
+    if (!data.item) {
+      return null;
+    }
+
+    if (data.item instanceof PaymentCard) {
+      return data.item;
+    }
+
+    try {
+      return new PaymentCard(data.item);
+    } catch (e) {
+      CatchError(e);
+      return null;
+    }
+  }, [data.item]);
+
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
 
   const decryptSecurityCodeOnDemand = useCallback(async () => {
@@ -46,14 +63,14 @@ function CardSecurityCode (props) {
       return localDecryptedSecurityCode;
     }
 
-    if (!data.item?.securityCodeExists) {
+    if (!itemInstance?.securityCodeExists) {
       return null;
     }
 
     setIsDecrypting(true);
 
     try {
-      const decryptedData = await data.item.decryptSecurityCode();
+      const decryptedData = await itemInstance.decryptSecurityCode();
       setLocalDecryptedSecurityCode(decryptedData);
       setData('sifDecryptError', false);
       return decryptedData;
@@ -64,7 +81,7 @@ function CardSecurityCode (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedSecurityCode, isDecrypting, sifDecryptError, data.item, setData]);
+  }, [localDecryptedSecurityCode, isDecrypting, sifDecryptError, itemInstance, setData]);
 
   const getSecurityCodeValue = () => {
     if (sifDecryptError || isHighlySecretWithoutSif) {
@@ -127,12 +144,12 @@ function CardSecurityCode (props) {
     const needsDecryption = (data?.securityCodeEditable || data?.securityCodeVisible) &&
                            localDecryptedSecurityCode === null &&
                            !isDecrypting &&
-                           data.item?.securityCodeExists;
+                           itemInstance?.securityCodeExists;
 
     if (needsDecryption) {
       decryptSecurityCodeOnDemand();
     }
-  }, [data?.securityCodeEditable, data?.securityCodeVisible, localDecryptedSecurityCode, isDecrypting, data.item?.securityCodeExists, decryptSecurityCodeOnDemand]);
+  }, [data?.securityCodeEditable, data?.securityCodeVisible, localDecryptedSecurityCode, isDecrypting, itemInstance?.securityCodeExists, decryptSecurityCodeOnDemand]);
 
   useEffect(() => {
     if (shouldFocusInputMask && data?.securityCodeEditable && isFocused) {
@@ -190,13 +207,13 @@ function CardSecurityCode (props) {
 
       if (isText(localDecryptedSecurityCode)) {
         securityCodeToCopy = localDecryptedSecurityCode;
-      } else if (data.item.securityCodeExists) {
+      } else if (itemInstance?.securityCodeExists) {
         securityCodeToCopy = await decryptSecurityCodeOnDemand();
       } else {
         securityCodeToCopy = '';
       }
 
-      await copyValue(securityCodeToCopy, data.item.deviceId, data.item.vaultId, data.item.id, 'securityCode');
+      await copyValue(securityCodeToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'securityCode');
       showToast(browser.i18n.getMessage('notification_card_security_code_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_card_security_code_copy_failed'), 'error');
@@ -218,10 +235,10 @@ function CardSecurityCode (props) {
     setLocalDecryptedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_securityCode: newValue }]);
-    setData('item', localItem);
+    setData('item', localItem.toJSON());
   };
 
   const handleRawSecurityCodeChange = async e => {
@@ -230,10 +247,10 @@ function CardSecurityCode (props) {
     setLocalDecryptedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_securityCode: newValue }]);
-    setData('item', localItem);
+    setData('item', localItem.toJSON());
   };
 
   const handlePasswordInputFocus = () => {
@@ -342,7 +359,7 @@ function CardSecurityCode (props) {
               >
                 <VisibleIcon />
               </button>
-              {((originalItem?.securityType === SECURITY_TIER.SECRET || data.item.securityCodeExists) && !sifDecryptError) && (
+              {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.securityCodeExists) && !sifDecryptError) && (
                 <button
                   type='button'
                   className={`${bS.btn} ${pI.iconButton}`}
