@@ -89,7 +89,7 @@ const usePopupStateStore = create(
     }),
     {
       name: 'popupState',
-      skipHydration: false,
+      skipHydration: true,
       storage: {
         async getItem (name) {
           let activeTab = null;
