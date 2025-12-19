@@ -7,7 +7,7 @@
 import S from '../AddNew.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import { useNavigate, useLocation } from 'react-router';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getDomainInfo from '../functions/getDomainInfo';
@@ -51,12 +51,15 @@ function LoginAddNewView() {
         const domainData = await getDomainInfo();
         const isReturningFromPasswordGenerator = location?.state?.from === 'passwordGenerator';
         const isReturningFromFetch = location?.state?.from === 'fetch';
+        const generatedPassword = location?.state?.generatedPassword;
 
         const getValueWithPriority = (key, stateValue, storeValue, fallback, shouldSanitize = false) => {
           let selectedValue;
 
           if (isReturningFromPasswordGenerator || isReturningFromFetch) {
-            if (key === 's_password' && stateValue !== undefined) {
+            if (key === 's_password' && generatedPassword !== undefined) {
+              selectedValue = generatedPassword;
+            } else if (key === 's_password' && stateValue !== undefined) {
               selectedValue = stateValue;
             } else if (stateValue !== undefined) {
               selectedValue = stateValue;
@@ -114,7 +117,7 @@ function LoginAddNewView() {
     return () => {
       browser.runtime.onMessage.removeListener(messageListener);
     };
-  }, [location?.state?.data]);
+  }, [location?.state?.data, location?.state?.generatedPassword]);
 
   const handlePasswordVisibleClick = () => {
     setData('passwordVisible', !data?.passwordVisible);
@@ -275,10 +278,10 @@ function LoginAddNewView() {
             </div>
           )}
         </Field>
-        <m.div
+        <motion.div
           className={`${S.addNewAdditional} ${data?.additionalOverflow ? S.overflowH : ''}`}
           variants={additionalVariants}
-          initial={data?.onMobile ? 'hidden' : 'visible'}
+          initial={data?.onMobile !== false ? 'hidden' : 'visible'}
           transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
           animate={data?.onMobile ? 'hidden' : 'visible'}
           onAnimationStart={() => { setData('additionalOverflow', true); }}
@@ -384,7 +387,7 @@ function LoginAddNewView() {
               </div>
             )}
           </Field>
-        </m.div>
+        </motion.div>
         <div className={S.addNewButtons}>
           <button
             type="submit"
