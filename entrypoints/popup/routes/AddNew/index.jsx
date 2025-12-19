@@ -5,8 +5,8 @@
 // See LICENSE file for full terms
 
 import S from './AddNew.module.scss';
-import { useRef } from 'react';
-import { useParams } from 'react-router';
+import { useRef, useMemo } from 'react';
+import { useParams, useLocation } from 'react-router';
 import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
@@ -26,15 +26,20 @@ import PaymentCardAddNewView from './modelsViews/PaymentCardAddNewView';
 */
 function AddNew(props) {
   const params = useParams();
+  const location = useLocation();
   const scrollableRef = useRef(null);
   const { data } = usePopupState();
 
   useScrollPosition(scrollableRef, true);
 
+  const generatedPassword = location?.state?.generatedPassword;
+
   const modelComponent = useMemo(() => {
     const modelName = params.model;
 
-    const modelData = {};
+    const modelData = {
+      generatedPassword
+    };
 
     switch (modelName.toLowerCase()) {
       case Login.contentType.toLowerCase():
@@ -46,7 +51,7 @@ function AddNew(props) {
       default:
         return null;
     }
-  }, [params.model, data?.item, props]);
+  }, [params.model, data?.item, props, generatedPassword]);
 
   if (!modelComponent) {
     return null;

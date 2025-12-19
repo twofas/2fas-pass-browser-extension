@@ -162,7 +162,7 @@ function PasswordGenerator (props) {
       return navigate(`/add-new/Login`, {
         state: {
           from: 'passwordGenerator',
-          data: { s_password: values.password }
+          generatedPassword: values.password
         }
       });
     } else if (returnTo === 'details') {
