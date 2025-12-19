@@ -30,7 +30,7 @@ const thisTabTopVariants = {
   hidden: { height: '0', marginBottom: '-10px', borderWidth: '0', transition: { duration: 0, ease: 'easeOut' } }
 };
 
-/** 
+/**
 * Function to render the main content of the ThisTab component.
 * @param {Object} props - The component props.
 * @return {JSX.Element} Element representing the ThisTab component.

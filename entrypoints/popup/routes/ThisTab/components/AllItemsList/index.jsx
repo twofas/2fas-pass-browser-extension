@@ -7,7 +7,7 @@
 import S from './styles/AllItemsList.module.scss';
 import Item from '../Item';
 import SafariViewportList from '@/entrypoints/popup/components/SafariViewportList';
-import { useMemo, memo } from 'react';
+import { useMemo, memo, useCallback } from 'react';
 import { sortFunction } from '@/partials/functions';
 import isItemsCorrect from '../../functions/isItemsCorrect';
 import EmptyListIcon from '@/assets/popup-window/empty-list.svg?react';
@@ -24,6 +24,8 @@ import EmptyListIcon from '@/assets/popup-window/empty-list.svg?react';
 * @return {JSX.Element|null} The rendered item list or null.
 */
 function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFilter }) {
+  const renderItem = useCallback(item => <Item data={item} key={item.id} loading={loading} />, [loading]);
+
   const itemsData = useMemo(() => {
     if (!isItemsCorrect(items) && !loading) {
       return null;
@@ -107,7 +109,7 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
     return (
       <div className={S.allItemsList}>
         <SafariViewportList items={itemsData.data} overscan={3}>
-          {item => <Item data={item} key={item.id} loading={loading} />}
+          {renderItem}
         </SafariViewportList>
       </div>
     );
@@ -127,7 +129,7 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
   return (
     <div className={S.allItemsList}>
       <SafariViewportList items={itemsData.data} overscan={10}>
-        {item => <Item data={item} key={item.id} loading={loading} />}
+        {renderItem}
       </SafariViewportList>
     </div>
   );

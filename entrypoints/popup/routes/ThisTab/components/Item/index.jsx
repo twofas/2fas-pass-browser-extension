@@ -7,7 +7,7 @@
 import S from './styles/Item.module.scss';
 
 import { useEffect, useRef, useCallback, useMemo, memo } from 'react';
-import { useItemList } from '../../context/ItemListContext';
+import { useIsItemOpen, useItemMenuActions } from '../../context/ItemListContext';
 
 // Models
 import LoginItemView from './modelsViews/LoginItemView';
@@ -20,23 +20,24 @@ import PaymentCardItemView from './modelsViews/PaymentCardItemView';
 * @return {JSX.Element} The rendered component.
 */
 function Item (props) {
-  const { openItemId, openMenu, closeMenu } = useItemList();
+  const itemId = props.data?.id;
+  const more = useIsItemOpen(itemId);
+  const { openMenu, closeMenu } = useItemMenuActions();
 
   const ref = useRef(null);
   const selectRef = useRef(null);
   const autofillBtnRef = useRef(null);
   const isHoveredRef = useRef(false);
-
-  const itemId = props.data?.id;
-  const more = openItemId === itemId;
+  const itemIdRef = useRef(itemId);
+  itemIdRef.current = itemId;
 
   const setMore = useCallback(value => {
     if (value) {
-      openMenu(itemId);
+      openMenu(itemIdRef.current);
     } else {
       closeMenu();
     }
-  }, [itemId, openMenu, closeMenu]);
+  }, [openMenu, closeMenu]);
 
   const handleMouseEnter = useCallback(() => {
     isHoveredRef.current = true;
@@ -88,21 +89,39 @@ function Item (props) {
   const constructorName = props?.data?.constructor?.name;
   let modelComponent = null;
 
-  const modelData = {
-    more,
-    setMore,
-    selectRef,
-    ref,
-    autofillBtnRef,
-    loading: props.loading
-  };
-
   if (constructorName === 'Login' || props.loading) {
-    modelComponent = <LoginItemView {...props} {...modelData} />;
+    modelComponent = (
+      <LoginItemView
+        data={props.data}
+        more={more}
+        setMore={setMore}
+        selectRef={selectRef}
+        autofillBtnRef={autofillBtnRef}
+        loading={props.loading}
+      />
+    );
   } else if (constructorName === 'SecureNote') {
-    modelComponent = <SecureNoteItemView {...props} {...modelData} />;
+    modelComponent = (
+      <SecureNoteItemView
+        data={props.data}
+        more={more}
+        setMore={setMore}
+        selectRef={selectRef}
+        autofillBtnRef={autofillBtnRef}
+        loading={props.loading}
+      />
+    );
   } else if (constructorName === 'PaymentCard') {
-    modelComponent = <PaymentCardItemView {...props} {...modelData} />;
+    modelComponent = (
+      <PaymentCardItemView
+        data={props.data}
+        more={more}
+        setMore={setMore}
+        selectRef={selectRef}
+        autofillBtnRef={autofillBtnRef}
+        loading={props.loading}
+      />
+    );
   } else {
     return null;
   }
@@ -121,4 +140,16 @@ function Item (props) {
   );
 }
 
-export default memo(Item);
+/**
+* Custom comparison function to prevent unnecessary re-renders.
+* Only re-render if data id or loading state changes.
+* @param {Object} prevProps - Previous props.
+* @param {Object} nextProps - Next props.
+* @return {boolean} True if props are equal (should not re-render).
+*/
+function arePropsEqual (prevProps, nextProps) {
+  return prevProps.data?.id === nextProps.data?.id &&
+         prevProps.loading === nextProps.loading;
+}
+
+export default memo(Item, arePropsEqual);

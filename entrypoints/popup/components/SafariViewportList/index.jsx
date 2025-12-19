@@ -47,8 +47,9 @@ const findScrollableParent = element => {
  */
 const SafariViewportList = ({ items, children, overscan = 10, className }) => {
   const listRef = useRef(null);
-  const [scrollElement, setScrollElement] = useState(null);
-  const [scrollMargin, setScrollMargin] = useState(0);
+  const scrollElementRef = useRef(null);
+  const scrollMarginRef = useRef(0);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const isSafari = useMemo(() => {
     const userAgent = navigator.userAgent.toLowerCase();
@@ -57,7 +58,7 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
 
   const safariOverscan = isSafari ? Math.max(overscan, 10) : overscan;
 
-  const getScrollElement = useCallback(() => scrollElement, [scrollElement]);
+  const getScrollElement = useCallback(() => scrollElementRef.current, []);
 
   const estimateSize = useCallback(() => ITEM_HEIGHT, []);
 
@@ -66,11 +67,11 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
     getScrollElement,
     estimateSize,
     overscan: safariOverscan,
-    scrollMargin
+    scrollMargin: scrollMarginRef.current
   });
 
   useLayoutEffect(() => {
-    if (listRef.current) {
+    if (listRef.current && !isInitialized) {
       const scrollParent = findScrollableParent(listRef.current);
 
       if (scrollParent && listRef.current) {
@@ -78,17 +79,18 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
         const listRect = listRef.current.getBoundingClientRect();
         const margin = listRect.top - parentRect.top + scrollParent.scrollTop;
 
-        setScrollElement(scrollParent);
-        setScrollMargin(margin);
+        scrollElementRef.current = scrollParent;
+        scrollMarginRef.current = margin;
+        setIsInitialized(true);
       }
     }
-  }, []);
+  }, [isInitialized]);
 
   useEffect(() => {
-    if (scrollElement) {
+    if (isInitialized) {
       virtualizer.measure();
     }
-  }, [items.length, scrollElement]);
+  }, [items.length, isInitialized]);
 
   const virtualItems = virtualizer.getVirtualItems();
   const totalSize = virtualizer.getTotalSize();
@@ -105,17 +107,18 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
     >
       {virtualItems.map(virtualItem => {
         const item = items[virtualItem.index];
+        const itemKey = item?.id || virtualItem.key;
 
         return (
           <div
-            key={virtualItem.key}
+            key={itemKey}
             data-index={virtualItem.index}
             ref={virtualizer.measureElement}
             style={{
               left: 0,
               position: 'absolute',
               top: 0,
-              transform: `translateY(${virtualItem.start - scrollMargin}px)`,
+              transform: `translateY(${virtualItem.start - scrollMarginRef.current}px)`,
               width: '100%'
             }}
           >
