@@ -142,13 +142,14 @@ function Item (props) {
 
 /**
 * Custom comparison function to prevent unnecessary re-renders.
-* Only re-render if data id or loading state changes.
+* Only re-render if data id, sifExists, or loading state changes.
 * @param {Object} prevProps - Previous props.
 * @param {Object} nextProps - Next props.
 * @return {boolean} True if props are equal (should not re-render).
 */
 function arePropsEqual (prevProps, nextProps) {
   return prevProps.data?.id === nextProps.data?.id &&
+         prevProps.data?.sifExists === nextProps.data?.sifExists &&
          prevProps.loading === nextProps.loading;
 }
 

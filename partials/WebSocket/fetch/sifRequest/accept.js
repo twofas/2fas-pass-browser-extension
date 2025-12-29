@@ -128,6 +128,10 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
     const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
     const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
 
+    // save encryptionItemT2Key in session storage (must be done before setSif)
+    const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.data.deviceId, itemId: state.data.itemId });
+    await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
+
     for (const sifKey of sifs) {
       if (info.data[sifKey] === undefined) {
         const nonce = await generateNonce();
@@ -145,15 +149,11 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
       }
     }
 
-    item.setSif(updateSifArr);
+    await item.setSif(updateSifArr);
 
     // Save sifTime in item's internalData
     const sifResetTime = info.expireInSeconds && info.expireInSeconds > 30 ? info.expireInSeconds / 60 : config.passwordResetDelay;
     item.internalData.sifResetTime = sifResetTime;
-
-    // save encryptionItemT2Key in session storage
-    const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.data.deviceId, itemId: state.data.itemId });
-    await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
     // Remove items from session storage (by itemsKeys)
     await storage.removeItems(itemsKeys);

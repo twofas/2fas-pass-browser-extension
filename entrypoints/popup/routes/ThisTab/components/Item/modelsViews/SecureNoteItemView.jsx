@@ -64,6 +64,7 @@ function SecureNoteItemView (props) {
 */
 function arePropsEqual (prevProps, nextProps) {
   return prevProps.data?.id === nextProps.data?.id &&
+         prevProps.data?.sifExists === nextProps.data?.sifExists &&
          prevProps.more === nextProps.more &&
          prevProps.loading === nextProps.loading;
 }
