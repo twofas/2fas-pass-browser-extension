@@ -311,6 +311,11 @@ const PopupMain = memo(() => {
       history.scrollRestoration = 'manual';
     }
 
+    browser.runtime.sendMessage({
+      action: REQUEST_ACTIONS.NEW_POPUP,
+      target: REQUEST_TARGETS.POPUP
+    }).catch(() => {});
+
     if (!initializationResult && !stateUpdated.current) {
       initializePopupOnce().then(result => {
         if (!stateUpdated.current) {
