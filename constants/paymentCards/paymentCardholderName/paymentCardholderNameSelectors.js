@@ -35,7 +35,18 @@ const paymentCardholderNameSelectors = () => {
     'input[name*="nameoncard"]',
     'input[name*="nameOnCard"]',
     'input[name*="name_on_card"]',
-    'input[name*="name-on-card"]'
+    'input[name*="name-on-card"]',
+    '[data-field="cardHolderName"] input',
+    '[data-field="cardholderName"] input',
+    '[data-field="cardholder-name"] input',
+    '[data-field="card-holder-name"] input',
+    '[data-field="holderName"] input',
+    '[data-field="holder-name"] input',
+    '[data-field="ccName"] input',
+    '[data-field="cc-name"] input',
+    'input.cardholder-input',
+    'input.cardHolderName-input',
+    'input.holder-name-input'
   ];
 
   paymentCardholderNameTexts.forEach(text => {

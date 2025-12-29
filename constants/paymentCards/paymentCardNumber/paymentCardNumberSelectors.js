@@ -22,7 +22,17 @@ const paymentCardNumberSelectors = () => {
     'input[name*="cardnumber"]',
     'input[name*="cardNumber"]',
     'input[name*="card_number"]',
-    'input[name*="card-number"]'
+    'input[name*="card-number"]',
+    'input.card-number-input',
+    'input.cardNumber-input',
+    'input.cardnumber-input',
+    'input.cc-number-input',
+    'input.ccnumber-input',
+    '[data-field="cardNumber"] input',
+    '[data-field="card-number"] input',
+    '[data-field="cc-number"] input',
+    '.card-number-item input[type="text"]',
+    '.cardNumber-item input[type="text"]'
   ];
 
   paymentCardNumberTexts.forEach(text => {
