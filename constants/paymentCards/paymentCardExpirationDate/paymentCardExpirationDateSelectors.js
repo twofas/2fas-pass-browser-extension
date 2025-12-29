@@ -15,10 +15,28 @@ import paymentCardAttributes from '../paymentCardAttributes.js';
 const paymentCardExpirationDateSelectors = () => {
   const selectors = [
     'input[autocomplete="cc-exp"]',
+    'input[autocomplete*="cc-exp" i]',
+    '[autocomplete="cc-exp"] input',
+    '[autocomplete*="cc-exp" i] input',
     'input[autocomplete="cc-exp-month"]',
+    'input[autocomplete*="cc-exp-month" i]',
+    '[autocomplete="cc-exp-month"] input',
+    '[autocomplete*="cc-exp-month" i] input',
     'input[autocomplete="cc-exp-year"]',
+    'input[autocomplete*="cc-exp-year" i]',
+    '[autocomplete="cc-exp-year"] input',
+    '[autocomplete*="cc-exp-year" i] input',
     'select[autocomplete="cc-exp-month"]',
+    'select[autocomplete*="cc-exp-month" i]',
+    '[autocomplete="cc-exp-month"] select',
+    '[autocomplete*="cc-exp-month" i] select',
     'select[autocomplete="cc-exp-year"]',
+    'select[autocomplete*="cc-exp-year" i]',
+    '[autocomplete="cc-exp-year"] select',
+    '[autocomplete*="cc-exp-year" i] select',
+    'input[data-braintree-name="expirationDate"]',
+    'input[data-braintree-name="expirationMonth"]',
+    'input[data-braintree-name="expirationYear"]',
     'input[name*="ccexp" i]',
     'input[name*="cc_exp" i]',
     'input[name*="cc-exp" i]',
@@ -60,8 +78,12 @@ const paymentCardExpirationDateSelectors = () => {
     'input[placeholder="MM / YY" i]',
     'input[placeholder*="mm/yy" i]',
     'input[placeholder*="mm / yy" i]',
+    'input[placeholder*="mm/rr" i]',
+    'input[placeholder*="mm / rr" i]',
     'input[placeholder*="expiry" i]',
-    'input[placeholder*="expiration" i]'
+    'input[placeholder*="expiration" i]',
+    'input.wpwl-control-expiry',
+    '.wpwl-group-expiry input'
   ];
 
   paymentCardExpirationDateTexts.forEach(text => {

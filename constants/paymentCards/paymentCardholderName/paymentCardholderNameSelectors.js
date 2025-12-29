@@ -42,7 +42,10 @@ const paymentCardholderNameSelectors = () => {
     '[data-field="cc-name" i] input',
     'input.cardholder-input',
     'input.cardHolderName-input',
-    'input.holder-name-input'
+    'input.holder-name-input',
+    'input.wpwl-control-cardHolder',
+    '.wpwl-group-cardHolder input',
+    'input[name="card.holder"]'
   ];
 
   paymentCardholderNameTexts.forEach(text => {

@@ -263,6 +263,15 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     }, tabId, true);
   }
 
+  const allNoInputs = response.every(frameResponse => frameResponse.status === 'error' && frameResponse.message === 'No input fields found');
+
+  if (allNoInputs) {
+    return TwofasNotification.show({
+      Title: browser.i18n.getMessage('notification_card_autofill_no_inputs_title'),
+      Message: browser.i18n.getMessage('notification_card_autofill_no_inputs_message')
+    }, tabId, true);
+  }
+
   const isPartial = response.some(frameResponse => frameResponse.status === 'partial');
   const partialResponse = response.find(frameResponse => frameResponse.status === 'partial');
 

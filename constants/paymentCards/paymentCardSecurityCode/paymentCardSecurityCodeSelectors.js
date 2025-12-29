@@ -15,6 +15,10 @@ import paymentCardAttributes from '../paymentCardAttributes.js';
 const paymentCardSecurityCodeSelectors = () => {
   const selectors = [
     'input[autocomplete="cc-csc"]',
+    'input[autocomplete*="cc-csc" i]',
+    '[autocomplete="cc-csc"] input',
+    '[autocomplete*="cc-csc" i] input',
+    'input[data-braintree-name="cvv"]',
     'input[name*="cvc" i]',
     'input[name*="cvv" i]',
     'input[name*="csc" i]',
@@ -65,7 +69,9 @@ const paymentCardSecurityCodeSelectors = () => {
     'input[placeholder*="cvv" i]',
     'input[placeholder*="cvc" i]',
     'input[placeholder*="csc" i]',
-    'input[placeholder*="security code" i]'
+    'input[placeholder*="security code" i]',
+    'input.wpwl-control-cvv',
+    '.wpwl-group-cvv input'
   ];
 
   paymentCardSecurityCodeTexts.forEach(text => {

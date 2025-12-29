@@ -12,6 +12,8 @@ const paymentCardExpirationYearPlaceholders = Object.freeze([
   'year',
   'yy',
   'yyyy',
+  'rr',
+  'rrrr',
   'rok',
   'año',
   'ano',
