@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { autoClearAction, storageAutoClearActions } from '@/partials/functions';
+import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 
 /** 
 * Function to handle messages sent to the popup.
@@ -36,7 +37,13 @@ const popupOnMessage = (request, sender, sendResponse) => {
         } else {
           sendResponse({ status: 'ok' });
         }
-        
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.NEW_POPUP: {
+        tryWindowClose();
+        sendResponse({ status: 'ok' });
         break;
       }
 
