@@ -404,19 +404,23 @@
 
     body.theme-light & {
       border: 1px solid v.$card-stroke-light;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
     }
 
     body.theme-dark & {
       border: 1px solid v.$card-stroke-dark;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         border: 1px solid v.$card-stroke-light;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
       }
 
       @media (prefers-color-scheme: dark) {
         border: 1px solid v.$card-stroke-dark;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
       }
     }
 
@@ -696,22 +700,26 @@
     body.theme-light & {
       background-color: v.$card-bg-light;
       border: 1px solid v.$card-stroke-light;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
     }
 
     body.theme-dark & {
       background-color: v.$card-bg-dark;
       border: 1px solid v.$card-stroke-dark;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         background-color: v.$card-bg-light;
         border: 1px solid v.$card-stroke-light;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$card-bg-dark;
         border: 1px solid v.$card-stroke-dark;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
       }
     }
 
@@ -1022,22 +1030,26 @@
     body.theme-light & {
       background-color: v.$card-bg-light;
       border: 1px solid v.$card-stroke-light;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
     }
 
     body.theme-dark & {
       background-color: v.$card-bg-dark;
       border: 1px solid v.$card-stroke-dark;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         background-color: v.$card-bg-light;
         border: 1px solid v.$card-stroke-light;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$card-bg-dark;
         border: 1px solid v.$card-stroke-dark;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
       }
     }
 
@@ -1273,24 +1285,26 @@
     body.theme-light & {
       background-color: v.$primary-box-bg-light;
       border: 1px solid v.$primary-box-stroke-light;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
     }
 
     body.theme-dark & {
       background-color: v.$primary-box-bg-dark;
       border: 1px solid v.$primary-box-stroke-dark;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         background-color: v.$primary-box-bg-light;
         border: 1px solid v.$primary-box-stroke-light;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$primary-box-bg-dark;
         border: 1px solid v.$primary-box-stroke-dark;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
       }
     }
   }
@@ -1411,6 +1425,8 @@
 
 .react-select-security-type__menu-portal {
   .react-select__menu {
+  
+
     &-list {
       max-height: 100% !important;
     }
@@ -1501,24 +1517,26 @@
     body.theme-light & {
       background-color: v.$card-bg-light;
       border: 1px solid v.$card-stroke-light;
-      box-shadow: 0 4px 10px v.$primary-bg-light;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
     }
 
     body.theme-dark & {
       background-color: v.$card-bg-dark;
       border: 1px solid v.$card-stroke-dark;
-      box-shadow: 0 4px 10px v.$primary-bg-dark, 1;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         background-color: v.$card-bg-light;
         border: 1px solid v.$card-stroke-light;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$card-bg-dark;
         border: 1px solid v.$card-stroke-dark;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
       }
     }
   }
@@ -1844,4 +1862,24 @@
 
 .react-select__single-value {
   margin-left: 0 !important;
+}
+
+.react-select__menu {
+  body.theme-light & {
+    filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
+  }
+
+  body.theme-dark & {
+    filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
+  }
+
+  body.theme-unset & {
+    @media (prefers-color-scheme: light) {
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
+    }
+
+    @media (prefers-color-scheme: dark) {
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
+    }
+  }
 }
