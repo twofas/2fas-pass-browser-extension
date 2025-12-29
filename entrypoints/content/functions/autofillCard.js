@@ -275,10 +275,12 @@ const setExpirationDateValue = (inputData, parsedDate) => {
       ]);
     } else {
       let combinedValue;
+      const placeholder = (element.getAttribute('placeholder') || '').toLowerCase();
+      const expectsFourDigitYear = placeholder.includes('yyyy') || placeholder.includes('mm/yyyy');
 
       if (element.maxLength === 5) {
         combinedValue = `${parsedDate.month}/${parsedDate.yearShort}`;
-      } else if (element.maxLength === 7) {
+      } else if (element.maxLength === 7 || expectsFourDigitYear) {
         combinedValue = `${parsedDate.month}/${parsedDate.yearFull}`;
       } else if (element.maxLength === 4) {
         combinedValue = `${parsedDate.month}${parsedDate.yearShort}`;
@@ -404,8 +406,9 @@ const autofillCard = async request => {
       cardNumberValue = request.cardNumber;
     }
 
-    cardNumberInputs.forEach(input => inputSetValue(input, cardNumberValue, cardAutofillOptions));
+    const cardNumberWithoutSpaces = cardNumberValue.replace(/\s/g, '');
     cardNumberValue = null;
+    cardNumberInputs.forEach(input => inputSetValue(input, cardNumberWithoutSpaces, cardAutofillOptions));
   }
 
   let failedExpirationFields = [];

@@ -62,7 +62,10 @@ const paymentCardNumberTexts = Object.freeze([
   'pan',
   'primaryAccountNumber',
   'primary-Account-Number',
-  'primary_Account_Number'
+  'primary_Account_Number',
+  'accountToken',
+  'account-Token',
+  'account_Token'
 ]);
 
 export default paymentCardNumberTexts;

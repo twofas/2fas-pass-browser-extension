@@ -55,15 +55,12 @@ const conflictingAutocompleteValues = [
   'sex',
   'photo',
   'impp',
-  'language',
-  'off',
-  'on'
+  'language'
 ];
 
 const conflictingInputTypes = [
   'email',
   'password',
-  'tel',
   'url',
   'search',
   'date',
@@ -112,11 +109,11 @@ const filterConflictingAttributes = input => {
   const inputType = (input.type || '').toLowerCase();
   const inputMode = (input.getAttribute('inputmode') || '').toLowerCase();
 
-  if (autocomplete === 'cc-number') {
+  if (autocomplete.includes('cc-number')) {
     return true;
   }
 
-  if (autocomplete && conflictingAutocompleteValues.includes(autocomplete)) {
+  if (autocomplete && conflictingAutocompleteValues.some(val => autocomplete.includes(val))) {
     return false;
   }
 

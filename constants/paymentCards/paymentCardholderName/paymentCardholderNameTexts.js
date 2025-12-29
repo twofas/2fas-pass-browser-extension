@@ -65,7 +65,12 @@ const paymentCardholderNameTexts = Object.freeze([
   'full-Name',
   'full_Name',
   'full-name',
-  'full_name'
+  'full_name',
+  'accountHolderName',
+  'account-Holder-Name',
+  'account_Holder_Name',
+  'account-holder-name',
+  'account_holder_name'
 ]);
 
 export default paymentCardholderNameTexts;

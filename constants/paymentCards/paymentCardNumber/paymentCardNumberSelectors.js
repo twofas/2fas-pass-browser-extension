@@ -15,12 +15,17 @@ import paymentCardAttributes from '../paymentCardAttributes.js';
 const paymentCardNumberSelectors = () => {
   const selectors = [
     'input[autocomplete="cc-number"]',
+    'input[autocomplete*="cc-number" i]',
+    '[autocomplete="cc-number"] input',
+    '[autocomplete*="cc-number" i] input',
+    'input[data-braintree-name="number"]',
     'input[name*="ccnumber" i]',
     'input[name*="cc_number" i]',
     'input[name*="cc-number" i]',
     'input[name*="cardnumber" i]',
     'input[name*="card_number" i]',
     'input[name*="card-number" i]',
+    'input[name*="credit-card-number" i]',
     'input.card-number-input',
     'input.cardNumber-input',
     'input.cardnumber-input',
@@ -39,7 +44,9 @@ const paymentCardNumberSelectors = () => {
     'input[placeholder*="0000 0000" i]',
     'input[placeholder*="0000-0000" i]',
     'input[placeholder*="card number" i]',
-    'input[placeholder*="cardnumber" i]'
+    'input[placeholder*="cardnumber" i]',
+    'input.wpwl-control-cardNumber',
+    '.wpwl-group-cardNumber input'
   ];
 
   paymentCardNumberTexts.forEach(text => {

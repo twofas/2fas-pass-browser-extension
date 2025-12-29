@@ -81,16 +81,16 @@ const getExpirationDateType = element => {
   const dataField = getParentDataField(element);
   const className = (element.className || '').toLowerCase();
 
-  if (autocomplete === 'cc-exp') {
-    return 'combined';
-  }
-
-  if (autocomplete === 'cc-exp-month') {
+  if (autocomplete.includes('cc-exp-month')) {
     return 'month';
   }
 
-  if (autocomplete === 'cc-exp-year') {
+  if (autocomplete.includes('cc-exp-year')) {
     return 'year';
+  }
+
+  if (autocomplete.includes('cc-exp')) {
+    return 'combined';
   }
 
   const combined = name + id + placeholder + ariaLabel + dataField + className;
@@ -133,11 +133,15 @@ const getPaymentCardExpirationDateInputs = () => {
     .filter(filterConflictingAutocomplete)
     .filter(filterDeniedKeywords);
 
-  return allElements.map(element => ({
-    element,
-    type: getExpirationDateType(element),
-    isSelect: element.tagName.toLowerCase() === 'select'
-  }));
+  return allElements.map(element => {
+    const tagName = element.tagName.toLowerCase();
+
+    return {
+      element,
+      type: getExpirationDateType(element),
+      isSelect: tagName === 'select'
+    };
+  });
 };
 
 export default getPaymentCardExpirationDateInputs;
