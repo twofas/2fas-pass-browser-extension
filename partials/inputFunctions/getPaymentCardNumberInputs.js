@@ -112,6 +112,10 @@ const filterConflictingAttributes = input => {
   const inputType = (input.type || '').toLowerCase();
   const inputMode = (input.getAttribute('inputmode') || '').toLowerCase();
 
+  if (autocomplete === 'cc-number') {
+    return true;
+  }
+
   if (autocomplete && conflictingAutocompleteValues.includes(autocomplete)) {
     return false;
   }
@@ -208,15 +212,14 @@ const filterOtherCardFields = input => {
 */
 const getPaymentCardNumberInputs = () => {
   const cardNumberSelector = paymentCardNumberSelectors().join(', ');
-
   const regularInputs = Array.from(document.querySelectorAll(cardNumberSelector));
-
   const shadowRoots = getShadowRoots();
   const shadowInputs = shadowRoots.flatMap(
     root => Array.from(root.querySelectorAll(cardNumberSelector))
   );
+  const allInputs = [...regularInputs, ...shadowInputs];
 
-  return [...regularInputs, ...shadowInputs]
+  return allInputs
     .filter(input => isVisible(input))
     .filter(uniqueElementOnly)
     .filter(filterConflictingAttributes)

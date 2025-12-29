@@ -22,6 +22,36 @@ const givenNameAutocompleteValues = ['cc-given-name', 'given-name'];
 const familyNameAutocompleteValues = ['cc-family-name', 'family-name'];
 const fullNameAutocompleteValues = ['cc-name'];
 
+const cardholderLabelKeywords = [
+  'name on card',
+  'cardholder name',
+  'cardholder',
+  'card holder',
+  'card name',
+  'full name on card',
+  'imię na karcie',
+  'imię i nazwisko na karcie',
+  'nazwa na karcie',
+  'posiadacz karty',
+  'nombre en la tarjeta',
+  'nombre en tarjeta',
+  'titular de la tarjeta',
+  'nom sur la carte',
+  'titulaire de la carte',
+  'name auf der karte',
+  'karteninhaber',
+  'nome sulla carta',
+  'titolare della carta',
+  'naam op kaart',
+  'kaarthouder',
+  'カード名義',
+  'カード所有者',
+  '卡片姓名',
+  '持卡人',
+  'nome no cartão',
+  'titular do cartão'
+];
+
 /**
 * Filters out inputs that have autocomplete attributes indicating non-cardholder-name fields.
 * @param {HTMLInputElement} input - The input element to check.
@@ -92,6 +122,105 @@ const getNameFieldType = input => {
 };
 
 /**
+* Gets the text content of the label associated with an input element.
+* @param {HTMLInputElement} input - The input element.
+* @return {string} The label text in lowercase, or empty string if not found.
+*/
+const getAssociatedLabelText = input => {
+  if (input.id) {
+    const labelByFor = document.querySelector(`label[for="${input.id}"]`);
+
+    if (labelByFor) {
+      return labelByFor.textContent.toLowerCase().trim();
+    }
+  }
+
+  const parentLabel = input.closest('label');
+
+  if (parentLabel) {
+    return parentLabel.textContent.toLowerCase().trim();
+  }
+
+  const previousSibling = input.previousElementSibling;
+
+  if (previousSibling && previousSibling.tagName === 'LABEL') {
+    return previousSibling.textContent.toLowerCase().trim();
+  }
+
+  const parent = input.parentElement;
+
+  if (parent) {
+    const siblingLabel = parent.previousElementSibling;
+
+    if (siblingLabel && (siblingLabel.tagName === 'LABEL' || siblingLabel.classList.contains('form-label'))) {
+      return siblingLabel.textContent.toLowerCase().trim();
+    }
+  }
+
+  const grandparent = input.parentElement?.parentElement;
+
+  if (grandparent) {
+    const grandSiblingLabel = grandparent.previousElementSibling;
+
+    if (grandSiblingLabel && (grandSiblingLabel.tagName === 'LABEL' || grandSiblingLabel.classList.contains('form-label'))) {
+      return grandSiblingLabel.textContent.toLowerCase().trim();
+    }
+  }
+
+  return '';
+};
+
+const minKeywordMatchLength = 8;
+
+/**
+* Checks if text matches any cardholder keyword bidirectionally.
+* @param {string} text - The text to check.
+* @return {boolean} True if text matches any keyword.
+*/
+const matchesCardholderKeyword = text => {
+  if (!text) {
+    return false;
+  }
+
+  return cardholderLabelKeywords.some(keyword => {
+    if (text.includes(keyword)) {
+      return true;
+    }
+
+    if (text.length >= minKeywordMatchLength && keyword.includes(text)) {
+      return true;
+    }
+
+    return false;
+  });
+};
+
+/**
+* Gets inputs that have associated labels matching cardholder name keywords.
+* @param {Document|ShadowRoot} rootNode - The root node to search in.
+* @return {HTMLInputElement[]} The array of cardholder name input elements found by label.
+*/
+const getInputsByLabelFromRoot = rootNode => {
+  const textInputs = Array.from(rootNode.querySelectorAll('input[type="text"], input:not([type])'));
+  const matchedInputs = [];
+
+  textInputs.forEach(input => {
+    const labelText = getAssociatedLabelText(input);
+    const ariaLabel = (input.getAttribute('aria-label') || '').toLowerCase();
+    const placeholder = (input.getAttribute('placeholder') || '').toLowerCase();
+
+    const textsToCheck = [labelText, ariaLabel, placeholder].filter(Boolean);
+    const hasMatch = textsToCheck.some(text => matchesCardholderKeyword(text));
+
+    if (hasMatch) {
+      matchedInputs.push(input);
+    }
+  });
+
+  return matchedInputs;
+};
+
+/**
 * Gets billing name inputs (given-name, family-name) from a root node when in payment context.
 * @param {Document|ShadowRoot} rootNode - The root node to search in.
 * @return {HTMLInputElement[]} The array of billing name input elements found.
@@ -142,16 +271,39 @@ const getBillingNameInputsFromRoot = rootNode => {
 const isInPaymentContext = input => {
   const form = input.closest('form');
 
-  if (!form) {
-    const parent = input.closest('[data-testid*="payment"], [data-testid*="credit"], [data-testid*="card"], [class*="payment"], [class*="credit"], [class*="checkout"], [class*="billing"]');
+  if (form) {
+    const formHtml = form.outerHTML.toLowerCase();
+    const paymentKeywords = ['payment', 'credit', 'card', 'checkout', 'billing', 'cc-number', 'cc-exp', 'cc-csc'];
 
-    return parent !== null;
+    return paymentKeywords.some(keyword => formHtml.includes(keyword));
   }
 
-  const formHtml = form.outerHTML.toLowerCase();
-  const paymentKeywords = ['payment', 'credit', 'card', 'checkout', 'billing', 'cc-number', 'cc-exp', 'cc-csc'];
+  const parent = input.closest('[data-testid*="payment"], [data-testid*="credit"], [data-testid*="card"], [class*="payment"], [class*="credit"], [class*="checkout"], [class*="billing"]');
 
-  return paymentKeywords.some(keyword => formHtml.includes(keyword));
+  if (parent) {
+    return true;
+  }
+
+  const rootNode = input.getRootNode();
+  const hasCardNumberInput = rootNode.querySelector('input[autocomplete="cc-number"]') !== null;
+
+  if (hasCardNumberInput) {
+    return true;
+  }
+
+  const hasExpirationInput = rootNode.querySelector('input[autocomplete="cc-exp"], input[autocomplete="cc-exp-month"], input[autocomplete="cc-exp-year"]') !== null;
+
+  if (hasExpirationInput) {
+    return true;
+  }
+
+  const hasCvvInput = rootNode.querySelector('input[autocomplete="cc-csc"]') !== null;
+
+  if (hasCvvInput) {
+    return true;
+  }
+
+  return false;
 };
 
 /**
@@ -167,6 +319,9 @@ const getPaymentCardholderNameInputs = () => {
   const regularBillingInputs = getBillingNameInputsFromRoot(document)
     .filter(input => isInPaymentContext(input));
 
+  const regularLabelInputs = getInputsByLabelFromRoot(document)
+    .filter(input => isInPaymentContext(input));
+
   const shadowRoots = getShadowRoots();
 
   const shadowCardholderInputs = shadowRoots.flatMap(
@@ -177,7 +332,18 @@ const getPaymentCardholderNameInputs = () => {
     root => getBillingNameInputsFromRoot(root).filter(input => isInPaymentContext(input))
   );
 
-  const allInputs = [...regularCardholderInputs, ...regularBillingInputs, ...shadowCardholderInputs, ...shadowBillingInputs];
+  const shadowLabelInputs = shadowRoots.flatMap(
+    root => getInputsByLabelFromRoot(root).filter(input => isInPaymentContext(input))
+  );
+
+  const allInputs = [
+    ...regularCardholderInputs,
+    ...regularBillingInputs,
+    ...regularLabelInputs,
+    ...shadowCardholderInputs,
+    ...shadowBillingInputs,
+    ...shadowLabelInputs
+  ];
 
   const filteredInputs = allInputs
     .filter(input => isVisible(input))

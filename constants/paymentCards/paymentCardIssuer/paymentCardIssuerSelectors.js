@@ -16,24 +16,20 @@ const paymentCardIssuerSelectors = () => {
   const selectors = [
     'select[autocomplete="cc-type"]',
     'input[autocomplete="cc-type"]',
-    'select[name*="cc__type"]',
-    'select[name*="cc_type"]',
-    'select[name*="cc-type"]',
-    'select[name*="cctype"]',
-    'select[name*="ccType"]',
-    'input[name*="cc__type"]',
-    'input[name*="cc_type"]',
-    'input[name*="cc-type"]',
-    'input[name*="cctype"]',
-    'input[name*="ccType"]',
-    'select[name*="cardtype"]',
-    'select[name*="cardType"]',
-    'select[name*="card_type"]',
-    'select[name*="card-type"]',
-    'input[name*="cardtype"]',
-    'input[name*="cardType"]',
-    'input[name*="card_type"]',
-    'input[name*="card-type"]'
+    'select[name*="cc__type" i]',
+    'select[name*="cc_type" i]',
+    'select[name*="cc-type" i]',
+    'select[name*="cctype" i]',
+    'input[name*="cc__type" i]',
+    'input[name*="cc_type" i]',
+    'input[name*="cc-type" i]',
+    'input[name*="cctype" i]',
+    'select[name*="cardtype" i]',
+    'select[name*="card_type" i]',
+    'select[name*="card-type" i]',
+    'input[name*="cardtype" i]',
+    'input[name*="card_type" i]',
+    'input[name*="card-type" i]'
   ];
 
   paymentCardIssuerTexts.forEach(text => {
@@ -48,38 +44,31 @@ const paymentCardIssuerSelectors = () => {
     selectors.push(`input#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}`);
 
     paymentCardAttributes.forEach(attr => {
-      selectors.push(`select[${attr}="${text}"]`);
-      selectors.push(`select[${attr}="${text.toLowerCase()}"]`);
-      selectors.push(`select[${attr}="${text.toUpperCase()}"]`);
-      selectors.push(`select[${attr}="${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}"]`);
-
-      selectors.push(`input[${attr}="${text}"]`);
-      selectors.push(`input[${attr}="${text.toLowerCase()}"]`);
-      selectors.push(`input[${attr}="${text.toUpperCase()}"]`);
-      selectors.push(`input[${attr}="${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}"]`);
+      selectors.push(`select[${attr}="${text}" i]`);
+      selectors.push(`input[${attr}="${text}" i]`);
     });
   });
 
   paymentCardFormTexts.forEach(text => {
-    selectors.push(`#${text} select[name*="type"]`);
-    selectors.push(`#${text.toLowerCase()} select[name*="type"]`);
-    selectors.push(`#${text.toUpperCase()} select[name*="type"]`);
-    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} select[name*="type"]`);
+    selectors.push(`#${text} select[name*="type" i]`);
+    selectors.push(`#${text.toLowerCase()} select[name*="type" i]`);
+    selectors.push(`#${text.toUpperCase()} select[name*="type" i]`);
+    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} select[name*="type" i]`);
 
-    selectors.push(`#${text} input[name*="type"]`);
-    selectors.push(`#${text.toLowerCase()} input[name*="type"]`);
-    selectors.push(`#${text.toUpperCase()} input[name*="type"]`);
-    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="type"]`);
+    selectors.push(`#${text} input[name*="type" i]`);
+    selectors.push(`#${text.toLowerCase()} input[name*="type" i]`);
+    selectors.push(`#${text.toUpperCase()} input[name*="type" i]`);
+    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="type" i]`);
 
-    selectors.push(`.${text} select[name*="type"]`);
-    selectors.push(`.${text.toLowerCase()} select[name*="type"]`);
-    selectors.push(`.${text.toUpperCase()} select[name*="type"]`);
-    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} select[name*="type"]`);
+    selectors.push(`.${text} select[name*="type" i]`);
+    selectors.push(`.${text.toLowerCase()} select[name*="type" i]`);
+    selectors.push(`.${text.toUpperCase()} select[name*="type" i]`);
+    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} select[name*="type" i]`);
 
-    selectors.push(`.${text} input[name*="type"]`);
-    selectors.push(`.${text.toLowerCase()} input[name*="type"]`);
-    selectors.push(`.${text.toUpperCase()} input[name*="type"]`);
-    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="type"]`);
+    selectors.push(`.${text} input[name*="type" i]`);
+    selectors.push(`.${text.toLowerCase()} input[name*="type" i]`);
+    selectors.push(`.${text.toUpperCase()} input[name*="type" i]`);
+    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="type" i]`);
   });
 
   return [...new Set(selectors)];

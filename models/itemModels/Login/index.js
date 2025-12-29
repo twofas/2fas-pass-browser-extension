@@ -145,14 +145,10 @@ export default class Login extends Item {
       return {};
     }
 
-    const contexts = ['page', 'editable'];
+    const contexts = ['page', 'editable', 'frame'];
 
     if (import.meta.env.BROWSER !== 'safari')  {
       contexts.push('page_action');
-    }
-
-    if (import.meta.env.BROWSER === 'firefox') {
-      contexts.push('frame');
     }
 
     const documentUrlPatterns = new Set();

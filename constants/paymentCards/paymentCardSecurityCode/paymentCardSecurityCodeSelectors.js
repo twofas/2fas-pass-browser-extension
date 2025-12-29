@@ -15,17 +15,24 @@ import paymentCardAttributes from '../paymentCardAttributes.js';
 const paymentCardSecurityCodeSelectors = () => {
   const selectors = [
     'input[autocomplete="cc-csc"]',
-    'input[name*="cvc"]',
-    'input[name*="cvv"]',
-    'input[name*="csc"]',
-    'input[name*="securitycode"]',
-    'input[name*="securityCode"]',
-    'input[name*="security_code"]',
-    'input[name*="security-code"]',
-    'input[name*="cardcode"]',
-    'input[name*="cardCode"]',
-    'input[name*="card_code"]',
-    'input[name*="card-code"]',
+    'input[name*="cvc" i]',
+    'input[name*="cvv" i]',
+    'input[name*="csc" i]',
+    'input[name*="securitycode" i]',
+    'input[name*="security_code" i]',
+    'input[name*="security-code" i]',
+    'input[name*="cardcode" i]',
+    'input[name*="card_code" i]',
+    'input[name*="card-code" i]',
+    'input[id*="cvc" i]',
+    'input[id*="cvv" i]',
+    'input[id*="csc" i]',
+    'input[id*="securitycode" i]',
+    'input[id*="security_code" i]',
+    'input[id*="security-code" i]',
+    'input[id*="cardcode" i]',
+    'input[id*="card_code" i]',
+    'input[id*="card-code" i]',
     'input.cvv-item',
     'input.cvc-item',
     'input.csc-item',
@@ -37,11 +44,28 @@ const paymentCardSecurityCodeSelectors = () => {
     '.cvc-form-item input[type="text"]',
     '.cvv-item input[type="text"]',
     '.cvc-item input[type="text"]',
-    '[data-field="cvv"] input',
-    '[data-field="cvc"] input',
-    '[data-field="csc"] input',
-    '[data-field="securityCode"] input',
-    '[data-field="security-code"] input'
+    '[data-field="cvv" i] input',
+    '[data-field="cvc" i] input',
+    '[data-field="csc" i] input',
+    '[data-field="securitycode" i] input',
+    '[data-field="security-code" i] input',
+    '.js-card-code input[type="text"]',
+    '.js-card-code input:not([type])',
+    '.js-card-cvv input[type="text"]',
+    '.js-card-cvv input:not([type])',
+    '.js-card-cvc input[type="text"]',
+    '.js-card-cvc input:not([type])',
+    '.js-cardcode input[type="text"]',
+    '.js-cardcvv input[type="text"]',
+    '.js-cardcvc input[type="text"]',
+    '.credit-input.js-card-code input',
+    '.credit-input-h.js-card-code input',
+    'input[placeholder="000"]',
+    'input[placeholder="0000"]',
+    'input[placeholder*="cvv" i]',
+    'input[placeholder*="cvc" i]',
+    'input[placeholder*="csc" i]',
+    'input[placeholder*="security code" i]'
   ];
 
   paymentCardSecurityCodeTexts.forEach(text => {
@@ -51,43 +75,40 @@ const paymentCardSecurityCodeSelectors = () => {
     selectors.push(`input#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}`);
 
     paymentCardAttributes.forEach(attr => {
-      selectors.push(`input[${attr}="${text}"]`);
-      selectors.push(`input[${attr}="${text.toLowerCase()}"]`);
-      selectors.push(`input[${attr}="${text.toUpperCase()}"]`);
-      selectors.push(`input[${attr}="${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}"]`);
+      selectors.push(`input[${attr}="${text}" i]`);
     });
   });
 
   paymentCardFormTexts.forEach(text => {
-    selectors.push(`#${text} input[name*="cvv"]`);
-    selectors.push(`#${text.toLowerCase()} input[name*="cvv"]`);
-    selectors.push(`#${text.toUpperCase()} input[name*="cvv"]`);
-    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="cvv"]`);
+    selectors.push(`#${text} input[name*="cvv" i]`);
+    selectors.push(`#${text.toLowerCase()} input[name*="cvv" i]`);
+    selectors.push(`#${text.toUpperCase()} input[name*="cvv" i]`);
+    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="cvv" i]`);
 
-    selectors.push(`#${text} input[name*="cvc"]`);
-    selectors.push(`#${text.toLowerCase()} input[name*="cvc"]`);
-    selectors.push(`#${text.toUpperCase()} input[name*="cvc"]`);
-    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="cvc"]`);
+    selectors.push(`#${text} input[name*="cvc" i]`);
+    selectors.push(`#${text.toLowerCase()} input[name*="cvc" i]`);
+    selectors.push(`#${text.toUpperCase()} input[name*="cvc" i]`);
+    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="cvc" i]`);
 
-    selectors.push(`#${text} input[name*="csc"]`);
-    selectors.push(`#${text.toLowerCase()} input[name*="csc"]`);
-    selectors.push(`#${text.toUpperCase()} input[name*="csc"]`);
-    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="csc"]`);
+    selectors.push(`#${text} input[name*="csc" i]`);
+    selectors.push(`#${text.toLowerCase()} input[name*="csc" i]`);
+    selectors.push(`#${text.toUpperCase()} input[name*="csc" i]`);
+    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="csc" i]`);
 
-    selectors.push(`.${text} input[name*="cvv"]`);
-    selectors.push(`.${text.toLowerCase()} input[name*="cvv"]`);
-    selectors.push(`.${text.toUpperCase()} input[name*="cvv"]`);
-    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="cvv"]`);
+    selectors.push(`.${text} input[name*="cvv" i]`);
+    selectors.push(`.${text.toLowerCase()} input[name*="cvv" i]`);
+    selectors.push(`.${text.toUpperCase()} input[name*="cvv" i]`);
+    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="cvv" i]`);
 
-    selectors.push(`.${text} input[name*="cvc"]`);
-    selectors.push(`.${text.toLowerCase()} input[name*="cvc"]`);
-    selectors.push(`.${text.toUpperCase()} input[name*="cvc"]`);
-    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="cvc"]`);
+    selectors.push(`.${text} input[name*="cvc" i]`);
+    selectors.push(`.${text.toLowerCase()} input[name*="cvc" i]`);
+    selectors.push(`.${text.toUpperCase()} input[name*="cvc" i]`);
+    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="cvc" i]`);
 
-    selectors.push(`.${text} input[name*="csc"]`);
-    selectors.push(`.${text.toLowerCase()} input[name*="csc"]`);
-    selectors.push(`.${text.toUpperCase()} input[name*="csc"]`);
-    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="csc"]`);
+    selectors.push(`.${text} input[name*="csc" i]`);
+    selectors.push(`.${text.toLowerCase()} input[name*="csc" i]`);
+    selectors.push(`.${text.toUpperCase()} input[name*="csc" i]`);
+    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="csc" i]`);
   });
 
   return [...new Set(selectors)];

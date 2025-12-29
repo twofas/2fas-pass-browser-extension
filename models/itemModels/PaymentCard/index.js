@@ -154,14 +154,10 @@ export default class PaymentCard extends Item {
       return {};
     }
 
-    const contexts = ['page', 'editable'];
+    const contexts = ['page', 'editable', 'frame'];
 
     if (import.meta.env.BROWSER !== 'safari')  {
       contexts.push('page_action');
-    }
-
-    if (import.meta.env.BROWSER === 'firefox') {
-      contexts.push('frame');
     }
 
     if (
@@ -177,7 +173,9 @@ export default class PaymentCard extends Item {
         parentId: '2fas-pass-payment-cards',
         contexts
       };
-    } else if (
+    }
+
+    if (
       this.securityType === SECURITY_TIER.HIGHLY_SECRET && !this.sifExists ||
       !this.sifExists
     ) {
@@ -190,9 +188,9 @@ export default class PaymentCard extends Item {
         parentId: '2fas-pass-payment-cards',
         contexts
       };
-    } else {
-      return {};
     }
+
+    return {};
   }
 
   get sifs () {
