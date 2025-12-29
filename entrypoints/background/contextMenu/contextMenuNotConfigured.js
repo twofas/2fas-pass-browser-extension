@@ -4,7 +4,21 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
+/**
+* Gets the context menu contexts based on browser type.
+* @return {string[]} The array of context menu contexts.
+*/
+const getContexts = () => {
+  const contexts = ['page', 'editable', 'frame'];
+
+  if (import.meta.env.BROWSER !== 'safari') {
+    contexts.push('page_action');
+  }
+
+  return contexts;
+};
+
+/**
 * Function to handle the context menu when browser extension is not configured.
 * @async
 * @return {Boolean} Returns true if the context menu is created successfully, otherwise returns false.
@@ -30,7 +44,8 @@ const contextMenuNotConfigured = async () => {
       enabled: true,
       title: browser.i18n.getMessage('background_contextMenuNotConfigured_connect'),
       type: 'normal',
-      visible: true
+      visible: true,
+      contexts: getContexts()
     });
   } catch {
     return false;

@@ -191,7 +191,6 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       target: REQUEST_TARGETS.CONTENT,
       autofillType: 'card'
     });
-
     const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
     const needsPermission = crossDomainFrames.length > 0;
 

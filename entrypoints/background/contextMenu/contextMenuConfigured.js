@@ -32,14 +32,10 @@ const contextMenuConfigured = async (items = null, retryAttempt = 0) => {
   isContextMenuConfiguring = true;
 
   try {
-    const contexts = ['page', 'editable'];
+    const contexts = ['page', 'editable', 'frame'];
 
     if (import.meta.env.BROWSER !== 'safari')  {
       contexts.push('page_action');
-    }
-
-    if (import.meta.env.BROWSER === 'firefox') {
-      contexts.push('frame');
     }
 
     let contextMenuSetting;

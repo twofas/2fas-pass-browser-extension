@@ -6,10 +6,11 @@
 
 import sendMessageToAllFrames from '../functions/sendMessageToAllFrames';
 
-/** 
+/**
 * Injects the content script and CSS if not already injected.
 * @async
 * @param {number} tabID - The ID of the tab to inject the content script and CSS into.
+* @param {string} type - The type of content script to inject.
 * @return {boolean} Indicates whether the content script was successfully injected.
 */
 const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { // content / prompt
@@ -54,7 +55,7 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
     return true;
   }
 
-  try {
+  const injectScript = async () => {
     switch (type) {
       case REQUEST_TARGETS.CONTENT: {
         await browser.scripting.executeScript({
@@ -78,11 +79,15 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
         throw new TwoFasError(TwoFasError.internalErrors.injectCSIfNotAlreadyUnknownTypeError);
       }
     }
+  };
+
+  try {
+    await injectScript();
   } catch {
     return injected;
   }
-  
-  while (attempts < 10) {
+
+  while (attempts < 15) {
     try {
       res = await sendMessageToAllFrames(tabID, { action: REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK, target: type });
     } catch {}
@@ -96,7 +101,13 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
       }
     }
 
-    await new Promise(resolve => setTimeout(resolve, 20));
+    if (attempts === 7 && type === REQUEST_TARGETS.CONTENT) {
+      try {
+        await injectScript();
+      } catch {}
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 30));
 
     attempts++;
   }
