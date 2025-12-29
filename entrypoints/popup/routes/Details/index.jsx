@@ -9,6 +9,7 @@ import { useParams, useNavigate, useLocation } from 'react-router';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import getItem from '@/partials/sessionStorage/getItem';
 import usePopupState from '../../store/popupState/usePopupState';
+import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import { matchModel, Login } from '@/models/itemModels';
@@ -52,6 +53,9 @@ function Details(props) {
       let item;
       let editedSecurityType;
 
+      const pathname = location.pathname;
+      const storeData = usePopupStateStore.getState().getData(pathname);
+
       if (location.state?.data?.item) {
         editedSecurityType = location.state.data.item.securityType;
 
@@ -75,11 +79,11 @@ function Details(props) {
         } else {
           item = await matchModel({ ...location.state.data.item, securityType: originalItem?.securityType });
         }
-      } else if (data?.item) {
+      } else if (storeData?.item) {
         if (location.state?.from !== 'thisTab') {
           try {
-            editedSecurityType = data.item.securityType;
-            item = await matchModel({ ...data.item, securityType: originalItem?.securityType });
+            editedSecurityType = storeData.item.securityType;
+            item = await matchModel({ ...storeData.item, securityType: originalItem?.securityType });
           } catch {
             if (params.id) {
               item = await getItem(params.deviceId, params.vaultId, params.id);
@@ -132,7 +136,8 @@ function Details(props) {
         });
       }
 
-      setData('item', item);
+      const itemToStore = typeof item?.toJSON === 'function' ? item.toJSON() : item;
+      setData('item', itemToStore);
       setLoading(false);
     } catch (e) {
       CatchError(e);
