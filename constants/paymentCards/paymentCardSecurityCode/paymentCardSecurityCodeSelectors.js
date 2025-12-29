@@ -25,7 +25,23 @@ const paymentCardSecurityCodeSelectors = () => {
     'input[name*="cardcode"]',
     'input[name*="cardCode"]',
     'input[name*="card_code"]',
-    'input[name*="card-code"]'
+    'input[name*="card-code"]',
+    'input.cvv-item',
+    'input.cvc-item',
+    'input.csc-item',
+    'input.cvv-input',
+    'input.cvc-input',
+    'input.csc-input',
+    'input.security-code-input',
+    '.cvv-form-item input[type="text"]',
+    '.cvc-form-item input[type="text"]',
+    '.cvv-item input[type="text"]',
+    '.cvc-item input[type="text"]',
+    '[data-field="cvv"] input',
+    '[data-field="cvc"] input',
+    '[data-field="csc"] input',
+    '[data-field="securityCode"] input',
+    '[data-field="security-code"] input'
   ];
 
   paymentCardSecurityCodeTexts.forEach(text => {

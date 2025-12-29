@@ -11,6 +11,8 @@ const paymentCardAttributes = Object.freeze([
   'placeholder',
   'aria-label',
   'data-id',
+  'data-encrypted-name',
+  'data-field',
   'aria-labelledby',
   'id',
   'class'

@@ -78,7 +78,12 @@ const paymentCardSecurityCodeTexts = Object.freeze([
   'sec_code',
   'cvv2',
   'cvc2',
-  'cid2'
+  'cid2',
+  'xCardCode',
+  'x-Card-Code',
+  'x_Card_Code',
+  'x-card-code',
+  'x_card_code'
 ]);
 
 export default paymentCardSecurityCodeTexts;

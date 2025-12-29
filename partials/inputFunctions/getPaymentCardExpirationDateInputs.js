@@ -4,7 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { paymentCardExpirationDateSelectors, paymentCardDeniedKeywords } from '@/constants';
+import {
+  paymentCardExpirationDateSelectors,
+  paymentCardDeniedKeywords,
+  paymentCardExpirationMonthPlaceholders,
+  paymentCardExpirationYearPlaceholders
+} from '@/constants';
 import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
@@ -48,6 +53,21 @@ const filterDeniedKeywords = input => {
 };
 
 /**
+* Gets the data-field value from closest parent element that has it.
+* @param {HTMLElement} element - The element to check.
+* @return {string} The data-field value or empty string.
+*/
+const getParentDataField = element => {
+  const parent = element.closest('[data-field]');
+
+  if (parent) {
+    return (parent.getAttribute('data-field') || '').toLowerCase();
+  }
+
+  return '';
+};
+
+/**
 * Determines the type of expiration date input based on autocomplete attribute.
 * @param {HTMLElement} element - The input or select element.
 * @return {string} The type: 'combined', 'month', or 'year'.
@@ -56,12 +76,37 @@ const getExpirationDateType = element => {
   const autocomplete = (element.getAttribute('autocomplete') || '').toLowerCase();
   const name = (element.name || '').toLowerCase();
   const id = (element.id || '').toLowerCase();
+  const placeholder = (element.getAttribute('placeholder') || '').toLowerCase();
+  const ariaLabel = (element.getAttribute('aria-label') || '').toLowerCase();
+  const dataField = getParentDataField(element);
+  const className = (element.className || '').toLowerCase();
 
-  if (autocomplete === 'cc-exp-month' || name.includes('month') || id.includes('month')) {
+  if (autocomplete === 'cc-exp') {
+    return 'combined';
+  }
+
+  if (autocomplete === 'cc-exp-month') {
     return 'month';
   }
 
-  if (autocomplete === 'cc-exp-year' || name.includes('year') || id.includes('year')) {
+  if (autocomplete === 'cc-exp-year') {
+    return 'year';
+  }
+
+  const combined = name + id + placeholder + ariaLabel + dataField + className;
+
+  const hasMonth = paymentCardExpirationMonthPlaceholders.some(keyword => combined.includes(keyword));
+  const hasYear = paymentCardExpirationYearPlaceholders.some(keyword => combined.includes(keyword));
+
+  if (hasMonth && hasYear) {
+    return 'combined';
+  }
+
+  if (hasMonth) {
+    return 'month';
+  }
+
+  if (hasYear) {
     return 'year';
   }
 

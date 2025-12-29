@@ -42,7 +42,20 @@ const paymentCardExpirationDateSelectors = () => {
     'input[name*="expiration"]',
     'input[name*="Expiration"]',
     'select[name*="expiration"]',
-    'select[name*="Expiration"]'
+    'select[name*="Expiration"]',
+    '.expire-date-item input[type="text"]',
+    '.expiry-date-item input[type="text"]',
+    '.expiration-date-item input[type="text"]',
+    '.select-expire-date__item input[type="text"]',
+    '[data-field="expiryDate"] input',
+    '[data-field="expiry-date"] input',
+    '[data-field="expireDate"] input',
+    '[data-field="expire-date"] input',
+    '[data-field="expirationDate"] input',
+    '[data-field="expiration-date"] input',
+    'input.expiry-input',
+    'input.expire-input',
+    'input.expiration-input'
   ];
 
   paymentCardExpirationDateTexts.forEach(text => {
