@@ -98,6 +98,7 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
       className={S.paymentCardSecurityCodeInput}
       type='text'
       mask={securityCodeMaskData.mask}
+      slotChar=' '
       autoClear={false}
       value={displayValue}
       placeholder={browser.i18n.getMessage('placeholder_payment_card_security_code')}

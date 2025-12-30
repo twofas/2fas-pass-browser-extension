@@ -44,7 +44,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
       return null;
     }
 
-    const cleanValue = stringValue.replace(/_/g, '');
+    const cleanValue = stringValue.replace(/\s/g, '');
     const parts = cleanValue.split('/');
 
     if (parts.length !== 2 || parts[0].length !== 2 || parts[1].length !== 2) {
@@ -209,6 +209,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
         onMouseDown={handleInputMouseDown}
         onFocus={handleInputFocus}
         mask='99/99'
+        slotChar=' '
         placeholder={browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
         id={inputId}
         disabled={disabled}

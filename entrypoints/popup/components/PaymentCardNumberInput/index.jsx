@@ -101,6 +101,7 @@ const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, 
       className={S.paymentCardNumberInput}
       type='text'
       mask={mask}
+      slotChar=' '
       autoClear={false}
       value={displayValue}
       id={id}
