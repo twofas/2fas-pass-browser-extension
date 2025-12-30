@@ -31,6 +31,7 @@ export { default as savePromptAction } from './savePrompt/savePromptAction.js';
 // Core utilities
 export { default as generateLocalKey } from './generateLocalKey.js';
 export { default as generatePersistentKeys } from './generatePersistentKeys.js';
+export { default as handleAutofillCardWithPermission } from './handleAutofillCardWithPermission.js';
 export { default as generateSecurityIcon } from './generateSecurityIcon.js';
 export { default as getBrowserInfo } from '../../../partials/browserInfo/getBrowserInfo.js';
 export { default as getBrowserVersion } from '../../../partials/browserInfo/getBrowserVersion.js';
