@@ -39,3 +39,11 @@
     }
   }
 }
+
+.payment-card-number-input-error {
+  color: v.$error-light !important;
+
+  @include m.darkMode {
+    color: v.$error-dark !important;
+  }
+}

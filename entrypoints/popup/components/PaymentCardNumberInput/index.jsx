@@ -6,7 +6,8 @@
 
 import S from './PaymentCardNumberInput.module.scss';
 import { forwardRef, memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
-import getCardNumberMask from './getCardNumberMask';
+import getCardNumberMask, { detectCardIssuer, maxCardNumberLength } from './getCardNumberMask';
+import PaymentCard from '@/models/itemModels/PaymentCard';
 
 /**
 * PaymentCardNumberInput component with dynamic mask based on card type.
@@ -36,6 +37,27 @@ const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, 
     () => getCardNumberMask(displayValue),
     [displayValue]
   );
+
+  const isInvalid = useMemo(() => {
+    if (!displayValue) {
+      return false;
+    }
+
+    const digitsOnly = displayValue.replace(/\D/g, '');
+
+    if (digitsOnly.length === 0) {
+      return false;
+    }
+
+    const issuer = detectCardIssuer(displayValue);
+    const requiredLength = maxCardNumberLength(issuer);
+
+    if (digitsOnly.length < requiredLength) {
+      return true;
+    }
+
+    return !PaymentCard.isValidLuhn(digitsOnly);
+  }, [displayValue]);
 
   useEffect(() => {
     if (loadedRef.current) {
@@ -77,13 +99,15 @@ const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, 
 
   const effectivePlaceholder = placeholder ?? (isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_number'));
 
+  const inputClassName = `${S.paymentCardNumberInput}${isInvalid ? ` ${S.paymentCardNumberInputError}` : ''}`;
+
   if (!InputMask || isHighlySecretWithoutSif) {
     return (
       <input
         {...inputProps}
         ref={ref}
         placeholder={effectivePlaceholder}
-        className={S.paymentCardNumberInput}
+        className={inputClassName}
         type='text'
         value={displayValue}
         id={id}
@@ -98,7 +122,7 @@ const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, 
       {...inputProps}
       ref={ref}
       placeholder={effectivePlaceholder}
-      className={S.paymentCardNumberInput}
+      className={inputClassName}
       type='text'
       mask={mask}
       slotChar=' '
