@@ -391,8 +391,6 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
         }
       }
 
-      
-
       break;
     }
 

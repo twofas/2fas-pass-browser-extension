@@ -79,6 +79,8 @@ function Details(props) {
         } else {
           item = await matchModel({ ...location.state.data.item, securityType: originalItem?.securityType });
         }
+      } else if (location.state?.from === 'fetch' && originalItem) {
+        item = originalItem;
       } else if (storeData?.item) {
         if (location.state?.from !== 'thisTab') {
           try {
@@ -230,7 +232,7 @@ function Details(props) {
                     itemId: data.item.id,
                     deviceId: data.item.deviceId,
                     vaultId: data.item.vaultId,
-                    contentType: data.item.constructor.contentType
+                    contentType: data.item.contentType
                   }
                 }}
                 title={browser.i18n.getMessage('details_fetch_title')}
