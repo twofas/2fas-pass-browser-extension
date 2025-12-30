@@ -6,8 +6,9 @@
 
 import S from './PaymentCardSecurityCodeInput.module.scss';
 import { forwardRef, memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
-import getSecurityCodeMask, { maxSecurityCodeLength } from './getSecurityCodeMask';
-import { detectCardIssuer } from '../PaymentCardNumberInput/getCardNumberMask';
+import getSecurityCodeMask from './getSecurityCodeMask';
+import isSecurityCodeInvalid from './validateSecurityCode';
+import isSecurityCodeTooLong from './isSecurityCodeTooLong';
 
 /**
 * PaymentCardSecurityCodeInput component with dynamic mask based on card type.
@@ -19,11 +20,12 @@ import { detectCardIssuer } from '../PaymentCardNumberInput/getCardNumberMask';
 * @param {string} props.cardNumber - The card number to determine mask (Amex uses 4 digits).
 * @param {number} props.securityType - Security tier type (0=Top Secret, 1=Highly Secret, 2=Secret).
 * @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
+* @param {Function} props.onTooLongChange - Callback when security code is too long for detected issuer.
 * @param {Object} props.inputProps - Additional props to spread on InputMask.
 * @param {Object} ref - Forwarded ref for the input element.
 * @return {JSX.Element} The rendered component.
 */
-const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumber, securityType, sifExists, ...inputProps }, ref) => {
+const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumber, securityType, sifExists, onTooLongChange, ...inputProps }, ref) => {
   const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
@@ -34,31 +36,19 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
   const displayValue = isHighlySecretWithoutSif ? '' : value;
 
   const securityCodeMaskData = useMemo(
-    () => getSecurityCodeMask(cardNumber),
-    [cardNumber]
+    () => getSecurityCodeMask(cardNumber, displayValue),
+    [cardNumber, displayValue]
   );
 
-  const isInvalid = useMemo(() => {
-    if (!displayValue) {
-      return false;
-    }
+  const isInvalid = useMemo(
+    () => isSecurityCodeInvalid(displayValue, cardNumber),
+    [displayValue, cardNumber]
+  );
 
-    const digitsOnly = displayValue.replace(/\D/g, '');
-
-    if (digitsOnly.length === 0) {
-      return false;
-    }
-
-    const issuer = detectCardIssuer(cardNumber);
-
-    if (issuer === null) {
-      return digitsOnly.length < 3;
-    }
-
-    const requiredLength = maxSecurityCodeLength(issuer);
-
-    return digitsOnly.length < requiredLength;
-  }, [displayValue, cardNumber]);
+  const isTooLong = useMemo(
+    () => isSecurityCodeTooLong(displayValue, cardNumber),
+    [displayValue, cardNumber]
+  );
 
   useEffect(() => {
     if (loadedRef.current) {
@@ -71,6 +61,12 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
       setInputMask(() => module.InputMask);
     });
   }, []);
+
+  useEffect(() => {
+    if (onTooLongChange) {
+      onTooLongChange(isTooLong);
+    }
+  }, [isTooLong, onTooLongChange]);
 
   useLayoutEffect(() => {
     if (previousMaskRef.current && previousMaskRef.current !== securityCodeMaskData.mask) {
@@ -98,7 +94,7 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
     onChange(e);
   }, [id, onChange]);
 
-  const inputClassName = `${S.paymentCardSecurityCodeInput}${isInvalid ? ` ${S.paymentCardSecurityCodeInputError}` : ''}`;
+  const inputClassName = `${S.paymentCardSecurityCodeInput}${isInvalid || isTooLong ? ` ${S.paymentCardSecurityCodeInputError}` : ''}`;
 
   if (!InputMask) {
     return (
