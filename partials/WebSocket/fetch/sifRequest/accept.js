@@ -258,7 +258,7 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
       }
     }
 
-    await item.setSif(updateSifArr);
+    item.setSifEncrypted(updateSifArr);
 
     // Save sifTime in item's internalData
     const sifResetTime = info.expireInSeconds && info.expireInSeconds > 30 ? info.expireInSeconds / 60 : config.passwordResetDelay;
@@ -280,6 +280,7 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
 
     return {
       returnUrl,
+      returnState: { from: 'fetch' },
       returnToast: {
         text: browser.i18n.getMessage(`fetch_${item.contentType ?? 'generic'}_request_accept_toast`),
         type: 'success'
