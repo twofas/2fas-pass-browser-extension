@@ -6,7 +6,8 @@
 
 import S from './PaymentCardSecurityCodeInput.module.scss';
 import { forwardRef, memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
-import getSecurityCodeMask from './getSecurityCodeMask';
+import getSecurityCodeMask, { maxSecurityCodeLength } from './getSecurityCodeMask';
+import { detectCardIssuer } from '../PaymentCardNumberInput/getCardNumberMask';
 
 /**
 * PaymentCardSecurityCodeInput component with dynamic mask based on card type.
@@ -36,6 +37,28 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
     () => getSecurityCodeMask(cardNumber),
     [cardNumber]
   );
+
+  const isInvalid = useMemo(() => {
+    if (!displayValue) {
+      return false;
+    }
+
+    const digitsOnly = displayValue.replace(/\D/g, '');
+
+    if (digitsOnly.length === 0) {
+      return false;
+    }
+
+    const issuer = detectCardIssuer(cardNumber);
+
+    if (issuer === null) {
+      return digitsOnly.length < 3;
+    }
+
+    const requiredLength = maxSecurityCodeLength(issuer);
+
+    return digitsOnly.length < requiredLength;
+  }, [displayValue, cardNumber]);
 
   useEffect(() => {
     if (loadedRef.current) {
@@ -75,12 +98,14 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
     onChange(e);
   }, [id, onChange]);
 
+  const inputClassName = `${S.paymentCardSecurityCodeInput}${isInvalid ? ` ${S.paymentCardSecurityCodeInputError}` : ''}`;
+
   if (!InputMask) {
     return (
       <input
         {...inputProps}
         ref={ref}
-        className={S.paymentCardSecurityCodeInput}
+        className={inputClassName}
         type='text'
         value={displayValue}
         placeholder={browser.i18n.getMessage('placeholder_payment_card_security_code')}
@@ -95,7 +120,7 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
     <InputMask
       {...inputProps}
       ref={ref}
-      className={S.paymentCardSecurityCodeInput}
+      className={inputClassName}
       type='text'
       mask={securityCodeMaskData.mask}
       slotChar=' '

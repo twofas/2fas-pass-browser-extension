@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardExpirationDate.module.scss';
-import { forwardRef, memo, useCallback, useRef, useEffect, useState } from 'react';
+import { forwardRef, memo, useCallback, useRef, useEffect, useState, useMemo } from 'react';
 import CalendarIcon from '@/assets/popup-window/calendar.svg?react';
 
 const PANEL_CLASS = 'payment-card-expiration-date-panel';
@@ -38,6 +38,46 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
 
   const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
   const displayValue = isHighlySecretWithoutSif ? '' : value;
+
+  const isInvalid = useMemo(() => {
+    if (!displayValue) {
+      return false;
+    }
+
+    const cleanValue = displayValue.replace(/\s/g, '');
+
+    if (cleanValue.length === 0) {
+      return false;
+    }
+
+    const parts = cleanValue.split('/');
+    const monthPart = parts[0] || '';
+    const digitsInMonth = monthPart.replace(/\D/g, '');
+
+    if (digitsInMonth.length === 0) {
+      return false;
+    }
+
+    const firstDigit = parseInt(digitsInMonth[0], 10);
+
+    if (firstDigit > 1) {
+      return true;
+    }
+
+    if (digitsInMonth.length >= 2) {
+      const secondDigit = parseInt(digitsInMonth[1], 10);
+
+      if (firstDigit === 0 && secondDigit === 0) {
+        return true;
+      }
+
+      if (firstDigit === 1 && secondDigit > 2) {
+        return true;
+      }
+    }
+
+    return false;
+  }, [displayValue]);
 
   const parseExpirationToDate = useCallback(stringValue => {
     if (!stringValue || typeof stringValue !== 'string') {
@@ -173,12 +213,14 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
 
   const { InputMask, Calendar } = primeReactComponents;
 
+  const inputClassName = `${S.paymentCardExpirationDateInput}${isInvalid ? ` ${S.paymentCardExpirationDateInputError}` : ''}`;
+
   if (!InputMask || !Calendar || isHighlySecretWithoutSif) {
     return (
       <div className={S.paymentCardExpirationDate}>
         <input
           ref={ref}
-          className={S.paymentCardExpirationDateInput}
+          className={inputClassName}
           value={displayValue}
           onChange={e => onChange(e.target.value)}
           placeholder={isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
@@ -203,7 +245,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
     <div className={S.paymentCardExpirationDate}>
       <InputMask
         ref={ref}
-        className={S.paymentCardExpirationDateInput}
+        className={inputClassName}
         value={displayValue}
         onChange={handleInputChange}
         onMouseDown={handleInputMouseDown}

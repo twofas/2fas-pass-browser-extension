@@ -47,6 +47,14 @@
   }
 }
 
+.payment-card-expiration-date-input-error {
+  color: v.$error-light !important;
+
+  @include m.darkMode {
+    color: v.$error-dark !important;
+  }
+}
+
 .payment-card-expiration-date-button {
   align-items: center;
   appearance: none;
