@@ -35,7 +35,6 @@ import ArrowDecorLight from '@/assets/install-page/arrow-decor-light.svg?react';
 import ArrowDecorDark from '@/assets/install-page/arrow-decor-dark.svg?react';
 import PlayIcon from '@/assets/install-page/play.svg?react';
 
-console.log('🎨 [PERF] Install: Direct SVG imports done at:', performance.now().toFixed(2), 'ms');
 const DownloadMobileApp = lazy(() => import('./components/DownloadMobileApp'));
 
 const stepVariants = {
