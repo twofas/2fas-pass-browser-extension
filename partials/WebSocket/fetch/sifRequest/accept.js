@@ -10,7 +10,7 @@ import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
-import { sendMessageToAllFrames, generateNonce } from '@/partials/functions';
+import { sendMessageToAllFrames, generateNonce, encryptValueForTransmission } from '@/partials/functions';
 import { ENCRYPTION_KEYS } from '@/constants';
 
 // FUTURE - Better error handling
@@ -54,27 +54,11 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
         const decryptedPassword = ArrayBufferToString(decryptedPasswordAB);
 
         if (state?.data?.cryptoAvailable) {
-          const [nonce, localKey] = await Promise.all([
-            generateNonce(),
-            storage.getItem('local:lKey')
-          ]);
+          const passwordResult = await encryptValueForTransmission(decryptedPassword);
 
-          const localKeyCrypto = await crypto.subtle.importKey(
-            'raw',
-            Base64ToArrayBuffer(localKey),
-            { name: 'AES-GCM' },
-            false,
-            ['encrypt']
-          );
-
-          const value = await crypto.subtle.encrypt(
-            { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-            localKeyCrypto,
-            StringToArrayBuffer(decryptedPassword)
-          );
-
-          const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
-          encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
+          if (passwordResult.status === 'ok') {
+            encryptedValueB64 = passwordResult.data;
+          }
         } else {
           encryptedValueB64 = decryptedPassword;
         }

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, generateNonce } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import PaymentCard from '@/models/itemModels/PaymentCard';
@@ -15,48 +15,6 @@ const showT2Toast = () => {
 
 const showGenericToast = () => {
   showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
-};
-
-/**
-* Encrypts a value using the local key for secure transmission.
-* @param {string} value - The value to encrypt.
-* @return {Promise<{status: string, data?: string, message?: string}>} Encryption result.
-*/
-const encryptValueForTransmission = async value => {
-  let nonce = null;
-  let localKeyCrypto = null;
-  let encryptedValue = null;
-
-  try {
-    nonce = generateNonce();
-    const localKey = await storage.getItem('local:lKey');
-    const localKeyAB = Base64ToArrayBuffer(localKey);
-
-    localKeyCrypto = await crypto.subtle.importKey(
-      'raw',
-      localKeyAB,
-      { name: 'AES-GCM' },
-      false,
-      ['encrypt']
-    );
-
-    encryptedValue = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-      localKeyCrypto,
-      StringToArrayBuffer(value)
-    );
-
-    const encryptedBytes = EncryptBytes(nonce.ArrayBuffer, encryptedValue);
-
-    return { status: 'ok', data: ArrayBufferToBase64(encryptedBytes) };
-  } catch (e) {
-    await CatchError(e);
-    return { status: 'error', message: 'Encryption failed' };
-  } finally {
-    nonce = null;
-    localKeyCrypto = null;
-    encryptedValue = null;
-  }
 };
 
 /**

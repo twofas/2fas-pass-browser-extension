@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, generateNonce } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import Login from '@/models/itemModels/Login';
@@ -131,43 +131,19 @@ const handleLoginAutofill = async (item, navigate) => {
       return;
     }
 
-    if (cryptoAvailableRes.status !== 'ok' || !cryptoAvailableRes.cryptoAvailable) {
+    const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
+
+    if (!cryptoAvailable) {
       encryptedValueB64 = decryptedPassword;
     } else {
-      let nonce = null;
-      let localKeyCrypto = null;
-      let value = null;
+      const passwordResult = await encryptValueForTransmission(decryptedPassword);
 
-      try {
-        nonce = generateNonce();
-        const localKey = await storage.getItem('local:lKey');
-        const localKeyAB = Base64ToArrayBuffer(localKey);
-
-        localKeyCrypto = await crypto.subtle.importKey(
-          'raw',
-          localKeyAB,
-          { name: 'AES-GCM' },
-          false,
-          ['encrypt']
-        );
-
-        value = await crypto.subtle.encrypt(
-          { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-          localKeyCrypto,
-          StringToArrayBuffer(decryptedPassword)
-        );
-
-        const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
-        encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
-      } catch (e) {
+      if (passwordResult.status !== 'ok') {
         showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
-        await CatchError(e);
         return;
-      } finally {
-        nonce = null;
-        localKeyCrypto = null;
-        value = null;
       }
+
+      encryptedValueB64 = passwordResult.data;
     }
 
     decryptedPassword = '';
