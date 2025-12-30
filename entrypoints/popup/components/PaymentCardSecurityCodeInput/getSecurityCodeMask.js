@@ -42,12 +42,22 @@ const maxSecurityCodeLength = issuer => {
 /**
  * Returns the appropriate security code mask based on card type.
  * Matches iOS PaymentCardUtilityInteractor.maxSecurityCodeLength.
+ * If current value has more digits than the new mask allows, keeps the longer mask.
  * @param {string} cardNumber - The card number to detect card type from.
+ * @param {string} currentValue - The current security code value (optional).
  * @returns {Object} Object with mask and placeholder properties.
  */
-const getSecurityCodeMask = cardNumber => {
+const getSecurityCodeMask = (cardNumber, currentValue) => {
   const issuer = detectCardIssuer(cardNumber);
   const maxLength = maxSecurityCodeLength(issuer);
+
+  if (currentValue) {
+    const currentDigits = currentValue.replace(/\D/g, '');
+
+    if (currentDigits.length > maxLength) {
+      return { ...SECURITY_CODE_MASKS.AMEX };
+    }
+  }
 
   if (maxLength === 4) {
     return { ...SECURITY_CODE_MASKS.AMEX };

@@ -207,6 +207,10 @@
     "message": "Security code must be 3 or 4 digits.",
     "description": "Validation message indicating that the security code must be 3 or 4 digits"
   },
+  "details_security_code_too_long": {
+    "message": "Security code is invalid.",
+    "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
+  },
   "details_secure_note_text_max_length": {
     "message": "Secure note text must be less than 16384 characters.",
     "description": "Validation message indicating the maximum length for the secure note text field"

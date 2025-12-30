@@ -38,6 +38,11 @@ function CardSecurityCode (props) {
   const [isDecrypting, setIsDecrypting] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [shouldFocusInputMask, setShouldFocusInputMask] = useState(false);
+  const [securityCodeTooLong, setSecurityCodeTooLong] = useState(false);
+
+  const handleSecurityCodeTooLongChange = useCallback(isTooLong => {
+    setSecurityCodeTooLong(isTooLong);
+  }, []);
 
   const itemInstance = useMemo(() => {
     if (!data.item) {
@@ -290,6 +295,7 @@ function CardSecurityCode (props) {
           disabled
           securityType={originalItem?.securityType}
           sifExists={originalItem?.sifExists}
+          onTooLongChange={handleSecurityCodeTooLongChange}
         />
       );
     }
@@ -297,7 +303,8 @@ function CardSecurityCode (props) {
     // Editable - show password input when not focused, PaymentCardSecurityCodeInput when focused
     if (isEditable && !isFocused) {
       const cardNumber = getCardNumberValue();
-      const securityCodeMaskData = getSecurityCodeMask(cardNumber);
+      const securityCode = getSecurityCodeValue();
+      const securityCodeMaskData = getSecurityCodeMask(cardNumber, securityCode);
       const maxLength = securityCodeMaskData.mask.length;
 
       return (
@@ -327,6 +334,7 @@ function CardSecurityCode (props) {
         disabled={sifDecryptError || isHighlySecretWithoutSif}
         securityType={originalItem?.securityType}
         sifExists={originalItem?.sifExists}
+        onTooLongChange={handleSecurityCodeTooLongChange}
       />
     );
   };
@@ -374,6 +382,9 @@ function CardSecurityCode (props) {
 
             {generateSecurityTypeTooltip(originalItem)}
             {generateErrorOverlay()}
+          </div>
+          <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
+            <p className={securityCodeTooLong ? '' : pI.empty}>{securityCodeTooLong ? browser.i18n.getMessage('details_security_code_too_long') : ''}</p>
           </div>
         </div>
       )}

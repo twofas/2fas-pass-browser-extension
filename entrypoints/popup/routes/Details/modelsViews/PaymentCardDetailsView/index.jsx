@@ -7,13 +7,17 @@
 import S from '../../Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useNavigate } from 'react-router';
-import { useState, lazy } from 'react';
+import { useState, lazy, useMemo } from 'react';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import PaymentCard from '@/models/itemModels/PaymentCard';
 import { PULL_REQUEST_TYPES, PAYMENT_CARD_REGEX } from '@/constants';
 import getItem from '@/partials/sessionStorage/getItem';
+import isCardNumberInvalid from '@/entrypoints/popup/components/PaymentCardNumberInput/validateCardNumber';
+import isExpirationDateInvalid from '@/entrypoints/popup/components/PaymentCardExpirationDate/validateExpirationDate';
+import isSecurityCodeInvalid from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/validateSecurityCode';
+import isSecurityCodeTooLong from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/isSecurityCodeTooLong';
 
 const Name = lazy(() => import('../../components/Name'));
 const CardHolder = lazy(() => import('../../components/CardHolder'));
@@ -35,6 +39,15 @@ function PaymentCardDetailsView(props) {
   const [inputError, setInputError] = useState(undefined);
 
   const navigate = useNavigate();
+
+  const hasLiveValidationErrors = useMemo(() => {
+    const cardNumberError = data.cardNumberEditable && isCardNumberInvalid(data.editedCardNumber);
+    const expirationDateError = data.expirationDateEditable && isExpirationDateInvalid(data.editedExpirationDate);
+    const securityCodeError = data.securityCodeEditable && isSecurityCodeInvalid(data.editedSecurityCode, data.editedCardNumber);
+    const securityCodeTooLongError = data.securityCodeEditable && isSecurityCodeTooLong(data.editedSecurityCode, data.editedCardNumber);
+
+    return cardNumberError || expirationDateError || securityCodeError || securityCodeTooLongError;
+  }, [data.cardNumberEditable, data.editedCardNumber, data.expirationDateEditable, data.editedExpirationDate, data.securityCodeEditable, data.editedSecurityCode]);
 
   const validate = values => {
     const errors = {};
@@ -213,7 +226,7 @@ function PaymentCardDetailsView(props) {
             <button
               type="submit"
               className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-              disabled={(getEditableAmount().amount <= 0 || submitting) ? 'disabled' : ''}
+              disabled={(getEditableAmount().amount <= 0 || submitting || hasLiveValidationErrors) ? 'disabled' : ''}
             >
               {browser.i18n.getMessage('update')}{getEditableAmount().text}
             </button>
