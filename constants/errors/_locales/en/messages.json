@@ -7,57 +7,25 @@
     "message": "EXT_PLATFORM is undefined",
     "description": "Error message displayed when the EXT_PLATFORM variable is not defined"
   },
+  "error_general_setting": {
+    "message": "Error, changes couldn't be saved",
+    "description": "Generic error message displayed when saving settings fails"
+  },
   "error_getting_theme_value": {
     "message": "Error while getting theme value",
     "description": "Error message displayed when retrieving the theme value fails"
-  },
-  "error_setting_theme_value": {
-    "message": "Error while setting theme value",
-    "description": "Error message displayed when setting the theme value fails"
-  },
-  "error_logging_settings_changed": {
-    "message": "Error while changing \"Crash logs\" settings",
-    "description": "Error message displayed when updating crash log settings fails"
   },
   "error_getting_services_key": {
     "message": "Error while getting service key",
     "description": "Error message displayed when retrieving the service key fails"
   },
-  "error_save_password_prompt_saving": {
-    "message": "Error while saving \"Save Item\" prompt settings",
-    "description": "Error shown when saving the save password prompt settings"
-  },
-  "error_safe_browsing_reports_saving": {
-    "message": "Error while saving \"Safe browsing\" reports settings",
-    "description": "Error shown when saving safe browsing reports settings"
-  },
-  "error_safe_browsing_saving": {
-    "message": "Error while saving \"Safe browsing\" settings",
-    "description": "Error shown when saving safe browsing settings"
-  },
-  "error_idle_lock_saving": {
-    "message": "Error while saving \"Idle lock\" settings",
-    "description": "Error message displayed when saving idle lock settings fails"
-  },
   "error_auto_clear_clipboard_permission_denied": {
     "message": "Permission to read clipboard denied. Auto clear clipboard feature disabled.",
     "description": "Error message displayed when clipboard read permission is denied"
   },
-  "error_auto_clear_clipboard_saving": {
-    "message": "Error while saving \"Auto clear clipboard\" settings",
-    "description": "Error message displayed when saving auto clear clipboard settings fails"
-  },
-  "error_saving_notification_settings": {
-    "message": "Error while saving \"Notifications\" settings",
-    "description": "Error message displayed when saving notification settings fails"
-  },
   "error_saving_extension_name": {
     "message": "Error! Failed to update extension name.",
     "description": "Error message displayed when updating the extension name fails"
-  },
-  "error_saving_context_menu_setting": {
-    "message": "Error while saving \"Context menu\" settings",
-    "description": "Error message displayed when saving context menu settings fails"
   },
   "error_uri_copy_failed": {
     "message": "Failed to copy URL to clipboard.",
