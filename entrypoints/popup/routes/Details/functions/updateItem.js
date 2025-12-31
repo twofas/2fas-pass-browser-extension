@@ -45,16 +45,15 @@ const deepMerge = (target, overwrites) => {
 
 /**
  * Updates an item with the provided overwrites
- * @param {Login|SecureNote} baseItem - The base item to update
+ * @param {Login|SecureNote|Object} baseItem - The base item to update (model instance or plain object)
  * @param {Object} overwrites - Object with properties to overwrite (supports nested properties)
- * @returns {Login|SecureNote} - New item instance with merged data
+ * @returns {Object} - Updated item data as plain object
  */
 const updateItem = (baseItem, overwrites = {}) => {
-  const itemData = baseItem.toJSON();
+  const itemData = typeof baseItem.toJSON === 'function' ? baseItem.toJSON() : { ...baseItem };
   const updatedData = deepMerge(itemData, overwrites);
-  const updatedItem = new (baseItem.constructor)(updatedData);
 
-  return updatedItem;
+  return updatedData;
 };
 
 export default updateItem;
