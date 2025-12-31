@@ -18,7 +18,6 @@ import LoginView from './modelsViews/LoginAddNewView';
 import SecureNoteView from './modelsViews/SecureNoteAddNewView';
 import PaymentCardAddNewView from './modelsViews/PaymentCardAddNewView';
 
-
 /**
 * AddNew component for creating a new item entry.
 * @param {Object} props - The properties passed to the component.
@@ -36,10 +35,7 @@ function AddNew(props) {
 
   const modelComponent = useMemo(() => {
     const modelName = params.model;
-
-    const modelData = {
-      generatedPassword
-    };
+    const modelData = { generatedPassword };
 
     switch (modelName.toLowerCase()) {
       case Login.contentType.toLowerCase():
@@ -62,7 +58,7 @@ function AddNew(props) {
       <div ref={scrollableRef}>
         <section className={S.addNew}>
           <div className={S.addNewContainer}>
-            <NavigationButton type='back' />
+            <NavigationButton type='cancel' />
 
             <h2>{browser.i18n.getMessage('add_new_header').replace('ITEM', itemsUiData[params.model]?.label || browser.i18n.getMessage('item'))}</h2>
             <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
