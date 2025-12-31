@@ -148,7 +148,7 @@
     "description": "Label for the highest security tier"
   },
   "tier_0_description": {
-    "message": "Do not share this password with the 2FAS Pass Browser Extension and type it manually.",
+    "message": "Do not share this Item with the 2FAS Pass Browser Extension and type it manually.",
     "description": "Description for the top-secret security tier"
   },
   "tier_1_name": {
@@ -156,7 +156,7 @@
     "description": "Label for the second-highest security tier"
   },
   "tier_1_description": {
-    "message": "Share the password with the 2FAS Pass Browser Extension once after confirmation in the 2FAS Pass mobile app.",
+    "message": "Access to Item details must be confirmed in the 2FAS Pass mobile app.",
     "description": "Explains the ultra-secure tier where passwords are shared after mobile app confirmation"
   },
   "tier_2_name": {
@@ -164,7 +164,7 @@
     "description": "Label for the standard security tier"
   },
   "tier_2_description": {
-    "message": "Access this password directly from the 2FAS Pass Browser Extension.",
+    "message": "Access this Item directly from the 2FAS Pass Browser Extension.",
     "description": "Explains the secure tier where passwords are accessed directly from the extension"
   },
   "no_item_name": {

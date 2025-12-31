@@ -184,7 +184,7 @@
     "description": "Description for configuring the extension shortcut"
   },
   "settings_shortcut_firefox_tooltip": {
-    "message": "To set or change this shortcut, go to your browser settings, extensions, then click on the gear icon and select “Manage Extension Shortcuts.”",
+    "message": "You can set or change this shortcut in your browser settings.",
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_shortcut_safari_tooltip": {
