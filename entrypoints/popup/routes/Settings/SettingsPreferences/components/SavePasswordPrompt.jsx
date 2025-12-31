@@ -70,12 +70,12 @@ function SavePasswordPrompt () {
         value: value === 'browser'
       }).catch(() => {});
 
-      showToast(browser.i18n.getMessage('notification_save_password_prompt_success'), 'success');
+      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:savePrompt') || 'default';
       setSP(previousValue);
 
-      showToast(browser.i18n.getMessage('error_save_password_prompt_saving'), 'error');
+      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
       await CatchError(e);
     }
   }, [isInitialized]);

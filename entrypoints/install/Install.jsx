@@ -154,7 +154,7 @@ function Install () {
       setLogs(!logs);
       showToast(browser.i18n.getMessage('install_logging_settings_changed'), 'success');
     } catch {
-      showToast(browser.i18n.getMessage('error_logging_settings_changed'), 'error');
+      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
     }
   };
 

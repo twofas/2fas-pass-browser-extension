@@ -199,10 +199,6 @@
     "message": "Custom 2FAS Pass Notifications",
     "description": "Option to use custom notifications from 2FAS Pass"
   },
-  "settings_push_notifications_changing_success": {
-    "message": "Push notification settings have been saved",
-    "description": "Message displayed when push notification settings are successfully saved"
-  },
   "settings_notifications_header": {
     "message": "Notifications",
     "description": "Header for the notifications settings"

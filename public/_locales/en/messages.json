@@ -7,57 +7,25 @@
     "message": "EXT_PLATFORM is undefined",
     "description": "Error message displayed when the EXT_PLATFORM variable is not defined"
   },
+  "error_general_setting": {
+    "message": "Error, changes couldn't be saved",
+    "description": "Generic error message displayed when saving settings fails"
+  },
   "error_getting_theme_value": {
     "message": "Error while getting theme value",
     "description": "Error message displayed when retrieving the theme value fails"
-  },
-  "error_setting_theme_value": {
-    "message": "Error while setting theme value",
-    "description": "Error message displayed when setting the theme value fails"
-  },
-  "error_logging_settings_changed": {
-    "message": "Error while changing \"Crash logs\" settings",
-    "description": "Error message displayed when updating crash log settings fails"
   },
   "error_getting_services_key": {
     "message": "Error while getting service key",
     "description": "Error message displayed when retrieving the service key fails"
   },
-  "error_save_password_prompt_saving": {
-    "message": "Error while saving \"Save Item\" prompt settings",
-    "description": "Error shown when saving the save password prompt settings"
-  },
-  "error_safe_browsing_reports_saving": {
-    "message": "Error while saving \"Safe browsing\" reports settings",
-    "description": "Error shown when saving safe browsing reports settings"
-  },
-  "error_safe_browsing_saving": {
-    "message": "Error while saving \"Safe browsing\" settings",
-    "description": "Error shown when saving safe browsing settings"
-  },
-  "error_idle_lock_saving": {
-    "message": "Error while saving \"Idle lock\" settings",
-    "description": "Error message displayed when saving idle lock settings fails"
-  },
   "error_auto_clear_clipboard_permission_denied": {
     "message": "Permission to read clipboard denied. Auto clear clipboard feature disabled.",
     "description": "Error message displayed when clipboard read permission is denied"
   },
-  "error_auto_clear_clipboard_saving": {
-    "message": "Error while saving \"Auto clear clipboard\" settings",
-    "description": "Error message displayed when saving auto clear clipboard settings fails"
-  },
-  "error_saving_notification_settings": {
-    "message": "Error while saving \"Notifications\" settings",
-    "description": "Error message displayed when saving notification settings fails"
-  },
   "error_saving_extension_name": {
     "message": "Error! Failed to update extension name.",
     "description": "Error message displayed when updating the extension name fails"
-  },
-  "error_saving_context_menu_setting": {
-    "message": "Error while saving \"Context menu\" settings",
-    "description": "Error message displayed when saving context menu settings fails"
   },
   "error_uri_copy_failed": {
     "message": "Failed to copy URL to clipboard.",
@@ -256,7 +224,7 @@
     "description": "Label for the highest security tier"
   },
   "tier_0_description": {
-    "message": "Do not share this password with the 2FAS Pass Browser Extension and type it manually.",
+    "message": "Do not share this Item with the 2FAS Pass Browser Extension and type it manually.",
     "description": "Description for the top-secret security tier"
   },
   "tier_1_name": {
@@ -264,7 +232,7 @@
     "description": "Label for the second-highest security tier"
   },
   "tier_1_description": {
-    "message": "Share the password with the 2FAS Pass Browser Extension once after confirmation in the 2FAS Pass mobile app.",
+    "message": "Access to Item details must be confirmed in the 2FAS Pass mobile app.",
     "description": "Explains the ultra-secure tier where passwords are shared after mobile app confirmation"
   },
   "tier_2_name": {
@@ -272,7 +240,7 @@
     "description": "Label for the standard security tier"
   },
   "tier_2_description": {
-    "message": "Access this password directly from the 2FAS Pass Browser Extension.",
+    "message": "Access this Item directly from the 2FAS Pass Browser Extension.",
     "description": "Explains the secure tier where passwords are accessed directly from the extension"
   },
   "no_item_name": {
@@ -335,33 +303,13 @@
     "message": "Sorry, but we can't autofill on Browser Internal Pages",
     "description": "Message shown when autofill isn't supported on browser internal pages"
   },
-  "notification_save_password_prompt_success": {
-    "message": "\"Save Item\" prompt settings have been saved",
-    "description": "Notification shown when save password prompt settings are saved"
-  },
-  "notification_safe_browsing_reports_success": {
-    "message": "\"Safe browsing\" reports settings have been saved",
-    "description": "Notification shown when safe browsing reports settings are saved"
-  },
-  "notification_safe_browsing_success": {
-    "message": "\"Safe browsing\" settings have been saved",
-    "description": "Notification message when the safe browsing settings are successfully saved"
-  },
-  "notification_idle_lock_success": {
-    "message": "\"Idle lock\" settings have been saved",
-    "description": "Notification message when the idle lock settings are successfully saved"
+  "notification_settings_save_success": {
+    "message": "Changes saved successfully",
+    "description": "Notification shown when settings are saved successfully"
   },
   "notification_idle_lock_premium_only": {
     "message": "\"Only on restart\" is a premium feature. Upgrade to the unlimited plan in your mobile app.",
     "description": "Notification message when the idle lock feature is unlimited plan only"
-  },
-  "notification_auto_clear_clipboard_success": {
-    "message": "\"Auto clear clipboard\" settings have been saved",
-    "description": "Notification message when the auto clear clipboard settings are successfully saved"
-  },
-  "notification_theme_setting_success": {
-    "message": "\"Theme\" settings have been saved",
-    "description": "Notification message when the theme settings are successfully saved"
   },
   "notification_test_title": {
     "message": "2FAS Pass",
@@ -379,17 +327,9 @@
     "message": "No username and password found",
     "description": "Message for the notification when no username and password are found"
   },
-  "notification_logging_settings_success": {
-    "message": "\"Crash logs\" settings saved",
-    "description": "Notification message when the crash logs settings are successfully saved"
-  },
   "notification_extension_name_update_success": {
     "message": "Extension name has been updated",
     "description": "Notification message when the extension name is successfully updated"
-  },
-  "notification_context_menu_setting_success": {
-    "message": "\"Context menu\" settings have been saved",
-    "description": "Notification message when the context menu settings are successfully saved"
   },
   "notification_uri_copied": {
     "message": "URI copied to clipboard",
@@ -1332,7 +1272,7 @@
     "description": "Description for configuring the extension shortcut"
   },
   "settings_shortcut_firefox_tooltip": {
-    "message": "To set or change this shortcut, go to your browser settings, extensions, then click on the gear icon and select “Manage Extension Shortcuts.”",
+    "message": "You can set or change this shortcut in your browser settings.",
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_shortcut_safari_tooltip": {
@@ -1346,10 +1286,6 @@
   "settings_push_custom": {
     "message": "Custom 2FAS Pass Notifications",
     "description": "Option to use custom notifications from 2FAS Pass"
-  },
-  "settings_push_notifications_changing_success": {
-    "message": "Push notification settings have been saved",
-    "description": "Message displayed when push notification settings are successfully saved"
   },
   "settings_notifications_header": {
     "message": "Notifications",
@@ -1592,7 +1528,7 @@
     "description": "Message displayed when username is autofilled for a Highly Secret item that requires fetching password from device"
   },
   "this_tab_autofill_no_username_and_password": {
-    "message": "No username and password found. Autofill not possible.",
+    "message": "No username and password found.",
     "description": "Message displayed when no username and password are found for autofill"
   },
   "this_tab_can_t_autofill": {

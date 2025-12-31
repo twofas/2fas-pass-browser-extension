@@ -76,9 +76,9 @@ function IdleLock () {
       setIdleInterval(value);
       setIL(value);
 
-      showToast(browser.i18n.getMessage('notification_idle_lock_success'), 'success');
+      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_idle_lock_saving'), 'error');
+      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
       await CatchError(e);
     } finally {
       setDisabled(false);
