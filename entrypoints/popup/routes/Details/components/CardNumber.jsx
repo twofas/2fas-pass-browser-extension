@@ -29,7 +29,7 @@ function CardNumber (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const { data, setData, setItem } = usePopupState();
+  const { data, setData, setBatchData, setItem } = usePopupState();
 
   const previousCardNumberRef = useRef(null);
   const passwordInputRef = useRef(null);
@@ -200,8 +200,10 @@ function CardNumber (props) {
       await decryptCardNumberOnDemand();
       setIsFocused(true);
       setShouldFocusInputMask(true);
-      setData('cardNumberVisible', false);
-      setData('cardNumberEditable', true);
+      setBatchData({
+        cardNumberVisible: false,
+        cardNumberEditable: true
+      });
     }
   };
 

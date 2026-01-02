@@ -40,7 +40,7 @@ function Password (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const { data, setData, setItem } = usePopupState();
+  const { data, setData, setBatchData, setItem } = usePopupState();
 
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
@@ -233,8 +233,10 @@ function Password (props) {
       form.change('editedSif', '');
     } else {
       await decryptPasswordOnDemand();
-      setData('passwordVisible', false);
-      setData('passwordEditable', true);
+      setBatchData({
+        passwordVisible: false,
+        passwordEditable: true
+      });
     }
   };
 
