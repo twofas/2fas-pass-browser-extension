@@ -21,6 +21,7 @@ const usePopupState = () => {
   const clearDataFromStore = usePopupStateStore(state => state.clearData);
   const clearAllDataFromStore = usePopupStateStore(state => state.clearAllData);
   const setScrollPositionToStore = usePopupStateStore(state => state.setScrollPosition);
+  const setItemToStore = usePopupStateStore(state => state.setItem);
   const href = usePopupStateStore(state => state.href);
   const setHref = usePopupStateStore(state => state.setHref);
   const popHref = usePopupStateStore(state => state.popHref);
@@ -50,6 +51,10 @@ const usePopupState = () => {
     setScrollPositionToStore(pathname, position);
   }, [setScrollPositionToStore, pathname]);
 
+  const setItem = useCallback(item => {
+    setItemToStore(pathname, item);
+  }, [setItemToStore, pathname]);
+
   return {
     pathname,
     data,
@@ -59,6 +64,7 @@ const usePopupState = () => {
     clearAllData: clearAllDataFromStore,
     scrollPosition,
     setScrollPosition,
+    setItem,
     href,
     setHref,
     popHref,

@@ -57,7 +57,7 @@ const keepPassword = async state => {
     }
   }
 
-  item.setSif(updateSifArr);
+  item.setSifEncrypted(updateSifArr);
 
   // Save sifTime in item's internalData
   const sifResetTime = state.expireInSeconds && state.expireInSeconds > 30 ? state.expireInSeconds / 60 : config.passwordResetDelay;

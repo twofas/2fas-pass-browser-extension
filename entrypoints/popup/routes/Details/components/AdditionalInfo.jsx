@@ -25,7 +25,7 @@ const additionalInfoVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function AdditionalInfo (props) {
-  const { data, setData, setBatchData } = usePopupState();
+  const { data, setData, setItem } = usePopupState();
 
   const { formData } = props;
   const { inputError } = formData;
@@ -33,33 +33,31 @@ function AdditionalInfo (props) {
   const handleAdditionalInfoEditable = async () => {
     if (data.additionalInfoEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      
-      const updatedItem = updateItem(data.item, {
+
+      const updatedItem = await updateItem(data.item, {
         content: { additionalInfo: item.content.additionalInfo || '' },
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
-      setBatchData({
-        item: updatedItem,
-        additionalInfoEditable: false
-      });
+      setItem(updatedItem);
+      setData('additionalInfoEditable', false);
     } else {
       setData('additionalInfoEditable', true);
     }
   };
 
-  const handleAdditionalInfoChange = useCallback(e => {
+  const handleAdditionalInfoChange = useCallback(async e => {
     const newAdditionalInfo = e.target.value;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { additionalInfo: newAdditionalInfo },
       internalData: { ...data.item.internalData }
     });
 
-    setData('item', updatedItem);
-  }, [data.item, setData]);
+    setItem(updatedItem);
+  }, [data.item, setItem]);
 
   return (
     <Field name="content.additionalInfo">

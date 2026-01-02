@@ -48,7 +48,7 @@ const urlVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function URLComponent (props) {
-  const { data, setData } = usePopupState();
+  const { data, setData, setItem } = usePopupState();
   const { urisWithTempIds, updateUri, removeUri, resetUri } = useUriTempIds();
 
   const { inputError, uri, index } = props;
@@ -94,13 +94,13 @@ function URLComponent (props) {
         resetUri(uri._tempId, { text: '', matcher: URIMatcher.M_DOMAIN_TYPE });
       }
 
-      const updatedItem = updateItem(data.item, {
+      const updatedItem = await updateItem(data.item, {
         content: { uris: newContentUris }
       });
 
       item = null;
 
-      setData('item', updatedItem);
+      setItem(updatedItem);
 
       const newDomainsEditable = {
         ...currentDomainsEditable,
@@ -111,7 +111,7 @@ function URLComponent (props) {
     }
   };
 
-  const handleRemoveUri = useCallback(() => {
+  const handleRemoveUri = useCallback(async () => {
     const uriIndex = urisWithTempIds.findIndex(u => u._tempId === uri._tempId);
 
     if (uriIndex === -1) {
@@ -123,14 +123,14 @@ function URLComponent (props) {
 
     const newIconUriIndex = data.item.content.iconUriIndex > 0 ? data.item.content.iconUriIndex - 1 : 0;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: {
         uris: newContentUris,
         iconUriIndex: newIconUriIndex
       }
     });
 
-    setData('item', updatedItem);
+    setItem(updatedItem);
     removeUri(uri._tempId);
 
     if (data?.domainsEditable && data.domainsEditable[uri._tempId] !== undefined) {
@@ -141,9 +141,9 @@ function URLComponent (props) {
 
     const currentUrisRemoved = data?.urisRemoved || 0;
     setData('urisRemoved', currentUrisRemoved + 1);
-  }, [data, uri._tempId, setData, urisWithTempIds, removeUri]);
+  }, [data, uri._tempId, setData, setItem, urisWithTempIds, removeUri]);
 
-  const handleUriChange = useCallback(e => {
+  const handleUriChange = useCallback(async e => {
     const newUriText = e.target.value;
 
     const uriIndex = urisWithTempIds.findIndex(u => u._tempId === uri._tempId);
@@ -156,13 +156,13 @@ function URLComponent (props) {
     const newContentUris = [...data.item.content.uris];
     newContentUris[uriIndex] = { text: newUriText, matcher: currentUri.matcher };
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { uris: newContentUris }
     });
 
-    setData('item', updatedItem);
+    setItem(updatedItem);
     updateUri(uri._tempId, { text: newUriText });
-  }, [data.item, setData, uri._tempId, urisWithTempIds, updateUri]);
+  }, [data.item, setItem, uri._tempId, urisWithTempIds, updateUri]);
 
   useEffect(() => {
     if (isEditable && inputRef.current) {

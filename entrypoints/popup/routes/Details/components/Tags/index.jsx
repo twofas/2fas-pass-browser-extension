@@ -53,7 +53,7 @@ const getTagName = (tagID, availableTags) => {
 * @return {JSX.Element} The rendered component.
 */
 function Tags () {
-  const { data, setData, setBatchData } = usePopupState();
+  const { data, setData, setItem } = usePopupState();
 
   const [availableTags, setAvailableTags] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -89,17 +89,15 @@ function Tags () {
     if (data.tagsEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
-      const updatedItem = updateItem(data.item, {
+      const updatedItem = await updateItem(data.item, {
         tags: item.tags,
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
-      setBatchData({
-        tagsEditable: false,
-        item: updatedItem
-      });
+      setItem(updatedItem);
+      setData('tagsEditable', false);
       setIsMenuOpen(false);
     } else {
       if (availableTags.length === 0) {
@@ -111,31 +109,31 @@ function Tags () {
     }
   };
 
-  const handleRemoveTag = tagId => {
+  const handleRemoveTag = async tagId => {
     const newTagIds = data.item.tags.filter(id => id !== tagId);
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       tags: newTagIds,
       internalData: { ...data.item.internalData }
     });
 
-    setData('item', updatedItem);
+    setItem(updatedItem);
   };
 
-  const handleSelectChange = useCallback(option => {
+  const handleSelectChange = useCallback(async option => {
     if (option && option.tag) {
       const newTagIds = [...data.item.tags, option.tag.id];
 
-      const updatedItem = updateItem(data.item, {
+      const updatedItem = await updateItem(data.item, {
         tags: newTagIds,
         internalData: { ...data.item.internalData }
       });
 
-      setData('item', updatedItem);
+      setItem(updatedItem);
     }
 
     setIsMenuOpen(false);
-  }, [data.item, setData]);
+  }, [data.item, setItem]);
 
   const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
   const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);

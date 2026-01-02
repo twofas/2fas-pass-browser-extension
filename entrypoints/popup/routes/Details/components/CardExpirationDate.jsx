@@ -26,7 +26,7 @@ function CardExpirationDate (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const { data, setData, setBatchData } = usePopupState();
+  const { data, setData, setBatchData, setItem } = usePopupState();
 
   const previousExpirationDateRef = useRef(null);
   const inputRef = useRef(null);
@@ -183,11 +183,12 @@ function CardExpirationDate (props) {
   const handleExpirationDateChange = async formattedValue => {
     setLocalEditedExpirationDate(formattedValue);
     form.change('editedExpirationDate', formattedValue);
+    setData('editedExpirationDate', formattedValue);
 
     const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_expirationDate: formattedValue }]);
-    setData('item', localItem.toJSON());
+    setItem(localItem);
   };
 
   return (

@@ -116,8 +116,7 @@ function SecureNoteDetailsView(props) {
     }
 
     if (data.sifEditable) {
-      const itemJSON = data.item.toJSON();
-      stateData.content.s_text = itemJSON.content.s_text;
+      stateData.content.s_text = data.editedSif || '';
     }
 
     if (data.additionalInfoEditable) {

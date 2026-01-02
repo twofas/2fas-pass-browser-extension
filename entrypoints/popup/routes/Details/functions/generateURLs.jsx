@@ -22,23 +22,23 @@ import AddIcon from '@/assets/popup-window/add-new-2.svg?react';
 * @return {JSX.Element} The rendered URLs or empty state.
 */
 function GenerateURLs (props) {
-  const { data, setData } = usePopupState();
+  const { data, setData, setItem } = usePopupState();
   const { urisWithTempIds, addUri } = useUriTempIds();
 
   const { formData } = props;
   const { inputError } = formData;
 
-  const handleAddUri = useCallback(() => {
+  const handleAddUri = useCallback(async () => {
     const newUri = addUri('', URIMatcher.M_DOMAIN_TYPE);
 
     const currentContentUris = data.item.content.uris || [];
     const newContentUris = [...currentContentUris, { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true }];
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { uris: newContentUris }
     });
 
-    setData('item', updatedItem);
+    setItem(updatedItem);
 
     const currentDomainsEditable = data?.domainsEditable || {};
     const newDomainsEditable = {
@@ -47,7 +47,7 @@ function GenerateURLs (props) {
     };
 
     setData('domainsEditable', newDomainsEditable);
-  }, [data.item, data?.domainsEditable, setData, addUri]);
+  }, [data.item, data?.domainsEditable, setData, setItem, addUri]);
 
   return (
     <>

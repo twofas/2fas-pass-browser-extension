@@ -86,6 +86,18 @@ const usePopupStateStore = create(
         newPathData[pathname] = { ...currentPathState, scrollPosition: position };
         return { pathData: newPathData };
       }),
+      setItem: (pathname, item) => {
+        if (!item) {
+          throw new Error('setItem: item is required');
+        }
+
+        if (typeof item.toJSON !== 'function') {
+          throw new Error('setItem: item must have a toJSON method (must be a class instance)');
+        }
+
+        const jsonData = item.toJSON();
+        return get().setData(pathname, 'item', jsonData);
+      },
     }),
     {
       name: 'popupState',

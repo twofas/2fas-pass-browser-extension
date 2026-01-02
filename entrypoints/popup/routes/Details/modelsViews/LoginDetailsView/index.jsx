@@ -102,9 +102,8 @@ function LoginDetailsView(props) {
       if (data.passwordMobile) {
         stateData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       } else {
-        const itemJSON = data.item.toJSON();
         stateData.content.s_password = {
-          value: itemJSON.content.s_password,
+          value: data.editedSif || '',
           action: REQUEST_STRING_ACTIONS.SET
         };
       }

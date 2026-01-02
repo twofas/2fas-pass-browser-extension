@@ -29,7 +29,7 @@ function CardNumber (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const { data, setData } = usePopupState();
+  const { data, setData, setItem } = usePopupState();
 
   const previousCardNumberRef = useRef(null);
   const passwordInputRef = useRef(null);
@@ -193,7 +193,7 @@ function CardNumber (props) {
       setLocalDecryptedCardNumber(null);
       setIsFocused(false);
       setShouldFocusInputMask(false);
-      setData('item', restoredItem.toJSON());
+      setItem(restoredItem);
       setData('cardNumberEditable', false);
       form.change('editedCardNumber', '');
     } else {
@@ -238,11 +238,12 @@ function CardNumber (props) {
 
     setLocalDecryptedCardNumber(newValue);
     form.change('editedCardNumber', newValue);
+    setData('editedCardNumber', newValue);
 
     const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_cardNumber: newValue }]);
-    setData('item', localItem.toJSON());
+    setItem(localItem);
   };
 
   const handleRawCardNumberChange = async e => {
@@ -250,11 +251,12 @@ function CardNumber (props) {
 
     setLocalDecryptedCardNumber(newValue);
     form.change('editedCardNumber', newValue);
+    setData('editedCardNumber', newValue);
 
     const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_cardNumber: newValue }]);
-    setData('item', localItem.toJSON());
+    setItem(localItem);
   };
 
   const handlePasswordInputFocus = () => {
