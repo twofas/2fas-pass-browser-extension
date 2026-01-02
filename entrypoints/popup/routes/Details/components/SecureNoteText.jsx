@@ -145,8 +145,13 @@ function SecureNoteText (props) {
                 textareaRef.current.style.overflowY = 'auto';
 
                 if (data?.sifEditable) {
-                  textareaRef.current.focus();
-                  textareaRef.current.setSelectionRange(0, 0);
+                  const textarea = textareaRef.current;
+                  textarea.focus();
+
+                  requestAnimationFrame(() => {
+                    textarea.setSelectionRange(0, 0);
+                    textarea.scrollTop = 0;
+                  });
                 }
               }
             });
