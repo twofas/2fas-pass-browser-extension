@@ -101,6 +101,10 @@ function CardSecurityCode (props) {
   };
 
   const getCardNumberValue = () => {
+    if (isText(data?.editedCardNumber)) {
+      return data.editedCardNumber;
+    }
+
     const formState = form.getState();
     const cardNumber = formState?.values?.editedCardNumber;
 

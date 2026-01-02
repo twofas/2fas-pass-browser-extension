@@ -135,9 +135,10 @@ function CardNumber (props) {
 
     if (currentCardNumber !== previousCardNumberRef.current) {
       form.change('editedCardNumber', currentCardNumber);
+      setData('editedCardNumber', currentCardNumber);
       previousCardNumberRef.current = currentCardNumber;
     }
-  }, [localDecryptedCardNumber, form]);
+  }, [localDecryptedCardNumber, form, setData]);
 
   useEffect(() => {
     const needsDecryption = (data?.cardNumberEditable || data?.cardNumberVisible) &&
