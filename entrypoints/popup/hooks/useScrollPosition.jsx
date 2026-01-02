@@ -40,13 +40,11 @@ const useScrollPosition = (scrollableRef, loading = false) => {
       return;
     }
 
-    if (targetPosition > 0) {
-      scrollableRef.current.scrollTo({
-        top: targetPosition,
-        left: 0,
-        behavior: 'instant'
-      });
-    }
+    scrollableRef.current.scrollTo({
+      top: targetPosition,
+      left: 0,
+      behavior: 'instant'
+    });
   }, []);
 
   useEffect(() => {
