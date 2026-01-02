@@ -13,7 +13,6 @@ import getItem from '@/partials/sessionStorage/getItem';
 import { useCallback, useEffect, useRef } from 'react';
 import updateItem from '../functions/updateItem';
 
-
 const notesVariants = {
   hidden: { height: 'auto', minHeight: '20px', maxHeight: '600px' },
   visible: { height: '121px', minHeight: '121px', maxHeight: '600px' }
@@ -58,8 +57,13 @@ function Notes () {
 
   useEffect(() => {
     if (data.notesEditable && textareaRef.current) {
-      textareaRef.current.focus();
-      textareaRef.current.setSelectionRange(0, 0);
+      const textarea = textareaRef.current;
+      textarea.focus();
+
+      requestAnimationFrame(() => {
+        textarea.setSelectionRange(0, 0);
+        textarea.scrollTop = 0;
+      });
     }
   }, [data.notesEditable]);
 
