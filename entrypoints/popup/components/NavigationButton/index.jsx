@@ -10,6 +10,8 @@ import usePopupStateStore from '../../store/popupState';
 import BackIcon from '@/assets/popup-window/back.svg?react';
 import CancelIcon from '@/assets/popup-window/cancel.svg?react';
 
+const IGNORED_PATHS = ['/password-generator'];
+
 /**
 * Function to render the Settings Back component.
 * @param {Object} props - The component props.
@@ -28,6 +30,11 @@ function NavigationButton({ type, className, state, onClick }) {
 
     for (let i = hrefArray.length - 2; i >= 0; i--) {
       if (hrefArray[i] !== currentPath) {
+        if (IGNORED_PATHS.includes(hrefArray[i])) {
+          count++;
+          continue;
+        }
+
         prevPath = hrefArray[i];
         count = hrefArray.length - 1 - i;
         break;
