@@ -201,8 +201,10 @@ function CardSecurityCode (props) {
       await decryptSecurityCodeOnDemand();
       setIsFocused(true);
       setShouldFocusInputMask(true);
-      setData('securityCodeVisible', false);
-      setData('securityCodeEditable', true);
+      setBatchData({
+        securityCodeVisible: false,
+        securityCodeEditable: true
+      });
     }
   };
 
