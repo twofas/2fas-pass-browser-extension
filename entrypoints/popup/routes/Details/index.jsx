@@ -138,6 +138,25 @@ function Details(props) {
         });
       }
 
+      if (location.state?.resetEditableFields) {
+        setBatchData({
+          nameEditable: false,
+          usernameEditable: false,
+          passwordEditable: false,
+          notesEditable: false,
+          domainsEditable: {},
+          sifEditable: false,
+          revealSecureNote: false,
+          cardHolderEditable: false,
+          cardNumberEditable: false,
+          cardNumberVisible: false,
+          expirationDateEditable: false,
+          securityCodeEditable: false,
+          securityCodeVisible: false
+        });
+        setScrollPosition(0);
+      }
+
       setItem(item);
       setLoading(false);
     } catch (e) {
