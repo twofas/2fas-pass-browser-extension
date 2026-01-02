@@ -28,7 +28,7 @@ const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, 
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
   const loadedRef = useRef(false);
-  const { handleMouseDown, handleFocus } = useInputMaskFocus();
+  const { handleMouseDown, handleFocus, handleClick, handleDoubleClick, handleKeyDown, handleKeyUp, handleSelect } = useInputMaskFocus();
 
   const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
   const displayValue = isHighlySecretWithoutSif ? '' : value;
@@ -116,6 +116,11 @@ const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, 
       onChange={handleChange}
       onMouseDown={handleMouseDown}
       onFocus={handleFocus}
+      onClick={handleClick}
+      onDoubleClick={handleDoubleClick}
+      onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
+      onSelect={handleSelect}
     />
   );
 });
