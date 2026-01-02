@@ -28,10 +28,6 @@ function NavigationButton({ type, className, state, onClick }) {
 
     for (let i = hrefArray.length - 2; i >= 0; i--) {
       if (hrefArray[i] !== currentPath) {
-        if (hrefArray[i] === '/' && i === 0) {
-          continue;
-        }
-
         prevPath = hrefArray[i];
         count = hrefArray.length - 1 - i;
         break;
