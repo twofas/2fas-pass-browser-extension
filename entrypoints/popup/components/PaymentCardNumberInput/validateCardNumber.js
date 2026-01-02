@@ -25,9 +25,13 @@ const isCardNumberInvalid = cardNumber => {
   }
 
   const issuer = detectCardIssuer(cardNumber);
-  const requiredLength = maxCardNumberLength(issuer);
+  const maxLength = maxCardNumberLength(issuer);
 
-  if (digitsOnly.length < requiredLength) {
+  if (issuer === null) {
+    if (digitsOnly.length < 13 || digitsOnly.length > 19) {
+      return true;
+    }
+  } else if (digitsOnly.length < maxLength) {
     return true;
   }
 
