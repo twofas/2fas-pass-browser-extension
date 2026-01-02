@@ -35,7 +35,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
   const buttonRef = useRef(null);
   const isOpenRef = useRef(false);
   const loadedRef = useRef(false);
-  const { handleMouseDown: handleInputMouseDown, handleFocus: handleInputFocus } = useInputMaskFocus();
+  const { handleMouseDown: handleInputMouseDown, handleFocus: handleInputFocus, handleClick: handleInputClick, handleDoubleClick: handleInputDoubleClick, handleKeyDown: handleInputKeyDown, handleKeyUp: handleInputKeyUp, handleSelect: handleInputSelect } = useInputMaskFocus();
 
   const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
   const displayValue = isHighlySecretWithoutSif ? '' : value;
@@ -216,6 +216,11 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
         onChange={handleInputChange}
         onMouseDown={handleInputMouseDown}
         onFocus={handleInputFocus}
+        onClick={handleInputClick}
+        onDoubleClick={handleInputDoubleClick}
+        onKeyDown={handleInputKeyDown}
+        onKeyUp={handleInputKeyUp}
+        onSelect={handleInputSelect}
         mask='99/99'
         slotChar=' '
         placeholder={browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
