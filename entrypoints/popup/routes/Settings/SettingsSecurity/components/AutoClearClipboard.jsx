@@ -95,9 +95,9 @@ function AutoClearClipboard () {
         />
       </form>
       <Tooltip type='bottom'>
-        <h4>{browser.i18n.getMessage('settings_idle_lock_tooltip_1')}</h4>
-        <h5>{browser.i18n.getMessage('settings_idle_lock_tooltip_2')}</h5>
-        <p>{browser.i18n.getMessage('settings_idle_lock_tooltip_3')}</p>
+        <h4>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_1')}</h4>
+        <h5>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_2')}</h5>
+        <p>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_3')}</p>
       </Tooltip>
     </div>
   );
