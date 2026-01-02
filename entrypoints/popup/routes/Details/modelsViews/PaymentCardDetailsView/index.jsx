@@ -67,7 +67,7 @@ function PaymentCardDetailsView(props) {
     }
 
     if (data.cardNumberEditable) {
-      const cardNumber = values?.editedCardNumber || '';
+      const cardNumber = data.editedCardNumber || '';
 
       if (cardNumber && cardNumber.length > 0) {
         const cleanCardNumber = cardNumber.replace(/\s/g, '');
@@ -83,7 +83,7 @@ function PaymentCardDetailsView(props) {
     }
 
     if (data.expirationDateEditable) {
-      const expirationDate = values?.editedExpirationDate || '';
+      const expirationDate = data.editedExpirationDate || '';
 
       if (expirationDate && expirationDate.length > 0) {
         const expDateParts = expirationDate.split('/');
@@ -102,7 +102,7 @@ function PaymentCardDetailsView(props) {
     }
 
     if (data.securityCodeEditable) {
-      const securityCode = values?.editedSecurityCode || '';
+      const securityCode = (data.editedSecurityCode || '').replace(/\D/g, '');
 
       if (securityCode && securityCode.length > 0) {
         if (!/^\d{3,4}$/.test(securityCode)) {
@@ -149,18 +149,16 @@ function PaymentCardDetailsView(props) {
       stateData.content.cardHolder = e?.content?.cardHolder ? e.content.cardHolder : '';
     }
 
-    const itemJSON = data.item.toJSON();
-
     if (data.cardNumberEditable) {
-      stateData.content.s_cardNumber = itemJSON.content.s_cardNumber;
+      stateData.content.s_cardNumber = (data.editedCardNumber || '').replace(/\s/g, '');
     }
 
     if (data.expirationDateEditable) {
-      stateData.content.s_expirationDate = itemJSON.content.s_expirationDate;
+      stateData.content.s_expirationDate = data.editedExpirationDate || '';
     }
 
     if (data.securityCodeEditable) {
-      stateData.content.s_securityCode = itemJSON.content.s_securityCode;
+      stateData.content.s_securityCode = (data.editedSecurityCode || '').replace(/\D/g, '');
     }
 
     if (data.notesEditable) {

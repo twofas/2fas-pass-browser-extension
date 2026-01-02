@@ -27,7 +27,7 @@ function SecureNoteText (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem, inputError } = formData;
 
-  const { data, setData, setBatchData } = usePopupState();
+  const { data, setData, setBatchData, setItem } = usePopupState();
 
   const previousSifValueRef = useRef(null);
   const textareaRef = useRef(null);
@@ -231,11 +231,12 @@ function SecureNoteText (props) {
 
     setLocalEditedText(newValue);
     form.change('editedSif', newValue);
+    setData('editedSif', newValue);
 
     const itemData = typeof data.item.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new SecureNote(itemData);
     await localItem.setSif([{ s_text: newValue }]);
-    setData('item', localItem.toJSON());
+    setItem(localItem);
   };
 
   const handleRevealToggle = async () => {

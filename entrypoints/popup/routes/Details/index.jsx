@@ -42,7 +42,7 @@ function Details(props) {
   const [originalItem, setOriginalItem] = useState(null);
   const scrollableRef = useRef(null);
 
-  const { data, setData, setBatchData, setScrollPosition } = usePopupState();
+  const { data, setData, setBatchData, setScrollPosition, setItem } = usePopupState();
 
   const fetchItemData = useCallback(async originalItem => {
     try {
@@ -138,14 +138,13 @@ function Details(props) {
         });
       }
 
-      const itemToStore = typeof item?.toJSON === 'function' ? item.toJSON() : item;
-      setData('item', itemToStore);
+      setItem(item);
       setLoading(false);
     } catch (e) {
       CatchError(e);
       navigate('/');
     }
-  }, [params.deviceId, params.vaultId, params.id, navigate, setData, setBatchData, setScrollPosition, location.state]);
+  }, [params.deviceId, params.vaultId, params.id, navigate, setData, setBatchData, setScrollPosition, setItem, location.state]);
 
   const getOriginalItem = useCallback(async () => {
     try {

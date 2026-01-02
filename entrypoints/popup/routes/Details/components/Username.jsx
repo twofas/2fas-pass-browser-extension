@@ -26,7 +26,7 @@ const usernameMobileVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Username (props) {
-  const { data, setData, setBatchData } = usePopupState();
+  const { data, setData, setItem } = usePopupState();
   const inputRef = useRef(null);
 
   const { formData } = props;
@@ -46,17 +46,15 @@ function Username (props) {
     if (data.usernameEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
-      const updatedItem = updateItem(data.item, {
+      const updatedItem = await updateItem(data.item, {
         content: { username: item.content.username },
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
-      setBatchData({
-        usernameEditable: false,
-        item: updatedItem
-      });
+      setItem(updatedItem);
+      setData('usernameEditable', false);
     } else {
       setData('usernameEditable', true);
     }
@@ -66,29 +64,29 @@ function Username (props) {
     if (!data.usernameMobile) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
-      const updatedItem = updateItem(data.item, {
+      const updatedItem = await updateItem(data.item, {
         content: { username: item.content.username },
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
-      setData('item', updatedItem);
+      setItem(updatedItem);
     }
 
     setData('usernameMobile', !data.usernameMobile);
   };
 
-  const handleUsernameChange = useCallback(e => {
+  const handleUsernameChange = useCallback(async e => {
     const newUsername = e.target.value;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { username: newUsername },
       internalData: { ...data.item.internalData }
     });
 
-    setData('item', updatedItem);
-  }, [data.item, setData]);
+    setItem(updatedItem);
+  }, [data.item, setItem]);
 
   useEffect(() => {
     if (data.usernameEditable && inputRef.current) {

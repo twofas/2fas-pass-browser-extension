@@ -20,7 +20,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function Name (props) {
-  const { data, setData, setBatchData } = usePopupState();
+  const { data, setData, setItem } = usePopupState();
   const inputRef = useRef(null);
 
   const { formData } = props;
@@ -39,32 +39,30 @@ function Name (props) {
     if (data.nameEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
-      const updatedItem = updateItem(data.item, {
+      const updatedItem = await updateItem(data.item, {
         content: { name: item.content.name },
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
-      setBatchData({
-        nameEditable: false,
-        item: updatedItem
-      });
+      setItem(updatedItem);
+      setData('nameEditable', false);
     } else {
       setData('nameEditable', true);
     }
   };
 
-  const handleNameChange = useCallback(e => {
+  const handleNameChange = useCallback(async e => {
     const newName = e.target.value;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { name: newName },
       internalData: { ...data.item.internalData }
     });
 
-    setData('item', updatedItem);
-  }, [data.item, setData]);
+    setItem(updatedItem);
+  }, [data.item, setItem]);
 
   useEffect(() => {
     if (data.nameEditable && inputRef.current) {

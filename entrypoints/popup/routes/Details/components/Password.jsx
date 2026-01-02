@@ -40,7 +40,7 @@ function Password (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const { data, setData } = usePopupState();
+  const { data, setData, setItem } = usePopupState();
 
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
@@ -228,7 +228,7 @@ function Password (props) {
 
       setLocalDecryptedPassword(null);
       setIsFocused(false);
-      setData('item', restoredItem);
+      setItem(restoredItem);
       setData('passwordEditable', false);
       form.change('editedSif', '');
     } else {
@@ -267,21 +267,21 @@ function Password (props) {
     try {
       const itemData = typeof currentItem.toJSON === 'function' ? currentItem.toJSON() : currentItem;
       const localItem = new Login(itemData);
+
       await localItem.setSif([{ s_password: passwordValue }]);
 
       if (latestPasswordRef.current !== passwordValue) {
         return;
       }
 
-      const localItemJSON = localItem.toJSON();
-      latestItemRef.current = localItemJSON;
-      setData('item', localItemJSON);
+      latestItemRef.current = localItem.toJSON();
+      setItem(localItem);
 
       latestPasswordRef.current = null;
     } catch (e) {
       CatchError(e);
     }
-  }, [setData]);
+  }, [setItem]);
 
   useEffect(() => {
     const flushPendingUpdate = () => {
@@ -321,6 +321,7 @@ function Password (props) {
     latestPasswordRef.current = newValue;
     setLocalDecryptedPassword(newValue);
     form.change('editedSif', newValue);
+    setData('editedSif', newValue);
 
     if (updateTimeoutRef.current) {
       clearTimeout(updateTimeoutRef.current);

@@ -29,7 +29,7 @@ function CardSecurityCode (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const { data, setData, setBatchData } = usePopupState();
+  const { data, setData, setBatchData, setItem } = usePopupState();
 
   const previousSecurityCodeRef = useRef(null);
   const passwordInputRef = useRef(null);
@@ -239,11 +239,12 @@ function CardSecurityCode (props) {
 
     setLocalDecryptedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
+    setData('editedSecurityCode', newValue);
 
     const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_securityCode: newValue }]);
-    setData('item', localItem.toJSON());
+    setItem(localItem);
   };
 
   const handleRawSecurityCodeChange = async e => {
@@ -251,11 +252,12 @@ function CardSecurityCode (props) {
 
     setLocalDecryptedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
+    setData('editedSecurityCode', newValue);
 
     const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_securityCode: newValue }]);
-    setData('item', localItem.toJSON());
+    setItem(localItem);
   };
 
   const handlePasswordInputFocus = () => {

@@ -20,7 +20,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function CardHolder (props) {
-  const { data, setData, setBatchData } = usePopupState();
+  const { data, setData, setItem } = usePopupState();
   const inputRef = useRef(null);
 
   const { formData } = props;
@@ -39,32 +39,30 @@ function CardHolder (props) {
     if (data.cardHolderEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
-      const updatedItem = updateItem(data.item, {
+      const updatedItem = await updateItem(data.item, {
         content: { cardHolder: item.content.cardHolder },
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
-      setBatchData({
-        cardHolderEditable: false,
-        item: updatedItem
-      });
+      setItem(updatedItem);
+      setData('cardHolderEditable', false);
     } else {
       setData('cardHolderEditable', true);
     }
   };
 
-  const handleCardholderChange = useCallback(e => {
+  const handleCardholderChange = useCallback(async e => {
     const newCardHolder = e.target.value;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { cardHolder: newCardHolder },
       internalData: { ...data.item.internalData }
     });
 
-    setData('item', updatedItem);
-  }, [data.item, setData]);
+    setItem(updatedItem);
+  }, [data.item, setItem]);
 
   useEffect(() => {
     if (data.cardHolderEditable && inputRef.current) {

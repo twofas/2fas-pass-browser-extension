@@ -24,39 +24,37 @@ const notesVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Notes () {
-  const { data, setData, setBatchData } = usePopupState();
+  const { data, setData, setItem } = usePopupState();
   const textareaRef = useRef(null);
 
   const handleNotesEditable = async () => {
     if (data.notesEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      
-      const updatedItem = updateItem(data.item, {
+
+      const updatedItem = await updateItem(data.item, {
         content: { notes: item.content.notes || '' },
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
-      setBatchData({
-        item: updatedItem,
-        notesEditable: false
-      });
+      setItem(updatedItem);
+      setData('notesEditable', false);
     } else {
       setData('notesEditable', true);
     }
   };
 
-  const handleNotesChange = useCallback(e => {
+  const handleNotesChange = useCallback(async e => {
     const newNotes = e.target.value;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { notes: newNotes },
       internalData: { ...data.item.internalData }
     });
 
-    setData('item', updatedItem);
-  }, [data.item, setData]);
+    setItem(updatedItem);
+  }, [data.item, setItem]);
 
   useEffect(() => {
     if (data.notesEditable && textareaRef.current) {
