@@ -56,7 +56,7 @@
     "description": "Error message displayed when the requested secure note is not found"
   },
   "error_secure_note_name_copy_failed": {
-    "message": "Failed to copy Name to clipboard.",
+    "message": "Failed to copy name to clipboard.",
     "description": "Error message displayed when copying the secure note name to the clipboard fails"
   }
 }

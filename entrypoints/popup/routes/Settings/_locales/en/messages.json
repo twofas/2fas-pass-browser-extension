@@ -128,7 +128,7 @@
     "description": "Option to clear data after 60 minutes of inactivity"
   },
   "settings_idle_lock_header": {
-    "message": "Automatically lock the Browser Extension when idle",
+    "message": "Automatic lock when idle",
     "description": "Header for the idle lock settings"
   },
   "settings_idle_lock_description": {
