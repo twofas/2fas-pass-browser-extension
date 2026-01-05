@@ -5,14 +5,14 @@
 // See LICENSE file for full terms
 
 import { useCallback } from 'react';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 
 /**
 * Hook for managing sort selection in popup state.
 * @return {Object} Object containing handleSortChange callback function.
 */
 export const useSortFilter = () => {
-  const setData = usePopupStateStore(state => state.setData);
+  const { setData } = usePopupState();
 
   const handleSortChange = useCallback(newSort => {
     setData('selectedSort', newSort);

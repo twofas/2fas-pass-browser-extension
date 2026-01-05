@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import Item from './Item';
+import Item from '@/models/itemModels/Item';
 
 /**
 * Class representing a secure note.
@@ -67,6 +67,22 @@ class SecureNote extends Item {
     for (const item of sifData) {
       if (Object.prototype.hasOwnProperty.call(item, 's_text')) {
         this.#s_text = await this.encryptSif(item.s_text, this?.internalData?.type);
+      }
+    }
+  }
+
+  /**
+  * Sets already-encrypted SIF data directly without re-encrypting.
+  * @param {Array<Object>} sifData - Array of objects with encrypted SIF values.
+  */
+  setSifEncrypted (sifData) {
+    if (!Array.isArray(sifData)) {
+      throw new Error('Invalid SIF data: must be an array');
+    }
+
+    for (const item of sifData) {
+      if (Object.prototype.hasOwnProperty.call(item, 's_text')) {
+        this.#s_text = item.s_text;
       }
     }
   }

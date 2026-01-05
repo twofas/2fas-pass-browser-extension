@@ -76,9 +76,9 @@ function IdleLock () {
       setIdleInterval(value);
       setIL(value);
 
-      showToast(browser.i18n.getMessage('notification_idle_lock_success'), 'success');
+      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_idle_lock_saving'), 'error');
+      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
       await CatchError(e);
     } finally {
       setDisabled(false);
@@ -107,9 +107,9 @@ function IdleLock () {
         />
       </form>
       <Tooltip>
-        <h4>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_1')}</h4>
-        <h5>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_2')}</h5>
-        <p>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_3')}</p>
+        <h4>{browser.i18n.getMessage('settings_idle_lock_tooltip_1')}</h4>
+        <h5>{browser.i18n.getMessage('settings_idle_lock_tooltip_2')}</h5>
+        <p>{browser.i18n.getMessage('settings_idle_lock_tooltip_3')}</p>
       </Tooltip>
     </div>
   );

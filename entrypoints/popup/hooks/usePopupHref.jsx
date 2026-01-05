@@ -8,16 +8,6 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router';
 import usePopupStateStore from '../store/popupState';
 
-const defaultData = {
-  '/password-generator': {
-    characters: 16,
-    includeLowercase: true,
-    includeUppercase: true,
-    includeNumbers: true,
-    includeSpecialChars: true
-  }
-};
-
 /**
  * Custom hook for tracking and storing current pathname in popup state.
  * Automatically updates the href in the store when the location changes.
@@ -28,34 +18,28 @@ const defaultData = {
  */
 const usePopupHref = (hydrationComplete = false) => {
   const location = useLocation();
+  const hrefArray = usePopupStateStore(state => state.href);
   const setHref = usePopupStateStore(state => state.setHref);
   const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
   const lastPathnameRef = useRef(null);
   const changeCountRef = useRef(0);
+  const initialHrefLengthRef = useRef(null);
 
   useEffect(() => {
     if (!hydrationComplete) {
       return;
     }
 
+    if (initialHrefLengthRef.current === null) {
+      initialHrefLengthRef.current = hrefArray.length;
+    }
+
     const pathname = location.pathname;
     const excludedPaths = ['/fetch', '/blocked'];
     const isExcluded = excludedPaths.includes(pathname) || pathname.startsWith('/fetch/');
 
-    // For excluded paths, don't update href - preserve the previous path
-    // This ensures that if the popup closes while at /fetch, it will reopen to the previous page (e.g., /details)
     if (isExcluded) {
-      // Only clear data and scroll position, but keep the previous href
-      setScrollPosition(0);
-
-      const defaultDataForPath = defaultData['/'] || {};
-
-      usePopupStateStore.setState({
-        data: {
-          ...defaultDataForPath
-        }
-      });
-
+      setScrollPosition(pathname, 0);
       return;
     }
 
@@ -63,24 +47,21 @@ const usePopupHref = (hydrationComplete = false) => {
       changeCountRef.current += 1;
 
       const isReturningFromFetch = location?.state?.from === 'fetch';
+      const isBackNavigation = location?.state?.isBackNavigation === true;
       const isUserNavigation = changeCountRef.current > 2 && !isReturningFromFetch;
+      const isInitialRootLoad = pathname === '/' && changeCountRef.current === 1 && initialHrefLengthRef.current > 0;
 
       lastPathnameRef.current = pathname;
-      setHref(pathname);
+
+      if (!isBackNavigation && !isInitialRootLoad) {
+        setHref(pathname);
+      }
 
       if (isUserNavigation) {
-        setScrollPosition(0);
-
-        const defaultDataForPath = defaultData[pathname] || {};
-
-        usePopupStateStore.setState({
-          data: {
-            ...defaultDataForPath
-          }
-        });
+        setScrollPosition(pathname, 0);
       }
     }
-  }, [location.pathname, location.state, setHref, setScrollPosition, hydrationComplete]);
+  }, [location.pathname, location.state, hrefArray.length, setHref, setScrollPosition, hydrationComplete]);
 
   return location.pathname;
 };

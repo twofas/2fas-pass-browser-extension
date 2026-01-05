@@ -4,8 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import URIMatcher from '../../URIMatcher';
-import Item from './Item';
+import URIMatcher from '@/partials/URIMatcher';
+import Item from '@/models/itemModels/Item';
 
 /**
 * Class representing a login.
@@ -120,6 +120,22 @@ export default class Login extends Item {
     }
   }
 
+  /**
+  * Sets already-encrypted SIF data directly without re-encrypting.
+  * @param {Array<Object>} sifData - Array of objects with encrypted SIF values.
+  */
+  setSifEncrypted (sifData) {
+    if (!Array.isArray(sifData)) {
+      throw new Error('Invalid SIF data: must be an array');
+    }
+
+    for (const item of sifData) {
+      if (Object.prototype.hasOwnProperty.call(item, 's_password')) {
+        this.#s_password = item.s_password;
+      }
+    }
+  }
+
   get dropdownList () {
     const dO = [
       { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
@@ -145,7 +161,7 @@ export default class Login extends Item {
       return {};
     }
 
-    const contexts = ['page', 'editable'];
+    const contexts = ['page', 'editable', 'frame'];
 
     if (import.meta.env.BROWSER !== 'safari')  {
       contexts.push('page_action');

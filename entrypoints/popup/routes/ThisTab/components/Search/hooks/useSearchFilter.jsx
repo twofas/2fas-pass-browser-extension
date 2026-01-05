@@ -5,14 +5,14 @@
 // See LICENSE file for full terms
 
 import { useCallback } from 'react';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 
 /**
 * Hook for managing search filter state in popup.
 * @return {Object} Object containing handleSearchChange and clearSearch callback functions.
 */
 export const useSearchFilter = () => {
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { setBatchData } = usePopupState();
 
   const handleSearchChange = useCallback(e => {
     const value = e?.target?.value;

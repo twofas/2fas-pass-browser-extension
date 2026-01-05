@@ -12,7 +12,6 @@
   border: 0;
   color: v.$primary-text-light;
   flex-grow: 1;
-  font-family: monospace;
   font-size: 14px;
   font-weight: 400;
   line-height: 1;
@@ -37,5 +36,13 @@
     @include m.darkMode {
       color: v.$secondary-text-dark;
     }
+  }
+}
+
+.payment-card-number-input-error {
+  color: v.$error-light !important;
+
+  @include m.darkMode {
+    color: v.$error-dark !important;
   }
 }

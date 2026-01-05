@@ -5,16 +5,15 @@
 // See LICENSE file for full terms
 
 import S from './styles/ModelFilter.module.scss';
-import { useState, useRef, lazy, useEffect, useCallback, useMemo } from 'react';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import { getSupportedFeatures } from '@/partials/functions';
 import generateItemModelsOptions from './functions/generateItemModelsOptions';
 import { supportedFeatures } from '@/constants';
 import ModelFilterCustomOption from './components/ModelFilterCustomOption';
-
-const AllIcon = lazy(() => import('@/assets/popup-window/items/all.svg?react'));
+import AllIcon from '@/assets/popup-window/items/all.svg?react';
 
 const selectComponents = { Option: ModelFilterCustomOption };
 const noOptionsMessage = () => null;
@@ -31,8 +30,7 @@ const ModelFilter = props => {
 
   const buttonRef = useRef(null);
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData } = usePopupState();
 
   const hasMultipleItemTypes = useMemo(() => {
     return deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) ||
@@ -40,7 +38,11 @@ const ModelFilter = props => {
   }, [deviceSupportedFeatures]);
 
   const selectedOption = useMemo(() => {
-    return itemModelsOptions.find(option => option.value === data.itemModelFilter);
+    if (data.itemModelFilter === undefined || data.itemModelFilter === null) {
+      return itemModelsOptions[0] || null;
+    }
+
+    return itemModelsOptions.find(option => option.value === data.itemModelFilter) || itemModelsOptions[0] || null;
   }, [itemModelsOptions, data.itemModelFilter]);
 
   const modelIcon = useMemo(() => {

@@ -5,23 +5,17 @@
 // See LICENSE file for full terms
 
 import S from './AddNew.module.scss';
-import { LazyMotion } from 'motion/react';
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { useParams } from 'react-router';
-import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import { itemsUiData } from '../../constants';
-import Login from '@/partials/models/itemModels/Login';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import { Login, SecureNote, PaymentCard } from '@/models/itemModels';
 
 // Model Views
 import LoginView from './modelsViews/LoginAddNewView';
 import SecureNoteView from './modelsViews/SecureNoteAddNewView';
 import PaymentCardAddNewView from './modelsViews/PaymentCardAddNewView';
-
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 /**
 * AddNew component for creating a new item entry.
@@ -31,48 +25,41 @@ const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => 
 function AddNew(props) {
   const params = useParams();
   const scrollableRef = useRef(null);
-  const data = usePopupStateStore(state => state.data);
 
   useScrollPosition(scrollableRef, true);
 
   const modelComponent = useMemo(() => {
-    const modelName = params.model;
-
-    const modelData = {};
-
-    switch (modelName.toLowerCase()) {
+    switch (params.model.toLowerCase()) {
       case Login.contentType.toLowerCase():
-        return <LoginView {...props} {...modelData} />;
+        return <LoginView />;
       case SecureNote.contentType.toLowerCase():
-        return <SecureNoteView {...props} {...modelData} />;
+        return <SecureNoteView />;
       case PaymentCard.contentType.toLowerCase():
-        return <PaymentCardAddNewView {...props} {...modelData} />;
+        return <PaymentCardAddNewView />;
       default:
         return null;
     }
-  }, [params.model, data?.item, props]);
+  }, [params.model]);
 
   if (!modelComponent) {
     return null;
   }
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <div className={`${props.className ? props.className : ''}`}>
-        <div ref={scrollableRef}>
-          <section className={S.addNew}>
-            <div className={S.addNewContainer}>
-              <NavigationButton type='cancel' />
+    <div className={`${props.className ? props.className : ''}`}>
+      <div ref={scrollableRef}>
+        <section className={S.addNew}>
+          <div className={S.addNewContainer}>
+            <NavigationButton type='cancel' />
 
-              <h2>{browser.i18n.getMessage('add_new_header').replace('ITEM', itemsUiData[params.model]?.label || browser.i18n.getMessage('item'))}</h2>
-              <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
+            <h2>{browser.i18n.getMessage('add_new_header').replace('ITEM', itemsUiData[params.model]?.label || browser.i18n.getMessage('item'))}</h2>
+            <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
 
-              {modelComponent}
-            </div>
-          </section>
-        </div>
+            {modelComponent}
+          </div>
+        </section>
       </div>
-    </LazyMotion>
+    </div>
   );
 }
 

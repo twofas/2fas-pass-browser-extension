@@ -8,16 +8,15 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import S from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/PaymentCardSecurityCodeInput.module.scss';
 import { Field } from 'react-final-form';
-import { lazy, useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { copyValue, isText } from '@/partials/functions';
-import usePopupStateStore from '../../../store/popupState';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import usePopupState from '../../../store/popupState/usePopupState';
+import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardSecurityCodeInput from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput';
 import getSecurityCodeMask from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/getSecurityCodeMask';
-
-const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
-const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+import VisibleIcon from '@/assets/popup-window/visible.svg?react';
+import InfoIcon from '@/assets/popup-window/info.svg?react';
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 
 /**
 * Renders the security code input field for PaymentCard details view.
@@ -30,14 +29,37 @@ function CardSecurityCode (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setBatchData, setItem } = usePopupState();
 
   const previousSecurityCodeRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const inputMaskRef = useRef(null);
   const [localDecryptedSecurityCode, setLocalDecryptedSecurityCode] = useState(null);
-  const [localEditedSecurityCode, setLocalEditedSecurityCode] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [shouldFocusInputMask, setShouldFocusInputMask] = useState(false);
+  const [securityCodeTooLong, setSecurityCodeTooLong] = useState(false);
+
+  const handleSecurityCodeTooLongChange = useCallback(isTooLong => {
+    setSecurityCodeTooLong(isTooLong);
+  }, []);
+
+  const itemInstance = useMemo(() => {
+    if (!data.item) {
+      return null;
+    }
+
+    if (data.item instanceof PaymentCard) {
+      return data.item;
+    }
+
+    try {
+      return new PaymentCard(data.item);
+    } catch (e) {
+      CatchError(e);
+      return null;
+    }
+  }, [data.item]);
 
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
 
@@ -46,14 +68,14 @@ function CardSecurityCode (props) {
       return localDecryptedSecurityCode;
     }
 
-    if (!data.item?.securityCodeExists) {
+    if (!itemInstance?.securityCodeExists) {
       return null;
     }
 
     setIsDecrypting(true);
 
     try {
-      const decryptedData = await data.item.decryptSecurityCode();
+      const decryptedData = await itemInstance.decryptSecurityCode();
       setLocalDecryptedSecurityCode(decryptedData);
       setData('sifDecryptError', false);
       return decryptedData;
@@ -64,15 +86,11 @@ function CardSecurityCode (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedSecurityCode, isDecrypting, sifDecryptError, data.item, setData]);
+  }, [localDecryptedSecurityCode, isDecrypting, sifDecryptError, itemInstance, setData]);
 
   const getSecurityCodeValue = () => {
     if (sifDecryptError || isHighlySecretWithoutSif) {
       return '';
-    }
-
-    if (isText(localEditedSecurityCode)) {
-      return localEditedSecurityCode;
     }
 
     if (isText(localDecryptedSecurityCode)) {
@@ -83,6 +101,10 @@ function CardSecurityCode (props) {
   };
 
   const getCardNumberValue = () => {
+    if (isText(data?.editedCardNumber)) {
+      return data.editedCardNumber;
+    }
+
     const formState = form.getState();
     const cardNumber = formState?.values?.editedCardNumber;
 
@@ -93,6 +115,31 @@ function CardSecurityCode (props) {
     return '';
   };
 
+  const getRawSecurityCode = () => {
+    const securityCode = getSecurityCodeValue();
+
+    return securityCode.replace(/\D/g, '');
+  };
+
+  const focusInputMask = useCallback(() => {
+    const inputElement = inputMaskRef.current?.getInput?.() || inputMaskRef.current;
+
+    if (inputElement && !inputElement.disabled) {
+      inputElement.focus();
+      setShouldFocusInputMask(false);
+    } else {
+      setTimeout(focusInputMask, 50);
+    }
+  }, []);
+
+  const getHiddenMaskValue = () => {
+    if (isHighlySecretWithoutSif) {
+      return '';
+    }
+
+    return '***';
+  };
+
   useEffect(() => {
     const currentSecurityCode = getSecurityCodeValue();
 
@@ -100,18 +147,24 @@ function CardSecurityCode (props) {
       form.change('editedSecurityCode', currentSecurityCode);
       previousSecurityCodeRef.current = currentSecurityCode;
     }
-  }, [localEditedSecurityCode, localDecryptedSecurityCode, sifDecryptError, form]);
+  }, [localDecryptedSecurityCode, form]);
 
   useEffect(() => {
     const needsDecryption = (data?.securityCodeEditable || data?.securityCodeVisible) &&
                            localDecryptedSecurityCode === null &&
                            !isDecrypting &&
-                           data.item?.securityCodeExists;
+                           itemInstance?.securityCodeExists;
 
     if (needsDecryption) {
       decryptSecurityCodeOnDemand();
     }
-  }, [data?.securityCodeEditable, data?.securityCodeVisible, localDecryptedSecurityCode, isDecrypting, data.item?.securityCodeExists, decryptSecurityCodeOnDemand]);
+  }, [data?.securityCodeEditable, data?.securityCodeVisible, localDecryptedSecurityCode, isDecrypting, itemInstance?.securityCodeExists, decryptSecurityCodeOnDemand]);
+
+  useEffect(() => {
+    if (shouldFocusInputMask && data?.securityCodeEditable && isFocused) {
+      setTimeout(focusInputMask, 0);
+    }
+  }, [shouldFocusInputMask, data?.securityCodeEditable, isFocused, focusInputMask]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -140,15 +193,22 @@ function CardSecurityCode (props) {
 
   const handleEditableClick = async () => {
     if (data?.securityCodeEditable) {
-      setLocalEditedSecurityCode(null);
+      setLocalDecryptedSecurityCode(null);
+      setIsFocused(false);
+      setShouldFocusInputMask(false);
       setBatchData({
         securityCodeEdited: false,
         securityCodeEditable: false
       });
-      form.change('editedSecurityCode', isText(localDecryptedSecurityCode) ? localDecryptedSecurityCode : '');
+      form.change('editedSecurityCode', '');
     } else {
       await decryptSecurityCodeOnDemand();
-      setData('securityCodeEditable', true);
+      setIsFocused(true);
+      setShouldFocusInputMask(true);
+      setBatchData({
+        securityCodeVisible: false,
+        securityCodeEditable: true
+      });
     }
   };
 
@@ -156,17 +216,15 @@ function CardSecurityCode (props) {
     try {
       let securityCodeToCopy;
 
-      if (isText(localEditedSecurityCode)) {
-        securityCodeToCopy = localEditedSecurityCode;
-      } else if (isText(localDecryptedSecurityCode)) {
+      if (isText(localDecryptedSecurityCode)) {
         securityCodeToCopy = localDecryptedSecurityCode;
-      } else if (data.item.securityCodeExists) {
+      } else if (itemInstance?.securityCodeExists) {
         securityCodeToCopy = await decryptSecurityCodeOnDemand();
       } else {
         securityCodeToCopy = '';
       }
 
-      await copyValue(securityCodeToCopy, data.item.deviceId, data.item.vaultId, data.item.id, 'securityCode');
+      await copyValue(securityCodeToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'securityCode');
       showToast(browser.i18n.getMessage('notification_card_security_code_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_card_security_code_copy_failed'), 'error');
@@ -185,45 +243,43 @@ function CardSecurityCode (props) {
   const handleSecurityCodeChange = async e => {
     const newValue = e.target.value;
 
-    setLocalEditedSecurityCode(newValue);
+    setLocalDecryptedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
+    setData('editedSecurityCode', newValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_securityCode: newValue }]);
-    setData('item', localItem);
-  };
-
-  const getHiddenMaskValue = () => {
-    if (isHighlySecretWithoutSif) {
-      return '';
-    }
-
-    return '***';
-  };
-
-  const getRawSecurityCode = () => {
-    const securityCode = getSecurityCodeValue();
-
-    return securityCode.replace(/\D/g, '');
+    setItem(localItem);
   };
 
   const handleRawSecurityCodeChange = async e => {
     const newValue = e.target.value.replace(/\D/g, '');
 
-    setLocalEditedSecurityCode(newValue);
+    setLocalDecryptedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
+    setData('editedSecurityCode', newValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_securityCode: newValue }]);
-    setData('item', localItem);
+    setItem(localItem);
+  };
+
+  const handlePasswordInputFocus = () => {
+    setIsFocused(true);
+    setShouldFocusInputMask(true);
+  };
+
+  const handleInputMaskBlur = () => {
+    setIsFocused(false);
   };
 
   const renderInput = () => {
     const isEditable = data?.securityCodeEditable;
     const isVisible = data?.securityCodeVisible;
 
+    // Not editable and not visible - show masked value
     if (!isEditable && !isVisible) {
       return (
         <input
@@ -236,24 +292,7 @@ function CardSecurityCode (props) {
       );
     }
 
-    if (isEditable && !isVisible) {
-      const cardNumber = getCardNumberValue();
-      const securityCodeMaskData = getSecurityCodeMask(cardNumber);
-      const maxLength = securityCodeMaskData.mask.length;
-
-      return (
-        <input
-          type='password'
-          id='editedSecurityCode'
-          className={S.paymentCardSecurityCodeInput}
-          value={getRawSecurityCode()}
-          onChange={handleRawSecurityCodeChange}
-          disabled={sifDecryptError}
-          maxLength={maxLength}
-        />
-      );
-    }
-
+    // Visible but not editable - show PaymentCardSecurityCodeInput disabled
     if (!isEditable && isVisible) {
       return (
         <PaymentCardSecurityCodeInput
@@ -264,19 +303,46 @@ function CardSecurityCode (props) {
           disabled
           securityType={originalItem?.securityType}
           sifExists={originalItem?.sifExists}
+          onTooLongChange={handleSecurityCodeTooLongChange}
         />
       );
     }
 
+    // Editable - show password input when not focused, PaymentCardSecurityCodeInput when focused
+    if (isEditable && !isFocused) {
+      const cardNumber = getCardNumberValue();
+      const securityCode = getSecurityCodeValue();
+      const securityCodeMaskData = getSecurityCodeMask(cardNumber, securityCode);
+      const maxLength = securityCodeMaskData.mask.length;
+
+      return (
+        <input
+          ref={passwordInputRef}
+          type='password'
+          id='editedSecurityCode'
+          className={S.paymentCardSecurityCodeInput}
+          value={getRawSecurityCode()}
+          onChange={handleRawSecurityCodeChange}
+          onFocus={handlePasswordInputFocus}
+          disabled={sifDecryptError || isHighlySecretWithoutSif}
+          maxLength={maxLength}
+        />
+      );
+    }
+
+    // Editable and focused - show PaymentCardSecurityCodeInput (InputMask)
     return (
       <PaymentCardSecurityCodeInput
+        ref={inputMaskRef}
         value={getSecurityCodeValue()}
         id='editedSecurityCode'
         cardNumber={getCardNumberValue()}
         onChange={handleSecurityCodeChange}
-        disabled={sifDecryptError}
+        onBlur={handleInputMaskBlur}
+        disabled={sifDecryptError || isHighlySecretWithoutSif}
         securityType={originalItem?.securityType}
         sifExists={originalItem?.sifExists}
+        onTooLongChange={handleSecurityCodeTooLongChange}
       />
     );
   };
@@ -303,13 +369,13 @@ function CardSecurityCode (props) {
               <button
                 type='button'
                 onClick={handleSecurityCodeVisibleClick}
-                className={`${pI.iconButton} ${pI.visibleButton} ${!(originalItem?.isT3orT2WithSif || data?.securityCodeEditable) || sifDecryptError ? pI.hidden : ''}`}
+                className={`${pI.iconButton} ${pI.visibleButton} ${!originalItem?.isT3orT2WithSif || data?.securityCodeEditable || sifDecryptError ? pI.hiddenButton : ''}`}
                 title={browser.i18n.getMessage('details_toggle_security_code_visibility')}
                 tabIndex={-1}
               >
                 <VisibleIcon />
               </button>
-              {((originalItem?.securityType === SECURITY_TIER.SECRET || data.item.securityCodeExists) && !sifDecryptError) && (
+              {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.securityCodeExists) && !sifDecryptError) && (
                 <button
                   type='button'
                   className={`${bS.btn} ${pI.iconButton}`}
@@ -324,6 +390,9 @@ function CardSecurityCode (props) {
 
             {generateSecurityTypeTooltip(originalItem)}
             {generateErrorOverlay()}
+          </div>
+          <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
+            <p className={securityCodeTooLong ? '' : pI.empty}>{securityCodeTooLong ? browser.i18n.getMessage('details_security_code_too_long') : ''}</p>
           </div>
         </div>
       )}

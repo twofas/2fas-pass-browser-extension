@@ -7,14 +7,12 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
-import usePopupStateStore from '../../../store/popupState';
+import { motion } from 'motion/react';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import { useCallback } from 'react';
 import updateItem from '../functions/updateItem';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const additionalInfoVariants = {
   hidden: { height: 'auto', minHeight: '20px', maxHeight: '600px' },
@@ -27,9 +25,7 @@ const additionalInfoVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function AdditionalInfo (props) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setItem } = usePopupState();
 
   const { formData } = props;
   const { inputError } = formData;
@@ -37,33 +33,31 @@ function AdditionalInfo (props) {
   const handleAdditionalInfoEditable = async () => {
     if (data.additionalInfoEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      
-      const updatedItem = updateItem(data.item, {
+
+      const updatedItem = await updateItem(data.item, {
         content: { additionalInfo: item.content.additionalInfo || '' },
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
-      setBatchData({
-        item: updatedItem,
-        additionalInfoEditable: false
-      });
+      setItem(updatedItem);
+      setData('additionalInfoEditable', false);
     } else {
       setData('additionalInfoEditable', true);
     }
   };
 
-  const handleAdditionalInfoChange = useCallback(e => {
+  const handleAdditionalInfoChange = useCallback(async e => {
     const newAdditionalInfo = e.target.value;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { additionalInfo: newAdditionalInfo },
       internalData: { ...data.item.internalData }
     });
 
-    setData('item', updatedItem);
-  }, [data.item, setData]);
+    setItem(updatedItem);
+  }, [data.item, setItem]);
 
   return (
     <Field name="content.additionalInfo">
@@ -83,31 +77,29 @@ function AdditionalInfo (props) {
             </button>
           </div>
           <div className={pI.passInputBottomMotion}>
-            <LazyMotion features={loadDomAnimation}>
-              <m.div
-                className={`${pI.passInputBottom} ${pI.note} ${data.additionalInfoEditable ? pI.noteEditable : ''}`}
-                variants={additionalInfoVariants}
-                initial="hidden"
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-                animate={input.value.length > 0 || data.additionalInfoEditable ? 'visible' : 'hidden'}
-              >
-                <textarea
-                  {...input}
-                  onChange={e => {
-                    input.onChange(e);
-                    handleAdditionalInfoChange(e);
-                  }}
-                  placeholder={browser.i18n.getMessage('details_additional_info_placeholder')}
-                  id="additional-info"
-                  disabled={!data.additionalInfoEditable ? 'disabled' : ''}
-                  dir="ltr"
-                  spellCheck="true"
-                  autoCorrect="off"
-                  autoComplete="off"
-                  autoCapitalize="off"
-                />
-              </m.div>
-            </LazyMotion>
+            <motion.div
+              className={`${pI.passInputBottom} ${pI.note} ${data.additionalInfoEditable ? pI.noteEditable : ''}`}
+              variants={additionalInfoVariants}
+              initial="hidden"
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              animate={input.value.length > 0 || data.additionalInfoEditable ? 'visible' : 'hidden'}
+            >
+              <textarea
+                {...input}
+                onChange={e => {
+                  input.onChange(e);
+                  handleAdditionalInfoChange(e);
+                }}
+                placeholder={browser.i18n.getMessage('details_additional_info_placeholder')}
+                id="additional-info"
+                disabled={!data.additionalInfoEditable ? 'disabled' : ''}
+                dir="ltr"
+                spellCheck="true"
+                autoCorrect="off"
+                autoComplete="off"
+                autoCapitalize="off"
+              />
+            </motion.div>
           </div>
         </div>
       )}

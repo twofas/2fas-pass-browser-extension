@@ -5,15 +5,14 @@
 // See LICENSE file for full terms
 
 import { useCallback } from 'react';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 
 /**
 * Hook for managing tag filter selection in popup state.
 * @return {Object} Object containing handleTagChange and clearTagFilter callback functions.
 */
 export const useTagFilter = () => {
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { setData, setBatchData } = usePopupState();
 
   const handleTagChange = useCallback(tag => {
     if (tag) {

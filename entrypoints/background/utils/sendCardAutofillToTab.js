@@ -4,40 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, generateNonce } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission } from '@/partials/functions';
 import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
-
-/**
-* Encrypts a value using the local key for secure transmission.
-* @param {string} value - The value to encrypt.
-* @param {CryptoKey} localKeyCrypto - The imported local key.
-* @return {Promise<{status: string, data?: string}>} Encryption result.
-*/
-const encryptValueForTransmission = async (value, localKeyCrypto) => {
-  let nonce = null;
-  let encryptedValue = null;
-
-  try {
-    nonce = generateNonce();
-
-    encryptedValue = await crypto.subtle.encrypt(
-      { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-      localKeyCrypto,
-      StringToArrayBuffer(value)
-    );
-
-    const encryptedBytes = EncryptBytes(nonce.ArrayBuffer, encryptedValue);
-
-    return { status: 'ok', data: ArrayBufferToBase64(encryptedBytes) };
-  } catch {
-    return { status: 'error' };
-  } finally {
-    nonce = null;
-    encryptedValue = null;
-  }
-};
 
 /**
 * Sends PaymentCard autofill data to a specific tab.
@@ -191,7 +161,6 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       target: REQUEST_TARGETS.CONTENT,
       autofillType: 'card'
     });
-
     const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
     const needsPermission = crossDomainFrames.length > 0;
 
@@ -261,6 +230,15 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     return TwofasNotification.show({
       Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
       Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+    }, tabId, true);
+  }
+
+  const allNoInputs = response.every(frameResponse => frameResponse.status === 'error' && frameResponse.message === 'No input fields found');
+
+  if (allNoInputs) {
+    return TwofasNotification.show({
+      Title: browser.i18n.getMessage('notification_card_autofill_no_inputs_title'),
+      Message: browser.i18n.getMessage('notification_card_autofill_no_inputs_message')
     }, tabId, true);
   }
 

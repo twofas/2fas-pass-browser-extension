@@ -5,8 +5,10 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardSecurityCodeInput.module.scss';
-import { memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
+import { forwardRef, memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
 import getSecurityCodeMask from './getSecurityCodeMask';
+import isSecurityCodeInvalid from './validateSecurityCode';
+import isSecurityCodeTooLong from './isSecurityCodeTooLong';
 
 /**
 * PaymentCardSecurityCodeInput component with dynamic mask based on card type.
@@ -18,22 +20,34 @@ import getSecurityCodeMask from './getSecurityCodeMask';
 * @param {string} props.cardNumber - The card number to determine mask (Amex uses 4 digits).
 * @param {number} props.securityType - Security tier type (0=Top Secret, 1=Highly Secret, 2=Secret).
 * @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
+* @param {Function} props.onTooLongChange - Callback when security code is too long for detected issuer.
 * @param {Object} props.inputProps - Additional props to spread on InputMask.
+* @param {Object} ref - Forwarded ref for the input element.
 * @return {JSX.Element} The rendered component.
 */
-function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, securityType, sifExists, ...inputProps }) {
+const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumber, securityType, sifExists, onTooLongChange, ...inputProps }, ref) => {
   const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
   const loadedRef = useRef(false);
-  const { handleMouseDown, handleFocus } = useInputMaskFocus();
+  const { handleMouseDown, handleFocus, handleClick, handleDoubleClick, handleKeyDown, handleKeyUp, handleSelect } = useInputMaskFocus();
 
   const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
   const displayValue = isHighlySecretWithoutSif ? '' : value;
 
   const securityCodeMaskData = useMemo(
-    () => getSecurityCodeMask(cardNumber),
-    [cardNumber]
+    () => getSecurityCodeMask(cardNumber, displayValue),
+    [cardNumber, displayValue]
+  );
+
+  const isInvalid = useMemo(
+    () => isSecurityCodeInvalid(displayValue, cardNumber),
+    [displayValue, cardNumber]
+  );
+
+  const isTooLong = useMemo(
+    () => isSecurityCodeTooLong(displayValue, cardNumber),
+    [displayValue, cardNumber]
   );
 
   useEffect(() => {
@@ -47,6 +61,12 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, securi
       setInputMask(() => module.InputMask);
     });
   }, []);
+
+  useEffect(() => {
+    if (onTooLongChange) {
+      onTooLongChange(isTooLong);
+    }
+  }, [isTooLong, onTooLongChange]);
 
   useLayoutEffect(() => {
     if (previousMaskRef.current && previousMaskRef.current !== securityCodeMaskData.mask) {
@@ -74,11 +94,14 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, securi
     onChange(e);
   }, [id, onChange]);
 
+  const inputClassName = `${S.paymentCardSecurityCodeInput}${isInvalid || isTooLong ? ` ${S.paymentCardSecurityCodeInputError}` : ''}`;
+
   if (!InputMask) {
     return (
       <input
         {...inputProps}
-        className={S.paymentCardSecurityCodeInput}
+        ref={ref}
+        className={inputClassName}
         type='text'
         value={displayValue}
         placeholder={browser.i18n.getMessage('placeholder_payment_card_security_code')}
@@ -92,9 +115,11 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, securi
   return (
     <InputMask
       {...inputProps}
-      className={S.paymentCardSecurityCodeInput}
+      ref={ref}
+      className={inputClassName}
       type='text'
       mask={securityCodeMaskData.mask}
+      slotChar=' '
       autoClear={false}
       value={displayValue}
       placeholder={browser.i18n.getMessage('placeholder_payment_card_security_code')}
@@ -102,8 +127,13 @@ function PaymentCardSecurityCodeInput ({ value, onChange, id, cardNumber, securi
       onChange={handleChange}
       onMouseDown={handleMouseDown}
       onFocus={handleFocus}
+      onClick={handleClick}
+      onDoubleClick={handleDoubleClick}
+      onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
+      onSelect={handleSelect}
     />
   );
-}
+});
 
 export default memo(PaymentCardSecurityCodeInput);

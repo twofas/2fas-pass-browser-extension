@@ -6,14 +6,13 @@
 
 import S from '../styles/Item.module.scss';
 import handleSecureNoteText from '../../../functions/serviceList/handleSecureNoteText';
-import { Link } from 'react-router';
-import { useState, useRef, lazy, useLayoutEffect } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
-
-const ItemFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
-const ItemCopyIcon = lazy(() => import('@/assets/popup-window/copy2.svg?react'));
+import SecureNote from '@/models/itemModels/SecureNote';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import ItemFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
+import ItemCopyIcon from '@/assets/popup-window/copy2.svg?react';
 
 /**
 * Function to render the password button.
@@ -115,7 +114,7 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
     );
   } else {
     return (
-      <Link
+      <ClearLink
         to='/fetch'
         state={{
           action: PULL_REQUEST_TYPES.SIF_REQUEST,
@@ -131,7 +130,7 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
         prefetch='intent'
       >
         <ItemFetchIcon className={S.itemFetch} />
-      </Link>
+      </ClearLink>
     );
   }
 };

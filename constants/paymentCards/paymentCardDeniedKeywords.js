@@ -18,7 +18,23 @@ const paymentCardDeniedKeywords = Object.freeze([
   'coupon',
   'promo',
   'discount',
-  'voucher'
+  'voucher',
+  'postal',
+  'postcode',
+  'zip',
+  'zipcode',
+  'address',
+  'street',
+  'city',
+  'state',
+  'province',
+  'region',
+  'country',
+  'phone',
+  'tel',
+  'mobile',
+  'fax',
+  'email'
 ]);
 
 export default paymentCardDeniedKeywords;

@@ -6,14 +6,13 @@
 
 import S from '../styles/Item.module.scss';
 import handleCardNumber from '../../../functions/serviceList/handleCardNumber';
-import { Link } from 'react-router';
-import { useState, useRef, lazy, useLayoutEffect } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
-
-const ItemFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
-const ItemCopyIcon = lazy(() => import('@/assets/popup-window/card-number.svg?react'));
+import PaymentCard from '@/models/itemModels/PaymentCard';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import ItemFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
+import ItemCopyIcon from '@/assets/popup-window/card-number.svg?react';
 
 /**
 * Renders the copy card number button for payment card items.
@@ -115,7 +114,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
     );
   } else {
     return (
-      <Link
+      <ClearLink
         to='/fetch'
         state={{
           action: PULL_REQUEST_TYPES.SIF_REQUEST,
@@ -131,7 +130,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
         prefetch='intent'
       >
         <ItemFetchIcon className={S.itemFetch} />
-      </Link>
+      </ClearLink>
     );
   }
 };

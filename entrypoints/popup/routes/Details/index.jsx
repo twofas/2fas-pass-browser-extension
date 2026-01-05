@@ -5,24 +5,22 @@
 // See LICENSE file for full terms
 
 import S from './Details.module.scss';
-import { LazyMotion } from 'motion/react';
-import { useParams, useNavigate, useLocation, Link } from 'react-router';
-import { useState, useEffect, useCallback, useRef, useMemo, lazy } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import getItem from '@/partials/sessionStorage/getItem';
+import usePopupState from '../../store/popupState/usePopupState';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import matchModel from '@/partials/models/itemModels/matchModel';
-import Login from '@/partials/models/itemModels/Login';
+import { matchModel, Login } from '@/models/itemModels';
 import { PULL_REQUEST_TYPES } from '@/constants';
+import ClearLink from '../../components/ClearLink';
+import ServiceFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
 
 // Model Views
 import LoginDetailsView from './modelsViews/LoginDetailsView';
 import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
 import PaymentCardDetailsView from './modelsViews/PaymentCardDetailsView';
-
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
 
 const DetailsViews = {
   'Login': LoginDetailsView,
@@ -44,12 +42,9 @@ function Details(props) {
   const [originalItem, setOriginalItem] = useState(null);
   const scrollableRef = useRef(null);
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
-  const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
+  const { data, setData, setBatchData, setScrollPosition, setItem } = usePopupState();
 
-  const getData = useCallback(async originalItem => {
+  const fetchItemData = useCallback(async originalItem => {
     try {
       if (location.state?.from === 'thisTab') {
         setScrollPosition(0);
@@ -57,6 +52,9 @@ function Details(props) {
 
       let item;
       let editedSecurityType;
+
+      const pathname = location.pathname;
+      const storeData = usePopupStateStore.getState().getData(pathname);
 
       if (location.state?.data?.item) {
         editedSecurityType = location.state.data.item.securityType;
@@ -81,11 +79,13 @@ function Details(props) {
         } else {
           item = await matchModel({ ...location.state.data.item, securityType: originalItem?.securityType });
         }
-      } else if (data?.item) {
+      } else if (location.state?.from === 'fetch' && originalItem) {
+        item = originalItem;
+      } else if (storeData?.item) {
         if (location.state?.from !== 'thisTab') {
           try {
-            editedSecurityType = data.item.securityType;
-            item = await matchModel({ ...data.item, securityType: originalItem?.securityType });
+            editedSecurityType = storeData.item.securityType;
+            item = await matchModel({ ...storeData.item, securityType: originalItem?.securityType });
           } catch {
             if (params.id) {
               item = await getItem(params.deviceId, params.vaultId, params.id);
@@ -108,10 +108,6 @@ function Details(props) {
 
       if (editedSecurityType !== undefined && item.securityType !== editedSecurityType) {
         item.securityType = editedSecurityType;
-      }
-
-      if (location.state?.scrollPosition !== undefined) {
-        setData('thisTabScrollPosition', location.state.scrollPosition);
       }
 
       if (location.state?.data) {
@@ -142,13 +138,32 @@ function Details(props) {
         });
       }
 
-      setData('item', item);
+      if (location.state?.resetEditableFields) {
+        setBatchData({
+          nameEditable: false,
+          usernameEditable: false,
+          passwordEditable: false,
+          notesEditable: false,
+          domainsEditable: {},
+          sifEditable: false,
+          revealSecureNote: false,
+          cardHolderEditable: false,
+          cardNumberEditable: false,
+          cardNumberVisible: false,
+          expirationDateEditable: false,
+          securityCodeEditable: false,
+          securityCodeVisible: false
+        });
+        setScrollPosition(0);
+      }
+
+      setItem(item);
       setLoading(false);
     } catch (e) {
       CatchError(e);
       navigate('/');
     }
-  }, [params.deviceId, params.vaultId, params.id, navigate, setData, setScrollPosition, location.state]);
+  }, [params.deviceId, params.vaultId, params.id, navigate, setData, setBatchData, setScrollPosition, setItem, location.state]);
 
   const getOriginalItem = useCallback(async () => {
     try {
@@ -167,7 +182,19 @@ function Details(props) {
       return null;
     }
 
-    return data?.item?.constructor?.name;
+    const name = data?.item?.constructor?.name;
+
+    if (name && name !== 'Object') {
+      return name;
+    }
+
+    const contentTypeMap = {
+      'login': 'Login',
+      'secureNote': 'SecureNote',
+      'paymentCard': 'PaymentCard'
+    };
+
+    return contentTypeMap[data?.item?.contentType] || null;
   }, [loading, data?.item]);
 
   const modelComponent = useMemo(() => {
@@ -188,8 +215,8 @@ function Details(props) {
   }, [loading, constructorName, props, originalItem]);
 
   useEffect(() => {
-    getOriginalItem().then(getData);
-  }, [getData, getOriginalItem]);
+    getOriginalItem().then(fetchItemData);
+  }, [fetchItemData, getOriginalItem]);
 
   useEffect(() => {
     if (!loading && constructorName && !DetailsViews[constructorName]) {
@@ -205,53 +232,39 @@ function Details(props) {
   }
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <div className={`${props.className ? props.className : ''}`}>
-        <div ref={scrollableRef}>
-          <section className={S.details}>
-            <div className={S.detailsContainer}>
-              <NavigationButton
-                type='cancel'
+    <div className={`${props.className ? props.className : ''}`}>
+      <div ref={scrollableRef}>
+        <section className={S.details}>
+          <div className={S.detailsContainer}>
+            <NavigationButton type='back' />
+            <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
+
+            <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
+              <p>{browser.i18n.getMessage('details_fetch_text')}</p>
+              <ClearLink
+                to='/fetch'
                 state={{
+                  action: PULL_REQUEST_TYPES.SIF_REQUEST,
                   from: 'details',
                   data: {
-                    lastSelectedTagInfo: data?.lastSelectedTagInfo,
-                    searchActive: data?.searchActive,
-                    searchValue: data?.searchValue,
-                    selectedTag: data?.selectedTag
-                  },
-                  scrollPosition: data?.thisTabScrollPosition
+                    itemId: data.item.id,
+                    deviceId: data.item.deviceId,
+                    vaultId: data.item.vaultId,
+                    contentType: data.item.contentType
+                  }
                 }}
-              />
-              <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
-
-              <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
-                <p>{browser.i18n.getMessage('details_fetch_text')}</p>
-                <Link
-                  to='/fetch'
-                  state={{
-                    action: PULL_REQUEST_TYPES.SIF_REQUEST,
-                    from: 'details',
-                    data: {
-                      itemId: data.item.id,
-                      deviceId: data.item.deviceId,
-                      vaultId: data.item.vaultId,
-                      contentType: data.item.constructor.contentType
-                    }
-                  }}
-                  title={browser.i18n.getMessage('details_fetch_title')}
-                >
-                  <ServiceFetchIcon />
-                  <span>{browser.i18n.getMessage('fetch')}</span>
-                </Link>
-              </div>
-
-              {modelComponent}
+                title={browser.i18n.getMessage('details_fetch_title')}
+              >
+                <ServiceFetchIcon />
+                <span>{browser.i18n.getMessage('fetch')}</span>
+              </ClearLink>
             </div>
-          </section>
-        </div>
+
+            {modelComponent}
+          </div>
+        </section>
       </div>
-    </LazyMotion>
+    </div>
   );
 }
 

@@ -7,8 +7,9 @@
 import S from '../AddNew.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import { useNavigate, useLocation } from 'react-router';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getDomainInfo from '../functions/getDomainInfo';
 import { useEffect, useState } from 'react';
 import { Form, Field } from 'react-final-form';
@@ -16,14 +17,12 @@ import onMessage from '../events/onMessage';
 import { copyValue, getCurrentDevice } from '@/partials/functions';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
-import usePopupStateStore from '../../../store/popupState';
 import Tooltip from '@/entrypoints/popup/components/Tooltip';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
-import PasswordInput from '@/entrypoints/popup/components/PasswordInput';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
-import Login from '@/partials/models/itemModels/Login';
+import Login from '@/models/itemModels/Login';
 
 const additionalVariants = {
   hidden: { maxHeight: '0px' },
@@ -37,11 +36,9 @@ const additionalVariants = {
 function LoginAddNewView() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { data, setData } = usePopupState();
 
   const [loading, setLoading] = useState(true);
-
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
 
   useEffect(() => {
     const messageListener = async (request, sender, sendResponse) => onMessage(request, sender, sendResponse, value => setData('url', value));
@@ -54,12 +51,15 @@ function LoginAddNewView() {
         const domainData = await getDomainInfo();
         const isReturningFromPasswordGenerator = location?.state?.from === 'passwordGenerator';
         const isReturningFromFetch = location?.state?.from === 'fetch';
+        const generatedPassword = location?.state?.generatedPassword;
 
         const getValueWithPriority = (key, stateValue, storeValue, fallback, shouldSanitize = false) => {
           let selectedValue;
 
           if (isReturningFromPasswordGenerator || isReturningFromFetch) {
-            if (key === 's_password' && stateValue !== undefined) {
+            if (key === 's_password' && generatedPassword !== undefined) {
+              selectedValue = generatedPassword;
+            } else if (key === 's_password' && stateValue !== undefined) {
               selectedValue = stateValue;
             } else if (stateValue !== undefined) {
               selectedValue = stateValue;
@@ -117,7 +117,7 @@ function LoginAddNewView() {
     return () => {
       browser.runtime.onMessage.removeListener(messageListener);
     };
-  }, [location?.state?.data]);
+  }, [location?.state?.data, location?.state?.generatedPassword]);
 
   const handlePasswordVisibleClick = () => {
     setData('passwordVisible', !data?.passwordVisible);
@@ -156,34 +156,8 @@ function LoginAddNewView() {
     }
   };
 
-  const handleGeneratePassword = form => {
-    const formState = form.getState();
-    const currentValues = formState.values;
-
-    const navigationData = {
-      url: currentValues.url || data.url,
-      username: currentValues.username || data.username,
-      s_password: currentValues.s_password || data.s_password,
-      minLength: currentValues['password-minlength'] || data.minLength,
-      maxLength: currentValues['password-maxlength'] || data.maxLength,
-      pattern: currentValues['password-pattern'] || data.pattern,
-      onMobile: currentValues.onMobile !== undefined ? currentValues.onMobile : data.onMobile,
-      additionalOverflow: data.additionalOverflow,
-      passwordVisible: data.passwordVisible
-    };
-
-    Object.entries(navigationData).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        setData(key, value);
-      }
-    });
-
-    navigate('/password-generator', {
-      state: {
-        from: 'addNew',
-        data: navigationData
-      }
-    });
+  const handleGeneratePassword = () => {
+    navigate('/password-generator', { state: { from: 'addNew' } });
   };
 
   const onSubmit = async e => {
@@ -304,10 +278,10 @@ function LoginAddNewView() {
             </div>
           )}
         </Field>
-        <m.div
+        <motion.div
           className={`${S.addNewAdditional} ${data?.additionalOverflow ? S.overflowH : ''}`}
           variants={additionalVariants}
-          initial={data?.onMobile ? 'hidden' : 'visible'}
+          initial={data?.onMobile !== false ? 'hidden' : 'visible'}
           transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
           animate={data?.onMobile ? 'hidden' : 'visible'}
           onAnimationStart={() => { setData('additionalOverflow', true); }}
@@ -360,13 +334,11 @@ function LoginAddNewView() {
                   <label htmlFor="s_password">{browser.i18n.getMessage('password')}</label>
                 </div>
                 <div className={pI.passInputBottom}>
-                  <PasswordInput
+                  <input
                     {...input}
                     type={data?.passwordVisible ? 'text' : 'password'}
                     placeholder={browser.i18n.getMessage('placeholder_password')}
                     id="s_password"
-                    showPassword={data?.passwordVisible}
-                    isDecrypted={true}
                     disabled={data?.onMobile ? 'disabled' : ''}
                     dir="ltr"
                     spellCheck="false"
@@ -382,8 +354,8 @@ function LoginAddNewView() {
                     <button
                       type='button'
                       className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
-                      onClick={() => handleGeneratePassword(form)}
-                      title={browser.i18n.getMessage('add_new_generate_password')}
+                      onClick={handleGeneratePassword}
+                      title={browser.i18n.getMessage('details_generate_password')}
                     >
                       <RefreshIcon />
                     </button>
@@ -391,7 +363,7 @@ function LoginAddNewView() {
                       type="button"
                       onClick={handlePasswordVisibleClick}
                       className={`${pI.iconButton} ${pI.visibleButton}`}
-                      title={browser.i18n.getMessage('add_new_toggle_password_visibility')}
+                      title={browser.i18n.getMessage('details_toggle_password_visibility')}
                       tabIndex={-1}
                     >
                       <VisibleIcon />
@@ -415,7 +387,7 @@ function LoginAddNewView() {
               </div>
             )}
           </Field>
-        </m.div>
+        </motion.div>
         <div className={S.addNewButtons}>
           <button
             type="submit"

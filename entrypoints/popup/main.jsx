@@ -10,12 +10,42 @@ import '@/partials/global-styles/global.scss';
 import '@/partials/global-styles/toasts.scss';
 import '@/partials/global-styles/selects.scss';
 import '@/partials/global-styles/prime-react.scss';
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Popup from './Popup.jsx';
 import { preloadInterFontAsync } from '@/partials/functions/preloadFonts.js';
+import setTheme from './utils/setTheme.js';
+import usePopupStateStore from './store/popupState/index.js';
 
-// Preload only Inter font for popup
+const EXCLUDED_ROUTES = ['/connect', '/', '/fetch', '/blocked'];
+
+/**
+ * Pre-hydrates Zustand store and sets initial hash route before React renders.
+ * This prevents the flash of ThisTab route before navigating to stored route.
+ */
+const hydrateAndSetInitialRoute = async () => {
+  try {
+    await usePopupStateStore.persist.rehydrate();
+
+    const state = usePopupStateStore.getState();
+    const hrefArray = state.href;
+    const lastHref = hrefArray.length > 0 ? hrefArray[hrefArray.length - 1] : null;
+
+    if (lastHref && !EXCLUDED_ROUTES.includes(lastHref) && !lastHref.startsWith('/fetch/')) {
+      const currentHash = window.location.hash;
+
+      if (currentHash === '' || currentHash === '#' || currentHash === '#/') {
+        window.location.hash = `#${lastHref}`;
+      }
+    }
+  } catch (e) {
+    CatchError(e);
+  }
+};
+
+await Promise.all([
+  setTheme(),
+  hydrateAndSetInitialRoute()
+]);
+
 preloadInterFontAsync();
-
 createRoot(document.getElementById('root')).render(<Popup />);

@@ -5,8 +5,7 @@
 // See LICENSE file for full terms
 
 import getItem from '@/partials/sessionStorage/getItem';
-import Login from '@/partials/models/itemModels/Login';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import { Login, PaymentCard } from '@/models/itemModels';
 import handleLoginAutofill from './handleLoginAutofill';
 import handleCardAutofill from './handleCardAutofill';
 

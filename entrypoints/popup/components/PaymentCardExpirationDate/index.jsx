@@ -5,8 +5,9 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardExpirationDate.module.scss';
-import { memo, useCallback, useRef, useEffect, useState } from 'react';
+import { forwardRef, memo, useCallback, useRef, useEffect, useState, useMemo } from 'react';
 import CalendarIcon from '@/assets/popup-window/calendar.svg?react';
+import isExpirationDateInvalid from './validateExpirationDate';
 
 const PANEL_CLASS = 'payment-card-expiration-date-panel';
 const PANEL_HEIGHT = 171;
@@ -25,25 +26,31 @@ const MIN_SPACE_REQUIRED = 8;
 * @param {boolean} props.disabled - Whether the component is disabled.
 * @param {number} props.securityType - Security tier type (0=Top Secret, 1=Highly Secret, 2=Secret).
 * @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
+* @param {Object} ref - Forwarded ref for the input element.
 * @return {JSX.Element} The rendered component.
 */
-function PaymentCardExpirationDate ({ value, onChange, inputId, disabled, securityType, sifExists }) {
+const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabled, securityType, sifExists }, ref) => {
   const [primeReactComponents, setPrimeReactComponents] = useState({ InputMask: null, Calendar: null });
   const calendarRef = useRef(null);
   const buttonRef = useRef(null);
   const isOpenRef = useRef(false);
   const loadedRef = useRef(false);
-  const { handleMouseDown: handleInputMouseDown, handleFocus: handleInputFocus } = useInputMaskFocus();
+  const { handleMouseDown: handleInputMouseDown, handleFocus: handleInputFocus, handleClick: handleInputClick, handleDoubleClick: handleInputDoubleClick, handleKeyDown: handleInputKeyDown, handleKeyUp: handleInputKeyUp, handleSelect: handleInputSelect } = useInputMaskFocus();
 
   const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
   const displayValue = isHighlySecretWithoutSif ? '' : value;
+
+  const isInvalid = useMemo(
+    () => isExpirationDateInvalid(displayValue),
+    [displayValue]
+  );
 
   const parseExpirationToDate = useCallback(stringValue => {
     if (!stringValue || typeof stringValue !== 'string') {
       return null;
     }
 
-    const cleanValue = stringValue.replace(/_/g, '');
+    const cleanValue = stringValue.replace(/\s/g, '');
     const parts = cleanValue.split('/');
 
     if (parts.length !== 2 || parts[0].length !== 2 || parts[1].length !== 2) {
@@ -172,11 +179,14 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled, securi
 
   const { InputMask, Calendar } = primeReactComponents;
 
+  const inputClassName = `${S.paymentCardExpirationDateInput}${isInvalid ? ` ${S.paymentCardExpirationDateInputError}` : ''}`;
+
   if (!InputMask || !Calendar || isHighlySecretWithoutSif) {
     return (
       <div className={S.paymentCardExpirationDate}>
         <input
-          className={S.paymentCardExpirationDateInput}
+          ref={ref}
+          className={inputClassName}
           value={displayValue}
           onChange={e => onChange(e.target.value)}
           placeholder={isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
@@ -200,12 +210,19 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled, securi
   return (
     <div className={S.paymentCardExpirationDate}>
       <InputMask
-        className={S.paymentCardExpirationDateInput}
+        ref={ref}
+        className={inputClassName}
         value={displayValue}
         onChange={handleInputChange}
         onMouseDown={handleInputMouseDown}
         onFocus={handleInputFocus}
+        onClick={handleInputClick}
+        onDoubleClick={handleInputDoubleClick}
+        onKeyDown={handleInputKeyDown}
+        onKeyUp={handleInputKeyUp}
+        onSelect={handleInputSelect}
         mask='99/99'
+        slotChar=' '
         placeholder={browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
         id={inputId}
         disabled={disabled}
@@ -236,6 +253,6 @@ function PaymentCardExpirationDate ({ value, onChange, inputId, disabled, securi
       />
     </div>
   );
-}
+});
 
 export default memo(PaymentCardExpirationDate);

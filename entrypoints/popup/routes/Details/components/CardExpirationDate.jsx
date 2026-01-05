@@ -7,10 +7,10 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { copyValue, isText, paymentCardExpirationDateValidation } from '@/partials/functions';
-import usePopupStateStore from '../../../store/popupState';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import usePopupState from '../../../store/popupState/usePopupState';
+import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
@@ -26,14 +26,30 @@ function CardExpirationDate (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setBatchData, setItem } = usePopupState();
 
   const previousExpirationDateRef = useRef(null);
+  const inputRef = useRef(null);
   const [localDecryptedExpirationDate, setLocalDecryptedExpirationDate] = useState(null);
   const [localEditedExpirationDate, setLocalEditedExpirationDate] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
+
+  const itemInstance = useMemo(() => {
+    if (!data.item) {
+      return null;
+    }
+
+    if (data.item instanceof PaymentCard) {
+      return data.item;
+    }
+
+    try {
+      return new PaymentCard(data.item);
+    } catch (e) {
+      CatchError(e);
+      return null;
+    }
+  }, [data.item]);
 
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
 
@@ -42,14 +58,14 @@ function CardExpirationDate (props) {
       return localDecryptedExpirationDate;
     }
 
-    if (!data.item?.expirationDateExists) {
+    if (!itemInstance?.expirationDateExists) {
       return null;
     }
 
     setIsDecrypting(true);
 
     try {
-      const decryptedData = await data.item.decryptExpirationDate();
+      const decryptedData = await itemInstance.decryptExpirationDate();
       setLocalDecryptedExpirationDate(decryptedData);
       setData('sifDecryptError', false);
       return decryptedData;
@@ -60,7 +76,7 @@ function CardExpirationDate (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedExpirationDate, isDecrypting, sifDecryptError, data.item, setData]);
+  }, [localDecryptedExpirationDate, isDecrypting, sifDecryptError, itemInstance, setData]);
 
   const getExpirationDateValue = () => {
     if (sifDecryptError || isHighlySecretWithoutSif) {
@@ -90,12 +106,18 @@ function CardExpirationDate (props) {
   useEffect(() => {
     const needsDecryption = localDecryptedExpirationDate === null &&
                            !isDecrypting &&
-                           data.item?.expirationDateExists;
+                           itemInstance?.expirationDateExists;
 
     if (needsDecryption) {
       decryptExpirationDateOnDemand();
     }
-  }, [localDecryptedExpirationDate, isDecrypting, data.item?.expirationDateExists, decryptExpirationDateOnDemand]);
+  }, [localDecryptedExpirationDate, isDecrypting, itemInstance?.expirationDateExists, decryptExpirationDateOnDemand]);
+
+  useEffect(() => {
+    if (data?.expirationDateEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [data?.expirationDateEditable]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -144,13 +166,13 @@ function CardExpirationDate (props) {
         expirationDateToCopy = localEditedExpirationDate;
       } else if (isText(localDecryptedExpirationDate)) {
         expirationDateToCopy = localDecryptedExpirationDate;
-      } else if (data.item.expirationDateExists) {
+      } else if (itemInstance?.expirationDateExists) {
         expirationDateToCopy = await decryptExpirationDateOnDemand();
       } else {
         expirationDateToCopy = '';
       }
 
-      await copyValue(expirationDateToCopy, data.item.deviceId, data.item.vaultId, data.item.id, 'expirationDate');
+      await copyValue(expirationDateToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'expirationDate');
       showToast(browser.i18n.getMessage('notification_expiration_date_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_expiration_date_copy_failed'), 'error');
@@ -161,11 +183,12 @@ function CardExpirationDate (props) {
   const handleExpirationDateChange = async formattedValue => {
     setLocalEditedExpirationDate(formattedValue);
     form.change('editedExpirationDate', formattedValue);
+    setData('editedExpirationDate', formattedValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_expirationDate: formattedValue }]);
-    setData('item', localItem);
+    setItem(localItem);
   };
 
   return (
@@ -185,6 +208,7 @@ function CardExpirationDate (props) {
           </div>
           <div className={pI.passInputBottom}>
             <PaymentCardExpirationDate
+              ref={inputRef}
               value={getExpirationDateValue()}
               inputId='editedExpirationDate'
               onChange={handleExpirationDateChange}
@@ -194,7 +218,7 @@ function CardExpirationDate (props) {
             />
 
             <div className={pI.passInputBottomButtons}>
-              {((originalItem?.securityType === SECURITY_TIER.SECRET || data.item.expirationDateExists) && !sifDecryptError) && (
+              {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.expirationDateExists) && !sifDecryptError) && (
                 <button
                   type='button'
                   className={`${bS.btn} ${pI.iconButton}`}

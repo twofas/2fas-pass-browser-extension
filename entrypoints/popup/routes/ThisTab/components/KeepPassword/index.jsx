@@ -26,7 +26,7 @@ function KeepPassword () {
   }, [autofillFailed]);
 
   useEffect(() => {
-    if (location?.state?.action === 'autofillT2Failed') {
+    if (location?.state?.action === 'autofillT2Failed' || location?.state?.action === 'autofillCardT2Failed') {
       setAutofillFailed(true);
     } else {
       setAutofillFailed(false);

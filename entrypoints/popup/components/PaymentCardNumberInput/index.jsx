@@ -5,8 +5,9 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardNumberInput.module.scss';
-import { memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
+import { forwardRef, memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
 import getCardNumberMask from './getCardNumberMask';
+import isCardNumberInvalid from './validateCardNumber';
 
 /**
 * PaymentCardNumberInput component with dynamic mask based on card type.
@@ -19,20 +20,26 @@ import getCardNumberMask from './getCardNumberMask';
 * @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
 * @param {string} props.placeholder - Optional placeholder text override.
 * @param {Object} props.inputProps - Additional props to spread on InputMask.
+* @param {Object} ref - Forwarded ref for the input element.
 * @return {JSX.Element} The rendered component.
 */
-function PaymentCardNumberInput ({ value, onChange, id, securityType, sifExists, placeholder, ...inputProps }) {
+const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, sifExists, placeholder, ...inputProps }, ref) => {
   const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
   const loadedRef = useRef(false);
-  const { handleMouseDown, handleFocus } = useInputMaskFocus();
+  const { handleMouseDown, handleFocus, handleClick, handleDoubleClick, handleKeyDown, handleKeyUp, handleSelect } = useInputMaskFocus();
 
   const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
   const displayValue = isHighlySecretWithoutSif ? '' : value;
 
   const mask = useMemo(
     () => getCardNumberMask(displayValue),
+    [displayValue]
+  );
+
+  const isInvalid = useMemo(
+    () => isCardNumberInvalid(displayValue),
     [displayValue]
   );
 
@@ -76,12 +83,15 @@ function PaymentCardNumberInput ({ value, onChange, id, securityType, sifExists,
 
   const effectivePlaceholder = placeholder ?? (isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_number'));
 
+  const inputClassName = `${S.paymentCardNumberInput}${isInvalid ? ` ${S.paymentCardNumberInputError}` : ''}`;
+
   if (!InputMask || isHighlySecretWithoutSif) {
     return (
       <input
         {...inputProps}
+        ref={ref}
         placeholder={effectivePlaceholder}
-        className={S.paymentCardNumberInput}
+        className={inputClassName}
         type='text'
         value={displayValue}
         id={id}
@@ -94,18 +104,25 @@ function PaymentCardNumberInput ({ value, onChange, id, securityType, sifExists,
   return (
     <InputMask
       {...inputProps}
+      ref={ref}
       placeholder={effectivePlaceholder}
-      className={S.paymentCardNumberInput}
+      className={inputClassName}
       type='text'
       mask={mask}
+      slotChar=' '
       autoClear={false}
       value={displayValue}
       id={id}
       onChange={handleChange}
       onMouseDown={handleMouseDown}
       onFocus={handleFocus}
+      onClick={handleClick}
+      onDoubleClick={handleDoubleClick}
+      onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
+      onSelect={handleSelect}
     />
   );
-}
+});
 
 export default memo(PaymentCardNumberInput);

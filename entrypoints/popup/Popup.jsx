@@ -5,21 +5,19 @@
 // See LICENSE file for full terms
 
 import S from './Popup.module.scss';
-import { HashRouter, Route, Routes, Navigate, useNavigate, useLocation } from 'react-router';
+import { HashRouter, Route, Routes, Navigate } from 'react-router';
 import { useEffect, useState, useMemo, memo, useRef, lazy, useCallback } from 'react';
 import { AuthProvider, useAuthState } from '@/hooks/useAuth';
 import popupOnMessage from './events/popupOnMessage';
 import lockShortcuts from './utils/lockShortcuts';
 import lockRMB from './utils/lockRMB';
-import setTheme from './utils/setTheme';
 import isPopupInSeparateWindowExists from './utils/isPopupInSeparateWindowExists';
 import { safariBlankLinks, storageAutoClearActions } from '@/partials/functions';
 import ToastsContent from './components/ToastsContent';
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
-import usePopupStateStore from './store/popupState';
 import usePopupHref from './hooks/usePopupHref';
-import { addToNavigationHistory } from './utils/navigationHistory';
+import useNavigationEvents from './hooks/useNavigationEvents';
 import { ScrollableRefProvider } from './context/ScrollableRefProvider';
 import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
@@ -79,62 +77,13 @@ const RouteGuard = memo(({ configured, blocked, isProtectedRoute, children }) =>
 
 /**
 * AuthRoutes component that provides configured state to all routes.
-* Handles initial navigation based on stored href before rendering routes.
+* Initial route is set in main.jsx before React renders via pre-hydration.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered routes.
 */
 const AuthRoutes = memo(({ blocked, configured }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const storedHref = usePopupStateStore(state => state.href);
-  const [initialCheckDone, setInitialCheckDone] = useState(false);
-  const [hydrationComplete, setHydrationComplete] = useState(false);
-  const hasNavigated = useRef(false);
-
-  useEffect(() => {
-    addToNavigationHistory(location.pathname);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    const unsubHydrate = usePopupStateStore.persist.onFinishHydration(() => {
-      setHydrationComplete(true);
-    });
-
-    if (usePopupStateStore.persist.hasHydrated()) {
-      setHydrationComplete(true);
-    }
-
-    return unsubHydrate;
-  }, []);
-
-  usePopupHref(hydrationComplete);
-
-  useEffect(() => {
-    if (!hydrationComplete) {
-      return;
-    }
-
-    if (hasNavigated.current || !configured) {
-      setInitialCheckDone(true);
-      return;
-    }
-
-    if (initialCheckDone) {
-      hasNavigated.current = true;
-      return;
-    }
-
-    const excludedRoutes = ['/connect', '/', '/fetch', '/blocked'];
-
-    if (storedHref && location.pathname === '/' && !excludedRoutes.includes(storedHref)) {
-      if (!storedHref.startsWith('/fetch/')) {
-        hasNavigated.current = true;
-        navigate(storedHref, { replace: true });
-      }
-    }
-
-    setInitialCheckDone(true);
-  }, [navigate, storedHref, location.pathname, configured, hydrationComplete, initialCheckDone]);
+  usePopupHref(true);
+  useNavigationEvents();
 
   const routeElements = useMemo(() => {
     return routeConfig.map(route => {
@@ -161,10 +110,6 @@ const AuthRoutes = memo(({ blocked, configured }) => {
       );
     });
   }, [configured, blocked]);
-
-  if (!initialCheckDone) {
-    return null;
-  }
 
   return (
     <Routes>
@@ -247,10 +192,9 @@ const initializePopupOnce = async () => {
 
   initializationPromise = (async () => {
     try {
-      const [tab, otherPopupExists,] = await Promise.all([
+      const [tab, otherPopupExists] = await Promise.all([
         browser?.tabs?.getCurrent().catch(() => null),
-        isPopupInSeparateWindowExists(),
-        setTheme()
+        isPopupInSeparateWindowExists()
       ]);
 
       const extUrl = browser.runtime.getURL('/popup.html');
@@ -368,6 +312,11 @@ const PopupMain = memo(() => {
     if (history?.scrollRestoration && history.scrollRestoration !== 'manual') {
       history.scrollRestoration = 'manual';
     }
+
+    browser.runtime.sendMessage({
+      action: REQUEST_ACTIONS.NEW_POPUP,
+      target: REQUEST_TARGETS.POPUP
+    }).catch(() => {});
 
     if (!initializationResult && !stateUpdated.current) {
       initializePopupOnce().then(result => {

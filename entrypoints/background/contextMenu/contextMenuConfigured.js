@@ -7,14 +7,24 @@
 import getItems from '@/partials/sessionStorage/getItems';
 
 let isContextMenuConfiguring = false;
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 500;
+
+/**
+* Helper function to delay execution.
+* @param {number} ms - Milliseconds to delay.
+* @return {Promise<void>} A promise that resolves after the delay.
+*/
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
 * Function to configure the context menu for the 2FAS Pass Browser Extension.
 * @async
 * @param {Array} items - An array of items to configure the context menu for.
+* @param {number} retryAttempt - Current retry attempt number.
 * @return {void}
 */
-const contextMenuConfigured = async (items = null) => {
+const contextMenuConfigured = async (items = null, retryAttempt = 0) => {
   if (isContextMenuConfiguring) {
     return;
   }
@@ -22,7 +32,7 @@ const contextMenuConfigured = async (items = null) => {
   isContextMenuConfiguring = true;
 
   try {
-    const contexts = ['page', 'editable'];
+    const contexts = ['page', 'editable', 'frame'];
 
     if (import.meta.env.BROWSER !== 'safari')  {
       contexts.push('page_action');
@@ -172,9 +182,16 @@ const contextMenuConfigured = async (items = null) => {
       }
     }
   } catch (e) {
+    isContextMenuConfiguring = false;
+
+    if (retryAttempt < MAX_RETRY_ATTEMPTS) {
+      await delay(RETRY_DELAY_MS * (retryAttempt + 1));
+      return contextMenuConfigured(items, retryAttempt + 1);
+    }
+
     throw new TwoFasError(TwoFasError.internalErrors.contextMenuConfiguredError, {
       event: e,
-      additional: { func: 'contextMenuConfigured' }
+      additional: { func: 'contextMenuConfigured', retryAttempt }
     });
   } finally {
     isContextMenuConfiguring = false;

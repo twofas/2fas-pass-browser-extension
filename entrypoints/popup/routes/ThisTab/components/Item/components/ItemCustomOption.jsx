@@ -4,44 +4,33 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { Link } from 'react-router';
-import { lazy } from 'react';
 import handleUriCopyClick from '../../../functions/serviceList/handleUriCopyClick';
 import handleUriClick from '../../../functions/serviceList/handleUriClick';
 import handleForgetPassword from '../../../functions/serviceList/handleForgetPassword';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import DetailsIcon from '@/assets/popup-window/details.svg?react';
+import MoreUrlIcon from '@/assets/popup-window/more-url.svg?react';
+import TrashIcon from '@/assets/popup-window/trash.svg?react';
 
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
-const DetailsIcon = lazy(() => import('@/assets/popup-window/details.svg?react'));
-const MoreUrlIcon = lazy(() => import('@/assets/popup-window/more-url.svg?react'));
-const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
-
-/** 
-* Function to render a custom option in the dropdown.
+/**
+* Function to render a custom option in the item dropdown.
 * @param {Object} option - The option data.
 * @return {JSX.Element} The rendered custom option.
 */
-const CustomOption = option => {
-  const data = usePopupStateStore(state => state.data);
-  const scrollPosition = usePopupStateStore(state => state.scrollPosition);
-
+const ItemCustomOption = option => {
   switch (option?.data?.type) {
     case 'details': {
       return (
         <div className='react-select-dropdown__option details'>
-          <Link
+          <ClearLink
             to={`/details/${option.data.deviceId}/${option.data.vaultId}/${option.data.id}`}
-            state={{
-              from: 'thisTab',
-              data: { ...data },
-              scrollPosition
-            }}
             className='react-select-dropdown__option--uri details'
             prefetch='intent'
           >
             <DetailsIcon />
             <span>{browser.i18n.getMessage('this_tab_more_details')}</span>
-          </Link>
+          </ClearLink>
         </div>
       );
     }
@@ -99,4 +88,4 @@ const CustomOption = option => {
   }
 };
 
-export default CustomOption;
+export default ItemCustomOption;

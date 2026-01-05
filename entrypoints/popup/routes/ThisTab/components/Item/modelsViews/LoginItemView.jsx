@@ -5,20 +5,24 @@
 // See LICENSE file for full terms
 
 import S from '../styles/Item.module.scss';
-import { memo, useMemo, useState, lazy, useRef, useCallback } from 'react';
+import { memo, useMemo, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import handleAutofill from '../../../functions/serviceList/handleAutofill';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import Skeleton from '../../Skeleton';
+import PasswordBtn from '../../../functions/serviceList/additionalButtons/PasswordBtn';
+import MoreBtn from '../../../functions/serviceList/additionalButtons/MoreBtn';
+import UsernameBtn from '../../../functions/serviceList/additionalButtons/UsernameBtn';
+import ItemCustomOption from '../components/ItemCustomOption';
 
-const PasswordBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/PasswordBtn'));
-const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
-const UsernameBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/UsernameBtn'));
-const CustomOption = lazy(() => import('../components/CustomOption'));
+const selectComponents = { Option: ItemCustomOption };
 
-const selectComponents = { Option: CustomOption };
-
+/**
+* Login item view component.
+* @param {Object} props - The component props.
+* @return {JSX.Element} The rendered component.
+*/
 function LoginItemView (props) {
   const [faviconError, setFaviconError] = useState(false);
   const moreBtnRef = useRef(null);
@@ -72,4 +76,17 @@ function LoginItemView (props) {
   );
 }
 
-export default memo(LoginItemView);
+/**
+* Custom comparison function to prevent unnecessary re-renders.
+* @param {Object} prevProps - Previous props.
+* @param {Object} nextProps - Next props.
+* @return {boolean} True if props are equal (should not re-render).
+*/
+function arePropsEqual (prevProps, nextProps) {
+  return prevProps.data?.id === nextProps.data?.id &&
+         prevProps.data?.sifExists === nextProps.data?.sifExists &&
+         prevProps.more === nextProps.more &&
+         prevProps.loading === nextProps.loading;
+}
+
+export default memo(LoginItemView, arePropsEqual);

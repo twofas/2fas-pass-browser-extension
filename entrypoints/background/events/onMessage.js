@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { isText, checkStorageAutoClearActions } from '@/partials/functions';
-import { openBrowserPage, openPopupWindowInNewWindow, openInstallPage, getLocalKey, sendAutoClearAction } from '../utils';
+import { openBrowserPage, openPopupWindowInNewWindow, openInstallPage, getLocalKey, sendAutoClearAction, handleAutofillCardWithPermission } from '../utils';
 import runMigrations from '../migrations';
 import onTabFocused from '../tabs/onTabFocused';
 
@@ -97,7 +97,19 @@ const onMessage = (request, sender, sendResponse, migrations) => {
 
         break;
       }
-  
+
+      case REQUEST_ACTIONS.AUTOFILL_CARD_WITH_PERMISSION: {
+        if (request?.tabId && request?.storageKey && request?.domains) {
+          handleAutofillCardWithPermission(request.tabId, request.storageKey, request.domains)
+            .then(() => { sendResponse({ status: 'ok' }); })
+            .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+        } else {
+          sendResponse({ status: 'error', message: 'Missing required parameters' });
+        }
+
+        break;
+      }
+
       default: {
         sendResponse({ status: 'error', message: 'Wrong action' });
         break;

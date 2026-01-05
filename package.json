@@ -53,7 +53,7 @@
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "@splidejs/react-splide": "^0.7.12",
-    "@tanstack/react-virtual": "^3.13.13",
+    "@tanstack/react-virtual": "^3.13.16",
     "final-form": "^5.0.0",
     "motion": "^12.23.26",
     "parse-domain": "^8.2.2",
@@ -61,9 +61,9 @@
     "qrcode": "^1.5.4",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-error-boundary": "^6.0.0",
+    "react-error-boundary": "^6.0.2",
     "react-final-form": "^7.0.0",
-    "react-router": "^7.10.1",
+    "react-router": "^7.11.0",
     "react-select": "^5.10.2",
     "react-toastify": "^11.0.5",
     "universal-base64url": "^1.1.0",
@@ -75,11 +75,11 @@
   "devDependencies": {
     "@wxt-dev/module-react": "^1.1.5",
     "dotenv": "^17.2.3",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
-    "sass-embedded": "1.96.0",
+    "sass-embedded": "1.97.1",
     "terser": "^5.44.1",
-    "vitest": "^4.0.15",
-    "wxt": "^0.20.11"
+    "vitest": "^4.0.16",
+    "wxt": "^0.20.13"
   }
 }
