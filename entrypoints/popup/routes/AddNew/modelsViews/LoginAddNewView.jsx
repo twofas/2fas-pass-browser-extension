@@ -355,7 +355,7 @@ function LoginAddNewView() {
                       type='button'
                       className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
                       onClick={handleGeneratePassword}
-                      title={browser.i18n.getMessage('add_new_generate_password')}
+                      title={browser.i18n.getMessage('details_generate_password')}
                     >
                       <RefreshIcon />
                     </button>
@@ -363,7 +363,7 @@ function LoginAddNewView() {
                       type="button"
                       onClick={handlePasswordVisibleClick}
                       className={`${pI.iconButton} ${pI.visibleButton}`}
-                      title={browser.i18n.getMessage('add_new_toggle_password_visibility')}
+                      title={browser.i18n.getMessage('details_toggle_password_visibility')}
                       tabIndex={-1}
                     >
                       <VisibleIcon />
