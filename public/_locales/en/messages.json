@@ -876,7 +876,7 @@
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
   "details_secure_note_text_max_length": {
-    "message": "Secure note text must be less than 16384 characters.",
+    "message": "Secure Note text must be less than 16384 characters.",
     "description": "Validation message indicating the maximum length for the secure note text field"
   },
   "details_additional_info_max_length": {
@@ -936,7 +936,7 @@
     "description": "Error message displayed when there is a connection issue"
   },
   "fetch_token_unregistered_header": {
-    "message": "FCM token unregistered. Lock the Browser Extension and \nscan the QR code again.",
+    "message": "FCM token unregistered.",
     "description": "Error message displayed when the FCM token is unregistered"
   },
   "fetch_connection_timeout_header": {
@@ -1212,7 +1212,7 @@
     "description": "Option to clear data after 60 minutes of inactivity"
   },
   "settings_idle_lock_header": {
-    "message": "Automatically lock the Browser Extension when idle",
+    "message": "Automatic lock when idle",
     "description": "Header for the idle lock settings"
   },
   "settings_idle_lock_description": {
@@ -1860,7 +1860,7 @@
     "description": "Error message displayed when the requested secure note is not found"
   },
   "error_secure_note_name_copy_failed": {
-    "message": "Failed to copy Name to clipboard.",
+    "message": "Failed to copy name to clipboard.",
     "description": "Error message displayed when copying the secure note name to the clipboard fails"
   }
 }
