@@ -326,6 +326,12 @@
                 }
               }
             }
+
+            &:last-of-type {
+              .twofas-pass-notification-matching-logins-item-btn {
+                border-bottom: 0 !important;
+              }
+            }
           }
         }
       }
@@ -382,6 +388,12 @@
                     }
                   }
                 }
+              }
+            }
+
+            &:last-of-type {
+              .twofas-pass-notification-matching-logins-item-btn {
+                border-bottom: 0 !important;
               }
             }
           }
@@ -442,6 +454,12 @@
                   }
                 }
               }
+
+              &:last-of-type {
+                .twofas-pass-notification-matching-logins-item-btn {
+                  border-bottom: 0 !important;
+                }
+              }
             }
           }
         }
@@ -498,6 +516,12 @@
                       }
                     }
                   }
+                }
+              }
+
+              &:last-of-type {
+                .twofas-pass-notification-matching-logins-item-btn {
+                  border-bottom: 0 !important;
                 }
               }
             }

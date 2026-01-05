@@ -336,15 +336,17 @@ const matchingLogins = (request, sendResponse, container) => {
 
   timers.maxHeight1 = setTimeout(() => {
     if (n && n.items) {
-      n.items.style.setProperty('max-height', `${(request.data.length * 57) - 13}px`, 'important');
+      const itemsHeight = Array.from(n.items.children).reduce((total, child) => total + child.offsetHeight, 0);
+      n.items.style.setProperty('max-height', `${itemsHeight}px`, 'important');
     }
 
     timers.maxHeight1 = null;
   }, 201);
 
   timers.maxHeight2 = setTimeout(() => {
-    if (n && n.item) {
-      n.item.style.maxHeight = `${n.item.offsetHeight + (request.data.length * 57) - 13}px`;
+    if (n && n.item && n.items) {
+      const itemsHeight = Array.from(n.items.children).reduce((total, child) => total + child.offsetHeight, 0);
+      n.item.style.maxHeight = `${n.item.offsetHeight + itemsHeight}px`;
     }
 
     timers.maxHeight2 = null;
