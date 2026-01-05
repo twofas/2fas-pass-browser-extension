@@ -14,7 +14,7 @@ import notification from '../functions/notification';
 import matchingLogins from '../functions/matchingLogins';
 import savePrompt from '../functions/savePrompt';
 
-/** 
+/**
 * Function to handle messages on the content script.
 * @param {Object} request - The request object.
 * @param {Object} sender - The sender object.
@@ -43,7 +43,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
         return false;
       }
     }
-  
+
     switch (request.action) {
       case REQUEST_ACTIONS.GET_DOMAIN_INFO: {
         sendResponse(getDomainInfo());
@@ -54,11 +54,15 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
         sendResponse(checkAutofillInputs());
         break;
       }
-  
+
       case REQUEST_ACTIONS.AUTOFILL: {
         autofill(request)
-          .then(autofillStatus => { sendResponse(autofillStatus); })
-          .catch(error => { sendResponse({ status: 'error', message: 'Autofill failed', error }); });
+          .then(autofillStatus => {
+            sendResponse(autofillStatus);
+          })
+          .catch(error => {
+            sendResponse({ status: 'error', message: 'Autofill failed', error });
+          });
 
         break;
       }
@@ -89,7 +93,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
         sendResponse(notificationStatus);
         break;
       }
-  
+
       case REQUEST_ACTIONS.MATCHING_LOGINS: {
         matchingLogins(request, sendResponse, container);
         break;
@@ -99,7 +103,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
         savePrompt(request, sendResponse, container);
         break;
       }
-  
+
       case REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK: {
         sendResponse({ status: 'ok' });
         break;

@@ -52,10 +52,21 @@ const inputSetValue = (el, value, options = {}) => {
 
     if (el.value !== value) {
       el.focus();
-      el.value = '';
-      el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
-      el.value = value;
-      el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+
+      if (nativeInputValueSetter) {
+        nativeInputValueSetter.call(el, '');
+        el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+        nativeInputValueSetter.call(el, value);
+        el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+      } else {
+        el.value = '';
+        el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+        el.value = value;
+        el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+      }
     }
   }, AUTOFILL_VALUE_DELAY);
 
