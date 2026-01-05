@@ -22,8 +22,10 @@ const setTheme = async () => {
     themeValueStorage = 'unset';
   }
 
-  document.documentElement.classList.add(`theme-${themeValueStorage}`);
-  document.body.classList.add(`theme-${themeValueStorage}`);
+  const browserName = import.meta.env.BROWSER || 'unknown';
+
+  document.documentElement.classList.add(`theme-${themeValueStorage}`, browserName);
+  document.body.classList.add(`theme-${themeValueStorage}`, browserName);
 
   setTimeout(() => {
     document.body.classList.add('loaded');
