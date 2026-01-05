@@ -17,6 +17,7 @@ import ToastsContent from './components/ToastsContent';
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
 import usePopupHref from './hooks/usePopupHref';
+import useNavigationEvents from './hooks/useNavigationEvents';
 import { ScrollableRefProvider } from './context/ScrollableRefProvider';
 import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
@@ -82,6 +83,7 @@ const RouteGuard = memo(({ configured, blocked, isProtectedRoute, children }) =>
 */
 const AuthRoutes = memo(({ blocked, configured }) => {
   usePopupHref(true);
+  useNavigationEvents();
 
   const routeElements = useMemo(() => {
     return routeConfig.map(route => {
