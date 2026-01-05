@@ -83,14 +83,11 @@ const getUsernameInputsFromRoot = (rootNode, userNameSelector) => {
 */
 const getUsernameInputs = (passwordForms = null) => {
   const userNameSelector = userNameSelectors().map(selector => selector + ignoredTypes()).join(', ');
-
   const regularInputs = getUsernameInputsFromRoot(document, userNameSelector);
-
   const shadowRoots = getShadowRoots();
   const shadowInputs = shadowRoots.flatMap(
     root => getUsernameInputsFromRoot(root, userNameSelector)
   );
-
   const userNameInputs = [...regularInputs, ...shadowInputs];
 
   if (passwordForms && Array.isArray(passwordForms) && userNameInputs.length === 0) {
@@ -109,10 +106,11 @@ const getUsernameInputs = (passwordForms = null) => {
     });
   }
 
-  return userNameInputs
-    .filter(input => isVisible(input))
-    .filter(uniqueElementOnly)
-    .filter(filterDeniedKeywords);
+  const visibleInputs = userNameInputs.filter(input => isVisible(input));
+  const uniqueInputs = visibleInputs.filter(uniqueElementOnly);
+  const filteredInputs = uniqueInputs.filter(filterDeniedKeywords);
+
+  return filteredInputs;
 };
 
 export default getUsernameInputs;

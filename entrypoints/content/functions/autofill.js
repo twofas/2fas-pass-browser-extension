@@ -80,6 +80,7 @@ const decryptPassword = async encryptedPassword => {
 * @param {boolean} [request.noPassword] - Flag indicating no password is available.
 * @param {boolean} [request.cryptoAvailable] - Flag indicating password is encrypted.
 * @param {boolean} [request.iframePermissionGranted] - Flag indicating cross-domain permission was granted.
+* @param {boolean} [request.hasPasswordInAnyFrame] - Flag indicating if any frame has password inputs.
 * @return {Promise<{status: string, message?: string}>} The status of the autofill operation.
 */
 const autofill = async request => {
@@ -93,7 +94,7 @@ const autofill = async request => {
     .filter(Boolean);
   const usernameInputs = getUsernameInputs(passwordForms);
 
-  setUsernameSkips(passwordInputs, usernameInputs);
+  setUsernameSkips(passwordInputs, usernameInputs, request.hasPasswordInAnyFrame);
 
   const hasUsernameData = request.username?.length > 0;
   const hasPasswordData = request.password?.length > 0;
@@ -106,7 +107,9 @@ const autofill = async request => {
     return { status: 'error', message: 'No input fields found' };
   }
 
-  if (!request.iframePermissionGranted) {
+  const isTopFrame = window.self === window.top;
+
+  if (!isTopFrame && !request.iframePermissionGranted) {
     return { status: 'cancelled', message: 'Cross-domain autofill not permitted' };
   }
 

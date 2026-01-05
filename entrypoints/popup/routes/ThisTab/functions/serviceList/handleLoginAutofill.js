@@ -168,10 +168,6 @@ const handleLoginAutofill = async (item, navigate) => {
         .replace('DOMAINS', uniqueDomains.join(', '));
 
       iframePermissionGranted = window.confirm(message);
-
-      if (!iframePermissionGranted) {
-        return;
-      }
     }
   } catch (e) {
     await CatchError(e);

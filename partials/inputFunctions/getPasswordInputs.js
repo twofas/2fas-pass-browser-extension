@@ -15,17 +15,16 @@ import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 */
 const getPasswordInputs = () => {
   const passwordSelector = passwordSelectors().map(selector => selector + ignoredTypes()).join(', ');
-
   const regularInputs = Array.from(document.querySelectorAll(passwordSelector));
-
   const shadowRoots = getShadowRoots();
   const shadowInputs = shadowRoots.flatMap(
     root => Array.from(root.querySelectorAll(passwordSelector))
   );
+  const allInputs = [...regularInputs, ...shadowInputs];
+  const visibleInputs = allInputs.filter(input => isVisible(input));
+  const uniqueInputs = visibleInputs.filter(uniqueElementOnly);
 
-  return [...regularInputs, ...shadowInputs]
-    .filter(input => isVisible(input))
-    .filter(uniqueElementOnly);
+  return uniqueInputs;
 };
 
 export default getPasswordInputs;

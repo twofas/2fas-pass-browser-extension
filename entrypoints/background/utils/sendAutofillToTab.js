@@ -92,6 +92,18 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   }
 
   let iframePermissionGranted = true;
+  let hasPasswordInAnyFrame = false;
+
+  try {
+    const inputCheckResults = await sendMessageToAllFrames(tabId, {
+      action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
+      target: REQUEST_TARGETS.CONTENT
+    });
+
+    hasPasswordInAnyFrame = inputCheckResults?.some(r => r.canAutofillPassword) || false;
+  } catch (e) {
+    await CatchError(e);
+  }
 
   try {
     const permissionResults = await sendMessageToAllFrames(tabId, {
@@ -117,7 +129,6 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
       if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
         iframePermissionGranted = false;
-        return;
       }
     }
   } catch (e) {
@@ -135,7 +146,8 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
         noPassword,
         noUsername,
         cryptoAvailable: cryptoAvailableRes?.cryptoAvailable,
-        iframePermissionGranted
+        iframePermissionGranted,
+        hasPasswordInAnyFrame
       }
     );
 
