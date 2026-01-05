@@ -6,8 +6,7 @@
 
 import S from './AddNew.module.scss';
 import { useRef, useMemo } from 'react';
-import { useParams, useLocation } from 'react-router';
-import usePopupState from '../../store/popupState/usePopupState';
+import { useParams } from 'react-router';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import { itemsUiData } from '../../constants';
@@ -25,29 +24,22 @@ import PaymentCardAddNewView from './modelsViews/PaymentCardAddNewView';
 */
 function AddNew(props) {
   const params = useParams();
-  const location = useLocation();
   const scrollableRef = useRef(null);
-  const { data } = usePopupState();
 
   useScrollPosition(scrollableRef, true);
 
-  const generatedPassword = location?.state?.generatedPassword;
-
   const modelComponent = useMemo(() => {
-    const modelName = params.model;
-    const modelData = { generatedPassword };
-
-    switch (modelName.toLowerCase()) {
+    switch (params.model.toLowerCase()) {
       case Login.contentType.toLowerCase():
-        return <LoginView {...props} {...modelData} />;
+        return <LoginView />;
       case SecureNote.contentType.toLowerCase():
-        return <SecureNoteView {...props} {...modelData} />;
+        return <SecureNoteView />;
       case PaymentCard.contentType.toLowerCase():
-        return <PaymentCardAddNewView {...props} {...modelData} />;
+        return <PaymentCardAddNewView />;
       default:
         return null;
     }
-  }, [params.model, data?.item, props, generatedPassword]);
+  }, [params.model]);
 
   if (!modelComponent) {
     return null;
