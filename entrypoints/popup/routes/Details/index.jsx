@@ -42,7 +42,7 @@ function Details(props) {
   const [originalItem, setOriginalItem] = useState(null);
   const scrollableRef = useRef(null);
 
-  const { data, setData, setBatchData, setScrollPosition, setItem } = usePopupState();
+  const { data, setData, setBatchData, clearData, setScrollPosition, setItem } = usePopupState();
 
   const fetchItemData = useCallback(async originalItem => {
     try {
@@ -138,22 +138,8 @@ function Details(props) {
         });
       }
 
-      if (location.state?.resetEditableFields) {
-        setBatchData({
-          nameEditable: false,
-          usernameEditable: false,
-          passwordEditable: false,
-          notesEditable: false,
-          domainsEditable: {},
-          sifEditable: false,
-          revealSecureNote: false,
-          cardHolderEditable: false,
-          cardNumberEditable: false,
-          cardNumberVisible: false,
-          expirationDateEditable: false,
-          securityCodeEditable: false,
-          securityCodeVisible: false
-        });
+      if (location.state?.resetOldData) {
+        clearData();
         setScrollPosition(0);
       }
 
