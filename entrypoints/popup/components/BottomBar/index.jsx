@@ -6,7 +6,7 @@
 
 import S from './BottomBar.module.scss';
 import { useState, useEffect, useCallback, useMemo, memo } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import { PULL_REQUEST_TYPES, CONNECT_VIEWS } from '@/constants';
 import { useAuthState } from '@/hooks/useAuth';
@@ -15,6 +15,7 @@ import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 import NewWindowIcon from '@/assets/popup-window/new-window.svg?react';
 import SettingsIcon from '@/assets/popup-window/settings.svg?react';
 import FullSyncIcon from '@/assets/popup-window/full-sync.svg?react';
+import ClearLink from '../ClearLink';
 
 /** 
 * Function to get the security icon.
@@ -190,14 +191,14 @@ function BottomBar () {
           >
             <NewWindowIcon />
           </button>
-          <Link
+          <ClearLink
             to='/settings'
             className={settingsLinkClass}
             title={settingsTitle}
             prefetch='intent'
           >
             <SettingsIcon />
-          </Link>
+          </ClearLink>
         </div>
 
         <div className={secIconClass}>
@@ -210,7 +211,7 @@ function BottomBar () {
         </p>
 
         <div className={`${S.bottombarFetch} ${fetchLinkClass}`}>
-          <Link
+          <ClearLink
             to='/fetch'
             state={{ action: PULL_REQUEST_TYPES.FULL_SYNC, from: 'bottomBar', data: {} }}
             title={browser.i18n.getMessage('sync_title')}
@@ -218,7 +219,7 @@ function BottomBar () {
           >
             <FullSyncIcon />
             <span>{browser.i18n.getMessage('sync')}</span>
-          </Link>
+          </ClearLink>
         </div>
       </footer>
     </>

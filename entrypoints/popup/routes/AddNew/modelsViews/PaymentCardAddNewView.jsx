@@ -7,16 +7,19 @@
 import S from '../AddNew.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { memo, useState } from 'react';
-import usePopupStateStore from '../../../store/popupState';
+import { memo, useState, useMemo, useCallback } from 'react';
+import usePopupState from '../../../store/popupState/usePopupState';
 import { Form, Field } from 'react-final-form';
 import { getCurrentDevice, paymentCardExpirationDateValidation } from '@/partials/functions';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import PaymentCard from '@/models/itemModels/PaymentCard';
 import { useNavigate, useLocation } from 'react-router';
 import { PULL_REQUEST_TYPES, PAYMENT_CARD_REGEX } from '@/constants';
 import PaymentCardNumberInput from '@/entrypoints/popup/components/PaymentCardNumberInput';
 import PaymentCardSecurityCodeInput from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput';
 import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
+import isCardNumberInvalid from '@/entrypoints/popup/components/PaymentCardNumberInput/validateCardNumber';
+import isExpirationDateInvalid from '@/entrypoints/popup/components/PaymentCardExpirationDate/validateExpirationDate';
+import isSecurityCodeInvalid from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/validateSecurityCode';
 
 /** 
 * PaymentCardAddNewView component for adding a new Payment Card.
@@ -25,12 +28,22 @@ import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCar
 function PaymentCardAddNewView () {
   const navigate = useNavigate();
   const location = useLocation();
+  const { data, setData, setBatchData } = usePopupState();
 
   const [inputError, setInputError] = useState(undefined);
+  const [securityCodeTooLong, setSecurityCodeTooLong] = useState(false);
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const handleSecurityCodeTooLongChange = useCallback(isTooLong => {
+    setSecurityCodeTooLong(isTooLong);
+  }, []);
+
+  const hasLiveValidationErrors = useMemo(() => {
+    const cardNumberError = isCardNumberInvalid(data?.cardNumber);
+    const expirationDateError = isExpirationDateInvalid(data?.expirationDate);
+    const securityCodeError = isSecurityCodeInvalid(data?.securityCode, data?.cardNumber);
+
+    return cardNumberError || expirationDateError || securityCodeError || securityCodeTooLong;
+  }, [data?.cardNumber, data?.expirationDate, data?.securityCode, securityCodeTooLong]);
 
   const validate = values => {
     const errors = {};
@@ -257,7 +270,11 @@ function PaymentCardAddNewView () {
                       input.onChange(e);
                       setData('securityCode', e.target.value);
                     }}
+                    onTooLongChange={handleSecurityCodeTooLongChange}
                   />
+                </div>
+                <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
+                  <p className={securityCodeTooLong ? '' : pI.empty}>{securityCodeTooLong ? browser.i18n.getMessage('add_new_security_code_too_long') : ''}</p>
                 </div>
               </div>
             )}
@@ -268,8 +285,9 @@ function PaymentCardAddNewView () {
             type='submit'
             className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
             disabled={
-              submitting || 
-              !data?.name || data?.name?.length === 0
+              submitting ||
+              !data?.name || data?.name?.length === 0 ||
+              hasLiveValidationErrors
               ? 'disabled' : ''
             }
           >

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, generateNonce } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission } from '@/partials/functions';
 import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
@@ -74,52 +74,20 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       });
     }
 
-    if (cryptoAvailableRes.status !== 'ok' || !cryptoAvailableRes.cryptoAvailable) {
+    const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
+
+    if (!cryptoAvailable) {
       encryptedValueB64 = decryptedPassword;
     } else {
-      let nonce, localKeyCrypto, value;
+      const passwordResult = await encryptValueForTransmission(decryptedPassword);
 
-      try {
-        nonce = await generateNonce();
-      } catch (e) {
-        throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabNonceError, {
-          event: e,
-          additional: { func: 'sendAutofillToTab - generateNonce' }
-        });
-      }
-
-      const localKey = await storage.getItem('local:lKey');
-
-      try {
-        localKeyCrypto = await crypto.subtle.importKey(
-          'raw',
-          Base64ToArrayBuffer(localKey),
-          { name: 'AES-GCM' },
-          false,
-          ['encrypt']
-        );
-      } catch (e) {
-        throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabImportKeyError, {
-          event: e,
-          additional: { func: 'sendAutofillToTab - importKey' }
-        });
-      }
-
-      try {
-        value = await crypto.subtle.encrypt(
-          { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-          localKeyCrypto,
-          StringToArrayBuffer(decryptedPassword)
-        );
-      } catch (e) {
+      if (passwordResult.status !== 'ok') {
         throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
-          event: e,
-          additional: { func: 'sendAutofillToTab - encrypt' }
+          additional: { func: 'sendAutofillToTab - encryptValueForTransmission' }
         });
       }
 
-      const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
-      encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
+      encryptedValueB64 = passwordResult.data;
     }
   }
 

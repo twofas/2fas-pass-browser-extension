@@ -7,13 +7,17 @@
 import S from '../../Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useNavigate } from 'react-router';
-import { useState, lazy } from 'react';
+import { useState, lazy, useMemo } from 'react';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
+import PaymentCard from '@/models/itemModels/PaymentCard';
 import { PULL_REQUEST_TYPES, PAYMENT_CARD_REGEX } from '@/constants';
 import getItem from '@/partials/sessionStorage/getItem';
+import isCardNumberInvalid from '@/entrypoints/popup/components/PaymentCardNumberInput/validateCardNumber';
+import isExpirationDateInvalid from '@/entrypoints/popup/components/PaymentCardExpirationDate/validateExpirationDate';
+import isSecurityCodeInvalid from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/validateSecurityCode';
+import isSecurityCodeTooLong from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/isSecurityCodeTooLong';
 
 const Name = lazy(() => import('../../components/Name'));
 const CardHolder = lazy(() => import('../../components/CardHolder'));
@@ -30,11 +34,20 @@ const DangerZone = lazy(() => import('../../components/DangerZone'));
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function PaymentCardDetailsView (props) {
-  const data = usePopupStateStore(state => state.data);
+function PaymentCardDetailsView(props) {
+  const { data } = usePopupState();
   const [inputError, setInputError] = useState(undefined);
 
   const navigate = useNavigate();
+
+  const hasLiveValidationErrors = useMemo(() => {
+    const cardNumberError = data.cardNumberEditable && isCardNumberInvalid(data.editedCardNumber);
+    const expirationDateError = data.expirationDateEditable && isExpirationDateInvalid(data.editedExpirationDate);
+    const securityCodeError = data.securityCodeEditable && isSecurityCodeInvalid(data.editedSecurityCode, data.editedCardNumber);
+    const securityCodeTooLongError = data.securityCodeEditable && isSecurityCodeTooLong(data.editedSecurityCode, data.editedCardNumber);
+
+    return cardNumberError || expirationDateError || securityCodeError || securityCodeTooLongError;
+  }, [data.cardNumberEditable, data.editedCardNumber, data.expirationDateEditable, data.editedExpirationDate, data.securityCodeEditable, data.editedSecurityCode]);
 
   const validate = values => {
     const errors = {};
@@ -54,7 +67,7 @@ function PaymentCardDetailsView (props) {
     }
 
     if (data.cardNumberEditable) {
-      const cardNumber = values?.editedCardNumber || '';
+      const cardNumber = data.editedCardNumber || '';
 
       if (cardNumber && cardNumber.length > 0) {
         const cleanCardNumber = cardNumber.replace(/\s/g, '');
@@ -70,7 +83,7 @@ function PaymentCardDetailsView (props) {
     }
 
     if (data.expirationDateEditable) {
-      const expirationDate = values?.editedExpirationDate || '';
+      const expirationDate = data.editedExpirationDate || '';
 
       if (expirationDate && expirationDate.length > 0) {
         const expDateParts = expirationDate.split('/');
@@ -89,7 +102,7 @@ function PaymentCardDetailsView (props) {
     }
 
     if (data.securityCodeEditable) {
-      const securityCode = values?.editedSecurityCode || '';
+      const securityCode = (data.editedSecurityCode || '').replace(/\D/g, '');
 
       if (securityCode && securityCode.length > 0) {
         if (!/^\d{3,4}$/.test(securityCode)) {
@@ -136,18 +149,16 @@ function PaymentCardDetailsView (props) {
       stateData.content.cardHolder = e?.content?.cardHolder ? e.content.cardHolder : '';
     }
 
-    const itemJSON = data.item.toJSON();
-
     if (data.cardNumberEditable) {
-      stateData.content.s_cardNumber = itemJSON.content.s_cardNumber;
+      stateData.content.s_cardNumber = (data.editedCardNumber || '').replace(/\s/g, '');
     }
 
     if (data.expirationDateEditable) {
-      stateData.content.s_expirationDate = itemJSON.content.s_expirationDate;
+      stateData.content.s_expirationDate = data.editedExpirationDate || '';
     }
 
     if (data.securityCodeEditable) {
-      stateData.content.s_securityCode = itemJSON.content.s_securityCode;
+      stateData.content.s_securityCode = (data.editedSecurityCode || '').replace(/\D/g, '');
     }
 
     if (data.notesEditable) {
@@ -165,21 +176,6 @@ function PaymentCardDetailsView (props) {
     if (data.tagsEditable) {
       stateData.tags = e.tags || [];
     }
-
-    stateData.uiState = {
-      nameEditable: data.nameEditable,
-      cardHolderEditable: data.cardHolderEditable,
-      cardNumberEditable: data.cardNumberEditable,
-      expirationDateEditable: data.expirationDateEditable,
-      securityCodeEditable: data.securityCodeEditable,
-      cardNumberVisible: data.cardNumberVisible,
-      expirationDateVisible: data.expirationDateVisible,
-      securityCodeVisible: data.securityCodeVisible,
-      notesEditable: data.notesEditable,
-      tierEditable: data.tierEditable,
-      tagsEditable: data.tagsEditable,
-      sifDecryptError: data.sifDecryptError
-    };
 
     return navigate('/fetch', {
       state: {
@@ -228,7 +224,7 @@ function PaymentCardDetailsView (props) {
             <button
               type="submit"
               className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-              disabled={(getEditableAmount().amount <= 0 || submitting) ? 'disabled' : ''}
+              disabled={(getEditableAmount().amount <= 0 || submitting || hasLiveValidationErrors) ? 'disabled' : ''}
             >
               {browser.i18n.getMessage('update')}{getEditableAmount().text}
             </button>

@@ -7,11 +7,10 @@
 import S from './styles/AllItemsList.module.scss';
 import Item from '../Item';
 import SafariViewportList from '@/entrypoints/popup/components/SafariViewportList';
-import { lazy, useMemo, memo } from 'react';
+import { useMemo, memo, useCallback } from 'react';
 import { sortFunction } from '@/partials/functions';
 import isItemsCorrect from '../../functions/isItemsCorrect';
-
-const EmptyListIcon = lazy(() => import('@/assets/popup-window/empty-list.svg?react'));
+import EmptyListIcon from '@/assets/popup-window/empty-list.svg?react';
 
 /**
 * Component displaying a list of all items with sorting, filtering and search.
@@ -25,6 +24,8 @@ const EmptyListIcon = lazy(() => import('@/assets/popup-window/empty-list.svg?re
 * @return {JSX.Element|null} The rendered item list or null.
 */
 function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFilter }) {
+  const renderItem = useCallback(item => <Item data={item} key={item.id} loading={loading} />, [loading]);
+
   const itemsData = useMemo(() => {
     if (!isItemsCorrect(items) && !loading) {
       return null;
@@ -64,17 +65,33 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
     }
 
     if (search && search.length > 0) {
-      result = result.filter(item => {
+      const searchLower = search.toLowerCase();
+      const nameMatches = [];
+      const otherMatches = [];
+
+      result.forEach(item => {
+        const nameMatch = item?.content?.name?.toLowerCase().includes(searchLower);
+
+        if (nameMatch) {
+          nameMatches.push(item);
+          return;
+        }
+
         let urisTexts = [];
 
         if (item?.content && item?.content?.uris && Array.isArray(item?.content?.uris)) {
           urisTexts = item.content.uris.map(uri => uri?.text).filter(Boolean);
         }
 
-        return item?.content?.name?.toLowerCase().includes(search?.toLowerCase()) ||
-          item?.content?.username?.toLowerCase().includes(search?.toLowerCase()) ||
-          urisTexts.some(uriText => uriText?.toLowerCase().includes(search?.toLowerCase()));
+        const usernameMatch = item?.content?.username?.toLowerCase().includes(searchLower);
+        const uriMatch = urisTexts.some(uriText => uriText?.toLowerCase().includes(searchLower));
+
+        if (usernameMatch || uriMatch) {
+          otherMatches.push(item);
+        }
       });
+
+      result = nameMatches.concat(otherMatches);
     }
 
     if ((!result || result.length <= 0) && !loading) {
@@ -92,7 +109,7 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
     return (
       <div className={S.allItemsList}>
         <SafariViewportList items={itemsData.data} overscan={3}>
-          {item => <Item data={item} key={item.id} loading={loading} />}
+          {renderItem}
         </SafariViewportList>
       </div>
     );
@@ -112,7 +129,7 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
   return (
     <div className={S.allItemsList}>
       <SafariViewportList items={itemsData.data} overscan={10}>
-        {item => <Item data={item} key={item.id} loading={loading} />}
+        {renderItem}
       </SafariViewportList>
     </div>
   );

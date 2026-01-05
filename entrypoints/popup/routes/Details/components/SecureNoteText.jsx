@@ -8,15 +8,13 @@ import S from '../Details.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { lazy, useState, useCallback } from 'react';
-import { LazyMotion, animate } from 'motion/react';
+import { useState, useCallback, useMemo } from 'react';
+import { animate } from 'motion/react';
 import { useEffect, useRef } from 'react';
 import { isText } from '@/partials/functions';
-import usePopupStateStore from '../../../store/popupState';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
-
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
+import usePopupState from '../../../store/popupState/usePopupState';
+import SecureNote from '@/models/itemModels/SecureNote';
+import InfoIcon from '@/assets/popup-window/info.svg?react';
 
  /**
 * Function to render the Secure Note text input field.
@@ -29,30 +27,47 @@ function SecureNoteText (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem, inputError } = formData;
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setBatchData, setItem } = usePopupState();
 
   const previousSifValueRef = useRef(null);
   const textareaRef = useRef(null);
   const [showTextarea, setShowTextarea] = useState(false);
+  const [textareaHeight, setTextareaHeight] = useState(0);
+  const [textareaOverflow, setTextareaOverflow] = useState('hidden');
   const [localDecryptedText, setLocalDecryptedText] = useState(null);
   const [localEditedText, setLocalEditedText] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
+
+  const itemInstance = useMemo(() => {
+    if (!data.item) {
+      return null;
+    }
+
+    if (data.item instanceof SecureNote) {
+      return data.item;
+    }
+
+    try {
+      return new SecureNote(data.item);
+    } catch (e) {
+      CatchError(e);
+      return null;
+    }
+  }, [data.item]);
 
   const decryptTextOnDemand = useCallback(async () => {
     if (localDecryptedText !== null || isDecrypting || sifDecryptError) {
       return localDecryptedText;
     }
 
-    if (!data.item?.sifExists) {
+    if (!itemInstance?.sifExists) {
       return null;
     }
 
     setIsDecrypting(true);
 
     try {
-      const decryptedData = await data.item.decryptSif();
+      const decryptedData = await itemInstance.decryptSif();
       setLocalDecryptedText(decryptedData.text);
       setData('sifDecryptError', false);
       return decryptedData.text;
@@ -63,7 +78,7 @@ function SecureNoteText (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedText, isDecrypting, sifDecryptError, data.item, setData]);
+  }, [localDecryptedText, isDecrypting, sifDecryptError, itemInstance, setData]);
 
   const getTextValue = () => {
     if (sifDecryptError) {
@@ -94,46 +109,50 @@ function SecureNoteText (props) {
     const needsDecryption = (data?.sifEditable || data?.revealSecureNote) &&
                            localDecryptedText === null &&
                            !isDecrypting &&
-                           data.item?.sifExists;
+                           itemInstance?.sifExists;
 
     if (needsDecryption) {
       decryptTextOnDemand();
     }
-  }, [data?.sifEditable, data?.revealSecureNote, localDecryptedText, isDecrypting, data.item?.sifExists, decryptTextOnDemand]);
+  }, [data?.sifEditable, data?.revealSecureNote, localDecryptedText, isDecrypting, itemInstance?.sifExists, decryptTextOnDemand]);
 
   useEffect(() => {
     if (data?.revealSecureNote) {
-      setShowTextarea(true);
-
       const animateExpand = async () => {
-        if (!textareaRef.current) {
-          return;
-        }
+        setTextareaHeight(0);
+        setTextareaOverflow('hidden');
+        setShowTextarea(true);
 
-        setTimeout(() => {
-          if (textareaRef.current) {
-            textareaRef.current.style.height = '0';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (!textareaRef.current) {
+              return;
+            }
+
             const scrollHeight = textareaRef.current.scrollHeight;
             const targetHeight = Math.max(TEXTAREA_LINE_HEIGHT, Math.min(scrollHeight, 200));
 
-            textareaRef.current.style.height = `${TEXTAREA_LINE_HEIGHT}px`;
-            textareaRef.current.style.overflowY = 'hidden';
-
-            animate(TEXTAREA_LINE_HEIGHT, targetHeight, {
+            animate(0, targetHeight, {
               duration: 0.2,
               ease: 'easeOut',
               onUpdate: value => {
-                if (textareaRef.current) {
-                  textareaRef.current.style.height = `${value}px`;
-                }
+                setTextareaHeight(value);
               },
             }).then(() => {
-              if (textareaRef.current) {
-                textareaRef.current.style.overflowY = 'auto';
+              setTextareaOverflow('auto');
+
+              if (data?.sifEditable && textareaRef.current) {
+                const textarea = textareaRef.current;
+                textarea.focus();
+
+                requestAnimationFrame(() => {
+                  textarea.setSelectionRange(0, 0);
+                  textarea.scrollTop = 0;
+                });
               }
             });
-          }
-        }, 0);
+          });
+        });
       };
 
       animateExpand();
@@ -145,15 +164,13 @@ function SecureNoteText (props) {
 
         const currentHeight = textareaRef.current.offsetHeight;
 
-        textareaRef.current.style.overflowY = 'hidden';
+        setTextareaOverflow('hidden');
 
-        await animate(currentHeight, TEXTAREA_LINE_HEIGHT, {
+        await animate(currentHeight, 0, {
           duration: 0.2,
           ease: 'easeOut',
           onUpdate: value => {
-            if (textareaRef.current) {
-              textareaRef.current.style.height = `${value}px`;
-            }
+            setTextareaHeight(value);
           },
         });
 
@@ -213,11 +230,12 @@ function SecureNoteText (props) {
 
     setLocalEditedText(newValue);
     form.change('editedSif', newValue);
+    setData('editedSif', newValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new SecureNote(itemData);
     await localItem.setSif([{ s_text: newValue }]);
-    setData('item', localItem);
+    setItem(localItem);
   };
 
   const handleRevealToggle = async () => {
@@ -229,9 +247,8 @@ function SecureNoteText (props) {
   };
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <Field name='editedSif'>
-        {() => (
+    <Field name='editedSif'>
+      {() => (
           <div className={`${pI.passInput} ${!data?.sifEditable || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''} ${inputError === 'content.s_text' ? pI.error : ''}`}>
             <div className={pI.passInputTop}>
               <label htmlFor='editedSif'>{browser.i18n.getMessage('secure_note_note')}</label>
@@ -252,6 +269,7 @@ function SecureNoteText (props) {
                   placeholder={!sifDecryptError && (originalItem?.isT3orT2WithSif || data?.sifEditable) ? browser.i18n.getMessage('placeholder_secure_note_empty') : ''}
                   id='editedSif'
                   className={S.detailsSecureNoteTextarea}
+                  style={{ height: `${textareaHeight}px`, overflowY: textareaOverflow }}
                   disabled={!data?.sifEditable || sifDecryptError}
                   onChange={handleTextChange}
                   dir="ltr"
@@ -298,7 +316,6 @@ function SecureNoteText (props) {
           </div>
         )}
       </Field>
-    </LazyMotion>
   );
 }
 

@@ -5,8 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './ThisTab.module.scss';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import { useEffect, useState, useRef, useCallback, useMemo, memo, useContext } from 'react';
 import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
 import getDomainFromTab from './functions/getDomainFromTab';
@@ -17,9 +16,8 @@ import getTags from '@/partials/sessionStorage/getTags';
 import { filterXSS } from 'xss';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
 import getDomainFromMessage from './functions/getDomainFromMessage';
-import { useLocation } from 'react-router';
 import isItemsCorrect from './functions/isItemsCorrect';
-import usePopupStateStore from '../../store/popupState';
+import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import { useTagFilter } from './components/Filters/hooks/useTagFilter';
 import { useSortFilter } from './components/Sort/hooks/useSortFilter';
@@ -27,20 +25,17 @@ import DomainIcon from '@/assets/popup-window/domain.svg?react';
 import { AllItemsList, Filters, KeepPassword, MatchingItemsList, ModelFilter, NoMatch, Search, Sort, TagsInfo, UpdateComponent } from './components';
 import { ItemListProvider } from './context/ItemListContext';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-
 const thisTabTopVariants = {
   visible: { height: 'auto', transition: { duration: 0.2, ease: 'easeOut' } },
   hidden: { height: '0', marginBottom: '-10px', borderWidth: '0', transition: { duration: 0, ease: 'easeOut' } }
 };
 
-/** 
+/**
 * Function to render the main content of the ThisTab component.
 * @param {Object} props - The component props.
 * @return {JSX.Element} Element representing the ThisTab component.
 */
 function ThisTab (props) {
-  const location = useLocation();
   const { changeMatchingLoginsLength } = useMatchingLogins();
   const scrollableRefContext = useContext(ScrollableRefContext);
   const [loading, setLoading] = useState(true);
@@ -51,10 +46,7 @@ function ThisTab (props) {
   const [matchingLogins, setMatchingLogins] = useState([]);
   const [storageVersion, setStorageVersion] = useState(null);
 
-  const data = usePopupStateStore(state => state.data);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
-  const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
-  const setHref = usePopupStateStore(state => state.setHref);
+  const { data, setBatchData } = usePopupState();
 
   // Refs
   const boxAnimationRef = useRef(null);
@@ -70,50 +62,6 @@ function ThisTab (props) {
       scrollableRefContext.setRef(scrollableRef.current);
     }
   }, [scrollableRefContext]);
-
-  const syncState = useCallback(() => {
-    if (!location.state?.from) {
-      return;
-    }
-
-    if (location.state?.data) {
-      const fieldsToSync = [
-        'lastSelectedTagInfo',
-        'searchActive',
-        'searchValue',
-        'selectedTag'
-      ];
-
-      const updates = {};
-      let hasChanges = false;
-
-      fieldsToSync.forEach(field => {
-        if (Object.prototype.hasOwnProperty.call(location.state.data, field)) {
-          updates[field] = location.state.data[field];
-          hasChanges = true;
-        }
-      });
-
-      if (hasChanges) {
-        const currentData = usePopupStateStore.getState().data;
-
-        usePopupStateStore.setState({
-          data: {
-            ...currentData,
-            ...updates
-          }
-        });
-      }
-    }
-
-    if (location.state?.scrollPosition !== undefined) {
-      setScrollPosition(location.state.scrollPosition);
-    }
-
-    if (location.state?.from === 'details') {
-      setHref(location.pathname);
-    }
-  }, [location.state, location.pathname, setScrollPosition, setHref]);
 
   const { handleSortChange } = useSortFilter();
   const { handleTagChange } = useTagFilter();
@@ -345,31 +293,22 @@ function ThisTab (props) {
     };
   }, [storageVersion, messageListener, initializeData]);
 
-  useEffect(() => {
-    if (location.state?.from === 'details') {
-      setTimeout(() => {
-        syncState();
-      }, 0);
-    }
-  }, [location?.state, syncState]);
-
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <div className={`${props.className ? props.className : ''}`}>
-        <div ref={scrollableRef}>
-          <section className={S.thisTab}>
-            <KeepPassword />
+    <div className={`${props.className ? props.className : ''}`}>
+      <div ref={scrollableRef}>
+        <section className={S.thisTab}>
+          <KeepPassword />
 
-            <div className={S.thisTabContainer}>
-              <m.div
-                ref={thisTabTopRef}
-                className={S.thisTabTop}
-                variants={thisTabTopVariants}
-                initial="visible"
-                animate={data?.searchActive || data?.selectedTag ? 'hidden' : 'visible'}
-                onAnimationComplete={handleAnimationComplete}
-                onUpdate={handleAnimationUpdate}
-              >
+          <div className={S.thisTabContainer}>
+            <motion.div
+              ref={thisTabTopRef}
+              className={S.thisTabTop}
+              variants={thisTabTopVariants}
+              initial="visible"
+              animate={data?.searchActive || data?.selectedTag ? 'hidden' : 'visible'}
+              onAnimationComplete={handleAnimationComplete}
+              onUpdate={handleAnimationUpdate}
+            >
                 <UpdateComponent />
 
                 <div className={S.thisTabHeader}>
@@ -399,7 +338,7 @@ function ThisTab (props) {
                     boxAnimationDarkRef={boxAnimationDarkRef}
                   />
                 </div>
-              </m.div>
+              </motion.div>
 
               <div className={allLoginsClass}>
                 <ModelFilter loading={loading} />
@@ -440,7 +379,6 @@ function ThisTab (props) {
           </section>
         </div>
       </div>
-    </LazyMotion>
   );
 }
 

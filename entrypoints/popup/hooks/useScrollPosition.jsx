@@ -5,21 +5,17 @@
 // See LICENSE file for full terms
 
 import { useEffect, useRef, useCallback } from 'react';
-import { useLocation } from 'react-router';
-import usePopupStateStore from '../store/popupState';
+import usePopupState from '../store/popupState/usePopupState';
 
 /**
  * Custom hook for managing scroll position.
- * Stores scroll position in zustand store and restores it only when the stored href matches current pathname.
+ * Stores scroll position in zustand store scoped by pathname.
  * @param {React.RefObject} scrollableRef - Reference to the scrollable element
  * @param {boolean} loading - Loading state to determine when to restore scroll position
  * @return {Object} Object containing saveScrollPosition, restoreScrollPosition and scrollPosition
  */
 const useScrollPosition = (scrollableRef, loading = false) => {
-  const location = useLocation();
-  const scrollPosition = usePopupStateStore(state => state.scrollPosition);
-  const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
-  const storedHref = usePopupStateStore(state => state.href);
+  const { pathname, scrollPosition, setScrollPosition } = usePopupState();
   const hasRestoredRef = useRef(false);
   const isRestoringRef = useRef(false);
   const targetScrollPositionRef = useRef(null);
@@ -40,18 +36,16 @@ const useScrollPosition = (scrollableRef, loading = false) => {
   const restoreScrollPosition = useCallback(() => {
     const targetPosition = targetScrollPositionRef.current;
 
-    if (!scrollableRef?.current || targetPosition === undefined || targetPosition === null || storedHref !== location.pathname) {
+    if (!scrollableRef?.current || targetPosition === undefined || targetPosition === null) {
       return;
     }
 
-    if (targetPosition > 0) {
-      scrollableRef.current.scrollTo({
-        top: targetPosition,
-        left: 0,
-        behavior: 'instant'
-      });
-    }
-  }, [storedHref, location.pathname]);
+    scrollableRef.current.scrollTo({
+      top: targetPosition,
+      left: 0,
+      behavior: 'instant'
+    });
+  }, []);
 
   useEffect(() => {
     const scrollElement = scrollableRef?.current;
@@ -78,7 +72,7 @@ const useScrollPosition = (scrollableRef, loading = false) => {
   }, [saveScrollPosition, loading]);
 
   useEffect(() => {
-    const shouldRestore = !loading && !hasRestoredRef.current && scrollableRef?.current && scrollPosition !== undefined && storedHref === location.pathname;
+    const shouldRestore = !loading && !hasRestoredRef.current && scrollableRef?.current && scrollPosition !== undefined;
 
     if (shouldRestore) {
       isRestoringRef.current = true;
@@ -113,11 +107,11 @@ const useScrollPosition = (scrollableRef, loading = false) => {
         });
       });
     }
-  }, [loading, scrollPosition, restoreScrollPosition, storedHref, location.pathname]);
+  }, [loading, scrollPosition, restoreScrollPosition]);
 
   useEffect(() => {
     hasRestoredRef.current = false;
-  }, [location.pathname]);
+  }, [pathname]);
 
   useEffect(() => {
     return () => {

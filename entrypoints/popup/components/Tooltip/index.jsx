@@ -5,9 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './Tooltip.module.scss';
-import { lazy } from 'react';
-
-const LearnMoreIcon = lazy(() => import('@/assets/popup-window/learn-more.svg?react'));
+import LearnMoreIcon from '@/assets/popup-window/learn-more.svg?react';
 
 /** 
 * Function component for the Tooltip.

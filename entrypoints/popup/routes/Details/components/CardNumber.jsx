@@ -7,12 +7,13 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { copyValue, isText } from '@/partials/functions';
-import usePopupStateStore from '../../../store/popupState';
-import PaymentCard from '@/partials/models/itemModels/PaymentCard';
+import usePopupState from '../../../store/popupState/usePopupState';
+import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardNumberInput from '@/entrypoints/popup/components/PaymentCardNumberInput';
 import getCardNumberMask from '@/entrypoints/popup/components/PaymentCardNumberInput/getCardNumberMask';
+import getItem from '@/partials/sessionStorage/getItem';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
@@ -28,14 +29,32 @@ function CardNumber (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setBatchData = usePopupStateStore(state => state.setBatchData);
+  const { data, setData, setBatchData, setItem } = usePopupState();
 
   const previousCardNumberRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const inputMaskRef = useRef(null);
   const [localDecryptedCardNumber, setLocalDecryptedCardNumber] = useState(null);
-  const [localEditedCardNumber, setLocalEditedCardNumber] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [shouldFocusInputMask, setShouldFocusInputMask] = useState(false);
+
+  const itemInstance = useMemo(() => {
+    if (!data.item) {
+      return null;
+    }
+
+    if (data.item instanceof PaymentCard) {
+      return data.item;
+    }
+
+    try {
+      return new PaymentCard(data.item);
+    } catch (e) {
+      CatchError(e);
+      return null;
+    }
+  }, [data.item]);
 
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
 
@@ -44,14 +63,14 @@ function CardNumber (props) {
       return localDecryptedCardNumber;
     }
 
-    if (!data.item?.cardNumberExists) {
+    if (!itemInstance?.cardNumberExists) {
       return null;
     }
 
     setIsDecrypting(true);
 
     try {
-      const decryptedData = await data.item.decryptCardNumber();
+      const decryptedData = await itemInstance.decryptCardNumber();
       setLocalDecryptedCardNumber(decryptedData);
       setData('sifDecryptError', false);
       return decryptedData;
@@ -62,15 +81,29 @@ function CardNumber (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedCardNumber, isDecrypting, sifDecryptError, data.item, setData]);
+  }, [localDecryptedCardNumber, isDecrypting, sifDecryptError, itemInstance, setData]);
+
+  const getHiddenMaskValue = () => {
+    if (isHighlySecretWithoutSif) {
+      return '';
+    }
+
+    const cardNumberMask = itemInstance?.content?.cardNumberMask;
+
+    if (isText(cardNumberMask)) {
+      return `**** ${cardNumberMask}`;
+    }
+
+    return '********';
+  };
 
   const getCardNumberValue = () => {
     if (sifDecryptError || isHighlySecretWithoutSif) {
       return '';
     }
 
-    if (isText(localEditedCardNumber)) {
-      return localEditedCardNumber;
+    if (!data?.cardNumberEditable && !data?.cardNumberVisible) {
+      return getHiddenMaskValue();
     }
 
     if (isText(localDecryptedCardNumber)) {
@@ -80,25 +113,49 @@ function CardNumber (props) {
     return '';
   };
 
+  const getRawCardNumber = () => {
+    const cardNumber = getCardNumberValue();
+
+    return cardNumber.replace(/\D/g, '');
+  };
+
+  const focusInputMask = useCallback(() => {
+    const inputElement = inputMaskRef.current?.getInput?.() || inputMaskRef.current;
+
+    if (inputElement && !inputElement.disabled) {
+      inputElement.focus();
+      setShouldFocusInputMask(false);
+    } else {
+      setTimeout(focusInputMask, 50);
+    }
+  }, []);
+
   useEffect(() => {
     const currentCardNumber = getCardNumberValue();
 
     if (currentCardNumber !== previousCardNumberRef.current) {
       form.change('editedCardNumber', currentCardNumber);
+      setData('editedCardNumber', currentCardNumber);
       previousCardNumberRef.current = currentCardNumber;
     }
-  }, [localEditedCardNumber, localDecryptedCardNumber, sifDecryptError, form]);
+  }, [localDecryptedCardNumber, form, setData]);
 
   useEffect(() => {
     const needsDecryption = (data?.cardNumberEditable || data?.cardNumberVisible) &&
                            localDecryptedCardNumber === null &&
                            !isDecrypting &&
-                           data.item?.cardNumberExists;
+                           itemInstance?.cardNumberExists;
 
     if (needsDecryption) {
       decryptCardNumberOnDemand();
     }
-  }, [data?.cardNumberEditable, data?.cardNumberVisible, localDecryptedCardNumber, isDecrypting, data.item?.cardNumberExists, decryptCardNumberOnDemand]);
+  }, [data?.cardNumberEditable, data?.cardNumberVisible, localDecryptedCardNumber, isDecrypting, itemInstance?.cardNumberExists, decryptCardNumberOnDemand]);
+
+  useEffect(() => {
+    if (shouldFocusInputMask && data?.cardNumberEditable && isFocused) {
+      setTimeout(focusInputMask, 0);
+    }
+  }, [shouldFocusInputMask, data?.cardNumberEditable, isFocused, focusInputMask]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -127,15 +184,27 @@ function CardNumber (props) {
 
   const handleEditableClick = async () => {
     if (data?.cardNumberEditable) {
-      setLocalEditedCardNumber(null);
-      setBatchData({
-        cardNumberEdited: false,
-        cardNumberEditable: false
-      });
-      form.change('editedCardNumber', isText(localDecryptedCardNumber) ? localDecryptedCardNumber : '');
+      let item = await getItem(itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id);
+
+      const itemData = item.toJSON();
+      const restoredItem = new PaymentCard(itemData);
+
+      item = null;
+
+      setLocalDecryptedCardNumber(null);
+      setIsFocused(false);
+      setShouldFocusInputMask(false);
+      setItem(restoredItem);
+      setData('cardNumberEditable', false);
+      form.change('editedCardNumber', '');
     } else {
       await decryptCardNumberOnDemand();
-      setData('cardNumberEditable', true);
+      setIsFocused(true);
+      setShouldFocusInputMask(true);
+      setBatchData({
+        cardNumberVisible: false,
+        cardNumberEditable: true
+      });
     }
   };
 
@@ -143,17 +212,15 @@ function CardNumber (props) {
     try {
       let cardNumberToCopy;
 
-      if (isText(localEditedCardNumber)) {
-        cardNumberToCopy = localEditedCardNumber;
-      } else if (isText(localDecryptedCardNumber)) {
+      if (isText(localDecryptedCardNumber)) {
         cardNumberToCopy = localDecryptedCardNumber;
-      } else if (data.item.cardNumberExists) {
+      } else if (itemInstance?.cardNumberExists) {
         cardNumberToCopy = await decryptCardNumberOnDemand();
       } else {
         cardNumberToCopy = '';
       }
 
-      await copyValue(cardNumberToCopy, data.item.deviceId, data.item.vaultId, data.item.id, 'cardNumber');
+      await copyValue(cardNumberToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'cardNumber');
       showToast(browser.i18n.getMessage('notification_card_number_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_card_number_copy_failed'), 'error');
@@ -172,45 +239,36 @@ function CardNumber (props) {
   const handleCardNumberChange = async e => {
     const newValue = e.target.value;
 
-    setLocalEditedCardNumber(newValue);
+    setLocalDecryptedCardNumber(newValue);
     form.change('editedCardNumber', newValue);
+    setData('editedCardNumber', newValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_cardNumber: newValue }]);
-    setData('item', localItem);
-  };
-
-  const getHiddenMaskValue = () => {
-    if (isHighlySecretWithoutSif) {
-      return '';
-    }
-
-    const cardNumberMask = data.item?.content?.cardNumberMask;
-
-    if (isText(cardNumberMask)) {
-      return `**** ${cardNumberMask}`;
-    }
-
-    return '********';
-  };
-
-  const getRawCardNumber = () => {
-    const cardNumber = getCardNumberValue();
-
-    return cardNumber.replace(/\D/g, '');
+    setItem(localItem);
   };
 
   const handleRawCardNumberChange = async e => {
     const newValue = e.target.value.replace(/\D/g, '');
 
-    setLocalEditedCardNumber(newValue);
+    setLocalDecryptedCardNumber(newValue);
     form.change('editedCardNumber', newValue);
+    setData('editedCardNumber', newValue);
 
-    const itemData = data.item.toJSON();
+    const itemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
     const localItem = new PaymentCard(itemData);
     await localItem.setSif([{ s_cardNumber: newValue }]);
-    setData('item', localItem);
+    setItem(localItem);
+  };
+
+  const handlePasswordInputFocus = () => {
+    setIsFocused(true);
+    setShouldFocusInputMask(true);
+  };
+
+  const handleInputMaskBlur = () => {
+    setIsFocused(false);
   };
 
   const renderInput = () => {
@@ -218,6 +276,7 @@ function CardNumber (props) {
     const isVisible = data?.cardNumberVisible;
     const placeholder = isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_number');
 
+    // Not editable and not visible - show masked value
     if (!isEditable && !isVisible) {
       return (
         <input
@@ -230,24 +289,7 @@ function CardNumber (props) {
       );
     }
 
-    if (isEditable && !isVisible) {
-      const rawCardNumber = getRawCardNumber();
-      const mask = getCardNumberMask(rawCardNumber);
-      const maxLength = mask.replace(/\s/g, '').length;
-
-      return (
-        <input
-          type='password'
-          id='editedCardNumber'
-          value={rawCardNumber}
-          onChange={handleRawCardNumberChange}
-          disabled={sifDecryptError || isHighlySecretWithoutSif}
-          maxLength={maxLength}
-          placeholder={placeholder}
-        />
-      );
-    }
-
+    // Visible but not editable - show PaymentCardNumberInput disabled
     if (!isEditable && isVisible) {
       return (
         <PaymentCardNumberInput
@@ -262,11 +304,35 @@ function CardNumber (props) {
       );
     }
 
+    // Editable - show password input when not focused, PaymentCardNumberInput when focused
+    if (isEditable && !isFocused) {
+      const rawCardNumber = getRawCardNumber();
+      const mask = getCardNumberMask(rawCardNumber);
+      const maxLength = mask.replace(/\s/g, '').length;
+
+      return (
+        <input
+          ref={passwordInputRef}
+          type='password'
+          id='editedCardNumber'
+          value={rawCardNumber}
+          onChange={handleRawCardNumberChange}
+          onFocus={handlePasswordInputFocus}
+          disabled={sifDecryptError || isHighlySecretWithoutSif}
+          maxLength={maxLength}
+          placeholder={placeholder}
+        />
+      );
+    }
+
+    // Editable and focused - show PaymentCardNumberInput (InputMask)
     return (
       <PaymentCardNumberInput
+        ref={inputMaskRef}
         value={getCardNumberValue()}
         id='editedCardNumber'
         onChange={handleCardNumberChange}
+        onBlur={handleInputMaskBlur}
         disabled={sifDecryptError || isHighlySecretWithoutSif}
         placeholder={placeholder}
         securityType={originalItem?.securityType}
@@ -297,13 +363,13 @@ function CardNumber (props) {
               <button
                 type='button'
                 onClick={handleCardNumberVisibleClick}
-                className={`${pI.iconButton} ${pI.visibleButton} ${!(originalItem?.isT3orT2WithSif || data?.cardNumberEditable) || sifDecryptError ? pI.hidden : ''}`}
+                className={`${pI.iconButton} ${pI.visibleButton} ${!originalItem?.isT3orT2WithSif || data?.cardNumberEditable || sifDecryptError ? pI.hiddenButton : ''}`}
                 title={browser.i18n.getMessage('details_toggle_card_number_visibility')}
                 tabIndex={-1}
               >
                 <VisibleIcon />
               </button>
-              {((originalItem?.securityType === SECURITY_TIER.SECRET || data.item.cardNumberExists) && !sifDecryptError) && (
+              {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.cardNumberExists) && !sifDecryptError) && (
                 <button
                   type='button'
                   className={`${bS.btn} ${pI.iconButton}`}

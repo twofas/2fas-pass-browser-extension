@@ -5,17 +5,16 @@
 // See LICENSE file for full terms
 
 import URLComponent from '../components/URLComponent';
-import { lazy, useCallback } from 'react';
+import { useCallback } from 'react';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import S from '../Details.module.scss';
 import { AnimatePresence } from 'motion/react';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import URIMatcher from '@/partials/URIMatcher';
 import { useUriTempIds } from '../context/UriTempIdsContext';
 import updateItem from './updateItem';
-
-const AddIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
+import AddIcon from '@/assets/popup-window/add-new-2.svg?react';
 
 /**
 * Component to generate and manage URL inputs.
@@ -23,24 +22,23 @@ const AddIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
 * @return {JSX.Element} The rendered URLs or empty state.
 */
 function GenerateURLs (props) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData, setItem } = usePopupState();
   const { urisWithTempIds, addUri } = useUriTempIds();
 
   const { formData } = props;
   const { inputError } = formData;
 
-  const handleAddUri = useCallback(() => {
+  const handleAddUri = useCallback(async () => {
     const newUri = addUri('', URIMatcher.M_DOMAIN_TYPE);
 
     const currentContentUris = data.item.content.uris || [];
     const newContentUris = [...currentContentUris, { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true }];
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { uris: newContentUris }
     });
 
-    setData('item', updatedItem);
+    setItem(updatedItem);
 
     const currentDomainsEditable = data?.domainsEditable || {};
     const newDomainsEditable = {
@@ -49,7 +47,7 @@ function GenerateURLs (props) {
     };
 
     setData('domainsEditable', newDomainsEditable);
-  }, [data.item, data?.domainsEditable, setData, addUri]);
+  }, [data.item, data?.domainsEditable, setData, setItem, addUri]);
 
   return (
     <>

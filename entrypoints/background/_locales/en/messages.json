@@ -42,5 +42,13 @@
   "notification_card_autofill_expiration_date_not_available": {
     "message": "The expiry date is not available in the form options",
     "description": "Message when the card expiry date doesn't match any available option in the form's dropdown"
+  },
+  "notification_card_autofill_no_inputs_title": {
+    "message": "No card inputs found",
+    "description": "Title for the notification when no card input fields are detected on the page"
+  },
+  "notification_card_autofill_no_inputs_message": {
+    "message": "This page doesn't have any card input fields that can be autofilled.",
+    "description": "Message for the notification when no card input fields are detected on the page"
   }
 }

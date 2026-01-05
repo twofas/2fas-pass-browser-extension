@@ -26,7 +26,9 @@ export {
 export {
   paymentCardExpirationDateTexts,
   paymentCardExpirationDateWords,
-  paymentCardExpirationDateSelectors
+  paymentCardExpirationDateSelectors,
+  paymentCardExpirationMonthPlaceholders,
+  paymentCardExpirationYearPlaceholders
 } from './paymentCardExpirationDate/index.js';
 
 // Payment Card Security Code

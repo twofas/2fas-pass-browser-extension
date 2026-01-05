@@ -4,12 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { lazy } from 'react';
-
-const LoginIcon = lazy(() => import('@/assets/popup-window/items/login.svg?react'));
-const PaymentCardIcon = lazy(() => import('@/assets/popup-window/items/payment-card.svg?react'));
-const SecureNoteIcon = lazy(() => import('@/assets/popup-window/items/secure-note.svg?react'));
-const SSHKeyIcon = lazy(() => import('@/assets/popup-window/items/ssh-key.svg?react'));
+import LoginIcon from '@/assets/popup-window/items/login.svg?react';
+import PaymentCardIcon from '@/assets/popup-window/items/payment-card.svg?react';
+import SecureNoteIcon from '@/assets/popup-window/items/secure-note.svg?react';
+import SSHKeyIcon from '@/assets/popup-window/items/ssh-key.svg?react';
 
 const itemsUiData = {
   Login: {

@@ -8,10 +8,8 @@ import S from '../../../components/Item/styles/Item.module.scss';
 import copyValue from '@/partials/functions/copyValue';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
 import { toast } from 'react-toastify';
-import { lazy } from 'react';
 import { ENCRYPTION_KEYS } from '@/constants';
-
-const ItemPasswordIcon = lazy(() => import('@/assets/popup-window/service-password.svg?react'));
+import ItemPasswordIcon from '@/assets/popup-window/service-password.svg?react';
 
 /** 
 * Function to handle autofill failed password.

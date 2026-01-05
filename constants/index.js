@@ -57,6 +57,8 @@ export {
   paymentCardExpirationDateTexts,
   paymentCardExpirationDateWords,
   paymentCardExpirationDateSelectors,
+  paymentCardExpirationMonthPlaceholders,
+  paymentCardExpirationYearPlaceholders,
   paymentCardSecurityCodeTexts,
   paymentCardSecurityCodeWords,
   paymentCardSecurityCodeSelectors,

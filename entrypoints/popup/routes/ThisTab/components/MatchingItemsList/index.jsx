@@ -8,7 +8,7 @@ import Item from '../Item';
 import SafariViewportList from '@/entrypoints/popup/components/SafariViewportList';
 import sortByName from '@/partials/functions/sortFunction';
 import isItemsCorrect from '../../functions/isItemsCorrect';
-import { useMemo, memo } from 'react';
+import { useMemo, memo, useCallback } from 'react';
 
 /**
 * Component displaying a list of matching items for the current domain.
@@ -18,6 +18,8 @@ import { useMemo, memo } from 'react';
 * @return {JSX.Element|null} The rendered matching items list or null.
 */
 function MatchingItemsList ({ items, loading }) {
+  const renderItem = useCallback(item => <Item data={item} key={item.id} />, []);
+
   const itemsData = useMemo(() => {
     if (!isItemsCorrect(items) && loading) {
       return { type: 'loading', data: null };
@@ -48,7 +50,7 @@ function MatchingItemsList ({ items, loading }) {
 
   return (
     <SafariViewportList items={itemsData.data} overscan={5}>
-      {item => <Item data={item} key={item.id} />}
+      {renderItem}
     </SafariViewportList>
   );
 }

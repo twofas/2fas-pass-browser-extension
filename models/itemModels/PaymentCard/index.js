@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import Item from './Item';
+import Item from '@/models/itemModels/Item';
 
 /**
 * Class representing a payment card.
@@ -137,6 +137,30 @@ export default class PaymentCard extends Item {
     }
   }
 
+  /**
+  * Sets already-encrypted SIF data directly without re-encrypting.
+  * @param {Array<Object>} sifData - Array of objects with encrypted SIF values.
+  */
+  setSifEncrypted (sifData) {
+    if (!Array.isArray(sifData)) {
+      throw new Error('Invalid SIF data: must be an array');
+    }
+
+    for (const item of sifData) {
+      if (Object.prototype.hasOwnProperty.call(item, 's_cardNumber')) {
+        this.#s_cardNumber = item.s_cardNumber;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(item, 's_expirationDate')) {
+        this.#s_expirationDate = item.s_expirationDate;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(item, 's_securityCode')) {
+        this.#s_securityCode = item.s_securityCode;
+      }
+    }
+  }
+
   get dropdownList () {
     const dO = [
       { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
@@ -154,7 +178,7 @@ export default class PaymentCard extends Item {
       return {};
     }
 
-    const contexts = ['page', 'editable'];
+    const contexts = ['page', 'editable', 'frame'];
 
     if (import.meta.env.BROWSER !== 'safari')  {
       contexts.push('page_action');
@@ -173,7 +197,9 @@ export default class PaymentCard extends Item {
         parentId: '2fas-pass-payment-cards',
         contexts
       };
-    } else if (
+    }
+
+    if (
       this.securityType === SECURITY_TIER.HIGHLY_SECRET && !this.sifExists ||
       !this.sifExists
     ) {
@@ -186,9 +212,9 @@ export default class PaymentCard extends Item {
         parentId: '2fas-pass-payment-cards',
         contexts
       };
-    } else {
-      return {};
     }
+
+    return {};
   }
 
   get sifs () {

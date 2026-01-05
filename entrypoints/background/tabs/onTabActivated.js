@@ -60,9 +60,9 @@ const onTabActivated = async ({ tabId }) => {
 
     if (!isPopupWindow) {
       await Promise.all([
-        sendDomainToPopupWindow(tabId),
-        updateNoAccountItem(tabId, items)
-      ]).catch(e => CatchError(e));
+        sendDomainToPopupWindow(tabId).catch(() => {}),
+        updateNoAccountItem(tabId, items).catch(() => {})
+      ]);
     }
 
     return true;

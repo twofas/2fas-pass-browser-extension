@@ -5,24 +5,59 @@
 // See LICENSE file for full terms
 
 import { describe, it, expect } from 'vitest';
-import { getSecurityCodeMask, SECURITY_CODE_MASKS } from './getSecurityCodeMask';
+import { getSecurityCodeMask, maxSecurityCodeLength, SECURITY_CODE_MASKS } from './getSecurityCodeMask';
+import { CARD_ISSUER } from '../PaymentCardNumberInput/getCardNumberMask';
+
+describe('maxSecurityCodeLength', () => {
+  it('returns 4 for American Express', () => {
+    expect(maxSecurityCodeLength(CARD_ISSUER.AMERICAN_EXPRESS)).toBe(4);
+  });
+
+  it('returns 3 for Visa', () => {
+    expect(maxSecurityCodeLength(CARD_ISSUER.VISA)).toBe(3);
+  });
+
+  it('returns 3 for Mastercard', () => {
+    expect(maxSecurityCodeLength(CARD_ISSUER.MASTERCARD)).toBe(3);
+  });
+
+  it('returns 3 for Discover', () => {
+    expect(maxSecurityCodeLength(CARD_ISSUER.DISCOVER)).toBe(3);
+  });
+
+  it('returns 3 for Diners Club', () => {
+    expect(maxSecurityCodeLength(CARD_ISSUER.DINERS_CLUB)).toBe(3);
+  });
+
+  it('returns 3 for JCB', () => {
+    expect(maxSecurityCodeLength(CARD_ISSUER.JCB)).toBe(3);
+  });
+
+  it('returns 3 for UnionPay', () => {
+    expect(maxSecurityCodeLength(CARD_ISSUER.UNION_PAY)).toBe(3);
+  });
+
+  it('returns 4 for null (unknown issuer)', () => {
+    expect(maxSecurityCodeLength(null)).toBe(4);
+  });
+});
 
 describe('getSecurityCodeMask', () => {
-  describe('empty/null input', () => {
-    it('returns STANDARD mask for null input', () => {
-      expect(getSecurityCodeMask(null)).toEqual({ ...SECURITY_CODE_MASKS.STANDARD });
+  describe('empty/null input (defaults to 4-digit like iOS)', () => {
+    it('returns AMEX mask for null input', () => {
+      expect(getSecurityCodeMask(null)).toEqual({ ...SECURITY_CODE_MASKS.AMEX });
     });
 
-    it('returns STANDARD mask for undefined input', () => {
-      expect(getSecurityCodeMask(undefined)).toEqual({ ...SECURITY_CODE_MASKS.STANDARD });
+    it('returns AMEX mask for undefined input', () => {
+      expect(getSecurityCodeMask(undefined)).toEqual({ ...SECURITY_CODE_MASKS.AMEX });
     });
 
-    it('returns STANDARD mask for empty string', () => {
-      expect(getSecurityCodeMask('')).toEqual({ ...SECURITY_CODE_MASKS.STANDARD });
+    it('returns AMEX mask for empty string', () => {
+      expect(getSecurityCodeMask('')).toEqual({ ...SECURITY_CODE_MASKS.AMEX });
     });
 
-    it('returns STANDARD mask for string with only spaces', () => {
-      expect(getSecurityCodeMask('    ')).toEqual({ ...SECURITY_CODE_MASKS.STANDARD });
+    it('returns AMEX mask for string with only spaces', () => {
+      expect(getSecurityCodeMask('    ')).toEqual({ ...SECURITY_CODE_MASKS.AMEX });
     });
   });
 
@@ -89,7 +124,7 @@ describe('getSecurityCodeMask', () => {
 
   describe('edge cases for Diners Club vs Amex distinction', () => {
     it('returns STANDARD mask for Diners starting with 30', () => {
-      expect(getSecurityCodeMask('30').mask).toBe(SECURITY_CODE_MASKS.STANDARD.mask);
+      expect(getSecurityCodeMask('300').mask).toBe(SECURITY_CODE_MASKS.STANDARD.mask);
     });
 
     it('returns STANDARD mask for Diners starting with 36', () => {
@@ -109,7 +144,17 @@ describe('getSecurityCodeMask', () => {
     });
 
     it('returns STANDARD mask for JCB starting with 35', () => {
-      expect(getSecurityCodeMask('35').mask).toBe(SECURITY_CODE_MASKS.STANDARD.mask);
+      expect(getSecurityCodeMask('3528').mask).toBe(SECURITY_CODE_MASKS.STANDARD.mask);
+    });
+  });
+
+  describe('unrecognized card types (defaults to 4-digit like iOS)', () => {
+    it('returns AMEX mask for unrecognized prefix 9', () => {
+      expect(getSecurityCodeMask('9999').mask).toBe(SECURITY_CODE_MASKS.AMEX.mask);
+    });
+
+    it('returns AMEX mask for unrecognized prefix 1', () => {
+      expect(getSecurityCodeMask('1111').mask).toBe(SECURITY_CODE_MASKS.AMEX.mask);
     });
   });
 

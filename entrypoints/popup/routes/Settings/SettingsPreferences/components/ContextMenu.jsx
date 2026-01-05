@@ -47,12 +47,12 @@ function ContextMenu () {
       setCM(newValue);
 
       await storage.setItem('local:contextMenu', newValue);
-      showToast(browser.i18n.getMessage('notification_context_menu_setting_success'), 'success');
+      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:contextMenu');
       setCM(previousValue !== null ? previousValue : true);
 
-      showToast(browser.i18n.getMessage('error_saving_context_menu_setting'), 'error');
+      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
       await CatchError(e);
     }
   }, [cM, isInitialized]);

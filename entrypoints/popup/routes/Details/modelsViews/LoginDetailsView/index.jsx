@@ -11,8 +11,8 @@ import { useState, lazy } from 'react';
 import GenerateURLs from '../../functions/generateURLs';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
-import Login from '@/partials/models/itemModels/Login';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
+import Login from '@/models/itemModels/Login';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import { UriTempIdsProvider } from '../../context/UriTempIdsContext';
 
@@ -30,7 +30,7 @@ const DangerZone = lazy(() => import('../../components/DangerZone'));
 * @return {JSX.Element} The rendered component.
 */
 function LoginDetailsView(props) {
-  const data = usePopupStateStore(state => state.data);
+  const { data } = usePopupState();
   const [inputError, setInputError] = useState(undefined);
 
   const navigate = useNavigate();
@@ -102,9 +102,8 @@ function LoginDetailsView(props) {
       if (data.passwordMobile) {
         stateData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       } else {
-        const itemJSON = data.item.toJSON();
         stateData.content.s_password = {
-          value: itemJSON.content.s_password,
+          value: data.editedSif || '',
           action: REQUEST_STRING_ACTIONS.SET
         };
       }
@@ -145,22 +144,6 @@ function LoginDetailsView(props) {
     if (data.notesEditable) {
       stateData.content.notes = e?.content?.notes ? e.content.notes : '';
     }
-
-    stateData.uiState = {
-      nameEditable: data.nameEditable,
-      usernameEditable: data.usernameEditable,
-      passwordEditable: data.passwordEditable,
-      passwordVisible: data.passwordVisible,
-      passwordMobile: data.passwordMobile,
-      usernameMobile: data.usernameMobile,
-      domainsEditable: data.domainsEditable,
-      urisWithTempIds: data.urisWithTempIds,
-      tierEditable: data.tierEditable,
-      tagsEditable: data.tagsEditable,
-      notesEditable: data.notesEditable,
-      urisRemoved: data.urisRemoved,
-      sifDecryptError: data.sifDecryptError
-    };
 
     return navigate('/fetch', {
       state: {

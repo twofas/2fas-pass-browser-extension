@@ -12,8 +12,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, lazy, useCallback, useRef } from 'react';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import ToastsContent from '@/entrypoints/popup/components/ToastsContent';
 import Video1Light from '@/assets/videos/install_video_1_light.mp4?url';
 import Video1Dark from '@/assets/videos/install_video_1_dark.mp4?url';
@@ -22,22 +21,21 @@ import Video2Dark from '@/assets/videos/install_video_2_dark.mp4?url';
 import VideoPoster from '@/assets/install-page/video-poster.png?url';
 import { openPopup, safariBlankLinks } from '@/partials/functions';
 import detectDefaultTheme from './functions/detectDefaultTheme';
+import Logo from '@/assets/logo.svg?react';
+import LogoDark from '@/assets/logo-dark.svg?react';
+import Domain from '@/assets/popup-window/domain.svg?react';
+import Check from '@/assets/install-page/check.svg?react';
+import Puzzle from '@/assets/install-page/puzzle.svg?react';
+import Pin from '@/assets/install-page/pin.svg?react';
+import Arrow from '@/assets/install-page/arrow.svg?react';
+import Shield from '@/assets/install-page/shield.svg?react';
+import Qr from '@/assets/install-page/qr.svg?react';
+import LogsIcon from '@/assets/install-page/logs.svg?react';
+import ArrowDecorLight from '@/assets/install-page/arrow-decor-light.svg?react';
+import ArrowDecorDark from '@/assets/install-page/arrow-decor-dark.svg?react';
+import PlayIcon from '@/assets/install-page/play.svg?react';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const Logo = lazy(() => import('@/assets/logo.svg?react'));
-const LogoDark = lazy(() => import('@/assets/logo-dark.svg?react'));
-const Domain = lazy(() => import('@/assets/popup-window/domain.svg?react'));
-const Check = lazy(() => import('@/assets/install-page/check.svg?react'));
-const Puzzle = lazy(() => import('@/assets/install-page/puzzle.svg?react'));
-const Pin = lazy(() => import('@/assets/install-page/pin.svg?react'));
-const Arrow = lazy(() => import('@/assets/install-page/arrow.svg?react'));
-const Shield = lazy(() => import('@/assets/install-page/shield.svg?react'));
-const Qr = lazy(() => import('@/assets/install-page/qr.svg?react'));
-const LogsIcon = lazy(() => import('@/assets/install-page/logs.svg?react'));
-const ArrowDecorLight = lazy(() => import('@/assets/install-page/arrow-decor-light.svg?react'));
-const ArrowDecorDark = lazy(() => import('@/assets/install-page/arrow-decor-dark.svg?react'));
-const PlayIcon = lazy(() => import('@/assets/install-page/play.svg?react'));
-const DownloadMobileApp  = lazy(() => import('./components/DownloadMobileApp'));
+const DownloadMobileApp = lazy(() => import('./components/DownloadMobileApp'));
 
 const stepVariants = {
   hidden: { opacity: 0, display: 'none', transition: { duration: 0.2, ease: 'easeOut' } },
@@ -156,7 +154,7 @@ function Install () {
       setLogs(!logs);
       showToast(browser.i18n.getMessage('install_logging_settings_changed'), 'success');
     } catch {
-      showToast(browser.i18n.getMessage('error_logging_settings_changed'), 'error');
+      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
     }
   };
 
@@ -266,9 +264,8 @@ function Install () {
         <div className={S.installContainer}>
           <div className="container">
             <div className={S.installContainerContent}>
-              <LazyMotion features={loadDomAnimation}>
                 <div className={S.installContainerContentLeft}>
-                  <m.div
+                  <motion.div
                     className={`${S.installContainerContentLeftBox}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -308,8 +305,8 @@ function Install () {
                         <Arrow />
                       </button>
                     </div>
-                  </m.div>
-                  <m.div
+                  </motion.div>
+                  <motion.div
                     className={`${S.installContainerContentLeftBox}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -346,8 +343,8 @@ function Install () {
                     <div className={`${S.installContainerContentLeftBoxApps} ${appsVisible ? S.visible : ''}`}>
                       <DownloadMobileApp />
                     </div>
-                  </m.div>
-                  <m.div
+                  </motion.div>
+                  <motion.div
                     className={`${S.installContainerContentLeftBox}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -385,10 +382,10 @@ function Install () {
                         </label>
                       </form>
                     </div>
-                  </m.div>
+                  </motion.div>
                 </div>
                 <div className={S.installContainerContentRight}>
-                  <m.div
+                  <motion.div
                     className={`${S.installContainerContentRightBox}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -396,8 +393,8 @@ function Install () {
                   >
                     <video src={Video1Light} className="theme-light" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
                     <video src={Video1Dark} className="theme-dark" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
-                  </m.div>
-                  <m.div
+                  </motion.div>
+                  <motion.div
                     className={`${S.installContainerContentRightBox}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -405,8 +402,8 @@ function Install () {
                   >
                     <video src={Video2Light} className="theme-light" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
                     <video src={Video2Dark} className="theme-dark" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
-                  </m.div>
-                  <m.div
+                  </motion.div>
+                  <motion.div
                     className={`${S.installContainerContentRightBox} ${S.external}`}
                     variants={stepVariants}
                     initial="hidden"
@@ -416,9 +413,8 @@ function Install () {
                       <PlayIcon />
                       <img src={VideoPoster} alt={browser.i18n.getMessage('install_3_get_started')} loading="lazy" />
                     </a>
-                  </m.div>
+                  </motion.div>
                 </div>
-              </LazyMotion>
             </div>
           </div>
         </div>

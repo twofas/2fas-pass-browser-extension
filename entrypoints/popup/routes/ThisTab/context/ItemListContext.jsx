@@ -105,4 +105,23 @@ export function useItemList () {
   return context || fallbackContext;
 }
 
+/**
+* Hook to check if a specific item's menu is open. Only re-renders when this item's state changes.
+* @param {string} itemId - The item ID to check.
+* @return {boolean} True if this item's menu is open.
+*/
+export function useIsItemOpen (itemId) {
+  const { openItemId } = useItemList();
+  return openItemId === itemId;
+}
+
+/**
+* Hook to get menu actions without subscribing to openItemId changes.
+* @return {Object} Object with openMenu and closeMenu functions.
+*/
+export function useItemMenuActions () {
+  const { openMenu, closeMenu } = useItemList();
+  return useMemo(() => ({ openMenu, closeMenu }), [openMenu, closeMenu]);
+}
+
 export default ItemListContext;

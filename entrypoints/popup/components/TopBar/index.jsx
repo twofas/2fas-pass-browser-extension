@@ -7,7 +7,7 @@
 import S from './TopBar.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { useEffect, useRef, useState, lazy, useCallback, useMemo, memo, useContext } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo, memo, useContext } from 'react';
 import { useAuthActions, useAuthState } from '@/hooks/useAuth';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
@@ -17,15 +17,15 @@ import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
 import generateAddNewOptions from './functions/generateAddNewOptions';
 import { getSupportedFeatures } from '@/partials/functions';
 import { supportedFeatures } from '@/constants';
+import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import Logo from '@/assets/logo.svg?react';
+import LogoDark from '@/assets/logo-dark.svg?react';
+import LockedIcon from '@/assets/popup-window/locked.svg?react';
+import LockIcon from '@/assets/popup-window/lock.svg?react';
+import AddNewIcon from '@/assets/popup-window/add-new.svg?react';
 
 const selectComponents = { Option: AddNewCustomOption };
 const noOptionsMessage = () => null;
-
-const Logo = lazy(() => import('@/assets/logo.svg?react'));
-const LogoDark = lazy(() => import('@/assets/logo-dark.svg?react'));
-const LockedIcon = lazy(() => import('@/assets/popup-window/locked.svg?react'));
-const LockIcon = lazy(() => import('@/assets/popup-window/lock.svg?react'));
-const AddNewIcon = lazy(() => import('@/assets/popup-window/add-new.svg?react'));
 
 /** 
 * Function component for the TopBar.
@@ -39,6 +39,7 @@ function TopBar() {
   const { configured } = useAuthState();
   const { matchingLoginsLength } = useMatchingLogins();
   const scrollableRefContext = useContext(ScrollableRefContext);
+  const clearData = usePopupStateStore(state => state.clearData);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [addNewOptions, setAddNewOptions] = useState([]);
@@ -71,6 +72,8 @@ function TopBar() {
   }, [logout]);
 
   const handleLogoClick = useCallback(() => {
+    clearData(location.pathname);
+
     if (location.pathname === '/' && scrollableRefContext?.ref?.current) {
       scrollableRefContext.ref.current.scrollTo({
         top: 0,
@@ -78,7 +81,7 @@ function TopBar() {
         behavior: 'smooth'
       });
     }
-  }, [location.pathname, scrollableRefContext]);
+  }, [clearData, location.pathname, scrollableRefContext]);
 
   const logoClass = useMemo(() =>
     `${S.topbarLogo} ${(location.pathname === '/blocked' || location.pathname === '/connect') ? S.disabled : ''}`,

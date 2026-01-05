@@ -6,7 +6,7 @@
 
 import { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 
 const UriTempIdsContext = createContext(null);
 
@@ -36,8 +36,7 @@ const generateTempIds = uris => {
 * @return {JSX.Element} The provider component.
 */
 export function UriTempIdsProvider ({ initialUris, children }) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData } = usePopupState();
 
   const [urisWithTempIds, setUrisWithTempIds] = useState(() => {
     if (data?.urisWithTempIds && data.urisWithTempIds.length > 0) {

@@ -7,7 +7,7 @@
 import decompress from '@/partials/gzip/decompress';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import getKey from './getKey';
-import Tag from '../models/Tag';
+import Tag from '@/models/Tag';
 
 /** 
 * Gets the tags from session storage.
@@ -30,7 +30,7 @@ const getTags = async () => {
   const devicesData = devices.map(device => {
     return {
       deviceId: device?.id,
-      vaultsIds: device.vaults.map(vault => vault.id).filter(id => id) || [],
+      vaultsIds: device?.vaults?.map(vault => vault.id).filter(id => id) || [],
     };
   });
 

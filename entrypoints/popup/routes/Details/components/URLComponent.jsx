@@ -8,19 +8,16 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
-import { lazy, useCallback } from 'react';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { useCallback, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 import copyValue from '@/partials/functions/copyValue';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import URIMatcher from '@/partials/URIMatcher';
 import updateItem from '../functions/updateItem';
 import { useUriTempIds } from '../context/UriTempIdsContext';
-
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
-const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import TrashIcon from '@/assets/popup-window/trash.svg?react';
 
 const urlVariants = {
   hidden: {
@@ -51,11 +48,11 @@ const urlVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function URLComponent (props) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData, setItem } = usePopupState();
   const { urisWithTempIds, updateUri, removeUri, resetUri } = useUriTempIds();
 
   const { inputError, uri, index } = props;
+  const inputRef = useRef(null);
 
   const isEditable = data?.domainsEditable?.[uri._tempId];
   const buttonText = isEditable === true ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit');
@@ -97,13 +94,13 @@ function URLComponent (props) {
         resetUri(uri._tempId, { text: '', matcher: URIMatcher.M_DOMAIN_TYPE });
       }
 
-      const updatedItem = updateItem(data.item, {
+      const updatedItem = await updateItem(data.item, {
         content: { uris: newContentUris }
       });
 
       item = null;
 
-      setData('item', updatedItem);
+      setItem(updatedItem);
 
       const newDomainsEditable = {
         ...currentDomainsEditable,
@@ -114,7 +111,7 @@ function URLComponent (props) {
     }
   };
 
-  const handleRemoveUri = useCallback(() => {
+  const handleRemoveUri = useCallback(async () => {
     const uriIndex = urisWithTempIds.findIndex(u => u._tempId === uri._tempId);
 
     if (uriIndex === -1) {
@@ -126,14 +123,14 @@ function URLComponent (props) {
 
     const newIconUriIndex = data.item.content.iconUriIndex > 0 ? data.item.content.iconUriIndex - 1 : 0;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: {
         uris: newContentUris,
         iconUriIndex: newIconUriIndex
       }
     });
 
-    setData('item', updatedItem);
+    setItem(updatedItem);
     removeUri(uri._tempId);
 
     if (data?.domainsEditable && data.domainsEditable[uri._tempId] !== undefined) {
@@ -144,9 +141,9 @@ function URLComponent (props) {
 
     const currentUrisRemoved = data?.urisRemoved || 0;
     setData('urisRemoved', currentUrisRemoved + 1);
-  }, [data, uri._tempId, setData, urisWithTempIds, removeUri]);
+  }, [data, uri._tempId, setData, setItem, urisWithTempIds, removeUri]);
 
-  const handleUriChange = useCallback(e => {
+  const handleUriChange = useCallback(async e => {
     const newUriText = e.target.value;
 
     const uriIndex = urisWithTempIds.findIndex(u => u._tempId === uri._tempId);
@@ -159,25 +156,30 @@ function URLComponent (props) {
     const newContentUris = [...data.item.content.uris];
     newContentUris[uriIndex] = { text: newUriText, matcher: currentUri.matcher };
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { uris: newContentUris }
     });
 
-    setData('item', updatedItem);
+    setItem(updatedItem);
     updateUri(uri._tempId, { text: newUriText });
-  }, [data.item, setData, uri._tempId, urisWithTempIds, updateUri]);
+  }, [data.item, setItem, uri._tempId, urisWithTempIds, updateUri]);
+
+  useEffect(() => {
+    if (isEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditable]);
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <Field name={`content.uris[${index}].text`}>
-        {({ input }) => (
-          <m.div
-            className={`${pI.passInput} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
-            variants={urlVariants}
-            initial={isNew ? 'hidden' : false}
-            animate={isNew ? 'visible' : false}
-            exit='hidden'
-          >
+    <Field name={`content.uris[${index}].text`}>
+      {({ input }) => (
+        <motion.div
+          className={`${pI.passInput} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
+          variants={urlVariants}
+          initial={isNew ? 'hidden' : false}
+          animate={isNew ? 'visible' : false}
+          exit='hidden'
+        >
             <div className={pI.passInputTop}>
               <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
               <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={handleUriEditable} tabIndex={-1}>{buttonText}</button>
@@ -186,6 +188,7 @@ function URLComponent (props) {
               <input
                 type="text"
                 {...input}
+                ref={inputRef}
                 value={uri.text}
                 onChange={e => {
                   input.onChange(e);
@@ -224,10 +227,9 @@ function URLComponent (props) {
             <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
               {domainValidation(input.value)}
             </div>
-          </m.div>
+          </motion.div>
         )}
       </Field>
-    </LazyMotion>
   );
 }
 

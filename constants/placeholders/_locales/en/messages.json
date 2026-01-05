@@ -1,46 +1,6 @@
 {
-  "placeholder_domain_uri": {
-    "message": "e.g., https://2fas.com",
-    "description": "Placeholder text for the domain or URI input field"
-  },
-  "placeholder_username": {
-    "message": "Type your username",
-    "description": "Placeholder text for the username input field"
-  },
-  "placeholder_password": {
-    "message": "Type your password",
-    "description": "Placeholder text for the password input field"
-  },
   "placeholder_name": {
     "message": "Type your Item name",
     "description": "Placeholder text for the name input field"
-  },
-  "placeholder_secure_note": {
-    "message": "Type your Secure Note",
-    "description": "Placeholder text for the Secure Note text input field"
-  },
-  "placeholder_secure_note_empty": {
-    "message": "Note is empty",
-    "description": "Placeholder text when there is no Secure Note available"
-  },
-  "placeholder_payment_card_name": {
-    "message": "Type the card name",
-    "description": "Placeholder text for the payment card name input field"
-  },
-  "placeholder_payment_card_cardholder": {
-    "message": "Type the cardholder's name",
-    "description": "Placeholder text for the cardholder name input field"
-  },
-  "placeholder_payment_card_number": {
-    "message": "0000 0000 0000 0000",
-    "description": "Placeholder text for the payment card number input field"
-  },
-  "placeholder_payment_card_expiration_date": {
-    "message": "MM/YY",
-    "description": "Placeholder text for the payment card expiration date input field"
-  },
-  "placeholder_payment_card_security_code": {
-    "message": "_ _ _",
-    "description": "Placeholder text for the payment card security code input field"
   }
 }

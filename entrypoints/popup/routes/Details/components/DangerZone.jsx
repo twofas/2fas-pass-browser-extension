@@ -5,13 +5,11 @@
 // See LICENSE file for full terms
 
 import S from '../Details.module.scss';
-import * as m from 'motion/react-m';
-import { Link } from 'react-router';
-import { lazy } from 'react';
+import { motion } from 'motion/react';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import usePopupStateStore from '../../../store/popupState';
-
-const ChevronIcon = lazy(() => import('@/assets/popup-window/chevron.svg?react'));
+import usePopupState from '../../../store/popupState/usePopupState';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
 
 const dangerZoneVariants = {
   hidden: { maxHeight: '0px' },
@@ -24,8 +22,7 @@ const dangerZoneVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function DangerZone (props) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData } = usePopupState();
 
   const { formData } = props;
   const { submitting } = formData;
@@ -38,11 +35,11 @@ function DangerZone (props) {
         onClick={() => setData('dangerZoneOpened', !data.dangerZoneOpened)}
         disabled={submitting ? 'disabled' : ''}
       >
-        <span>{browser.i18n.getMessage('danger_zone')}</span>
+        <span>{browser.i18n.getMessage('settings_danger_zone')}</span>
         <ChevronIcon />
       </button>
 
-      <m.div
+      <motion.div
         className={S.detailsDangerZoneBody}
         variants={dangerZoneVariants}
         initial='hidden'
@@ -50,7 +47,7 @@ function DangerZone (props) {
         animate={data.dangerZoneOpened ? 'visible' : 'hidden'}
       >
         <p>{browser.i18n.getMessage('details_delete_header')}</p>
-        <Link
+        <ClearLink
           to='/fetch'
           state={{
             action: PULL_REQUEST_TYPES.DELETE_DATA,
@@ -66,8 +63,8 @@ function DangerZone (props) {
           prefetch='intent'
         >
           <span>{browser.i18n.getMessage('details_delete')}</span>
-        </Link>
-      </m.div>
+        </ClearLink>
+      </motion.div>
     </div>
   );
 }
