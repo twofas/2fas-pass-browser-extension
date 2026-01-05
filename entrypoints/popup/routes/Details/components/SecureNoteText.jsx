@@ -32,6 +32,8 @@ function SecureNoteText (props) {
   const previousSifValueRef = useRef(null);
   const textareaRef = useRef(null);
   const [showTextarea, setShowTextarea] = useState(false);
+  const [textareaHeight, setTextareaHeight] = useState(0);
+  const [textareaOverflow, setTextareaOverflow] = useState('hidden');
   const [localDecryptedText, setLocalDecryptedText] = useState(null);
   const [localEditedText, setLocalEditedText] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
@@ -116,47 +118,41 @@ function SecureNoteText (props) {
 
   useEffect(() => {
     if (data?.revealSecureNote) {
-      setShowTextarea(true);
-
       const animateExpand = async () => {
-        if (!textareaRef.current) {
-          return;
-        }
+        setTextareaHeight(0);
+        setTextareaOverflow('hidden');
+        setShowTextarea(true);
 
-        setTimeout(() => {
-          if (textareaRef.current) {
-            textareaRef.current.style.height = '0';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (!textareaRef.current) {
+              return;
+            }
+
             const scrollHeight = textareaRef.current.scrollHeight;
             const targetHeight = Math.max(TEXTAREA_LINE_HEIGHT, Math.min(scrollHeight, 200));
 
-            textareaRef.current.style.height = `${TEXTAREA_LINE_HEIGHT}px`;
-            textareaRef.current.style.overflowY = 'hidden';
-
-            animate(TEXTAREA_LINE_HEIGHT, targetHeight, {
+            animate(0, targetHeight, {
               duration: 0.2,
               ease: 'easeOut',
               onUpdate: value => {
-                if (textareaRef.current) {
-                  textareaRef.current.style.height = `${value}px`;
-                }
+                setTextareaHeight(value);
               },
             }).then(() => {
-              if (textareaRef.current) {
-                textareaRef.current.style.overflowY = 'auto';
+              setTextareaOverflow('auto');
 
-                if (data?.sifEditable) {
-                  const textarea = textareaRef.current;
-                  textarea.focus();
+              if (data?.sifEditable && textareaRef.current) {
+                const textarea = textareaRef.current;
+                textarea.focus();
 
-                  requestAnimationFrame(() => {
-                    textarea.setSelectionRange(0, 0);
-                    textarea.scrollTop = 0;
-                  });
-                }
+                requestAnimationFrame(() => {
+                  textarea.setSelectionRange(0, 0);
+                  textarea.scrollTop = 0;
+                });
               }
             });
-          }
-        }, 0);
+          });
+        });
       };
 
       animateExpand();
@@ -168,15 +164,13 @@ function SecureNoteText (props) {
 
         const currentHeight = textareaRef.current.offsetHeight;
 
-        textareaRef.current.style.overflowY = 'hidden';
+        setTextareaOverflow('hidden');
 
-        await animate(currentHeight, TEXTAREA_LINE_HEIGHT, {
+        await animate(currentHeight, 0, {
           duration: 0.2,
           ease: 'easeOut',
           onUpdate: value => {
-            if (textareaRef.current) {
-              textareaRef.current.style.height = `${value}px`;
-            }
+            setTextareaHeight(value);
           },
         });
 
@@ -275,6 +269,7 @@ function SecureNoteText (props) {
                   placeholder={!sifDecryptError && (originalItem?.isT3orT2WithSif || data?.sifEditable) ? browser.i18n.getMessage('placeholder_secure_note_empty') : ''}
                   id='editedSif'
                   className={S.detailsSecureNoteTextarea}
+                  style={{ height: `${textareaHeight}px`, overflowY: textareaOverflow }}
                   disabled={!data?.sifEditable || sifDecryptError}
                   onChange={handleTextChange}
                   dir="ltr"
