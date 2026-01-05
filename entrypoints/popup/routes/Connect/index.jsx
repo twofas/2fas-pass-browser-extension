@@ -70,9 +70,16 @@ function Connect (props) {
              device.platform && device.sessionId;
     });
 
-    setReadyDevices(filteredDevices);
+    const sortedDevices = filteredDevices.sort((a, b) => {
+      const dateA = a?.updatedAt || 0;
+      const dateB = b?.updatedAt || 0;
 
-    return filteredDevices;
+      return dateB - dateA;
+    });
+
+    setReadyDevices(sortedDevices);
+
+    return sortedDevices;
   }, []);
 
   const initEphemeralKeys = useCallback(async () => {
