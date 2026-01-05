@@ -1156,17 +1156,17 @@
     "@svgr/hast-util-to-babel-ast" "8.0.0"
     svg-parser "^2.0.4"
 
-"@tanstack/react-virtual@^3.13.14":
-  version "3.13.14"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.13.14.tgz#741ecee962bca03cecd3eda2833d4dc3d1d7138a"
-  integrity sha512-WG0d7mBD54eA7dgA3+sO5csS0B49QKqM6Gy5Rf31+Oq/LTKROQSao9m2N/vz1IqVragOKU5t5k1LAcqh/DfTxw==
+"@tanstack/react-virtual@^3.13.16":
+  version "3.13.16"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.13.16.tgz#932c0661e091b377007442ec61f67289c712f7e9"
+  integrity sha512-y4xLKvLu6UZWiGdNcgk3yYlzCznYIV0m8dSyUzr3eAC0dHLos5V74qhUHxutYddFGgGU8sWLkp6H5c2RCrsrXw==
   dependencies:
-    "@tanstack/virtual-core" "3.13.14"
+    "@tanstack/virtual-core" "3.13.16"
 
-"@tanstack/virtual-core@3.13.14":
-  version "3.13.14"
-  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.13.14.tgz#ee838837e135e576227686e75a46c3fdd1951c4a"
-  integrity sha512-b5Uvd8J2dc7ICeX9SRb/wkCxWk7pUwN214eEPAQsqrsktSKTCmyLxOQWSMgogBByXclZeAdgZ3k4o0fIYUIBqQ==
+"@tanstack/virtual-core@3.13.16":
+  version "3.13.16"
+  resolved "https://registry.yarnpkg.com/@tanstack/virtual-core/-/virtual-core-3.13.16.tgz#221780180fe52718c4f13301be5a939a54df00bf"
+  integrity sha512-njazUC8mDkrxWmyZmn/3eXrDcP8Msb3chSr4q6a65RmwdSbMlMCdnOphv6/8mLO7O3Fuza5s4M4DclmvAO5w0w==
 
 "@types/babel__core@^7.20.5":
   version "7.20.5"
@@ -4583,10 +4583,10 @@ react-dom@^19.2.3:
   dependencies:
     scheduler "^0.27.0"
 
-react-error-boundary@^6.0.0:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-6.0.1.tgz#4f6c05ef27a05401b7b4f1422f36022f295085a2"
-  integrity sha512-zArgQpjJUN1ZLMEKWtifxQweW3yfvwL5j2nh3Pesze1qG6r5oCDMy/TA97bUF01wy4xCeeL4/pd8GHmvEsP3Bg==
+react-error-boundary@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/react-error-boundary/-/react-error-boundary-6.0.2.tgz#c4f5a18510cbe54874c23d759f19c99471816c9e"
+  integrity sha512-yvWErn55ag/ywZEFqYpXYX9rxIDPIabXIX25F184KY3F5Szk2x/cVieOflw5R47ltN3KzWOw82Lmlb4vNjyn9A==
 
 react-final-form@^7.0.0:
   version "7.0.0"
