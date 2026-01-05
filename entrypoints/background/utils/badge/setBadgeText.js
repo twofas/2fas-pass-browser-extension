@@ -64,18 +64,18 @@ const setBadgeText = async (configured, services, url, tabId) => {
     const promises = [];
 
     if (browser?.action?.setBadgeTextColor && typeof browser.action.setBadgeTextColor === 'function') {
-      promises.push(browser.action.setBadgeTextColor({ color: [255, 255, 255, 255] }));
+      promises.push(browser.action.setBadgeTextColor({ color: [255, 255, 255, 255] }).catch(() => {}));
     }
 
     if (browser?.action?.setBadgeBackgroundColor && typeof browser.action.setBadgeBackgroundColor === 'function') {
-      promises.push(browser.action.setBadgeBackgroundColor({ color: [13, 47, 170, 255] }));
+      promises.push(browser.action.setBadgeBackgroundColor({ color: [13, 47, 170, 255] }).catch(() => {}));
     }
 
     if (browser?.action?.setBadgeText && typeof browser.action.setBadgeText === 'function') {
       if (tabId) {
-        promises.push(browser.action.setBadgeText({ text, tabId }));
+        promises.push(browser.action.setBadgeText({ text, tabId }).catch(() => {}));
       } else {
-        promises.push(browser.action.setBadgeText({ text }));
+        promises.push(browser.action.setBadgeText({ text }).catch(() => {}));
       }
     }
 
