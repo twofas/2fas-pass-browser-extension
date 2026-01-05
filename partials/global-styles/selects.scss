@@ -1487,8 +1487,6 @@
 
 .react-select-security-type__menu-portal {
   .react-select__menu {
-  
-
     &-list {
       max-height: 100% !important;
     }
@@ -1942,6 +1940,16 @@
 
     @media (prefers-color-scheme: dark) {
       filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
+    }
+  }
+}
+
+.react-select-auto-clear-clipboard__menu-portal {
+  .safari & {
+    .react-select__menu {
+      .react-select__menu-list {
+        max-height: 250px;
+      }
     }
   }
 }

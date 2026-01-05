@@ -87,6 +87,7 @@ function AutoClearClipboard () {
         <AdvancedSelect
           className='react-select-container'
           classNamePrefix='react-select'
+          classNames={{ menuPortal: () => 'react-select-auto-clear-clipboard__menu-portal' }}
           isSearchable={false}
           options={autoClearClipboardOptions}
           value={autoClearClipboardOptions.find(el => el.value === cC)}
