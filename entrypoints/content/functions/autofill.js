@@ -81,7 +81,7 @@ const decryptPassword = async encryptedPassword => {
 * @param {boolean} [request.cryptoAvailable] - Flag indicating password is encrypted.
 * @param {boolean} [request.iframePermissionGranted] - Flag indicating cross-domain permission was granted.
 * @param {boolean} [request.hasPasswordInAnyFrame] - Flag indicating if any frame has password inputs.
-* @return {Promise<{status: string, message?: string}>} The status of the autofill operation.
+* @return {Promise<{status: string, message?: string, canAutofillPassword?: boolean, canAutofillUsername?: boolean}>} The status of the autofill operation.
 */
 const autofill = async request => {
   if (request.noPassword && request.noUsername) {
@@ -93,28 +93,38 @@ const autofill = async request => {
     .map(input => input.closest('form'))
     .filter(Boolean);
   const usernameInputs = getUsernameInputs(passwordForms);
+  const canAutofillPassword = passwordInputs.length > 0;
+  const canAutofillUsername = usernameInputs.length > 0;
 
   setUsernameSkips(passwordInputs, usernameInputs, request.hasPasswordInAnyFrame);
 
   const hasUsernameData = request.username?.length > 0;
   const hasPasswordData = request.password?.length > 0;
-  const hasUsernameInput = usernameInputs.length > 0;
-  const hasPasswordInput = passwordInputs.length > 0;
-  const canFillUsername = hasUsernameData && hasUsernameInput;
-  const canFillPassword = hasPasswordData && hasPasswordInput;
+  const canFillUsername = hasUsernameData && usernameInputs.length > 0;
+  const canFillPassword = hasPasswordData && passwordInputs.length > 0;
 
   if (!canFillUsername && !canFillPassword) {
-    return { status: 'error', message: 'No input fields found' };
+    return {
+      status: 'error',
+      message: 'No input fields found',
+      canAutofillPassword,
+      canAutofillUsername
+    };
   }
 
   const isTopFrame = window.self === window.top;
 
   if (!isTopFrame && !request.iframePermissionGranted) {
-    return { status: 'cancelled', message: 'Cross-domain autofill not permitted' };
+    return {
+      status: 'cancelled',
+      message: 'Cross-domain autofill not permitted',
+      canAutofillPassword,
+      canAutofillUsername
+    };
   }
 
   if (canFillUsername) {
-    usernameInputs.forEach(input => inputSetValue(input, request.username));
+    usernameInputs.forEach(input => inputSetValue(input, request.username, { respectSkipAttribute: false }));
   }
 
   if (canFillPassword) {
@@ -124,7 +134,7 @@ const autofill = async request => {
       const decryptResult = await decryptPassword(request.password);
 
       if (decryptResult.status !== 'ok') {
-        return decryptResult;
+        return { ...decryptResult, canAutofillPassword, canAutofillUsername };
       }
 
       passwordValue = decryptResult.data;
@@ -132,11 +142,11 @@ const autofill = async request => {
       passwordValue = request.password;
     }
 
-    passwordInputs.forEach(input => inputSetValue(input, passwordValue));
+    passwordInputs.forEach(input => inputSetValue(input, passwordValue, { respectSkipAttribute: false }));
     passwordValue = null;
   }
 
-  return { status: 'ok' };
+  return { status: 'ok', canAutofillPassword, canAutofillUsername };
 };
 
 export default autofill;

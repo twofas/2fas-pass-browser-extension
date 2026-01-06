@@ -9,6 +9,7 @@ export const REQUEST_ACTIONS = Object.freeze({
   AUTOFILL: 'autofill', // content
   AUTOFILL_CARD: 'autofillCard', // content
   AUTOFILL_CARD_WITH_PERMISSION: 'autofillCardWithPermission', // background
+  AUTOFILL_WITH_PERMISSION: 'autofillWithPermission', // background
   CHECK_AUTOFILL_INPUTS: 'checkAutofillInputs', // content
   CHECK_AUTOFILL_INPUTS_CARD: 'checkAutofillInputsCard', // content
   CHECK_IFRAME_PERMISSION: 'checkIframePermission', // content

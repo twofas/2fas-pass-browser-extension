@@ -34,6 +34,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
   if (closeData?.action === 'autofill') {
     const tabId = state.data.tabId;
+    const actionData = closeData.actionData;
 
     try {
       await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
@@ -41,7 +42,68 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
       await CatchError(e);
     }
 
-    const autofillRes = await sendMessageToAllFrames(tabId, closeData.actionData);
+    let hasPasswordInAnyFrame = false;
+
+    try {
+      const inputCheckResults = await sendMessageToAllFrames(tabId, {
+        action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
+        target: REQUEST_TARGETS.CONTENT
+      });
+
+      hasPasswordInAnyFrame = inputCheckResults?.some(r => r.canAutofillPassword) || false;
+    } catch (e) {
+      await CatchError(e);
+    }
+
+    actionData.hasPasswordInAnyFrame = hasPasswordInAnyFrame;
+
+    let needsPermission = false;
+
+    try {
+      const permissionResults = await sendMessageToAllFrames(tabId, {
+        action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
+        target: REQUEST_TARGETS.CONTENT,
+        autofillType: 'login'
+      });
+
+      const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
+      needsPermission = crossDomainFrames.length > 0;
+
+      if (needsPermission) {
+        const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
+        const storageKey = `session:autofillData-${tabId}`;
+
+        // FUTURE - improve that
+        await storage.setItem(storageKey, JSON.stringify({
+          actionData,
+          closeData: {
+            vaultId: closeData.vaultId,
+            deviceId: closeData.deviceId,
+            itemId: closeData.itemId,
+            s_password: closeData.s_password,
+            hkdfSaltAB: closeData.hkdfSaltAB,
+            sessionKeyForHKDF: closeData.sessionKeyForHKDF
+          }
+        }));
+
+        browser.runtime.sendMessage({
+          action: REQUEST_ACTIONS.AUTOFILL_WITH_PERMISSION,
+          target: REQUEST_TARGETS.BACKGROUND,
+          tabId,
+          storageKey,
+          domains: uniqueDomains
+        });
+
+        eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
+        return true;
+      }
+    } catch (e) {
+      await CatchError(e);
+    }
+
+    actionData.iframePermissionGranted = true;
+
+    const autofillRes = await sendMessageToAllFrames(tabId, actionData);
     const isOk = autofillRes?.some(frameResponse => frameResponse.status === 'ok');
 
     if (isOk) {

@@ -165,7 +165,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     }
   } catch (e) {
     await CatchError(e);
-    
+
     return TwofasNotification.show({
       Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
       Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')

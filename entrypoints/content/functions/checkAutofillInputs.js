@@ -10,7 +10,7 @@ import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 
 /**
 * Function to check and set autofill inputs.
-* @return {{canAutofillPassword: boolean, canAutofillUsername: boolean}} Autofill capability status.
+* @return {{canAutofillPassword: boolean, canAutofillUsername: boolean, passwordInputsCount: number, usernameInputsCount: number}} Autofill capability status.
 */
 const checkAutofillInputs = () => {
   const passwordInputs = getPasswordInputs();
@@ -23,7 +23,9 @@ const checkAutofillInputs = () => {
 
   return {
     canAutofillPassword: passwordInputs.length > 0,
-    canAutofillUsername: usernameInputs.length > 0
+    canAutofillUsername: usernameInputs.length > 0,
+    passwordInputsCount: passwordInputs.length,
+    usernameInputsCount: usernameInputs.length
   };
 };
 
