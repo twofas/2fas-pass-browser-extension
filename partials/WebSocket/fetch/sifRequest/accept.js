@@ -72,8 +72,10 @@ const prepareValueForTransmission = async (value, cryptoAvailable) => {
 const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key, messageId, hkdfSaltAB, sessionKeyForHKDF) => {
   const password = info.data.s_password;
   let encryptedValueB64 = null;
+  const noPassword = !password || password.length === 0;
+  const noUsername = !item?.content?.username || item?.content?.username?.length === 0;
 
-  if (password && password.length > 0) {
+  if (!noPassword) {
     const decryptedPassword = await decryptSifValue(password, encryptionItemT2Key);
 
     encryptedValueB64 = await prepareValueForTransmission(decryptedPassword, state?.data?.cryptoAvailable);
@@ -84,6 +86,8 @@ const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key,
     username: item.content.username,
     password: encryptedValueB64 || '',
     target: REQUEST_TARGETS.CONTENT,
+    noPassword,
+    noUsername,
     cryptoAvailable: state?.data?.cryptoAvailable
   };
 

@@ -63,29 +63,29 @@ const handleLoginAutofill = async (item, navigate) => {
   let needsFetchPassword = false;
 
   if (isHighlySecret) {
-    if (!hasPassword) {
-      let canAutofill = false;
-      let canAutofillPassword = false;
+    let canAutofill = false;
+    let canAutofillPassword = false;
 
-      try {
-        const inputTests = await sendMessageToAllFrames(tab.id, {
-          action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
-          target: REQUEST_TARGETS.CONTENT
-        });
+    try {
+      const inputTests = await sendMessageToAllFrames(tab.id, {
+        action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
+        target: REQUEST_TARGETS.CONTENT
+      });
 
-        canAutofillPassword = inputTests.some(input => input.canAutofillPassword);
-        const canAutofillUsername = inputTests.some(input => input.canAutofillUsername);
-        canAutofill = canAutofillPassword || canAutofillUsername;
-      } catch {
-        canAutofill = false;
-      }
+      canAutofillPassword = inputTests.some(input => input.canAutofillPassword);
+      const canAutofillUsername = inputTests.some(input => input.canAutofillUsername);
+      canAutofill = canAutofillPassword || canAutofillUsername;
+    } catch {
+      canAutofill = false;
+    }
 
-      if (!canAutofill) {
-        showT2Toast();
-        return;
-      }
+    if (!canAutofill) {
+      showT2Toast();
+      return;
+    }
 
-      if (canAutofillPassword) {
+    if (canAutofillPassword) {
+      if (!hasPassword) {
         navigate(
           '/fetch', {
             state: {
@@ -105,9 +105,9 @@ const handleLoginAutofill = async (item, navigate) => {
 
         return;
       }
-
+    } else {
       passwordDecrypt = false;
-      needsFetchPassword = true;
+      needsFetchPassword = hasPassword;
     }
   } else if (item.securityType === SECURITY_TIER.SECRET) {
     if (!hasPassword && hasUsername) {

@@ -17,8 +17,6 @@ import getElementInitialScale from './getElementInitialScale';
 */
 const inputSetValue = (el, value, options = {}) => {
   const { respectSkipAttribute = true } = options;
-  const AUTOFILL_CLASS_DELAY = 10;
-  const AUTOFILL_VALUE_DELAY = 20;
   const AUTOFILL_RESET_DELAY = 200;
 
   if (!isVisible(el)) {
@@ -35,40 +33,27 @@ const inputSetValue = (el, value, options = {}) => {
 
   const initialElementScale = getElementInitialScale(el);
 
-  setTimeout(() => {
-    if (!el.isConnected) {
-      return;
+  el.classList.add('twofas-pass-input-autofill');
+  el.style.scale = `${initialElementScale * 1.05}`;
+
+  if (el.value !== value) {
+    el.focus();
+
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+
+    if (nativeInputValueSetter) {
+      nativeInputValueSetter.call(el, '');
+      el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+      nativeInputValueSetter.call(el, value);
+      el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+      el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+    } else {
+      el.value = '';
+      el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+      el.value = value;
+      el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
     }
-
-    el.classList.add('twofas-pass-input-autofill');
-  }, AUTOFILL_CLASS_DELAY);
-
-  setTimeout(() => {
-    if (!el.isConnected) {
-      return;
-    }
-
-    el.style.scale = `${initialElementScale * 1.05}`;
-
-    if (el.value !== value) {
-      el.focus();
-
-      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
-
-      if (nativeInputValueSetter) {
-        nativeInputValueSetter.call(el, '');
-        el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
-        nativeInputValueSetter.call(el, value);
-        el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
-        el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
-      } else {
-        el.value = '';
-        el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
-        el.value = value;
-        el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
-      }
-    }
-  }, AUTOFILL_VALUE_DELAY);
+  }
 
   setTimeout(() => {
     if (!el.isConnected) {
