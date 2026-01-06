@@ -10,15 +10,78 @@
 * @return {boolean} True if the element is visible, false otherwise. True if domElement.checkVisibility is not a function.
 */
 const isVisible = domElement => {
-  if (!domElement || typeof domElement.checkVisibility !== 'function') {
-    return true;
+  if (!domElement) {
+    return false;
   }
 
-  return domElement.checkVisibility({
-    contentVisibilityAuto: true,
-    opacityProperty: false,
-    visibilityProperty: true
-  });
+  if (typeof domElement.checkVisibility === 'function') {
+    const browserVisible = domElement.checkVisibility({
+      contentVisibilityAuto: true,
+      opacityProperty: true,
+      visibilityProperty: true
+    });
+
+    if (!browserVisible) {
+      return false;
+    }
+  }
+
+  const rect = domElement.getBoundingClientRect();
+
+  if (rect.width === 0 || rect.height === 0) {
+    return false;
+  }
+
+  const style = window.getComputedStyle(domElement);
+
+  if (style.display === 'none' || style.visibility === 'hidden') {
+    return false;
+  }
+
+  if (style.clip === 'rect(0px, 0px, 0px, 0px)' || style.clipPath === 'inset(100%)') {
+    return false;
+  }
+
+  if (rect.bottom < 0 || rect.right < 0) {
+    return false;
+  }
+
+  const isInIframe = window.self !== window.top;
+
+  if (!isInIframe) {
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    if (rect.top > viewportHeight || rect.left > viewportWidth) {
+      return false;
+    }
+  }
+
+  let parent = domElement.parentElement;
+
+  while (parent && parent !== document.body && parent !== document.documentElement) {
+    const parentStyle = window.getComputedStyle(parent);
+
+    if (parentStyle.display === 'none' || parentStyle.visibility === 'hidden') {
+      return false;
+    }
+
+    if (parentStyle.display !== 'contents') {
+      const parentRect = parent.getBoundingClientRect();
+
+      if (parentRect.height === 0 || parentRect.width === 0) {
+        return false;
+      }
+    }
+
+    if (parseFloat(parentStyle.opacity) === 0) {
+      return false;
+    }
+
+    parent = parent.parentElement;
+  }
+
+  return true;
 };
 
 export default isVisible;
