@@ -6,7 +6,7 @@
 
 import { useCallback } from 'react';
 import { toast } from 'react-toastify';
-import keepPassword from '../functions/keepPassword';
+import keepItem from '../functions/keepItem';
 
 /**
 * Hook for managing keep password popup actions.
@@ -14,9 +14,9 @@ import keepPassword from '../functions/keepPassword';
 * @param {Function} setAutofillFailed - Function to set autofill failed state.
 * @return {Object} Object containing handleKeepPassword and handleDontKeepPassword callback functions.
 */
-export const useKeepPassword = (state, setAutofillFailed) => {
-  const handleKeepPassword = useCallback(async () => {
-    await keepPassword(state);
+export const useKeepItem = (state, setAutofillFailed) => {
+  const handleKeepItem = useCallback(async () => {
+    await keepItem(state);
     window.history.replaceState({}, '');
     setAutofillFailed(false);
 
@@ -25,7 +25,7 @@ export const useKeepPassword = (state, setAutofillFailed) => {
     }
   }, [state, setAutofillFailed]);
 
-  const handleDontKeepPassword = useCallback(() => {
+  const handleDontKeepItem = useCallback(() => {
     setAutofillFailed(false);
     window.history.replaceState({}, '');
 
@@ -34,5 +34,5 @@ export const useKeepPassword = (state, setAutofillFailed) => {
     }
   }, [state, setAutofillFailed]);
 
-  return { handleKeepPassword, handleDontKeepPassword };
+  return { handleKeepItem, handleDontKeepItem };
 };

@@ -13,12 +13,12 @@ import { generateNonce } from '@/partials/functions';
 import { ENCRYPTION_KEYS } from '@/constants';
 
 /**
-* Function to keep the password.
+* Function to keep the item.
 * @async
 * @param {Object} state - The current state.
-* @return {Promise<void>} A promise that resolves when the password is kept.
+* @return {Promise<void>} A promise that resolves when the item is kept.
 */
-const keepPassword = async state => {
+const keepItem = async state => {
   const [items, itemsKeys] = await Promise.all([
     getItems(),
     getItemsKeys(state.deviceId, state.vaultId)
@@ -77,4 +77,4 @@ const keepPassword = async state => {
   await browser.alarms.create(`sifT2Reset-${state.deviceId}|${state.vaultId}|${state.itemId}`, { delayInMinutes: sifResetTime });
 };
 
-export default keepPassword;
+export default keepItem;
