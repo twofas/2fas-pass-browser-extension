@@ -8,23 +8,22 @@
 @use "@/partials/global-styles/variables" as v;
 @use "@/partials/global-styles/mixins" as m;
 
-.small-login-item {
+.autofill-error-item {
   margin: 0 auto;
   padding-bottom: 0;
   position: relative;
   width: 267px;
 
-  &-autofill {
+  &-content {
     align-items: center;
     background-color: rgba(v.$hover-color-light, 0);
     border: 1px solid v.$primary-box-stroke-light;
     border-radius: 6px;
     display: flex;
-    flex-direction: row;
-    height: 58px;
-    justify-content: flex-start;
+    flex-direction: column;
+    justify-content: center;
     margin: 0;
-    padding: 12px 12px;
+    padding: 20px 11px;
     transition: background-color v.$anim;
     width: 100%;
 
@@ -33,8 +32,15 @@
       border-color: v.$primary-box-stroke-dark;
     }
 
-    > span {
-      &:first-of-type {
+    &-header {
+      align-items: center;
+      display: inline-flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 0 10px;
+      margin-bottom: 12px;
+
+      span {
         align-items: center;
         background-color: v.$primary-box-bg-light;
         border-radius: 4px;
@@ -43,7 +49,7 @@
         flex-shrink: 0;
         height: 32px;
         justify-content: center;
-        margin-right: 8px;
+        margin-right: 0;
         overflow: hidden;
         width: 32px;
 
@@ -97,100 +103,94 @@
         }
       }
 
-      &:nth-of-type(2) {
-        align-items: flex-start;
-        display: flex;
-        flex-direction: column;
-        gap: 3px 0;
-        max-width: 255px;
+      p {
+        color: v.$primary-text-light;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.2;
+        max-width: 200px;
         overflow: hidden;
-        transition: max-width v.$anim;
+        text-overflow: ellipsis;
+        white-space: nowrap;
 
-        > span {
-          line-height: 1.2;
-          max-width: 100%;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
+      }
+    }
 
-          &:first-of-type,
-          &:first-of-type:last-of-type {
+    &-data {
+      align-items: flex-start;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+
+      &-line {
+        align-items: center;
+        border-bottom: 1px solid v.$divider-light;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 12px 0;
+        text-align: left;
+        width: 100%;
+
+        &:last-of-type {
+          border-bottom: 0;
+          padding-bottom: 0;
+        }
+
+        @include m.darkMode {
+          border-color: v.$divider-dark;
+        }
+
+        &-content {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+
+          h4 {
             color: v.$primary-text-light;
             font-size: 14px;
             font-weight: 500;
+            line-height: 1.2;
 
             @include m.darkMode {
               color: v.$primary-text-dark;
             }
           }
 
-          &:last-of-type {
+          p {
             color: v.$secondary-text-light;
             font-size: 12px;
             font-weight: 400;
-          }
-        }
-      }
-    }
-  }
-
-  &-additional-buttons {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    gap: 0 2px;
-    margin-left: auto;
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
-
-    a,
-    button {
-      background-color: rgba(v.$hover-on-hover-light, 0);
-      align-items: center;
-      border-radius: 4px;
-      display: inline-flex;
-      height: 32px;
-      justify-content: center;
-      opacity: 1;
-      padding: 0;
-      transition: background-color v.$anim, opacity v.$anim;
-      width: 32px;
-
-      @include m.darkMode {
-        background-color: rgba(v.$hover-on-hover-dark, 0);
-      }
-
-      &:hover {
-        background-color: rgba(v.$hover-on-hover-light, 1);
-
-        @include m.darkMode {
-          background-color: rgba(v.$hover-on-hover-dark, 1);
-        }
-
-        svg {
-          &.service-password {
-            fill: v.$primary-color-light;
-            transition: fill v.$anim;
+            line-height: 1.2;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
 
             @include m.darkMode {
-              fill: v.$primary-color-dark;
+              color: v.$secondary-text-dark;
             }
           }
         }
-      }
 
-      svg {
-        height: auto;
+        &-actions {
+          button {
+            svg {
+              height: 18px;
+              stroke: v.$primary-color-light;
+              stroke-linecap: round;
+              stroke-linejoin: round;
+              stroke-width: 1.3;
+              width: 18px;
 
-        &.service-password {
-          fill: v.$object-light;
-          width: 24px;
-
-          @include m.darkMode {
-            fill: v.$object-dark;
+              @include m.darkMode {
+                stroke: v.$primary-color-dark;
+              }
+            }
           }
         }
       }

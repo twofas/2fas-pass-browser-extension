@@ -7,7 +7,7 @@
 @use "@/partials/global-styles/variables" as v;
 @use "@/partials/global-styles/mixins" as m;
 
-.keep-password {
+.keep-item {
   align-items: center;
   background-color: rgba(v.$primary-box-bg-dark, .5);
   display: flex;
@@ -34,9 +34,9 @@
   &-box {
     background-color: v.$primary-bg-light;
     border-radius: 10px;
-    padding: 23px 13px 20px;
+    padding: 23px 14px 20px;
     text-align: center;
-    width: calc(100% - 24px);
+    width: calc(100% - 32px);
 
     @include m.darkMode {
       background-color: v.$primary-bg-dark;

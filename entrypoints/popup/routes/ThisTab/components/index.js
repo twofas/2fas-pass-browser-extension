@@ -7,13 +7,13 @@
 export { default as AllItemsList } from './AllItemsList';
 export { default as Filters } from './Filters';
 export { default as Item } from './Item';
-export { default as KeepPassword } from './KeepPassword';
+export { default as KeepItem } from './KeepItem';
 export { default as MatchingItemsList } from './MatchingItemsList';
 export { default as ModelFilter } from './ModelFilter';
 export { default as NoMatch } from './NoMatch';
 export { default as Search } from './Search';
 export { default as Skeleton } from './Skeleton';
-export { default as SmallLoginItem } from './SmallLoginItem';
+export { default as SmallLoginItem } from './AutofillErrorItem';
 export { default as Sort } from './Sort';
 export { default as TagsInfo } from './TagsInfo';
 export { default as UpdateComponent } from './UpdateComponent';
