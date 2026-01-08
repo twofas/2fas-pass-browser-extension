@@ -23,11 +23,18 @@ const checkAutofillInputsCard = () => {
   const hasYearInput = expirationDateInputs.some(item => item.type === 'year');
   const hasCombinedInput = expirationDateInputs.some(item => item.type === 'combined');
 
+  const canAutofillCardNumber = cardNumberInputs.length > 0;
+  const canAutofillExpirationDate = expirationDateInputs.length > 0;
+  const canAutofillSecurityCode = securityCodeInputs.length > 0;
+
+  const canAutofillCriticalFields = canAutofillCardNumber && canAutofillExpirationDate && canAutofillSecurityCode;
+
   return {
-    canAutofillCardNumber: cardNumberInputs.length > 0,
+    canAutofillCardNumber,
     canAutofillCardholderName: cardholderNameInputs.length > 0,
-    canAutofillExpirationDate: expirationDateInputs.length > 0,
-    canAutofillSecurityCode: securityCodeInputs.length > 0,
+    canAutofillExpirationDate,
+    canAutofillSecurityCode,
+    canAutofillCriticalFields,
     expirationDateFormat: {
       hasMonthInput,
       hasYearInput,

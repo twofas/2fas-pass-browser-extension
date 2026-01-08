@@ -26,12 +26,11 @@ function KeepItem () {
   }, [autofillFailed]);
 
   useEffect(() => {
-    // if (location?.state?.action === 'autofillT2Failed' || location?.state?.action === 'autofillCardT2Failed') {
-    //   setAutofillFailed(true);
-    // } else {
-    //   setAutofillFailed(false);
-    // }
-    setAutofillFailed(true); // debug
+    if (location?.state?.action === 'autofillT2Failed' || location?.state?.action === 'autofillCardT2Failed') {
+      setAutofillFailed(true);
+    } else {
+      setAutofillFailed(false);
+    }
   }, [location?.state]);
 
   return (
@@ -41,12 +40,9 @@ function KeepItem () {
 
         <div className={S.keepItemBoxLoginItem}>
           <AutofillErrorItem
-            // deviceId={state?.deviceId}
-            // vaultId={state?.vaultId}
-            // itemId={state?.itemId}
-            deviceId="6CC62DF5-702A-4770-8331-69EEF99B4853"
-            vaultId="af43f163-eec4-4153-99a7-a1bb2829a137"
-            itemId="0361f9a4-32e9-4649-819d-8769cf14da07"
+            deviceId={state?.deviceId}
+            vaultId={state?.vaultId}
+            itemId={state?.itemId}
             state={state}
             setAutofillFailed={setAutofillFailed}
           />

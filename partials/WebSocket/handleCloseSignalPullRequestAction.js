@@ -209,9 +209,8 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
     const autofillRes = await sendMessageToAllFrames(tabId, actionData);
     const isOk = autofillRes?.some(frameResponse => frameResponse.status === 'ok');
-    const isPartial = autofillRes?.some(frameResponse => frameResponse.status === 'partial');
 
-    if (isOk || isPartial) {
+    if (isOk) {
       const separateWindow = await popupIsInSeparateWindow();
       await closeWindowIfNotInSeparateWindow(separateWindow);
 
