@@ -342,6 +342,37 @@ const setCardIssuerValue = (inputData, issuerValue) => {
 };
 
 /**
+* Checks if expiration date was successfully filled.
+* Returns true if combined field was filled OR both month and year were filled.
+* @param {Array<{success: boolean, type: string}>} expirationResults - Results from expiration date autofill.
+* @return {boolean} True if expiration date is considered filled.
+*/
+const isExpirationDateFilled = expirationResults => {
+  if (!expirationResults || expirationResults.length === 0) {
+    return false;
+  }
+
+  const combinedResult = expirationResults.find(r => r.type === 'combined');
+
+  if (combinedResult?.success) {
+    return true;
+  }
+
+  const monthResult = expirationResults.find(r => r.type === 'month');
+  const yearResult = expirationResults.find(r => r.type === 'year');
+
+  if (monthResult?.success && yearResult?.success) {
+    return true;
+  }
+
+  if (monthResult?.success || yearResult?.success) {
+    return true;
+  }
+
+  return false;
+};
+
+/**
 * Function to autofill payment card input fields.
 * @param {Object} request - The request object containing card data.
 * @param {string} [request.cardholderName] - The cardholder name to fill.
@@ -351,7 +382,7 @@ const setCardIssuerValue = (inputData, issuerValue) => {
 * @param {string} [request.cardIssuer] - The card issuer/type to fill.
 * @param {boolean} [request.cryptoAvailable] - Flag indicating encrypted fields need decryption.
 * @param {boolean} [request.iframePermissionGranted] - Flag indicating cross-domain permission was granted.
-* @return {Promise<{status: string, message?: string}>} The status of the autofill operation.
+* @return {Promise<{status: string, message?: string, filledFields?: Object}>} The status of the autofill operation.
 */
 const autofillCard = async request => {
   const cardNumberInputs = getPaymentCardNumberInputs();
@@ -378,17 +409,26 @@ const autofillCard = async request => {
   const canFillSecurityCode = hasSecurityCodeData && hasSecurityCodeInput;
   const canFillCardIssuer = hasCardIssuerData && hasCardIssuerInput;
 
+  const filledFields = {
+    cardNumber: false,
+    cardholderName: false,
+    expirationDate: false,
+    securityCode: false,
+    cardIssuer: false
+  };
+
   if (!canFillCardNumber && !canFillCardholderName && !canFillExpirationDate && !canFillSecurityCode && !canFillCardIssuer) {
-    return { status: 'error', message: 'No input fields found' };
+    return { status: 'error', message: 'No input fields found', filledFields };
   }
 
   if (!request.iframePermissionGranted) {
-    return { status: 'cancelled', message: 'Cross-domain autofill not permitted' };
+    return { status: 'cancelled', message: 'Cross-domain autofill not permitted', filledFields };
   }
 
   if (canFillCardholderName) {
     const splitName = splitFullName(request.cardholderName);
     cardholderNameInputs.forEach(inputData => setCardholderNameValue(inputData, request.cardholderName, splitName));
+    filledFields.cardholderName = true;
   }
 
   if (canFillCardNumber) {
@@ -398,7 +438,7 @@ const autofillCard = async request => {
       const decryptResult = await decryptValue(request.cardNumber);
 
       if (decryptResult.status !== 'ok') {
-        return decryptResult;
+        return { ...decryptResult, filledFields };
       }
 
       cardNumberValue = decryptResult.data;
@@ -409,9 +449,10 @@ const autofillCard = async request => {
     const cardNumberWithoutSpaces = cardNumberValue.replace(/\s/g, '');
     cardNumberValue = null;
     cardNumberInputs.forEach(input => inputSetValue(input, cardNumberWithoutSpaces, cardAutofillOptions));
+    filledFields.cardNumber = true;
   }
 
-  let failedExpirationFields = [];
+  let expirationResults = [];
 
   if (canFillExpirationDate) {
     let expirationDateValue;
@@ -420,7 +461,7 @@ const autofillCard = async request => {
       const decryptResult = await decryptValue(request.expirationDate);
 
       if (decryptResult.status !== 'ok') {
-        return decryptResult;
+        return { ...decryptResult, filledFields };
       }
 
       expirationDateValue = decryptResult.data;
@@ -431,8 +472,8 @@ const autofillCard = async request => {
     const parsedDate = parseExpirationDate(expirationDateValue);
     expirationDateValue = null;
 
-    const expirationResults = expirationDateInputs.map(inputData => setExpirationDateValue(inputData, parsedDate));
-    failedExpirationFields = expirationResults.filter(r => !r.success).map(r => r.type);
+    expirationResults = expirationDateInputs.map(inputData => setExpirationDateValue(inputData, parsedDate));
+    filledFields.expirationDate = isExpirationDateFilled(expirationResults);
   }
 
   if (canFillSecurityCode) {
@@ -442,7 +483,7 @@ const autofillCard = async request => {
       const decryptResult = await decryptValue(request.securityCode);
 
       if (decryptResult.status !== 'ok') {
-        return decryptResult;
+        return { ...decryptResult, filledFields };
       }
 
       securityCodeValue = decryptResult.data;
@@ -452,21 +493,45 @@ const autofillCard = async request => {
 
     securityCodeInputs.forEach(input => inputSetValue(input, securityCodeValue, cardAutofillOptions));
     securityCodeValue = null;
+    filledFields.securityCode = true;
   }
 
   if (canFillCardIssuer) {
     cardIssuerInputs.forEach(inputData => setCardIssuerValue(inputData, request.cardIssuer));
+    filledFields.cardIssuer = true;
   }
 
-  if (failedExpirationFields.length > 0) {
+  const failedCriticalFields = [];
+
+  if (hasCardNumberData && !filledFields.cardNumber) {
+    failedCriticalFields.push('cardNumber');
+  }
+
+  if (hasExpirationDateData && !filledFields.expirationDate) {
+    failedCriticalFields.push('expirationDate');
+  }
+
+  if (hasSecurityCodeData && !filledFields.securityCode) {
+    failedCriticalFields.push('securityCode');
+  }
+
+  const anyFieldFilled = filledFields.cardNumber || filledFields.cardholderName ||
+                         filledFields.expirationDate || filledFields.securityCode || filledFields.cardIssuer;
+
+  if (failedCriticalFields.length > 0) {
     return {
       status: 'partial',
-      message: 'Some expiration date fields could not be filled',
-      failedFields: failedExpirationFields
+      message: 'Some critical fields could not be filled',
+      failedFields: failedCriticalFields,
+      filledFields
     };
   }
 
-  return { status: 'ok' };
+  if (anyFieldFilled) {
+    return { status: 'ok', filledFields };
+  }
+
+  return { status: 'error', message: 'No fields were filled', filledFields };
 };
 
 export default autofillCard;

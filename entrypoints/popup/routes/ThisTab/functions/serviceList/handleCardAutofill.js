@@ -78,7 +78,8 @@ const handleCardAutofill = async (item, navigate) => {
         const canAutofillSecurityCode = inputTests.some(input => input.canAutofillSecurityCode);
         const canAutofillCardholderName = inputTests.some(input => input.canAutofillCardholderName);
 
-        canAutofillEncryptedFields = canAutofillCardNumber || canAutofillExpirationDate || canAutofillSecurityCode;
+        const canAutofillCriticalFields = canAutofillCardNumber && canAutofillExpirationDate && canAutofillSecurityCode;
+        canAutofillEncryptedFields = canAutofillCriticalFields;
         canAutofill = canAutofillEncryptedFields || canAutofillCardholderName;
       } catch {
         canAutofill = false;

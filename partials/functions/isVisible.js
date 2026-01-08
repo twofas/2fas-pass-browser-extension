@@ -42,17 +42,33 @@ const isVisible = domElement => {
     return false;
   }
 
-  if (rect.bottom < 0 || rect.right < 0) {
-    return false;
-  }
-
   const isInIframe = window.self !== window.top;
 
   if (!isInIframe) {
-    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const documentHeight = Math.max(
+      document.body.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.clientHeight,
+      document.documentElement.scrollHeight,
+      document.documentElement.offsetHeight
+    );
+    const documentWidth = Math.max(
+      document.body.scrollWidth,
+      document.body.offsetWidth,
+      document.documentElement.clientWidth,
+      document.documentElement.scrollWidth,
+      document.documentElement.offsetWidth
+    );
 
-    if (rect.top > viewportHeight || rect.left > viewportWidth) {
+    if (rect.bottom < 0 || rect.right < 0) {
+      return false;
+    }
+
+    if (rect.top > documentHeight || rect.left > documentWidth) {
+      return false;
+    }
+  } else {
+    if (rect.bottom < 0 || rect.right < 0) {
       return false;
     }
   }
