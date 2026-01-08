@@ -140,7 +140,7 @@
     "description": "Label for the expiration date field in payment card details"
   },
   "details_expiration_date_decrypt_error": {
-    "message": "Decrypting expiration date error. Please resync with your mobile app.",
+    "message": "Decrypting expiration date error.",
     "description": "Error message displayed when decrypting the expiration date fails"
   },
   "details_toggle_expiration_date_visibility": {
@@ -156,7 +156,7 @@
     "description": "Label for the security code field in payment card details"
   },
   "details_security_code_decrypt_error": {
-    "message": "Decrypting security code error. Please resync with your mobile app.",
+    "message": "Decrypting security code error.",
     "description": "Error message displayed when decrypting the security code fails"
   },
   "details_toggle_security_code_visibility": {
