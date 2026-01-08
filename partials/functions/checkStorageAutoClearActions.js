@@ -7,10 +7,11 @@
 import getItem from '../sessionStorage/getItem';
 import URIMatcher from '../URIMatcher';
 
-/** 
-* Function to check storage auto clear actions.
+/**
+* Function to check storage auto clear actions and retrieve the value to be cleared.
+* Handles item types: 'password', 'username', 'uri', 'name', 'text', 'cardNumber', 'expirationDate', 'securityCode', 'cardHolder'.
 * @async
-* @return {Promise<boolean>} A promise that resolves to true if an action is found, otherwise false.
+* @return {Promise<string|boolean>} A promise that resolves to the item value if found, 'addNew' for new items, or false if no action.
 */
 const checkStorageAutoClearActions = async () => {
   if (import.meta.env.BROWSER === 'safari') {

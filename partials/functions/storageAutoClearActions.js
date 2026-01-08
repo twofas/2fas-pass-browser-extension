@@ -7,8 +7,10 @@
 import getItem from '../sessionStorage/getItem';
 import URIMatcher from '../URIMatcher';
 
-/** 
-* Function to handle automatic clearing of the clipboard.
+/**
+* Function to handle automatic clearing of the clipboard based on stored actions.
+* Handles item types: 'password', 'username', 'uri', 'name', 'text', 'cardNumber', 'expirationDate', 'securityCode', 'cardHolder'.
+* @async
 * @return {Promise<void>} A promise that resolves when the clipboard is cleared.
 */
 const storageAutoClearActions = async () => {
