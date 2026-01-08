@@ -37,7 +37,6 @@ function TopBar() {
 
   const { logout } = useAuthActions();
   const { configured } = useAuthState();
-  const { matchingLoginsLength } = useMatchingLogins();
   const scrollableRefContext = useContext(ScrollableRefContext);
   const clearData = usePopupStateStore(state => state.clearData);
 
@@ -98,8 +97,8 @@ function TopBar() {
       return '';
     }
 
-    return (parseInt(matchingLoginsLength, 10) || 0) <= 0 ? S.highlighted : S.active;
-  }, [configured, matchingLoginsLength]);
+    return S.active;
+  }, [configured]);
 
   const addNewBtnClass = useMemo(() => {
     const path = location.pathname;
