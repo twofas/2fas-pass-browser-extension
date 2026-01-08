@@ -4,12 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
+/**
 * Function to add an auto-clear action to session storage for later use (on browser focus).
 * @param {string} deviceId - The ID of the device.
 * @param {string} vaultId - The ID of the vault.
 * @param {string} itemId - The ID of the item to clear.
-* @param {string} itemType - The type of the item to clear.
+* @param {string} itemType - The type of the item to clear ('password', 'username', 'uri', 'name', 'text', 'cardNumber', 'expirationDate', 'securityCode', 'cardHolder').
 * @return {Promise<void>} A promise that resolves when the action is added.
 */
 const addAutoClearAction = async (deviceId, vaultId, itemId, itemType) => {
