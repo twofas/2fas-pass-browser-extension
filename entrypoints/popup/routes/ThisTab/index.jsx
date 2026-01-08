@@ -36,7 +36,6 @@ const thisTabTopVariants = {
 * @return {JSX.Element} Element representing the ThisTab component.
 */
 function ThisTab (props) {
-  const { changeMatchingLoginsLength } = useMatchingLogins();
   const scrollableRefContext = useContext(ScrollableRefContext);
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('Unknown');
@@ -86,12 +85,8 @@ function ThisTab (props) {
 
     setMatchingLogins(matchingLogins);
 
-    setTimeout(() => {
-      changeMatchingLoginsLength(matchingLogins?.length || 0);
-    }, 200);
-
     setBatchData({ searchActive: false, searchValue: '' });
-  }, [changeMatchingLoginsLength, setBatchData]);
+  }, [setBatchData]);
 
   const watchStorageVersion = useCallback(() => {
     const uSV = storage.watch('session:storageVersion', async newValue => {
@@ -158,9 +153,8 @@ function ThisTab (props) {
     } catch {}
 
     setMatchingLogins(sanitizeObject(matchingLogins));
-    changeMatchingLoginsLength(matchingLogins?.length || 0);
     setLoading(false);
-  }, [changeMatchingLoginsLength]);
+  }, []);
 
   const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl), [sendUrl]);
 

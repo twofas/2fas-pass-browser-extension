@@ -247,6 +247,10 @@
     "message": "No Item name",
     "description": "Label for a state where no item name is available"
   },
+  "no_value": {
+    "message": "No value",
+    "description": "Label for a state where no value is available"
+  },
   "no_valid_domain": {
     "message": "No valid domain detected. If it is a non-standard domain, add the appropriate protocol (e.g. https) at the beginning.",
     "description": "Label for a state where no valid domain is provided"
@@ -1624,7 +1628,7 @@
     "description": "Option text to clear the selected tag filter"
   },
   "keep_item_popup_header": {
-    "message": "Data for the following Item successfully fetched.",
+    "message": "Data for the following Item \nsuccessfully fetched.",
     "description": "Header message in popup after fetching login data for autofill"
   },
   "keep_item_popup_keep": {
