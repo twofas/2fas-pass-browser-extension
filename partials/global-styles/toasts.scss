@@ -13,7 +13,7 @@
     left: 0 !important;
     pointer-events: none !important;
     transform: none !important;
-    z-index: 2 !important;
+    z-index: 999999 !important;
 
     &.Toastify__install {
       left: 50% !important;

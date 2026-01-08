@@ -36,6 +36,7 @@
     border-radius: 10px;
     padding: 23px 14px 20px;
     text-align: center;
+    transform: translateY(-60px);
     width: calc(100% - 32px);
 
     @include m.darkMode {
@@ -57,7 +58,7 @@
       font-size: 16px;
       font-weight: 600;
       line-height: 1.5;
-      margin-bottom: 26px;
+      margin-bottom: 16px;
       white-space: pre-wrap;
 
       @include m.darkMode {
