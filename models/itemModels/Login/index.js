@@ -88,11 +88,20 @@ export default class Login extends Item {
   #normalizeUris (uris) {
     if (uris && uris.length > 0) {
       const filteredUris = uris.filter(uri => uri && uri?.text && uri.text !== '' && URIMatcher.isText(uri.text) && URIMatcher.isUrl(uri.text, true));
+      const normalizedUris = [];
 
-      return filteredUris.map(uri => ({
-        text: URIMatcher.normalizeUrl(uri.text, true),
-        matcher: uri.matcher
-      }));
+      for (const uri of filteredUris) {
+        try {
+          normalizedUris.push({
+            text: URIMatcher.normalizeUrl(uri.text, true),
+            matcher: uri.matcher
+          });
+        } catch {
+          // Skip invalid URLs that pass isUrl but fail normalizeUrl
+        }
+      }
+
+      return normalizedUris;
     }
 
     return uris;
