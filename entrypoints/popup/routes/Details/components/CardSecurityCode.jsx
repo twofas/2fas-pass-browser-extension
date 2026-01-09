@@ -10,6 +10,7 @@ import S from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/Payme
 import { Field } from 'react-final-form';
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { copyValue, isText } from '@/partials/functions';
+import getItem from '@/partials/sessionStorage/getItem';
 import usePopupState from '../../../store/popupState/usePopupState';
 import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardSecurityCodeInput from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput';
@@ -35,6 +36,7 @@ function CardSecurityCode (props) {
   const passwordInputRef = useRef(null);
   const inputMaskRef = useRef(null);
   const [localDecryptedSecurityCode, setLocalDecryptedSecurityCode] = useState(null);
+  const [localEditedSecurityCode, setLocalEditedSecurityCode] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [shouldFocusInputMask, setShouldFocusInputMask] = useState(false);
@@ -93,6 +95,10 @@ function CardSecurityCode (props) {
       return '';
     }
 
+    if (isText(localEditedSecurityCode)) {
+      return localEditedSecurityCode;
+    }
+
     if (isText(localDecryptedSecurityCode)) {
       return localDecryptedSecurityCode;
     }
@@ -147,7 +153,7 @@ function CardSecurityCode (props) {
       form.change('editedSecurityCode', currentSecurityCode);
       previousSecurityCodeRef.current = currentSecurityCode;
     }
-  }, [localDecryptedSecurityCode, form]);
+  }, [localEditedSecurityCode, localDecryptedSecurityCode, sifDecryptError, form]);
 
   useEffect(() => {
     const needsDecryption = (data?.securityCodeEditable || data?.securityCodeVisible) &&
@@ -193,22 +199,32 @@ function CardSecurityCode (props) {
 
   const handleEditableClick = async () => {
     if (data?.securityCodeEditable) {
+      let originalItemFromStorage = await getItem(itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id);
+
+      const originalSecurityCode = originalItemFromStorage.toJSON().content.s_securityCode;
+      const currentItemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
+      const restoredItem = new PaymentCard(currentItemData);
+
+      restoredItem.setSifEncrypted([{ s_securityCode: originalSecurityCode }]);
+
+      originalItemFromStorage = null;
+
+      setLocalEditedSecurityCode(null);
       setLocalDecryptedSecurityCode(null);
       setIsFocused(false);
       setShouldFocusInputMask(false);
+      setItem(restoredItem);
       setBatchData({
         securityCodeEdited: false,
-        securityCodeEditable: false
+        securityCodeEditable: false,
+        securityCodeVisible: false
       });
       form.change('editedSecurityCode', '');
     } else {
       await decryptSecurityCodeOnDemand();
       setIsFocused(true);
       setShouldFocusInputMask(true);
-      setBatchData({
-        securityCodeVisible: false,
-        securityCodeEditable: true
-      });
+      setData('securityCodeEditable', true);
     }
   };
 
@@ -216,7 +232,9 @@ function CardSecurityCode (props) {
     try {
       let securityCodeToCopy;
 
-      if (isText(localDecryptedSecurityCode)) {
+      if (isText(localEditedSecurityCode)) {
+        securityCodeToCopy = localEditedSecurityCode;
+      } else if (isText(localDecryptedSecurityCode)) {
         securityCodeToCopy = localDecryptedSecurityCode;
       } else if (itemInstance?.securityCodeExists) {
         securityCodeToCopy = await decryptSecurityCodeOnDemand();
@@ -243,7 +261,7 @@ function CardSecurityCode (props) {
   const handleSecurityCodeChange = async e => {
     const newValue = e.target.value;
 
-    setLocalDecryptedSecurityCode(newValue);
+    setLocalEditedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
     setData('editedSecurityCode', newValue);
 
@@ -256,7 +274,7 @@ function CardSecurityCode (props) {
   const handleRawSecurityCodeChange = async e => {
     const newValue = e.target.value.replace(/\D/g, '');
 
-    setLocalDecryptedSecurityCode(newValue);
+    setLocalEditedSecurityCode(newValue);
     form.change('editedSecurityCode', newValue);
     setData('editedSecurityCode', newValue);
 
