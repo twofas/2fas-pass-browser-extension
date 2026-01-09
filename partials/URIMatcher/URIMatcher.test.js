@@ -13,6 +13,7 @@ describe('URIMatcher', () => {
     it('should return true if the text is a string', () => {
       assert.isTrue(URIMatcher.isText(''));
       assert.isTrue(URIMatcher.isText('string'));
+      assert.isTrue(URIMatcher.isText('https://login.live.com, https://odc.officeapp.com'));
       assert.isFalse(URIMatcher.isText(123));
       assert.isFalse(URIMatcher.isText(123.2222));
       assert.isFalse(URIMatcher.isText({}));
@@ -26,6 +27,7 @@ describe('URIMatcher', () => {
     it('should return true if the URL has a standard protocol', () => {
       assert.isTrue(URIMatcher.hasStandardProtocol('https://www.domain.com'));
       assert.isTrue(URIMatcher.hasStandardProtocol('http://www.domain.com'));
+      assert.isTrue(URIMatcher.hasStandardProtocol('https://login.live.com, https://odc.officeapp.com'));
       assert.isFalse(URIMatcher.hasStandardProtocol('httpdomain.com'));
       assert.isFalse(URIMatcher.hasStandardProtocol('ftp://www.domain.com'));
       assert.isFalse(URIMatcher.hasStandardProtocol('file:///path/to/file'));
@@ -42,7 +44,8 @@ describe('URIMatcher', () => {
       assert.equal(URIMatcher.prependProtocol('https://www.domain.com'), 'https://www.domain.com');
       assert.equal(URIMatcher.prependProtocol('http://domain.com'), 'http://domain.com');
       assert.equal(URIMatcher.prependProtocol('127.0.0.1'), 'https://127.0.0.1');
-      
+      assert.equal(URIMatcher.prependProtocol('https://login.live.com, https://odc.officeapp.com'), 'https://login.live.com, https://odc.officeapp.com');
+
       // Test edge cases - removes all leading non-alphanumeric characters
       assert.equal(URIMatcher.prependProtocol('://google.com'), 'https://google.com');
       assert.equal(URIMatcher.prependProtocol('//google.com'), 'https://google.com');
@@ -103,6 +106,8 @@ describe('URIMatcher', () => {
       assert.isTrue(URIMatcher.isUrl('chrome-extension://sdasusfgdiausfdas', true));
       assert.isFalse(URIMatcher.isUrl('android://com.twofasapp', true));
       assert.isFalse(URIMatcher.isUrl('android://com.twofasapp', false));
+      assert.isFalse(URIMatcher.isUrl('https://login.live.com, https://odc.officeapp.com'));
+      assert.isFalse(URIMatcher.isUrl('https://login.live.com, https://odc.officeapp.com', true));
     });
   });
 
@@ -140,6 +145,7 @@ describe('URIMatcher', () => {
       assert.strictEqual(URIMatcher.ignoreWWW('http://www.domain.com'), 'http://domain.com');
       assert.strictEqual(URIMatcher.ignoreWWW('https://domain.com'), 'https://domain.com');
       assert.strictEqual(URIMatcher.ignoreWWW('http://domain.com'), 'http://domain.com');
+      assert.strictEqual(URIMatcher.ignoreWWW('https://login.live.com, https://odc.officeapp.com'), 'https://login.live.com, https://odc.officeapp.com');
       assert.strictEqual(URIMatcher.ignoreWWW(''), '');
       expect(() => URIMatcher.ignoreWWW(123)).to.throw('Parameter is not a string');
       expect(() => URIMatcher.ignoreWWW({})).to.throw('Parameter is not a string');
@@ -158,6 +164,7 @@ describe('URIMatcher', () => {
       expect(() => URIMatcher.cleanURLParameters(null)).to.throw('Parameter is not a string');
       expect(() => URIMatcher.cleanURLParameters(undefined)).to.throw('Parameter is not a string');
       expect(() => URIMatcher.cleanURLParameters('test')).to.throw('Parameter is not a valid URL');
+      expect(() => URIMatcher.cleanURLParameters('https://login.live.com, https://odc.officeapp.com')).to.throw('Parameter is not a valid URL');
     });
   });
 
@@ -278,6 +285,9 @@ describe('URIMatcher', () => {
 
       // Android test
       expect(() => URIMatcher.normalizeUrl('android://com.twofasapp')).to.throw('Parameter is not a valid URL');
+
+      // Comma-separated URLs test
+      expect(() => URIMatcher.normalizeUrl('https://login.live.com, https://odc.officeapp.com')).to.throw('Parameter is not a valid URL');
     });
   });
 
@@ -582,6 +592,14 @@ describe('URIMatcher', () => {
       assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '14', content: { uris: [{ text: 'https://2fas.com', matcher: 999 }] } }], 'https://2fas.com'), []);
       assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '15', content: { uris: [{ text: 'https://2fas.com', matcher: -1 }] } }], 'https://2fas.com'), []);
       assert.deepEqual(URIMatcher.getMatchedAccounts([{ id: '16', content: { uris: [{ text: 'https://2fas.com', matcher: 'invalid' }] } }], 'https://2fas.com'), []);
+
+      // Test with comma-separated URLs as single string (e.g., "https://login.live.com, https://odc.officeapp.com")
+      assert.deepEqual(
+        URIMatcher.getMatchedAccounts([
+          { id: '17', content: { uris: [{ text: 'https://login.live.com, https://odc.officeapp.com', matcher: URIMatcher.M_DOMAIN_TYPE }] } }
+        ], 'https://login.live.com'),
+        []
+      );
     });
   });
 

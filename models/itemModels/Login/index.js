@@ -37,17 +37,21 @@ export default class Login extends Item {
       validate(Array.isArray(loginData.content.uris), 'Invalid loginData.content.uris: must be an array');
 
       if (loginData?.content?.uris?.length > 0) {
-        loginData.content.uris.forEach((uri, index) => {
-          validate(uri && typeof uri === 'object', `Invalid loginData.content.uris[${index}]: must be an object`);
-          validate(typeof uri.text === 'string', `Invalid loginData.content.uris[${index}].text: must be a string`);
-          validate(isValidInteger(uri.matcher, URIMatcher.M_DOMAIN_TYPE, URIMatcher.M_EXACT_TYPE), `Invalid loginData.content.uris[${index}].matcher: must be an integer`);
-        });
+        loginData.content.uris = loginData.content.uris.filter(uri =>
+          uri &&
+          typeof uri === 'object' &&
+          typeof uri.text === 'string' &&
+          isValidInteger(uri.matcher, URIMatcher.M_DOMAIN_TYPE, URIMatcher.M_EXACT_TYPE)
+        );
       }
     }
 
     if (loginData?.content?.iconUriIndex !== undefined && loginData?.content?.iconUriIndex !== null) {
-      const urisLength = loginData?.content?.uris?.length && loginData.content.uris.length > 0 ? loginData.content.uris.length : 1;
-      validate(isValidInteger(loginData.content.iconUriIndex, -1, urisLength - 1), `Invalid loginData.content.iconUriIndex: must be an integer between 0 and ${urisLength - 1}`);
+      const urisLength = loginData?.content?.uris?.length ?? 0;
+
+      if (!isValidInteger(loginData.content.iconUriIndex, -1, urisLength - 1)) {
+        loginData.content.iconUriIndex = null;
+      }
     }
 
     validateOptional(loginData?.content?.labelText, isValidString, 'Invalid loginData.content.labelText: must be a string');

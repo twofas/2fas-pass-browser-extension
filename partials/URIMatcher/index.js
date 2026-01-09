@@ -87,6 +87,10 @@ class URIMatcher {
       return false;
     }
 
+    if (/\s/.test(url)) {
+      return false;
+    }
+
     const hasHttpProtocol = this.hasStandardProtocol(url);
 
     if (hasHttpProtocol) {
