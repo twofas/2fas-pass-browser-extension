@@ -100,7 +100,8 @@ export default defineConfig({
         "idle",
         "privacy",
         "scripting",
-        "webRequest"
+        "webRequest",
+        "commands"
       ];
 
       manifestObj.optional_permissions = [
@@ -128,7 +129,8 @@ export default defineConfig({
         "clipboardWrite",
         "webNavigation",
         "alarms",
-        "scripting"
+        "scripting",
+        "commands"
       ];
 
       manifestObj.commands = {
