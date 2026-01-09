@@ -60,6 +60,7 @@ function Connect (props) {
   const abortControllerRef = useRef(null);
   const sliderRef = useRef(null);
   const previousViewRef = useRef(null);
+  const selectedDeviceIdRef = useRef(null);
 
   const { data, setData } = usePopupState();
 
@@ -155,6 +156,55 @@ function Connect (props) {
     }
   }, [initEphemeralKeys, initQRConnection]);
 
+  const cleanupEphemeralUuid = useCallback(async () => {
+    const currentUuid = ephemeralDataRef.current?.uuid;
+    const selectedDeviceId = selectedDeviceIdRef.current;
+
+    if (!currentUuid && !selectedDeviceId) {
+      return;
+    }
+
+    const devices = await storage.getItem('local:devices') || [];
+    let modified = false;
+
+    const updatedDevices = devices.map(device => {
+      if (device.uuid === currentUuid) {
+        modified = true;
+
+        if (device.id) {
+          delete device.uuid;
+          return device;
+        }
+
+        return null;
+      }
+
+      if (selectedDeviceId && device.id === selectedDeviceId && device.uuid) {
+        modified = true;
+        delete device.uuid;
+        return device;
+      }
+
+      return device;
+    }).filter(Boolean);
+
+    if (modified) {
+      await storage.setItem('local:devices', updatedDevices);
+    }
+
+    selectedDeviceIdRef.current = null;
+  }, []);
+
+  const handleCancelPushSent = useCallback(async () => {
+    await cleanupEphemeralUuid();
+    setConnectView(CONNECT_VIEWS.DeviceSelect);
+  }, [cleanupEphemeralUuid]);
+
+  const handleSwitchToQrFromPushSent = useCallback(async () => {
+    await cleanupEphemeralUuid();
+    setConnectView(CONNECT_VIEWS.QrView);
+  }, [cleanupEphemeralUuid]);
+
   const showConnectToast = useCallback(({ message, type }) => {
     showToast(message, type);
   }, []);
@@ -167,6 +217,7 @@ function Connect (props) {
     try {
       setDeviceName(device?.name);
       setConnectView(CONNECT_VIEWS.PushSent);
+      selectedDeviceIdRef.current = device?.id;
       device.uuid = ephemeralDataRef.current.uuid;
 
       if (abortSignal?.aborted) {
@@ -695,7 +746,7 @@ function Connect (props) {
             <div className={S.pushContainer}>
               <NavigationButton
                 type='cancel'
-                onClick={() => { setConnectView(CONNECT_VIEWS.DeviceSelect); }}
+                onClick={handleCancelPushSent}
               />
 
               <PushNotification description={browser.i18n.getMessage('connect_push_animation_description')} />
@@ -713,7 +764,7 @@ function Connect (props) {
                     <span>{browser.i18n.getMessage('connect_push_trouble_tooltip_or')}</span>
                     <button
                       className={`${bS.btn} ${bS.btnClear}`}
-                      onClick={async () => { setConnectView(CONNECT_VIEWS.QrView); }}
+                      onClick={handleSwitchToQrFromPushSent}
                     >
                       <span>{browser.i18n.getMessage('connect_push_trouble_tooltip_use_qr')}</span>
                       <DeviceQrIcon />
