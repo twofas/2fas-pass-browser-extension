@@ -55,7 +55,7 @@
     "@splidejs/react-splide": "^0.7.12",
     "@tanstack/react-virtual": "^3.13.18",
     "final-form": "^5.0.0",
-    "motion": "^12.24.12",
+    "motion": "^12.25.0",
     "parse-domain": "^8.2.2",
     "primereact": "^10.9.7",
     "qrcode": "^1.5.4",
