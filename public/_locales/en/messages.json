@@ -1540,8 +1540,8 @@
     "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
   },
   "this_tab_can_t_autofill_t2_failed": {
-    "message": "Browser Extension can't autofill the form.",
-    "description": "Message displayed when autofill operation fails completely"
+    "message": "Browser Extension can't fully autofill the form.",
+    "description": "Message displayed when autofill operation fails or is incomplete"
   },
   "this_tab_can_t_find_inputs": {
     "message": "No input field found. Can't autofill Item details.",
