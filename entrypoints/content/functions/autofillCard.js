@@ -432,68 +432,80 @@ const autofillCard = async request => {
   }
 
   if (canFillCardNumber) {
-    let cardNumberValue;
+    let cardNumberValue = null;
 
-    if (request.cryptoAvailable && request.cardNumberEncrypted) {
-      const decryptResult = await decryptValue(request.cardNumber);
+    try {
+      if (request.cryptoAvailable && request.cardNumberEncrypted) {
+        const decryptResult = await decryptValue(request.cardNumber);
 
-      if (decryptResult.status !== 'ok') {
-        return { ...decryptResult, filledFields };
+        if (decryptResult.status === 'ok') {
+          cardNumberValue = decryptResult.data;
+        }
+      } else if (request.cardNumber) {
+        cardNumberValue = request.cardNumber;
       }
-
-      cardNumberValue = decryptResult.data;
-    } else {
-      cardNumberValue = request.cardNumber;
+    } catch {
+      cardNumberValue = null;
     }
 
-    const cardNumberWithoutSpaces = cardNumberValue.replace(/\s/g, '');
-    cardNumberValue = null;
-    cardNumberInputs.forEach(input => inputSetValue(input, cardNumberWithoutSpaces, cardAutofillOptions));
-    filledFields.cardNumber = true;
+    if (cardNumberValue) {
+      const cardNumberWithoutSpaces = cardNumberValue.replace(/\s/g, '');
+      cardNumberValue = null;
+      cardNumberInputs.forEach(input => inputSetValue(input, cardNumberWithoutSpaces, cardAutofillOptions));
+      filledFields.cardNumber = true;
+    }
   }
 
   let expirationResults = [];
 
   if (canFillExpirationDate) {
-    let expirationDateValue;
+    let expirationDateValue = null;
 
-    if (request.cryptoAvailable && request.expirationDateEncrypted) {
-      const decryptResult = await decryptValue(request.expirationDate);
+    try {
+      if (request.cryptoAvailable && request.expirationDateEncrypted) {
+        const decryptResult = await decryptValue(request.expirationDate);
 
-      if (decryptResult.status !== 'ok') {
-        return { ...decryptResult, filledFields };
+        if (decryptResult.status === 'ok') {
+          expirationDateValue = decryptResult.data;
+        }
+      } else if (request.expirationDate) {
+        expirationDateValue = request.expirationDate;
       }
-
-      expirationDateValue = decryptResult.data;
-    } else {
-      expirationDateValue = request.expirationDate;
+    } catch {
+      expirationDateValue = null;
     }
 
-    const parsedDate = parseExpirationDate(expirationDateValue);
-    expirationDateValue = null;
+    if (expirationDateValue) {
+      const parsedDate = parseExpirationDate(expirationDateValue);
+      expirationDateValue = null;
 
-    expirationResults = expirationDateInputs.map(inputData => setExpirationDateValue(inputData, parsedDate));
-    filledFields.expirationDate = isExpirationDateFilled(expirationResults);
+      expirationResults = expirationDateInputs.map(inputData => setExpirationDateValue(inputData, parsedDate));
+      filledFields.expirationDate = isExpirationDateFilled(expirationResults);
+    }
   }
 
   if (canFillSecurityCode) {
-    let securityCodeValue;
+    let securityCodeValue = null;
 
-    if (request.cryptoAvailable && request.securityCodeEncrypted) {
-      const decryptResult = await decryptValue(request.securityCode);
+    try {
+      if (request.cryptoAvailable && request.securityCodeEncrypted) {
+        const decryptResult = await decryptValue(request.securityCode);
 
-      if (decryptResult.status !== 'ok') {
-        return { ...decryptResult, filledFields };
+        if (decryptResult.status === 'ok') {
+          securityCodeValue = decryptResult.data;
+        }
+      } else if (request.securityCode) {
+        securityCodeValue = request.securityCode;
       }
-
-      securityCodeValue = decryptResult.data;
-    } else {
-      securityCodeValue = request.securityCode;
+    } catch {
+      securityCodeValue = null;
     }
 
-    securityCodeInputs.forEach(input => inputSetValue(input, securityCodeValue, cardAutofillOptions));
-    securityCodeValue = null;
-    filledFields.securityCode = true;
+    if (securityCodeValue) {
+      securityCodeInputs.forEach(input => inputSetValue(input, securityCodeValue, cardAutofillOptions));
+      securityCodeValue = null;
+      filledFields.securityCode = true;
+    }
   }
 
   if (canFillCardIssuer) {

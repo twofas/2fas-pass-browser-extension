@@ -65,7 +65,7 @@ const handleCardAutofill = async (item, navigate) => {
   if (isHighlySecret) {
     if (!hasCardData) {
       let canAutofill = false;
-      let canAutofillEncryptedFields = false;
+      let canAutofillAnySifField = false;
 
       try {
         const inputTests = await sendMessageToAllFrames(tab.id, {
@@ -78,9 +78,8 @@ const handleCardAutofill = async (item, navigate) => {
         const canAutofillSecurityCode = inputTests.some(input => input.canAutofillSecurityCode);
         const canAutofillCardholderName = inputTests.some(input => input.canAutofillCardholderName);
 
-        const canAutofillCriticalFields = canAutofillCardNumber && canAutofillExpirationDate && canAutofillSecurityCode;
-        canAutofillEncryptedFields = canAutofillCriticalFields;
-        canAutofill = canAutofillEncryptedFields || canAutofillCardholderName;
+        canAutofillAnySifField = canAutofillCardNumber || canAutofillExpirationDate || canAutofillSecurityCode;
+        canAutofill = canAutofillAnySifField || canAutofillCardholderName;
       } catch {
         canAutofill = false;
       }
@@ -90,7 +89,7 @@ const handleCardAutofill = async (item, navigate) => {
         return;
       }
 
-      if (canAutofillEncryptedFields) {
+      if (canAutofillAnySifField) {
         navigate(
           '/fetch', {
             state: {
@@ -265,16 +264,7 @@ const handleCardAutofill = async (item, navigate) => {
   const partialResponse = res.find(frameResponse => frameResponse.status === 'partial');
 
   if (isPartial && partialResponse?.failedFields) {
-    const failedFields = partialResponse.failedFields;
-    let messageKey = 'this_tab_autofill_expiration_date_not_available';
-
-    if (failedFields.includes('year') && !failedFields.includes('month')) {
-      messageKey = 'this_tab_autofill_year_not_available';
-    } else if (failedFields.includes('month') && !failedFields.includes('year')) {
-      messageKey = 'this_tab_autofill_month_not_available';
-    }
-
-    showToast(browser.i18n.getMessage(messageKey), 'info');
+    showToast(browser.i18n.getMessage('this_tab_autofill_some_fields_not_available'), 'info');
     return;
   }
 

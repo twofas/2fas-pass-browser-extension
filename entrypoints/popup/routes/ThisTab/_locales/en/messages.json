@@ -64,8 +64,8 @@
     "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
   },
   "this_tab_can_t_autofill_t2_failed": {
-    "message": "Browser Extension can't autofill the form.",
-    "description": "Message displayed when autofill operation fails completely"
+    "message": "Browser Extension can't fully autofill the form.",
+    "description": "Message displayed when autofill operation fails or is incomplete"
   },
   "this_tab_can_t_find_inputs": {
     "message": "No input field found. Can't autofill Item details.",
@@ -123,16 +123,8 @@
     "message": "Only cardholder name was available for autofill",
     "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
-  "this_tab_autofill_year_not_available": {
-    "message": "The expiry year is not available in the form options",
-    "description": "Message displayed when the card expiry year doesn't match any available option in the form's year dropdown"
-  },
-  "this_tab_autofill_month_not_available": {
-    "message": "The expiry month is not available in the form options",
-    "description": "Message displayed when the card expiry month doesn't match any available option in the form's month dropdown"
-  },
-  "this_tab_autofill_expiration_date_not_available": {
-    "message": "The expiry date is not available in the form options",
-    "description": "Message displayed when the card expiry date doesn't match any available option in the form's dropdown"
+  "this_tab_autofill_some_fields_not_available": {
+    "message": "Some card details could not be autofilled",
+    "description": "Message displayed when some payment card fields could not be autofilled"
   }
 }
