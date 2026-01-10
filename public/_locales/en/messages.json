@@ -1599,17 +1599,9 @@
     "message": "Only cardholder name was available for autofill",
     "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
-  "this_tab_autofill_year_not_available": {
-    "message": "The expiry year is not available in the form options",
-    "description": "Message displayed when the card expiry year doesn't match any available option in the form's year dropdown"
-  },
-  "this_tab_autofill_month_not_available": {
-    "message": "The expiry month is not available in the form options",
-    "description": "Message displayed when the card expiry month doesn't match any available option in the form's month dropdown"
-  },
-  "this_tab_autofill_expiration_date_not_available": {
-    "message": "The expiry date is not available in the form options",
-    "description": "Message displayed when the card expiry date doesn't match any available option in the form's dropdown"
+  "this_tab_autofill_some_fields_not_available": {
+    "message": "Some card details could not be autofilled",
+    "description": "Message displayed when some payment card fields could not be autofilled"
   },
   "all_items_list_no_search_results": {
     "message": "No search results. Please try again.",
