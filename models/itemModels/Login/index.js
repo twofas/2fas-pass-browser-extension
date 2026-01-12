@@ -1,0 +1,258 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+import URIMatcher from '@/partials/URIMatcher';
+import Item from '@/models/itemModels/Item';
+
+/**
+* Class representing a login.
+* @extends Item
+*/
+export default class Login extends Item {
+  static contentType = 'login';
+  static contentVersion = 1;
+
+  #s_password;
+
+  constructor (loginData, deviceId = null, vaultId = null) {
+    if (loginData.constructor.name === Login.name) {
+      return loginData;
+    }
+
+    super(loginData, deviceId, vaultId);
+
+    validate(loginData.content && typeof loginData.content === 'object', 'Invalid login data');
+
+    validate(isValidInteger(loginData.content.iconType, 0, 2), 'Invalid or missing loginData.iconType: must be an integer between 0 and 2');
+
+    validateOptional(loginData?.content?.name, isValidString, 'Invalid loginData.content.name: must be a string');
+    validateOptional(loginData?.content?.username, isValidString, 'Invalid loginData.content.username: must be a string');
+
+    validateOptional(loginData?.content?.s_password, isValidBase64, 'Invalid loginData.content.s_password: must be a base64 string');
+
+    if (loginData?.content?.uris !== undefined) {
+      validate(Array.isArray(loginData.content.uris), 'Invalid loginData.content.uris: must be an array');
+
+      if (loginData?.content?.uris?.length > 0) {
+        loginData.content.uris = loginData.content.uris.filter(uri =>
+          uri &&
+          typeof uri === 'object' &&
+          typeof uri.text === 'string' &&
+          isValidInteger(uri.matcher, URIMatcher.M_DOMAIN_TYPE, URIMatcher.M_EXACT_TYPE)
+        );
+      }
+    }
+
+    if (loginData?.content?.iconUriIndex !== undefined && loginData?.content?.iconUriIndex !== null) {
+      const urisLength = loginData?.content?.uris?.length ?? 0;
+
+      if (!isValidInteger(loginData.content.iconUriIndex, -1, urisLength - 1)) {
+        loginData.content.iconUriIndex = null;
+      }
+    }
+
+    validateOptional(loginData?.content?.labelText, isValidString, 'Invalid loginData.content.labelText: must be a string');
+    validateOptional(loginData?.content?.labelColor, isValidHexColor, 'Invalid loginData.content.labelColor: must be a hex color string (3 or 6 characters)');
+    validateOptional(loginData?.content?.customImageUrl, isValidString, 'Invalid loginData.content.customImageUrl: must be a string');
+    validateOptional(loginData?.content?.notes, isValidString, 'Invalid loginData.content.notes: must be a string');
+
+    this.contentType = Login.contentType;
+    this.contentVersion = Login.contentVersion;
+
+    this.content = {
+      name: loginData.content.name,
+      username: loginData.content.username,
+      uris: loginData.content.uris,
+      iconType: loginData.content.iconType,
+      iconUriIndex: loginData.content.iconUriIndex ?? null,
+      labelText: loginData.content.labelText ?? null,
+      labelColor: loginData.content.labelColor ?? null,
+      customImageUrl: loginData.content.customImageUrl ?? null,
+      notes: loginData.content.notes ?? null,
+      s_password: loginData.content.s_password ?? null
+    };
+
+    this.internalData = {
+      ...this.internalData,
+      uiName: browser.i18n.getMessage('login'),
+      normalizedUris: loginData.internalData?.normalizedUris || this.#normalizeUris(loginData.content.uris) || []
+    };
+
+    // Secure Input Fields
+    this.#s_password = loginData.content.s_password ?? null;
+  }
+
+  #normalizeUris (uris) {
+    if (uris && uris.length > 0) {
+      const filteredUris = uris.filter(uri => uri && uri?.text && uri.text !== '' && URIMatcher.isText(uri.text) && URIMatcher.isUrl(uri.text, true));
+      const normalizedUris = [];
+
+      for (const uri of filteredUris) {
+        try {
+          normalizedUris.push({
+            text: URIMatcher.normalizeUrl(uri.text, true),
+            matcher: uri.matcher
+          });
+        } catch {
+          // Skip invalid URLs that pass isUrl but fail normalizeUrl
+        }
+      }
+
+      return normalizedUris;
+    }
+
+    return uris;
+  }
+
+  removeSif () {
+    if (this.securityType !== SECURITY_TIER.HIGHLY_SECRET) {
+      throw new Error('Item is not of Highly Secret security tier');
+    }
+
+    this.#s_password = null;
+  }
+
+  async decryptSif () {
+    return {
+      password: await super.decryptSif(this.#s_password, this?.internalData?.type)
+    };
+  }
+
+  async setSif (sifData) {
+    if (!Array.isArray(sifData)) {
+      throw new Error('Invalid SIF data: must be an array');
+    }
+
+    for (const item of sifData) {
+      if (Object.prototype.hasOwnProperty.call(item, 's_password')) {
+        this.#s_password = await this.encryptSif(item.s_password, this?.internalData?.type);
+      }
+    }
+  }
+
+  /**
+  * Sets already-encrypted SIF data directly without re-encrypting.
+  * @param {Array<Object>} sifData - Array of objects with encrypted SIF values.
+  */
+  setSifEncrypted (sifData) {
+    if (!Array.isArray(sifData)) {
+      throw new Error('Invalid SIF data: must be an array');
+    }
+
+    for (const item of sifData) {
+      if (Object.prototype.hasOwnProperty.call(item, 's_password')) {
+        this.#s_password = item.s_password;
+      }
+    }
+  }
+
+  get dropdownList () {
+    const dO = [
+      { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
+    ];
+
+    if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
+      dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_password'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
+    }
+
+    if (this.internalData.normalizedUris && this.internalData.normalizedUris.length > 0) {
+      dO.push({ value: 'uris:', label: `${browser.i18n.getMessage('this_tab_more_uris')}`, type: 'urisHeader' });
+
+      this.internalData.normalizedUris.forEach(uri => {
+        dO.push({ value: uri.text, label: uri.text, deviceId: this.deviceId, vaultId: this.vaultId, itemId: this.id });
+      });
+    }
+
+    return dO;
+  }
+
+  get contextMenuItem () {
+    if (this.securityType !== SECURITY_TIER.HIGHLY_SECRET && this.securityType !== SECURITY_TIER.SECRET) {
+      return {};
+    }
+
+    const contexts = ['page', 'editable', 'frame'];
+
+    if (import.meta.env.BROWSER !== 'safari')  {
+      contexts.push('page_action');
+    }
+
+    const documentUrlPatterns = new Set();
+
+    try {
+      const recognizedURIs = URIMatcher.recognizeURIs(this.internalData.normalizedUris);
+
+      if (recognizedURIs?.urls && recognizedURIs?.urls.length > 0) {
+        recognizedURIs.urls.forEach(uri => {
+          const patterns = URIMatcher.generateDocumentUrlPatterns(uri);
+
+          if (patterns && patterns.length > 0) {
+            patterns.forEach(pattern => documentUrlPatterns.add(pattern));
+          }
+        });
+      }
+    } catch {}
+
+    if (!documentUrlPatterns || documentUrlPatterns.size <= 0) {
+      return {};
+    }
+
+    if (
+      this.securityType === SECURITY_TIER.SECRET ||
+      (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists)
+    ) {
+      return {
+        id: `2fas-pass-autofill-${this.deviceId}|${this.vaultId}|${this.id}`,
+        enabled: true,
+        title: `${browser.i18n.getMessage('autofill')} ${this.content.username || this.content.name}`,
+        type: 'normal',
+        visible: true,
+        parentId: '2fas-pass-configured',
+        documentUrlPatterns: [...documentUrlPatterns],
+        contexts
+      };
+    } else if (
+      this.securityType === SECURITY_TIER.HIGHLY_SECRET && !this.sifExists ||
+      !this.sifExists
+    ) {
+      return {
+        id: `2fas-pass-fetch-${this.deviceId}|${this.vaultId}|${this.id}|${this.contentType}`,
+        enabled: true,
+        title: `${browser.i18n.getMessage('fetch')} ${this.content.username || this.content.name}...`,
+        type: 'normal',
+        visible: true,
+        parentId: '2fas-pass-configured',
+        documentUrlPatterns: [...documentUrlPatterns],
+        contexts
+      };
+    } else {
+      return {};
+    }
+  }
+
+  get sifs () {
+    return ['s_password'];
+  }
+
+  get sifExists () {
+    return this.#s_password && this.#s_password !== '';
+  }
+
+  toJSON () {
+    return {
+      ...super.toJSON(),
+      contentType: Login.contentType,
+      contentVersion: Login.contentVersion,
+      content: {
+        ...this.content,
+        s_password: this.#s_password
+      },
+      internalData: {
+        ...this.internalData
+      }
+    };
+  }
+}

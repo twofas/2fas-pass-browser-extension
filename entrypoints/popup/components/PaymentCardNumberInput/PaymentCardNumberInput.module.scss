@@ -1,0 +1,48 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.payment-card-number-input {
+  background-color: transparent;
+  border: 0;
+  color: v.$primary-text-light;
+  flex-grow: 1;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  padding: 0;
+  transition: color v.$anim;
+  width: 100%;
+
+  @include m.darkMode {
+    color: v.$primary-text-dark;
+  }
+
+  &:focus,
+  &:active {
+    box-shadow: none;
+    outline: none;
+  }
+
+  &[disabled] {
+    color: v.$secondary-text-light;
+    cursor: default;
+
+    @include m.darkMode {
+      color: v.$secondary-text-dark;
+    }
+  }
+}
+
+.payment-card-number-input-error {
+  color: v.$error-light !important;
+
+  @include m.darkMode {
+    color: v.$error-dark !important;
+  }
+}

@@ -23,7 +23,7 @@ const deleteExistingClearClipboardAlarms = async () => {
 * @param {string} deviceId - The ID of the device.
 * @param {string} vaultId - The ID of the vault.
 * @param {string} itemId - The ID of the item being copied.
-* @param {string} itemType - The type of the item being copied ('password', 'username', 'uri', 'name', 'text').
+* @param {string} itemType - The type of the item being copied ('password', 'username', 'uri', 'name', 'text', 'cardNumber', 'expirationDate', 'securityCode', 'cardHolder').
 * @return {Promise<void>}
 */
 const copyValue = async (value, deviceId, vaultId, itemId, itemType) => {

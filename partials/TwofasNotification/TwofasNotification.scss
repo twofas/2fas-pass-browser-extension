@@ -39,7 +39,7 @@
 
     &.twofas-pass-transitions {
       .twofas-pass-notification-item {
-        transition: opacity .3s ease-in-out !important;
+        transition: opacity v.$anim !important;
 
         &.twofas-pass-matching-logins {
           &.twofas-pass-visible {
@@ -48,18 +48,18 @@
                 &-top {
                   &-close {
                     opacity: 0 !important;
-                    transition: opacity .3s ease-in-out !important;
+                    transition: opacity v.$anim !important;
                   }
                 }
 
                 &-header {
                   opacity: 0 !important;
-                  transition: opacity .3s ease-in-out !important;
+                  transition: opacity v.$anim !important;
                 }
 
                 &-items {
                   opacity: 0 !important;
-                  transition: opacity .3s ease-in-out !important;
+                  transition: opacity v.$anim !important;
                 }
               }
             }
@@ -68,23 +68,23 @@
               &-top {
                 &-close {
                   opacity: 1 !important;
-                  transition: opacity .3s ease-in-out !important;
+                  transition: opacity v.$anim !important;
                 }
               }
 
               &-header {
                 max-height: 60px !important;
                 opacity: 1 !important;
-                transition: opacity .3s ease-in-out !important;
+                transition: opacity v.$anim !important;
 
                 span {
-                  transition: transform .3s ease-in-out !important;
+                  transition: transform v.$anim !important;
                 }
               }
 
               &-items {
                 opacity: 1 !important;
-                transition: opacity .3s ease-in-out !important;
+                transition: opacity v.$anim !important;
               }
             }
           }
@@ -97,18 +97,18 @@
                 &-top {
                   &-close {
                     opacity: 0 !important;
-                    transition: opacity .3s ease-in-out !important;
+                    transition: opacity v.$anim !important;
                   }
                 }
 
                 &-header {
                   opacity: 0 !important;
-                  transition: opacity .3s ease-in-out !important;
+                  transition: opacity v.$anim !important;
                 }
 
                 &-buttons {
                   opacity: 0 !important;
-                  transition: opacity .3s ease-in-out !important;
+                  transition: opacity v.$anim !important;
                 }
               }
             }
@@ -117,24 +117,24 @@
               &-top {
                 &-close {
                   opacity: 1 !important;
-                  transition: opacity .3s ease-in-out !important;
+                  transition: opacity v.$anim !important;
                 }
               }
 
               &-header {
                 max-height: 64px !important;
                 opacity: 1 !important;
-                transition: opacity .3s ease-in-out !important;
+                transition: opacity v.$anim !important;
 
                 p {
-                  transition: transform .3s ease-in-out !important;
+                  transition: transform v.$anim !important;
                 }
               }
 
               &-buttons {
                 max-height: 58px !important;
                 opacity: 1 !important;
-                transition: opacity .3s ease-in-out !important;
+                transition: opacity v.$anim !important;
               }
             }
           }
@@ -165,18 +165,18 @@
               &-buttons,
               &-buttons-with-select {
                 opacity: 0 !important;
-                transition: opacity .3s ease-in-out !important;
+                transition: opacity v.$anim !important;
               }
 
               p {
                 opacity: 0 !important;
       
                 &:first-of-type {
-                  transition: opacity .3s ease-in-out !important;
+                  transition: opacity v.$anim !important;
                 }
         
                 &:nth-of-type(2) {
-                  transition: opacity .3s ease-in-out !important;
+                  transition: opacity v.$anim !important;
                 }
               }
             }
@@ -187,22 +187,22 @@
           margin-top: -12px !important;
           max-height: 0 !important;
           padding: 0 !important;
-          transition: max-height .6s ease-in-out, padding .6s ease-in-out, margin-top .6s ease-in-out !important;
+          transition: max-height .4s ease-out, padding .4s ease-out, margin-top .4s ease-out !important;
         }
   
         &-content {
           &-buttons,
           &-buttons-with-select {
-            transition: opacity .3s ease-in-out !important;
+            transition: opacity v.$anim !important;
           }
           
           p {
             &:first-of-type {
-              transition: opacity .3s ease-in-out !important;
+              transition: opacity v.$anim !important;
             }
   
             &:nth-of-type(2) {
-              transition: opacity .3s ease-in-out !important;
+              transition: opacity v.$anim !important;
             }
           }
         }
@@ -278,7 +278,7 @@
           &-top {
             &-close {
               svg {
-                fill: v.$additional-light !important;
+                fill: v.$primary-box-bg-light !important;
                 stroke: v.$primary-color-light !important;
               }
             }
@@ -307,10 +307,6 @@
                     background-color: v.$login-item-bg-light !important;
                     color: v.$login-item-light !important;
                   }
-
-                  &.icon-image {
-                    border: 1px solid v.$object-stroke-light !important;
-                  }
                 }
 
                 &.twofas-pass-notification-matching-logins-item-secondary-btn {
@@ -328,6 +324,12 @@
                     }
                   }
                 }
+              }
+            }
+
+            &:last-of-type {
+              .twofas-pass-notification-matching-logins-item-btn {
+                border-bottom: 0 !important;
               }
             }
           }
@@ -368,10 +370,6 @@
                     background-color: v.$login-item-bg-dark !important;
                     color: v.$login-item-dark !important;
                   }
-
-                  &.icon-image {
-                    border: 1px solid v.$object-stroke-dark !important;
-                  }
                 }
 
                 &.twofas-pass-notification-matching-logins-item-secondary-btn {
@@ -390,6 +388,12 @@
                     }
                   }
                 }
+              }
+            }
+
+            &:last-of-type {
+              .twofas-pass-notification-matching-logins-item-btn {
+                border-bottom: 0 !important;
               }
             }
           }
@@ -431,10 +435,6 @@
                       background-color: v.$login-item-bg-light !important;
                       color: v.$login-item-light !important;
                     }
-
-                    &.icon-image {
-                      border: 1px solid v.$object-stroke-light !important;
-                    }
                   }
 
                   &.twofas-pass-notification-matching-logins-item-secondary-btn {
@@ -452,6 +452,12 @@
                       }
                     }
                   }
+                }
+              }
+
+              &:last-of-type {
+                .twofas-pass-notification-matching-logins-item-btn {
+                  border-bottom: 0 !important;
                 }
               }
             }
@@ -492,10 +498,6 @@
                       background-color: v.$login-item-bg-dark !important;
                       color: v.$login-item-dark !important;
                     }
-
-                    &.icon-image {
-                      border: 1px solid v.$object-stroke-dark !important;
-                    }
                   }
 
                   &.twofas-pass-notification-matching-logins-item-secondary-btn {
@@ -514,6 +516,12 @@
                       }
                     }
                   }
+                }
+              }
+
+              &:last-of-type {
+                .twofas-pass-notification-matching-logins-item-btn {
+                  border-bottom: 0 !important;
                 }
               }
             }
@@ -767,7 +775,7 @@
         margin: 0 !important;
         opacity: 0 !important;
         padding: 0 !important;
-        transition: opacity .3s ease-in-out !important;
+        transition: opacity v.$anim !important;
 
         svg {
           height: 32px !important;
@@ -793,7 +801,7 @@
 
       span {
         display: inline-block !important;
-        margin-top: 32px !important;
+        margin-top: 16px !important;
         margin-bottom: 8px !important;
       }
     }
@@ -805,7 +813,7 @@
       max-height: 0 !important;
       opacity: 0 !important;
       overflow: hidden !important;
-      transition: opacity .3s ease-in-out, max-height .3s ease-in-out !important;
+      transition: opacity v.$anim, max-height v.$anim !important;
       width: 100% !important;
     }
 
@@ -832,7 +840,7 @@
         padding: 0 !important;
         padding-bottom: 12px !important;
         padding-top: 12px !important;
-        transition: background-color .3s ease-in-out !important;
+        transition: background-color v.$anim !important;
         width: 100% !important;
 
         > span {
@@ -856,9 +864,24 @@
             }
   
             &.icon-image {
+              overflow: hidden !important;
+              position: relative !important;
+
               img {
                 height: auto !important;
+                max-height: 24px !important;
+                opacity: 0 !important;
+                position: relative !important;
+                transition: opacity v.$anim !important;
                 width: 24px !important;
+                z-index: 2 !important;
+
+                &.icon-image-blur {
+                  filter: blur(12px) saturate(2) !important;
+                  position: absolute !important;
+                  transform: scale(1.4) !important;
+                  z-index: 1 !important;
+                }
               }
             }
           }
@@ -874,7 +897,7 @@
             margin-left: auto !important;
             padding: 7px 10px !important;
             text-align: center !important;
-            transition: background-color .3s ease-in-out !important;
+            transition: background-color v.$anim !important;
           }
           
           &:nth-of-type(2) { // Account data
@@ -884,7 +907,7 @@
             gap: 6px 0 !important;
             max-width: 170px !important;
             overflow: hidden !important;
-            transition: max-width .3s ease-in-out !important;
+            transition: max-width v.$anim !important;
   
             > span {
               margin-bottom: -2px !important;
@@ -946,7 +969,7 @@
         margin: 0 !important;
         opacity: 0 !important;
         padding: 0 !important;
-        transition: opacity .3s ease-in-out !important;
+        transition: opacity v.$anim !important;
 
         svg {
           height: 32px !important;
@@ -985,7 +1008,7 @@
       justify-content: space-between !important;
       margin-top: 16px !important;
       opacity: 0 !important;
-      transition: opacity .3s ease-in-out !important;
+      transition: opacity v.$anim !important;
       width: 100% !important;
 
       &-do-not-ask {

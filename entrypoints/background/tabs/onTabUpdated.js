@@ -84,9 +84,9 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
 
     await Promise.all([
       setBadgeText(configured, items, tab.url, tabID).catch(e => CatchError(e)),
-      sendDomainToPopupWindow(tabID),
-      updateNoAccountItem(tabID, items),
-      checkPromptCS(tabID)
+      sendDomainToPopupWindow(tabID).catch(() => {}),
+      updateNoAccountItem(tabID, items).catch(() => {}),
+      checkPromptCS(tabID).catch(() => {})
     ]);
 
     const action = savePromptActions.filter(a => a.tabId === tabID)[0];
@@ -94,7 +94,7 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
     if (action && !tabUpdateData[tabID].savePromptVisible) {
       tabUpdateData[tabID].savePromptVisible = true;
 
-      await injectCSIfNotAlready(tabID, REQUEST_TARGETS.CONTENT);
+      await injectCSIfNotAlready(tabID, REQUEST_TARGETS.CONTENT).catch(() => {});
 
       let actionUrlHostname = null;
       let tabUrlHostname = null;

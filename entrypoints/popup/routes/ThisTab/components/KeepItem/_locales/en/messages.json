@@ -1,0 +1,14 @@
+{
+  "keep_item_popup_header": {
+    "message": "Data for the following Item \nsuccessfully fetched.",
+    "description": "Header message in popup after fetching login data for autofill"
+  },
+  "keep_item_popup_keep": {
+    "message": "Keep it for 3 minutes",
+    "description": "Button label to keep the fetched password for a limited time"
+  },
+  "keep_item_popup_dont_keep": {
+    "message": "Don't keep it",
+    "description": "Button label to not keep the fetched password for a limited time"
+  }
+}

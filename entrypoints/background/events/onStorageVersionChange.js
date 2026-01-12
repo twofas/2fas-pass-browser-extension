@@ -16,7 +16,7 @@ import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfig
 */
 const onStorageVersionChange = async () => {
   const contextMenuSetting = await storage.getItem('local:contextMenu');
-  
+
   if (contextMenuSetting === false) {
     await browser.contextMenus.removeAll();
     return;
@@ -31,7 +31,7 @@ const onStorageVersionChange = async () => {
     ]);
   } catch {}
 
-  await initContextMenu();
+  await initContextMenu(items);
   await updateContextMenu(items);
   await updateBadge(configured, items);
 };

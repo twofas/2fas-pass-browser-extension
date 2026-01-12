@@ -7,8 +7,7 @@
 import S from './Connect.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, useCallback, useRef, memo, lazy } from 'react';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import { useAuthActions } from '@/hooks/useAuth';
 import useConnectView from '../../hooks/useConnectView';
 import { generateSessionKeysNonces, generateEphemeralKeys, generateSessionID, calculateConnectSignature, generateQR } from './functions';
@@ -23,19 +22,18 @@ import NavigationButton from '../../components/NavigationButton';
 import { getNTPTime, sendPush, networkTest } from '@/partials/functions';
 import { PULL_REQUEST_TYPES, SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
-import usePopupStateStore from '../../store/popupState';
+import usePopupState from '../../store/popupState/usePopupState';
+import IphoneIconLight from '@/assets/popup-window/device-select/device-iphone-light.svg?react';
+import IphoneIconDark from '@/assets/popup-window/device-select/device-iphone-dark.svg?react';
+import AndroidIconLight from '@/assets/popup-window/device-select/device-android-light.svg?react';
+import AndroidIconDark from '@/assets/popup-window/device-select/device-android-dark.svg?react';
+import IpadIconLight from '@/assets/popup-window/device-select/device-ipad-light.svg?react';
+import IpadIconDark from '@/assets/popup-window/device-select/device-ipad-dark.svg?react';
+import AndroidTabletIconLight from '@/assets/popup-window/device-select/device-android-tablet-light.svg?react';
+import AndroidTabletIconDark from '@/assets/popup-window/device-select/device-android-tablet-dark.svg?react';
+import ChevronIcon from '@/assets/popup-window/chevron2.svg?react';
 
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 const PushNotification = lazy(() => import('../Fetch/components/PushNotification'));
-const IphoneIconLight = lazy(() => import('@/assets/popup-window/device-select/device-iphone-light.svg?react'));
-const IphoneIconDark = lazy(() => import('@/assets/popup-window/device-select/device-iphone-dark.svg?react'));
-const AndroidIconLight = lazy(() => import('@/assets/popup-window/device-select/device-android-light.svg?react'));
-const AndroidIconDark = lazy(() => import('@/assets/popup-window/device-select/device-android-dark.svg?react'));
-const IpadIconLight = lazy(() => import('@/assets/popup-window/device-select/device-ipad-light.svg?react'));
-const IpadIconDark = lazy(() => import('@/assets/popup-window/device-select/device-ipad-dark.svg?react'));
-const AndroidTabletIconLight = lazy(() => import('@/assets/popup-window/device-select/device-android-tablet-light.svg?react'));
-const AndroidTabletIconDark = lazy(() => import('@/assets/popup-window/device-select/device-android-tablet-dark.svg?react'));
-const ChevronIcon = lazy(() => import('@/assets/popup-window/chevron2.svg?react'));
 
 const viewVariants = {
   visible: { opacity: 1, borderWidth: '1px', pointerEvents: 'auto' },
@@ -62,9 +60,9 @@ function Connect (props) {
   const abortControllerRef = useRef(null);
   const sliderRef = useRef(null);
   const previousViewRef = useRef(null);
+  const selectedDeviceIdRef = useRef(null);
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData } = usePopupState();
 
   const getReadyDevices = useCallback(async () => {
     const devices = await storage.getItem('local:devices') || [];
@@ -73,9 +71,16 @@ function Connect (props) {
              device.platform && device.sessionId;
     });
 
-    setReadyDevices(filteredDevices);
+    const sortedDevices = filteredDevices.sort((a, b) => {
+      const dateA = a?.updatedAt || 0;
+      const dateB = b?.updatedAt || 0;
 
-    return filteredDevices;
+      return dateB - dateA;
+    });
+
+    setReadyDevices(sortedDevices);
+
+    return sortedDevices;
   }, []);
 
   const initEphemeralKeys = useCallback(async () => {
@@ -151,6 +156,55 @@ function Connect (props) {
     }
   }, [initEphemeralKeys, initQRConnection]);
 
+  const cleanupEphemeralUuid = useCallback(async () => {
+    const currentUuid = ephemeralDataRef.current?.uuid;
+    const selectedDeviceId = selectedDeviceIdRef.current;
+
+    if (!currentUuid && !selectedDeviceId) {
+      return;
+    }
+
+    const devices = await storage.getItem('local:devices') || [];
+    let modified = false;
+
+    const updatedDevices = devices.map(device => {
+      if (device.uuid === currentUuid) {
+        modified = true;
+
+        if (device.id) {
+          delete device.uuid;
+          return device;
+        }
+
+        return null;
+      }
+
+      if (selectedDeviceId && device.id === selectedDeviceId && device.uuid) {
+        modified = true;
+        delete device.uuid;
+        return device;
+      }
+
+      return device;
+    }).filter(Boolean);
+
+    if (modified) {
+      await storage.setItem('local:devices', updatedDevices);
+    }
+
+    selectedDeviceIdRef.current = null;
+  }, []);
+
+  const handleCancelPushSent = useCallback(async () => {
+    await cleanupEphemeralUuid();
+    setConnectView(CONNECT_VIEWS.DeviceSelect);
+  }, [cleanupEphemeralUuid]);
+
+  const handleSwitchToQrFromPushSent = useCallback(async () => {
+    await cleanupEphemeralUuid();
+    setConnectView(CONNECT_VIEWS.QrView);
+  }, [cleanupEphemeralUuid]);
+
   const showConnectToast = useCallback(({ message, type }) => {
     showToast(message, type);
   }, []);
@@ -163,6 +217,7 @@ function Connect (props) {
     try {
       setDeviceName(device?.name);
       setConnectView(CONNECT_VIEWS.PushSent);
+      selectedDeviceIdRef.current = device?.id;
       device.uuid = ephemeralDataRef.current.uuid;
 
       if (abortSignal?.aborted) {
@@ -490,7 +545,7 @@ function Connect (props) {
     return () => {
       document.removeEventListener('keydown', handleKeyboardEnterClick);
     };
-  }, [handleKeyboardEnterClick]);
+  }, [handleKeyboardEnterClick, setData, data?.connectSliderIndex]);
 
   useEffect(() => {
     handleViewSwitch();
@@ -527,20 +582,19 @@ function Connect (props) {
         sliderRef.current.splide.off('move');
       }
     };
-  }, [readyDevices, sliderMounted]);
+  }, [readyDevices, sliderMounted, setData, data.connectSliderIndex]);
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <div className={`${props.className ? props.className : ''}`}>
-        <div>
-          {/* QR View */}
-          <m.section
-            className={S.connect}
-            variants={viewVariants}
-            initial="hidden"
-            transition={{ duration: 0.3, type: 'tween' }}
-            animate={connectView === CONNECT_VIEWS.QrView ? 'visible' : 'hidden'}
-          >
+    <div className={`${props.className ? props.className : ''}`}>
+      <div>
+        {/* QR View */}
+        <motion.section
+          className={S.connect}
+          variants={viewVariants}
+          initial="hidden"
+          transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
+          animate={connectView === CONNECT_VIEWS.QrView ? 'visible' : 'hidden'}
+        >
             <div className={S.connectContainer}>
               <h1>{browser.i18n.getMessage('connect_header')}</h1>
 
@@ -564,14 +618,14 @@ function Connect (props) {
                 <p>{browser.i18n.getMessage('connect_description')}</p>
               </div>
             </div>
-          </m.section>
+          </motion.section>
 
           {/* Device Select */}
-          <m.section
+          <motion.section
             className={S.deviceSelect}
             variants={viewVariants}
             initial="hidden"
-            transition={{ duration: 0.3, type: 'tween' }}
+            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
             animate={connectView === CONNECT_VIEWS.DeviceSelect ? 'visible' : 'hidden'}
           >
             <div className={S.deviceSelectContainer}>
@@ -651,14 +705,14 @@ function Connect (props) {
                 </button>
               </div>
             </div>
-          </m.section>
+          </motion.section>
 
           {/* Progress */}
-          <m.section
+          <motion.section
             className={S.progress}
             variants={viewVariants}
             initial="hidden"
-            transition={{ duration: 0.3, type: 'tween' }}
+            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
             animate={connectView === CONNECT_VIEWS.Progress ? 'visible' : 'hidden'}
           >
             <div className={S.progressContainer}>
@@ -679,20 +733,20 @@ function Connect (props) {
                 <span>{deviceName}</span>
               </div>
             </div>
-          </m.section>
+          </motion.section>
 
           {/* Push Sent */}
-          <m.section
+          <motion.section
             className={S.push}
             variants={viewVariants}
             initial="hidden"
-            transition={{ duration: 0.3, type: 'tween' }}
+            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
             animate={connectView === CONNECT_VIEWS.PushSent ? 'visible' : 'hidden'}
           >
             <div className={S.pushContainer}>
               <NavigationButton
                 type='cancel'
-                onClick={() => { setConnectView(CONNECT_VIEWS.DeviceSelect); }}
+                onClick={handleCancelPushSent}
               />
 
               <PushNotification description={browser.i18n.getMessage('connect_push_animation_description')} />
@@ -710,7 +764,7 @@ function Connect (props) {
                     <span>{browser.i18n.getMessage('connect_push_trouble_tooltip_or')}</span>
                     <button
                       className={`${bS.btn} ${bS.btnClear}`}
-                      onClick={async () => { setConnectView(CONNECT_VIEWS.QrView); }}
+                      onClick={handleSwitchToQrFromPushSent}
                     >
                       <span>{browser.i18n.getMessage('connect_push_trouble_tooltip_use_qr')}</span>
                       <DeviceQrIcon />
@@ -719,10 +773,9 @@ function Connect (props) {
                 </div>
               </div>
             </div>
-          </m.section>
+          </motion.section>
         </div>
       </div>
-    </LazyMotion>
   );
 }
 

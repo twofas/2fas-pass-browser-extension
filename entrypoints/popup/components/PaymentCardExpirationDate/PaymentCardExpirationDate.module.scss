@@ -1,0 +1,152 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.payment-card-expiration-date {
+  align-items: center;
+  display: flex;
+  flex-grow: 1;
+  gap: 0 8px;
+}
+
+.payment-card-expiration-date-input {
+  background-color: transparent;
+  border: 0;
+  color: v.$primary-text-light;
+  flex-grow: 1;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  padding: 0;
+  transition: color v.$anim;
+  width: 100%;
+
+  @include m.darkMode {
+    color: v.$primary-text-dark;
+  }
+
+  &:focus,
+  &:active {
+    box-shadow: none;
+    outline: none;
+  }
+
+  &[disabled] {
+    color: v.$secondary-text-light;
+    cursor: default;
+
+    @include m.darkMode {
+      color: v.$secondary-text-dark;
+    }
+  }
+}
+
+.payment-card-expiration-date-input-error {
+  color: v.$error-light !important;
+
+  @include m.darkMode {
+    color: v.$error-dark !important;
+  }
+}
+
+.payment-card-expiration-date-button {
+  align-items: center;
+  appearance: none;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  flex-shrink: 0;
+  height: 16px;
+  justify-content: center;
+  margin-right: 4px;
+  max-width: 16px;
+  opacity: 1;
+  outline: none;
+  overflow: hidden;
+  padding: 0;
+  transition: max-width v.$anim, margin-right v.$anim, opacity v.$anim;
+  width: 16px;
+
+  &:hover,
+  &:focus {
+    svg {
+      stroke: v.$focus-light;
+
+      @include m.darkMode {
+        stroke: v.$focus-dark;
+      }
+    }
+  }
+
+  &:active {
+    svg {
+      stroke: v.$pressed-light;
+
+      @include m.darkMode {
+        stroke: v.$pressed-dark;
+      }
+    }
+  }
+
+  svg {
+    height: 15px !important;
+    stroke: v.$primary-color-light;
+    stroke-width: 2 !important;
+    transition: stroke v.$anim;
+    width: auto;
+
+    @include m.darkMode {
+      stroke: v.$primary-color-dark;
+    }
+  }
+}
+
+.payment-card-expiration-date-button-hidden {
+  cursor: default;
+  margin-right: 0;
+  max-width: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.payment-card-expiration-date-calendar {
+  height: 0;
+  overflow: visible;
+  position: absolute;
+  width: 0;
+
+  :global(.p-inputtext) {
+    display: none !important;
+  }
+}
+
+:global(.payment-card-expiration-date-panel) {
+  display: block !important;
+  left: auto !important;
+  opacity: 0;
+  pointer-events: none;
+  position: fixed !important;
+  right: 24px !important;
+  transform: none !important;
+  transition: opacity .15s ease-out;
+  z-index: 9999 !important;
+
+  &:global(.p-connected-overlay-enter-done) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &:global(.p-connected-overlay-exit-done),
+  &:global(.p-connected-overlay-exit),
+  &:global(.p-connected-overlay-exit-active) {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}

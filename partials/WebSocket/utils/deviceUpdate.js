@@ -16,7 +16,7 @@ const deviceUpdate = async (uuid, json) => {
 
   let device = devices.find(d => d.uuid === uuid);
   const deviceById = devices.find(d => d.id === json?.payload?.deviceId);
-  
+
   if (!device && !deviceById) {
     throw new TwoFasError(TwoFasError.internalErrors.deviceNotFound, { additional: { func: 'deviceUpdate' } });
   }

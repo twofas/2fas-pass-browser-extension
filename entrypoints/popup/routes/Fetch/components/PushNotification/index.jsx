@@ -5,9 +5,8 @@
 // See LICENSE file for full terms
 
 import S from '../../Fetch.module.scss';
-import { useRef, useEffect, useState, lazy } from 'react';
-
-const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
+import { useRef, useEffect, useState } from 'react';
+import InfoIcon from '@/assets/popup-window/info.svg?react';
 
 /**
 * Function to render the push notification component.

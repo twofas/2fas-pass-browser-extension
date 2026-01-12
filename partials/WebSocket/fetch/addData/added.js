@@ -12,7 +12,7 @@ import getKey from '@/partials/sessionStorage/getKey';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
 import saveTags from '@/partials/WebSocket/utils/saveTags';
 import { ENCRYPTION_KEYS } from '@/constants';
-import matchModel from '@/partials/models/itemModels/matchModel';
+import matchModel from '@/models/itemModels/matchModel';
 
 /** 
 * Handles the addition of a new item.
@@ -46,7 +46,7 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
 
     newData.deviceId = state.deviceId;
 
-    const newItem = matchModel(newData);
+    const newItem = await matchModel(newData);
 
     if (!newItem) {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionNewLoginAddedWrongData);

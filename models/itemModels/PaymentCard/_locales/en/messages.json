@@ -1,0 +1,78 @@
+{
+  "payment_card": {
+    "message": "Card",
+    "description": "Label for the payment card functionality"
+  },
+  "payment_card_plural": {
+    "message": "Cards",
+    "description": "Label for multiple payment cards"
+  },
+  "payment_card_name": {
+    "message": "Name",
+    "description": "Label for the payment card name field"
+  },
+  "payment_card_cardholder": {
+    "message": "Cardholder",
+    "description": "Label for the payment card cardholder field"
+  },
+  "payment_card_card_number": {
+    "message": "Card Number",
+    "description": "Label for the payment card number field"
+  },
+  "payment_card_expiration_date": {
+    "message": "Expiration Date",
+    "description": "Label for the payment card expiration date field"
+  },
+  "payment_card_security_code": {
+    "message": "Security Code",
+    "description": "Label for the payment card security code field"
+  },
+  "placeholder_payment_card_name": {
+    "message": "Type the card name",
+    "description": "Placeholder text for the payment card name input field"
+  },
+  "placeholder_payment_card_cardholder": {
+    "message": "Type the cardholder's name",
+    "description": "Placeholder text for the cardholder name input field"
+  },
+  "placeholder_payment_card_number": {
+    "message": "0000 0000 0000 0000",
+    "description": "Placeholder text for the payment card number input field"
+  },
+  "placeholder_payment_card_expiration_date": {
+    "message": "MM/YY",
+    "description": "Placeholder text for the payment card expiration date input field"
+  },
+  "placeholder_payment_card_security_code": {
+    "message": "_ _ _",
+    "description": "Placeholder text for the payment card security code input field"
+  },
+  "notification_card_number_copied": {
+    "message": "Card number copied to clipboard",
+    "description": "Notification message when the card number is successfully copied to the clipboard"
+  },
+  "notification_card_security_code_copied": {
+    "message": "Security code copied to clipboard",
+    "description": "Notification message when the security code is successfully copied to the clipboard"
+  },
+  "notification_expiration_date_copied": {
+    "message": "Expiration date copied to clipboard",
+    "description": "Notification message when the expiration date is successfully copied to the clipboard"
+  },
+  "error_card_not_found": {
+    "message": "Something went wrong. Payment Card not found.",
+    "description": "Error message displayed when the requested payment card is not found"
+  },
+  "error_card_number_copy_failed": {
+    "message": "Failed to copy card number to clipboard.",
+    "description": "Error message displayed when copying the card number to the clipboard fails"
+  },
+  "error_card_security_code_copy_failed": {
+    "message": "Failed to copy security code to clipboard.",
+    "description": "Error message displayed when copying the security code to the clipboard fails"
+  },
+  "error_expiration_date_copy_failed": {
+    "message": "Failed to copy expiration date to clipboard.",
+    "description": "Error message displayed when copying the expiration date to the clipboard fails"
+  }
+}

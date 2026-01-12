@@ -12,7 +12,7 @@
     "description": "Label for the include options section"
   },
   "password_generator_regenerate": {
-    "message": "Regenerate password",
+    "message": "Generate password",
     "description": "Title for the regenerate password button"
   },
   "password_generator_uppercase": {

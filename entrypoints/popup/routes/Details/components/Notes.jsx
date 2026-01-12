@@ -7,14 +7,11 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
-import usePopupStateStore from '../../../store/popupState';
+import { motion } from 'motion/react';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import updateItem from '../functions/updateItem';
-
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
 
 const notesVariants = {
   hidden: { height: 'auto', minHeight: '20px', maxHeight: '600px' },
@@ -26,37 +23,49 @@ const notesVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Notes () {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData, setItem } = usePopupState();
+  const textareaRef = useRef(null);
 
   const handleNotesEditable = async () => {
     if (data.notesEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
-      
-      const updatedItem = updateItem(data.item, {
+
+      const updatedItem = await updateItem(data.item, {
         content: { notes: item.content.notes || '' },
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
-      setData('item', updatedItem);
+      setItem(updatedItem);
       setData('notesEditable', false);
     } else {
       setData('notesEditable', true);
     }
   };
 
-  const handleNotesChange = useCallback(e => {
+  const handleNotesChange = useCallback(async e => {
     const newNotes = e.target.value;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { notes: newNotes },
       internalData: { ...data.item.internalData }
     });
 
-    setData('item', updatedItem);
-  }, [data.item, setData]);
+    setItem(updatedItem);
+  }, [data.item, setItem]);
+
+  useEffect(() => {
+    if (data.notesEditable && textareaRef.current) {
+      const textarea = textareaRef.current;
+      textarea.focus();
+
+      requestAnimationFrame(() => {
+        textarea.setSelectionRange(0, 0);
+        textarea.scrollTop = 0;
+      });
+    }
+  }, [data.notesEditable]);
 
   return (
     <Field name="content.notes">
@@ -70,36 +79,36 @@ function Notes () {
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
               onClick={handleNotesEditable}
+              tabIndex={-1}
             >
               {data.notesEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
           </div>
           <div className={pI.passInputBottomMotion}>
-            <LazyMotion features={loadDomAnimation}>
-              <m.div
-                className={`${pI.passInputBottom} ${pI.note} ${data.notesEditable ? pI.noteEditable : ''}`}
-                variants={notesVariants}
-                initial="hidden"
-                transition={{ duration: 0.3 }}
-                animate={input.value.length > 0 || data.notesEditable ? 'visible' : 'hidden'}
-              >
-                <textarea
-                  {...input}
-                  onChange={e => {
-                    input.onChange(e);
-                    handleNotesChange(e);
-                  }}
-                  placeholder={browser.i18n.getMessage('details_notes_placeholder')}
-                  id="notes"
-                  disabled={!data.notesEditable ? 'disabled' : ''}
-                  dir="ltr"
-                  spellCheck="true"
-                  autoCorrect="off"
-                  autoComplete="off"
-                  autoCapitalize="off"
-                />
-              </m.div>
-            </LazyMotion>
+            <motion.div
+              className={`${pI.passInputBottom} ${pI.note} ${data.notesEditable ? pI.noteEditable : ''}`}
+              variants={notesVariants}
+              initial="hidden"
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              animate={input.value.length > 0 || data.notesEditable ? 'visible' : 'hidden'}
+            >
+              <textarea
+                {...input}
+                ref={textareaRef}
+                onChange={e => {
+                  input.onChange(e);
+                  handleNotesChange(e);
+                }}
+                placeholder={browser.i18n.getMessage('details_notes_placeholder')}
+                id="notes"
+                disabled={!data.notesEditable ? 'disabled' : ''}
+                dir="ltr"
+                spellCheck="true"
+                autoCorrect="off"
+                autoComplete="off"
+                autoCapitalize="off"
+              />
+            </motion.div>
           </div>
         </div>
       )}

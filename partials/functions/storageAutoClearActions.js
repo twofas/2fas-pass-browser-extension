@@ -7,8 +7,10 @@
 import getItem from '../sessionStorage/getItem';
 import URIMatcher from '../URIMatcher';
 
-/** 
-* Function to handle automatic clearing of the clipboard.
+/**
+* Function to handle automatic clearing of the clipboard based on stored actions.
+* Handles item types: 'password', 'username', 'uri', 'name', 'text', 'cardNumber', 'expirationDate', 'securityCode', 'cardHolder'.
+* @async
 * @return {Promise<void>} A promise that resolves when the clipboard is cleared.
 */
 const storageAutoClearActions = async () => {
@@ -76,6 +78,30 @@ const storageAutoClearActions = async () => {
     try {
       const decryptedSif = await item.decryptSif();
       itemValue = decryptedSif.text;
+    } catch {
+      await storage.setItem('session:autoClearActions', []);
+      return;
+    }
+  } else if (action.itemType === 'cardNumber') {
+    try {
+      const decryptedSif = await item.decryptSif();
+      itemValue = decryptedSif.cardNumber;
+    } catch {
+      await storage.setItem('session:autoClearActions', []);
+      return;
+    }
+  } else if (action.itemType === 'expirationDate') {
+    try {
+      const decryptedSif = await item.decryptSif();
+      itemValue = decryptedSif.expirationDate;
+    } catch {
+      await storage.setItem('session:autoClearActions', []);
+      return;
+    }
+  } else if (action.itemType === 'securityCode') {
+    try {
+      const decryptedSif = await item.decryptSif();
+      itemValue = decryptedSif.securityCode;
     } catch {
       await storage.setItem('session:autoClearActions', []);
       return;

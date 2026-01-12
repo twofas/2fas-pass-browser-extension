@@ -6,7 +6,7 @@
 
 import saveItems from './saveItems';
 import saveTags from './saveTags';
-import filterVault from '@/partials/models/filterVault';
+import filterVault from '@/models/filterVault';
 
 /** 
 * Saves vaults to storage.

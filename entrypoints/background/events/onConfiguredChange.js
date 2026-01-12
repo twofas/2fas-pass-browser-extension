@@ -19,7 +19,7 @@ const onConfiguredChange = async newValue => {
   let items;
 
   try {
-    items = await getItems(['Login']);
+    items = await getItems(['Login', 'PaymentCard']);
   } catch {}
 
   try {

@@ -8,18 +8,16 @@ import S from '../Settings.module.scss';
 import { useState, useEffect, useRef } from 'react';
 import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
-import { lazy } from 'react';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-
-const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
-const AboutIcon = lazy(() => import('@/assets/popup-window/about.svg?react'));
-const AboutDarkIcon = lazy(() => import('@/assets/popup-window/about-dark.svg?react'));
-const Domain = lazy(() => import('@/assets/popup-window/domain.svg?react'));
-const DiscordIcon = lazy(() => import('@/assets/social/discord.svg?react'));
-const YoutubeIcon = lazy(() => import('@/assets/social/youtube.svg?react'));
-const TwitterIcon = lazy(() => import('@/assets/social/twitter.svg?react'));
-const GithubIcon = lazy(() => import('@/assets/social/github.svg?react'));
+import StarIcon from '@/assets/popup-window/star.svg?react';
+import AboutIcon from '@/assets/popup-window/about.svg?react';
+import AboutDarkIcon from '@/assets/popup-window/about-dark.svg?react';
+import Domain from '@/assets/popup-window/domain.svg?react';
+import DiscordIcon from '@/assets/social/discord.svg?react';
+import YoutubeIcon from '@/assets/social/youtube.svg?react';
+import TwitterIcon from '@/assets/social/twitter.svg?react';
+import GithubIcon from '@/assets/social/github.svg?react';
 
 /**
 * Function to render the Settings About component.

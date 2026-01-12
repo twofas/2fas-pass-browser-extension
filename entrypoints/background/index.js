@@ -33,7 +33,9 @@ export default defineBackground({
     browser.runtime.onMessage.addListener((r, s, sR) => onPromptMessage(r, s, sR, tabsInputData));
     browser.runtime.onStartup.addListener(() => onStartup(migrations));
 
-    browser.commands.onCommand.addListener(onCommand);
+    if (browser?.commands?.onCommand) {
+      browser.commands.onCommand.addListener(onCommand);
+    }
     
     browser.contextMenus.onClicked.addListener(onContextMenuClick);
 

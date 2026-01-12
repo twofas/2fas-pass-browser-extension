@@ -10,9 +10,11 @@ import { Field } from 'react-final-form';
 import { useCallback } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import CustomTierOption from './CustomTierOption';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
+
+const selectComponents = { Option: CustomTierOption };
 
 const securityTiersOptions = [
   { value: SECURITY_TIER.SECRET, label: browser.i18n.getMessage('tier_2_name'), description: browser.i18n.getMessage('tier_2_description') },
@@ -25,37 +27,36 @@ const securityTiersOptions = [
 * @return {JSX.Element} The rendered component.
 */
 function SecurityType () {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData, setItem } = usePopupState();
 
   const handleTierEditable = async () => {
     if (data.tierEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
-      const updatedItem = updateItem(data.item, {
+      const updatedItem = await updateItem(data.item, {
         securityType: item.securityType,
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
+      setItem(updatedItem);
       setData('tierEditable', false);
-      setData('item', updatedItem);
     } else {
       setData('tierEditable', true);
     }
   };
 
-  const handleSelectChange = useCallback(selectedOption => {
+  const handleSelectChange = useCallback(async selectedOption => {
     const newValue = selectedOption ? selectedOption.value : null;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       securityType: newValue,
       internalData: { ...data.item.internalData }
     });
 
-    setData('item', updatedItem);
-  }, [data.item, setData]);
+    setItem(updatedItem);
+  }, [data.item, setItem]);
 
   return (
     <Field name="securityType">
@@ -67,6 +68,7 @@ function SecurityType () {
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
               onClick={handleTierEditable}
+              tabIndex={-1}
             >
               {data.tierEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
@@ -79,14 +81,12 @@ function SecurityType () {
               isSearchable={false}
               options={securityTiersOptions}
               value={securityTiersOptions.find(option => option.value === input.value)}
-              onChange={selectedOption => handleSelectChange(selectedOption)}
+              onChange={handleSelectChange}
               onBlur={input.onBlur}
               menuPlacement='top'
               menuPosition='fixed'
               isDisabled={!data.tierEditable}
-              components={{
-                Option: CustomTierOption
-              }}
+              components={selectComponents}
             />
           </div>
         </div>

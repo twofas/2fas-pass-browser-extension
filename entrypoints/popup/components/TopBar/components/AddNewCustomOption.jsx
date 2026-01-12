@@ -5,21 +5,27 @@
 // See LICENSE file for full terms
 
 import { itemsUiData } from '@/entrypoints/popup/constants';
-import { Link } from 'react-router';
+import ClearLink from '../../ClearLink';
 
 const AddNewCustomOption = option => {
+  const handleClick = () => {
+    if (option?.selectProps?.setIsMenuOpen) {
+      option.selectProps.setIsMenuOpen(false);
+    }
+  };
+
   return (
     <div className={`react-select-add-new__option ${option?.selectProps?.pathname === option.data.value ? 'active' : ''}`}>
-      <Link
+      <ClearLink
         to={option.data.value}
         title={`${browser.i18n.getMessage('top_bar_create_new')} ${option.data.label}`}
-        onClick={() => option?.selectProps?.setIsMenuOpen ? option?.selectProps?.setIsMenuOpen(false) : {}}
+        onClick={handleClick}
       >
         <span className={`react-select-add-new__option-icon ${itemsUiData[option.data.item].selectClassName}`}>
           {itemsUiData[option.data.item].svg}
         </span>
         <span className='react-select-add-new__option-label'>{option.data.label}</span>
-      </Link>
+      </ClearLink>
     </div>
   );
 };

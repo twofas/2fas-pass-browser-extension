@@ -7,14 +7,24 @@
 import getItems from '@/partials/sessionStorage/getItems';
 
 let isContextMenuConfiguring = false;
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 500;
 
-/** 
+/**
+* Helper function to delay execution.
+* @param {number} ms - Milliseconds to delay.
+* @return {Promise<void>} A promise that resolves after the delay.
+*/
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
 * Function to configure the context menu for the 2FAS Pass Browser Extension.
 * @async
 * @param {Array} items - An array of items to configure the context menu for.
+* @param {number} retryAttempt - Current retry attempt number.
 * @return {void}
 */
-const contextMenuConfigured = async (items = null) => {
+const contextMenuConfigured = async (items = null, retryAttempt = 0) => {
   if (isContextMenuConfiguring) {
     return;
   }
@@ -22,7 +32,7 @@ const contextMenuConfigured = async (items = null) => {
   isContextMenuConfiguring = true;
 
   try {
-    const contexts = ['page', 'editable'];
+    const contexts = ['page', 'editable', 'frame'];
 
     if (import.meta.env.BROWSER !== 'safari')  {
       contexts.push('page_action');
@@ -42,7 +52,7 @@ const contextMenuConfigured = async (items = null) => {
 
     try {
       if (!items) {
-        items = await getItems(['Login']);
+        items = await getItems(['Login', 'PaymentCard']);
       }
     } catch (e) {
       await CatchError(e);
@@ -64,7 +74,14 @@ const contextMenuConfigured = async (items = null) => {
       await CatchError(e);
     }
 
+    const paymentCards = [];
+
     for (const item of items) {
+      if (item.constructor.name === 'PaymentCard') {
+        paymentCards.push(item);
+        continue;
+      }
+
       const contextMenuItem = item?.contextMenuItem;
 
       if (!contextMenuItem || Object.keys(contextMenuItem).length === 0) {
@@ -119,10 +136,62 @@ const contextMenuConfigured = async (items = null) => {
     } catch (e) {
       await CatchError(e);
     }
+
+    // Payment Cards section
+    if (paymentCards.length > 0) {
+      // Cards separator
+      try {
+        browser.contextMenus.create({
+          id: '2fas-pass-cards-separator',
+          type: 'separator',
+          parentId: '2fas-pass-configured',
+          contexts
+        });
+      } catch (e) {
+        await CatchError(e);
+      }
+
+      // Cards submenu
+      try {
+        browser.contextMenus.create({
+          id: '2fas-pass-payment-cards',
+          enabled: true,
+          title: browser.i18n.getMessage('background_contextMenuConfigured_cards'),
+          type: 'normal',
+          visible: true,
+          parentId: '2fas-pass-configured',
+          contexts
+        });
+      } catch (e) {
+        await CatchError(e);
+      }
+
+      // Payment card items
+      for (const card of paymentCards) {
+        const contextMenuItem = card?.contextMenuItem;
+
+        if (!contextMenuItem || Object.keys(contextMenuItem).length === 0) {
+          continue;
+        }
+
+        try {
+          browser.contextMenus.create(contextMenuItem);
+        } catch (e) {
+          await CatchError(e);
+        }
+      }
+    }
   } catch (e) {
+    isContextMenuConfiguring = false;
+
+    if (retryAttempt < MAX_RETRY_ATTEMPTS) {
+      await delay(RETRY_DELAY_MS * (retryAttempt + 1));
+      return contextMenuConfigured(items, retryAttempt + 1);
+    }
+
     throw new TwoFasError(TwoFasError.internalErrors.contextMenuConfiguredError, {
       event: e,
-      additional: { func: 'contextMenuConfigured' }
+      additional: { func: 'contextMenuConfigured', retryAttempt }
     });
   } finally {
     isContextMenuConfiguring = false;

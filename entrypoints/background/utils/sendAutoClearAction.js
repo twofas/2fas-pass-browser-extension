@@ -7,11 +7,14 @@
 import getLocalKey from './getLocalKey';
 import { generateNonce, sendMessageToTab } from '@/partials/functions';
 
-/** 
-* Brief description of the function here.
-* @param {string} value - Value to be processed, can be a string or an object.
+/**
+* Sends an auto-clear action to content scripts and popup to clear the clipboard.
+* The value is encrypted before transmission if crypto is available.
+* @async
+* @param {string} value - The item value to compare with clipboard ('addNew' for new items, or the actual value from items like password, username, uri, name, text, cardNumber, expirationDate, securityCode, cardHolder).
 * @param {boolean} cryptoAvailable - Indicates if cryptographic functions are available.
-* @return {Promise<void>} A promise that resolves when the action is sent.
+* @param {Object} sender - The message sender object containing tab information.
+* @return {Promise<boolean|void>} A promise that resolves to false on error, or void on success.
 */
 const sendAutoClearAction = async (value, cryptoAvailable, sender) => {
   if (!value) {

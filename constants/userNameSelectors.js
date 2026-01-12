@@ -22,10 +22,7 @@ const userNameSelectors = () => {
     userNameSelectors.push(`input#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}`);
 
     userNameAttributes.forEach(attr => {
-      userNameSelectors.push(`input[${attr}="${text}"]`);
-      userNameSelectors.push(`input[${attr}="${text.toLowerCase()}"]`);
-      userNameSelectors.push(`input[${attr}="${text.toUpperCase()}"]`);
-      userNameSelectors.push(`input[${attr}="${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}"]`);
+      userNameSelectors.push(`input[${attr}="${text}" i]`);
     });
   });
 

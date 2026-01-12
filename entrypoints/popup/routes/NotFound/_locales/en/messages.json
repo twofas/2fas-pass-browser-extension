@@ -1,6 +1,0 @@
-{
-  "not_found_text": {
-    "message": "Route not implemented yet ;)",
-    "description": "Message shown when a user navigates to an unimplemented route"
-  }
-}
