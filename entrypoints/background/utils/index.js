@@ -31,6 +31,8 @@ export { default as savePromptAction } from './savePrompt/savePromptAction.js';
 // Core utilities
 export { default as generateLocalKey } from './generateLocalKey.js';
 export { default as generatePersistentKeys } from './generatePersistentKeys.js';
+export { default as handleAutofillCardWithPermission } from './handleAutofillCardWithPermission.js';
+export { default as handleAutofillWithPermission } from './handleAutofillWithPermission.js';
 export { default as generateSecurityIcon } from './generateSecurityIcon.js';
 export { default as getBrowserInfo } from '../../../partials/browserInfo/getBrowserInfo.js';
 export { default as getBrowserVersion } from '../../../partials/browserInfo/getBrowserVersion.js';
@@ -43,6 +45,7 @@ export { default as openPopupWindowInNewWindow } from './openPopupWindowInNewWin
 export { default as promptInput } from './promptInput.js';
 export { default as sendAutoClearAction } from './sendAutoClearAction.js';
 export { default as sendAutofillToTab } from './sendAutofillToTab.js';
+export { default as sendCardAutofillToTab } from './sendCardAutofillToTab.js';
 export { default as sendDomainToPopupWindow } from './sendDomainToPopupWindow.js';
 export { default as sendMatchingLoginsToTab } from './sendMatchingLoginsToTab.js';
 export { default as sendSavePromptToTab } from './sendSavePromptToTab.js';

@@ -48,20 +48,20 @@ const updateNoAccountItem = async (tabId, items = null) => {
 
     if (matchedAccounts && matchedAccounts.length > 0) {
       try {
-        await browser.contextMenus.update('2fas-pass-no-accounts', { visible: false }, () => browser.runtime.lastError);
+        await browser.contextMenus.update('2fas-pass-no-accounts', { visible: false });
       } catch {
         return false;
       }
     } else {
       try {
-        await browser.contextMenus.update('2fas-pass-no-accounts', { visible: true }, () => browser.runtime.lastError);
+        await browser.contextMenus.update('2fas-pass-no-accounts', { visible: true });
       } catch {
         return false;
       }
     }
   } else {
     try {
-      await browser.contextMenus.update('2fas-pass-no-accounts', { visible: false }, () => browser.runtime.lastError);
+      await browser.contextMenus.update('2fas-pass-no-accounts', { visible: false });
     } catch {
       return false;
     }

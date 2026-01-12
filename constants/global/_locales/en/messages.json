@@ -67,14 +67,6 @@
     "message": "Name",
     "description": "Label for the name field"
   },
-  "username": {
-    "message": "Username / Email",
-    "description": "Label for the username or email field"
-  },
-  "password": {
-    "message": "Password",
-    "description": "Label for the password field"
-  },
   "enter_on_mobile": {
     "message": "I will enter it in my mobile app",
     "description": "Option to enter data manually in the mobile app"
@@ -94,10 +86,6 @@
   "update": {
     "message": "Update",
     "description": "Button label to update an item or data"
-  },
-  "danger_zone": {
-    "message": "Danger Zone",
-    "description": "Label for a section with potentially risky actions"
   },
   "try_again": {
     "message": "Try again",
@@ -160,7 +148,7 @@
     "description": "Label for the highest security tier"
   },
   "tier_0_description": {
-    "message": "Do not share this password with the 2FAS Pass Browser Extension and type it manually.",
+    "message": "Do not share this Item with the 2FAS Pass Browser Extension and type it manually.",
     "description": "Description for the top-secret security tier"
   },
   "tier_1_name": {
@@ -168,7 +156,7 @@
     "description": "Label for the second-highest security tier"
   },
   "tier_1_description": {
-    "message": "Share the password with the 2FAS Pass Browser Extension once after confirmation in the 2FAS Pass mobile app.",
+    "message": "Access to Item details must be confirmed in the 2FAS Pass mobile app.",
     "description": "Explains the ultra-secure tier where passwords are shared after mobile app confirmation"
   },
   "tier_2_name": {
@@ -176,12 +164,16 @@
     "description": "Label for the standard security tier"
   },
   "tier_2_description": {
-    "message": "Access this password directly from the 2FAS Pass Browser Extension.",
+    "message": "Access this Item directly from the 2FAS Pass Browser Extension.",
     "description": "Explains the secure tier where passwords are accessed directly from the extension"
   },
   "no_item_name": {
     "message": "No Item name",
     "description": "Label for a state where no item name is available"
+  },
+  "no_value": {
+    "message": "No value",
+    "description": "Label for a state where no value is available"
   },
   "no_valid_domain": {
     "message": "No valid domain detected. If it is a non-standard domain, add the appropriate protocol (e.g. https) at the beginning.",
@@ -195,58 +187,6 @@
     "message": "Sync with your 2FAS Pass mobile app",
     "description": "Title for the sync data section"
   },
-  "login": {
-    "message": "Login",
-    "description": "Label for the login functionality"
-  },
-  "login_plural": {
-    "message": "Logins",
-    "description": "Label for multiple logins"
-  },
-  "credit_card": {
-    "message": "Credit Card",
-    "description": "Label for the credit card functionality"
-  },
-  "credit_card_plural": {
-    "message": "Credit Cards",
-    "description": "Label for multiple credit cards"
-  },
-  "secure_note": {
-    "message": "Secure Note",
-    "description": "Label for the secure note functionality"
-  },
-  "secure_note_note": {
-    "message": "Note",
-    "description": "Label for the secure note text field"
-  },
-  "secure_note_plural": {
-    "message": "Secure Notes",
-    "description": "Label for multiple secure notes"
-  },
-  "secure_note_placeholder": {
-    "message": "Add the Note",
-    "description": "Placeholder text for the secure note input field"
-  },
-  "secure_note_name": {
-    "message": "Name",
-    "description": "Placeholder text for the secure note name input field"
-  },
-  "secure_note_name_placeholder": {
-    "message": "Secure Note name",
-    "description": "Placeholder text for the secure note name input field"
-  },
-  "secure_note_name_required": {
-    "message": "Secure Note name is required.",
-    "description": "Validation message indicating that the secure note name is required"
-  },
-  "secure_note_name_max_length": {
-    "message": "Secure Note name must be less than 256 characters.",
-    "description": "Validation message indicating that the secure note title exceeds the maximum length"
-  },
-  "secure_note_text_max_length": {
-    "message": "Secure Note text must be less than 16384 characters.",
-    "description": "Validation message indicating that the secure note text exceeds the maximum length"
-  },
   "ssh_key": {
     "message": "SSH Key",
     "description": "Label for the SSH key functionality"
@@ -254,5 +194,9 @@
   "item": {
     "message": "Item",
     "description": "Generic label for an item"
+  },
+  "button_open_calendar": {
+    "message": "Open calendar",
+    "description": "Button title for opening the calendar popup to select expiration date"
   }
 }

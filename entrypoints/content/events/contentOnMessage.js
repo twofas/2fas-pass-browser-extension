@@ -5,13 +5,16 @@
 // See LICENSE file for full terms
 
 import checkAutofillInputs from '../functions/checkAutofillInputs';
+import checkAutofillInputsCard from '../functions/checkAutofillInputsCard';
+import checkIframePermission from '../functions/checkIframePermission';
 import autofill from '../functions/autofill';
+import autofillCard from '../functions/autofillCard';
 import getDomainInfo from '../functions/getDomainInfo';
 import notification from '../functions/notification';
 import matchingLogins from '../functions/matchingLogins';
 import savePrompt from '../functions/savePrompt';
 
-/** 
+/**
 * Function to handle messages on the content script.
 * @param {Object} request - The request object.
 * @param {Object} sender - The sender object.
@@ -30,16 +33,17 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
     // IS TOP FRAME CHECK
     if (
       // request?.action === REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK ||
-      request?.action === REQUEST_ACTIONS.MATCHING_LOGINS || 
-      request?.action === REQUEST_ACTIONS.NOTIFICATION || 
+      request?.action === REQUEST_ACTIONS.MATCHING_LOGINS ||
+      request?.action === REQUEST_ACTIONS.NOTIFICATION ||
       request?.action === REQUEST_ACTIONS.SAVE_PROMPT ||
-      request?.action === REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE
+      request?.action === REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE ||
+      request?.action === REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM
     ) {
       if (!isTopFrame) {
         return false;
       }
     }
-  
+
     switch (request.action) {
       case REQUEST_ACTIONS.GET_DOMAIN_INFO: {
         sendResponse(getDomainInfo());
@@ -50,11 +54,36 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
         sendResponse(checkAutofillInputs());
         break;
       }
-  
+
       case REQUEST_ACTIONS.AUTOFILL: {
         autofill(request)
+          .then(autofillStatus => {
+            sendResponse(autofillStatus);
+          })
+          .catch(error => {
+            sendResponse({ status: 'error', message: 'Autofill failed', error });
+          });
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS_CARD: {
+        sendResponse(checkAutofillInputsCard());
+        break;
+      }
+
+      case REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION: {
+        checkIframePermission(request.autofillType)
+          .then(result => { sendResponse(result); })
+          .catch(() => { sendResponse({ needsPermission: false, frameInfo: {} }); });
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.AUTOFILL_CARD: {
+        autofillCard(request)
           .then(autofillStatus => { sendResponse(autofillStatus); })
-          .catch(error => { sendResponse({ status: 'error', message: 'Autofill failed', error }); });
+          .catch(error => { sendResponse({ status: 'error', message: 'Autofill card failed', error }); });
 
         break;
       }
@@ -64,7 +93,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
         sendResponse(notificationStatus);
         break;
       }
-  
+
       case REQUEST_ACTIONS.MATCHING_LOGINS: {
         matchingLogins(request, sendResponse, container);
         break;
@@ -74,7 +103,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
         savePrompt(request, sendResponse, container);
         break;
       }
-  
+
       case REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK: {
         sendResponse({ status: 'ok' });
         break;
@@ -84,7 +113,15 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
         sendResponse({ status: 'ok', cryptoAvailable });
         break;
       }
-  
+
+      case REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM: {
+        const message = request.message || '';
+        const userConfirmed = window.confirm(message);
+
+        sendResponse({ status: 'ok', confirmed: userConfirmed });
+        break;
+      }
+
       default: {
         sendResponse({ status: 'error', message: 'Wrong action' });
         break;

@@ -12,7 +12,7 @@
     "description": "Error message displayed when there is a connection issue"
   },
   "fetch_token_unregistered_header": {
-    "message": "FCM token unregistered. Lock the Browser Extension and \nscan the QR code again.",
+    "message": "FCM token unregistered.",
     "description": "Error message displayed when the FCM token is unregistered"
   },
   "fetch_connection_timeout_header": {
@@ -87,9 +87,9 @@
     "message": "Secure Note request accepted",
     "description": "Toast message displayed when a secure note request is accepted"
   },
-  "fetch_creditCard_request_accept_toast": {
-    "message": "Credit Card request accepted",
-    "description": "Toast message displayed when a credit card request is accepted"
+  "fetch_paymentCard_request_accept_toast": {
+    "message": "Card request accepted",
+    "description": "Toast message displayed when a payment card request is accepted"
   },
   "fetch_request_cancel_toast": {
     "message": "Item request rejected",

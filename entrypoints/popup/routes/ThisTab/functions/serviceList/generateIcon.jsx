@@ -4,15 +4,33 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
-import { lazy } from 'react';
+import S from '../../components/Item/styles/Item.module.scss';
 import { getDomain } from '@/partials/functions';
 import { HEX_REGEX } from '@/constants';
 import URIMatcher from '@/partials/URIMatcher';
 import { parseDomain, ParseResultType } from 'parse-domain';
+import visaLight from '@/assets/popup-window/payment-cards/visa_light.svg';
+import visaDark from '@/assets/popup-window/payment-cards/visa_dark.svg';
+import mc from '@/assets/popup-window/payment-cards/mc.svg';
+import amex from '@/assets/popup-window/payment-cards/amex.svg';
+import discover from '@/assets/popup-window/payment-cards/discover.svg';
+import dinnersLight from '@/assets/popup-window/payment-cards/dinners_light.svg';
+import dinnersDark from '@/assets/popup-window/payment-cards/dinners_dark.svg';
+import jcb from '@/assets/popup-window/payment-cards/jcb.png';
+import unionPay from '@/assets/popup-window/payment-cards/unionPay.svg';
+import Skeleton from '../../components/Skeleton';
+import SecureNoteIcon from '@/assets/popup-window/items/secure-note.svg?react';
+import PaymentCardIcon from '@/assets/popup-window/items/payment-card.svg?react';
 
-const Skeleton = lazy(() => import('../../components/Skeleton'));
-const SecureNoteIcon = lazy(() => import('@/assets/popup-window/items/secure-note.svg?react'));
+const CARD_ISSUER_ICONS = {
+  Visa: { light: visaLight, dark: visaDark },
+  MC: { light: mc, dark: mc },
+  AMEX: { light: amex, dark: amex },
+  Discover: { light: discover, dark: discover },
+  DinersClub: { light: dinnersLight, dark: dinnersDark },
+  JCB: { light: jcb, dark: jcb },
+  UnionPay: { light: unionPay, dark: unionPay }
+};
 
 /** 
 * Function to generate the icon for a login item.
@@ -79,6 +97,14 @@ const generateIcon = (item, faviconError, setFaviconError, loading) => {
             <img
               src={imageUrl}
               alt={item?.content?.name}
+              className={S.iconImageBlur}
+              onError={handleFaviconError}
+              onLoad={el => { el.target.style.opacity = 1; }}
+              loading="lazy"
+            />
+            <img
+              src={imageUrl}
+              alt={item?.content?.name}
               onError={handleFaviconError}
               onLoad={el => { el.target.style.opacity = 1; }}
               loading="lazy"
@@ -89,6 +115,14 @@ const generateIcon = (item, faviconError, setFaviconError, loading) => {
         // Custom
         return (
           <span className={S.iconImage}>
+            <img
+              src={item?.content?.customImageUrl}
+              alt={item?.content?.name}
+              className={S.iconImageBlur}
+              onError={handleFaviconError}
+              onLoad={el => { el.target.style.opacity = 1; }}
+              loading="lazy"
+            />
             <img
               src={item?.content?.customImageUrl}
               alt={item?.content?.name}
@@ -105,6 +139,52 @@ const generateIcon = (item, faviconError, setFaviconError, loading) => {
       return (
         <span className={S.iconSecureNote}>
           <SecureNoteIcon />
+        </span>
+      );
+    }
+
+    case 'PaymentCard': {
+      const cardIssuer = item?.content?.cardIssuer;
+      const issuerIcon = CARD_ISSUER_ICONS[cardIssuer];
+
+      if (issuerIcon) {
+        return (
+          <span className={S.iconPaymentCardImage}>
+            <img
+              src={issuerIcon.light}
+              alt={cardIssuer}
+              className={`${S.iconPaymentCardImageBlur} theme-light`}
+              onLoad={el => { el.target.style.opacity = 1; }}
+              loading="lazy"
+            />
+            <img
+              src={issuerIcon.dark}
+              alt={cardIssuer}
+              className={`${S.iconPaymentCardImageBlur} theme-dark`}
+              onLoad={el => { el.target.style.opacity = 1; }}
+              loading="lazy"
+            />
+            <img
+              src={issuerIcon.light}
+              alt={cardIssuer}
+              className="theme-light"
+              onLoad={el => { el.target.style.opacity = 1; }}
+              loading="lazy"
+            />
+            <img
+              src={issuerIcon.dark}
+              alt={cardIssuer}
+              className="theme-dark"
+              onLoad={el => { el.target.style.opacity = 1; }}
+              loading="lazy"
+            />
+          </span>
+        );
+      }
+
+      return (
+        <span className={S.iconPaymentCard}>
+          <PaymentCardIcon />
         </span>
       );
     }

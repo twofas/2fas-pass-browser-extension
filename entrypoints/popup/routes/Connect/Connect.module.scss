@@ -89,7 +89,7 @@
         opacity: 0;
         top: 50%;
         transform: translate(-50%, -50%);
-        transition: opacity .3s ease-in-out;
+        transition: opacity v.$anim;
         width: 126px;
         z-index: 2;
 
@@ -190,7 +190,7 @@
       stroke-linejoin: miter;
       stroke-width: 3;
       transform: rotate(-90deg);
-      transition: stroke-dashoffset .3s ease-in-out;
+      transition: stroke-dashoffset v.$anim;
       vertical-align: top;
       width: 120px;
 
@@ -249,7 +249,7 @@
     margin-top: 24px;
     opacity: 0;
     padding: 9px 12px;
-    transition: opacity .3s ease-in-out;
+    transition: opacity v.$anim;
     width: auto;
 
     &.visible {
@@ -318,7 +318,7 @@
         position: absolute;
         width: calc((100vw - 184px - 26px) / 2);
         top: 50%;
-        transition: opacity .3s ease-in-out;
+        transition: opacity v.$anim;
         transform: translateY(-50%);
         z-index: 9999;
 
@@ -438,7 +438,7 @@
         padding: 16px;
         position: relative;
         text-align: center;
-        transition: background-color .3s ease-in-out, border .3s ease-in-out;
+        transition: background-color v.$anim, border v.$anim;
         width: 184px;
 
         &:hover {
@@ -536,7 +536,7 @@
           stroke-linecap: square;
           stroke-linejoin: round;
           stroke-width: 2;
-          transition: stroke .3s ease-in-out;
+          transition: stroke v.$anim;
           width: auto;
 
           @include m.darkMode {
@@ -625,7 +625,7 @@
         position: absolute;
         opacity: 0;
         transform: translateX(-50%) translateY(20px);
-        transition: opacity .3s ease-in-out, transform .3s ease-in-out;
+        transition: opacity v.$anim, transform v.$anim;
         width: 300px;
 
         @include m.darkMode {
@@ -694,7 +694,7 @@
             stroke-linecap: square;
             stroke-linejoin: round;
             stroke-width: 2;
-            transition: stroke .3s ease-in-out;
+            transition: stroke v.$anim;
             width: auto;
 
             @include m.darkMode {

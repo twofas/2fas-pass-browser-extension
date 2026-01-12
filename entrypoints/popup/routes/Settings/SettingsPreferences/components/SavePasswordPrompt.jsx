@@ -5,11 +5,10 @@
 // See LICENSE file for full terms
 
 import S from '../../Settings.module.scss';
-import { useEffect, useState, lazy, useCallback, Suspense } from 'react';
-import { Link } from 'react-router';
+import { useEffect, useState, useCallback } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
-
-const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
 
 /**
 * Function to render the Save Password Prompt component.
@@ -71,12 +70,12 @@ function SavePasswordPrompt () {
         value: value === 'browser'
       }).catch(() => {});
 
-      showToast(browser.i18n.getMessage('notification_save_password_prompt_success'), 'success');
+      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:savePrompt') || 'default';
       setSP(previousValue);
 
-      showToast(browser.i18n.getMessage('error_save_password_prompt_saving'), 'error');
+      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
       await CatchError(e);
     }
   }, [isInitialized]);
@@ -100,16 +99,14 @@ function SavePasswordPrompt () {
       </form>
 
       {sP === 'default' || sP === 'default_encrypted' ? (
-        <Link
+        <ClearLink
           to='/settings/preferences/save-login-excluded-domains'
           className={S.settingsSavePasswordPromptExcludedDomainsLink}
           prefetch='intent'
         >
           <span>{browser.i18n.getMessage('settings_excluded_domains')}</span>
-          <Suspense fallback={null}>
-            <MenuArrowIcon />
-          </Suspense>
-        </Link>
+          <MenuArrowIcon />
+        </ClearLink>
       ) : null}
     </div>
   );

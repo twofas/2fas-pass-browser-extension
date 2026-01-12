@@ -6,7 +6,7 @@
 
 import getKey from '@/partials/sessionStorage/getKey';
 import compress from '@/partials/gzip/compress';
-import Tag from '@/partials/models/Tag';
+import Tag from '@/models/Tag';
 
 /** 
 * Saves the tags in the session storage.

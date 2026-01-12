@@ -47,12 +47,12 @@ function Logs () {
       setL(newValue);
 
       await storage.setItem('local:logging', newValue);
-      showToast(browser.i18n.getMessage('notification_logging_settings_success'), 'success');
+      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:logging');
       setL(previousValue !== null ? previousValue : false);
 
-      showToast(browser.i18n.getMessage('error_logging_settings_changed'), 'error');
+      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
       await CatchError(e);
     }
   }, [l, isInitialized]);

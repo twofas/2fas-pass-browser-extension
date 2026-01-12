@@ -6,17 +6,16 @@
 
 import S from '../Settings.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
-import { useState, useEffect, lazy } from 'react';
+import { useState, useEffect } from 'react';
 import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import ConfirmDialog from '@/entrypoints/popup/components/ConfirmDialog';
-
-const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
-const AddNewIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
-const CancelIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
+import TrashIcon from '@/assets/popup-window/trash.svg?react';
+import AddNewIcon from '@/assets/popup-window/add-new-2.svg?react';
+import CancelIcon from '@/assets/popup-window/close.svg?react';
 
 /**
 * Function to render the Settings Save Login Excluded Domains component.
@@ -24,13 +23,12 @@ const CancelIcon = lazy(() => import('@/assets/popup-window/close.svg?react'));
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSaveLoginExcludedDomains (props) {
+  const { data, setData, setBatchData } = usePopupState();
+
   const [loading, setLoading] = useState(true);
   const [excludedDomains, setExcludedDomains] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [domainToRemove, setDomainToRemove] = useState(null);
-
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
 
   const removeExcludedDomain = async domain => {
     const updatedDomains = excludedDomains.filter((d) => d !== domain);
@@ -79,7 +77,7 @@ function SettingsSaveLoginExcludedDomains (props) {
 
   const handleDialogCancel = () => {
     setDialogOpen(false);
-    setTimeout(() => { setDomainToRemove(null); }, 301);
+    setTimeout(() => { setDomainToRemove(null); }, 201);
   };
 
   const handleDialogConfirm = async () => {
@@ -88,7 +86,7 @@ function SettingsSaveLoginExcludedDomains (props) {
     }
 
     setDialogOpen(false);
-    setTimeout(() => { setDomainToRemove(null); }, 301);
+    setTimeout(() => { setDomainToRemove(null); }, 201);
   };
 
   const validate = values => {
@@ -129,8 +127,10 @@ function SettingsSaveLoginExcludedDomains (props) {
     const updatedDomains = [...excludedDomains, getDomain(e['ignored-domain'])];
     await storage.setItem('local:savePromptIgnoreDomains', updatedDomains);
     setExcludedDomains(updatedDomains);
-    setData('newDomainForm', false);
-    setData('inputValue', '');
+    setBatchData({
+      newDomainForm: false,
+      inputValue: ''
+    });
     form.reset();
     showToast(browser.i18n.getMessage('settings_excluded_domains_add_success'), 'success');
   };
@@ -225,8 +225,10 @@ function SettingsSaveLoginExcludedDomains (props) {
                                       type='button'
                                       title={browser.i18n.getMessage('settings_excluded_domains_add_cancel_title')}
                                       onClick={() => {
-                                        setData('newDomainForm', false);
-                                        setData('inputValue', '');
+                                        setBatchData({
+                                          newDomainForm: false,
+                                          inputValue: ''
+                                        });
                                         form.reset();
                                       }}
                                     >

@@ -7,73 +7,25 @@
     "message": "EXT_PLATFORM is undefined",
     "description": "Error message displayed when the EXT_PLATFORM variable is not defined"
   },
+  "error_general_setting": {
+    "message": "Error, changes couldn't be saved",
+    "description": "Generic error message displayed when saving settings fails"
+  },
   "error_getting_theme_value": {
     "message": "Error while getting theme value",
     "description": "Error message displayed when retrieving the theme value fails"
-  },
-  "error_setting_theme_value": {
-    "message": "Error while setting theme value",
-    "description": "Error message displayed when setting the theme value fails"
-  },
-  "error_logging_settings_changed": {
-    "message": "Error while changing \"Crash logs\" settings",
-    "description": "Error message displayed when updating crash log settings fails"
   },
   "error_getting_services_key": {
     "message": "Error while getting service key",
     "description": "Error message displayed when retrieving the service key fails"
   },
-  "error_save_password_prompt_saving": {
-    "message": "Error while saving \"Save Item\" prompt settings",
-    "description": "Error shown when saving the save password prompt settings"
-  },
-  "error_safe_browsing_reports_saving": {
-    "message": "Error while saving \"Safe browsing\" reports settings",
-    "description": "Error shown when saving safe browsing reports settings"
-  },
-  "error_safe_browsing_saving": {
-    "message": "Error while saving \"Safe browsing\" settings",
-    "description": "Error shown when saving safe browsing settings"
-  },
-  "error_idle_lock_saving": {
-    "message": "Error while saving \"Idle lock\" settings",
-    "description": "Error message displayed when saving idle lock settings fails"
-  },
   "error_auto_clear_clipboard_permission_denied": {
     "message": "Permission to read clipboard denied. Auto clear clipboard feature disabled.",
     "description": "Error message displayed when clipboard read permission is denied"
   },
-  "error_auto_clear_clipboard_saving": {
-    "message": "Error while saving \"Auto clear clipboard\" settings",
-    "description": "Error message displayed when saving auto clear clipboard settings fails"
-  },
-  "error_saving_notification_settings": {
-    "message": "Error while saving \"Notifications\" settings",
-    "description": "Error message displayed when saving notification settings fails"
-  },
   "error_saving_extension_name": {
     "message": "Error! Failed to update extension name.",
     "description": "Error message displayed when updating the extension name fails"
-  },
-  "error_saving_context_menu_setting": {
-    "message": "Error while saving \"Context menu\" settings",
-    "description": "Error message displayed when saving context menu settings fails"
-  },
-  "error_login_not_found": {
-    "message": "Something went wrong. Item not found.",
-    "description": "Error message displayed when the requested login item is not found"
-  },
-  "error_secure_note_not_found": {
-    "message": "Something went wrong. Secure Note not found.",
-    "description": "Error message displayed when the requested secure note is not found"
-  },
-  "error_username_copy_failed": {
-    "message": "Failed to copy username to clipboard.",
-    "description": "Error message displayed when copying the username to the clipboard fails"
-  },
-  "error_password_copy_failed": {
-    "message": "Failed to copy password to clipboard.",
-    "description": "Error message displayed when copying the password to the clipboard fails"
   },
   "error_uri_copy_failed": {
     "message": "Failed to copy URL to clipboard.",
@@ -82,10 +34,6 @@
   "error_autofill_failed": {
     "message": "Failed to autofill. Please try again.",
     "description": "Error message displayed when the autofill operation fails"
-  },
-  "error_secure_note_name_copy_failed": {
-    "message": "Failed to copy Name to clipboard.",
-    "description": "Error message displayed when copying the secure note name to the clipboard fails"
   },
   "error_no_response_from_tab": {
     "message": "No response from tab",
@@ -195,14 +143,6 @@
     "message": "Name",
     "description": "Label for the name field"
   },
-  "username": {
-    "message": "Username / Email",
-    "description": "Label for the username or email field"
-  },
-  "password": {
-    "message": "Password",
-    "description": "Label for the password field"
-  },
   "enter_on_mobile": {
     "message": "I will enter it in my mobile app",
     "description": "Option to enter data manually in the mobile app"
@@ -222,10 +162,6 @@
   "update": {
     "message": "Update",
     "description": "Button label to update an item or data"
-  },
-  "danger_zone": {
-    "message": "Danger Zone",
-    "description": "Label for a section with potentially risky actions"
   },
   "try_again": {
     "message": "Try again",
@@ -288,7 +224,7 @@
     "description": "Label for the highest security tier"
   },
   "tier_0_description": {
-    "message": "Do not share this password with the 2FAS Pass Browser Extension and type it manually.",
+    "message": "Do not share this Item with the 2FAS Pass Browser Extension and type it manually.",
     "description": "Description for the top-secret security tier"
   },
   "tier_1_name": {
@@ -296,7 +232,7 @@
     "description": "Label for the second-highest security tier"
   },
   "tier_1_description": {
-    "message": "Share the password with the 2FAS Pass Browser Extension once after confirmation in the 2FAS Pass mobile app.",
+    "message": "Access to Item details must be confirmed in the 2FAS Pass mobile app.",
     "description": "Explains the ultra-secure tier where passwords are shared after mobile app confirmation"
   },
   "tier_2_name": {
@@ -304,12 +240,16 @@
     "description": "Label for the standard security tier"
   },
   "tier_2_description": {
-    "message": "Access this password directly from the 2FAS Pass Browser Extension.",
+    "message": "Access this Item directly from the 2FAS Pass Browser Extension.",
     "description": "Explains the secure tier where passwords are accessed directly from the extension"
   },
   "no_item_name": {
     "message": "No Item name",
     "description": "Label for a state where no item name is available"
+  },
+  "no_value": {
+    "message": "No value",
+    "description": "Label for a state where no value is available"
   },
   "no_valid_domain": {
     "message": "No valid domain detected. If it is a non-standard domain, add the appropriate protocol (e.g. https) at the beginning.",
@@ -323,58 +263,6 @@
     "message": "Sync with your 2FAS Pass mobile app",
     "description": "Title for the sync data section"
   },
-  "login": {
-    "message": "Login",
-    "description": "Label for the login functionality"
-  },
-  "login_plural": {
-    "message": "Logins",
-    "description": "Label for multiple logins"
-  },
-  "credit_card": {
-    "message": "Credit Card",
-    "description": "Label for the credit card functionality"
-  },
-  "credit_card_plural": {
-    "message": "Credit Cards",
-    "description": "Label for multiple credit cards"
-  },
-  "secure_note": {
-    "message": "Secure Note",
-    "description": "Label for the secure note functionality"
-  },
-  "secure_note_note": {
-    "message": "Note",
-    "description": "Label for the secure note text field"
-  },
-  "secure_note_plural": {
-    "message": "Secure Notes",
-    "description": "Label for multiple secure notes"
-  },
-  "secure_note_placeholder": {
-    "message": "Add the Note",
-    "description": "Placeholder text for the secure note input field"
-  },
-  "secure_note_name": {
-    "message": "Name",
-    "description": "Placeholder text for the secure note name input field"
-  },
-  "secure_note_name_placeholder": {
-    "message": "Secure Note name",
-    "description": "Placeholder text for the secure note name input field"
-  },
-  "secure_note_name_required": {
-    "message": "Secure Note name is required.",
-    "description": "Validation message indicating that the secure note name is required"
-  },
-  "secure_note_name_max_length": {
-    "message": "Secure Note name must be less than 256 characters.",
-    "description": "Validation message indicating that the secure note title exceeds the maximum length"
-  },
-  "secure_note_text_max_length": {
-    "message": "Secure Note text must be less than 16384 characters.",
-    "description": "Validation message indicating that the secure note text exceeds the maximum length"
-  },
   "ssh_key": {
     "message": "SSH Key",
     "description": "Label for the SSH key functionality"
@@ -382,6 +270,10 @@
   "item": {
     "message": "Item",
     "description": "Generic label for an item"
+  },
+  "button_open_calendar": {
+    "message": "Open calendar",
+    "description": "Button title for opening the calendar popup to select expiration date"
   },
   "notification_send_autofill_to_tab_lack_of_service_title": {
     "message": "Error",
@@ -415,33 +307,13 @@
     "message": "Sorry, but we can't autofill on Browser Internal Pages",
     "description": "Message shown when autofill isn't supported on browser internal pages"
   },
-  "notification_save_password_prompt_success": {
-    "message": "\"Save Item\" prompt settings have been saved",
-    "description": "Notification shown when save password prompt settings are saved"
-  },
-  "notification_safe_browsing_reports_success": {
-    "message": "\"Safe browsing\" reports settings have been saved",
-    "description": "Notification shown when safe browsing reports settings are saved"
-  },
-  "notification_safe_browsing_success": {
-    "message": "\"Safe browsing\" settings have been saved",
-    "description": "Notification message when the safe browsing settings are successfully saved"
-  },
-  "notification_idle_lock_success": {
-    "message": "\"Idle lock\" settings have been saved",
-    "description": "Notification message when the idle lock settings are successfully saved"
+  "notification_settings_save_success": {
+    "message": "Changes saved successfully",
+    "description": "Notification shown when settings are saved successfully"
   },
   "notification_idle_lock_premium_only": {
     "message": "\"Only on restart\" is a premium feature. Upgrade to the unlimited plan in your mobile app.",
     "description": "Notification message when the idle lock feature is unlimited plan only"
-  },
-  "notification_auto_clear_clipboard_success": {
-    "message": "\"Auto clear clipboard\" settings have been saved",
-    "description": "Notification message when the auto clear clipboard settings are successfully saved"
-  },
-  "notification_theme_setting_success": {
-    "message": "\"Theme\" settings have been saved",
-    "description": "Notification message when the theme settings are successfully saved"
   },
   "notification_test_title": {
     "message": "2FAS Pass",
@@ -459,65 +331,25 @@
     "message": "No username and password found",
     "description": "Message for the notification when no username and password are found"
   },
-  "notification_logging_settings_success": {
-    "message": "\"Crash logs\" settings saved",
-    "description": "Notification message when the crash logs settings are successfully saved"
-  },
   "notification_extension_name_update_success": {
     "message": "Extension name has been updated",
     "description": "Notification message when the extension name is successfully updated"
-  },
-  "notification_context_menu_setting_success": {
-    "message": "\"Context menu\" settings have been saved",
-    "description": "Notification message when the context menu settings are successfully saved"
-  },
-  "notification_username_copied": {
-    "message": "Username copied to clipboard",
-    "description": "Notification message when the username is successfully copied to the clipboard"
   },
   "notification_uri_copied": {
     "message": "URI copied to clipboard",
     "description": "Notification message when the URI is successfully copied to the clipboard"
   },
-  "notification_password_copied": {
-    "message": "Password copied to clipboard",
-    "description": "Notification message when the password is successfully copied to the clipboard"
-  },
-  "notification_secure_note_name_copied": {
-    "message": "Name copied to clipboard",
-    "description": "Notification message when the secure note name is successfully copied to the clipboard"
-  },
-  "notification_secure_note_text_copied": {
-    "message": "Note copied to clipboard",
-    "description": "Notification message when the secure note text is successfully copied to the clipboard"
-  },
   "notification_error_message_copied": {
     "message": "Error message copied to clipboard",
     "description": "Notification message when the error message is successfully copied to the clipboard"
   },
-  "placeholder_domain_uri": {
-    "message": "e.g., https://2fas.com",
-    "description": "Placeholder text for the domain or URI input field"
-  },
-  "placeholder_username": {
-    "message": "Type your username",
-    "description": "Placeholder text for the username input field"
-  },
-  "placeholder_password": {
-    "message": "Type your password",
-    "description": "Placeholder text for the password input field"
+  "autofill_cross_domain_warning_popup": {
+    "message": "This page contains forms from external domains:\nDOMAINS\n\nDo you want to autofill data in these frames?",
+    "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
   },
   "placeholder_name": {
     "message": "Type your Item name",
     "description": "Placeholder text for the name input field"
-  },
-  "placeholder_secure_note": {
-    "message": "Type your Secure Note",
-    "description": "Placeholder text for the Secure Note text input field"
-  },
-  "placeholder_secure_note_empty": {
-    "message": "Note is empty",
-    "description": "Placeholder text when there is no Secure Note available"
   },
   "background_contextMenuConfigured_no_accounts": {
     "message": "There are no matching Items for this domain",
@@ -527,6 +359,10 @@
     "message": "Add account...",
     "description": "Option in the context menu to add a new account for the current domain"
   },
+  "background_contextMenuConfigured_cards": {
+    "message": "Cards",
+    "description": "Submenu title for payment cards in the context menu"
+  },
   "background_contextMenuNotConfigured_connect": {
     "message": "Connect with the 2FAS Pass mobile app...",
     "description": "Option to connect the extension with the 2FAS Pass mobile app"
@@ -534,6 +370,30 @@
   "background_get_browser_info_on": {
     "message": "on",
     "description": "Used in generating the browser extension name, e.g., Chrome on Windows"
+  },
+  "notification_card_autofill_no_data_title": {
+    "message": "No card data",
+    "description": "Title for the notification when the card has no data to autofill"
+  },
+  "notification_card_autofill_no_data_message": {
+    "message": "This card has no data to autofill",
+    "description": "Message for the notification when the card has no data to autofill"
+  },
+  "notification_card_autofill_partial_title": {
+    "message": "Partial autofill",
+    "description": "Title for the notification when card autofill is only partially successful"
+  },
+  "notification_card_autofill_partial_message": {
+    "message": "Some card details could not be autofilled",
+    "description": "Message when some payment card fields could not be autofilled"
+  },
+  "notification_card_autofill_no_inputs_title": {
+    "message": "No card inputs found",
+    "description": "Title for the notification when no card input fields are detected on the page"
+  },
+  "notification_card_autofill_no_inputs_message": {
+    "message": "This page doesn't have any card input fields that can be autofilled.",
+    "description": "Message for the notification when no card input fields are detected on the page"
   },
   "content_matching_logins_title": {
     "message": "Matching Items",
@@ -690,6 +550,34 @@
   "add_new_validate_invalid_domain": {
     "message": "Please enter a valid Domain (URI)",
     "description": "Validation message displayed when the Domain (URI) entered is invalid"
+  },
+  "add_new_validate_card_name_required": {
+    "message": "Card name is required",
+    "description": "Validation message displayed when the Card Name field is empty"
+  },
+  "add_new_validate_card_name_length": {
+    "message": "Card name must be less than 256 characters",
+    "description": "Validation message displayed when the Card Name field exceeds 255 characters"
+  },
+  "add_new_validate_cardholder_length": {
+    "message": "Cardholder must be less than 256 characters",
+    "description": "Validation message displayed when the Cardholder field exceeds 255 characters"
+  },
+  "add_new_validate_card_number_invalid": {
+    "message": "Card number is invalid",
+    "description": "Validation message displayed when the Card Number field is invalid"
+  },
+  "add_new_validate_expiration_date_invalid": {
+    "message": "Expiration date is invalid",
+    "description": "Validation message displayed when the Expiration Date field is invalid"
+  },
+  "add_new_validate_security_code_invalid": {
+    "message": "Security code must be 3 or 4 digits",
+    "description": "Validation message displayed when the Security Code field is invalid"
+  },
+  "add_new_security_code_too_long": {
+    "message": "Security code is invalid.",
+    "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
   "add_new_header": {
     "message": "Adding a new ITEM to \n2FAS Pass",
@@ -895,6 +783,98 @@
     "message": "Additional info is empty",
     "description": "Placeholder text for the additional info input field"
   },
+  "details_card_number": {
+    "message": "Card number",
+    "description": "Label for the card number field in payment card details"
+  },
+  "details_card_number_decrypt_error": {
+    "message": "Decrypting card number error. Please resync with your mobile app.",
+    "description": "Error message displayed when decrypting the card number fails"
+  },
+  "details_toggle_card_number_visibility": {
+    "message": "Toggle card number visibility",
+    "description": "Title for the button that toggles card number visibility"
+  },
+  "details_expiration_date": {
+    "message": "Expiration date",
+    "description": "Label for the expiration date field in payment card details"
+  },
+  "details_expiration_date_decrypt_error": {
+    "message": "Decrypting expiration date error.",
+    "description": "Error message displayed when decrypting the expiration date fails"
+  },
+  "details_toggle_expiration_date_visibility": {
+    "message": "Toggle expiration date visibility",
+    "description": "Title for the button that toggles expiration date visibility"
+  },
+  "details_copy_expiration_date": {
+    "message": "Copy expiration date",
+    "description": "Title for the button that copies expiration date to clipboard"
+  },
+  "details_security_code": {
+    "message": "Security code",
+    "description": "Label for the security code field in payment card details"
+  },
+  "details_security_code_decrypt_error": {
+    "message": "Decrypting security code error.",
+    "description": "Error message displayed when decrypting the security code fails"
+  },
+  "details_toggle_security_code_visibility": {
+    "message": "Toggle security code visibility",
+    "description": "Title for the button that toggles security code visibility"
+  },
+  "details_cardholder_required": {
+    "message": "Cardholder is required.",
+    "description": "Validation message indicating that the cardholder field is required"
+  },
+  "details_cardholder_max_length": {
+    "message": "Cardholder must be less than 256 characters.",
+    "description": "Validation message indicating the maximum length for the cardholder field"
+  },
+  "details_cardholder_copied": {
+    "message": "Cardholder copied to clipboard",
+    "description": "Success message shown when the cardholder is copied to clipboard"
+  },
+  "details_card_number_required": {
+    "message": "Card number is required.",
+    "description": "Validation message indicating that the card number field is required"
+  },
+  "details_card_number_invalid": {
+    "message": "Card number is invalid.",
+    "description": "Validation message indicating that the card number is not valid"
+  },
+  "details_expiration_date_required": {
+    "message": "Expiration date is required.",
+    "description": "Validation message indicating that the expiration date field is required"
+  },
+  "details_expiration_date_invalid": {
+    "message": "Expiration date is invalid.",
+    "description": "Validation message indicating that the expiration date format is not valid"
+  },
+  "details_expiration_date_past": {
+    "message": "Expiration date cannot be in the past.",
+    "description": "Validation message indicating that the expiration date must not be in the past"
+  },
+  "details_card_expired": {
+    "message": "This card has expired.",
+    "description": "Informational message indicating that the payment card expiration date is in the past"
+  },
+  "details_security_code_required": {
+    "message": "Security code is required.",
+    "description": "Validation message indicating that the security code field is required"
+  },
+  "details_security_code_invalid": {
+    "message": "Security code must be 3 or 4 digits.",
+    "description": "Validation message indicating that the security code must be 3 or 4 digits"
+  },
+  "details_security_code_too_long": {
+    "message": "Security code is invalid.",
+    "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
+  },
+  "details_secure_note_text_max_length": {
+    "message": "Secure Note text must be less than 16384 characters.",
+    "description": "Validation message indicating the maximum length for the secure note text field"
+  },
   "details_additional_info_max_length": {
     "message": "Additional info must be less than 16384 characters.",
     "description": "Validation message indicating the maximum length for the additional info field"
@@ -952,7 +932,7 @@
     "description": "Error message displayed when there is a connection issue"
   },
   "fetch_token_unregistered_header": {
-    "message": "FCM token unregistered. Lock the Browser Extension and \nscan the QR code again.",
+    "message": "FCM token unregistered.",
     "description": "Error message displayed when the FCM token is unregistered"
   },
   "fetch_connection_timeout_header": {
@@ -1027,9 +1007,9 @@
     "message": "Secure Note request accepted",
     "description": "Toast message displayed when a secure note request is accepted"
   },
-  "fetch_creditCard_request_accept_toast": {
-    "message": "Credit Card request accepted",
-    "description": "Toast message displayed when a credit card request is accepted"
+  "fetch_paymentCard_request_accept_toast": {
+    "message": "Card request accepted",
+    "description": "Toast message displayed when a payment card request is accepted"
   },
   "fetch_request_cancel_toast": {
     "message": "Item request rejected",
@@ -1059,10 +1039,6 @@
     "message": "Synchronization completed",
     "description": "Toast message displayed when a full sync operation is completed successfully"
   },
-  "not_found_text": {
-    "message": "Route not implemented yet ;)",
-    "description": "Message shown when a user navigates to an unimplemented route"
-  },
   "password_generator_title": {
     "message": "Password generator",
     "description": "Title for the password generator page"
@@ -1076,7 +1052,7 @@
     "description": "Label for the include options section"
   },
   "password_generator_regenerate": {
-    "message": "Regenerate password",
+    "message": "Generate password",
     "description": "Title for the regenerate password button"
   },
   "password_generator_uppercase": {
@@ -1232,7 +1208,7 @@
     "description": "Option to clear data after 60 minutes of inactivity"
   },
   "settings_idle_lock_header": {
-    "message": "Automatically lock the Browser Extension when idle",
+    "message": "Automatic lock when idle",
     "description": "Header for the idle lock settings"
   },
   "settings_idle_lock_description": {
@@ -1288,7 +1264,7 @@
     "description": "Description for configuring the extension shortcut"
   },
   "settings_shortcut_firefox_tooltip": {
-    "message": "To set or change this shortcut, go to your browser settings, extensions, then click on the gear icon and select “Manage Extension Shortcuts.”",
+    "message": "You can set or change this shortcut in your browser settings.",
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_shortcut_safari_tooltip": {
@@ -1302,10 +1278,6 @@
   "settings_push_custom": {
     "message": "Custom 2FAS Pass Notifications",
     "description": "Option to use custom notifications from 2FAS Pass"
-  },
-  "settings_push_notifications_changing_success": {
-    "message": "Push notification settings have been saved",
-    "description": "Message displayed when push notification settings are successfully saved"
   },
   "settings_notifications_header": {
     "message": "Notifications",
@@ -1511,10 +1483,6 @@
     "message": "Sort",
     "description": "Label for the sort functionality"
   },
-  "this_tab_search_placeholder": {
-    "message": "Search among %AMOUNT% Items",
-    "description": "Placeholder text for the search input showing the number of available items"
-  },
   "this_tab_more_details": {
     "message": "View details",
     "description": "Button label to view more details about a login item"
@@ -1527,6 +1495,10 @@
     "message": "Forget this note",
     "description": "Button label to forget the saved secure note"
   },
+  "this_tab_more_forget_payment_card": {
+    "message": "Forget this card",
+    "description": "Button label to forget the saved payment card"
+  },
   "this_tab_more_uris": {
     "message": "Website URL(s):",
     "description": "Label for displaying associated website URLs of a login item"
@@ -1534,10 +1506,6 @@
   "this_tab_copy_to_clipboard": {
     "message": "Copy to clipboard",
     "description": "Button label to copy data to the clipboard"
-  },
-  "this_tab_no_search_results": {
-    "message": "No search results. Please try again.",
-    "description": "Message displayed when no search results are found"
   },
   "this_tab_autofill_success": {
     "message": "Autofill successful",
@@ -1547,8 +1515,12 @@
     "message": "Username autofilled but no password found",
     "description": "Message displayed when no password is found for autofill"
   },
+  "this_tab_autofill_fetch_password": {
+    "message": "Username autofilled. Fetch password from device to complete.",
+    "description": "Message displayed when username is autofilled for a Highly Secret item that requires fetching password from device"
+  },
   "this_tab_autofill_no_username_and_password": {
-    "message": "No username and password found. Autofill not possible.",
+    "message": "No username and password found.",
     "description": "Message displayed when no username and password are found for autofill"
   },
   "this_tab_can_t_autofill": {
@@ -1560,8 +1532,8 @@
     "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
   },
   "this_tab_can_t_autofill_t2_failed": {
-    "message": "Browser Extension can’t autofill the form.",
-    "description": "Message displayed when autofill operation fails completely"
+    "message": "Browser Extension can't fully autofill the form.",
+    "description": "Message displayed when autofill operation fails or is incomplete"
   },
   "this_tab_can_t_find_inputs": {
     "message": "No input field found. Can't autofill Item details.",
@@ -1591,33 +1563,41 @@
     "message": "Fetch note",
     "description": "Button label to fetch the text from the mobile app"
   },
+  "this_tab_copy_card_number": {
+    "message": "Copy card number",
+    "description": "Button label to copy the card number to the clipboard"
+  },
+  "this_tab_fetch_card_info": {
+    "message": "Fetch card info",
+    "description": "Button label to fetch the card info from the mobile app"
+  },
+  "this_tab_copy_card_security_code": {
+    "message": "Copy security code",
+    "description": "Button label to copy the security code to the clipboard"
+  },
+  "this_tab_fetch_card_security_code": {
+    "message": "Fetch security code",
+    "description": "Button label to fetch the security code from the mobile app"
+  },
   "this_tab_more_actions": {
     "message": "More actions",
     "description": "Label for a dropdown or menu containing additional actions"
   },
-  "this_tab_tag_info_text": {
-    "message": "Showing AMOUNT Items Tagged: TAG_NAME",
-    "description": "Information text displaying the number of items with a specific tag"
+  "this_tab_autofill_fetch_card_data": {
+    "message": "Cardholder name autofilled. Fetch card details from device to complete.",
+    "description": "Message displayed when cardholder name is autofilled for a Highly Secret item that requires fetching card data from device"
   },
-  "this_tab_clear_tag_filter": {
-    "message": "Clear Tag filter",
-    "description": "Button label to clear the selected tag filter"
+  "this_tab_autofill_no_card_data_available": {
+    "message": "Only cardholder name was available for autofill",
+    "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
-  "this_tab_update_available": {
-    "message": "A new version of the extension is available!",
-    "description": "Notification message when a new extension update is available"
+  "this_tab_autofill_some_fields_not_available": {
+    "message": "Some card details could not be autofilled",
+    "description": "Message displayed when some payment card fields could not be autofilled"
   },
-  "this_tab_update_button": {
-    "message": "Update",
-    "description": "Button label to update the extension"
-  },
-  "this_tab_update_button_title": {
-    "message": "Update the extension to the latest version",
-    "description": "Tooltip for the update button"
-  },
-  "this_tab_update_manual_required": {
-    "message": "Please update the extension manually from your browser's extension settings",
-    "description": "Error message when automatic update is not available"
+  "all_items_list_no_search_results": {
+    "message": "No search results. Please try again.",
+    "description": "Message displayed when no search results are found"
   },
   "filters_no_tags": {
     "message": "No Tags available",
@@ -1630,6 +1610,22 @@
   "filters_clear_choice": {
     "message": "Clear filters",
     "description": "Option text to clear the selected tag filter"
+  },
+  "keep_item_popup_header": {
+    "message": "Data for the following Item \nsuccessfully fetched.",
+    "description": "Header message in popup after fetching login data for autofill"
+  },
+  "keep_item_popup_keep": {
+    "message": "Keep it for 3 minutes",
+    "description": "Button label to keep the fetched password for a limited time"
+  },
+  "keep_item_popup_dont_keep": {
+    "message": "Don't keep it",
+    "description": "Button label to not keep the fetched password for a limited time"
+  },
+  "search_placeholder": {
+    "message": "Search among %AMOUNT% Items",
+    "description": "Placeholder text for the search input showing the number of available items"
   },
   "sort_az": {
     "message": "A-Z",
@@ -1646,5 +1642,213 @@
   "sort_oldest": {
     "message": "Oldest",
     "description": "Sort option for sorting items by least recently updated first"
+  },
+  "tags_info_text": {
+    "message": "Showing AMOUNT Items Tagged: TAG_NAME",
+    "description": "Information text displaying the number of items with a specific tag"
+  },
+  "tags_info_clear_filter": {
+    "message": "Clear Tag filter",
+    "description": "Button label to clear the selected tag filter"
+  },
+  "update_available": {
+    "message": "A new version of the extension is available!",
+    "description": "Notification message when a new extension update is available"
+  },
+  "update_button": {
+    "message": "Update",
+    "description": "Button label to update the extension"
+  },
+  "update_button_title": {
+    "message": "Update the extension to the latest version",
+    "description": "Tooltip for the update button"
+  },
+  "update_manual_required": {
+    "message": "Please update the extension manually from your browser's extension settings",
+    "description": "Error message when automatic update is not available"
+  },
+  "login": {
+    "message": "Login",
+    "description": "Label for the login functionality"
+  },
+  "login_plural": {
+    "message": "Logins",
+    "description": "Label for multiple logins"
+  },
+  "username": {
+    "message": "Username / Email",
+    "description": "Label for the username or email field"
+  },
+  "password": {
+    "message": "Password",
+    "description": "Label for the password field"
+  },
+  "placeholder_username": {
+    "message": "Type your username",
+    "description": "Placeholder text for the username input field"
+  },
+  "placeholder_password": {
+    "message": "Type your password",
+    "description": "Placeholder text for the password input field"
+  },
+  "notification_username_copied": {
+    "message": "Username copied to clipboard",
+    "description": "Notification message when the username is successfully copied to the clipboard"
+  },
+  "notification_password_copied": {
+    "message": "Password copied to clipboard",
+    "description": "Notification message when the password is successfully copied to the clipboard"
+  },
+  "error_login_not_found": {
+    "message": "Something went wrong. Login not found.",
+    "description": "Error message displayed when the requested login item is not found"
+  },
+  "error_username_copy_failed": {
+    "message": "Failed to copy username to clipboard.",
+    "description": "Error message displayed when copying the username to the clipboard fails"
+  },
+  "error_password_copy_failed": {
+    "message": "Failed to copy password to clipboard.",
+    "description": "Error message displayed when copying the password to the clipboard fails"
+  },
+  "placeholder_domain_uri": {
+    "message": "e.g., https://2fas.com",
+    "description": "Placeholder text for the domain or URI input field"
+  },
+  "payment_card": {
+    "message": "Card",
+    "description": "Label for the payment card functionality"
+  },
+  "payment_card_plural": {
+    "message": "Cards",
+    "description": "Label for multiple payment cards"
+  },
+  "payment_card_name": {
+    "message": "Name",
+    "description": "Label for the payment card name field"
+  },
+  "payment_card_cardholder": {
+    "message": "Cardholder",
+    "description": "Label for the payment card cardholder field"
+  },
+  "payment_card_card_number": {
+    "message": "Card Number",
+    "description": "Label for the payment card number field"
+  },
+  "payment_card_expiration_date": {
+    "message": "Expiration Date",
+    "description": "Label for the payment card expiration date field"
+  },
+  "payment_card_security_code": {
+    "message": "Security Code",
+    "description": "Label for the payment card security code field"
+  },
+  "placeholder_payment_card_name": {
+    "message": "Type the card name",
+    "description": "Placeholder text for the payment card name input field"
+  },
+  "placeholder_payment_card_cardholder": {
+    "message": "Type the cardholder's name",
+    "description": "Placeholder text for the cardholder name input field"
+  },
+  "placeholder_payment_card_number": {
+    "message": "0000 0000 0000 0000",
+    "description": "Placeholder text for the payment card number input field"
+  },
+  "placeholder_payment_card_expiration_date": {
+    "message": "MM/YY",
+    "description": "Placeholder text for the payment card expiration date input field"
+  },
+  "placeholder_payment_card_security_code": {
+    "message": "_ _ _",
+    "description": "Placeholder text for the payment card security code input field"
+  },
+  "notification_card_number_copied": {
+    "message": "Card number copied to clipboard",
+    "description": "Notification message when the card number is successfully copied to the clipboard"
+  },
+  "notification_card_security_code_copied": {
+    "message": "Security code copied to clipboard",
+    "description": "Notification message when the security code is successfully copied to the clipboard"
+  },
+  "notification_expiration_date_copied": {
+    "message": "Expiration date copied to clipboard",
+    "description": "Notification message when the expiration date is successfully copied to the clipboard"
+  },
+  "error_card_not_found": {
+    "message": "Something went wrong. Payment Card not found.",
+    "description": "Error message displayed when the requested payment card is not found"
+  },
+  "error_card_number_copy_failed": {
+    "message": "Failed to copy card number to clipboard.",
+    "description": "Error message displayed when copying the card number to the clipboard fails"
+  },
+  "error_card_security_code_copy_failed": {
+    "message": "Failed to copy security code to clipboard.",
+    "description": "Error message displayed when copying the security code to the clipboard fails"
+  },
+  "error_expiration_date_copy_failed": {
+    "message": "Failed to copy expiration date to clipboard.",
+    "description": "Error message displayed when copying the expiration date to the clipboard fails"
+  },
+  "secure_note": {
+    "message": "Secure Note",
+    "description": "Label for the secure note functionality"
+  },
+  "secure_note_note": {
+    "message": "Note",
+    "description": "Label for the secure note text field"
+  },
+  "secure_note_plural": {
+    "message": "Secure Notes",
+    "description": "Label for multiple secure notes"
+  },
+  "secure_note_placeholder": {
+    "message": "Add the Note",
+    "description": "Placeholder text for the secure note input field"
+  },
+  "secure_note_name": {
+    "message": "Name",
+    "description": "Placeholder text for the secure note name input field"
+  },
+  "secure_note_name_placeholder": {
+    "message": "Secure Note name",
+    "description": "Placeholder text for the secure note name input field"
+  },
+  "secure_note_name_required": {
+    "message": "Secure Note name is required.",
+    "description": "Validation message indicating that the secure note name is required"
+  },
+  "secure_note_name_max_length": {
+    "message": "Secure Note name must be less than 256 characters.",
+    "description": "Validation message indicating that the secure note title exceeds the maximum length"
+  },
+  "secure_note_text_max_length": {
+    "message": "Secure Note text must be less than 16384 characters.",
+    "description": "Validation message indicating that the secure note text exceeds the maximum length"
+  },
+  "placeholder_secure_note": {
+    "message": "Type your Secure Note",
+    "description": "Placeholder text for the Secure Note text input field"
+  },
+  "placeholder_secure_note_empty": {
+    "message": "Note is empty",
+    "description": "Placeholder text when there is no Secure Note available"
+  },
+  "notification_secure_note_name_copied": {
+    "message": "Name copied to clipboard",
+    "description": "Notification message when the secure note name is successfully copied to the clipboard"
+  },
+  "notification_secure_note_text_copied": {
+    "message": "Note copied to clipboard",
+    "description": "Notification message when the secure note text is successfully copied to the clipboard"
+  },
+  "error_secure_note_not_found": {
+    "message": "Something went wrong. Secure Note not found.",
+    "description": "Error message displayed when the requested secure note is not found"
+  },
+  "error_secure_note_name_copy_failed": {
+    "message": "Failed to copy name to clipboard.",
+    "description": "Error message displayed when copying the secure note name to the clipboard fails"
   }
 }

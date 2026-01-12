@@ -16,10 +16,10 @@ import usePopupStateStore from '../../store/popupState';
 * @return {JSX.Element} The rendered component.
 */
 function ErrorFallback (props) {
-  const clearData = usePopupStateStore(state => state.clearData);
+  const clearAllData = usePopupStateStore(state => state.clearAllData);
 
   const handleRetry = () => {
-    clearData();
+    clearAllData();
     window.location.reload();
   };
 
@@ -57,6 +57,7 @@ function ErrorFallback (props) {
                 className={S.errorFallbackDetailsCopyButton}
                 title={browser.i18n.getMessage('error_fallback_copy_error_title')}
                 onClick={handleCopyErrorMessage}
+                tabIndex={-1}
               >
                 <CopyIcon />
               </button>

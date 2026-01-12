@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { tabIsInternal, openPopup } from '@/partials/functions';
+import { tabIsInternal, openPopup, sendMessageToAllFrames } from '@/partials/functions';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import getItems from '@/partials/sessionStorage/getItems';
 import URIMatcher from '@/partials/URIMatcher';
@@ -71,23 +71,38 @@ const shortcutAutofill = async () => {
   }
 
   if (matchingLogins.length === 1) {
-    if (!matchingLogins[0].isT3orT2WithSif) {
-      const data = encodeURIComponent(JSON.stringify({
-        action: PULL_REQUEST_TYPES.SIF_REQUEST,
-        from: 'shortcut',
-        data: {
-          contentType: matchingLogins[0].contentType,
-          vaultId: matchingLogins[0].vaultId,
-          itemId: matchingLogins[0].id,
-          deviceId: matchingLogins[0].deviceId,
-          tabId: tab.id
-        }
-      }));
-      
-      return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
+    const item = matchingLogins[0];
+
+    if (!item.isT3orT2WithSif) {
+      let canAutofillPassword = false;
+
+      try {
+        const inputTests = await sendMessageToAllFrames(tab.id, {
+          action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
+          target: REQUEST_TARGETS.CONTENT
+        });
+
+        canAutofillPassword = inputTests?.some(r => r.canAutofillPassword) || false;
+      } catch {}
+
+      if (canAutofillPassword) {
+        const data = encodeURIComponent(JSON.stringify({
+          action: PULL_REQUEST_TYPES.SIF_REQUEST,
+          from: 'shortcut',
+          data: {
+            contentType: item.contentType,
+            vaultId: item.vaultId,
+            itemId: item.id,
+            deviceId: item.deviceId,
+            tabId: tab.id
+          }
+        }));
+
+        return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
+      }
     }
 
-    return sendAutofillToTab(tab.id, matchingLogins[0].deviceId, matchingLogins[0].vaultId, matchingLogins[0].id); // FUTURE - Case with full data, no id?
+    return sendAutofillToTab(tab.id, item.deviceId, item.vaultId, item.id);
   }
 
   matchingLogins = matchingLogins.map(item => {
@@ -109,20 +124,33 @@ const shortcutAutofill = async () => {
       item.id === matchingLoginsAction.id
     )[0];
 
-    if (item.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      const data = encodeURIComponent(JSON.stringify({
-        action: PULL_REQUEST_TYPES.SIF_REQUEST,
-        from: 'shortcut',
-        data: {
-          vaultId: matchingLoginsAction.vaultId,
-          deviceId: matchingLoginsAction.deviceId,
-          itemId: matchingLoginsAction.id,
-          contentType: matchingLoginsAction.contentType,
-          tabId: tab.id
-        }
-      }));
+    if (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.isT3orT2WithSif) {
+      let canAutofillPassword = false;
 
-      return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
+      try {
+        const inputTests = await sendMessageToAllFrames(tab.id, {
+          action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
+          target: REQUEST_TARGETS.CONTENT
+        });
+
+        canAutofillPassword = inputTests?.some(r => r.canAutofillPassword) || false;
+      } catch {}
+
+      if (canAutofillPassword) {
+        const data = encodeURIComponent(JSON.stringify({
+          action: PULL_REQUEST_TYPES.SIF_REQUEST,
+          from: 'shortcut',
+          data: {
+            vaultId: matchingLoginsAction.vaultId,
+            deviceId: matchingLoginsAction.deviceId,
+            itemId: matchingLoginsAction.id,
+            contentType: matchingLoginsAction.contentType,
+            tabId: tab.id
+          }
+        }));
+
+        return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
+      }
     }
 
     return sendAutofillToTab(tab.id, matchingLoginsAction.deviceId, matchingLoginsAction.vaultId, matchingLoginsAction.id);

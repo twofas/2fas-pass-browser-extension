@@ -45,7 +45,7 @@
     opacity: 1;
     position: absolute;
     transform: translateX(-50%);
-    transition: opacity .3s ease-in-out, border-color .3s ease-in-out, border-width .3s ease-in-out;
+    transition: opacity v.$anim, border-color v.$anim, border-width v.$anim;
     width: 64px;
     z-index: 3;
 
@@ -89,7 +89,7 @@
       height: 64px;
       opacity: 0;
       position: absolute;
-      transition: opacity .3s ease-in-out;
+      transition: opacity v.$anim;
       width: 64px;
     }
 
@@ -128,7 +128,7 @@
       pointer-events: none;
       position: absolute;
       transform: translateX(-50%) translateY(20px);
-      transition: opacity .3s ease-in-out, transform .3s ease-in-out;
+      transition: opacity v.$anim, transform v.$anim;
       white-space: pre-wrap;
       width: 275px;
       z-index: 2;
@@ -170,7 +170,7 @@
       justify-content: center;
       opacity: 0;
       position: relative;
-      transition: opacity .3s ease-in-out;
+      transition: opacity v.$anim;
       width: 60px;
       z-index: 2;
 
@@ -213,7 +213,7 @@
       justify-content: center;
       opacity: 1;
       text-align: center;
-      transition: opacity .3s ease-in-out, background-color .3s ease-in-out;
+      transition: opacity v.$anim, background-color v.$anim;
       width: 32px;
 
       @include m.darkMode {
@@ -238,7 +238,7 @@
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
         width: 20px;
 
         @include m.darkMode {
@@ -257,7 +257,7 @@
       opacity: 0;
       pointer-events: none;
       text-align: center;
-      transition: opacity .3s ease-in-out, background-color .3s ease-in-out;
+      transition: opacity v.$anim, background-color v.$anim;
       user-select: none;
       width: 32px;
 
@@ -289,7 +289,7 @@
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
         width: 20px;
 
         @include m.darkMode {
@@ -303,7 +303,7 @@
     opacity: 0;
     padding: 4px 0;
     pointer-events: none;
-    transition: opacity .3s ease-in-out;
+    transition: opacity v.$anim;
     user-select: none;
 
     &.visible {
@@ -329,7 +329,7 @@
       height: 100%;
       justify-content: center;
       padding: 4px 12px 4px 6px;
-      transition: background-color .3s ease-in-out;
+      transition: background-color v.$anim;
 
       @include m.darkMode {
         background-color: rgba(v.$hover-color-dark, 0);
@@ -353,7 +353,7 @@
         font-weight: 500;
         line-height: 1;
         transform: translateY(1px);
-        transition: color .3s ease-in-out;
+        transition: color v.$anim;
 
         @include m.darkMode {
           color: v.$primary-color-dark;
@@ -366,7 +366,7 @@
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
         width: 24px;
 
         @include m.darkMode {

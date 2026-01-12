@@ -71,6 +71,8 @@ const getKey = async (key, data) => {
 
     case ENCRYPTION_KEYS.ITEM_T2.sK:
     case ENCRYPTION_KEYS.ITEM_T3_NEW.sK: {
+      // @TODO: VaultId check?
+
       if (data?.itemId) {
         keyGenerated += `_${data.itemId}`;
       }

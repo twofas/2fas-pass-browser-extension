@@ -10,8 +10,8 @@ import { useNavigate } from 'react-router';
 import { useState, lazy } from 'react';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
-import usePopupStateStore from '@/entrypoints/popup/store/popupState';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
+import SecureNote from '@/models/itemModels/SecureNote';
 import { PULL_REQUEST_TYPES } from '@/constants';
 
 const Name = lazy(() => import('../../components/Name'));
@@ -27,7 +27,7 @@ const DangerZone = lazy(() => import('../../components/DangerZone'));
 * @return {JSX.Element} The rendered component.
 */
 function SecureNoteDetailsView(props) {
-  const data = usePopupStateStore(state => state.data);
+  const { data } = usePopupState();
   const [inputError, setInputError] = useState(undefined);
 
   const navigate = useNavigate();
@@ -61,15 +61,15 @@ function SecureNoteDetailsView(props) {
       errors.name = browser.i18n.getMessage('details_name_max_length');
     }
 
-    if (values?.content?.s_text) {
-      const tempText = data?.item?.internalData?.editedSif ? data.item.internalData.editedSif : (data?.item?.sifDecrypted ? data.item.sifDecrypted : '');
+    if (data.sifEditable) {
+      const tempText = values?.editedSif || '';
 
       if (tempText.length > 16384) {
         if (errors?.content === undefined) {
           errors.content = {};
         }
 
-        errors.content.s_text = browser.i18n.getMessage('secure_note_text_max_length');
+        errors.content.s_text = browser.i18n.getMessage('details_secure_note_text_max_length');
       }
     }
 
@@ -116,7 +116,7 @@ function SecureNoteDetailsView(props) {
     }
 
     if (data.sifEditable) {
-      stateData.content.s_text = data?.item?.internalData?.editedSif ? data.item.internalData.editedSif : (data?.item?.sifDecrypted ? data.item.sifDecrypted : '');
+      stateData.content.s_text = data.editedSif || '';
     }
 
     if (data.additionalInfoEditable) {
@@ -132,15 +132,6 @@ function SecureNoteDetailsView(props) {
     if (data.tagsEditable) {
       stateData.tags = e.tags || [];
     }
-
-    stateData.uiState = {
-      nameEditable: data.nameEditable,
-      sifEditable: data.sifEditable,
-      sifVisible: data.sifVisible,
-      tierEditable: data.tierEditable,
-      tagsEditable: data.tagsEditable,
-      sifDecryptError: data.sifDecryptError
-    };
 
     return navigate('/fetch', {
       state: {

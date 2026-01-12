@@ -34,7 +34,7 @@
     gap: 0 6px;
     padding: 5px;
     transform: translateX(-5px);
-    transition: background-color .3s ease-in-out;
+    transition: background-color v.$anim;
     position: relative;
     z-index: 10;
 
@@ -97,7 +97,7 @@
     position: absolute;
     text-align: left;
     transform: translateY(10px);
-    transition: opacity .3s ease-in-out, transform .3s ease-in-out;
+    transition: opacity v.$anim, transform v.$anim;
     width: 326px;
 
     &::before {

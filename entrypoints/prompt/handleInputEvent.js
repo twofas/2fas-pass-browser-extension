@@ -50,14 +50,14 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     }
   }
 
-  // Get input element and create unique identifier for debouncing
   let input = e?.target;
-  
+
   if (input?.tagName && input.tagName.toLowerCase() !== 'input') {
-    const shadowElements = getShadowRoots(input).filter(el => el?.nodeName?.toLowerCase() === 'input');
-    
-    if (shadowElements && shadowElements.length > 0) {
-      input = shadowElements[0]; // FUTURE - Check if the input is the correct one
+    const shadowRoots = getShadowRoots(input);
+    const shadowInputs = shadowRoots.flatMap(root => Array.from(root.querySelectorAll('input')));
+
+    if (shadowInputs.length > 0) {
+      input = shadowInputs[0];
     }
   }
 
@@ -81,8 +81,9 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
 
     if (!inputId && !isElementInArray(input, allInputs)) {
       const passwordInputs = getPasswordInputs();
-      const passwordForms = passwordInputs.map(input => input.closest('form'));
-            
+      const passwordForms = passwordInputs
+        .map(input => input.closest('form'))
+        .filter(Boolean);
       const usernameInputs = getUsernameInputs(passwordForms);
       setUsernameSkips(passwordInputs, usernameInputs);
 

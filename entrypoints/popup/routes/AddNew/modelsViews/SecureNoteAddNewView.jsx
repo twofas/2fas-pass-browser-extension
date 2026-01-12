@@ -8,10 +8,10 @@ import S from '../AddNew.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { memo, useState } from 'react';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import { Form, Field } from 'react-final-form';
 import { getCurrentDevice } from '@/partials/functions';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
+import SecureNote from '@/models/itemModels/SecureNote';
 import { useNavigate, useLocation } from 'react-router';
 import { PULL_REQUEST_TYPES } from '@/constants';
 
@@ -22,11 +22,9 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 function SecureNoteAddNewView() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { data, setData, setBatchData } = usePopupState();
 
   const [inputError, setInputError] = useState(undefined);
-
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
 
   const validate = values => {
     const errors = {};
@@ -55,10 +53,16 @@ function SecureNoteAddNewView() {
   useEffect(() => {
     if (location?.state?.data) {
       const stateData = location.state.data;
-      if (stateData.name) setData('name', stateData.name);
-      if (stateData.text) setData('text', stateData.text);
+      const batchUpdate = {};
+
+      if (stateData.name) batchUpdate.name = stateData.name;
+      if (stateData.text) batchUpdate.text = stateData.text;
+
+      if (Object.keys(batchUpdate).length > 0) {
+        setBatchData(batchUpdate);
+      }
     }
-  }, [location?.state?.data]);
+  }, [location?.state?.data, setBatchData]);
 
   const onSubmit = async e => {
     setInputError(undefined);

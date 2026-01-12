@@ -52,7 +52,7 @@ const closeNotification = (n, timers) => {
 
       n = null;
       timers.cleanup = null;
-    }, 300);
+    }, 200);
   }
 };
 
@@ -247,12 +247,22 @@ const matchingLogins = (request, sendResponse, container) => {
         const imageUrl = `https://icon.2fas.com/${iconDomain}/favicon.png`;
 
         itemIcon.classList.add('icon-image');
+
+        const iconImageBlur = createElement('img');
+        iconImageBlur.src = imageUrl;
+        iconImageBlur.alt = item.content.name;
+        iconImageBlur.classList.add('icon-image-blur');
+        iconImageBlur.onload = () => { iconImageBlur.style.setProperty('opacity', '1', 'important'); };
+        itemIcon.appendChild(iconImageBlur);
+
         const iconImage = createElement('img');
         iconImage.src = imageUrl;
         iconImage.alt = item.content.name;
+        iconImage.onload = () => { iconImage.style.setProperty('opacity', '1', 'important'); };
         itemIcon.appendChild(iconImage);
 
         iconImage.onerror = () => {
+          itemIcon.removeChild(iconImageBlur);
           itemIcon.removeChild(iconImage);
           itemIcon.classList.remove('icon-image');
           generateLabel(item, itemIcon);
@@ -262,13 +272,25 @@ const matchingLogins = (request, sendResponse, container) => {
       }
     } else {
       // Custom
+      const customImageUrl = `https://custom-icon.2fas.com/?url=${item?.content?.customImageUrl}`;
+
       itemIcon.classList.add('icon-image');
+
+      const iconImageBlur = createElement('img');
+      iconImageBlur.src = customImageUrl;
+      iconImageBlur.alt = item.content.name;
+      iconImageBlur.classList.add('icon-image-blur');
+      iconImageBlur.onload = () => { iconImageBlur.style.setProperty('opacity', '1', 'important'); };
+      itemIcon.appendChild(iconImageBlur);
+
       const iconImage = createElement('img');
-      iconImage.src = `https://custom-icon.2fas.com/?url=${item?.content?.customImageUrl}`;
+      iconImage.src = customImageUrl;
       iconImage.alt = item.content.name;
+      iconImage.onload = () => { iconImage.style.setProperty('opacity', '1', 'important'); };
       itemIcon.appendChild(iconImage);
 
       iconImage.onerror = () => {
+        itemIcon.removeChild(iconImageBlur);
         itemIcon.removeChild(iconImage);
         itemIcon.classList.remove('icon-image');
         generateLabel(item, itemIcon);
@@ -310,23 +332,25 @@ const matchingLogins = (request, sendResponse, container) => {
     }
 
     timers.visible = null;
-  }, 300);
+  }, 200);
 
   timers.maxHeight1 = setTimeout(() => {
     if (n && n.items) {
-      n.items.style.setProperty('max-height', `${(request.data.length * 57) - 13}px`, 'important');
+      const itemsHeight = Array.from(n.items.children).reduce((total, child) => total + child.offsetHeight, 0);
+      n.items.style.setProperty('max-height', `${itemsHeight}px`, 'important');
     }
 
     timers.maxHeight1 = null;
-  }, 301);
+  }, 201);
 
   timers.maxHeight2 = setTimeout(() => {
-    if (n && n.item) {
-      n.item.style.maxHeight = `${n.item.offsetHeight + (request.data.length * 57) - 13}px`;
+    if (n && n.item && n.items) {
+      const itemsHeight = Array.from(n.items.children).reduce((total, child) => total + child.offsetHeight, 0);
+      n.item.style.maxHeight = `${n.item.offsetHeight + itemsHeight}px`;
     }
 
     timers.maxHeight2 = null;
-  }, 302);
+  }, 202);
 };
 
 export default matchingLogins;

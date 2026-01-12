@@ -7,7 +7,7 @@
 const supportedFeatures = {
   items: {
     secureNote: 'items.secureNote',
-    creditCard: 'items.creditCard',
+    paymentCard: 'items.paymentCard',
   }
 };
 

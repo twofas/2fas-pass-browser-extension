@@ -1,0 +1,95 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.tags-info {
+  background-color: v.$primary-box-bg-light;
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 12px 0;
+  position: sticky;
+  top: 90px;
+  width: 100%;
+  z-index: 2;
+
+  @include m.darkMode {
+    background-color: v.$primary-box-bg-dark;
+  }
+
+  &.active {
+    max-height: 42px;
+    padding: 0 12px 8px;
+  }
+
+  &-box {
+    align-items: center;
+    background-color: v.$hover-color-light;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 8px 0 8px 12px;
+
+    @include m.darkMode {
+      background-color: v.$hover-color-dark;
+    }
+
+    button {
+      align-items: center;
+      border-left: 1px solid v.$hover-on-hover-light;
+      display: inline-flex;
+      flex-shrink: 0;
+      justify-content: center;
+      padding: 0 9px;
+
+      @include m.darkMode {
+        border-left: 1px solid v.$hover-on-hover-dark;
+      }
+
+      &:hover {
+        svg {
+          fill: v.$hover-on-hover-light;
+
+          @include m.darkMode {
+            fill: v.$hover-on-hover-dark;
+          }
+        }
+      }
+
+      svg {
+        fill: v.$primary-color-light;
+        height: 16px;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: fill v.$anim;
+        width: auto;
+
+        @include m.darkMode {
+          fill: v.$primary-color-dark;
+        }
+      }
+    }
+
+    p {
+      color: v.$primary-text-light;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1;
+      margin-bottom: -2px;
+      overflow: hidden;
+      padding-bottom: 2px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: calc(100% - 38px);
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+  }
+}

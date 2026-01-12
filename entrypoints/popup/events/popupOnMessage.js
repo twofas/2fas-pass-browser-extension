@@ -5,6 +5,42 @@
 // See LICENSE file for full terms
 
 import { autoClearAction, storageAutoClearActions } from '@/partials/functions';
+import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
+
+/**
+* Checks if the current popup is running in a separate window.
+* @async
+* @return {Promise<boolean>} True if popup is in a separate window, false otherwise.
+*/
+const isCurrentPopupInSeparateWindow = async () => {
+  try {
+    const tab = await browser?.tabs?.getCurrent();
+
+    if (!tab?.url) {
+      return false;
+    }
+
+    const extUrl = browser.runtime.getURL('/popup.html');
+    return tab.url.includes(extUrl);
+  } catch {
+    return false;
+  }
+};
+
+/**
+* Focuses the current window if it's a separate popup window.
+* @async
+* @return {Promise<void>}
+*/
+const focusCurrentWindow = async () => {
+  try {
+    const tab = await browser?.tabs?.getCurrent();
+
+    if (tab?.windowId) {
+      await browser.windows.update(tab.windowId, { focused: true });
+    }
+  } catch {}
+};
 
 /** 
 * Function to handle messages sent to the popup.
@@ -36,7 +72,21 @@ const popupOnMessage = (request, sender, sendResponse) => {
         } else {
           sendResponse({ status: 'ok' });
         }
-        
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.NEW_POPUP: {
+        isCurrentPopupInSeparateWindow().then(isSeparateWindow => {
+          if (isSeparateWindow) {
+            focusCurrentWindow();
+          } else {
+            tryWindowClose();
+          }
+
+          sendResponse({ status: 'ok' });
+        });
+
         break;
       }
 

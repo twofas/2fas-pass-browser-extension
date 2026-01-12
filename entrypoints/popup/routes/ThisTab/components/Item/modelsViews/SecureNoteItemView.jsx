@@ -4,17 +4,23 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
-import { memo, lazy, useRef, useMemo } from 'react';
+import S from '../styles/Item.module.scss';
+import { memo, useRef, useMemo } from 'react';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
+import Skeleton from '../../Skeleton';
+import CopyNameBtn from '../components/CopyNameBtn';
+import CopySecureNoteBtn from '../components/CopySecureNoteBtn';
+import MoreBtn from '../../../functions/serviceList/additionalButtons/MoreBtn';
+import ItemCustomOption from '../components/ItemCustomOption';
 
-const Skeleton = lazy(() => import('../../Skeleton'));
-const CopyNameBtn = lazy(() => import('../components/CopyNameBtn'));
-const CopySecureNoteBtn = lazy(() => import('../components/CopySecureNoteBtn'));
-const MoreBtn = lazy(() => import('../../../functions/serviceList/additionalButtons/MoreBtn'));
-const CustomOption = lazy(() => import('../components/CustomOption'));
+const selectComponents = { Option: ItemCustomOption };
 
+/**
+* Secure note item view component.
+* @param {Object} props - The component props.
+* @return {JSX.Element} The rendered component.
+*/
 function SecureNoteItemView (props) {
   const moreBtnRef = useRef(null);
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
@@ -22,15 +28,15 @@ function SecureNoteItemView (props) {
   return (
     <>
       <div
-        className={S.servicesListItemAutofill}
+        className={S.itemAutofill}
         ref={props.autofillBtnRef}
       >
         {generateIcon(props.data, null, null, props.loading)}
         <span>
-          {props.loading ? <Skeleton /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
         </span>
       </div>
-      <div className={S.servicesListItemAdditionalButtons}>
+      <div className={S.itemAdditionalButtons}>
         <CopySecureNoteBtn item={props.data} more={props.more} setMore={props.setMore} />
         <CopyNameBtn item={props.data} more={props.more} setMore={props.setMore} />
         <MoreBtn item={props.data} more={props.more} setMore={props.setMore} ref={moreBtnRef} />
@@ -44,12 +50,23 @@ function SecureNoteItemView (props) {
         ref={props.selectRef}
         triggerRef={moreBtnRef}
         setMore={props.setMore}
-        components={{
-          Option: CustomOption
-        }}
+        components={selectComponents}
       />
     </>
   );
 }
 
-export default memo(SecureNoteItemView);
+/**
+* Custom comparison function to prevent unnecessary re-renders.
+* @param {Object} prevProps - Previous props.
+* @param {Object} nextProps - Next props.
+* @return {boolean} True if props are equal (should not re-render).
+*/
+function arePropsEqual (prevProps, nextProps) {
+  return prevProps.data?.id === nextProps.data?.id &&
+         prevProps.data?.sifExists === nextProps.data?.sifExists &&
+         prevProps.more === nextProps.more &&
+         prevProps.loading === nextProps.loading;
+}
+
+export default memo(SecureNoteItemView, arePropsEqual);

@@ -4,10 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { openPopupWindowInNewWindow, sendAutofillToTab } from '../utils';
+import { openPopupWindowInNewWindow, sendAutofillToTab, sendCardAutofillToTab } from '../utils';
 import { AUTOFILL_REGEX, FETCH_REGEX, PULL_REQUEST_TYPES } from '@/constants';
+import getItem from '@/partials/sessionStorage/getItem';
 
-/** 
+/**
 * Function to handle context menu click events.
 * @async
 * @param {Object} info - The context menu click event information.
@@ -16,17 +17,36 @@ import { AUTOFILL_REGEX, FETCH_REGEX, PULL_REQUEST_TYPES } from '@/constants';
 */
 const onContextMenuClick = async (info, tab) => {
   const { menuItemId } = info;
-  const serviceRegexTest = AUTOFILL_REGEX.exec(menuItemId);
+  const autofillRegexTest = AUTOFILL_REGEX.exec(menuItemId);
 
   try {
-    if (serviceRegexTest) {
-      const [, deviceId, vaultId, itemId] = serviceRegexTest;
-      await sendAutofillToTab(tab.id, deviceId, vaultId, itemId);
+    if (autofillRegexTest) {
+      const [, deviceId, vaultId, itemId] = autofillRegexTest;
+
+      let item;
+
+      try {
+        item = await getItem(deviceId, vaultId, itemId);
+      } catch (e) {
+        await CatchError(e);
+        return false;
+      }
+
+      if (!item) {
+        return false;
+      }
+
+      if (item.constructor.name === 'PaymentCard') {
+        await sendCardAutofillToTab(tab.id, deviceId, vaultId, itemId);
+      } else {
+        await sendAutofillToTab(tab.id, deviceId, vaultId, itemId);
+      }
+
       return true;
     }
-  
+
     const fetchRegexTest = FETCH_REGEX.exec(menuItemId);
-  
+
     if (fetchRegexTest) {
       const [, deviceId, vaultId, itemId, contentType] = fetchRegexTest;
       const data = encodeURIComponent(JSON.stringify({
@@ -39,18 +59,18 @@ const onContextMenuClick = async (info, tab) => {
 
       return true;
     }
-  
+
     switch (menuItemId) {
       case '2fas-pass-not-configured': {
         await openPopupWindowInNewWindow();
         return true;
       }
-  
+
       case '2fas-pass-add-account': {
         await openPopupWindowInNewWindow({ pathname: '/add-new/Login' });
         return true;
       }
-  
+
       default: {
         return false;
       }

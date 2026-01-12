@@ -18,7 +18,7 @@
   outline: none !important;
   text-align: center;
   text-decoration: none;
-  transition: background-color .3s ease-in-out, color .3s ease-in-out, border-color .3s ease-in-out;
+  transition: background-color v.$anim, color v.$anim, border-color v.$anim;
 
   &[disabled] {
     cursor: default;
@@ -190,7 +190,7 @@
     height: 32px;
     transition: none;
     padding: 0 8px 0 12px;
-    transition: background-color .3s ease-in-out;
+    transition: background-color v.$anim;
     user-select: none;
     width: 100%;
 
@@ -207,11 +207,11 @@
       }
 
       span {
-        transition: color .3s ease-in-out;
+        transition: color v.$anim;
       }
 
       svg {
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
       }
     }
 
@@ -348,7 +348,7 @@
     font-weight: 500;
     padding: 14px 0;
     width: 100%;
-    transition: border-color .3s ease-in-out, color .3s ease-in-out;
+    transition: border-color v.$anim, color v.$anim;
 
     @include m.darkMode {
       border: 1px solid v.$error-dark;
@@ -514,7 +514,7 @@
       stroke-linecap: round;
       stroke-linejoin: round;
       transform: translateY(-1px);
-      transition: stroke .3s ease-in-out;
+      transition: stroke v.$anim;
       width: auto;
 
       @include m.darkMode {
@@ -572,10 +572,10 @@
   &.loaded {
     label {
       .pass-toggle-box {
-        transition: background-color .2s ease-in-out;
+        transition: background-color v.$anim-fast;
 
         .pass-toggle-box-circle {
-          transition: transform .2s ease-in-out;
+          transition: transform v.$anim-fast;
         }
       }
     }
@@ -677,7 +677,7 @@
       flex-shrink: 0;
       height: 18px;
       position: relative;
-      transition: background-color .3s ease-in-out;
+      transition: background-color v.$anim;
       width: 32px;
 
       @include m.darkMode {
@@ -692,7 +692,7 @@
         position: absolute;
         top: 2px;
         transform: translateX(0);
-        transition: transform .3s ease-in-out;
+        transition: transform v.$anim;
         width: 14px;
 
         @include m.darkMode {
@@ -707,7 +707,7 @@
         font-size: 12px;
         font-weight: 400;
         line-height: 1;
-        transition: color .3s ease-in-out;
+        transition: color v.$anim;
 
         @include m.darkMode {
           color: v.$primary-text-dark;

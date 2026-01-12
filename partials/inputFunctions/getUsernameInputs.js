@@ -9,86 +9,108 @@ import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 
-/** 
-* Gets the username input elements from the document.
+/**
+* Filters out inputs that contain denied keywords in their name or id.
+* @param {HTMLInputElement} input - The input element to check.
+* @return {boolean} True if the input should be kept, false otherwise.
+*/
+const filterDeniedKeywords = input => {
+  const name = (input.name || '').toLowerCase();
+  const id = (input.id || '').toLowerCase();
+  const hasDeniedWord = userNameDeniedKeywords.some(word => name.includes(word) || id.includes(word));
+
+  return !hasDeniedWord;
+};
+
+/**
+* Checks if an input matches username-related attributes or has a matching label.
+* @param {HTMLInputElement} input - The input element to check.
+* @param {Document|ShadowRoot} rootNode - The root node to search for labels.
+* @return {boolean} True if input matches username criteria.
+*/
+const matchesUsernameInput = (input, rootNode) => {
+  const matchesAttribute = userNameAttributes.some(attribute => {
+    const attrValue = input.getAttribute(attribute);
+
+    if (!attrValue) {
+      return false;
+    }
+
+    const lowerAttrValue = attrValue.toLowerCase();
+
+    return userNameWords.some(word => lowerAttrValue.includes(word.toLowerCase()));
+  });
+
+  if (matchesAttribute) {
+    return true;
+  }
+
+  if (input.id) {
+    const label = rootNode.querySelector(`label[for="${input.id}"]`);
+    const labelText = label?.innerText?.toLowerCase();
+
+    if (labelText && userNameWords.some(word => labelText.includes(word.toLowerCase()))) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+/**
+* Gets the username input elements from a root node (document or shadow root).
+* @param {Document|ShadowRoot} rootNode - The root node to search in.
+* @param {string} userNameSelector - The CSS selector for username inputs.
+* @return {HTMLInputElement[]} The array of username input elements found.
+*/
+const getUsernameInputsFromRoot = (rootNode, userNameSelector) => {
+  const userNameInputs = Array.from(rootNode.querySelectorAll(userNameSelector));
+  const allInputs = rootNode.querySelectorAll(`input${ignoredTypes()}`);
+
+  allInputs.forEach(input => {
+    if (matchesUsernameInput(input, rootNode)) {
+      userNameInputs.push(input);
+    }
+  });
+
+  return userNameInputs;
+};
+
+/**
+* Gets the username input elements from the document, including those inside shadow DOMs.
 * @param {HTMLFormElement[]|null} passwordForms - The password form elements to search within.
 * @return {HTMLInputElement[]} The array of username input elements.
 */
 const getUsernameInputs = (passwordForms = null) => {
-  let userNameInputs = [];
-
   const userNameSelector = userNameSelectors().map(selector => selector + ignoredTypes()).join(', ');
-  userNameInputs = Array.from(document.querySelectorAll(userNameSelector));
+  const regularInputs = getUsernameInputsFromRoot(document, userNameSelector);
+  const shadowRoots = getShadowRoots();
+  const shadowInputs = shadowRoots.flatMap(
+    root => getUsernameInputsFromRoot(root, userNameSelector)
+  );
+  const userNameInputs = [...regularInputs, ...shadowInputs];
 
-  const allInputs = document.querySelectorAll(`input${ignoredTypes()}`);
-
-  allInputs.forEach(input => {
-    userNameAttributes.forEach(attribute => {
-      userNameWords.forEach(word => {
-        if (input.getAttribute(attribute) && input?.getAttribute(attribute)?.toLowerCase().includes(word.toLowerCase())) {
-          userNameInputs.push(input);
-        }
-      });
-    });
-
-    if (input.id) {
-      const label = document.querySelector(`label[for="${input.id}"]`);
-
-      if (label) {
-        userNameWords.forEach(word => {
-          if (label && label?.innerText?.toLowerCase().includes(word.toLowerCase())) {
-            userNameInputs.push(input);
-          }
-        });
-      }
-    }
-  });
-
-  if (passwordForms && Array.isArray(passwordForms) && userNameInputs.length <= 0) {
+  if (passwordForms && Array.isArray(passwordForms) && userNameInputs.length === 0) {
     const tryInputSelector = 'input' + ignoredTypes();
-    
+
     passwordForms.forEach(form => {
-      if (!form || form instanceof HTMLFormElement === false) {
+      if (!(form instanceof HTMLFormElement)) {
         return;
       }
 
       const inputs = form.querySelectorAll(tryInputSelector);
 
-      if (inputs && inputs.length > 0) {
+      if (inputs.length > 0) {
         userNameInputs.push(...inputs);
       }
     });
   }
 
-  userNameInputs = userNameInputs.filter(input => isVisible(input));
-  userNameInputs = userNameInputs.filter(uniqueElementOnly);
+  const visibleInputs = userNameInputs.filter(input => isVisible(input));
+  const uniqueInputs = visibleInputs.filter(uniqueElementOnly);
+  const filteredInputs = uniqueInputs.filter(filterDeniedKeywords);
 
-  userNameInputs = userNameInputs.filter(input => {
-    const name = input?.name ? input?.name?.toLowerCase() : '';
-    const id = input?.id ? input?.id?.toLowerCase() : '';
-
-    const hasDeniedWord = userNameDeniedKeywords.some(word => name.includes(word) || id.includes(word));
-    return !hasDeniedWord;
-  });
-
-
-  if (userNameInputs.length <= 0) {
-    const shadowElements = getShadowRoots().filter(el => el?.nodeName?.toLowerCase() === 'input');
-
-    shadowElements.forEach(el => {
-      const parent = el.parentNode;
-      const shadowInputs = Array.from(parent.querySelectorAll(userNameSelector));
-      
-      if (shadowInputs && shadowInputs.length > 0) {
-        userNameInputs.push(...shadowInputs);
-      }
-    });
-
-    userNameInputs = userNameInputs.filter(input => isVisible(input));
-    userNameInputs = userNameInputs.filter(uniqueElementOnly);
-  }
-
-  return userNameInputs;
+  return filteredInputs;
 };
 
 export default getUsernameInputs;

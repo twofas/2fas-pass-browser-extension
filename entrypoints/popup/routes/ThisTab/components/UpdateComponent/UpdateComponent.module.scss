@@ -19,7 +19,7 @@
     display: flex;
     justify-content: space-between;
     padding: 15px 12px;
-    transition: background-color .3s ease-in-out, border-color .3s ease-in-out;
+    transition: background-color v.$anim, border-color v.$anim;
 
     @include m.darkMode {
       background-color: v.$hover-color-dark;
@@ -38,7 +38,7 @@
       font-size: 12px;
       font-weight: 500;
       line-height: 1;
-      transition: color .3s ease-in-out;
+      transition: color v.$anim;
 
       @include m.darkMode {
         color: v.$primary-text-dark;
@@ -58,7 +58,7 @@
       gap: 0 4px;
       outline: none;
       padding: 0;
-      transition: color .3s ease-in-out;
+      transition: color v.$anim;
       white-space: nowrap;
 
       @include m.darkMode {
