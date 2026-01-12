@@ -208,11 +208,31 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     actionData.iframePermissionGranted = true;
 
     const autofillRes = await sendMessageToAllFrames(tabId, actionData);
+
     const relevantResponses = autofillRes?.filter(r => r && r.status && r.message !== 'No input fields found') || [];
+
     const isOk = relevantResponses.some(frameResponse => frameResponse.status === 'ok');
     const isPartial = relevantResponses.some(frameResponse => frameResponse.status === 'partial');
 
-    if (isOk) {
+    const allFilledFields = relevantResponses.reduce((acc, r) => {
+      if (r.filledFields) {
+        Object.keys(r.filledFields).forEach(field => {
+          if (r.filledFields[field]) {
+            acc[field] = true;
+          }
+        });
+      }
+
+      return acc;
+    }, {});
+
+    const allMissingInputFields = relevantResponses
+      .flatMap(r => r.missingInputFields || [])
+      .filter((field, index, self) => self.indexOf(field) === index)
+      .filter(field => !allFilledFields[field]);
+    const hasMissingInputs = allMissingInputFields.length > 0;
+
+    if (isOk && !isPartial && !hasMissingInputs) {
       const separateWindow = await popupIsInSeparateWindow();
       await closeWindowIfNotInSeparateWindow(separateWindow);
 
@@ -220,6 +240,26 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
         showToast(browser.i18n.getMessage('this_tab_autofill_success'), 'success');
         eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
       }
+    } else if (isOk && hasMissingInputs) {
+      const toastId = showToast(browser.i18n.getMessage('this_tab_autofill_some_fields_not_available'), 'info', false);
+
+      eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, {
+        path: '/',
+        options: {
+          state: {
+            action: 'autofillCardT2Failed',
+            vaultId: closeData.vaultId,
+            deviceId: closeData.deviceId,
+            itemId: closeData.itemId,
+            s_cardNumber: closeData.s_cardNumber,
+            s_expirationDate: closeData.s_expirationDate,
+            s_securityCode: closeData.s_securityCode,
+            hkdfSaltAB: closeData.hkdfSaltAB,
+            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+            toastId
+          }
+        }
+      });
     } else if (isPartial) {
       showToast(browser.i18n.getMessage('this_tab_autofill_some_fields_not_available'), 'info');
       eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });

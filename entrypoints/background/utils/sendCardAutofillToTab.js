@@ -245,11 +245,29 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   const isOk = relevantResponses.some(frameResponse => frameResponse.status === 'ok');
   const isPartial = relevantResponses.some(frameResponse => frameResponse.status === 'partial');
 
-  if (isOk) {
+  const allFilledFields = relevantResponses.reduce((acc, r) => {
+    if (r.filledFields) {
+      Object.keys(r.filledFields).forEach(field => {
+        if (r.filledFields[field]) {
+          acc[field] = true;
+        }
+      });
+    }
+
+    return acc;
+  }, {});
+
+  const allMissingInputFields = relevantResponses
+    .flatMap(r => r.missingInputFields || [])
+    .filter((field, index, self) => self.indexOf(field) === index)
+    .filter(field => !allFilledFields[field]);
+  const hasMissingInputs = allMissingInputFields.length > 0;
+
+  if (isOk && !isPartial && !hasMissingInputs) {
     return;
   }
 
-  if (isPartial) {
+  if (isPartial || hasMissingInputs) {
     return TwofasNotification.show({
       Title: browser.i18n.getMessage('notification_card_autofill_partial_title'),
       Message: browser.i18n.getMessage('notification_card_autofill_partial_message')
