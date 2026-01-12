@@ -38,9 +38,9 @@ function SafeBrowsingReports () {
     try {
       await browser.privacy.services.safeBrowsingExtendedReportingEnabled.set({ value: !sbr });
       setSbr(!sbr);
-      showToast(browser.i18n.getMessage('notification_safe_browsing_reports_success'), 'success');
+      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_safe_browsing_reports_saving'), 'error');
+      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
       await CatchError(e);
     } finally {
       setDisabled(false);

@@ -1,0 +1,50 @@
+{
+  "login": {
+    "message": "Login",
+    "description": "Label for the login functionality"
+  },
+  "login_plural": {
+    "message": "Logins",
+    "description": "Label for multiple logins"
+  },
+  "username": {
+    "message": "Username / Email",
+    "description": "Label for the username or email field"
+  },
+  "password": {
+    "message": "Password",
+    "description": "Label for the password field"
+  },
+  "placeholder_username": {
+    "message": "Type your username",
+    "description": "Placeholder text for the username input field"
+  },
+  "placeholder_password": {
+    "message": "Type your password",
+    "description": "Placeholder text for the password input field"
+  },
+  "notification_username_copied": {
+    "message": "Username copied to clipboard",
+    "description": "Notification message when the username is successfully copied to the clipboard"
+  },
+  "notification_password_copied": {
+    "message": "Password copied to clipboard",
+    "description": "Notification message when the password is successfully copied to the clipboard"
+  },
+  "error_login_not_found": {
+    "message": "Something went wrong. Login not found.",
+    "description": "Error message displayed when the requested login item is not found"
+  },
+  "error_username_copy_failed": {
+    "message": "Failed to copy username to clipboard.",
+    "description": "Error message displayed when copying the username to the clipboard fails"
+  },
+  "error_password_copy_failed": {
+    "message": "Failed to copy password to clipboard.",
+    "description": "Error message displayed when copying the password to the clipboard fails"
+  },
+  "placeholder_domain_uri": {
+    "message": "e.g., https://2fas.com",
+    "description": "Placeholder text for the domain or URI input field"
+  }
+}

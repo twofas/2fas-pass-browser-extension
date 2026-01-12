@@ -4,6 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { matchModel } from '@/models/itemModels';
+
 /**
  * Checks if an object is a plain object with properties (not empty)
  * @param {*} obj - Value to check
@@ -44,26 +46,16 @@ const deepMerge = (target, overwrites) => {
 };
 
 /**
- * Updates an item with the provided overwrites
- * @param {Login|SecureNote} baseItem - The base item to update
+ * Updates an item with the provided overwrites and returns a class instance.
+ * @param {Login|SecureNote|PaymentCard|Object} baseItem - The base item to update (model instance or plain object)
  * @param {Object} overwrites - Object with properties to overwrite (supports nested properties)
- * @returns {Login|SecureNote} - New item instance with merged data
+ * @returns {Promise<Login|SecureNote|PaymentCard>} - Updated item as a class instance
  */
-const updateItem = (baseItem, overwrites = {}) => {
-  const itemData = baseItem.toJSON();
+const updateItem = async (baseItem, overwrites = {}) => {
+  const itemData = typeof baseItem.toJSON === 'function' ? baseItem.toJSON() : { ...baseItem };
   const updatedData = deepMerge(itemData, overwrites);
-  const updatedItem = new (baseItem.constructor)(updatedData);
 
-  // Preserve decrypted password if applicable
-  if (baseItem.isSifDecrypted) {
-    updatedItem.setSifDecrypted(baseItem.sifDecrypted);
-  }
-
-  if (baseItem.internalData.editedPassword !== null) {
-    updatedItem.internalData.editedPassword = baseItem.internalData.editedPassword;
-  }
-
-  return updatedItem;
+  return await matchModel(updatedData);
 };
 
 export default updateItem;

@@ -5,15 +5,14 @@
 // See LICENSE file for full terms
 
 import S from './Settings.module.scss';
-import { Link } from 'react-router';
-import { useState, useEffect, lazy, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import getRatingLink from './functions/getRatingLink';
 import getRatingText from './functions/getRatingText';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-
-const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
-const StarIcon = lazy(() => import('@/assets/popup-window/star.svg?react'));
+import ClearLink from '../../components/ClearLink';
+import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
+import StarIcon from '@/assets/popup-window/star.svg?react';
 
 /**
 * Function to render the Settings component.
@@ -50,28 +49,28 @@ function Settings (props) {
             <div className={S.settingsMenu}>
               <ul>
                 <li>
-                  <Link to='/settings/preferences' prefetch='intent'>
+                  <ClearLink to='/settings/preferences' prefetch='intent'>
                     <span>{browser.i18n.getMessage('settings_preferences')}</span>
                     <MenuArrowIcon />
-                  </Link>
+                  </ClearLink>
                 </li>
                 <li>
-                  <Link to='/settings/security' prefetch='intent'>
+                  <ClearLink to='/settings/security' prefetch='intent'>
                     <span>{browser.i18n.getMessage('settings_security')}</span>
                     <MenuArrowIcon />
-                  </Link>
+                  </ClearLink>
                 </li>
                 <li>
-                  <Link to='/settings/devices' prefetch='intent'>
+                  <ClearLink to='/settings/devices' prefetch='intent'>
                     <span>{browser.i18n.getMessage('settings_devices')}</span>
                     <MenuArrowIcon />
-                  </Link>
+                  </ClearLink>
                 </li>
                 <li>
-                  <Link to='/settings/about' prefetch='intent'>
+                  <ClearLink to='/settings/about' prefetch='intent'>
                     <span>{browser.i18n.getMessage('settings_about')}</span>
                     <MenuArrowIcon />
-                  </Link>
+                  </ClearLink>
                 </li>
               </ul>
             </div>

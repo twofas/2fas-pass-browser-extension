@@ -9,7 +9,7 @@ import decryptValues from './decryptValues';
 import openPopupWindowInNewWindow from '../openPopupWindowInNewWindow';
 import { SAVE_PROMPT_ACTIONS, PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import { getCurrentDevice } from '@/partials/functions';
-import Login from '@/partials/models/itemModels/Login';
+import Login from '@/models/itemModels/Login';
 
 // FUTURE - actions should be moved to a separate files
 /** 

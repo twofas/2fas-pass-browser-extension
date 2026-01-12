@@ -4,16 +4,15 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../ThisTab.module.scss';
+import S from '../styles/Item.module.scss';
 import handleSecureNoteText from '../../../functions/serviceList/handleSecureNoteText';
-import { Link } from 'react-router';
-import { useState, useRef, lazy, useLayoutEffect } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import SecureNote from '@/partials/models/itemModels/SecureNote';
-
-const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
-const ServiceCopyIcon = lazy(() => import('@/assets/popup-window/copy2.svg?react'));
+import SecureNote from '@/models/itemModels/SecureNote';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import ItemFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
+import ItemCopyIcon from '@/assets/popup-window/copy2.svg?react';
 
 /**
 * Function to render the password button.
@@ -90,7 +89,7 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
         onClick={async () => await handleSecureNoteText(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_text')}
       >
-        <ServiceCopyIcon className={S.serviceCopy2} />
+        <ItemCopyIcon className={S.itemCopy2} />
       </button>
     );
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
@@ -98,24 +97,24 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
       <button
         onClick={async () => await handleSecureNoteText(item.deviceId, item.vaultId, item.id, more, setMore)}
         title={browser.i18n.getMessage('this_tab_copy_text')}
-        className={S.servicePasswordLoader}
+        className={S.itemPasswordLoader}
       >
         <svg
           ref={loaderRef}
-          className={S.serviceLoader}
+          className={S.itemLoader}
           viewBox="0 0 96 96"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <circle cx="48" cy="48" r="42" className={S.serviceLoaderBg} />
+          <circle cx="48" cy="48" r="42" className={S.itemLoaderBg} />
           <circle cx="48" cy="48" r="42" />
         </svg>
 
-        <ServiceCopyIcon className={S.serviceCopy2} />
+        <ItemCopyIcon className={S.itemCopy2} />
       </button>
     );
   } else {
     return (
-      <Link
+      <ClearLink
         to='/fetch'
         state={{
           action: PULL_REQUEST_TYPES.SIF_REQUEST,
@@ -130,8 +129,8 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
         title={browser.i18n.getMessage('this_tab_fetch_text')}
         prefetch='intent'
       >
-        <ServiceFetchIcon className={S.serviceFetch} />
-      </Link>
+        <ItemFetchIcon className={S.itemFetch} />
+      </ClearLink>
     );
   }
 };

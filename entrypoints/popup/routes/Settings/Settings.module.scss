@@ -59,7 +59,7 @@
           justify-content: space-between;
           line-height: 1;
           padding: 14px 12px;
-          transition: color .3s ease-in-out, background-color .3s ease-in-out;
+          transition: color v.$anim, background-color v.$anim;
 
           @include m.darkMode {
             background-color: rgba(v.$hover-color-dark, 0);
@@ -87,7 +87,7 @@
           svg {
             fill: v.$object-light;
             height: 10px;
-            transition: fill .3s ease-in-out;
+            transition: fill v.$anim;
             width: auto;
 
             @include m.darkMode {
@@ -147,7 +147,7 @@
   &-submenu {
     flex: 0 0 100%;
     transform: translateX(0);
-    transition: transform .5s ease-in-out;
+    transition: transform .5s ease-out;
 
     &-header {
       position: relative;
@@ -229,7 +229,7 @@
       text-align: left;
       top: 50%;
       transform: translateY(-50%);
-      transition: opacity .3s ease-in-out;
+      transition: opacity v.$anim;
       width: 287px;
       z-index: 2;
 
@@ -379,7 +379,7 @@
         gap: 0 4px;
         margin-bottom: 12px;
         padding: 4px 5px;
-        transition: background-color .3s ease-in-out;
+        transition: background-color v.$anim;
 
         @include m.darkMode {
           background-color: v.$hover-color-dark;
@@ -545,7 +545,7 @@
       }
   
       svg {
-        transition: fill .3s ease-in-out;
+        transition: fill v.$anim;
         width: auto;
 
         &.social-github {
@@ -571,7 +571,7 @@
   
           :global(.social-youtube-play) {
             fill: v.$object-light;
-            transition: fill .3s ease-in-out;
+            transition: fill v.$anim;
 
             @include m.darkMode {
               fill: v.$object-dark;
@@ -580,7 +580,7 @@
   
           :global(.social-youtube-box) {
             fill: v.$primary-box-bg-light;
-            transition: fill .3s ease-in-out;
+            transition: fill v.$anim;
 
             @include m.darkMode {
               fill: v.$primary-box-bg-dark;
@@ -613,7 +613,7 @@
       margin-right: -12px;
       margin-top: 4px;
       padding: 12px;
-      transition: background-color .3s ease-in-out;
+      transition: background-color v.$anim;
       width: calc(100% + 24px);
 
       @include m.darkMode {
@@ -649,7 +649,7 @@
         font-size: 12px;
         font-weight: 500;
         line-height: 1;
-        transition: color .3s ease-in-out;
+        transition: color v.$anim;
 
         @include m.darkMode {
           color: v.$primary-text-dark;
@@ -659,7 +659,7 @@
       svg {
         height: 10px;
         fill: v.$object-light;
-        transition: fill .3s ease-in-out;
+        transition: fill v.$anim;
         width: auto;
 
         @include m.darkMode {
@@ -676,7 +676,7 @@
       max-height: 20px;
       overflow: hidden;
       text-align: center;
-      transition: max-height .3s ease-in-out;
+      transition: max-height v.$anim;
       width: 100%;
 
       &.hidden {
@@ -723,7 +723,7 @@
     &-new {
       max-height: 40px;
       overflow: hidden;
-      transition: max-height .3s ease-in-out;
+      transition: max-height v.$anim;
 
       &.hidden {
         max-height: 0;
@@ -828,7 +828,7 @@
         border-radius: 4px;
         margin-right: -4px;
         padding: 4px;
-        transition: background-color .3s ease-in-out;
+        transition: background-color v.$anim;
 
         @include m.darkMode {
           background-color: rgba(v.$hover-color-dark, 0);
@@ -971,7 +971,7 @@
               stroke-linecap: round;
               stroke-linejoin: round;
               stroke-width: 1.5;
-              transition: stroke .3s ease-in-out;
+              transition: stroke v.$anim;
               width: auto;
 
               @include m.darkMode {

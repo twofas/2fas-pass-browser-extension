@@ -4,32 +4,28 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from './NotFound.module.scss';
 import { useEffect } from 'react';
+import { Navigate, useLocation } from 'react-router';
 
 /**
 * Function to render the Not Found component.
-* @param {Object} props - The component props.
+* Logs the invalid route and redirects to home.
 * @return {JSX.Element} The rendered component.
 */
-function NotFound (props) {
+function NotFound () {
+  const location = useLocation();
+
   useEffect(() => {
     try {
-      throw new TwoFasError(TwoFasError.internalErrors.notFoundRoute);
+      throw new TwoFasError(TwoFasError.internalErrors.notFoundRoute, {
+        additional: { pathname: location.pathname }
+      });
     } catch (e) {
       CatchError(e);
     }
-  }, []);
+  }, [location.pathname]);
 
-  return (
-    <div className={`${props.className ? props.className : ''}`}>
-      <div>
-        <section className={S.notFound}>
-          <h1>{browser.i18n.getMessage('not_found_text')}</h1>
-        </section>
-      </div>
-    </div>
-  );
+  return <Navigate to='/' replace />;
 }
 
 export default NotFound;

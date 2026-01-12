@@ -57,7 +57,7 @@ function Theme () {
       document.documentElement.classList.add(`theme-${value}`);
 
       await storage.setItem('local:theme', value);
-      showToast(browser.i18n.getMessage('notification_theme_setting_success'), 'success');
+      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:theme') || 'unset';
       setT(previousValue);
@@ -68,7 +68,7 @@ function Theme () {
       document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-unset');
       document.documentElement.classList.add(`theme-${previousValue}`);
 
-      showToast(browser.i18n.getMessage('error_setting_theme_value'), 'error');
+      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
       await CatchError(e);
     }
   }, [isInitialized]);

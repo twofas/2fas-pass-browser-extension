@@ -22,8 +22,21 @@ const setTheme = async () => {
     themeValueStorage = 'unset';
   }
 
-  document.documentElement.classList.add(`theme-${themeValueStorage}`);
-  document.body.classList.add(`theme-${themeValueStorage}`);
+  const browserName = import.meta.env.BROWSER || 'unknown';
+  const platform = navigator.platform || '';
+  const userAgent = navigator.userAgent || '';
+  let osClass = 'os-unknown';
+
+  if (platform.startsWith('Win') || userAgent.includes('Windows')) {
+    osClass = 'os-windows';
+  } else if (platform.startsWith('Mac') || userAgent.includes('Macintosh')) {
+    osClass = 'os-macos';
+  } else if (platform.startsWith('Linux') || userAgent.includes('Linux')) {
+    osClass = 'os-linux';
+  }
+
+  document.documentElement.classList.add(`theme-${themeValueStorage}`, browserName, osClass);
+  document.body.classList.add(`theme-${themeValueStorage}`, browserName, osClass);
 
   setTimeout(() => {
     document.body.classList.add('loaded');

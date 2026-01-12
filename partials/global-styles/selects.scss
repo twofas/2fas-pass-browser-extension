@@ -60,7 +60,7 @@
     cursor: pointer;
     height: 38px;
     min-height: 0;
-    transition: background-color .3s ease-in-out, border-color .3s ease-in-out;
+    transition: background-color v.$anim, border-color v.$anim;
 
     body.theme-light & {
       background-color: v.$primary-box-bg-light;
@@ -146,7 +146,7 @@
         line-height: 1;
         padding-bottom: 3px;
         transform: translateY(1px);
-        transition: color .3s ease-in-out;
+        transition: color v.$anim;
 
         body.theme-light & {
           color: v.$primary-text-light;
@@ -404,19 +404,23 @@
 
     body.theme-light & {
       border: 1px solid v.$card-stroke-light;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
     }
 
     body.theme-dark & {
       border: 1px solid v.$card-stroke-dark;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         border: 1px solid v.$card-stroke-light;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
       }
 
       @media (prefers-color-scheme: dark) {
         border: 1px solid v.$card-stroke-dark;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
       }
     }
 
@@ -481,7 +485,7 @@
       flex-direction: row;
       gap: 0 8px;
       padding: 10px 12px;
-      transition: background-color .3s ease-in-out;
+      transition: background-color v.$anim;
       width: 100%;
 
       body.theme-light & {
@@ -606,6 +610,42 @@
           }
         }
 
+        &.icon-item-payment-card {
+          body.theme-light & {
+            background-color: v.$payment-card-item-bg-light;
+
+            svg {
+              stroke: v.$payment-card-item-light;
+            }
+          }
+
+          body.theme-dark & {
+            background-color: v.$payment-card-item-bg-dark;
+
+            svg {
+              stroke: v.$payment-card-item-dark;
+            }
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$payment-card-item-bg-light;
+
+              svg {
+                stroke: v.$payment-card-item-light;
+              }
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$payment-card-item-bg-dark;
+
+              svg {
+                stroke: v.$payment-card-item-dark;
+              }
+            }
+          }
+        }
+
         svg {
           height: 12px;
           stroke-linecap: round;
@@ -653,29 +693,33 @@
     right: auto;
     top: 8px;
     transform: translateX(-50%);
-    transition: opacity .3s ease-in-out;
+    transition: opacity v.$anim;
     width: auto;
     z-index: 9999;
 
     body.theme-light & {
       background-color: v.$card-bg-light;
       border: 1px solid v.$card-stroke-light;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
     }
 
     body.theme-dark & {
       background-color: v.$card-bg-dark;
       border: 1px solid v.$card-stroke-dark;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         background-color: v.$card-bg-light;
         border: 1px solid v.$card-stroke-light;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$card-bg-dark;
         border: 1px solid v.$card-stroke-dark;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
       }
     }
 
@@ -696,7 +740,7 @@
     overflow: hidden;
     padding: 10px 12px;
     position: relative;
-    transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    transition: background-color v.$anim, color v.$anim;
     width: 198px;
 
     body.theme-light & {
@@ -722,6 +766,26 @@
         background-color: rgba(v.$hover-color-dark, 0);
         border-bottom: 0.5px solid v.$card-stroke-dark;
         color: v.$primary-text-dark;
+      }
+    }
+
+    &:hover {
+      body.theme-light & {
+        background-color: v.$hover-color-light;
+      }
+
+      body.theme-dark & {
+        background-color: v.$hover-color-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          background-color: v.$hover-color-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          background-color: v.$hover-color-dark;
+        }
       }
     }
 
@@ -856,6 +920,46 @@
         }
       }
 
+      &.payment-cards {
+        body.theme-light & {
+          background-color: v.$payment-card-item-bg-light;
+
+          svg {
+            stroke: v.$payment-card-item-light;
+          }
+        }
+
+        body.theme-dark & {
+          background-color: v.$payment-card-item-bg-dark;
+
+          svg {
+            stroke: v.$payment-card-item-dark;
+          }
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$payment-card-item-bg-light;
+
+            svg {
+              stroke: v.$payment-card-item-light;
+            }
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$payment-card-item-bg-dark;
+
+            svg {
+              stroke: v.$payment-card-item-dark;
+            }
+          }
+        }
+
+        svg {
+          stroke-width: 1 !important;
+        }
+      }
+
       svg {
         stroke-linecap: round;
         stroke-linejoin: round;
@@ -919,30 +1023,96 @@
     overflow: hidden;
     right: 0;
     top: 8px;
-    transition: opacity .3s ease-in-out;
+    transition: opacity v.$anim;
     width: auto;
     z-index: 9999;
 
     body.theme-light & {
       background-color: v.$card-bg-light;
       border: 1px solid v.$card-stroke-light;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
+
+      ::-webkit-scrollbar {
+        background-color: v.$primary-bg-light;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background-color: v.$hover-on-hover-light;
+      }
     }
 
     body.theme-dark & {
       background-color: v.$card-bg-dark;
       border: 1px solid v.$card-stroke-dark;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
+
+      ::-webkit-scrollbar {
+        background-color: v.$primary-bg-dark;
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background-color: v.$hover-on-hover-dark;
+      }
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         background-color: v.$card-bg-light;
         border: 1px solid v.$card-stroke-light;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
+
+        ::-webkit-scrollbar {
+          background-color: v.$primary-bg-light;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+          background-color: v.$hover-on-hover-light;
+        }
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$card-bg-dark;
         border: 1px solid v.$card-stroke-dark;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
+
+        ::-webkit-scrollbar {
+          background-color: v.$primary-bg-dark;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+          background-color: v.$hover-on-hover-dark;
+        }
       }
+    }
+
+    html.firefox.theme-light {
+      scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+    }
+
+    html.firefox.theme-dark {
+      scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+    }
+
+    html.firefox.theme-unset {
+      @media (prefers-color-scheme: light) {
+        scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      box-shadow: none;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      border-radius: 3px;
     }
 
     &-list {
@@ -962,7 +1132,7 @@
     overflow: hidden;
     padding: 9px 12px;
     position: relative;
-    transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    transition: background-color v.$anim, color v.$anim;
     width: 198px;
 
     body.theme-light & {
@@ -1051,7 +1221,7 @@
       flex: 0 0 16px;
       height: 16px;
       justify-content: center;
-      transition: border-color .3s ease-in-out;
+      transition: border-color v.$anim;
       width: 16px;
 
       body.theme-light & {
@@ -1101,7 +1271,7 @@
         display: block;
         height: 6px;
         opacity: 0;
-        transition: opacity .3s ease-in-out;
+        transition: opacity v.$anim;
         width: 6px;
 
         body.theme-light & {
@@ -1170,31 +1340,33 @@
     max-height: 200px;
     overflow: hidden;
     position: relative;
-    transition: opacity .3s ease-in-out;
+    transition: opacity v.$anim;
     width: 150px;
     z-index: 9999;
 
     body.theme-light & {
       background-color: v.$primary-box-bg-light;
       border: 1px solid v.$primary-box-stroke-light;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
     }
 
     body.theme-dark & {
       background-color: v.$primary-box-bg-dark;
       border: 1px solid v.$primary-box-stroke-dark;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         background-color: v.$primary-box-bg-light;
         border: 1px solid v.$primary-box-stroke-light;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$primary-box-bg-dark;
         border: 1px solid v.$primary-box-stroke-dark;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, .4);
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
       }
     }
   }
@@ -1216,7 +1388,7 @@
     margin-bottom: 2px;
     overflow: hidden;
     padding: 8px 12px;
-    transition: background-color .3s ease-in-out, color .3s ease-in-out;
+    transition: background-color v.$anim, color v.$anim;
     
     span {
       overflow: hidden;
@@ -1399,30 +1571,32 @@
     min-width: 200px;
     right: 0;
     top: 8px;
-    transition: opacity .3s ease-in-out;
+    transition: opacity v.$anim;
     z-index: 9999;
 
     body.theme-light & {
       background-color: v.$card-bg-light;
       border: 1px solid v.$card-stroke-light;
-      box-shadow: 0 4px 10px v.$primary-bg-light;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
     }
 
     body.theme-dark & {
       background-color: v.$card-bg-dark;
       border: 1px solid v.$card-stroke-dark;
-      box-shadow: 0 4px 10px v.$primary-bg-dark, 1;
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         background-color: v.$card-bg-light;
         border: 1px solid v.$card-stroke-light;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$card-bg-dark;
         border: 1px solid v.$card-stroke-dark;
+        filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
       }
     }
   }
@@ -1532,7 +1706,7 @@
       max-width: 100%;
       padding: 12px 30px 9px 8px;
       text-align: left;
-      transition: color .3s ease-in-out;
+      transition: color v.$anim;
       width: 100%;
 
       &.uris {
@@ -1607,7 +1781,7 @@
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 1.5;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
         width: 14px;
 
         body.theme-light & {
@@ -1646,7 +1820,7 @@
       right: 8px;
       top: 50%;
       transform: translateY(-50%);
-      transition: background-color .3s ease-in-out;
+      transition: background-color v.$anim;
       z-index: 2;
 
       body.theme-light & {
@@ -1716,7 +1890,7 @@
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
         width: 16px;
 
         body.theme-light & {
@@ -1741,11 +1915,41 @@
 
     a {
       border-radius: 6px;
-      transition: background-color .3s ease-in-out, color .3s ease-in-out;
+      transition: background-color v.$anim, color v.$anim;
     }
   }
 }
 
 .react-select__single-value {
   margin-left: 0 !important;
+}
+
+.react-select__menu {
+  body.theme-light & {
+    filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
+  }
+
+  body.theme-dark & {
+    filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
+  }
+
+  body.theme-unset & {
+    @media (prefers-color-scheme: light) {
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
+    }
+
+    @media (prefers-color-scheme: dark) {
+      filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
+    }
+  }
+}
+
+.react-select-auto-clear-clipboard__menu-portal {
+  .safari & {
+    .react-select__menu {
+      .react-select__menu-list {
+        max-height: 250px;
+      }
+    }
+  }
 }

@@ -7,16 +7,13 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
-import { lazy, useCallback } from 'react';
+import { motion } from 'motion/react';
+import { useCallback, useEffect, useRef } from 'react';
 import copyValue from '@/partials/functions/copyValue';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
-
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 
 const usernameMobileVariants = {
   hidden: { maxHeight: '0px' },
@@ -29,8 +26,8 @@ const usernameMobileVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Username (props) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData, setItem } = usePopupState();
+  const inputRef = useRef(null);
 
   const { formData } = props;
   const { inputError } = formData;
@@ -49,15 +46,15 @@ function Username (props) {
     if (data.usernameEditable) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
-      const updatedItem = updateItem(data.item, {
+      const updatedItem = await updateItem(data.item, {
         content: { username: item.content.username },
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
+      setItem(updatedItem);
       setData('usernameEditable', false);
-      setData('item', updatedItem);
     } else {
       setData('usernameEditable', true);
     }
@@ -67,29 +64,35 @@ function Username (props) {
     if (!data.usernameMobile) {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
-      const updatedItem = updateItem(data.item, {
+      const updatedItem = await updateItem(data.item, {
         content: { username: item.content.username },
         internalData: { ...data.item.internalData }
       });
 
       item = null;
 
-      setData('item', updatedItem);
+      setItem(updatedItem);
     }
 
     setData('usernameMobile', !data.usernameMobile);
   };
 
-  const handleUsernameChange = useCallback(e => {
+  const handleUsernameChange = useCallback(async e => {
     const newUsername = e.target.value;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: { username: newUsername },
       internalData: { ...data.item.internalData }
     });
 
-    setData('item', updatedItem);
-  }, [data.item, setData]);
+    setItem(updatedItem);
+  }, [data.item, setItem]);
+
+  useEffect(() => {
+    if (data.usernameEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [data.usernameEditable]);
 
   return (
     <Field name="content.username">
@@ -101,6 +104,7 @@ function Username (props) {
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
               onClick={handleUsernameEditable}
+              tabIndex={-1}
             >
               {data.usernameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
             </button>
@@ -109,6 +113,7 @@ function Username (props) {
             <input
               type="text"
               {...input}
+              ref={inputRef}
               onChange={e => {
                 input.onChange(e);
                 handleUsernameChange(e);
@@ -127,32 +132,31 @@ function Username (props) {
             className={`${bS.btn} ${pI.iconButton}`}
             onClick={() => handleCopyUsername(input.value)}
             title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+            tabIndex={-1}
           >
             <CopyIcon />
           </button>
         </div>
-        <LazyMotion features={loadDomAnimation}>
-          <m.div
-            className={`${pI.passInputAdditional} ${data.usernameEditable ? '' : pI.removeMarginTop}`}
-            variants={usernameMobileVariants}
-            initial="hidden"
-            transition={{ duration: 0.3 }}
-            animate={data.usernameEditable ? 'visible' : 'hidden'}
-          >
-            <div className={`${bS.passToggle} ${bS.loaded}`}>
-              <input type="checkbox" name="username-mobile" id="username-mobile" checked={data.usernameMobile} onChange={handleUsernameMobile} />
-              <label htmlFor="username-mobile">
-                <span className={bS.passToggleText}>
-                  <span>{browser.i18n.getMessage('enter_on_mobile')}</span>
-                </span>
+        <motion.div
+          className={`${pI.passInputAdditional} ${data.usernameEditable ? '' : pI.removeMarginTop}`}
+          variants={usernameMobileVariants}
+          initial="hidden"
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          animate={data.usernameEditable ? 'visible' : 'hidden'}
+        >
+          <div className={`${bS.passToggle} ${bS.loaded}`}>
+            <input type="checkbox" name="username-mobile" id="username-mobile" checked={data.usernameMobile} onChange={handleUsernameMobile} />
+            <label htmlFor="username-mobile">
+              <span className={bS.passToggleText}>
+                <span>{browser.i18n.getMessage('enter_on_mobile')}</span>
+              </span>
 
-                <span className={bS.passToggleBox}>
-                  <span className={bS.passToggleBoxCircle}></span>
-                </span>
-              </label>
-            </div>
-          </m.div>
-        </LazyMotion>
+              <span className={bS.passToggleBox}>
+                <span className={bS.passToggleBoxCircle}></span>
+              </span>
+            </label>
+          </div>
+        </motion.div>
       </div>
       )}
     </Field>

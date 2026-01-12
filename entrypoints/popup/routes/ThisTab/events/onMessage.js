@@ -4,16 +4,15 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
-* Function to handle incoming messages in ThisTab view.
+/**
+* Handles incoming messages in ThisTab view.
 * @param {Object} request - The request object.
 * @param {Object} sender - The sender object.
 * @param {Function} sendResponse - The function to send a response.
 * @param {Function} sendUrl - The function to send a URL.
-* @param {Function} setUpdateAvailable - The function to set update availability.
 * @return {boolean} Whether the message was handled.
 */
-const onMessage = (request, sender, sendResponse, sendUrl, setUpdateAvailable) => {
+const onMessage = (request, sender, sendResponse, sendUrl) => {
   try {
     if (!request || !request?.action || request?.target !== REQUEST_TARGETS.POPUP_THIS_TAB) {
       return false;
@@ -22,12 +21,6 @@ const onMessage = (request, sender, sendResponse, sendUrl, setUpdateAvailable) =
     switch (request.action) {
       case REQUEST_ACTIONS.SEND_URL: {
         sendUrl(request);
-        sendResponse({ status: 'ok' });
-        break;
-      }
-
-      case REQUEST_ACTIONS.UPDATE_AVAILABLE: {
-        setUpdateAvailable(true);
         sendResponse({ status: 'ok' });
         break;
       }

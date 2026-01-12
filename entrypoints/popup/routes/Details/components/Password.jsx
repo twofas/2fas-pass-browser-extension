@@ -7,21 +7,19 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { lazy } from 'react';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
-import { Link } from 'react-router';
+import { motion } from 'motion/react';
 import { copyValue, isText } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
-import { useState, useEffect, useRef } from 'react';
-import usePopupStateStore from '../../../store/popupState';
-
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const VisibleIcon = lazy(() => import('@/assets/popup-window/visible.svg?react'));
-const InfoIcon = lazy(() => import('@/assets/popup-window/info.svg?react'));
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
-const RefreshIcon = lazy(() => import('@/assets/popup-window/refresh.svg?react'));
-const ExternalLinkIcon = lazy(() => import('@/assets/popup-window/new-tab.svg?react'));
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import usePopupState from '../../../store/popupState/usePopupState';
+import Login from '@/models/itemModels/Login';
+import getItem from '@/partials/sessionStorage/getItem';
+import VisibleIcon from '@/assets/popup-window/visible.svg?react';
+import InfoIcon from '@/assets/popup-window/info.svg?react';
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
+import ExternalLinkIcon from '@/assets/popup-window/new-tab.svg?react';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
 
 const passwordMobileVariants = {
   hidden: { maxHeight: '0px' },
@@ -42,24 +40,74 @@ function Password (props) {
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData, setBatchData, setItem } = usePopupState();
 
   const [changePasswordUrl, setChangePasswordUrl] = useState(null);
   const [checkingUrl, setCheckingUrl] = useState(false);
+  const [localDecryptedPassword, setLocalDecryptedPassword] = useState(null);
+  const [isDecrypting, setIsDecrypting] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const previousPasswordValueRef = useRef(null);
+  const inputRef = useRef(null);
+  const latestItemRef = useRef(data.item);
+  const latestPasswordRef = useRef(null);
+  const updateTimeoutRef = useRef(null);
+
+  const itemInstance = useMemo(() => {
+    if (!data.item) {
+      return null;
+    }
+
+    if (data.item instanceof Login) {
+      return data.item;
+    }
+
+    try {
+      return new Login(data.item);
+    } catch (e) {
+      CatchError(e);
+      return null;
+    }
+  }, [data.item]);
+
+  const decryptPasswordOnDemand = useCallback(async () => {
+    if (localDecryptedPassword !== null || isDecrypting || sifDecryptError) {
+      return localDecryptedPassword;
+    }
+
+    if (!itemInstance?.sifExists) {
+      return null;
+    }
+
+    setIsDecrypting(true);
+
+    try {
+      const decryptedData = await itemInstance.decryptSif();
+      setLocalDecryptedPassword(decryptedData.password);
+      setData('sifDecryptError', false);
+      return decryptedData.password;
+    } catch (e) {
+      setData('sifDecryptError', true);
+      CatchError(e);
+      return null;
+    } finally {
+      setIsDecrypting(false);
+    }
+  }, [localDecryptedPassword, isDecrypting, sifDecryptError, itemInstance, setData]);
+
+  const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
 
   const getPasswordValue = () => {
-    if (sifDecryptError) {
+    if (sifDecryptError || isHighlySecretWithoutSif) {
       return '';
     }
 
-    if (isText(data.item.internalData.editedSif)) {
-      return data.item.internalData.editedSif;
+    if (!data?.passwordEditable && !data?.passwordVisible) {
+      return itemInstance?.sifExists ? '******' : '';
     }
 
-    if (data.item.isSifDecrypted) {
-      return data.item.sifDecrypted;
+    if (isText(localDecryptedPassword)) {
+      return localDecryptedPassword;
     }
 
     return '';
@@ -72,7 +120,28 @@ function Password (props) {
       form.change('editedSif', currentPasswordValue);
       previousPasswordValueRef.current = currentPasswordValue;
     }
-  }, [data.item.internalData.editedSif, data.item.sifDecrypted, form]);
+  }, [localDecryptedPassword, form]);
+
+  useEffect(() => {
+    const needsDecryption = (data?.passwordVisible || data?.passwordEditable) &&
+                           localDecryptedPassword === null &&
+                           !isDecrypting &&
+                           itemInstance?.sifExists;
+
+    if (needsDecryption) {
+      decryptPasswordOnDemand();
+    }
+  }, [data?.passwordVisible, data?.passwordEditable, localDecryptedPassword, isDecrypting, itemInstance?.sifExists, decryptPasswordOnDemand]);
+
+  useEffect(() => {
+    if (data?.passwordEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [data?.passwordEditable]);
+
+  useEffect(() => {
+    latestItemRef.current = data.item;
+  }, [data.item]);
 
   const generateErrorOverlay = () => {
     if (!sifDecryptError) {
@@ -114,19 +183,15 @@ function Password (props) {
     try {
       let passwordToCopy;
 
-      if (data.item.internalData.editedSif !== null) {
-        passwordToCopy = data.item.internalData.editedSif;
-      } else if (data.item.isSifDecrypted) {
-        passwordToCopy = data.item.sifDecrypted;
-      } else if (data.item.sifExists) {
-        let decryptedData = await data.item.decryptSif();
-        passwordToCopy = decryptedData.password;
-        decryptedData = null;
+      if (isText(localDecryptedPassword)) {
+        passwordToCopy = localDecryptedPassword;
+      } else if (itemInstance?.sifExists) {
+        passwordToCopy = await decryptPasswordOnDemand();
       } else {
         passwordToCopy = '';
       }
 
-      await copyValue(passwordToCopy, data.item.deviceId, data.item.vaultId, data.item.id, 'password');
+      await copyValue(passwordToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'password');
       showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
     } catch (e) {
       showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
@@ -152,28 +217,34 @@ function Password (props) {
     setData('passwordMobile', !data?.passwordMobile);
   };
 
-  const handleEditableClick = () => {
+  const handleEditableClick = async () => {
     if (data?.passwordEditable) {
-      const itemData = data.item.toJSON();
-      itemData.internalData = { ...data.item.internalData };
-      const updatedItem = new (data.item.constructor)(itemData);
+      let item = await getItem(itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id);
 
-      if (data.item.isSifDecrypted) {
-        updatedItem.setSifDecrypted(data.item.sifDecrypted);
-      }
+      const itemData = item.toJSON();
+      const restoredItem = new Login(itemData);
 
-      updatedItem.internalData.editedSif = null;
+      item = null;
 
-      setData('item', updatedItem);
-      setData('passwordEdited', false);
+      setLocalDecryptedPassword(null);
+      setIsFocused(false);
+      setItem(restoredItem);
       setData('passwordEditable', false);
-      form.change('editedSif', data.item.isSifDecrypted ? data.item.sifDecrypted : '');
+      form.change('editedSif', '');
     } else {
-      setData('passwordEditable', true);
+      await decryptPasswordOnDemand();
+      setBatchData({
+        passwordVisible: false,
+        passwordEditable: true
+      });
     }
   };
 
-  const handlePasswordVisibleClick = () => {
+  const handlePasswordVisibleClick = async () => {
+    if (!data?.passwordVisible) {
+      await decryptPasswordOnDemand();
+    }
+
     setData('passwordVisible', !data?.passwordVisible);
   };
   
@@ -188,26 +259,85 @@ function Password (props) {
     await browser.tabs.create({ url: changePasswordUrl });
   };
 
-  const handlePasswordChange = e => {
-    const newValue = e.target.value;
-    const itemData = data.item.toJSON();
-    itemData.internalData = { ...data.item.internalData };
-    const updatedItem = new (data.item.constructor)(itemData);
+  const updateItemWithPassword = useCallback(async passwordValue => {
+    const currentItem = latestItemRef.current;
 
-    if (data.item.isSifDecrypted) {
-      updatedItem.setSifDecrypted(data.item.sifDecrypted);
+    if (!currentItem) {
+      return;
     }
 
-    updatedItem.internalData.editedSif = newValue;
+    try {
+      const itemData = typeof currentItem.toJSON === 'function' ? currentItem.toJSON() : currentItem;
+      const localItem = new Login(itemData);
 
-    setData('item', updatedItem);
+      await localItem.setSif([{ s_password: passwordValue }]);
+
+      if (latestPasswordRef.current !== passwordValue) {
+        return;
+      }
+
+      latestItemRef.current = localItem.toJSON();
+      setItem(localItem);
+
+      latestPasswordRef.current = null;
+    } catch (e) {
+      CatchError(e);
+    }
+  }, [setItem]);
+
+  useEffect(() => {
+    const flushPendingUpdate = () => {
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+        updateTimeoutRef.current = null;
+
+        if (latestPasswordRef.current !== null) {
+          updateItemWithPassword(latestPasswordRef.current);
+        }
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      flushPendingUpdate();
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        flushPendingUpdate();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      flushPendingUpdate();
+    };
+  }, [updateItemWithPassword]);
+
+  const handlePasswordChange = e => {
+    const newValue = e.target.value;
+
+    latestPasswordRef.current = newValue;
+    setLocalDecryptedPassword(newValue);
     form.change('editedSif', newValue);
+    setData('editedSif', newValue);
+
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
+    }
+
+    const debounceTime = 50;
+    updateTimeoutRef.current = setTimeout(() => {
+      updateItemWithPassword(newValue);
+    }, debounceTime);
   };
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <Field name="editedSif">
-        {() => (
+    <Field name="editedSif">
+      {() => (
           <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''}`}>
             <div className={pI.passInputTop}>
               <label htmlFor='editedSif'>{browser.i18n.getMessage('password')}</label>
@@ -215,17 +345,21 @@ function Password (props) {
                 type='button'
                 className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
                 onClick={handleEditableClick}
+                tabIndex={-1}
               >
                 {data?.passwordEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
               </button>
             </div>
             <div className={pI.passInputBottom}>
               <input
+                ref={inputRef}
                 value={getPasswordValue()}
-                type={data?.passwordVisible ? 'text' : 'password'}
-                placeholder={!sifDecryptError && (!data?.passwordMobile && originalItem?.isT3orT2WithSif || data?.passwordEditable) ? browser.i18n.getMessage('placeholder_password') : ''}
+                type={data?.passwordVisible || (data?.passwordEditable && isFocused) ? 'text' : 'password'}
+                placeholder={!sifDecryptError && !isDecrypting && (!data?.passwordMobile && originalItem?.isT3orT2WithSif || data?.passwordEditable) ? browser.i18n.getMessage('placeholder_password') : ''}
                 id='editedSif'
                 onChange={handlePasswordChange}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 disabled={!data?.passwordEditable || data?.passwordMobile || sifDecryptError}
                 dir="ltr"
                 spellCheck="false"
@@ -234,28 +368,30 @@ function Password (props) {
                 autoCapitalize="off"
               />
               <div className={pI.passInputBottomButtons}>
-                <Link
+                <ClearLink
                   to='/password-generator'
                   className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${!data?.passwordEditable || data?.passwordMobile || sifDecryptError ? pI.hiddenButton : ''}`}
                   title={browser.i18n.getMessage('details_generate_password')}
-                  state={{ from: 'details', data }}
+                  state={{ from: 'details', data: { item: data.item } }}
                 >
                   <RefreshIcon />
-                </Link>
+                </ClearLink>
                 <button
                   type="button"
                   onClick={handlePasswordVisibleClick}
-                  className={`${pI.iconButton} ${pI.visibleButton} ${!(originalItem?.isT3orT2WithSif || data?.passwordEditable) || sifDecryptError ? pI.hidden : ''}`}
+                  className={`${pI.iconButton} ${pI.visibleButton} ${!originalItem?.isT3orT2WithSif || data?.passwordEditable || sifDecryptError ? pI.hiddenButton : ''}`}
                   title={browser.i18n.getMessage('details_toggle_password_visibility')}
+                  tabIndex={-1}
                 >
                   <VisibleIcon />
                 </button>
-                {((originalItem?.securityType === SECURITY_TIER.SECRET || (data.item.passwordEncrypted && data.item.passwordEncrypted.length > 0)) && !sifDecryptError) && (
+                {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.sifExists) && !sifDecryptError) && (
                   <button
                     type='button'
                     className={`${bS.btn} ${pI.iconButton}`}
                     onClick={handleCopyPassword}
                     title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                    tabIndex={-1}
                   >
                     <CopyIcon />
                   </button>
@@ -265,11 +401,11 @@ function Password (props) {
               {generateSecurityTypeTooltip(originalItem)}
               {generateErrorOverlay()}
             </div>
-            <m.div
+            <motion.div
               className={`${pI.passInputAdditional} ${data?.passwordEditable ? '' : pI.removeMarginTop}`}
               variants={passwordMobileVariants}
               initial="hidden"
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
               animate={data?.passwordEditable ? 'visible' : 'hidden'}
             >
               <div className={`${bS.passToggle} ${bS.loaded}`}>
@@ -284,13 +420,13 @@ function Password (props) {
                   </span>
                 </label>
               </div>
-            </m.div>
+            </motion.div>
             {!checkingUrl && changePasswordUrl && (
-              <m.div
+              <motion.div
                 className={pI.passInputLink}
                 variants={changePasswordVariants}
                 initial="hidden"
-                transition={{ duration: .3 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
                 animate={changePasswordUrl ? 'visible' : 'hidden'}
               >
                 <button
@@ -302,12 +438,11 @@ function Password (props) {
                   <span>{browser.i18n.getMessage('details_change_password_in_service')}</span>
                   <ExternalLinkIcon />
                 </button>
-              </m.div>
+              </motion.div>
             )}
           </div>
         )}
       </Field>
-    </LazyMotion>
   );
 }
 

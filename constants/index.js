@@ -36,8 +36,41 @@ export {
   SIF_T2_RESET_REGEX,
   AUTO_CLEAR_CLIPBOARD_REGEX,
   URL_REGEX,
-  IP_REGEX
+  IP_REGEX,
+  PAYMENT_CARD_REGEX
 } from './regex.js';
 
 // Re-export named export from savePromptActions.js
 export { SAVE_PROMPT_ACTIONS } from './savePromptActions.js';
+
+// Re-export all payment card-related constants
+export {
+  paymentCardAttributes,
+  paymentCardDeniedKeywords,
+  paymentCardFormTexts,
+  paymentCardNumberTexts,
+  paymentCardNumberWords,
+  paymentCardNumberSelectors,
+  paymentCardholderNameTexts,
+  paymentCardholderNameWords,
+  paymentCardholderNameSelectors,
+  paymentCardExpirationDateTexts,
+  paymentCardExpirationDateWords,
+  paymentCardExpirationDateSelectors,
+  paymentCardExpirationMonthPlaceholders,
+  paymentCardExpirationYearPlaceholders,
+  paymentCardSecurityCodeTexts,
+  paymentCardSecurityCodeWords,
+  paymentCardSecurityCodeSelectors,
+  paymentCardIssuerTexts,
+  paymentCardIssuerWords,
+  paymentCardIssuerSelectors,
+  PaymentCardIssuerVisa,
+  PaymentCardIssuerMasterCard,
+  PaymentCardIssuerAmericanExpress,
+  PaymentCardIssuerDiscover,
+  PaymentCardIssuerJCB,
+  PaymentCardIssuerDinersClub,
+  PaymentCardIssuerMaestro,
+  PaymentCardIssuerUnionPay
+} from './paymentCards/index.js';

@@ -12,6 +12,11 @@
 */
 const getCurrentDevice = async (deviceId = null) => {
   const devices = await storage.getItem('local:devices');
+
+  if (!devices || !Array.isArray(devices) || devices.length === 0) {
+    throw new TwoFasError(TwoFasError.internalErrors.getCurrentDeviceNoDevice, { additional: { func: 'getCurrentDevice' } });
+  }
+
   let device;
 
   if (!deviceId) {

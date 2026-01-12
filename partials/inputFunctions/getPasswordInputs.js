@@ -9,38 +9,22 @@ import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 
-/** 
-* Gets the password input elements from the document.
+/**
+* Gets the password input elements from the document, including those inside shadow DOMs.
 * @return {HTMLInputElement[]} The array of password input elements.
 */
 const getPasswordInputs = () => {
-  let passwordInputs = [];
-
   const passwordSelector = passwordSelectors().map(selector => selector + ignoredTypes()).join(', ');
-  passwordInputs = Array.from(document.querySelectorAll(passwordSelector));
+  const regularInputs = Array.from(document.querySelectorAll(passwordSelector));
+  const shadowRoots = getShadowRoots();
+  const shadowInputs = shadowRoots.flatMap(
+    root => Array.from(root.querySelectorAll(passwordSelector))
+  );
+  const allInputs = [...regularInputs, ...shadowInputs];
+  const visibleInputs = allInputs.filter(input => isVisible(input));
+  const uniqueInputs = visibleInputs.filter(uniqueElementOnly);
 
-  passwordInputs = passwordInputs.filter(input => isVisible(input));
-  passwordInputs = passwordInputs.filter(uniqueElementOnly);
-
-  if (passwordInputs.length <= 0) {
-    const shadowElements = getShadowRoots().filter(el => el?.nodeName?.toLowerCase() === 'input');
-    
-    shadowElements.forEach(el => {
-      const parent = el.parentNode;
-      const shadowInputs = Array.from(parent.querySelectorAll(passwordSelector));
-      
-      if (shadowInputs && shadowInputs.length > 0) {
-        shadowInputs.forEach(input => {
-          passwordInputs.push(input);
-        });
-      }
-    });
-
-    passwordInputs = passwordInputs.filter(uniqueElementOnly);
-    passwordInputs = passwordInputs.filter(input => isVisible(input));
-  }
-
-  return passwordInputs;
+  return uniqueInputs;
 };
 
 export default getPasswordInputs;

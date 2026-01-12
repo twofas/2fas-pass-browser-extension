@@ -1,0 +1,65 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+// camelCase - other cases are generated in paymentCardIssuerSelectors.js
+const paymentCardIssuerTexts = Object.freeze([
+  'cardType',
+  'card-Type',
+  'card_Type',
+  'card-type',
+  'card_type',
+  'ccType',
+  'cc-Type',
+  'cc_Type',
+  'cc-type',
+  'cc_type',
+  'creditCardType',
+  'credit-Card-Type',
+  'credit_Card_Type',
+  'credit-card-type',
+  'credit_card_type',
+  'cardIssuer',
+  'card-Issuer',
+  'card_Issuer',
+  'card-issuer',
+  'card_issuer',
+  'issuer',
+  'cardBrand',
+  'card-Brand',
+  'card_Brand',
+  'card-brand',
+  'card_brand',
+  'brand',
+  'cardNetwork',
+  'card-Network',
+  'card_Network',
+  'card-network',
+  'card_network',
+  'network',
+  'paymentMethod',
+  'payment-Method',
+  'payment_Method',
+  'payment-method',
+  'payment_method',
+  'paymentType',
+  'payment-Type',
+  'payment_Type',
+  'payment-type',
+  'payment_type',
+  'cardProvider',
+  'card-Provider',
+  'card_Provider',
+  'card-provider',
+  'card_provider',
+  'provider',
+  'userCard',
+  'user-Card',
+  'user_Card',
+  'user-card',
+  'user_card'
+]);
+
+export default paymentCardIssuerTexts;

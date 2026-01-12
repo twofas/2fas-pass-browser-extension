@@ -5,69 +5,55 @@
 // See LICENSE file for full terms
 
 import URLComponent from '../components/URLComponent';
-import { lazy } from 'react';
+import { useCallback } from 'react';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import S from '../Details.module.scss';
 import { AnimatePresence } from 'motion/react';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import URIMatcher from '@/partials/URIMatcher';
-import { v4 as uuidv4 } from 'uuid';
+import { useUriTempIds } from '../context/UriTempIdsContext';
+import updateItem from './updateItem';
+import AddIcon from '@/assets/popup-window/add-new-2.svg?react';
 
-const AddIcon = lazy(() => import('@/assets/popup-window/add-new-2.svg?react'));
-
-/** 
-* Function to generate URLs.
+/**
+* Component to generate and manage URL inputs.
 * @param {Object} props - The component props.
-* @return {JSX.Element|null} The generated URLs or null if not available.
+* @return {JSX.Element} The rendered URLs or empty state.
 */
-const generateURLs = props => {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+function GenerateURLs (props) {
+  const { data, setData, setItem } = usePopupState();
+  const { urisWithTempIds, addUri } = useUriTempIds();
 
   const { formData } = props;
   const { inputError } = formData;
 
-  const handleAddUri = async () => {
-    const newUriWithTempId = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true, _tempId: uuidv4() };
-    const newContentUri = { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true };
+  const handleAddUri = useCallback(async () => {
+    const newUri = addUri('', URIMatcher.M_DOMAIN_TYPE);
 
-    const currentUrisWithTempIds = data.item.internalData.urisWithTempIds || [];
     const currentContentUris = data.item.content.uris || [];
+    const newContentUris = [...currentContentUris, { text: '', matcher: URIMatcher.M_DOMAIN_TYPE, new: true }];
 
-    const newUrisWithTempIds = [...currentUrisWithTempIds, newUriWithTempId];
-    const newContentUris = [...currentContentUris, newContentUri];
+    const updatedItem = await updateItem(data.item, {
+      content: { uris: newContentUris }
+    });
 
-    const itemData = data.item.toJSON();
-    itemData.content.uris = newContentUris;
-    itemData.internalData = {
-      ...data.item.internalData,
-      urisWithTempIds: newUrisWithTempIds
-    };
-    const updatedItem = new (data.item.constructor)(itemData);
-
-    if (data.item.isSifDecrypted) {
-      updatedItem.setSifDecrypted(data.item.sifDecrypted);
-    }
-
-    if (data.item.internalData.editedSif !== null) {
-      updatedItem.internalData.editedSif = data.item.internalData.editedSif;
-    }
-
-    setData('item', updatedItem);
+    setItem(updatedItem);
 
     const currentDomainsEditable = data?.domainsEditable || {};
-    setData('domainsEditable', {
+    const newDomainsEditable = {
       ...currentDomainsEditable,
-      [newUriWithTempId._tempId]: true
-    });
-  };
-  
+      [newUri._tempId]: true
+    };
+
+    setData('domainsEditable', newDomainsEditable);
+  }, [data.item, data?.domainsEditable, setData, setItem, addUri]);
+
   return (
     <>
       <AnimatePresence mode='popLayout'>
-        {data?.item?.internalData?.urisWithTempIds?.length > 0 ? (
-          data.item.internalData.urisWithTempIds.map((uri, index) => {
+        {urisWithTempIds?.length > 0 ? (
+          urisWithTempIds.map((uri, index) => {
             const key = `uri-${data.item.id}-${uri._tempId}`;
 
             return (
@@ -94,11 +80,11 @@ const generateURLs = props => {
           onClick={handleAddUri}
         >
           <AddIcon />
-          <span>{data?.item?.internalData?.urisWithTempIds?.length > 0 ? browser.i18n.getMessage('details_add_another_domain') : browser.i18n.getMessage('details_add_domain')}</span>
+          <span>{urisWithTempIds?.length > 0 ? browser.i18n.getMessage('details_add_another_domain') : browser.i18n.getMessage('details_add_domain')}</span>
         </button>
       </div>
     </>
   );
-};
+}
 
-export default generateURLs;
+export default GenerateURLs;

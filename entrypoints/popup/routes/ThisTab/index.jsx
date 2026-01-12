@@ -5,53 +5,37 @@
 // See LICENSE file for full terms
 
 import S from './ThisTab.module.scss';
-import bS from '@/partials/global-styles/buttons.module.scss';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { motion } from 'motion/react';
 import { useEffect, useState, useRef, useCallback, useMemo, memo, useContext } from 'react';
 import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
 import getDomainFromTab from './functions/getDomainFromTab';
 import onMessage from './events/onMessage';
-import generateAllItemsList from './functions/generateAllItemsList';
-import generateMatchingItemsList from './functions/generateMatchingItemsList';
 import URIMatcher from '@/partials/URIMatcher';
 import getItems from '@/partials/sessionStorage/getItems';
 import getTags from '@/partials/sessionStorage/getTags';
 import { filterXSS } from 'xss';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
 import getDomainFromMessage from './functions/getDomainFromMessage';
-import { useLocation } from 'react-router';
-import keepPassword from './functions/keepPassword';
-import { toast } from 'react-toastify';
 import isItemsCorrect from './functions/isItemsCorrect';
-import usePopupStateStore from '../../store/popupState';
+import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
-import SmallLoginItem from './components/SmallLoginItem';
+import { useTagFilter } from './components/Filters/hooks/useTagFilter';
+import { useSortFilter } from './components/Sort/hooks/useSortFilter';
 import DomainIcon from '@/assets/popup-window/domain.svg?react';
-import SearchIcon from '@/assets/popup-window/search-icon.svg?react';
-import ClearIcon from '@/assets/popup-window/clear.svg?react';
-import NoMatch from './components/NoMatch';
-import ModelFilter from './components/ModelFilter';
-import Filters from './components/Filters';
-import Sort from './components/Sort';
-import UpdateComponent from './components/UpdateComponent';
-
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
+import { AllItemsList, Filters, KeepItem, MatchingItemsList, ModelFilter, NoMatch, Search, Sort, TagsInfo, UpdateComponent } from './components';
+import { ItemListProvider } from './context/ItemListContext';
 
 const thisTabTopVariants = {
-  visible: { height: 'auto', transition: { duration: 0.3 } },
-  hidden: { height: '0', marginBottom: '-10px', borderWidth: '0', transition: { duration: 0 } }
+  visible: { height: 'auto', transition: { duration: 0.2, ease: 'easeOut' } },
+  hidden: { height: '0', marginBottom: '-10px', borderWidth: '0', transition: { duration: 0, ease: 'easeOut' } }
 };
 
-/** 
+/**
 * Function to render the main content of the ThisTab component.
 * @param {Object} props - The component props.
 * @return {JSX.Element} Element representing the ThisTab component.
 */
 function ThisTab (props) {
-  const location = useLocation();
-  const { state } = location;
-  const { changeMatchingLoginsLength } = useMatchingLogins();
   const scrollableRefContext = useContext(ScrollableRefContext);
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('Unknown');
@@ -60,14 +44,8 @@ function ThisTab (props) {
   const [tags, setTags] = useState([]);
   const [matchingLogins, setMatchingLogins] = useState([]);
   const [storageVersion, setStorageVersion] = useState(null);
-  const [autofillFailed, setAutofillFailed] = useState(false);
-  const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [forceCloseFilters, setForceCloseFilters] = useState(false);
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
-  const setHref = usePopupStateStore(state => state.setHref);
+  const { data, setBatchData } = usePopupState();
 
   // Refs
   const boxAnimationRef = useRef(null);
@@ -84,101 +62,8 @@ function ThisTab (props) {
     }
   }, [scrollableRefContext]);
 
-  const syncState = useCallback(() => {
-    if (!location.state?.from) {
-      return;
-    }
-
-    if (location.state?.data) {
-      const fieldsToSync = [
-        'lastSelectedTagInfo',
-        'searchActive',
-        'searchValue',
-        'selectedTag'
-      ];
-
-      const updates = {};
-      let hasChanges = false;
-
-      fieldsToSync.forEach(field => {
-        if (Object.prototype.hasOwnProperty.call(location.state.data, field)) {
-          updates[field] = location.state.data[field];
-          hasChanges = true;
-        }
-      });
-
-      if (hasChanges) {
-        const currentData = usePopupStateStore.getState().data;
-
-        usePopupStateStore.setState({
-          data: {
-            ...currentData,
-            ...updates
-          }
-        });
-      }
-    }
-
-    if (location.state?.scrollPosition !== undefined) {
-      setScrollPosition(location.state.scrollPosition);
-    }
-
-    if (location.state?.from === 'details') {
-      setHref(location.pathname);
-    }
-  }, [location.state, location.pathname, setScrollPosition, setHref]);
-
-  const handleSortChange = useCallback(async newSort => {
-    setData('selectedSort', newSort);
-  }, []);
-
-  const handleSearchChange = useCallback(e => {
-    const value = e?.target?.value;
-
-    setForceCloseFilters(true);
-    setTimeout(() => setForceCloseFilters(false), 100);
-
-    if (value.trim().length > 0) {
-      setData('searchActive', true);
-      setData('searchValue', value);
-    } else {
-      setData('searchActive', false);
-      setData('searchValue', '');
-    }
-  }, [setData]);
-
-  const handleSearchClear = useCallback(() => {
-    setData('searchValue', '');
-    setData('searchActive', false);
-  }, [setData]);
-
-  const handleTagChange = useCallback((tag) => {
-    setData('selectedTag', tag);
-
-    if (tag) {
-      const tagInfo = { name: tag.name, amount: tag.amount };
-      setData('lastSelectedTagInfo', tagInfo);
-    }
-  }, [setData]);
-
-  const handleKeepPassword = useCallback(async () => {
-    await keepPassword(state);
-    window.history.replaceState({}, '');
-    setAutofillFailed(false);
-
-    if (state?.toastId) {
-      toast.dismiss(state?.toastId);
-    }
-  }, [state]);
-
-  const handleDontKeepPassword = useCallback(() => {
-    setAutofillFailed(false);
-    window.history.replaceState({}, '');
-    
-    if (state?.toastId) {
-      toast.dismiss(state?.toastId);
-    }
-  }, [state]);
+  const { handleSortChange } = useSortFilter();
+  const { handleTagChange } = useTagFilter();
 
   const sendUrl = useCallback(async request => {
     const d = getDomainFromMessage(request);
@@ -200,13 +85,8 @@ function ThisTab (props) {
 
     setMatchingLogins(matchingLogins);
 
-    setTimeout(() => {
-      changeMatchingLoginsLength(matchingLogins?.length || 0);
-    }, 200);
-
-    setData('searchActive', false);
-    setData('searchValue', '');
-  }, [changeMatchingLoginsLength, setData]);
+    setBatchData({ searchActive: false, searchValue: '' });
+  }, [setBatchData]);
 
   const watchStorageVersion = useCallback(() => {
     const uSV = storage.watch('session:storageVersion', async newValue => {
@@ -216,23 +96,21 @@ function ThisTab (props) {
     return uSV;
   }, []);
 
-  const getDomain = useCallback(async () => {
-    const d = await getDomainFromTab();
-    setDomain(filterXSS(d.domain));
-    setUrl(filterXSS(d.url));
-    return filterXSS(d.url);
-  }, []);
+  const fetchInitialData = useCallback(async () => {
+    const [domainData, fetchedItems, fetchedTags] = await Promise.all([
+      getDomainFromTab(),
+      getItems(),
+      getTags()
+    ]);
 
-  const getStorageItems = useCallback(async () => {
-    const i = await getItems();
-    setItems(i);
+    const sanitizedDomain = filterXSS(domainData.domain);
+    const sanitizedUrl = filterXSS(domainData.url);
 
-    return i;
-  }, []);
+    setDomain(sanitizedDomain);
+    setUrl(sanitizedUrl);
+    setItems(fetchedItems);
 
-  const getStorageTags = useCallback(async () => {
-    const t = await getTags();
-    return t;
+    return { url: sanitizedUrl, items: fetchedItems, tags: fetchedTags };
   }, []);
 
   const getTagsAmount = useCallback(async (tags, services) => {
@@ -241,14 +119,15 @@ function ThisTab (props) {
       return false;
     }
 
+    const tagMap = new Map(tags.map((tag, index) => [tag.id, index]));
     const servicesWithTags = services.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
 
     for (const service of servicesWithTags) {
-      for (const tag of service.tags) {
-        const tagIndex = tags.findIndex(t => t.id === tag);
+      for (const tagId of service.tags) {
+        const tagIndex = tagMap.get(tagId);
 
-        if (tagIndex === -1) {
-          await CatchError(new TwoFasError(TwoFasError.internalErrors.tagIndexError, { additional: { tagId: tag } }));
+        if (tagIndex === undefined) {
+          await CatchError(new TwoFasError(TwoFasError.internalErrors.tagIndexError, { additional: { tagId } }));
           continue;
         }
 
@@ -274,152 +153,130 @@ function ThisTab (props) {
     } catch {}
 
     setMatchingLogins(sanitizeObject(matchingLogins));
-    changeMatchingLoginsLength(matchingLogins?.length || 0);
     setLoading(false);
-  }, [changeMatchingLoginsLength]);
+  }, []);
 
-  const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl, setUpdateAvailable), [sendUrl, setUpdateAvailable]);
+  const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl), [sendUrl]);
+
+  const playEmptyStateAnimation = useCallback(() => {
+    setTimeout(() => {
+      if (boxAnimationRef?.current?.play) {
+        boxAnimationRef.current.play();
+      }
+
+      if (boxAnimationDarkRef?.current?.play) {
+        boxAnimationDarkRef.current.play();
+      }
+    }, 600);
+  }, []);
+
+  const initializeData = useCallback(async () => {
+    try {
+      const { url, items: fetchedItems, tags: fetchedTags } = await fetchInitialData();
+
+      await Promise.all([
+        getMatchingLogins(fetchedItems, url),
+        getTagsAmount(fetchedTags, fetchedItems)
+      ]);
+
+      if (fetchedItems.length === 0) {
+        playEmptyStateAnimation();
+      }
+
+      unwatchStorageVersion.current = watchStorageVersion();
+    } catch (e) {
+      await CatchError(e);
+    }
+  }, [fetchInitialData, getMatchingLogins, getTagsAmount, playEmptyStateAnimation, watchStorageVersion]);
+
+  const handleAnimationComplete = useCallback(e => {
+    if (e === 'visible') {
+      thisTabTopRef.current.style.overflow = 'visible';
+    } else if (e === 'hidden') {
+      thisTabTopRef.current.style.overflow = 'clip';
+    }
+  }, []);
+
+  const handleAnimationUpdate = useCallback(() => {
+    if (data?.searchActive || data?.selectedTag) {
+      scrollableRef.current.scrollTo(0, 0);
+    }
+  }, [data?.searchActive, data?.selectedTag]);
 
   const hasMatchingLogins = useMemo(() => isItemsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
   const hasLogins = useMemo(() => isItemsCorrect(items) && items?.length > 0, [items]);
 
-  const filteredItemsByModel = useMemo(() => {
-    if (!data?.itemModelFilter) {
-      return items;
+  const filteredItemsData = useMemo(() => {
+    let filteredByModel = items;
+
+    if (data?.itemModelFilter) {
+      filteredByModel = items.filter(item => item?.constructor?.name === data.itemModelFilter);
     }
 
-    return items.filter(item => item?.constructor?.name === data.itemModelFilter);
-  }, [items, data?.itemModelFilter]);
+    const servicesWithTags = filteredByModel.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
 
-  const tagsWithFilteredAmounts = useMemo(() => {
-    if (!Array.isArray(tags) || tags.length === 0) {
-      return [];
-    }
+    const tagAmountMap = new Map();
 
-    const itemsToCount = filteredItemsByModel;
-    const servicesWithTags = itemsToCount.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
-
-    return tags.map(tag => {
-      let amount = 0;
-
-      for (const service of servicesWithTags) {
-        if (service.tags.includes(tag.id)) {
-          amount += 1;
-        }
+    for (const service of servicesWithTags) {
+      for (const tagId of service.tags) {
+        tagAmountMap.set(tagId, (tagAmountMap.get(tagId) || 0) + 1);
       }
+    }
 
-      return { ...tag, amount };
-    });
-  }, [tags, filteredItemsByModel]);
+    const tagsWithAmounts = Array.isArray(tags) && tags.length > 0
+      ? tags.map(tag => ({ ...tag, amount: tagAmountMap.get(tag.id) || 0 }))
+      : [];
 
-  const searchPlaceholder = useMemo(() => {
-    let amount;
+    let filteredByTag = filteredByModel;
 
     if (data?.selectedTag) {
-      const tagWithFilteredAmount = tagsWithFilteredAmounts.find(t => t.id === data.selectedTag.id);
-      amount = tagWithFilteredAmount?.amount || 0;
-    } else {
-      amount = filteredItemsByModel?.length || 0;
-    }
-
-    return browser.i18n.getMessage('this_tab_search_placeholder').replace('%AMOUNT%', amount);
-  }, [data?.selectedTag, filteredItemsByModel?.length, tagsWithFilteredAmounts]);
-
-  const currentTagInfo = useMemo(() => {
-    if (!data?.selectedTag || !data?.lastSelectedTagInfo) {
-      return null;
-    }
-
-    const tagWithFilteredAmount = tagsWithFilteredAmounts.find(t => t.id === data.selectedTag.id);
-
-    return {
-      name: data.lastSelectedTagInfo.name,
-      amount: tagWithFilteredAmount?.amount || 0
-    };
-  }, [data?.selectedTag, data?.lastSelectedTagInfo, tagsWithFilteredAmounts]);
-
-  const autofillPopupClass = `${S.thisTabAutofillPopup} ${autofillFailed ? S.active : ''}`;
-  const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
-  const allLoginsClass = `${S.thisTabAllLogins} ${!hasLogins && !loading ? S.hidden : ''}`;
-  const searchClass = `${S.thisTabAllLoginsSearch} ${data?.searchActive ? S.active : ''}`;
-
-  const memoizedMatchingItemsList = useMemo(() => generateMatchingItemsList(matchingLogins, loading), [matchingLogins, loading]);
-  const memoizedAllItemsList = useMemo(() => generateAllItemsList(items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter), [items, data.selectedSort, data?.searchValue, loading, tags, data?.selectedTag, data?.itemModelFilter]);
-
-  const filteredItemsCount = useMemo(() => {
-    if (!isItemsCorrect(items)) {
-      return 0;
-    }
-
-    let itemsData = items;
-
-    if (data?.selectedTag) {
-      itemsData = itemsData.filter(item => {
+      const selectedTagId = data.selectedTag.id;
+      filteredByTag = filteredByModel.filter(item => {
         if (!item?.tags || !Array.isArray(item?.tags)) {
           return false;
         }
 
-        const tagsSet = new Set(item.tags);
-        return tagsSet.has(data.selectedTag.id);
+        return item.tags.includes(selectedTagId);
       });
     }
 
-    if (data?.itemModelFilter) {
-      itemsData = itemsData.filter(item => item?.constructor?.name === data.itemModelFilter);
-    }
+    let filteredBySearch = filteredByTag;
 
     if (data?.searchValue && data.searchValue.length > 0) {
-      itemsData = itemsData.filter(item => {
+      const searchLower = data.searchValue.toLowerCase();
+      filteredBySearch = filteredByTag.filter(item => {
         let urisTexts = [];
 
         if (item?.content && item?.content?.uris && Array.isArray(item?.content?.uris)) {
           urisTexts = item.content.uris.map(uri => uri?.text).filter(Boolean);
         }
 
-        return item?.content?.name?.toLowerCase().includes(data.searchValue?.toLowerCase()) ||
-          item?.content?.username?.toLowerCase().includes(data.searchValue?.toLowerCase()) ||
-          urisTexts.some(uriText => uriText?.toLowerCase().includes(data.searchValue?.toLowerCase()));
+        return item?.content?.name?.toLowerCase().includes(searchLower) ||
+          item?.content?.username?.toLowerCase().includes(searchLower) ||
+          urisTexts.some(uriText => uriText?.toLowerCase().includes(searchLower));
       });
     }
 
-    return itemsData.length;
-  }, [items, data?.selectedTag, data?.itemModelFilter, data?.searchValue]);
+    return {
+      filteredByModel,
+      tagsWithAmounts,
+      filteredByTag,
+      filteredBySearch,
+      filteredCount: filteredBySearch.length
+    };
+  }, [items, tags, data?.itemModelFilter, data?.selectedTag, data?.searchValue]);
+
+  const filteredItemsByModel = filteredItemsData.filteredByModel;
+  const tagsWithFilteredAmounts = filteredItemsData.tagsWithAmounts;
+
+  const matchingLoginsListClass = `${S.thisTabMatchingLoginsList} ${hasMatchingLogins || loading ? S.active : ''}`;
+  const allLoginsClass = `${S.thisTabAllLogins} ${!hasLogins && !loading ? S.hidden : ''}`;
+
+  const filteredItemsCount = filteredItemsData.filteredCount;
 
   useEffect(() => {
     browser.runtime.onMessage.addListener(messageListener);
-
-    if (browser?.runtime?.requestUpdateCheck && typeof browser?.runtime?.requestUpdateCheck === 'function') {
-      browser.runtime.requestUpdateCheck()
-        .then(([status]) => {
-          if (status === 'update_available') {
-            setUpdateAvailable(true);
-          }
-      })
-      .catch(() => {});
-    }
-
-    Promise.all([ getDomain(), getStorageItems(), getStorageTags() ])
-      .then(([domain, items, tags]) => Promise.all([
-        getMatchingLogins(items, domain),
-        getTagsAmount(tags, items)
-      ]))
-      .then(() => {
-        if (items.length === 0) {
-          setTimeout(() => {
-            if (boxAnimationRef?.current?.play) {
-              boxAnimationRef.current.play();
-            }
-
-            if (boxAnimationDarkRef?.current?.play) {
-              boxAnimationDarkRef.current.play();
-            }
-          }, 700);
-        }
-
-        return watchStorageVersion();
-      })
-      .then(unwatch => { unwatchStorageVersion.current = unwatch; })
-      .catch(async e => { await CatchError(e); });
+    initializeData();
 
     return () => {
       browser.runtime.onMessage.removeListener(messageListener);
@@ -428,84 +285,31 @@ function ThisTab (props) {
         unwatchStorageVersion.current();
       }
     };
-  }, [storageVersion]);
-
-  useEffect(() => {
-    if (location?.state?.action === 'autofillT2Failed') {
-      setAutofillFailed(true);
-    } else {
-      setAutofillFailed(false);
-    }
-
-    if (location.state?.from === 'details') {
-      setTimeout(() => {
-        syncState();
-      }, 0);
-    }
-  }, [location?.state, syncState]);
+  }, [storageVersion, messageListener, initializeData]);
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <div className={`${props.className ? props.className : ''}`}>
-        <div ref={scrollableRef}>
-          <section className={S.thisTab}>
-            <div className={autofillPopupClass}>
-              <div className={S.thisTabAutofillPopupBox}>
-                <h2>Password for the following service successfully fetched.</h2>
-                <div className={S.thisTabAutofillPopupBoxLoginItem}>
-                  <SmallLoginItem
-                    deviceId={state?.deviceId}
-                    vaultId={state?.vaultId}
-                    itemId={state?.itemId}
-                    state={state}
-                    setAutofillFailed={setAutofillFailed}
-                  />
-                </div>
-                <div className={S.thisTabAutofillPopupBoxButtons}>
-                  <button
-                    className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-                    onClick={handleKeepPassword}
-                  >
-                    Keep it for 3 minutes
-                  </button>
-                  <button
-                    className={`${bS.btn} ${bS.btnClear}`}
-                    onClick={handleDontKeepPassword}
-                  >
-                    Don't keep it
-                  </button>
-                </div>
-              </div>
-            </div>
+    <div className={`${props.className ? props.className : ''}`}>
+      <div ref={scrollableRef}>
+        <section className={S.thisTab}>
+          <KeepItem />
 
-            <div className={S.thisTabContainer}>
-              <m.div
-                ref={thisTabTopRef}
-                className={S.thisTabTop}
-                variants={thisTabTopVariants}
-                initial="visible"
-                animate={data?.searchActive || data?.selectedTag ? 'hidden' : 'visible'}
-                onAnimationComplete={e => {
-                  if (e === 'visible') {
-                    thisTabTopRef.current.style.overflow = 'visible';
-                  } else if (e === 'hidden') {
-                    thisTabTopRef.current.style.overflow = 'clip';
-                  }
-                }}
-                onUpdate={() => {
-                  if (data?.searchActive || data?.selectedTag) {
-                    scrollableRef.current.scrollTo(0, 0);
-                  }
-                }}
-                style={{ opacity: '1 !important'}}
-              >
-                <UpdateComponent updateAvailable={updateAvailable} />
+          <div className={S.thisTabContainer}>
+            <motion.div
+              ref={thisTabTopRef}
+              className={S.thisTabTop}
+              variants={thisTabTopVariants}
+              initial="visible"
+              animate={data?.searchActive || data?.selectedTag ? 'hidden' : 'visible'}
+              onAnimationComplete={handleAnimationComplete}
+              onUpdate={handleAnimationUpdate}
+            >
+                <UpdateComponent />
 
                 <div className={S.thisTabHeader}>
                   <h1>
-                    {hasMatchingLogins ? browser.i18n.getMessage('this_tab_matching_logins_header') : browser.i18n.getMessage('this_tab_matching_logins_header_no_logins')}
+                    {loading ? '\u00A0' : (hasMatchingLogins ? browser.i18n.getMessage('this_tab_matching_logins_header') : browser.i18n.getMessage('this_tab_matching_logins_header_no_logins'))}
                   </h1>
-                  <h2 title={url}>
+                  <h2 className={loading ? '' : S.loaded} title={url}>
                     <DomainIcon />
                     <span>{domain}</span>
                   </h2>
@@ -513,7 +317,12 @@ function ThisTab (props) {
 
                 <div className={S.thisTabMatchingLogins}>
                   <div className={matchingLoginsListClass}>
-                    {memoizedMatchingItemsList}
+                    <ItemListProvider>
+                      <MatchingItemsList
+                        items={matchingLogins}
+                        loading={loading}
+                      />
+                    </ItemListProvider>
                   </div>
 
                   <NoMatch
@@ -523,44 +332,20 @@ function ThisTab (props) {
                     boxAnimationDarkRef={boxAnimationDarkRef}
                   />
                 </div>
-              </m.div>
+              </motion.div>
 
               <div className={allLoginsClass}>
-                <div className={S.thisTabAllLoginsHeader}>
-                  <ModelFilter />
-                </div>
+                <ModelFilter loading={loading} />
 
                 <div className={S.thisTabAllLoginsSearchContainer}>
-                  <div className={searchClass}>
-                    <SearchIcon />
-                    <input
-                      id="search"
-                      name="search"
-                      type="search"
-                      placeholder={searchPlaceholder}
-                      dir="ltr"
-                      spellCheck="false"
-                      autoCorrect="off"
-                      autoComplete="off"
-                      autoCapitalize="off"
-                      maxLength="2048"
-                      onChange={handleSearchChange}
-                      value={data.searchValue || ''}
-                      className={data?.searchValue && data?.searchValue?.length > 0 ? S.withValue : ''}
-                    />
-        
-                    <button
-                      className={`${S.thisTabAllLoginsSearchClear} ${!data?.searchValue || data?.searchValue?.length <= 0 ? S.hidden : ''}`}
-                      onClick={handleSearchClear}
-                    >
-                      <ClearIcon />
-                    </button>
-                  </div>
+                  <Search
+                    tagsWithFilteredAmounts={tagsWithFilteredAmounts}
+                    filteredItemsByModelLength={filteredItemsByModel?.length}
+                  />
                   <Filters
                     tags={tagsWithFilteredAmounts}
                     selectedTag={data.selectedTag}
                     onTagChange={handleTagChange}
-                    forceClose={forceCloseFilters}
                   />
                   <Sort
                     selectedSort={data.selectedSort || 'az'}
@@ -568,28 +353,26 @@ function ThisTab (props) {
                   />
                 </div>
 
-                <div className={`${S.thisTabAllLoginsTagsInfo} ${currentTagInfo && data.selectedTag ? S.active : ''}`}>
-                  <div
-                    className={S.thisTabAllLoginsTagsInfoBox}
-                    title={browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', filteredItemsCount).replace('TAG_NAME', currentTagInfo?.name || '')}
-                  >
-                    <p>{browser.i18n.getMessage('this_tab_tag_info_text').replace('AMOUNT', filteredItemsCount).replace('TAG_NAME', currentTagInfo?.name || '')}</p>
-                    <button
-                      onClick={() => setData('selectedTag', null)}
-                      title={browser.i18n.getMessage('this_tab_clear_tag_filter')}
-                    >
-                      <ClearIcon />
-                    </button>
-                  </div>
-                </div>
+                <TagsInfo
+                  tagsWithFilteredAmounts={tagsWithFilteredAmounts}
+                  filteredItemsCount={filteredItemsCount}
+                />
 
-                {memoizedAllItemsList}
+                <ItemListProvider>
+                  <AllItemsList
+                    items={items}
+                    sort={data.selectedSort}
+                    search={data?.searchValue}
+                    loading={loading}
+                    selectedTag={data?.selectedTag}
+                    itemModelFilter={data?.itemModelFilter}
+                  />
+                </ItemListProvider>
               </div>
             </div>
           </section>
         </div>
       </div>
-    </LazyMotion>
   );
 }
 

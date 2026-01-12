@@ -12,7 +12,7 @@ import getKey from '@/partials/sessionStorage/getKey';
 import saveItems from '@/partials/WebSocket/utils/saveItems';
 import saveTags from '@/partials/WebSocket/utils/saveTags';
 import { ENCRYPTION_KEYS } from '@/constants';
-import matchModel from '@/partials/models/itemModels/matchModel';
+import matchModel from '@/models/itemModels/matchModel';
 
 /** 
 * Handles the update of a item after it has been modified.
@@ -45,7 +45,7 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
     const itemData = Object.assign({}, info.data);
     itemData.deviceId = state.data.deviceId;
 
-    const item = matchModel(itemData);
+    const item = await matchModel(itemData);
 
     if (!item) {
       throw new TwoFasError(TwoFasError.errors.pullRequestActionUpdateLoginUpdatedWrongData);
@@ -105,6 +105,7 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
 
     return {
       returnUrl: `/details/${state.data.deviceId}/${info.data.vaultId}/${state.data.itemId}`,
+      returnState: { from: 'fetch', resetOldData: true },
       returnToast: {
         text: browser.i18n.getMessage('fetch_update_login_updated_toast'),
         type: 'success'

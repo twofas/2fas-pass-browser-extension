@@ -73,7 +73,7 @@
       pointer-events: none;
       position: absolute;
       transform: translateY(11px);
-      transition: opacity .3s ease-in-out, transform .3s ease-in-out;
+      transition: opacity v.$anim, transform v.$anim;
       z-index: 9999;
 
       @include m.darkMode {
@@ -82,7 +82,12 @@
       }
 
       span {
+        color: v.$primary-text-light;
         font-size: 12px;
+
+        @include m.darkMode {
+          color: v.$primary-text-dark;
+        }
       }
     }
   }
@@ -160,7 +165,7 @@
     min-height: 39px;
     padding: 9px 12px;
     position: relative;
-    transition: border-color .3s ease-in-out, background-color .3s ease-in-out;
+    transition: border-color v.$anim, background-color v.$anim;
 
     @include m.darkMode {
       background-color: v.$primary-box-bg-dark;
@@ -199,7 +204,7 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      transition: opacity .3s ease-in-out;
+      transition: opacity v.$anim;
 
       &.hidden {
         opacity: 0;
@@ -226,7 +231,7 @@
         stroke-linecap: round;
         stroke-linejoin: round;
         width: auto;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
   
         @include m.darkMode {
           stroke: v.$object-dark;
@@ -262,7 +267,7 @@
             stroke-linecap: round;
             stroke-linejoin: round;
             stroke-width: 1.5;
-            transition: stroke .3s ease-in-out;
+            transition: stroke v.$anim;
             width: 16px;
 
             @include m.darkMode {
@@ -296,7 +301,7 @@
             max-width: 16px;
             opacity: 1;
             overflow: hidden;
-            transition: opacity .3s ease-in-out, max-width .3s ease-in-out, margin-left .3s ease-in-out, margin-right .3s ease-in-out;
+            transition: opacity v.$anim, max-width v.$anim, margin-left v.$anim, margin-right v.$anim;
 
             &.hidden-button {
               margin-right: 0;
@@ -310,7 +315,7 @@
             max-width: 16px;
             opacity: 1;
             overflow: hidden;
-            transition: opacity .3s ease-in-out, max-width .3s ease-in-out, margin-left .3s ease-in-out, margin-right .3s ease-in-out;
+            transition: opacity v.$anim, max-width v.$anim, margin-left v.$anim, margin-right v.$anim;
 
             &:hover,
             &:focus {
@@ -339,21 +344,33 @@
           }
 
           &.visible-button {
+            max-width: 16px;
+            opacity: 1;
+            overflow: hidden;
+            transition: opacity v.$anim, max-width v.$anim, margin-right v.$anim;
+
+            &.hidden-button {
+              margin-right: 0;
+              max-width: 0;
+              opacity: 0;
+              pointer-events: none;
+            }
+
             &:hover,
             &:focus {
               svg {
                 stroke: v.$focus-light !important;
-                 
+
                 @include m.darkMode {
                   stroke: v.$focus-dark !important;
                 }
               }
             }
-            
+
             &:active {
               svg {
                 stroke: v.$pressed-light !important;
-                
+
                 @include m.darkMode {
                   stroke: v.$pressed-dark !important;
                 }
@@ -361,7 +378,7 @@
             }
 
             svg {
-              transition: stroke .3s ease-in-out;
+              transition: stroke v.$anim;
               width: 16px;
 
               @include m.darkMode {
@@ -383,7 +400,7 @@
       font-size: 14px;
       font-weight: 400;
       line-height: 1;
-      transition: color .3s ease-in-out, opacity .3s ease-in-out;
+      transition: color v.$anim, opacity v.$anim;
 
       @include m.darkMode {
         color: v.$primary-text-dark;
@@ -410,7 +427,7 @@
         -webkit-box-shadow: 0 0 0 0 transparent inset !important;
         -webkit-text-fill-color: v.$primary-text-light !important;
         box-shadow: inset 0 0 0 0 transparent;
-        transition: background-color 5000s ease-in-out 0s !important;
+        transition: background-color 5000s ease-out 0s !important;
 
         @include m.darkMode {
           -webkit-text-fill-color: v.$primary-text-dark !important;
@@ -483,7 +500,7 @@
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 1.5;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
         width: 16px;
 
         @include m.darkMode {
@@ -523,7 +540,7 @@
 
   &-description {
     overflow: hidden;
-    transition: margin-top .3s ease-in-out;
+    transition: margin-top v.$anim;
 
     &.remove-margin-top {
       margin-top: -12px;
@@ -546,7 +563,7 @@
     display: flex;
     justify-content: flex-start;
     overflow: hidden;
-    transition: margin-top .3s ease-in-out;
+    transition: margin-top v.$anim;
 
     &.remove-margin-top {
       margin-top: -12px;
@@ -567,11 +584,19 @@
         font-weight: 400;
         line-height: 1.3;
         max-height: 33px;
-        transition: max-height .3s ease-in-out;
+        transition: color v.$anim, max-height v.$anim;
         white-space: pre-wrap;
 
         &.empty {
           max-height: 0;
+        }
+
+        &.error-text {
+          color: v.$error-light;
+
+          @include m.darkMode {
+            color: v.$error-dark;
+          }
         }
 
         @include m.darkMode {
@@ -636,7 +661,7 @@
       gap: 6px;
       line-height: 1;
       padding: 0;
-      transition: .3s ease-in-out;
+      transition: v.$anim;
       
       @include m.darkMode {
         color: v.$primary-color-dark;
@@ -670,7 +695,7 @@
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 1.5;
-        transition: stroke .3s ease-in-out;
+        transition: stroke v.$anim;
         width: 16px;
       }
     }

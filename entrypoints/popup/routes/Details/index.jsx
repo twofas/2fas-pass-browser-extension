@@ -5,29 +5,30 @@
 // See LICENSE file for full terms
 
 import S from './Details.module.scss';
-import { LazyMotion } from 'motion/react';
-import { useParams, useNavigate, useLocation, Link } from 'react-router';
-import { useState, useEffect, useCallback, useRef, useMemo, lazy } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import getItem from '@/partials/sessionStorage/getItem';
+import usePopupState from '../../store/popupState/usePopupState';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import matchModel from '@/partials/models/itemModels/matchModel';
+import { matchModel, Login } from '@/models/itemModels';
 import { PULL_REQUEST_TYPES } from '@/constants';
+import ClearLink from '../../components/ClearLink';
+import ServiceFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
 
 // Model Views
 import LoginDetailsView from './modelsViews/LoginDetailsView';
 import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
-
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const ServiceFetchIcon = lazy(() => import('@/assets/popup-window/service-fetch.svg?react'));
+import PaymentCardDetailsView from './modelsViews/PaymentCardDetailsView';
 
 const DetailsViews = {
   'Login': LoginDetailsView,
-  'SecureNote': SecureNoteDetailsView
+  'SecureNote': SecureNoteDetailsView,
+  'PaymentCard': PaymentCardDetailsView
 };
 
-/** 
+/**
 * Function to render the details component.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
@@ -41,11 +42,9 @@ function Details(props) {
   const [originalItem, setOriginalItem] = useState(null);
   const scrollableRef = useRef(null);
 
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
-  const setScrollPosition = usePopupStateStore(state => state.setScrollPosition);
+  const { data, setData, setBatchData, clearData, setScrollPosition, setItem } = usePopupState();
 
-  const getData = useCallback(async originalItem => {
+  const fetchItemData = useCallback(async originalItem => {
     try {
       if (location.state?.from === 'thisTab') {
         setScrollPosition(0);
@@ -53,6 +52,9 @@ function Details(props) {
 
       let item;
       let editedSecurityType;
+
+      const pathname = location.pathname;
+      const storeData = usePopupStateStore.getState().getData(pathname);
 
       if (location.state?.data?.item) {
         editedSecurityType = location.state.data.item.securityType;
@@ -63,8 +65,6 @@ function Details(props) {
 
           if (location.state.data.item.content) {
             const stateContent = { ...location.state.data.item.content };
-            delete stateContent.s_text;
-            delete stateContent.s_password;
 
             mergedItem.content = { ...originalItemData.content, ...stateContent };
           }
@@ -75,15 +75,17 @@ function Details(props) {
 
           delete mergedItem.internalData;
 
-          item = matchModel(mergedItem);
+          item = await matchModel(mergedItem);
         } else {
-          item = matchModel({ ...location.state.data.item, securityType: originalItem?.securityType });
+          item = await matchModel({ ...location.state.data.item, securityType: originalItem?.securityType });
         }
-      } else if (data?.item) {
+      } else if (location.state?.from === 'fetch' && originalItem) {
+        item = originalItem;
+      } else if (storeData?.item) {
         if (location.state?.from !== 'thisTab') {
           try {
-            editedSecurityType = data.item.securityType;
-            item = matchModel({ ...data.item, securityType: originalItem?.securityType });
+            editedSecurityType = storeData.item.securityType;
+            item = await matchModel({ ...storeData.item, securityType: originalItem?.securityType });
           } catch {
             if (params.id) {
               item = await getItem(params.deviceId, params.vaultId, params.id);
@@ -104,100 +106,50 @@ function Details(props) {
         return;
       }
 
-      const hasEditedSifFromState = location.state?.data?.editedSif !== undefined;
-
-      if (item.sifExists && !item.isSifDecrypted && !item.internalData?.editedSif && !hasEditedSifFromState) {
-        try {
-          const decryptedData = await item.decryptSif();
-
-          // FUTURE - Refactor this
-          if (item.constructor.name === 'Login') {
-            item.setSifDecrypted(decryptedData.password);
-          } else if (item.constructor.name === 'SecureNote') {
-            item.setSifDecrypted(decryptedData.text);
-          }
-
-          setData('sifDecryptError', false);
-        } catch (e) {
-          setData('sifDecryptError', true);
-          CatchError(e);
-        }
-      }
-
       if (editedSecurityType !== undefined && item.securityType !== editedSecurityType) {
         item.securityType = editedSecurityType;
-      }
-
-      if (location.state?.scrollPosition !== undefined) {
-        setData('thisTabScrollPosition', location.state.scrollPosition);
       }
 
       if (location.state?.data) {
         const stateData = location.state.data;
 
         Object.keys(stateData).forEach(field => {
-          if (field !== 'item' && field !== 'editedSif') {
+          if (field !== 'item') {
             setData(field, stateData[field]);
           }
         });
-
-        if (stateData.editedSif !== undefined && item) {
-          if (item.constructor.name === 'Login') {
-            item.setSifDecrypted(stateData.editedSif);
-            item.internalData.editedSif = stateData.editedSif;
-          } else if (item.constructor.name === 'SecureNote') {
-            item.setSifDecrypted(stateData.editedSif);
-            item.internalData.editedSif = stateData.editedSif;
-          }
-
-          setData('sifDecryptError', false);
-        }
-
-        if (stateData.domainsEditable && item && item.internalData?.urisWithTempIds) {
-          const newDomainsEditable = {};
-          item.internalData.urisWithTempIds.forEach((uri) => {
-            newDomainsEditable[uri._tempId] = true;
-          });
-          setData('domainsEditable', newDomainsEditable);
-        }
 
         if (!location.state?.generatedPassword) {
           if (stateData.passwordEditable !== undefined) {
             setData('passwordEditable', stateData.passwordEditable);
           }
-
-          if (stateData.passwordEdited !== undefined) {
-            setData('passwordEdited', stateData.passwordEdited);
-          }
         }
       }
 
-      if (location.state?.generatedPassword) {
-        item.internalData.editedSif = location.state.generatedPassword;
-        setData('passwordEditable', true);
-        setData('passwordEdited', true);
+      if (location.state?.generatedPassword && item instanceof Login) {
+        const itemData = item.toJSON();
+        const updatedItem = new Login(itemData);
+        await updatedItem.setSif([{ s_password: location.state.generatedPassword }]);
+        item = updatedItem;
+
+        setBatchData({
+          passwordEditable: true,
+          passwordVisible: location.state?.data?.passwordVisible || false
+        });
       }
 
-      if (!location.state?.data && item && item.internalData?.urisWithTempIds && item.internalData.urisWithTempIds.length > 0) {
-        const currentDomainsEditable = data.domainsEditable || {};
-        const hasEditableDomains = Object.keys(currentDomainsEditable).length > 0;
-
-        if (hasEditableDomains) {
-          const newDomainsEditable = {};
-          item.internalData.urisWithTempIds.forEach((uri) => {
-            newDomainsEditable[uri._tempId] = true;
-          });
-          setData('domainsEditable', newDomainsEditable);
-        }
+      if (location.state?.resetOldData) {
+        clearData();
+        setScrollPosition(0);
       }
 
-      setData('item', item);
+      setItem(item);
       setLoading(false);
     } catch (e) {
       CatchError(e);
       navigate('/');
     }
-  }, [params.deviceId, params.vaultId, params.id, navigate, setData, setScrollPosition, location.state]);
+  }, [params.deviceId, params.vaultId, params.id, navigate, setData, setBatchData, setScrollPosition, setItem, location.state]);
 
   const getOriginalItem = useCallback(async () => {
     try {
@@ -216,7 +168,19 @@ function Details(props) {
       return null;
     }
 
-    return data?.item?.constructor?.name;
+    const name = data?.item?.constructor?.name;
+
+    if (name && name !== 'Object') {
+      return name;
+    }
+
+    const contentTypeMap = {
+      'login': 'Login',
+      'secureNote': 'SecureNote',
+      'paymentCard': 'PaymentCard'
+    };
+
+    return contentTypeMap[data?.item?.contentType] || null;
   }, [loading, data?.item]);
 
   const modelComponent = useMemo(() => {
@@ -237,8 +201,8 @@ function Details(props) {
   }, [loading, constructorName, props, originalItem]);
 
   useEffect(() => {
-    getOriginalItem().then(getData);
-  }, [getData, getOriginalItem]);
+    getOriginalItem().then(fetchItemData);
+  }, [fetchItemData, getOriginalItem]);
 
   useEffect(() => {
     if (!loading && constructorName && !DetailsViews[constructorName]) {
@@ -254,53 +218,39 @@ function Details(props) {
   }
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <div className={`${props.className ? props.className : ''}`}>
-        <div ref={scrollableRef}>
-          <section className={S.details}>
-            <div className={S.detailsContainer}>
-              <NavigationButton
-                type='cancel'
+    <div className={`${props.className ? props.className : ''}`}>
+      <div ref={scrollableRef}>
+        <section className={S.details}>
+          <div className={S.detailsContainer}>
+            <NavigationButton type='back' />
+            <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
+
+            <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
+              <p>{browser.i18n.getMessage('details_fetch_text')}</p>
+              <ClearLink
+                to='/fetch'
                 state={{
+                  action: PULL_REQUEST_TYPES.SIF_REQUEST,
                   from: 'details',
                   data: {
-                    lastSelectedTagInfo: data?.lastSelectedTagInfo,
-                    searchActive: data?.searchActive,
-                    searchValue: data?.searchValue,
-                    selectedTag: data?.selectedTag
-                  },
-                  scrollPosition: data?.thisTabScrollPosition
+                    itemId: data.item.id,
+                    deviceId: data.item.deviceId,
+                    vaultId: data.item.vaultId,
+                    contentType: data.item.contentType
+                  }
                 }}
-              />
-              <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
-
-              <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
-                <p>{browser.i18n.getMessage('details_fetch_text')}</p>
-                <Link
-                  to='/fetch'
-                  state={{
-                    action: PULL_REQUEST_TYPES.SIF_REQUEST,
-                    from: 'details',
-                    data: {
-                      itemId: data.item.id,
-                      deviceId: data.item.deviceId,
-                      vaultId: data.item.vaultId,
-                      contentType: data.item.constructor.contentType
-                    }
-                  }}
-                  title={browser.i18n.getMessage('details_fetch_title')}
-                >
-                  <ServiceFetchIcon />
-                  <span>{browser.i18n.getMessage('fetch')}</span>
-                </Link>
-              </div>
-
-              {modelComponent}
+                title={browser.i18n.getMessage('details_fetch_title')}
+              >
+                <ServiceFetchIcon />
+                <span>{browser.i18n.getMessage('fetch')}</span>
+              </ClearLink>
             </div>
-          </section>
-        </div>
+
+            {modelComponent}
+          </div>
+        </section>
       </div>
-    </LazyMotion>
+    </div>
   );
 }
 

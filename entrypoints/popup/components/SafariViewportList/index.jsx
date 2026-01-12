@@ -4,57 +4,130 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { ViewportList } from 'react-viewport-list';
-import { useEffect, useRef, useMemo } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { useEffect, useRef, useMemo, useCallback, useLayoutEffect, memo, useState } from 'react';
 import styles from './SafariViewportList.module.scss';
 
+const ITEM_HEIGHT = 66;
+
 /**
- * Safari-optimized wrapper for ViewportList that addresses scrolling glitches
+ * Finds the closest scrollable parent element
+ * @param {HTMLElement} element - Starting element
+ * @returns {HTMLElement|null} Scrollable parent or null
+ */
+const findScrollableParent = element => {
+  if (!element) {
+    return null;
+  }
+
+  let parent = element.parentElement;
+
+  while (parent) {
+    const style = window.getComputedStyle(parent);
+    const overflowY = style.overflowY;
+    const isScrollable = overflowY === 'auto' || overflowY === 'scroll';
+
+    if (isScrollable) {
+      return parent;
+    }
+
+    parent = parent.parentElement;
+  }
+
+  return null;
+};
+
+/**
+ * High-performance virtualized list component optimized for Safari and all browsers
  * @param {Array} items - Array of items to render
- * @param {Function} children - Render function for each item
+ * @param {Function} children - Render function for each item receiving (item, index)
  * @param {number} overscan - Number of items to render outside viewport
  * @param {string} className - Optional className for the wrapper
- * @returns {JSX.Element} Safari-optimized viewport list
+ * @returns {JSX.Element} Virtualized list component
  */
 const SafariViewportList = ({ items, children, overscan = 10, className }) => {
-  const containerRef = useRef(null);
+  const listRef = useRef(null);
+  const scrollElementRef = useRef(null);
+  const scrollMarginRef = useRef(0);
+  const [isInitialized, setIsInitialized] = useState(false);
+
   const isSafari = useMemo(() => {
     const userAgent = navigator.userAgent.toLowerCase();
     return userAgent.includes('safari') && !userAgent.includes('chrome');
   }, []);
 
-  useEffect(() => {
-    if (!isSafari || !containerRef.current) {
-      return;
-    }
-
-    const container = containerRef.current;
-    container.style.webkitOverflowScrolling = 'touch';
-
-    return () => {
-      container.style.webkitOverflowScrolling = 'auto';
-    };
-  }, [isSafari]);
-
   const safariOverscan = isSafari ? Math.max(overscan, 10) : overscan;
-  const scrollThreshold = isSafari ? 100 : 0;
+
+  const getScrollElement = useCallback(() => scrollElementRef.current, []);
+
+  const estimateSize = useCallback(() => ITEM_HEIGHT, []);
+
+  const virtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement,
+    estimateSize,
+    overscan: safariOverscan,
+    scrollMargin: scrollMarginRef.current
+  });
+
+  useLayoutEffect(() => {
+    if (listRef.current && !isInitialized) {
+      const scrollParent = findScrollableParent(listRef.current);
+
+      if (scrollParent && listRef.current) {
+        const parentRect = scrollParent.getBoundingClientRect();
+        const listRect = listRef.current.getBoundingClientRect();
+        const margin = listRect.top - parentRect.top + scrollParent.scrollTop;
+
+        scrollElementRef.current = scrollParent;
+        scrollMarginRef.current = margin;
+        setIsInitialized(true);
+      }
+    }
+  }, [isInitialized]);
+
+  useEffect(() => {
+    if (isInitialized) {
+      virtualizer.measure();
+    }
+  }, [items.length, isInitialized]);
+
+  const virtualItems = virtualizer.getVirtualItems();
+  const totalSize = virtualizer.getTotalSize();
 
   return (
     <div
-      ref={containerRef}
+      ref={listRef}
       className={`${styles.safariViewportList} ${className || ''}`}
+      style={{
+        height: `${totalSize}px`,
+        position: 'relative',
+        width: '100%'
+      }}
     >
-      <ViewportList
-        items={items}
-        overscan={safariOverscan}
-        scrollThreshold={scrollThreshold}
-        withCache={true}
-        initialPrerender={safariOverscan}
-      >
-        {(item, index) => children(item, index)}
-      </ViewportList>
+      {virtualItems.map(virtualItem => {
+        const item = items[virtualItem.index];
+        const itemKey = item?.id || virtualItem.key;
+
+        return (
+          <div
+            key={itemKey}
+            data-index={virtualItem.index}
+            ref={virtualizer.measureElement}
+            style={{
+              left: 0,
+              position: 'absolute',
+              top: 0,
+              transform: `translateY(${virtualItem.start - scrollMarginRef.current}px)`,
+              width: '100%'
+            }}
+          >
+            {children(item, virtualItem.index)}
+          </div>
+        );
+      })}
     </div>
   );
 };
 
-export default SafariViewportList;
+export default memo(SafariViewportList);

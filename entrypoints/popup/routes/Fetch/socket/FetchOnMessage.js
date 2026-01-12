@@ -44,7 +44,7 @@ const FetchOnMessage = async (json, data) => {
         data.sessionKeyForHKDF = res.sessionKeyForHKDF;
         break;
       }
-  
+
       case SOCKET_ACTIONS.PULL_REQUEST: {
         const res = await handlePullRequest(json, data.hkdfSalt, data.sessionKeyForHKDF, data.state);
         data.newSessionId = res.newSessionId;

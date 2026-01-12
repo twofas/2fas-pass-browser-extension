@@ -7,7 +7,13 @@
 export const REQUEST_ACTIONS = Object.freeze({
   AUTO_CLEAR_ACTION: 'autoClearAction', // background, focus, popup
   AUTOFILL: 'autofill', // content
+  AUTOFILL_CARD: 'autofillCard', // content
+  AUTOFILL_CARD_WITH_PERMISSION: 'autofillCardWithPermission', // background
+  AUTOFILL_WITH_PERMISSION: 'autofillWithPermission', // background
   CHECK_AUTOFILL_INPUTS: 'checkAutofillInputs', // content
+  CHECK_AUTOFILL_INPUTS_CARD: 'checkAutofillInputsCard', // content
+  CHECK_IFRAME_PERMISSION: 'checkIframePermission', // content
+  SHOW_CROSS_DOMAIN_CONFIRM: 'showCrossDomainConfirm', // content
   SEND_URL: 'sendUrl', // popup
   MATCHING_LOGINS: 'matchingLogins', // content
   SAVE_PROMPT: 'savePrompt', // content
@@ -25,4 +31,5 @@ export const REQUEST_ACTIONS = Object.freeze({
   TAB_FOCUS: 'tabFocus', // focus, background
   UPDATE_AVAILABLE: 'updateAvailable', // background, this_tab
   FOCUS_CHECK: 'focusCheck', // background, popup, focus
+  NEW_POPUP: 'newPopup', // popup
 });
