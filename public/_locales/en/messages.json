@@ -383,17 +383,9 @@
     "message": "Partial autofill",
     "description": "Title for the notification when card autofill is only partially successful"
   },
-  "notification_card_autofill_year_not_available": {
-    "message": "The expiry year is not available in the form options",
-    "description": "Message when the card expiry year doesn't match any available option in the form's year dropdown"
-  },
-  "notification_card_autofill_month_not_available": {
-    "message": "The expiry month is not available in the form options",
-    "description": "Message when the card expiry month doesn't match any available option in the form's month dropdown"
-  },
-  "notification_card_autofill_expiration_date_not_available": {
-    "message": "The expiry date is not available in the form options",
-    "description": "Message when the card expiry date doesn't match any available option in the form's dropdown"
+  "notification_card_autofill_partial_message": {
+    "message": "Some card details could not be autofilled",
+    "description": "Message when some payment card fields could not be autofilled"
   },
   "notification_card_autofill_no_inputs_title": {
     "message": "No card inputs found",

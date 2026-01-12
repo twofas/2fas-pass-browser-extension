@@ -208,10 +208,11 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     actionData.iframePermissionGranted = true;
 
     const autofillRes = await sendMessageToAllFrames(tabId, actionData);
-    const isOk = autofillRes?.some(frameResponse => frameResponse.status === 'ok');
-    const isPartial = autofillRes?.some(frameResponse => frameResponse.status === 'partial');
+    const relevantResponses = autofillRes?.filter(r => r && r.status && r.message !== 'No input fields found') || [];
+    const isOk = relevantResponses.some(frameResponse => frameResponse.status === 'ok');
+    const isPartial = relevantResponses.some(frameResponse => frameResponse.status === 'partial');
 
-    if (isOk && !isPartial) {
+    if (isOk) {
       const separateWindow = await popupIsInSeparateWindow();
       await closeWindowIfNotInSeparateWindow(separateWindow);
 
@@ -219,6 +220,9 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
         showToast(browser.i18n.getMessage('this_tab_autofill_success'), 'success');
         eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
       }
+    } else if (isPartial) {
+      showToast(browser.i18n.getMessage('this_tab_autofill_some_fields_not_available'), 'info');
+      eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
     } else {
       const toastId = showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
 
