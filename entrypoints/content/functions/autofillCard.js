@@ -527,6 +527,20 @@ const autofillCard = async request => {
     failedCriticalFields.push('securityCode');
   }
 
+  const missingInputFields = [];
+
+  if (hasCardNumberData && !hasCardNumberInput) {
+    missingInputFields.push('cardNumber');
+  }
+
+  if (hasExpirationDateData && !hasExpirationDateInput) {
+    missingInputFields.push('expirationDate');
+  }
+
+  if (hasSecurityCodeData && !hasSecurityCodeInput) {
+    missingInputFields.push('securityCode');
+  }
+
   const anyFieldFilled = filledFields.cardNumber || filledFields.cardholderName ||
                          filledFields.expirationDate || filledFields.securityCode || filledFields.cardIssuer;
 
@@ -535,15 +549,16 @@ const autofillCard = async request => {
       status: 'partial',
       message: 'Some critical fields could not be filled',
       failedFields: failedCriticalFields,
+      missingInputFields,
       filledFields
     };
   }
 
   if (anyFieldFilled) {
-    return { status: 'ok', filledFields };
+    return { status: 'ok', filledFields, missingInputFields };
   }
 
-  return { status: 'error', message: 'No fields were filled', filledFields };
+  return { status: 'error', message: 'No fields were filled', filledFields, missingInputFields };
 };
 
 export default autofillCard;
