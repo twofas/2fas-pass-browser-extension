@@ -161,6 +161,7 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       target: REQUEST_TARGETS.CONTENT,
       autofillType: 'card'
     });
+
     const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
     const needsPermission = crossDomainFrames.length > 0;
 
@@ -169,6 +170,16 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
       const confirmMessage = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
         .replace('DOMAINS', uniqueDomains.join(', '));
+
+      // Focus the tab before showing confirmation dialog
+      try {
+        const tab = await browser.tabs.get(tabId);
+
+        await browser.windows.update(tab.windowId, { focused: true });
+        await browser.tabs.update(tabId, { active: true });
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+      } catch { }
 
       const confirmResult = await sendMessageToTab(tabId, {
         action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,

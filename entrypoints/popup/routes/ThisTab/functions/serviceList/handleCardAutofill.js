@@ -187,41 +187,13 @@ const handleCardAutofill = async (item, navigate) => {
     decryptedSecurityCode = '';
   }
 
-  let iframePermissionGranted = true;
-
-  try {
-    const permissionResults = await sendMessageToAllFrames(tab.id, {
-      action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
-      target: REQUEST_TARGETS.CONTENT,
-      autofillType: 'card'
-    });
-
-    const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
-    const needsPermission = crossDomainFrames.length > 0;
-
-    if (needsPermission) {
-      const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
-
-      const message = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
-        .replace('DOMAINS', uniqueDomains.join(', '));
-
-      iframePermissionGranted = window.confirm(message);
-
-      if (!iframePermissionGranted) {
-        return;
-      }
-    }
-  } catch (e) {
-    await CatchError(e);
-  }
-
   const actionData = {
     action: REQUEST_ACTIONS.AUTOFILL_CARD,
     cardholderName: item.content.cardHolder,
     cardIssuer: item.content.cardIssuer,
     target: REQUEST_TARGETS.CONTENT,
     cryptoAvailable: cryptoAvailableRes.cryptoAvailable,
-    iframePermissionGranted
+    iframePermissionGranted: true
   };
 
   if (sifDecrypt) {
@@ -244,6 +216,42 @@ const handleCardAutofill = async (item, navigate) => {
   encryptedCardNumberB64 = null;
   encryptedExpirationDateB64 = null;
   encryptedSecurityCodeB64 = null;
+
+  // Check for cross-domain iframes that need permission
+  try {
+    const permissionResults = await sendMessageToAllFrames(tab.id, {
+      action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
+      target: REQUEST_TARGETS.CONTENT,
+      autofillType: 'card'
+    });
+
+    const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
+    const needsPermission = crossDomainFrames.length > 0;
+
+    if (needsPermission) {
+      const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
+
+      // Store action data and delegate to background script
+      // This is necessary because focusing the tab will close the popup
+      const storageKey = `session:autofillCardData-${tab.id}`;
+
+      await storage.setItem(storageKey, JSON.stringify({
+        actionData
+      }));
+
+      browser.runtime.sendMessage({
+        action: REQUEST_ACTIONS.AUTOFILL_CARD_WITH_PERMISSION,
+        target: REQUEST_TARGETS.BACKGROUND,
+        tabId: tab.id,
+        storageKey,
+        domains: uniqueDomains
+      });
+
+      return;
+    }
+  } catch (e) {
+    await CatchError(e);
+  }
 
   let res;
 

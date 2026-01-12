@@ -117,6 +117,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       case REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM: {
         const message = request.message || '';
         const userConfirmed = window.confirm(message);
+
         sendResponse({ status: 'ok', confirmed: userConfirmed });
         break;
       }

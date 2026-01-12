@@ -55,24 +55,25 @@ const filterDeniedKeywords = input => {
  */
 const getPaymentCardIssuerInputs = () => {
   const issuerSelector = paymentCardIssuerSelectors().join(', ');
-
   const regularElements = Array.from(document.querySelectorAll(issuerSelector));
-
   const shadowRoots = getShadowRoots();
+
   const shadowElements = shadowRoots.flatMap(
     root => Array.from(root.querySelectorAll(issuerSelector))
   );
 
-  const allElements = [...regularElements, ...shadowElements]
-    .filter(element => isVisible(element))
-    .filter(uniqueElementOnly)
-    .filter(filterConflictingAutocomplete)
-    .filter(filterDeniedKeywords);
+  const allElements = [...regularElements, ...shadowElements];
+  const afterVisible = allElements.filter(element => isVisible(element));
+  const afterUnique = afterVisible.filter(uniqueElementOnly);
+  const afterConflicting = afterUnique.filter(filterConflictingAutocomplete);
+  const filteredElements = afterConflicting.filter(filterDeniedKeywords);
 
-  return allElements.map(element => ({
+  const result = filteredElements.map(element => ({
     element,
     isSelect: element.tagName.toLowerCase() === 'select'
   }));
+
+  return result;
 };
 
 export default getPaymentCardIssuerInputs;

@@ -211,17 +211,19 @@ const getPaymentCardNumberInputs = () => {
   const cardNumberSelector = paymentCardNumberSelectors().join(', ');
   const regularInputs = Array.from(document.querySelectorAll(cardNumberSelector));
   const shadowRoots = getShadowRoots();
+
   const shadowInputs = shadowRoots.flatMap(
     root => Array.from(root.querySelectorAll(cardNumberSelector))
   );
-  const allInputs = [...regularInputs, ...shadowInputs];
 
-  return allInputs
-    .filter(input => isVisible(input))
-    .filter(uniqueElementOnly)
-    .filter(filterConflictingAttributes)
-    .filter(filterDeniedKeywords)
-    .filter(filterOtherCardFields);
+  const allInputs = [...regularInputs, ...shadowInputs];
+  const afterVisible = allInputs.filter(input => isVisible(input));
+  const afterUnique = afterVisible.filter(uniqueElementOnly);
+  const afterConflicting = afterUnique.filter(filterConflictingAttributes);
+  const afterDenied = afterConflicting.filter(filterDeniedKeywords);
+  const result = afterDenied.filter(filterOtherCardFields);
+
+  return result;
 };
 
 export default getPaymentCardNumberInputs;

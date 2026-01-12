@@ -123,13 +123,15 @@ const parseExpirationDate = expirationDate => {
   const yearFull = year.length === 2 ? '20' + year : year;
   const yearShort = year.length === 4 ? year.substring(2, 4) : year;
 
-  return {
+  const result = {
     month: month.padStart(2, '0'),
     year,
     monthNumeric,
     yearFull,
     yearShort
   };
+
+  return result;
 };
 
 /**
@@ -451,7 +453,9 @@ const autofillCard = async request => {
     if (cardNumberValue) {
       const cardNumberWithoutSpaces = cardNumberValue.replace(/\s/g, '');
       cardNumberValue = null;
-      cardNumberInputs.forEach(input => inputSetValue(input, cardNumberWithoutSpaces, cardAutofillOptions));
+      cardNumberInputs.forEach(input => {
+        inputSetValue(input, cardNumberWithoutSpaces, cardAutofillOptions);
+      });
       filledFields.cardNumber = true;
     }
   }
@@ -479,7 +483,9 @@ const autofillCard = async request => {
       const parsedDate = parseExpirationDate(expirationDateValue);
       expirationDateValue = null;
 
-      expirationResults = expirationDateInputs.map(inputData => setExpirationDateValue(inputData, parsedDate));
+      expirationResults = expirationDateInputs.map(inputData => {
+        return setExpirationDateValue(inputData, parsedDate);
+      });
       filledFields.expirationDate = isExpirationDateFilled(expirationResults);
     }
   }
@@ -502,14 +508,18 @@ const autofillCard = async request => {
     }
 
     if (securityCodeValue) {
-      securityCodeInputs.forEach(input => inputSetValue(input, securityCodeValue, cardAutofillOptions));
+      securityCodeInputs.forEach(input => {
+        inputSetValue(input, securityCodeValue, cardAutofillOptions);
+      });
       securityCodeValue = null;
       filledFields.securityCode = true;
     }
   }
 
   if (canFillCardIssuer) {
-    cardIssuerInputs.forEach(inputData => setCardIssuerValue(inputData, request.cardIssuer));
+    cardIssuerInputs.forEach(inputData => {
+      setCardIssuerValue(inputData, request.cardIssuer);
+    });
     filledFields.cardIssuer = true;
   }
 

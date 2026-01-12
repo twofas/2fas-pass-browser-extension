@@ -119,21 +119,20 @@ const getExpirationDateType = element => {
 */
 const getPaymentCardExpirationDateInputs = () => {
   const expirationDateSelector = paymentCardExpirationDateSelectors().join(', ');
-
   const regularElements = Array.from(document.querySelectorAll(expirationDateSelector));
-
   const shadowRoots = getShadowRoots();
+
   const shadowElements = shadowRoots.flatMap(
     root => Array.from(root.querySelectorAll(expirationDateSelector))
   );
 
-  const allElements = [...regularElements, ...shadowElements]
-    .filter(element => isVisible(element))
-    .filter(uniqueElementOnly)
-    .filter(filterConflictingAutocomplete)
-    .filter(filterDeniedKeywords);
+  const allElements = [...regularElements, ...shadowElements];
+  const afterVisible = allElements.filter(element => isVisible(element));
+  const afterUnique = afterVisible.filter(uniqueElementOnly);
+  const afterConflicting = afterUnique.filter(filterConflictingAutocomplete);
+  const filteredElements = afterConflicting.filter(filterDeniedKeywords);
 
-  return allElements.map(element => {
+  const result = filteredElements.map(element => {
     const tagName = element.tagName.toLowerCase();
 
     return {
@@ -142,6 +141,8 @@ const getPaymentCardExpirationDateInputs = () => {
       isSelect: tagName === 'select'
     };
   });
+
+  return result;
 };
 
 export default getPaymentCardExpirationDateInputs;
