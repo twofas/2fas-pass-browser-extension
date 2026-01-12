@@ -42,36 +42,11 @@ const isVisible = domElement => {
     return false;
   }
 
-  const isInIframe = window.self !== window.top;
-
-  if (!isInIframe) {
-    const documentHeight = Math.max(
-      document.body.scrollHeight,
-      document.body.offsetHeight,
-      document.documentElement.clientHeight,
-      document.documentElement.scrollHeight,
-      document.documentElement.offsetHeight
-    );
-    const documentWidth = Math.max(
-      document.body.scrollWidth,
-      document.body.offsetWidth,
-      document.documentElement.clientWidth,
-      document.documentElement.scrollWidth,
-      document.documentElement.offsetWidth
-    );
-
-    if (rect.bottom < 0 || rect.right < 0) {
-      return false;
-    }
-
-    if (rect.top > documentHeight || rect.left > documentWidth) {
-      return false;
-    }
-  } else {
-    if (rect.bottom < 0 || rect.right < 0) {
-      return false;
-    }
-  }
+  // Note: We intentionally do NOT check viewport position here.
+  // Elements scrolled out of view (rect.bottom < 0 or rect.top > viewportHeight)
+  // are still valid targets for autofill - they exist in the DOM and can receive values.
+  // We only want to filter out elements that are truly hidden (display:none,
+  // visibility:hidden, zero dimensions, clipped, etc.).
 
   let parent = domElement.parentElement;
 

@@ -52,6 +52,18 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   const confirmMessage = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
     .replace('DOMAINS', domains.join(', '));
 
+  // Focus the tab before showing confirmation dialog
+  // window.confirm() requires the tab to be active/focused to show the dialog
+  try {
+    const tab = await browser.tabs.get(tabId);
+
+    await browser.windows.update(tab.windowId, { focused: true });
+    await browser.tabs.update(tabId, { active: true });
+
+    // Small delay to ensure tab is fully focused before showing dialog
+    await new Promise(resolve => setTimeout(resolve, 100));
+  } catch { }
+
   let confirmResult;
 
   try {

@@ -29,7 +29,7 @@ const checkAutofillInputsCard = () => {
 
   const canAutofillCriticalFields = canAutofillCardNumber && canAutofillExpirationDate && canAutofillSecurityCode;
 
-  return {
+  const result = {
     canAutofillCardNumber,
     canAutofillCardholderName: cardholderNameInputs.length > 0,
     canAutofillExpirationDate,
@@ -42,6 +42,8 @@ const checkAutofillInputsCard = () => {
       hasSeparateInputs: hasMonthInput && hasYearInput
     }
   };
+
+  return result;
 };
 
 export default checkAutofillInputsCard;

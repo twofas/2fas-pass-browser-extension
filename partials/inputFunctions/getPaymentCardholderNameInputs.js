@@ -313,7 +313,6 @@ const isInPaymentContext = input => {
 */
 const getPaymentCardholderNameInputs = () => {
   const cardholderNameSelector = paymentCardholderNameSelectors().join(', ');
-
   const regularCardholderInputs = Array.from(document.querySelectorAll(cardholderNameSelector));
 
   const regularBillingInputs = getBillingNameInputsFromRoot(document)
@@ -345,16 +344,17 @@ const getPaymentCardholderNameInputs = () => {
     ...shadowLabelInputs
   ];
 
-  const filteredInputs = allInputs
-    .filter(input => isVisible(input))
-    .filter(uniqueElementOnly)
-    .filter(filterConflictingAutocomplete)
-    .filter(filterDeniedKeywords);
+  const afterVisible = allInputs.filter(input => isVisible(input));
+  const afterUnique = afterVisible.filter(uniqueElementOnly);
+  const afterConflicting = afterUnique.filter(filterConflictingAutocomplete);
+  const filteredInputs = afterConflicting.filter(filterDeniedKeywords);
 
-  return filteredInputs.map(element => ({
+  const result = filteredInputs.map(element => ({
     element,
     type: getNameFieldType(element)
   }));
+
+  return result;
 };
 
 export default getPaymentCardholderNameInputs;

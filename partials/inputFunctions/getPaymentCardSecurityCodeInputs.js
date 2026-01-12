@@ -55,19 +55,20 @@ const filterDeniedKeywords = input => {
 */
 const getPaymentCardSecurityCodeInputs = () => {
   const securityCodeSelector = paymentCardSecurityCodeSelectors().join(', ');
-
   const regularInputs = Array.from(document.querySelectorAll(securityCodeSelector));
-
   const shadowRoots = getShadowRoots();
+
   const shadowInputs = shadowRoots.flatMap(
     root => Array.from(root.querySelectorAll(securityCodeSelector))
   );
 
-  return [...regularInputs, ...shadowInputs]
-    .filter(input => isVisible(input))
-    .filter(uniqueElementOnly)
-    .filter(filterConflictingAutocomplete)
-    .filter(filterDeniedKeywords);
+  const allInputs = [...regularInputs, ...shadowInputs];
+  const afterVisible = allInputs.filter(input => isVisible(input));
+  const afterUnique = afterVisible.filter(uniqueElementOnly);
+  const afterConflicting = afterUnique.filter(filterConflictingAutocomplete);
+  const result = afterConflicting.filter(filterDeniedKeywords);
+
+  return result;
 };
 
 export default getPaymentCardSecurityCodeInputs;

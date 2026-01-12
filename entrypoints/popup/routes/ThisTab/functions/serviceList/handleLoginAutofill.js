@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission } from '@/partials/functions';
+import { sendMessageToAllFrames, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, sendMessageToTab } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import Login from '@/models/itemModels/Login';
@@ -149,8 +149,21 @@ const handleLoginAutofill = async (item, navigate) => {
     decryptedPassword = '';
   }
 
-  let iframePermissionGranted = true;
+  const actionData = {
+    action: REQUEST_ACTIONS.AUTOFILL,
+    username: item.content.username,
+    target: REQUEST_TARGETS.CONTENT,
+    cryptoAvailable: cryptoAvailableRes.cryptoAvailable,
+    iframePermissionGranted: true
+  };
 
+  if (passwordDecrypt) {
+    actionData.password = encryptedValueB64;
+  }
+
+  encryptedValueB64 = null;
+
+  // Check for cross-domain iframes that need permission
   try {
     const permissionResults = await sendMessageToAllFrames(tab.id, {
       action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
@@ -164,28 +177,28 @@ const handleLoginAutofill = async (item, navigate) => {
     if (needsPermission) {
       const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
 
-      const message = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
-        .replace('DOMAINS', uniqueDomains.join(', '));
+      // Store action data and delegate to background script
+      // This is necessary because focusing the tab will close the popup
+      const storageKey = `session:autofillData-${tab.id}`;
 
-      iframePermissionGranted = window.confirm(message);
+      await storage.setItem(storageKey, JSON.stringify({
+        actionData
+      }));
+
+      browser.runtime.sendMessage({
+        action: REQUEST_ACTIONS.AUTOFILL_WITH_PERMISSION,
+        target: REQUEST_TARGETS.BACKGROUND,
+        tabId: tab.id,
+        storageKey,
+        domains: uniqueDomains
+      });
+
+      return;
     }
   } catch (e) {
     await CatchError(e);
   }
 
-  const actionData = {
-    action: REQUEST_ACTIONS.AUTOFILL,
-    username: item.content.username,
-    target: REQUEST_TARGETS.CONTENT,
-    cryptoAvailable: cryptoAvailableRes.cryptoAvailable,
-    iframePermissionGranted
-  };
-
-  if (passwordDecrypt) {
-    actionData.password = encryptedValueB64;
-  }
-
-  encryptedValueB64 = null;
   let res;
 
   try {
