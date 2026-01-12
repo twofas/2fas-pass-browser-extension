@@ -137,7 +137,7 @@ function PaymentCardDetailsView(props) {
       content: {}
     };
 
-    if (data.item.isT3orT2WithSif) {
+    if (props.originalItem?.isT3orT2WithSif) {
       stateData.sifFetched = true;
     }
 

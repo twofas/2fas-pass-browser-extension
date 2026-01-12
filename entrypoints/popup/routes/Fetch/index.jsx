@@ -60,6 +60,8 @@ function Fetch(props) {
   const location = useLocation();
   const { state } = location;
 
+  console.log(state);
+
   const navigate = useNavigate();
 
   let device;
