@@ -18,7 +18,7 @@
   position: fixed;
   text-align: center;
   top: 0;
-  transition: opacity .3s ease-in-out;
+  transition: opacity v.$anim;
   width: 100vw;
   z-index: 9999;
 
@@ -53,7 +53,7 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, .1);
     padding: 12px 20px;
     transform: translateY(20px);
-    transition: transform .3s ease-in-out;
+    transition: transform v.$anim;
     width: 80vw;
 
     @include m.darkMode {

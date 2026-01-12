@@ -5,8 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { Link } from 'react-router';
-import { lazy, useRef, Suspense } from 'react';
+import { useRef } from 'react';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import ExtensionName from './components/ExtensionName';
 import Shortcut from './components/Shortcut';
@@ -16,8 +15,8 @@ import SavePasswordPrompt from './components/SavePasswordPrompt';
 import ContextMenu from './components/ContextMenu';
 import Logs from './components/Logs';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-
-const MenuArrowIcon = lazy(() => import('@/assets/popup-window/menu-arrow.svg?react'));
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
 
 /**
 * Function to render the Settings Preferences component.
@@ -32,12 +31,8 @@ function SettingsPreferences (props) {
     <div className={`${props.className ? props.className : ''}`}>
       <div ref={scrollableRef}>
         <section className={S.settings}>
-          <Suspense fallback={null}>
-            <NavigationButton type='back' />
-          </Suspense>
-          <Suspense fallback={null}>
-            <NavigationButton type='cancel' />
-          </Suspense>
+          <NavigationButton type='back' />
+          <NavigationButton type='cancel' />
 
           <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
             <div className={S.settingsSubmenu}>
@@ -64,12 +59,10 @@ function SettingsPreferences (props) {
                 <div className={S.settingsDangerZone}>
                   <h4>{browser.i18n.getMessage('settings_danger_zone')}</h4>
 
-                  <Link to='/settings/preferences/reset' className={S.settingsDangerZoneLink}>
+                  <ClearLink to='/settings/preferences/reset' className={S.settingsDangerZoneLink}>
                     <span>{browser.i18n.getMessage('settings_danger_zone_reset')}</span>
-                    <Suspense fallback={null}>
-                      <MenuArrowIcon />
-                    </Suspense>
-                  </Link>
+                    <MenuArrowIcon />
+                  </ClearLink>
                 </div>
               </div>
             </div>

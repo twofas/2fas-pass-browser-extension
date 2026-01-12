@@ -128,7 +128,7 @@
     "description": "Option to clear data after 60 minutes of inactivity"
   },
   "settings_idle_lock_header": {
-    "message": "Automatically lock the Browser Extension when idle",
+    "message": "Automatic lock when idle",
     "description": "Header for the idle lock settings"
   },
   "settings_idle_lock_description": {
@@ -184,7 +184,7 @@
     "description": "Description for configuring the extension shortcut"
   },
   "settings_shortcut_firefox_tooltip": {
-    "message": "To set or change this shortcut, go to your browser settings, extensions, then click on the gear icon and select “Manage Extension Shortcuts.”",
+    "message": "You can set or change this shortcut in your browser settings.",
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_shortcut_safari_tooltip": {
@@ -198,10 +198,6 @@
   "settings_push_custom": {
     "message": "Custom 2FAS Pass Notifications",
     "description": "Option to use custom notifications from 2FAS Pass"
-  },
-  "settings_push_notifications_changing_success": {
-    "message": "Push notification settings have been saved",
-    "description": "Message displayed when push notification settings are successfully saved"
   },
   "settings_notifications_header": {
     "message": "Notifications",

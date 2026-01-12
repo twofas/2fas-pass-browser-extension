@@ -18,14 +18,18 @@ import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready'
 */
 const sendFrontEndPushAction = async (notificationObject, tabID, timeout) => {
   await injectCSIfNotAlready(tabID, REQUEST_TARGETS.CONTENT);
-  
-  return browser.tabs.sendMessage(tabID, {
-    action: REQUEST_ACTIONS.NOTIFICATION,
-    title: notificationObject.Title,
-    message: notificationObject.Message,
-    timeout,
-    target: REQUEST_TARGETS.CONTENT
-  });
+
+  try {
+    return await browser.tabs.sendMessage(tabID, {
+      action: REQUEST_ACTIONS.NOTIFICATION,
+      title: notificationObject.Title,
+      message: notificationObject.Message,
+      timeout,
+      target: REQUEST_TARGETS.CONTENT
+    });
+  } catch {
+    return undefined;
+  }
 };
 
 export default sendFrontEndPushAction;

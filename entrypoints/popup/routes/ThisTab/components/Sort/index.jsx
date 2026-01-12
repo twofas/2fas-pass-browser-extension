@@ -4,50 +4,14 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/Sort.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { lazy, useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, memo, useCallback } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
+import SortIcon from '@/assets/popup-window/sort.svg?react';
+import SortCustomOption from './components/SortCustomOption';
 
-const SortIcon = lazy(() => import('@/assets/popup-window/sort.svg?react'));
-
-const CustomOption = option => {
-  const handleClick = e => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    option.selectOption(option.data);
-  };
-
-  if (option.data.isDisabled) {
-    return (
-      <div className='react-select-tags__option react-select-tags__option_disabled'>
-        <span
-          className={option.data.value === null ? 'react-select-tags__option_clear' : ''}
-          title={option.data.label}
-        >
-          {option.data.label}
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    <div className='react-select-tags__option' onClick={handleClick}>
-      <span
-        className={option.data.value === null ? 'react-select-tags__option_clear' : ''}
-        title={option.data.label}
-      >
-        {option.data.label}
-      </span>
-      {option.data.value === null ? null : (
-        <span className={`react-select-tags__option-circle ${option.isSelected ? 'selected' : ''}`}>
-          <span></span>
-        </span>
-      )}
-    </div>
-  );
-};
+const selectComponents = { Option: SortCustomOption };
 
 const options = [
   { value: 'az', label: browser.i18n.getMessage('sort_az') },
@@ -56,31 +20,18 @@ const options = [
   { value: 'oldest', label: browser.i18n.getMessage('sort_oldest') }
 ];
 
-/** 
-* Function to render the Sort component.
+/**
+* Sort component for selecting item ordering with dropdown menu.
 * @param {Object} props - The component props.
-* @return {JSX.Element} The rendered component.
+* @param {string} props.selectedSort - Currently selected sort value.
+* @param {Function} props.onSortChange - Callback when sort selection changes.
+* @param {boolean} props.forceClose - Flag to force close the dropdown menu.
+* @return {JSX.Element} The rendered sort dropdown component.
 */
 const Sort = ({ selectedSort, onSortChange, forceClose }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const selectRef = useRef(null);
   const buttonRef = useRef(null);
-
-  const handleButtonClick = () => {
-    setIsMenuOpen(!isMenuOpen);
-
-    if (!isMenuOpen && selectRef.current) {
-      selectRef.current.focus();
-    }
-  };
-
-  const handleSelectChange = (option) => {
-    if (onSortChange) {
-      onSortChange(option ? option.value : null);
-    }
-
-    setIsMenuOpen(false);
-  };
 
   const selectedOption = useMemo(() => {
     if (!selectedSort) {
@@ -88,7 +39,27 @@ const Sort = ({ selectedSort, onSortChange, forceClose }) => {
     }
 
     return options.find(opt => opt.value === selectedSort) || null;
-  }, [selectedSort, options]);
+  }, [selectedSort]);
+
+  const handleButtonClick = useCallback(() => {
+    setIsMenuOpen(prev => !prev);
+
+    if (!isMenuOpen && selectRef.current) {
+      selectRef.current.focus();
+    }
+  }, [isMenuOpen]);
+
+  const handleSelectChange = useCallback(option => {
+    if (onSortChange) {
+      onSortChange(option ? option.value : null);
+    }
+
+    setIsMenuOpen(false);
+  }, [onSortChange]);
+
+  const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
+
+  const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
 
   useEffect(() => {
     if (forceClose) {
@@ -97,37 +68,33 @@ const Sort = ({ selectedSort, onSortChange, forceClose }) => {
   }, [forceClose]);
 
   return (
-    <>
-      <div className={S.thisTabAllLoginsSearchContainerTags} style={{ position: 'relative' }}>
-        <button
-          ref={buttonRef}
-          className={`${bS.btn} ${bS.btnFilter} ${bS.sort} ${isMenuOpen ? bS.btnFilterActive : ''}`}
-          onClick={handleButtonClick}
-          title={browser.i18n.getMessage('filters_button_title')}
-        >
-          <SortIcon />
-        </button>
-        
-        <AdvancedSelect
-          ref={selectRef}
-          options={options}
-          value={selectedOption}
-          onChange={handleSelectChange}
-          menuIsOpen={isMenuOpen}
-          onMenuClose={() => setIsMenuOpen(false)}
-          onMenuOpen={() => setIsMenuOpen(true)}
-          className='react-select-pass-dropdown'
-          classNamePrefix='react-select-tags'
-          isClearable={false}
-          isSearchable={false}
-          triggerRef={buttonRef}
-          components={{
-            Option: CustomOption
-          }}
-        />
-      </div>
-    </>
+    <div className={S.sort}>
+      <button
+        ref={buttonRef}
+        className={`${bS.btn} ${bS.btnFilter} ${bS.sort} ${isMenuOpen ? bS.btnFilterActive : ''}`}
+        onClick={handleButtonClick}
+        title={browser.i18n.getMessage('filters_button_title')}
+      >
+        <SortIcon />
+      </button>
+
+      <AdvancedSelect
+        ref={selectRef}
+        options={options}
+        value={selectedOption}
+        onChange={handleSelectChange}
+        menuIsOpen={isMenuOpen}
+        onMenuClose={handleMenuClose}
+        onMenuOpen={handleMenuOpen}
+        className='react-select-pass-dropdown'
+        classNamePrefix='react-select-tags'
+        isClearable={false}
+        isSearchable={false}
+        triggerRef={buttonRef}
+        components={selectComponents}
+      />
+    </div>
   );
 };
 
-export default Sort;
+export default memo(Sort);

@@ -1,0 +1,57 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "@/partials/global-styles/variables" as v;
+@use "@/partials/global-styles/mixins" as m;
+
+.all-items-list {
+  -webkit-backface-visibility: hidden;
+  -webkit-overflow-scrolling: touch;
+  backface-visibility: hidden;
+  position: relative;
+
+  &::-webkit-scrollbar {
+    -webkit-appearance: none;
+  }
+
+  &.no-data {
+    border: 0 !important;
+    padding: 6px 0 0;
+
+    div {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      gap: 0 4px;
+      justify-content: center;
+
+      svg {
+        height: 16px;
+        stroke: v.$object-light;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5;
+        width: auto;
+
+        @include m.darkMode {
+          stroke: v.$object-dark;
+        }
+      }
+
+      span {
+        color: v.$secondary-text-light;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1;
+        text-align: center;
+
+        @include m.darkMode {
+          color: v.$secondary-text-dark;
+        }
+      }
+    }
+  }
+}

@@ -56,12 +56,12 @@ function Push () {
       setPush(value);
 
       await storage.setItem('local:nativePush', value);
-      showToast(browser.i18n.getMessage('settings_push_notifications_changing_success'), 'success');
+      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:nativePush') || defaultPushValue;
       setPush(previousValue);
 
-      showToast(browser.i18n.getMessage('error_saving_notification_settings'), 'error');
+      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
       await CatchError(e);
     }
   }, [isInitialized, defaultPushValue]);

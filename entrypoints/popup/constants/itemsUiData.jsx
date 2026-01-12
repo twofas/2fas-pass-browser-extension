@@ -4,12 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { lazy } from 'react';
-
-const LoginIcon = lazy(() => import('@/assets/popup-window/items/login.svg?react'));
-const CreditCardIcon = lazy(() => import('@/assets/popup-window/items/credit-card.svg?react'));
-const SecureNoteIcon = lazy(() => import('@/assets/popup-window/items/secure-note.svg?react'));
-const SSHKeyIcon = lazy(() => import('@/assets/popup-window/items/ssh-key.svg?react'));
+import LoginIcon from '@/assets/popup-window/items/login.svg?react';
+import PaymentCardIcon from '@/assets/popup-window/items/payment-card.svg?react';
+import SecureNoteIcon from '@/assets/popup-window/items/secure-note.svg?react';
+import SSHKeyIcon from '@/assets/popup-window/items/ssh-key.svg?react';
 
 const itemsUiData = {
   Login: {
@@ -17,10 +15,10 @@ const itemsUiData = {
     selectClassName: 'icon-item-login',
     svg: <LoginIcon />
   },
-  CreditCard: {
-    label: browser.i18n.getMessage('credit_card'),
-    selectClassName: 'icon-item-credit-card',
-    svg: <CreditCardIcon />
+  PaymentCard: {
+    label: browser.i18n.getMessage('payment_card'),
+    selectClassName: 'icon-item-payment-card',
+    svg: <PaymentCardIcon />
   },
   SecureNote: {
     label: browser.i18n.getMessage('secure_note'),

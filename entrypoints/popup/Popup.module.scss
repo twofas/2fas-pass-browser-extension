@@ -45,7 +45,7 @@
   background: v.$primary-bg-light;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 64px);
+  height: 100vh;
   min-height: 600px;
   min-width: 400px;
   overflow: hidden;
@@ -84,7 +84,60 @@
     .pass-screen {
       > div {
         padding: 11px 12px 43px;
+        scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+
+        @include m.darkMode {
+          scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+        }
       }
+    }
+  }
+
+  :global(body.firefox.os-windows) & {
+    .pass-screen {
+      > div {
+        padding: 11px 12px 43px;
+        scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+      }
+    }
+  }
+
+  :global(body.firefox.os-windows.theme-dark) & {
+    .pass-screen {
+      > div {
+        scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+      }
+    }
+  }
+
+  @media (prefers-color-scheme: light) {
+    :global(body.firefox.os-windows.theme-unset) & {
+      .pass-screen {
+        > div {
+          scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+        }
+      }
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(body.firefox.os-windows.theme-unset) & {
+      .pass-screen {
+        > div {
+          scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+        }
+      }
+    }
+  }
+
+  &:global(.safari) {
+    *::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background-clip: padding-box;
+      border-right: 1px solid transparent;
     }
   }
 
@@ -106,6 +159,18 @@
   &.pass-non-separate-window {
     max-width: 400px !important;
     width: 400px !important;
+  }
+
+  &.scrollable {
+    pointer-events: auto;
+  }
+
+  :global(body.firefox:not(.os-windows)) &.scrollable {
+    .pass-screen {
+      > div {
+        padding-right: 0 !important;
+      }
+    }
   }
 
   &.pass-error {

@@ -21,6 +21,24 @@
   border-radius: 4px;
 }
 
+:global(html.firefox.theme-light) {
+  scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+}
+
+:global(html.firefox.theme-dark) {
+  scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+}
+
+:global(html.firefox.theme-unset) {
+  @media (prefers-color-scheme: light) {
+    scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+  }
+}
+
 :global(body.theme-light) {
   &::-webkit-scrollbar,
   *::-webkit-scrollbar {
@@ -81,7 +99,7 @@
   min-height: 100vh;
   opacity: 0;
   position: relative;
-  transition: opacity .2s ease-in-out;
+  transition: opacity v.$anim;
   width: 100%;
 
   @include m.darkMode {
@@ -208,7 +226,7 @@
                   left: 50%;
                   opacity: 0;
                   padding: 10px 11px;
-                  transition: opacity .3s ease-in-out;
+                  transition: opacity v.$anim;
                   transform: translateX(-50%);
                   pointer-events: none;
                   position: absolute;
@@ -262,7 +280,7 @@
                     stroke-width: 2px;
                     stroke-linecap: square;
                     stroke-linejoin: round;
-                    transition: stroke .3s ease-in-out;
+                    transition: stroke v.$anim;
                     width: auto;
 
                     @include m.darkMode {
@@ -282,7 +300,7 @@
                     line-height: 1.4;
                     text-align: center;
                     text-transform: uppercase;
-                    transition: color .3s ease-in-out;
+                    transition: color v.$anim;
 
                     @include m.darkMode {
                       color: v.$primary-text-dark;
@@ -595,7 +613,7 @@
               top: 50%;
               transform: translate(-50%, -50%);
               transform-origin: top left;
-              transition: scale .3s ease-in-out;
+              transition: scale .3s ease-out;
               width: 120px;
 
               @include m.darkMode {
@@ -832,7 +850,7 @@
         display: inline-flex;
         gap: 0 10px;
         padding: 8px 10px;
-        transition: background-color .3s ease-in-out;
+        transition: background-color v.$anim;
 
         @include m.darkMode {
           background-color: v.$hover-color-dark;
@@ -911,7 +929,7 @@
       height: 100%;
       opacity: 0;
       pointer-events: none;
-      transition: opacity .3s ease-in-out;
+      transition: opacity v.$anim;
 
       @media all and (max-width: 800px) {
         display: none;
@@ -969,7 +987,7 @@
             opacity: 0;
             padding: 10px 11px;
             pointer-events: none;
-            transition: opacity .3s ease-in-out;
+            transition: opacity v.$anim;
             transform: translateX(-50%);
             position: absolute;
 
@@ -1021,7 +1039,7 @@
               stroke-width: 2px;
               stroke-linecap: square;
               stroke-linejoin: round;
-              transition: stroke .3s ease-in-out;
+              transition: stroke v.$anim;
               width: auto;
 
               @include m.darkMode {
@@ -1041,7 +1059,7 @@
               line-height: 1.4;
               text-align: center;
               text-transform: uppercase;
-              transition: color .3s ease-in-out;
+              transition: color v.$anim;
 
               @include m.darkMode {
                 color: v.$primary-text-dark;

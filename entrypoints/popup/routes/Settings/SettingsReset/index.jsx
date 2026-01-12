@@ -7,13 +7,12 @@
 import S from '../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useNavigate } from 'react-router';
-import { lazy, useRef } from 'react';
+import { useRef } from 'react';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
-
-const WarningIconLight = lazy(() => import('@/assets/popup-window/warning-light.svg?react'));
-const WarningIconDark = lazy(() => import('@/assets/popup-window/warning-dark.svg?react'));
+import WarningIconLight from '@/assets/popup-window/warning-light.svg?react';
+import WarningIconDark from '@/assets/popup-window/warning-dark.svg?react';
 
 /**
 * Function to reset the extension.

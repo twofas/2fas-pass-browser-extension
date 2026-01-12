@@ -15,10 +15,6 @@
     "message": "Sort",
     "description": "Label for the sort functionality"
   },
-  "this_tab_search_placeholder": {
-    "message": "Search among %AMOUNT% Items",
-    "description": "Placeholder text for the search input showing the number of available items"
-  },
   "this_tab_more_details": {
     "message": "View details",
     "description": "Button label to view more details about a login item"
@@ -31,6 +27,10 @@
     "message": "Forget this note",
     "description": "Button label to forget the saved secure note"
   },
+  "this_tab_more_forget_payment_card": {
+    "message": "Forget this card",
+    "description": "Button label to forget the saved payment card"
+  },
   "this_tab_more_uris": {
     "message": "Website URL(s):",
     "description": "Label for displaying associated website URLs of a login item"
@@ -38,10 +38,6 @@
   "this_tab_copy_to_clipboard": {
     "message": "Copy to clipboard",
     "description": "Button label to copy data to the clipboard"
-  },
-  "this_tab_no_search_results": {
-    "message": "No search results. Please try again.",
-    "description": "Message displayed when no search results are found"
   },
   "this_tab_autofill_success": {
     "message": "Autofill successful",
@@ -51,8 +47,12 @@
     "message": "Username autofilled but no password found",
     "description": "Message displayed when no password is found for autofill"
   },
+  "this_tab_autofill_fetch_password": {
+    "message": "Username autofilled. Fetch password from device to complete.",
+    "description": "Message displayed when username is autofilled for a Highly Secret item that requires fetching password from device"
+  },
   "this_tab_autofill_no_username_and_password": {
-    "message": "No username and password found. Autofill not possible.",
+    "message": "No username and password found.",
     "description": "Message displayed when no username and password are found for autofill"
   },
   "this_tab_can_t_autofill": {
@@ -64,8 +64,8 @@
     "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
   },
   "this_tab_can_t_autofill_t2_failed": {
-    "message": "Browser Extension can’t autofill the form.",
-    "description": "Message displayed when autofill operation fails completely"
+    "message": "Browser Extension can't fully autofill the form.",
+    "description": "Message displayed when autofill operation fails or is incomplete"
   },
   "this_tab_can_t_find_inputs": {
     "message": "No input field found. Can't autofill Item details.",
@@ -95,32 +95,36 @@
     "message": "Fetch note",
     "description": "Button label to fetch the text from the mobile app"
   },
+  "this_tab_copy_card_number": {
+    "message": "Copy card number",
+    "description": "Button label to copy the card number to the clipboard"
+  },
+  "this_tab_fetch_card_info": {
+    "message": "Fetch card info",
+    "description": "Button label to fetch the card info from the mobile app"
+  },
+  "this_tab_copy_card_security_code": {
+    "message": "Copy security code",
+    "description": "Button label to copy the security code to the clipboard"
+  },
+  "this_tab_fetch_card_security_code": {
+    "message": "Fetch security code",
+    "description": "Button label to fetch the security code from the mobile app"
+  },
   "this_tab_more_actions": {
     "message": "More actions",
     "description": "Label for a dropdown or menu containing additional actions"
   },
-  "this_tab_tag_info_text": {
-    "message": "Showing AMOUNT Items Tagged: TAG_NAME",
-    "description": "Information text displaying the number of items with a specific tag"
+  "this_tab_autofill_fetch_card_data": {
+    "message": "Cardholder name autofilled. Fetch card details from device to complete.",
+    "description": "Message displayed when cardholder name is autofilled for a Highly Secret item that requires fetching card data from device"
   },
-  "this_tab_clear_tag_filter": {
-    "message": "Clear Tag filter",
-    "description": "Button label to clear the selected tag filter"
+  "this_tab_autofill_no_card_data_available": {
+    "message": "Only cardholder name was available for autofill",
+    "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
-  "this_tab_update_available": {
-    "message": "A new version of the extension is available!",
-    "description": "Notification message when a new extension update is available"
-  },
-  "this_tab_update_button": {
-    "message": "Update",
-    "description": "Button label to update the extension"
-  },
-  "this_tab_update_button_title": {
-    "message": "Update the extension to the latest version",
-    "description": "Tooltip for the update button"
-  },
-  "this_tab_update_manual_required": {
-    "message": "Please update the extension manually from your browser's extension settings",
-    "description": "Error message when automatic update is not available"
+  "this_tab_autofill_some_fields_not_available": {
+    "message": "Some card details could not be autofilled",
+    "description": "Message displayed when some payment card fields could not be autofilled"
   }
 }

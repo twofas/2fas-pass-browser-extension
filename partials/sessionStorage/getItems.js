@@ -7,7 +7,7 @@
 import decompress from '@/partials/gzip/decompress';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import getItemsKeys from './getItemsKeys';
-import matchModel from '../models/itemModels/matchModel';
+import matchModel from '@/models/itemModels/matchModel';
 
 /** 
 * Gets the items from session storage.
@@ -44,7 +44,7 @@ const getItems = async (filter = []) => {
   const devicesData = devices.map(device => {
     return {
       deviceId: device?.id,
-      vaultsIds: device.vaults.map(vault => vault.id).filter(id => id) || [],
+      vaultsIds: device?.vaults?.map(vault => vault.id).filter(id => id) || [],
     };
   });
 
@@ -107,7 +107,8 @@ const getItems = async (filter = []) => {
   const jsons = (await Promise.all(processPromises)).filter(Boolean);
   const flattened = jsons.flat();
 
-  const mapped = flattened.map(matchModel).filter(Boolean);
+  const mappedPromises = flattened.map(matchModel);
+  const mapped = (await Promise.all(mappedPromises)).filter(Boolean);
 
   if (filter && Array.isArray(filter) && filter.length > 0) {
     return mapped.filter(item => filter.includes(item?.constructor?.name));

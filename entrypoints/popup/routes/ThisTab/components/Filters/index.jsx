@@ -4,57 +4,24 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/Filters.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { lazy, useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useMemo, useCallback, memo } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
+import FiltersCustomOption from './components/FiltersCustomOption';
+import FiltersIcon from '@/assets/popup-window/filters.svg?react';
 
-const FiltersIcon = lazy(() => import('@/assets/popup-window/filters.svg?react'));
+const selectComponents = { Option: FiltersCustomOption };
 
-const CustomOption = option => {
-  const handleClick = e => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    option.selectOption(option.data);
-  };
-
-  if (option.data.isDisabled) {
-    return (
-      <div className='react-select-tags__option react-select-tags__option_disabled'>
-        <span
-          className={option.data.value === null ? 'react-select-tags__option_clear' : ''}
-          title={option.data.label}
-        >
-          {option.data.label}
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    <div className='react-select-tags__option' onClick={handleClick}>
-      <span
-        className={option.data.value === null ? 'react-select-tags__option_clear' : ''}
-        title={option.data.label}
-      >
-        {option.data.label}
-      </span>
-      {option.data.value === null ? null : (
-        <span className={`react-select-tags__option-circle ${option.isSelected ? 'selected' : ''}`}>
-          <span></span>
-        </span>
-      )}
-    </div>
-  );
-};
-
-/** 
-* Function to render the Filters component.
+/**
+* Filter component for selecting tags with dropdown menu.
 * @param {Object} props - The component props.
-* @return {JSX.Element} The rendered component.
+* @param {Array} props.tags - Array of tag objects with id, name, and amount.
+* @param {Object} props.selectedTag - Currently selected tag object or null.
+* @param {Function} props.onTagChange - Callback when tag selection changes.
+* @return {JSX.Element} The rendered filter dropdown component.
 */
-const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
+const Filters = ({ tags, selectedTag, onTagChange }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const selectRef = useRef(null);
   const buttonRef = useRef(null);
@@ -69,7 +36,7 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
     const tagOptions = tags.map(tag => ({
       value: tag.id,
       label: `${tag.name} (${tag.amount || 0})`,
-      tag: tag
+      tag
     }));
 
     if (selectedTag) {
@@ -83,65 +50,62 @@ const Filters = ({ tags, selectedTag, onTagChange, forceClose }) => {
     return tagOptions;
   }, [tags, selectedTag]);
 
-  const handleButtonClick = () => {
-    setIsMenuOpen(!isMenuOpen);
-    if (!isMenuOpen && selectRef.current) {
-      selectRef.current.focus();
-    }
-  };
-
-  const handleSelectChange = (option) => {
-    if (onTagChange) {
-      onTagChange(option ? option.tag : null);
-    }
-    setIsMenuOpen(false);
-  };
-
   const selectedOption = useMemo(() => {
     if (!selectedTag) {
       return null;
     }
+
     return options.find(opt => opt.value === selectedTag.id) || null;
   }, [selectedTag, options]);
 
-  useEffect(() => {
-    if (forceClose) {
-      setIsMenuOpen(false);
+  const handleButtonClick = useCallback(() => {
+    setIsMenuOpen(prev => !prev);
+
+    if (!isMenuOpen && selectRef.current) {
+      selectRef.current.focus();
     }
-  }, [forceClose]);
+  }, [isMenuOpen]);
+
+  const handleSelectChange = useCallback(option => {
+    if (onTagChange) {
+      onTagChange(option ? option.tag : null);
+    }
+
+    setIsMenuOpen(false);
+  }, [onTagChange]);
+
+  const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
+
+  const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
 
   return (
-    <>
-      <div className={S.thisTabAllLoginsSearchContainerTags} style={{ position: 'relative' }}>
-        <button
-          ref={buttonRef}
-          className={`${bS.btn} ${bS.btnFilter} ${isMenuOpen ? bS.btnFilterActive : ''}`}
-          onClick={handleButtonClick}
-          title={browser.i18n.getMessage('filters_button_title')}
-        >
-          <FiltersIcon />
-        </button>
-        
-        <AdvancedSelect
-          ref={selectRef}
-          options={options}
-          value={selectedOption}
-          onChange={handleSelectChange}
-          menuIsOpen={isMenuOpen}
-          onMenuClose={() => setIsMenuOpen(false)}
-          onMenuOpen={() => setIsMenuOpen(true)}
-          className='react-select-pass-dropdown'
-          classNamePrefix='react-select-tags'
-          isClearable={false}
-          isSearchable={false}
-          triggerRef={buttonRef}
-          components={{
-            Option: CustomOption
-          }}
-        />
-      </div>
-    </>
+    <div className={S.filters}>
+      <button
+        ref={buttonRef}
+        className={`${bS.btn} ${bS.btnFilter} ${isMenuOpen ? bS.btnFilterActive : ''}`}
+        onClick={handleButtonClick}
+        title={browser.i18n.getMessage('filters_button_title')}
+      >
+        <FiltersIcon />
+      </button>
+
+      <AdvancedSelect
+        ref={selectRef}
+        options={options}
+        value={selectedOption}
+        onChange={handleSelectChange}
+        menuIsOpen={isMenuOpen}
+        onMenuClose={handleMenuClose}
+        onMenuOpen={handleMenuOpen}
+        className='react-select-pass-dropdown'
+        classNamePrefix='react-select-tags'
+        isClearable={false}
+        isSearchable={false}
+        triggerRef={buttonRef}
+        components={selectComponents}
+      />
+    </div>
   );
 };
 
-export default Filters;
+export default memo(Filters);

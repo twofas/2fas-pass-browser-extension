@@ -8,19 +8,21 @@ import contextMenuNotConfigured from './contextMenuNotConfigured';
 import contextMenuConfigured from './contextMenuConfigured';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
-/** 
+/**
 * Function to initialize the context menu.
+* @async
+* @param {Array|null} items - Optional array of items to use for context menu configuration.
 * @return {Promise<void>} A promise that resolves when the context menu is initialized.
 */
-const initContextMenu = async () => {
+const initContextMenu = async (items = null) => {
   try {
     const contextMenuSetting = await storage.getItem('local:contextMenu');
-  
+
     if (contextMenuSetting === null || contextMenuSetting === true) {
       const configured = await getConfiguredBoolean();
 
       if (configured) {
-        await contextMenuConfigured();
+        await contextMenuConfigured(items);
       } else {
         await contextMenuNotConfigured();
       }

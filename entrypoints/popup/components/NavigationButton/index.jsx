@@ -5,80 +5,90 @@
 // See LICENSE file for full terms
 
 import { Link, useNavigate, useLocation } from 'react-router';
-import { lazy } from 'react';
-import { getPreviousPath } from '../../utils/navigationHistory';
+import { useCallback, useMemo, memo } from 'react';
+import usePopupStateStore from '../../store/popupState';
+import BackIcon from '@/assets/popup-window/back.svg?react';
+import CancelIcon from '@/assets/popup-window/cancel.svg?react';
 
-const BackIcon = lazy(() => import('@/assets/popup-window/back.svg?react'));
-const CancelIcon = lazy(() => import('@/assets/popup-window/cancel.svg?react'));
+const IGNORED_PATHS = ['/password-generator'];
 
 /**
 * Function to render the Settings Back component.
+* @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-function NavigationButton(props) {
+function NavigationButton({ type, className, state, onClick }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const previousPath = getPreviousPath();
+  const hrefArray = usePopupStateStore(s => s.href);
+  const popHref = usePopupStateStore(s => s.popHref);
+
+  const { previousPath, popCount } = useMemo(() => {
+    const currentPath = location.pathname;
+    let prevPath = null;
+    let count = 1;
+
+    for (let i = hrefArray.length - 2; i >= 0; i--) {
+      if (hrefArray[i] !== currentPath) {
+        if (IGNORED_PATHS.includes(hrefArray[i])) {
+          count++;
+          continue;
+        }
+
+        prevPath = hrefArray[i];
+        count = hrefArray.length - 1 - i;
+        break;
+      }
+    }
+
+    return { previousPath: prevPath, popCount: count };
+  }, [hrefArray, location.pathname]);
+
+  const handleClick = useCallback(e => {
+    if (type === 'back') {
+      e.preventDefault();
+
+      for (let i = 0; i < popCount; i++) {
+        popHref();
+      }
+
+      const navState = { ...state, isBackNavigation: true };
+
+      if (previousPath) {
+        navigate(previousPath, { state: navState });
+      } else {
+        const currentSegments = location.pathname.split('/').filter(segment => segment);
+
+        if (currentSegments.length > 0) {
+          currentSegments.pop();
+          const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
+          navigate(parentPath, { state: navState });
+        } else {
+          navigate('/', { state: navState });
+        }
+      }
+    } else if (onClick && typeof onClick === 'function') {
+      e.preventDefault();
+      onClick(e);
+    }
+  }, [type, popCount, popHref, state, previousPath, navigate, location.pathname, onClick]);
+
+  const linkTo = type === 'cancel' ? '/' : '..';
+  const linkClassName = `${type} ${className || ''}`;
+  const linkTitle = type ? browser.i18n.getMessage(type) : '';
 
   return (
     <Link
-      className={`${props.type} ${props.className || ''}`}
-      to={props?.type === 'cancel' ? '/' : '..'}
-      state={props.state}
-      onClick={e => {
-        if (props?.type === 'back') {
-          e.preventDefault();
-
-          try {
-            const currentPath = location.pathname;
-            const currentSegments = currentPath.split('/').filter(segment => segment);
-
-            if (window.history.length > 1 && location.key !== 'default') {
-              if (previousPath && previousPath !== currentPath) {
-                const previousSegments = previousPath.split('/').filter(segment => segment);
-
-                if (previousSegments[0] === 'details' || previousSegments[0] === 'add-new') {
-                  navigate(previousPath, { state: props.state });
-                  return;
-                }
-
-                if (previousSegments.length > currentSegments.length) {
-                  if (currentSegments.length > 0) {
-                    currentSegments.pop();
-                    const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
-                    navigate(parentPath, { state: props.state });
-                  } else {
-                    navigate('/', { state: props.state });
-                  }
-
-                  return;
-                }
-              }
-
-              navigate(-1, { state: props.state });
-            } else {
-              if (currentSegments.length > 0) {
-                currentSegments.pop();
-                const parentPath = '/' + currentSegments.join('/') + (currentSegments.length > 0 ? '/' : '');
-                navigate(parentPath, { state: props.state });
-              } else {
-                navigate('/', { state: props.state });
-              }
-            }
-          } catch {
-            navigate('/', { state: props.state });
-          }
-        } else if (props?.onClick && typeof props?.onClick === 'function') {
-          e.preventDefault();
-          props.onClick(e);
-        }
-      }}
-      title={props?.type ? browser.i18n.getMessage(props.type) : ''}
+      className={linkClassName}
+      to={linkTo}
+      state={state}
+      onClick={handleClick}
+      title={linkTitle}
       prefetch='intent'
     >
-      {props?.type === 'cancel' ? <CancelIcon /> : <BackIcon />}
+      {type === 'cancel' ? <CancelIcon /> : <BackIcon />}
     </Link>
   );
 }
 
-export default NavigationButton;
+export default memo(NavigationButton);

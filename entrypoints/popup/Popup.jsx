@@ -5,21 +5,19 @@
 // See LICENSE file for full terms
 
 import S from './Popup.module.scss';
-import { HashRouter, Route, Routes, Navigate, useNavigate, useLocation } from 'react-router';
-import { useEffect, useState, useMemo, memo, useRef, lazy } from 'react';
+import { HashRouter, Route, Routes, Navigate } from 'react-router';
+import { useEffect, useState, useMemo, memo, useRef, lazy, useCallback } from 'react';
 import { AuthProvider, useAuthState } from '@/hooks/useAuth';
 import popupOnMessage from './events/popupOnMessage';
 import lockShortcuts from './utils/lockShortcuts';
 import lockRMB from './utils/lockRMB';
-import setTheme from './utils/setTheme';
 import isPopupInSeparateWindowExists from './utils/isPopupInSeparateWindowExists';
 import { safariBlankLinks, storageAutoClearActions } from '@/partials/functions';
 import ToastsContent from './components/ToastsContent';
 import TopBar from './components/TopBar';
 import BottomBar from './components/BottomBar';
-import usePopupStateStore from './store/popupState';
 import usePopupHref from './hooks/usePopupHref';
-import { addToNavigationHistory } from './utils/navigationHistory';
+import useNavigationEvents from './hooks/useNavigationEvents';
 import { ScrollableRefProvider } from './context/ScrollableRefProvider';
 import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
@@ -79,62 +77,13 @@ const RouteGuard = memo(({ configured, blocked, isProtectedRoute, children }) =>
 
 /**
 * AuthRoutes component that provides configured state to all routes.
-* Handles initial navigation based on stored href before rendering routes.
+* Initial route is set in main.jsx before React renders via pre-hydration.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered routes.
 */
 const AuthRoutes = memo(({ blocked, configured }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const storedHref = usePopupStateStore(state => state.href);
-  const [initialCheckDone, setInitialCheckDone] = useState(false);
-  const [hydrationComplete, setHydrationComplete] = useState(false);
-  const hasNavigated = useRef(false);
-
-  useEffect(() => {
-    addToNavigationHistory(location.pathname);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    const unsubHydrate = usePopupStateStore.persist.onFinishHydration(() => {
-      setHydrationComplete(true);
-    });
-
-    if (usePopupStateStore.persist.hasHydrated()) {
-      setHydrationComplete(true);
-    }
-
-    return unsubHydrate;
-  }, []);
-
-  usePopupHref(hydrationComplete);
-
-  useEffect(() => {
-    if (!hydrationComplete) {
-      return;
-    }
-
-    if (hasNavigated.current || !configured) {
-      setInitialCheckDone(true);
-      return;
-    }
-
-    if (initialCheckDone) {
-      hasNavigated.current = true;
-      return;
-    }
-
-    const excludedRoutes = ['/connect', '/', '/fetch', '/blocked'];
-
-    if (storedHref && location.pathname === '/' && !excludedRoutes.includes(storedHref)) {
-      if (!storedHref.startsWith('/fetch/')) {
-        hasNavigated.current = true;
-        navigate(storedHref, { replace: true });
-      }
-    }
-
-    setInitialCheckDone(true);
-  }, [navigate, storedHref, location.pathname, configured, hydrationComplete, initialCheckDone]);
+  usePopupHref(true);
+  useNavigationEvents();
 
   const routeElements = useMemo(() => {
     return routeConfig.map(route => {
@@ -161,10 +110,6 @@ const AuthRoutes = memo(({ blocked, configured }) => {
       );
     });
   }, [configured, blocked]);
-
-  if (!initialCheckDone) {
-    return null;
-  }
 
   return (
     <Routes>
@@ -193,11 +138,14 @@ const AppContent = memo(({ blocked }) => {
 /**
 * Main app content - without AuthProvider since it's now in main.jsx
 * @param {Object} props - The component props.
+* @param {boolean} props.blockedValue - Whether the popup is blocked.
+* @param {string} props.mainSectionClassName - Class name for main section.
+* @param {Object} props.sectionRef - Ref for the section element.
 * @return {JSX.Element} The rendered app.
 */
-const MainApp = memo(({ blockedValue, mainSectionClassName }) => {
+const MainApp = memo(({ blockedValue, mainSectionClassName, sectionRef }) => {
   return (
-    <section className={mainSectionClassName}>
+    <section ref={sectionRef} className={mainSectionClassName}>
       <AppContent blocked={blockedValue} />
       <ToastsContent />
     </section>
@@ -206,22 +154,28 @@ const MainApp = memo(({ blockedValue, mainSectionClassName }) => {
 
 /**
 * PopupContent wrapper that handles blocking logic
+* @param {Object} props - The component props.
+* @param {boolean} props.loaded - Whether the popup is loaded.
+* @param {boolean} props.blocked - Whether the popup is blocked.
+* @param {string} props.blockedSectionClassName - Class name for blocked section.
+* @param {string} props.mainSectionClassName - Class name for main section.
+* @param {Object} props.sectionRef - Ref for the section element.
 * @return {JSX.Element} The rendered component.
 */
-const PopupContent = memo(({ loaded, blocked, blockedSectionClassName, mainSectionClassName }) => {
+const PopupContent = memo(({ loaded, blocked, blockedSectionClassName, mainSectionClassName, sectionRef }) => {
   if (!loaded) {
     return null;
   }
 
   if (blocked) {
     return (
-      <section className={blockedSectionClassName}>
+      <section ref={sectionRef} className={blockedSectionClassName}>
         <Blocked className={S.passScreen} />
       </section>
     );
   }
 
-  return <MainApp blockedValue={blocked} mainSectionClassName={mainSectionClassName} />;
+  return <MainApp blockedValue={blocked} mainSectionClassName={mainSectionClassName} sectionRef={sectionRef} />;
 });
 
 let initializationPromise = null;
@@ -238,10 +192,9 @@ const initializePopupOnce = async () => {
 
   initializationPromise = (async () => {
     try {
-      const [tab, otherPopupExists,] = await Promise.all([
+      const [tab, otherPopupExists] = await Promise.all([
         browser?.tabs?.getCurrent().catch(() => null),
-        isPopupInSeparateWindowExists(),
-        setTheme()
+        isPopupInSeparateWindowExists()
       ]);
 
       const extUrl = browser.runtime.getURL('/popup.html');
@@ -289,17 +242,65 @@ const PopupMain = memo(() => {
       isSeparateWindow: false
     };
   });
+  const [isScrollable, setIsScrollable] = useState(false);
 
   const initialized = useRef(false);
   const stateUpdated = useRef(false);
+  const sectionRef = useRef(null);
+  const resizeObserverRef = useRef(null);
+  const mutationObserverRef = useRef(null);
+
+  const checkScrollable = useCallback(() => {
+    if (!sectionRef.current) {
+      return;
+    }
+
+    const scrollableChild = sectionRef.current.querySelector(`.${S.passScreen} > div`);
+
+    if (scrollableChild) {
+      const hasScrollbar = scrollableChild.scrollHeight > scrollableChild.clientHeight;
+      setIsScrollable(hasScrollbar);
+    } else {
+      setIsScrollable(false);
+    }
+  }, []);
 
   const classNames = useMemo(() => {
-    const baseClass = `${S.pass} ${!state.isSeparateWindow ? S.passNonSeparateWindow : ''} ${import.meta.env.BROWSER}`;
+    const baseClass = `${S.pass} ${!state.isSeparateWindow ? S.passNonSeparateWindow : ''} ${isScrollable ? S.scrollable : ''} ${import.meta.env.BROWSER}`;
     return {
       blocked: `${baseClass} ${S.passBlocked}`,
       main: baseClass
     };
-  }, [state.isSeparateWindow]);
+  }, [state.isSeparateWindow, isScrollable]);
+
+  useEffect(() => {
+    if (!state.loaded || !sectionRef.current) {
+      return;
+    }
+
+    checkScrollable();
+
+    resizeObserverRef.current = new ResizeObserver(checkScrollable);
+    resizeObserverRef.current.observe(sectionRef.current);
+
+    mutationObserverRef.current = new MutationObserver(checkScrollable);
+    mutationObserverRef.current.observe(sectionRef.current, {
+      childList: true,
+      subtree: true
+    });
+
+    return () => {
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
+
+      if (mutationObserverRef.current) {
+        mutationObserverRef.current.disconnect();
+        mutationObserverRef.current = null;
+      }
+    };
+  }, [state.loaded, checkScrollable]);
 
   useEffect(() => {
     if (initialized.current) {
@@ -311,6 +312,11 @@ const PopupMain = memo(() => {
     if (history?.scrollRestoration && history.scrollRestoration !== 'manual') {
       history.scrollRestoration = 'manual';
     }
+
+    browser.runtime.sendMessage({
+      action: REQUEST_ACTIONS.NEW_POPUP,
+      target: REQUEST_TARGETS.POPUP
+    }).catch(() => {});
 
     if (!initializationResult && !stateUpdated.current) {
       initializePopupOnce().then(result => {
@@ -364,6 +370,7 @@ const PopupMain = memo(() => {
       blocked={state.blocked}
       blockedSectionClassName={classNames.blocked}
       mainSectionClassName={classNames.main}
+      sectionRef={sectionRef}
     />
   );
 });

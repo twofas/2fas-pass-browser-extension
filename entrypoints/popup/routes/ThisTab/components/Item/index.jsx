@@ -4,66 +4,40 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../ThisTab.module.scss';
+import S from './styles/Item.module.scss';
 
-import { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
+import { useEffect, useRef, useCallback, useMemo, memo } from 'react';
+import { useIsItemOpen, useItemMenuActions } from '../../context/ItemListContext';
 
 // Models
 import LoginItemView from './modelsViews/LoginItemView';
 import SecureNoteItemView from './modelsViews/SecureNoteItemView';
+import PaymentCardItemView from './modelsViews/PaymentCardItemView';
 
-/** 
+/**
 * Function to render the item.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
 function Item (props) {
-  const [more, setMoreState] = useState(false);
+  const itemId = props.data?.id;
+  const more = useIsItemOpen(itemId);
+  const { openMenu, closeMenu } = useItemMenuActions();
 
   const ref = useRef(null);
   const selectRef = useRef(null);
   const autofillBtnRef = useRef(null);
   const isHoveredRef = useRef(false);
-  const isClosingRef = useRef(false);
-  const moreRef = useRef(false);
+  const itemIdRef = useRef(itemId);
+  itemIdRef.current = itemId;
 
   const setMore = useCallback(value => {
-    moreRef.current = value;
-    setMoreState(value);
-  }, []);
-
-  const handleScroll = useCallback(event => {
-    if (!more || isClosingRef.current) {
-      return;
+    if (value) {
+      openMenu(itemIdRef.current);
+    } else {
+      closeMenu();
     }
-
-    const selectMenuListElement = document.querySelector('.react-select-dropdown__menu-list');
-
-    if (selectMenuListElement && (event.target === selectMenuListElement || selectMenuListElement.contains(event.target))) {
-      return;
-    }
-
-    isClosingRef.current = true;
-    setMore(false);
-  }, [more]);
-
-  const handleClickOutside = useCallback(event => {
-    if (ref.current && ref.current.contains(event.target)) {
-      return;
-    }
-
-    if (!moreRef.current) {
-      return;
-    }
-
-    const selectMenu = document.querySelector('.react-select-dropdown__menu');
-
-    if (selectMenu && selectMenu.contains(event.target)) {
-      return;
-    }
-
-    setMore(false);
-  }, []);
+  }, [openMenu, closeMenu]);
 
   const handleMouseEnter = useCallback(() => {
     isHoveredRef.current = true;
@@ -92,15 +66,11 @@ function Item (props) {
   }, [more]);
 
   const itemClassName = useMemo(() =>
-    `${S.servicesListItem} ${more ? S.hover : ''} ${props.loading === true ? S.loading : ''}`,
+    `${S.item} ${more ? S.hover : ''} ${props.loading === true ? S.loading : ''}`,
     [more, props.loading]
   );
 
   useEffect(() => {
-    if (more) {
-      isClosingRef.current = false;
-    }
-
     if (!more && !isHoveredRef.current) {
       if (ref.current) {
         ref.current.classList.remove(S.hover);
@@ -112,16 +82,6 @@ function Item (props) {
     }
   }, [more]);
 
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll, true);
-    document.addEventListener('mousedown', handleClickOutside, true);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll, true);
-      document.removeEventListener('mousedown', handleClickOutside, true);
-    };
-  }, [handleScroll, handleClickOutside]);
-
   if (!props.data) {
     return null;
   }
@@ -129,19 +89,39 @@ function Item (props) {
   const constructorName = props?.data?.constructor?.name;
   let modelComponent = null;
 
-  const modelData = {
-    more,
-    setMore,
-    selectRef,
-    ref,
-    autofillBtnRef,
-    loading: props.loading
-  };
-
   if (constructorName === 'Login' || props.loading) {
-    modelComponent = <LoginItemView {...props} {...modelData} />;
+    modelComponent = (
+      <LoginItemView
+        data={props.data}
+        more={more}
+        setMore={setMore}
+        selectRef={selectRef}
+        autofillBtnRef={autofillBtnRef}
+        loading={props.loading}
+      />
+    );
   } else if (constructorName === 'SecureNote') {
-    modelComponent = <SecureNoteItemView {...props} {...modelData} />;
+    modelComponent = (
+      <SecureNoteItemView
+        data={props.data}
+        more={more}
+        setMore={setMore}
+        selectRef={selectRef}
+        autofillBtnRef={autofillBtnRef}
+        loading={props.loading}
+      />
+    );
+  } else if (constructorName === 'PaymentCard') {
+    modelComponent = (
+      <PaymentCardItemView
+        data={props.data}
+        more={more}
+        setMore={setMore}
+        selectRef={selectRef}
+        autofillBtnRef={autofillBtnRef}
+        loading={props.loading}
+      />
+    );
   } else {
     return null;
   }
@@ -151,6 +131,7 @@ function Item (props) {
       key={props.data.id}
       className={itemClassName}
       ref={ref}
+      data-item-id={itemId}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -159,4 +140,17 @@ function Item (props) {
   );
 }
 
-export default memo(Item);
+/**
+* Custom comparison function to prevent unnecessary re-renders.
+* Only re-render if data id, sifExists, or loading state changes.
+* @param {Object} prevProps - Previous props.
+* @param {Object} nextProps - Next props.
+* @return {boolean} True if props are equal (should not re-render).
+*/
+function arePropsEqual (prevProps, nextProps) {
+  return prevProps.data?.id === nextProps.data?.id &&
+         prevProps.data?.sifExists === nextProps.data?.sifExists &&
+         prevProps.loading === nextProps.loading;
+}
+
+export default memo(Item, arePropsEqual);

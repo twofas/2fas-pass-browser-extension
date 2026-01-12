@@ -1,0 +1,890 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright � 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "variables" as v;
+
+.p-calendar {
+  display: flex;
+  width: 100%;
+
+  .p-inputtext {
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 400;
+    height: 38px;
+    line-height: 1;
+    padding: 10px 12px;
+    transition: background-color v.$anim, border-color v.$anim, color v.$anim;
+    width: 100%;
+
+    body.theme-light & {
+      background-color: v.$primary-box-bg-light;
+      border: 1px solid v.$object-stroke-light;
+      color: v.$primary-text-light;
+
+      &::placeholder {
+        color: v.$secondary-text-light;
+      }
+    }
+
+    body.theme-dark & {
+      background-color: v.$primary-box-bg-dark;
+      border: 1px solid v.$object-stroke-dark;
+      color: v.$primary-text-dark;
+
+      &::placeholder {
+        color: v.$secondary-text-dark;
+      }
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        background-color: v.$primary-box-bg-light;
+        border: 1px solid v.$object-stroke-light;
+        color: v.$primary-text-light;
+
+        &::placeholder {
+          color: v.$secondary-text-light;
+        }
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: v.$primary-box-bg-dark;
+        border: 1px solid v.$object-stroke-dark;
+        color: v.$primary-text-dark;
+
+        &::placeholder {
+          color: v.$secondary-text-dark;
+        }
+      }
+    }
+
+    &:hover,
+    &:focus {
+      outline: none;
+
+      body.theme-light & {
+        border-color: v.$object-light;
+      }
+
+      body.theme-dark & {
+        border-color: v.$object-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          border-color: v.$object-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          border-color: v.$object-dark;
+        }
+      }
+    }
+  }
+}
+
+.p-datepicker {
+  border-radius: 6px;
+  overflow: hidden;
+  padding: 6px;
+  z-index: 9999 !important;
+
+  body.theme-light & {
+    background-color: v.$card-bg-light;
+    border: 1px solid v.$card-stroke-light;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+  }
+
+  body.theme-dark & {
+    background-color: v.$card-bg-dark;
+    border: 1px solid v.$card-stroke-dark;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+  }
+
+  body.theme-unset & {
+    @media (prefers-color-scheme: light) {
+      background-color: v.$card-bg-light;
+      border: 1px solid v.$card-stroke-light;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      background-color: v.$card-bg-dark;
+      border: 1px solid v.$card-stroke-dark;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+    }
+  }
+
+  .p-datepicker-header {
+    align-items: center;
+    border-bottom: 1px solid;
+    display: flex;
+    font-size: 13px;
+    font-weight: 600;
+    justify-content: space-between;
+    margin: 0;
+    padding: 6px;
+
+    body.theme-light & {
+      background-color: v.$card-bg-light;
+      border-bottom-color: v.$divider-light;
+      color: v.$primary-text-light;
+    }
+
+    body.theme-dark & {
+      background-color: v.$card-bg-dark;
+      border-bottom-color: v.$divider-dark;
+      color: v.$primary-text-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        background-color: v.$card-bg-light;
+        border-bottom-color: v.$divider-light;
+        color: v.$primary-text-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        background-color: v.$card-bg-dark;
+        border-bottom-color: v.$divider-dark;
+        color: v.$primary-text-dark;
+      }
+    }
+
+    .p-datepicker-prev,
+    .p-datepicker-next {
+      align-items: center;
+      background: transparent;
+      border: 0 none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-flex;
+      height: 1.5rem;
+      justify-content: center;
+      transition: background-color v.$anim, color v.$anim;
+      width: 1.5rem;
+
+      body.theme-light & {
+        color: v.$object-light;
+
+        &:hover,
+        &:focus {
+          background-color: v.$hover-color-light;
+          color: v.$primary-text-light;
+        }
+      }
+
+      body.theme-dark & {
+        color: v.$object-dark;
+
+        &:hover,
+        &:focus {
+          background-color: v.$hover-color-dark;
+          color: v.$primary-text-dark;
+        }
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          color: v.$object-light;
+
+          &:hover,
+          &:focus {
+            background-color: v.$hover-color-light;
+            color: v.$primary-text-light;
+          }
+        }
+
+        @media (prefers-color-scheme: dark) {
+          color: v.$object-dark;
+
+          &:hover,
+          &:focus {
+            background-color: v.$hover-color-dark;
+            color: v.$primary-text-dark;
+          }
+        }
+      }
+
+      .p-icon {
+        height: .75rem;
+        width: .75rem;
+      }
+    }
+
+    .p-datepicker-title {
+      align-items: center;
+      display: flex;
+      gap: 0 4px;
+      line-height: 1.5rem;
+
+      .p-datepicker-month,
+      .p-datepicker-year {
+        background: transparent;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 4px 6px;
+        transition: background-color v.$anim, color v.$anim;
+
+        body.theme-light & {
+          color: v.$primary-text-light;
+
+          &:hover,
+          &:focus {
+            color: v.$primary-color-light;
+          }
+        }
+
+        body.theme-dark & {
+          color: v.$primary-text-dark;
+
+          &:hover,
+          &:focus {
+            color: v.$primary-color-dark;
+          }
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            color: v.$primary-text-light;
+
+            &:hover,
+            &:focus {
+              color: v.$primary-color-light;
+            }
+          }
+
+          @media (prefers-color-scheme: dark) {
+            color: v.$primary-text-dark;
+
+            &:hover,
+            &:focus {
+              color: v.$primary-color-dark;
+            }
+          }
+        }
+      }
+
+      .p-datepicker-month {
+        margin-right: 8px;
+      }
+    }
+  }
+
+  table {
+    border-collapse: collapse;
+    font-size: 1rem;
+    margin: 8px 0;
+    width: 100%;
+
+    th {
+      padding: 8px;
+
+      > span {
+        height: 2.5rem;
+        width: 2.5rem;
+
+        body.theme-light & {
+          color: v.$secondary-text-light;
+        }
+
+        body.theme-dark & {
+          color: v.$secondary-text-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            color: v.$secondary-text-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            color: v.$secondary-text-dark;
+          }
+        }
+      }
+    }
+
+    td {
+      padding: 8px;
+
+      > span {
+        align-items: center;
+        border: 1px solid transparent;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        height: 2.5rem;
+        justify-content: center;
+        transition: background-color v.$anim, color v.$anim;
+        width: 2.5rem;
+
+        body.theme-light & {
+          color: v.$primary-text-light;
+        }
+
+        body.theme-dark & {
+          color: v.$primary-text-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            color: v.$primary-text-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            color: v.$primary-text-dark;
+          }
+        }
+
+        &.p-highlight {
+          body.theme-light & {
+            background-color: v.$hover-color-light;
+            color: v.$primary-color-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$hover-color-dark;
+            color: v.$primary-color-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$hover-color-light;
+              color: v.$primary-color-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$hover-color-dark;
+              color: v.$primary-color-dark;
+            }
+          }
+        }
+      }
+
+      &.p-datepicker-today {
+        > span {
+          body.theme-light & {
+            background-color: v.$additional-light;
+            color: v.$primary-text-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$additional-dark;
+            color: v.$primary-text-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$additional-light;
+              color: v.$primary-text-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$additional-dark;
+              color: v.$primary-text-dark;
+            }
+          }
+
+          &.p-highlight {
+            body.theme-light & {
+              background-color: v.$hover-color-light;
+              color: v.$primary-color-light;
+            }
+
+            body.theme-dark & {
+              background-color: v.$hover-color-dark;
+              color: v.$primary-color-dark;
+            }
+
+            body.theme-unset & {
+              @media (prefers-color-scheme: light) {
+                background-color: v.$hover-color-light;
+                color: v.$primary-color-light;
+              }
+
+              @media (prefers-color-scheme: dark) {
+                background-color: v.$hover-color-dark;
+                color: v.$primary-color-dark;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &:not(.p-disabled) {
+    table {
+      td {
+        span:not(.p-highlight):not(.p-disabled) {
+          &:hover,
+          &:focus {
+            body.theme-light & {
+              background-color: v.$hover-color-light;
+            }
+
+            body.theme-dark & {
+              background-color: v.$hover-color-dark;
+            }
+
+            body.theme-unset & {
+              @media (prefers-color-scheme: light) {
+                background-color: v.$hover-color-light;
+              }
+
+              @media (prefers-color-scheme: dark) {
+                background-color: v.$hover-color-dark;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .p-datepicker-buttonbar {
+    border-top: 1px solid;
+    padding: 1rem 0;
+
+    body.theme-light & {
+      border-top-color: v.$divider-light;
+    }
+
+    body.theme-dark & {
+      border-top-color: v.$divider-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        border-top-color: v.$divider-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        border-top-color: v.$divider-dark;
+      }
+    }
+
+    .p-button {
+      width: auto;
+    }
+  }
+
+  .p-monthpicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px !important;
+    margin: 4px 0;
+
+    .p-monthpicker-month {
+      border-radius: 4px !important;
+      font-size: 12px !important;
+      padding: 6px 2px !important;
+      transition: background-color v.$anim, color v.$anim;
+      width: calc(33.3% - 2px);
+
+      body.theme-light & {
+        color: v.$primary-text-light;
+      }
+
+      body.theme-dark & {
+        color: v.$primary-text-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          color: v.$primary-text-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          color: v.$primary-text-dark;
+        }
+      }
+
+      &.p-highlight {
+        body.theme-light & {
+          background-color: v.$hover-color-light;
+          color: v.$primary-color-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$hover-color-dark;
+          color: v.$primary-color-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$hover-color-light;
+            color: v.$primary-color-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$hover-color-dark;
+            color: v.$primary-color-dark;
+          }
+        }
+      }
+
+      &.p-disabled {
+        cursor: default;
+        opacity: .4;
+
+        body.theme-light & {
+          color: v.$secondary-text-light;
+        }
+
+        body.theme-dark & {
+          color: v.$secondary-text-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            color: v.$secondary-text-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            color: v.$secondary-text-dark;
+          }
+        }
+      }
+    }
+  }
+
+  &:not(.p-disabled) {
+    .p-monthpicker {
+      .p-monthpicker-month:not(.p-disabled):not(.p-highlight) {
+        &:hover,
+        &:focus {
+          body.theme-light & {
+            background-color: v.$hover-color-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$hover-color-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$hover-color-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$hover-color-dark;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .p-yearpicker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px !important;
+    margin: 4px 0;
+
+    .p-yearpicker-year {
+      border-radius: 4px !important;
+      font-size: 12px !important;
+      padding: 6px 2px !important;
+      transition: background-color v.$anim, color v.$anim;
+      width: calc(50% - 1px);
+
+      body.theme-light & {
+        color: v.$primary-text-light;
+      }
+
+      body.theme-dark & {
+        color: v.$primary-text-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          color: v.$primary-text-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          color: v.$primary-text-dark;
+        }
+      }
+
+      &.p-highlight {
+        body.theme-light & {
+          background-color: v.$hover-color-light;
+          color: v.$primary-color-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$hover-color-dark;
+          color: v.$primary-color-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$hover-color-light;
+            color: v.$primary-color-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$hover-color-dark;
+            color: v.$primary-color-dark;
+          }
+        }
+      }
+
+      &.p-disabled {
+        cursor: default;
+        opacity: .4;
+
+        body.theme-light & {
+          color: v.$secondary-text-light;
+        }
+
+        body.theme-dark & {
+          color: v.$secondary-text-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            color: v.$secondary-text-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            color: v.$secondary-text-dark;
+          }
+        }
+      }
+    }
+  }
+
+  &:not(.p-disabled) {
+    .p-yearpicker {
+      .p-yearpicker-year:not(.p-disabled):not(.p-highlight) {
+        &:hover,
+        &:focus {
+          body.theme-light & {
+            background-color: v.$hover-color-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$hover-color-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$hover-color-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$hover-color-dark;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .p-timepicker {
+    border-top: 1px solid;
+    padding: 8px;
+
+    body.theme-light & {
+      border-top-color: v.$divider-light;
+    }
+
+    body.theme-dark & {
+      border-top-color: v.$divider-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        border-top-color: v.$divider-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        border-top-color: v.$divider-dark;
+      }
+    }
+
+    button {
+      background: transparent;
+      border: 0 none;
+      border-radius: 50%;
+      cursor: pointer;
+      height: 2rem;
+      transition: background-color v.$anim, color v.$anim;
+      width: 2rem;
+
+      body.theme-light & {
+        color: v.$object-light;
+
+        &:enabled:hover,
+        &:focus {
+          background-color: v.$hover-color-light;
+          color: v.$primary-text-light;
+        }
+      }
+
+      body.theme-dark & {
+        color: v.$object-dark;
+
+        &:enabled:hover,
+        &:focus {
+          background-color: v.$hover-color-dark;
+          color: v.$primary-text-dark;
+        }
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          color: v.$object-light;
+
+          &:enabled:hover,
+          &:focus {
+            background-color: v.$hover-color-light;
+            color: v.$primary-text-light;
+          }
+        }
+
+        @media (prefers-color-scheme: dark) {
+          color: v.$object-dark;
+
+          &:enabled:hover,
+          &:focus {
+            background-color: v.$hover-color-dark;
+            color: v.$primary-text-dark;
+          }
+        }
+      }
+
+      &:last-child {
+        margin-top: .2em;
+      }
+    }
+
+    span {
+      font-size: 1.25rem;
+    }
+
+    > div {
+      padding: 0 8px;
+    }
+  }
+
+  &.p-datepicker-timeonly {
+    .p-timepicker {
+      border-top: 0 none;
+    }
+  }
+}
+
+.p-inputmask {
+  font-size: 14px;
+  font-weight: 400;
+  height: 38px;
+  line-height: 1;
+  padding: 10px 12px;
+  transition: background-color v.$anim, border-color v.$anim, color v.$anim;
+  width: 100%;
+
+  body.theme-light & {
+    background-color: v.$primary-box-bg-light;
+    border: 1px solid v.$object-stroke-light;
+    color: v.$primary-text-light;
+
+    &::placeholder {
+      color: v.$secondary-text-light;
+    }
+  }
+
+  body.theme-dark & {
+    background-color: v.$primary-box-bg-dark;
+    border: 1px solid v.$object-stroke-dark;
+    color: v.$primary-text-dark;
+
+    &::placeholder {
+      color: v.$secondary-text-dark;
+    }
+  }
+
+  body.theme-unset & {
+    @media (prefers-color-scheme: light) {
+      background-color: v.$primary-box-bg-light;
+      border: 1px solid v.$object-stroke-light;
+      color: v.$primary-text-light;
+
+      &::placeholder {
+        color: v.$secondary-text-light;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      background-color: v.$primary-box-bg-dark;
+      border: 1px solid v.$object-stroke-dark;
+      color: v.$primary-text-dark;
+
+      &::placeholder {
+        color: v.$secondary-text-dark;
+      }
+    }
+  }
+
+  &:hover,
+  &:focus {
+    outline: none;
+
+    body.theme-light & {
+      border-color: v.$object-light;
+    }
+
+    body.theme-dark & {
+      border-color: v.$object-dark;
+    }
+
+    body.theme-unset & {
+      @media (prefers-color-scheme: light) {
+        border-color: v.$object-light;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        border-color: v.$object-dark;
+      }
+    }
+  }
+}
+
+[class*="pass-input-bottom"] {
+  .p-calendar {
+    .p-inputtext {
+      background-color: transparent !important;
+      border: 0 none !important;
+      height: auto !important;
+      padding: 0 !important;
+
+      &:hover,
+      &:focus {
+        background-color: transparent !important;
+        border: 0 none !important;
+      }
+    }
+  }
+
+  .p-inputmask {
+    background-color: transparent !important;
+    border: 0 none !important;
+    height: auto !important;
+    padding: 0 !important;
+
+    &:hover,
+    &:focus {
+      background-color: transparent !important;
+      border: 0 none !important;
+    }
+  }
+}

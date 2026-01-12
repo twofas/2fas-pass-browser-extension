@@ -60,6 +60,8 @@ function Fetch(props) {
   const location = useLocation();
   const { state } = location;
 
+  console.log(state);
+
   const navigate = useNavigate();
 
   let device;
@@ -211,7 +213,7 @@ function Fetch(props) {
     } else if (state?.from === 'add-new' && state?.originalData && state?.model) {
       navigate(`/add-new/${state.model}`, {
         state: {
-          data: state.originalData,
+          data: state.originalData, // @TODO: verify if this is needed
           from: 'fetch'
         }
       });
@@ -225,21 +227,26 @@ function Fetch(props) {
           uiFlags.usernameEditable = true;
         }
 
-        if (restoredItem.content.s_password && typeof restoredItem.content.s_password === 'object' && restoredItem.content.s_password.value !== undefined) {
-          restoredItem.content.s_password = restoredItem.content.s_password.value;
+        if (restoredItem.content.s_password !== undefined) {
+          if (typeof restoredItem.content.s_password === 'object' && restoredItem.content.s_password.value !== undefined) {
+            restoredItem.content.s_password = restoredItem.content.s_password.value;
+          }
+
           uiFlags.passwordEditable = true;
-          uiFlags.passwordEdited = true;
         }
-        
-        if (restoredItem.content.s_text && typeof restoredItem.content.s_text === 'object' && restoredItem.content.s_text.value !== undefined) {
-          restoredItem.content.s_text = restoredItem.content.s_text.value;
+
+        if (restoredItem.content.s_text !== undefined) {
+          if (typeof restoredItem.content.s_text === 'object' && restoredItem.content.s_text.value !== undefined) {
+            restoredItem.content.s_text = restoredItem.content.s_text.value;
+          }
+
           uiFlags.sifEditable = true;
-        } else if (restoredItem.content.s_text !== undefined) {
-          uiFlags.sifEditable = true;
+          uiFlags.revealSecureNote = true;
         }
 
         if (restoredItem.content.name !== undefined) uiFlags.nameEditable = true;
         if (restoredItem.content.notes !== undefined) uiFlags.notesEditable = true;
+        if (restoredItem.content.additionalInfo !== undefined) uiFlags.additionalInfoEditable = true;
         if (restoredItem.tags !== undefined) uiFlags.tagsEditable = true;
         if (restoredItem.securityType !== undefined) uiFlags.tierEditable = true;
       }

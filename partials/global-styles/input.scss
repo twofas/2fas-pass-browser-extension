@@ -22,7 +22,7 @@ button {
   border: 0;
   background: transparent;
   cursor: pointer;
-  transition: color .3s ease-in-out, background-color .3s ease-in-out;
+  transition: color v.$anim, background-color v.$anim;
 }
 
 input {

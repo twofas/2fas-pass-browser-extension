@@ -37,6 +37,18 @@
     }
   }
 
+  &-split-box {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    gap: 0 8px;
+
+    > div {
+      flex: 0 0 calc(50% - 4px);
+      width: calc(50% - 4px);
+    }
+  }
+
   h2 {
     color: v.$primary-text-light;
     font-size: 16px;

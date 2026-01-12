@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, generateNonce } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission } from '@/partials/functions';
 import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
@@ -74,53 +74,65 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       });
     }
 
-    if (cryptoAvailableRes.status !== 'ok' || !cryptoAvailableRes.cryptoAvailable) {
+    const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
+
+    if (!cryptoAvailable) {
       encryptedValueB64 = decryptedPassword;
     } else {
-      let nonce, localKeyCrypto, value;
+      const passwordResult = await encryptValueForTransmission(decryptedPassword);
 
-      try {
-        nonce = await generateNonce();
-      } catch (e) {
-        throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabNonceError, {
-          event: e,
-          additional: { func: 'sendAutofillToTab - generateNonce' }
-        });
-      }
-
-      const localKey = await storage.getItem('local:lKey');
-
-      try {
-        localKeyCrypto = await crypto.subtle.importKey(
-          'raw',
-          Base64ToArrayBuffer(localKey),
-          { name: 'AES-GCM' },
-          false,
-          ['encrypt']
-        );
-      } catch (e) {
-        throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabImportKeyError, {
-          event: e,
-          additional: { func: 'sendAutofillToTab - importKey' }
-        });
-      }
-
-      try {
-        value = await crypto.subtle.encrypt(
-          { name: 'AES-GCM', iv: nonce.ArrayBuffer },
-          localKeyCrypto,
-          StringToArrayBuffer(decryptedPassword)
-        );
-      } catch (e) {
+      if (passwordResult.status !== 'ok') {
         throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
-          event: e,
-          additional: { func: 'sendAutofillToTab - encrypt' }
+          additional: { func: 'sendAutofillToTab - encryptValueForTransmission' }
         });
       }
 
-      const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
-      encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
+      encryptedValueB64 = passwordResult.data;
     }
+  }
+
+  let iframePermissionGranted = true;
+  let hasPasswordInAnyFrame = false;
+
+  try {
+    const inputCheckResults = await sendMessageToAllFrames(tabId, {
+      action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
+      target: REQUEST_TARGETS.CONTENT
+    });
+
+    hasPasswordInAnyFrame = inputCheckResults?.some(r => r.canAutofillPassword) || false;
+  } catch (e) {
+    await CatchError(e);
+  }
+
+  try {
+    const permissionResults = await sendMessageToAllFrames(tabId, {
+      action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
+      target: REQUEST_TARGETS.CONTENT,
+      autofillType: 'login'
+    });
+
+    const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
+    const needsPermission = crossDomainFrames.length > 0;
+
+    if (needsPermission) {
+      const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
+
+      const confirmMessage = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
+        .replace('DOMAINS', uniqueDomains.join(', '));
+
+      const confirmResult = await sendMessageToTab(tabId, {
+        action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+        target: REQUEST_TARGETS.CONTENT,
+        message: confirmMessage
+      });
+
+      if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+        iframePermissionGranted = false;
+      }
+    }
+  } catch (e) {
+    await CatchError(e);
   }
 
   try {
@@ -133,7 +145,9 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
         target: REQUEST_TARGETS.CONTENT,
         noPassword,
         noUsername,
-        cryptoAvailable: cryptoAvailableRes?.cryptoAvailable
+        cryptoAvailable: cryptoAvailableRes?.cryptoAvailable,
+        iframePermissionGranted,
+        hasPasswordInAnyFrame
       }
     );
 
@@ -151,7 +165,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     }
   } catch (e) {
     await CatchError(e);
-    
+
     return TwofasNotification.show({
       Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
       Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')

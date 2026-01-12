@@ -8,18 +8,16 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
-import { lazy, useCallback } from 'react';
-import { LazyMotion } from 'motion/react';
-import * as m from 'motion/react-m';
+import { useCallback, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 import copyValue from '@/partials/functions/copyValue';
-import usePopupStateStore from '../../../store/popupState';
+import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import URIMatcher from '@/partials/URIMatcher';
 import updateItem from '../functions/updateItem';
-
-const loadDomAnimation = () => import('@/features/domAnimation.js').then(res => res.default);
-const CopyIcon = lazy(() => import('@/assets/popup-window/copy-to-clipboard.svg?react'));
-const TrashIcon = lazy(() => import('@/assets/popup-window/trash.svg?react'));
+import { useUriTempIds } from '../context/UriTempIdsContext';
+import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import TrashIcon from '@/assets/popup-window/trash.svg?react';
 
 const urlVariants = {
   hidden: {
@@ -28,8 +26,8 @@ const urlVariants = {
     marginBottom: 0,
     overflow: 'hidden',
     transition: {
-      duration: 0.3,
-      ease: 'easeInOut'
+      duration: 0.2,
+      ease: 'easeOut'
     }
   },
   visible: {
@@ -38,30 +36,31 @@ const urlVariants = {
     marginBottom: 24,
     overflow: 'visible',
     transition: {
-      duration: 0.3,
-      ease: 'easeInOut'
+      duration: 0.2,
+      ease: 'easeOut'
     }
   }
 };
 
-/** 
-* Function to render the URL input field.
+/**
+* Component to render the URL input field.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
 function URLComponent (props) {
-  const data = usePopupStateStore(state => state.data);
-  const setData = usePopupStateStore(state => state.setData);
+  const { data, setData, setItem } = usePopupState();
+  const { urisWithTempIds, updateUri, removeUri, resetUri } = useUriTempIds();
 
   const { inputError, uri, index } = props;
+  const inputRef = useRef(null);
 
   const isEditable = data?.domainsEditable?.[uri._tempId];
   const buttonText = isEditable === true ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit');
-  const isNew = data.item.content.uris && data.item.content.uris[index] && data.item.content.uris[index].new;
+  const isNew = uri.new;
 
   const handleCopyUri = useCallback(async index => {
-    const uri = data?.item?.content?.uris && data?.item?.content?.uris?.[index] ? data.item.content.uris[index].text : '';
-    await copyValue(uri, data.item.deviceId, data.item.vaultId, data.item.id, `uri-${index}`);
+    const uriText = data?.item?.content?.uris && data?.item?.content?.uris?.[index] ? data.item.content.uris[index].text : '';
+    await copyValue(uriText, data.item.deviceId, data.item.vaultId, data.item.id, 'uri');
     showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
   }, [data.item]);
 
@@ -78,40 +77,30 @@ function URLComponent (props) {
     } else {
       let item = await getItem(data.item.deviceId, data.item.vaultId, data.item.id);
 
-      const newUrisWithTempIds = [...data.item.internalData.urisWithTempIds];
+      const originalUri = item?.content?.uris?.[index];
       const newContentUris = [...data.item.content.uris];
-      const currentUri = newUrisWithTempIds[index];
 
-      if (item.internalData.urisWithTempIds && item.internalData.urisWithTempIds[index]) {
-        newUrisWithTempIds[index] = {
-          text: item.internalData.urisWithTempIds[index].text,
-          matcher: item.internalData.urisWithTempIds[index].matcher,
-          _tempId: currentUri._tempId
-        };
+      if (originalUri) {
         newContentUris[index] = {
-          text: item.internalData.urisWithTempIds[index].text,
-          matcher: item.internalData.urisWithTempIds[index].matcher
+          text: originalUri.text,
+          matcher: originalUri.matcher
         };
+        resetUri(uri._tempId, originalUri);
       } else {
-        newUrisWithTempIds[index] = {
-          text: '',
-          matcher: URIMatcher.M_DOMAIN_TYPE,
-          _tempId: currentUri._tempId
-        };
         newContentUris[index] = {
           text: '',
           matcher: URIMatcher.M_DOMAIN_TYPE
         };
+        resetUri(uri._tempId, { text: '', matcher: URIMatcher.M_DOMAIN_TYPE });
       }
 
-      const updatedItem = updateItem(data.item, {
-        content: { uris: newContentUris },
-        internalData: { ...data.item.internalData, urisWithTempIds: newUrisWithTempIds }
+      const updatedItem = await updateItem(data.item, {
+        content: { uris: newContentUris }
       });
 
       item = null;
 
-      setData('item', updatedItem);
+      setItem(updatedItem);
 
       const newDomainsEditable = {
         ...currentDomainsEditable,
@@ -122,36 +111,27 @@ function URLComponent (props) {
     }
   };
 
-  const handleRemoveUri = useCallback(() => {
-    const newUrisWithTempIds = [...data.item.internalData.urisWithTempIds];
-    const newContentUris = [...data.item.content.uris];
-    const removedUri = newUrisWithTempIds.find(u => u._tempId === uri._tempId);
+  const handleRemoveUri = useCallback(async () => {
+    const uriIndex = urisWithTempIds.findIndex(u => u._tempId === uri._tempId);
 
-    if (!removedUri) {
+    if (uriIndex === -1) {
       return;
     }
 
-    const removedIndex = newUrisWithTempIds.indexOf(removedUri);
-
-    if (removedIndex > -1) {
-      newUrisWithTempIds.splice(removedIndex, 1);
-      newContentUris.splice(removedIndex, 1);
-    }
+    const newContentUris = [...data.item.content.uris];
+    newContentUris.splice(uriIndex, 1);
 
     const newIconUriIndex = data.item.content.iconUriIndex > 0 ? data.item.content.iconUriIndex - 1 : 0;
 
-    const updatedItem = updateItem(data.item, {
+    const updatedItem = await updateItem(data.item, {
       content: {
         uris: newContentUris,
         iconUriIndex: newIconUriIndex
-      },
-      internalData: {
-        ...data.item.internalData,
-        urisWithTempIds: newUrisWithTempIds
       }
     });
 
-    setData('item', updatedItem);
+    setItem(updatedItem);
+    removeUri(uri._tempId);
 
     if (data?.domainsEditable && data.domainsEditable[uri._tempId] !== undefined) {
       // eslint-disable-next-line no-unused-vars
@@ -161,53 +141,54 @@ function URLComponent (props) {
 
     const currentUrisRemoved = data?.urisRemoved || 0;
     setData('urisRemoved', currentUrisRemoved + 1);
-  }, [data, uri._tempId, setData]);
+  }, [data, uri._tempId, setData, setItem, urisWithTempIds, removeUri]);
 
-  const handleUriChange = useCallback(e => {
-    const newUri = e.target.value;
-    const newUrisWithTempIds = [...data.item.internalData.urisWithTempIds];
-    const newContentUris = [...data.item.content.uris];
+  const handleUriChange = useCallback(async e => {
+    const newUriText = e.target.value;
 
-    const uriToUpdate = newUrisWithTempIds.find(u => u._tempId === uri._tempId);
+    const uriIndex = urisWithTempIds.findIndex(u => u._tempId === uri._tempId);
 
-    if (!uriToUpdate) {
+    if (uriIndex === -1) {
       return;
     }
 
-    const uriIndex = newUrisWithTempIds.indexOf(uriToUpdate);
+    const currentUri = urisWithTempIds[uriIndex];
+    const newContentUris = [...data.item.content.uris];
+    newContentUris[uriIndex] = { text: newUriText, matcher: currentUri.matcher };
 
-    if (uriIndex > -1) {
-      newUrisWithTempIds[uriIndex] = { ...uriToUpdate, text: newUri };
-      newContentUris[uriIndex] = { text: newUri, matcher: uriToUpdate.matcher };
-    }
-
-    const updatedItem = updateItem(data.item, {
-      content: { uris: newContentUris },
-      internalData: { ...data.item.internalData, urisWithTempIds: newUrisWithTempIds }
+    const updatedItem = await updateItem(data.item, {
+      content: { uris: newContentUris }
     });
 
-    setData('item', updatedItem);
-  });
+    setItem(updatedItem);
+    updateUri(uri._tempId, { text: newUriText });
+  }, [data.item, setItem, uri._tempId, urisWithTempIds, updateUri]);
+
+  useEffect(() => {
+    if (isEditable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isEditable]);
 
   return (
-    <LazyMotion features={loadDomAnimation}>
-      <Field name={`content.uris[${index}].text`}>
-        {({ input }) => (
-          <m.div
-            className={`${pI.passInput} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
-            variants={urlVariants}
-            initial={isNew ? 'hidden' : false}
-            animate={isNew ? 'visible' : false}
-            exit='hidden'
-          >
+    <Field name={`content.uris[${index}].text`}>
+      {({ input }) => (
+        <motion.div
+          className={`${pI.passInput} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
+          variants={urlVariants}
+          initial={isNew ? 'hidden' : false}
+          animate={isNew ? 'visible' : false}
+          exit='hidden'
+        >
             <div className={pI.passInputTop}>
               <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
-              <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={handleUriEditable}>{buttonText}</button>
+              <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={handleUriEditable} tabIndex={-1}>{buttonText}</button>
             </div>
             <div className={pI.passInputBottom}>
               <input
                 type="text"
                 {...input}
+                ref={inputRef}
                 value={uri.text}
                 onChange={e => {
                   input.onChange(e);
@@ -228,6 +209,7 @@ function URLComponent (props) {
                   className={`${bS.btn} ${pI.iconButton}`}
                   onClick={() => handleCopyUri(index)}
                   title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                  tabIndex={-1}
                 >
                   <CopyIcon />
                 </button>
@@ -245,10 +227,9 @@ function URLComponent (props) {
             <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
               {domainValidation(input.value)}
             </div>
-          </m.div>
+          </motion.div>
         )}
       </Field>
-    </LazyMotion>
   );
 }
 
