@@ -233,31 +233,26 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     }, tabId, true);
   }
 
-  const allNoInputs = response.every(frameResponse => frameResponse.status === 'error' && frameResponse.message === 'No input fields found');
+  const relevantResponses = response.filter(r => r && r.status && r.message !== 'No input fields found') || [];
 
-  if (allNoInputs) {
+  if (relevantResponses.length === 0) {
     return TwofasNotification.show({
       Title: browser.i18n.getMessage('notification_card_autofill_no_inputs_title'),
       Message: browser.i18n.getMessage('notification_card_autofill_no_inputs_message')
     }, tabId, true);
   }
 
-  const isPartial = response.some(frameResponse => frameResponse.status === 'partial');
-  const partialResponse = response.find(frameResponse => frameResponse.status === 'partial');
+  const isOk = relevantResponses.some(frameResponse => frameResponse.status === 'ok');
+  const isPartial = relevantResponses.some(frameResponse => frameResponse.status === 'partial');
 
-  if (isPartial && partialResponse?.failedFields) {
-    const failedFields = partialResponse.failedFields;
-    let messageKey = 'notification_card_autofill_expiration_date_not_available';
+  if (isOk) {
+    return;
+  }
 
-    if (failedFields.includes('year') && !failedFields.includes('month')) {
-      messageKey = 'notification_card_autofill_year_not_available';
-    } else if (failedFields.includes('month') && !failedFields.includes('year')) {
-      messageKey = 'notification_card_autofill_month_not_available';
-    }
-
+  if (isPartial) {
     return TwofasNotification.show({
       Title: browser.i18n.getMessage('notification_card_autofill_partial_title'),
-      Message: browser.i18n.getMessage(messageKey)
+      Message: browser.i18n.getMessage('notification_card_autofill_partial_message')
     }, tabId, true);
   }
 };

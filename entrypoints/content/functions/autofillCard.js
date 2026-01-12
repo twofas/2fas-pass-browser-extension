@@ -515,15 +515,15 @@ const autofillCard = async request => {
 
   const failedCriticalFields = [];
 
-  if (hasCardNumberData && !filledFields.cardNumber) {
+  if (canFillCardNumber && !filledFields.cardNumber) {
     failedCriticalFields.push('cardNumber');
   }
 
-  if (hasExpirationDateData && !filledFields.expirationDate) {
+  if (canFillExpirationDate && !filledFields.expirationDate) {
     failedCriticalFields.push('expirationDate');
   }
 
-  if (hasSecurityCodeData && !filledFields.securityCode) {
+  if (canFillSecurityCode && !filledFields.securityCode) {
     failedCriticalFields.push('securityCode');
   }
 
