@@ -1,0 +1,50 @@
+{
+  "login": {
+    "message": "Login",
+    "description": "Label for the login functionality"
+  },
+  "login_plural": {
+    "message": "Loginy",
+    "description": "Label for multiple logins"
+  },
+  "username": {
+    "message": "Nazwa użytkownika / Email",
+    "description": "Label for the username or email field"
+  },
+  "password": {
+    "message": "Hasło",
+    "description": "Label for the password field"
+  },
+  "placeholder_username": {
+    "message": "Wpisz nazwę użytkownika",
+    "description": "Placeholder text for the username input field"
+  },
+  "placeholder_password": {
+    "message": "Wpisz hasło",
+    "description": "Placeholder text for the password input field"
+  },
+  "notification_username_copied": {
+    "message": "Nazwa użytkownika skopiowana do schowka",
+    "description": "Notification message when the username is successfully copied to the clipboard"
+  },
+  "notification_password_copied": {
+    "message": "Hasło skopiowane do schowka",
+    "description": "Notification message when the password is successfully copied to the clipboard"
+  },
+  "error_login_not_found": {
+    "message": "Wystąpił błąd. Nie znaleziono loginu.",
+    "description": "Error message displayed when the requested login item is not found"
+  },
+  "error_username_copy_failed": {
+    "message": "Nie udało się skopiować nazwy użytkownika do schowka.",
+    "description": "Error message displayed when copying the username to the clipboard fails"
+  },
+  "error_password_copy_failed": {
+    "message": "Nie udało się skopiować hasła do schowka.",
+    "description": "Error message displayed when copying the password to the clipboard fails"
+  },
+  "placeholder_domain_uri": {
+    "message": "np. https://2fas.com",
+    "description": "Placeholder text for the domain or URI input field"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "background_contextMenuConfigured_no_accounts": {
+    "message": "Brak pasujących elementów dla tej domeny.",
+    "description": "Message displayed when no login items match the current domain in the context menu"
+  },
+  "background_contextMenuConfigured_add_account": {
+    "message": "Dodaj konto...",
+    "description": "Option in the context menu to add a new account for the current domain"
+  },
+  "background_contextMenuConfigured_cards": {
+    "message": "Karty",
+    "description": "Submenu title for payment cards in the context menu"
+  },
+  "background_contextMenuNotConfigured_connect": {
+    "message": "Połącz z aplikacją mobilną 2FAS Pass...",
+    "description": "Option to connect the extension with the 2FAS Pass mobile app"
+  },
+  "background_get_browser_info_on": {
+    "message": "w",
+    "description": "Used in generating the browser extension name, e.g., Chrome on Windows"
+  },
+  "notification_card_autofill_no_data_title": {
+    "message": "Brak danych karty",
+    "description": "Title for the notification when the card has no data to autofill"
+  },
+  "notification_card_autofill_no_data_message": {
+    "message": "Ta karta nie ma danych do autouzupełnienia",
+    "description": "Message for the notification when the card has no data to autofill"
+  },
+  "notification_card_autofill_partial_title": {
+    "message": "Częściowe autouzupełnienie",
+    "description": "Title for the notification when card autofill is only partially successful"
+  },
+  "notification_card_autofill_partial_message": {
+    "message": "Some card details could not be autofilled",
+    "description": "Message when some payment card fields could not be autofilled"
+  },
+  "notification_card_autofill_no_inputs_title": {
+    "message": "Nie znaleziono formularza danych karty",
+    "description": "Title for the notification when no card input fields are detected on the page"
+  },
+  "notification_card_autofill_no_inputs_message": {
+    "message": "Ta strona nie zawiera formularza danych karty, który można automatycznie uzupełnić.",
+    "description": "Message for the notification when no card input fields are detected on the page"
+  }
+}

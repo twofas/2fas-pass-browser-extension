@@ -1,0 +1,34 @@
+{
+  "content_matching_logins_title": {
+    "message": "Pasujące elementy",
+    "description": "Title for the section displaying login items that match the current context"
+  },
+  "content_save_prompt_add_header": {
+    "message": "Czy chcesz dodać ten element do 2FAS Pass?",
+    "description": "Header asking if the user wants to save a new login item"
+  },
+  "content_save_prompt_update_header": {
+    "message": "Czy chcesz zapisać zmiany?",
+    "description": "Header asking if the user wants to update an existing login item"
+  },
+  "content_save_prompt_don_t_ask": {
+    "message": "Ignoruj tą domenę",
+    "description": "Option to prevent the save prompt from appearing in the future"
+  },
+  "content_save_prompt_add_login": {
+    "message": "Nowy element",
+    "description": "Button label to add a new login item to 2FAS Pass"
+  },
+  "content_save_prompt_update_login": {
+    "message": "Zapisz element",
+    "description": "Button label to update an existing login item in 2FAS Pass"
+  },
+  "autofill_cross_domain_warning": {
+    "message": "Ten formularz znajduje się w innej domenie (CURRENT_DOMAIN) niż strona główna (TOP_DOMAIN). Czy chcesz kontynuować autouzupełnianie?",
+    "description": "Warning shown when autofill is attempted on a cross-domain iframe"
+  },
+  "autofill_cross_domain_warning_no_access": {
+    "message": "Ten formularz znajduje się w domenie CURRENT_DOMAIN i jest osadzony w ramce iframe z innej domeny. Czy na pewno chcesz kontynuować autouzupełnianie?",
+    "description": "Warning shown when autofill is attempted on a cross-domain iframe and we cannot access the parent domain"
+  }
+}

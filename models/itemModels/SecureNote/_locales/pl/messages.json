@@ -1,0 +1,62 @@
+{
+  "secure_note": {
+    "message": "Notatka",
+    "description": "Label for the secure note functionality"
+  },
+  "secure_note_note": {
+    "message": "Notatka",
+    "description": "Label for the secure note text field"
+  },
+  "secure_note_plural": {
+    "message": "Notatki",
+    "description": "Label for multiple secure notes"
+  },
+  "secure_note_placeholder": {
+    "message": "Dodaj notatkę",
+    "description": "Placeholder text for the secure note input field"
+  },
+  "secure_note_name": {
+    "message": "Nazwa",
+    "description": "Placeholder text for the secure note name input field"
+  },
+  "secure_note_name_placeholder": {
+    "message": "Nazwa notatki",
+    "description": "Placeholder text for the secure note name input field"
+  },
+  "secure_note_name_required": {
+    "message": "Nazwa notatki jest wymagana",
+    "description": "Validation message indicating that the secure note name is required"
+  },
+  "secure_note_name_max_length": {
+    "message": "Nazwa notatki musi mieć mniej niż 256 znaków.",
+    "description": "Validation message indicating that the secure note title exceeds the maximum length"
+  },
+  "secure_note_text_max_length": {
+    "message": "Notatka musi mieć mniej niż 16384 znaków.",
+    "description": "Validation message indicating that the secure note text exceeds the maximum length"
+  },
+  "placeholder_secure_note": {
+    "message": "Wpisz bezpieczną notatkę",
+    "description": "Placeholder text for the Secure Note text input field"
+  },
+  "placeholder_secure_note_empty": {
+    "message": "Notatka jest pusta",
+    "description": "Placeholder text when there is no Secure Note available"
+  },
+  "notification_secure_note_name_copied": {
+    "message": "Nazwa skopiowana do schowka",
+    "description": "Notification message when the secure note name is successfully copied to the clipboard"
+  },
+  "notification_secure_note_text_copied": {
+    "message": "Notatka skopiowana do schowka",
+    "description": "Notification message when the secure note text is successfully copied to the clipboard"
+  },
+  "error_secure_note_not_found": {
+    "message": "Wystąpił błąd. Nie znaleziono notatki.",
+    "description": "Error message displayed when the requested secure note is not found"
+  },
+  "error_secure_note_name_copy_failed": {
+    "message": "Nie udało się skopiować nazwy do schowka.",
+    "description": "Error message displayed when copying the secure note name to the clipboard fails"
+  }
+}

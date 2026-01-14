@@ -1,130 +1,130 @@
 {
   "error_general": {
-    "message": "Something went wrong. Please try again.",
+    "message": "Wystąpił błąd. Spróbuj ponownie.",
     "description": "Generic error message displayed when an unspecified error occurs"
   },
   "error_ext_platform_undefined": {
-    "message": "EXT_PLATFORM is undefined",
+    "message": "EXT_PLATFORM nie jest zdefiniowane.",
     "description": "Error message displayed when the EXT_PLATFORM variable is not defined"
   },
   "error_general_setting": {
-    "message": "Error, changes couldn't be saved",
+    "message": "Błąd, nie można zapisać zmian",
     "description": "Generic error message displayed when saving settings fails"
   },
   "error_getting_theme_value": {
-    "message": "Error while getting theme value",
+    "message": "Błąd przy pobieraniu motywu",
     "description": "Error message displayed when retrieving the theme value fails"
   },
   "error_getting_services_key": {
-    "message": "Error while getting service key",
+    "message": "Błąd przy pobieraniu klucza serwisu",
     "description": "Error message displayed when retrieving the service key fails"
   },
   "error_auto_clear_clipboard_permission_denied": {
-    "message": "Permission to read clipboard denied. Auto clear clipboard feature disabled.",
+    "message": "Odmówiono dostępu do odczytu schowka. Wyłączono automatyczne czyszczenie schowka.",
     "description": "Error message displayed when clipboard read permission is denied"
   },
   "error_saving_extension_name": {
-    "message": "Error! Failed to update extension name.",
+    "message": "Błąd! Nie udało się zaktualizować nazwy rozszerzenia.",
     "description": "Error message displayed when updating the extension name fails"
   },
   "error_uri_copy_failed": {
-    "message": "Failed to copy URL to clipboard.",
+    "message": "Nie udało się skopiować adresu URL do schowka.",
     "description": "Error message displayed when copying the URI to the clipboard fails"
   },
   "error_autofill_failed": {
-    "message": "Failed to autofill. Please try again.",
+    "message": "Nieudane autouzupełnianie. Spróbuj ponownie.",
     "description": "Error message displayed when the autofill operation fails"
   },
   "error_no_response_from_tab": {
-    "message": "No response from tab",
+    "message": "Brak odpowiedzi z karty",
     "description": "Error message displayed when there is no response from the browser tab"
   },
   "error_unknown_response_from_tab": {
-    "message": "Unknown response from tab",
+    "message": "Nieznana odpowiedź z karty",
     "description": "Error message displayed when the browser tab returns an unknown response"
   },
   "error_storage_capacity_exceeded": {
-    "message": "Data size exceeded. Use less data or try a different browser.",
+    "message": "Przekroczono limit danych. Użyj mniej danych lub spróbuj użyć innej przeglądarki.",
     "description": "Error shown when storage capacity exceeds the limit"
   },
   "error_scheme_mismatch": {
-    "message": "Please update the 2FAS Pass mobile app.",
+    "message": "Zaktualizuj aplikację mobilną 2FAS Pass.",
     "description": "Error shown when there is a scheme mismatch between the extension and mobile app"
   },
   "error_mobile_disconnected": {
-    "message": "Mobile device disconnected. Please try again.",
+    "message": "Rozłączono z urządzeniem mobilnym. Spróbuj ponownie.",
     "description": "Error shown when the mobile device disconnects"
   },
   "error_timeout": {
-    "message": "Timed out due to inactivity.",
+    "message": "Przekroczono limit czasu połączenia.",
     "description": "Error message displayed when an operation times out due to inactivity"
   },
   "error_feature_wrong_data": {
-    "message": "Something went wrong. Our developer team is already working on it.",
+    "message": "Wystąpił błąd. Nasz zespół programistów już nad tym pracuje.",
     "description": "Error message displayed when there is an issue with the shortcut settings"
   },
   "error_no_network_connection": {
-    "message": "No Internet connection. Please check your connection and try again.",
+    "message": "Brak połączenia z internetem. Sprawdź swoje połączenie i spróbuj ponownie.",
     "description": "Error message displayed when there is no network connection"
   },
   "error_connection_error": {
-    "message": "Connection error. Please check your Internet connection and try again.",
+    "message": "Błąd połączenia. Sprawdź swoje połączenie z internetem i spróbuj ponownie.",
     "description": "Error message displayed when a connection error occurs"
   },
   "error_error_message_copy_failed": {
-    "message": "Failed to copy error message to clipboard.",
+    "message": "Nie udało się skopiować treści błędu do schowka.",
     "description": "Error message displayed when copying the error message to the clipboard fails"
   },
   "appDesc": {
-    "message": "2FAS Pass is a next-gen password manager with no compromises in security and full control over your data.",
+    "message": "2FAS Pass to menedżer haseł nowej generacji, zaprojektowany bez kompromisów w zakresie bezpieczeństwa oraz z pełną kontrolą użytkownika nad danymi.",
     "description": "Description of the 2FAS Pass Browser Extension highlighting its features"
   },
   "autofill": {
-    "message": "Autofill",
+    "message": "Autouzupełnianie",
     "description": "Label for the autofill functionality"
   },
   "autofillCommand": {
-    "message": "Autofill 2FAS Pass",
+    "message": "Autouzupełnianie 2FAS Pass",
     "description": "Label for the command used to trigger autofill"
   },
   "fetch": {
-    "message": "Fetch",
+    "message": "Pobierz",
     "description": "Label for the fetch functionality"
   },
   "continue": {
-    "message": "Continue",
+    "message": "Kontynuuj",
     "description": "Button label to proceed with an action"
   },
   "continue_without_pinning": {
-    "message": "Continue without pinning",
+    "message": "Kontynuuj bez przypięcia",
     "description": "Button label to proceed without pinning the extension"
   },
   "open_in_new_window": {
-    "message": "Open in a new window",
+    "message": "Otwórz w nowym oknie",
     "description": "Option to open a link or page in a new browser window"
   },
   "go_to_settings": {
-    "message": "Go to settings",
+    "message": "Przejdź do ustawień",
     "description": "Button label to navigate to the settings page"
   },
   "fetch_from_mobile": {
-    "message": "Fetch from mobile",
+    "message": "Pobierz z aplikacji",
     "description": "Option to fetch data from the mobile app"
   },
   "go_to_home_page": {
-    "message": "Go to Home Page",
+    "message": "Przejdź na stronę główną",
     "description": "Button label to navigate to the home page"
   },
   "scroll_to_top": {
-    "message": "Scroll to top",
+    "message": "Przewiń do góry",
     "description": "Button label to scroll to the top of the page"
   },
   "cancel": {
-    "message": "Cancel",
+    "message": "Anuluj",
     "description": "Button label to cancel an action"
   },
   "edit": {
-    "message": "Edit",
+    "message": "Edytuj",
     "description": "Button label to edit an item"
   },
   "info": {
@@ -132,187 +132,187 @@
     "description": "Label for displaying information"
   },
   "domain_uri": {
-    "message": "Domain (URI)",
+    "message": "Domena (URI)",
     "description": "Label for the domain or URI field"
   },
   "domain_uri_index": {
-    "message": "Domain (URI %INDEX%)",
+    "message": "Domena (URI %INDEX%)",
     "description": "Label for a specific domain or URI with an index"
   },
   "name": {
-    "message": "Name",
+    "message": "Nazwa",
     "description": "Label for the name field"
   },
   "enter_on_mobile": {
-    "message": "I will enter it in my mobile app",
+    "message": "Wprowadzę je w aplikacji mobilnej",
     "description": "Option to enter data manually in the mobile app"
   },
   "autogenerate_on_mobile": {
-    "message": "Autogenerate password in my mobile app",
+    "message": "Automatycznie wygeneruj hasło w aplikacji mobilnej",
     "description": "Option to autogenerate a password in the mobile app"
   },
   "set_login_and_password_in_the_mobile_app": {
-    "message": "Set a username and password in the mobile app",
+    "message": "Ustaw nazwę użytkownika i hasło w aplikacji mobilnej",
     "description": "Instruction to set login and password in the mobile app"
   },
   "reload": {
-    "message": "Reload",
+    "message": "Odśwież",
     "description": "Button label to reload the page or data"
   },
   "update": {
-    "message": "Update",
+    "message": "Aktualizuj",
     "description": "Button label to update an item or data"
   },
   "try_again": {
-    "message": "Try again",
+    "message": "Spróbuj ponownie",
     "description": "Button label to retry an action"
   },
   "version": {
-    "message": "Version",
+    "message": "Wersja",
     "description": "Label for displaying the version of the extension"
   },
   "back": {
-    "message": "Back",
+    "message": "Cofnij",
     "description": "Button label to navigate to the previous page or step"
   },
   "advanced": {
-    "message": "Advanced",
+    "message": "Zaawansowane",
     "description": "Label for advanced settings or options"
   },
   "light_mode": {
-    "message": "Light mode",
+    "message": "Tryb jasny",
     "description": "Option to enable light mode for the interface"
   },
   "dark_mode": {
-    "message": "Dark mode",
+    "message": "Tryb ciemny",
     "description": "Option to enable dark mode for the interface"
   },
   "unset_mode": {
-    "message": "System default",
+    "message": "Domyślne ustawienia systemu",
     "description": "Option to use the system's default mode for the interface"
   },
   "save": {
-    "message": "Save",
+    "message": "Zapisz",
     "description": "Button label to save changes"
   },
   "or": {
-    "message": "or",
+    "message": "albo",
     "description": "Text used to indicate an alternative option"
   },
   "unknown": {
-    "message": "Unknown",
+    "message": "Nieznany",
     "description": "Label for an unknown value or state"
   },
   "browser_internal_page": {
-    "message": "Browser Internal Page",
+    "message": "Wewnętrzna strona przeglądarki",
     "description": "Label for a browser's internal page"
   },
   "close": {
-    "message": "Close",
+    "message": "Zamknij",
     "description": "Button label to close a window or dialog"
   },
   "notes": {
-    "message": "Notes",
+    "message": "Notatki",
     "description": "Label for a section or field to add notes"
   },
   "learn_more": {
-    "message": "Learn more",
+    "message": "Dowiedz się więcej",
     "description": "Button label to access additional information"
   },
   "tier_0_name": {
-    "message": "Top Secret",
+    "message": "Ściśle tajne",
     "description": "Label for the highest security tier"
   },
   "tier_0_description": {
-    "message": "Do not share this Item with the 2FAS Pass Browser Extension and type it manually.",
+    "message": "Nie udostępniaj tego elementu rozszerzeniu przeglądarki 2FAS Pass i wpisuj go ręcznie.",
     "description": "Description for the top-secret security tier"
   },
   "tier_1_name": {
-    "message": "Highly Secret",
+    "message": "Tajne",
     "description": "Label for the second-highest security tier"
   },
   "tier_1_description": {
-    "message": "Access to Item details must be confirmed in the 2FAS Pass mobile app.",
+    "message": "Dostęp do szczegółów elementu musi być potwierdzony w aplikacji mobilnej 2FAS Pass.",
     "description": "Explains the ultra-secure tier where passwords are shared after mobile app confirmation"
   },
   "tier_2_name": {
-    "message": "Secret",
+    "message": "Poufne",
     "description": "Label for the standard security tier"
   },
   "tier_2_description": {
-    "message": "Access this Item directly from the 2FAS Pass Browser Extension.",
+    "message": "Uzyskaj dostęp do tego elementu bezpośrednio z rozszerzenia przeglądarki 2FAS Pass.",
     "description": "Explains the secure tier where passwords are accessed directly from the extension"
   },
   "no_item_name": {
-    "message": "No Item name",
+    "message": "Brak nazwy elementu",
     "description": "Label for a state where no item name is available"
   },
   "no_value": {
-    "message": "No value",
+    "message": "Brak wartości",
     "description": "Label for a state where no value is available"
   },
   "no_valid_domain": {
-    "message": "No valid domain detected. If it is a non-standard domain, add the appropriate protocol (e.g. https) at the beginning.",
+    "message": "Nie wykryto prawidłowej domeny. Jeśli jest to domena niestandardowa, dodaj na jej początku odpowiedni protokół (np. https).",
     "description": "Label for a state where no valid domain is provided"
   },
   "sync": {
-    "message": "Sync",
+    "message": "Synchronizuj",
     "description": "Label for the sync functionality"
   },
   "sync_title": {
-    "message": "Sync with your 2FAS Pass mobile app",
+    "message": "Zsynchronizuj z aplikacją mobilną 2FAS Pass.",
     "description": "Title for the sync data section"
   },
   "ssh_key": {
-    "message": "SSH Key",
+    "message": "Klucz SSH",
     "description": "Label for the SSH key functionality"
   },
   "item": {
-    "message": "Item",
+    "message": "Element",
     "description": "Generic label for an item"
   },
   "button_open_calendar": {
-    "message": "Open calendar",
+    "message": "Otwórz kalendarz",
     "description": "Button title for opening the calendar popup to select expiration date"
   },
   "notification_send_autofill_to_tab_lack_of_service_title": {
-    "message": "Error",
+    "message": "Błąd",
     "description": "Title for the notification when the autofill service is not found"
   },
   "notification_send_autofill_to_tab_lack_of_service_message": {
-    "message": "Service not found",
+    "message": "Nie znaleziono serwisu",
     "description": "Message for the notification when the autofill service is not found"
   },
   "notification_send_autofill_to_tab_autofill_error_title": {
-    "message": "Error",
+    "message": "Błąd",
     "description": "Title for the notification when an autofill error occurs"
   },
   "notification_send_autofill_to_tab_autofill_error_message": {
-    "message": "Failed to autofill. Please try again.",
+    "message": "Nieudane autouzupełnianie. Spróbuj ponownie.",
     "description": "Message for the notification when an autofill error occurs"
   },
   "notification_shortcut_autofill_no_active_tab_title": {
-    "message": "No active tab",
+    "message": "Brak aktywnej karty",
     "description": "Title for the notification when there is no active tab for autofill"
   },
   "notification_shortcut_autofill_no_active_tab_message": {
-    "message": "There is no active tab to autofill",
+    "message": "Brak aktywnej karty do autouzupełniania.",
     "description": "Message for the notification when there is no active tab for autofill"
   },
   "notification_shortcut_autofill_internal_page_title": {
-    "message": "Browser Internal page",
+    "message": "Wewnętrzna strona przeglądarki",
     "description": "Title for the notification when autofill is attempted on a browser internal page"
   },
   "notification_shortcut_autofill_internal_page_message": {
-    "message": "Sorry, but we can't autofill on Browser Internal Pages",
+    "message": "Przepraszamy, ale nie możemy automatycznie wypełniać danych na wewnętrznych stronach przeglądarki.",
     "description": "Message shown when autofill isn't supported on browser internal pages"
   },
   "notification_settings_save_success": {
-    "message": "Changes saved successfully",
+    "message": "Zmiany zapisane pomyślnie",
     "description": "Notification shown when settings are saved successfully"
   },
   "notification_idle_lock_premium_only": {
-    "message": "\"Only on restart\" is a premium feature. Upgrade to the unlimited plan in your mobile app.",
+    "message": "Opcja „Tylko przy ponownym uruchomieniu” jest funkcją premium. Ulepsz plan do unlimited w aplikacji mobilnej.",
     "description": "Notification message when the idle lock feature is unlimited plan only"
   },
   "notification_test_title": {
@@ -320,67 +320,67 @@
     "description": "Title for a test notification"
   },
   "notification_test_message": {
-    "message": "This is a test notification",
+    "message": "To jest testowe powiadomienie",
     "description": "Message for a test notification"
   },
   "notification_shortcut_autofill_no_username_and_password_title": {
-    "message": "Autofill not possible",
+    "message": "Autouzupełnianie niemożliwe",
     "description": "Title for the notification when no username and password are found"
   },
   "notification_shortcut_autofill_no_username_and_password_message": {
-    "message": "No username and password found",
+    "message": "Nie znaleziono nazwy użytkownika i hasła.",
     "description": "Message for the notification when no username and password are found"
   },
   "notification_extension_name_update_success": {
-    "message": "Extension name has been updated",
+    "message": "Zaktualizowano nazwę rozszerzenia",
     "description": "Notification message when the extension name is successfully updated"
   },
   "notification_uri_copied": {
-    "message": "URI copied to clipboard",
+    "message": "URI skopiowane do schowka",
     "description": "Notification message when the URI is successfully copied to the clipboard"
   },
   "notification_error_message_copied": {
-    "message": "Error message copied to clipboard",
+    "message": "Treść błędu skopiowana do schowka",
     "description": "Notification message when the error message is successfully copied to the clipboard"
   },
   "autofill_cross_domain_warning_popup": {
-    "message": "This page contains forms from external domains:\nDOMAINS\n\nDo you want to autofill data in these frames?",
+    "message": "Ta strona zawiera formularze z zewnętrznych domen:\nDOMAINS\n\nCzy chcesz automatycznie uzupełnić dane w tych formularzach?",
     "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
   },
   "placeholder_name": {
-    "message": "Type your Item name",
+    "message": "Wpisz nazwę elementu",
     "description": "Placeholder text for the name input field"
   },
   "background_contextMenuConfigured_no_accounts": {
-    "message": "There are no matching Items for this domain",
+    "message": "Brak pasujących elementów dla tej domeny.",
     "description": "Message displayed when no login items match the current domain in the context menu"
   },
   "background_contextMenuConfigured_add_account": {
-    "message": "Add account...",
+    "message": "Dodaj konto...",
     "description": "Option in the context menu to add a new account for the current domain"
   },
   "background_contextMenuConfigured_cards": {
-    "message": "Cards",
+    "message": "Karty",
     "description": "Submenu title for payment cards in the context menu"
   },
   "background_contextMenuNotConfigured_connect": {
-    "message": "Connect with the 2FAS Pass mobile app...",
+    "message": "Połącz z aplikacją mobilną 2FAS Pass...",
     "description": "Option to connect the extension with the 2FAS Pass mobile app"
   },
   "background_get_browser_info_on": {
-    "message": "on",
+    "message": "w",
     "description": "Used in generating the browser extension name, e.g., Chrome on Windows"
   },
   "notification_card_autofill_no_data_title": {
-    "message": "No card data",
+    "message": "Brak danych karty",
     "description": "Title for the notification when the card has no data to autofill"
   },
   "notification_card_autofill_no_data_message": {
-    "message": "This card has no data to autofill",
+    "message": "Ta karta nie ma danych do autouzupełnienia",
     "description": "Message for the notification when the card has no data to autofill"
   },
   "notification_card_autofill_partial_title": {
-    "message": "Partial autofill",
+    "message": "Częściowe autouzupełnienie",
     "description": "Title for the notification when card autofill is only partially successful"
   },
   "notification_card_autofill_partial_message": {
@@ -388,1207 +388,1207 @@
     "description": "Message when some payment card fields could not be autofilled"
   },
   "notification_card_autofill_no_inputs_title": {
-    "message": "No card inputs found",
+    "message": "Nie znaleziono formularza danych karty",
     "description": "Title for the notification when no card input fields are detected on the page"
   },
   "notification_card_autofill_no_inputs_message": {
-    "message": "This page doesn't have any card input fields that can be autofilled.",
+    "message": "Ta strona nie zawiera formularza danych karty, który można automatycznie uzupełnić.",
     "description": "Message for the notification when no card input fields are detected on the page"
   },
   "content_matching_logins_title": {
-    "message": "Matching Items",
+    "message": "Pasujące elementy",
     "description": "Title for the section displaying login items that match the current context"
   },
   "content_save_prompt_add_header": {
-    "message": "Do you want to add this Item to 2FAS Pass?",
+    "message": "Czy chcesz dodać ten element do 2FAS Pass?",
     "description": "Header asking if the user wants to save a new login item"
   },
   "content_save_prompt_update_header": {
-    "message": "Do you want to save the changes done to this Item?",
+    "message": "Czy chcesz zapisać zmiany?",
     "description": "Header asking if the user wants to update an existing login item"
   },
   "content_save_prompt_don_t_ask": {
-    "message": "Ignore this domain",
+    "message": "Ignoruj tą domenę",
     "description": "Option to prevent the save prompt from appearing in the future"
   },
   "content_save_prompt_add_login": {
-    "message": "Add Item",
+    "message": "Nowy element",
     "description": "Button label to add a new login item to 2FAS Pass"
   },
   "content_save_prompt_update_login": {
-    "message": "Save Item",
+    "message": "Zapisz element",
     "description": "Button label to update an existing login item in 2FAS Pass"
   },
   "autofill_cross_domain_warning": {
-    "message": "This form is on a different domain (CURRENT_DOMAIN) than the main page (TOP_DOMAIN). Do you want to continue with autofill?",
+    "message": "Ten formularz znajduje się w innej domenie (CURRENT_DOMAIN) niż strona główna (TOP_DOMAIN). Czy chcesz kontynuować autouzupełnianie?",
     "description": "Warning shown when autofill is attempted on a cross-domain iframe"
   },
   "autofill_cross_domain_warning_no_access": {
-    "message": "This form is on CURRENT_DOMAIN which appears to be in a cross-domain iframe. Do you want to continue with autofill?",
+    "message": "Ten formularz znajduje się w domenie CURRENT_DOMAIN i jest osadzony w ramce iframe z innej domeny. Czy na pewno chcesz kontynuować autouzupełnianie?",
     "description": "Warning shown when autofill is attempted on a cross-domain iframe and we cannot access the parent domain"
   },
   "install_please_pin_extension": {
-    "message": "Please pin the extension to the toolbar.",
+    "message": "Przypnij te rozszerzenie do paska zadań.",
     "description": "Prompt asking the user to pin the browser extension to the toolbar"
   },
   "install_logging_settings_changed": {
-    "message": "\"Crash logs\" settings changed successfully.",
+    "message": "Ustawienia „Raportów awarii” zmienione pomyślnie.",
     "description": "Message displayed when crash log settings are successfully updated"
   },
   "install_privacy_text": {
-    "message": "Privacy meets security & convenience.",
+    "message": "Prywatność łączy się z bezpieczeństwem i wygodą.",
     "description": "Text emphasizing the balance of privacy, security, and convenience"
   },
   "install_1_info": {
-    "message": "Browser Extension installed successfully!",
+    "message": "Rozszerznie przeglądarki zainstalowane pomyślnie!",
     "description": "Message displayed when the browser extension is installed successfully"
   },
   "install_1_header": {
-    "message": "Pin to access \nyour Items\nquickly!",
+    "message": "Przypnij aby mieć \nszybki dostęp do \nelementów",
     "description": "Header encouraging the user to pin the extension for quick access"
   },
   "install_1_open_extension_menu": {
-    "message": "Open the Extension menu.",
+    "message": "Otwórz menu rozszerzenia.",
     "description": "Instruction to open the browser's extension menu"
   },
   "install_1_pin_extension": {
-    "message": "Pin 2FAS Pass to the toolbar.",
+    "message": "Przypnij 2FAS Pass do paska zadań.",
     "description": "Instruction to pin the 2FAS Pass extension to the toolbar"
   },
   "install_2_info": {
-    "message": "Browser Extension pinned!",
+    "message": "Rozszerznie przeglądarki przypięte!",
     "description": "Message displayed when the browser extension is successfully pinned"
   },
   "install_2_header": {
-    "message": "Now start \nworking with your \nnew password \nmanager",
+    "message": "Zacznij korzystać\nz menedżera haseł",
     "description": "Header encouraging the user to start using the password manager"
   },
   "install_2_click_icon": {
-    "message": "Click the icon to open the 2FAS Pass Browser Extension.",
+    "message": "Kliknij ikonę, aby otworzyć rozszerzenie przeglądarki 2FAS Pass.",
     "description": "Instruction to click the extension icon to open it"
   },
   "install_2_use_mobile_app": {
-    "message": "Tap “Connect” in the 2FAS Pass mobile app to scan the QR Code.",
+    "message": "Dotknij \"Połącz\" w aplikacji mobilnej 2FAS Pass aby zeskanować kod QR.",
     "description": "Instruction to use the mobile app to scan the QR code"
   },
   "install_3_info": {
-    "message": "Extension is unlocked for this browser's session!",
+    "message": "Rozszerzenie jest odblokowane na czas tej sesji przeglądarki!",
     "description": "Message displayed when the extension is unlocked for the current browser session"
   },
   "install_3_header": {
-    "message": "This Browser \nExtension is ready \nto use.",
+    "message": "To rozszerzenie\nprzeglądarki jest\ngotowe do użycia",
     "description": "Header indicating that the browser extension is ready to use"
   },
   "install_3_get_started": {
-    "message": "Here's everything you need to know to get started.",
+    "message": "Oto wszystkie informacje potrzebne do rozpoczęcia",
     "description": "Message introducing the user to the getting started guide"
   },
   "install_3_crash_logs_header": {
-    "message": "Crash logs permission",
+    "message": "Zgoda na raporty o awariach",
     "description": "Header for the section explaining crash log permissions"
   },
   "install_3_crash_logs_description": {
-    "message": "If you want to support the development of this Source-available project, you can give permission to send anonymous Crash logs.",
+    "message": "Jeśli chcesz wesprzeć rozwój tego projektu, możesz wyrazić zgodę na wysyłanie anonimowych raportów o awariach.",
     "description": "Explains the purpose of sending anonymous crash logs to support the project"
   },
   "install_3_crash_logs_checkbox_description": {
-    "message": "I want to contribute and share anonymous Crash logs.",
+    "message": "Chcę udostępnić anonimowe raporty o awariach.",
     "description": "Checkbox label for opting in to share anonymous crash logs"
   },
   "install_get_mobile_app": {
-    "message": "Get mobile app",
+    "message": "Pobierz aplikację mobilną",
     "description": "Button label for downloading the mobile app"
   },
   "install_scan": {
-    "message": "Scan",
+    "message": "Skanuj",
     "description": "Button label for scanning the QR code with the mobile app"
   },
   "install_point_camera": {
-    "message": "Point camera at the QR Code",
+    "message": "Zeskanuj kod QR",
     "description": "Tooltip text instructing the user to point their camera at the QR code"
   },
   "install_download_ios_app": {
-    "message": "Download app for iOS",
+    "message": "Pobierz aplikację na iOS",
     "description": "Button label for downloading the iOS app"
   },
   "install_download_android_app": {
-    "message": "Download app for Android",
+    "message": "Pobierz aplikację na Androida",
     "description": "Button label for downloading the Android app"
   },
   "bottom_bar_security_icon_tooltip_header": {
-    "message": "This is your Identicon that only you know.",
+    "message": "To jest twój Identikon. Znasz go tylko ty.",
     "description": "Header for the tooltip explaining the purpose of the Identicon"
   },
   "bottom_bar_security_icon_tooltip_text": {
-    "message": "Make sure you see it every time you use \nthe 2FAS Pass Browser Extension.",
+    "message": "Upewnij się, że widzisz go za każdym razem, \ngdy korzystasz z rozszerzenia przeglądarki 2FAS Pass.",
     "description": "Reminds the user to verify their Identicon for security purposes"
   },
   "top_bar_locked": {
-    "message": "Locked",
+    "message": "Zablokowane",
     "description": "Indicates that the extension is locked"
   },
   "top_bar_lock": {
-    "message": "Lock",
+    "message": "Zablokuj",
     "description": "Button to lock the extension"
   },
   "top_bar_add_new": {
-    "message": "Add new",
+    "message": "Dodaj nowy",
     "description": "Button to add a new item"
   },
   "top_bar_create_new": {
-    "message": "Create new",
+    "message": "Dodaj",
     "description": "Link to create a new item of a specific type"
   },
   "add_new_validate_require": {
-    "message": "Please enter the Domain (URI)",
+    "message": "Wprowadź domenę (URI)",
     "description": "Validation message displayed when the Domain (URI) field is empty"
   },
   "add_new_validate_min_length": {
-    "message": "Please enter the Domain (URI) with at least 3 characters.",
+    "message": "Wprowadź domenę (URI), nie krótszą niż 3 znaki.",
     "description": "Validation message displayed when the Domain (URI) field has fewer than 3 characters"
   },
   "add_new_validate_invalid_domain": {
-    "message": "Please enter a valid Domain (URI)",
+    "message": "Wprowadź prawidłową domenę (URI).",
     "description": "Validation message displayed when the Domain (URI) entered is invalid"
   },
   "add_new_validate_card_name_required": {
-    "message": "Card name is required",
+    "message": "Nazwa karty jest wyamagana",
     "description": "Validation message displayed when the Card Name field is empty"
   },
   "add_new_validate_card_name_length": {
-    "message": "Card name must be less than 256 characters",
+    "message": "Nazwa karty musi mieć mniej niż 256 znaków.",
     "description": "Validation message displayed when the Card Name field exceeds 255 characters"
   },
   "add_new_validate_cardholder_length": {
-    "message": "Cardholder must be less than 256 characters",
+    "message": "Właściciel karty musi mieć mniej niż 256 znaków.",
     "description": "Validation message displayed when the Cardholder field exceeds 255 characters"
   },
   "add_new_validate_card_number_invalid": {
-    "message": "Card number is invalid",
+    "message": "Niepoprawny numer karty",
     "description": "Validation message displayed when the Card Number field is invalid"
   },
   "add_new_validate_expiration_date_invalid": {
-    "message": "Expiration date is invalid",
+    "message": "Niepoprawna data ważności",
     "description": "Validation message displayed when the Expiration Date field is invalid"
   },
   "add_new_validate_security_code_invalid": {
-    "message": "Security code must be 3 or 4 digits",
+    "message": "Kod bezpieczeństwa musi mieć conajmniej 3 lub 4 znaki.",
     "description": "Validation message displayed when the Security Code field is invalid"
   },
   "add_new_security_code_too_long": {
-    "message": "Security code is invalid.",
+    "message": "Niepoprawny kod bezpieczeństwa",
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
   "add_new_header": {
-    "message": "Adding a new ITEM to \n2FAS Pass",
+    "message": "Dodawanie nowego ITEM\ndo 2FAS Pass",
     "description": "Header for the section to add a new item"
   },
   "add_new_subheader": {
-    "message": "Start the process here and continue in the mobile app.",
+    "message": "Rozpocznij proces tutaj i kontynuuj w aplikacji mobilnej.",
     "description": "Subheader explaining that the process starts in the browser and continues in the mobile app"
   },
   "add_new_learn_more_tooltip_header": {
-    "message": "Security is our priority",
+    "message": "Bezpieczeństwo jest naszym priorytetem",
     "description": "Header for the tooltip explaining security measures"
   },
   "add_new_learn_more_tooltip_content_1": {
-    "message": "By default, we do not ask you to enter your username and create a password using the Browser Extension. Instead, we encourage you to choose a username and generate a password directly in the mobile application.",
+    "message": "Domyślnie nie prosimy o podanie nazwy użytkownika ani o wygenerowanie hasła za pomocą rozszerzenia przeglądarki. Zamiast tego zachęcamy do wykonania tych czynności bezpośrednio w aplikacji mobilnej.",
     "description": "Explains the default security approach of creating login and password in the mobile app"
   },
   "add_new_learn_more_tooltip_content_2": {
-    "message": "You can enter your username and/or password in the form above and save it to your Vault in the mobile app.",
+    "message": "Możesz wpisać swoją nazwę użytkownika i/lub hasło w powyższym formularzu i zapisać je w sejfie w aplikacji mobilnej.",
     "description": "Explains the option to enter login and password in the browser extension and save it to the mobile app"
   },
   "blocked_text": {
-    "message": "This view is blocked. \nPlease use the external popup.",
+    "message": "Ten widok jest zablokowany.\nUżyj otwartego okienka.",
     "description": "This view is blocked. Please use the external popup."
   },
   "blocked_button": {
-    "message": "Open popup",
+    "message": "Otwórz okienko",
     "description": "Button label to open the external popup."
   },
   "connect_header": {
-    "message": "Scan this QR Code with your 2FAS Pass mobile app",
+    "message": "Zeskanuj ten kod QR za pomocą aplikacji mobilnej 2FAS Pass.",
     "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
   },
   "connect_description": {
-    "message": "Do this when you first launch the browser extension to securely connect it with your mobile app.",
+    "message": "Zrób to przy pierwszym uruchomieniu rozszerzenia przeglądarki, aby bezpiecznie połączyć je z aplikacją mobilną.",
     "description": "Explains the need to scan the QR code for secure access during each browser launch"
   },
   "connect_connecting": {
-    "message": "Connecting...",
+    "message": "Łączenie…",
     "description": "Message displayed while the connection process is ongoing"
   },
   "connect_connection_opened": {
-    "message": "Connection is opened.\nPlease keep this window open",
+    "message": "Nawiązano połączenie.\nNie wyłączaj tego okienka",
     "description": "Message displayed when the connection is successfully opened"
   },
   "connect_push_cancelled": {
-    "message": "Connection cancelled in the mobile app.",
+    "message": "Połączenie anulowane w aplikacji mobilnej.",
     "description": "Message displayed when the connection is cancelled by the user from the mobile app"
   },
   "connect_device_select_header": {
-    "message": "Your Devices",
+    "message": "Twoje urządzenia",
     "description": "Header prompting the user to select their device"
   },
   "connect_device_select_list_header": {
-    "message": "Select the device you want to connect with:",
+    "message": "Wybierz urządzenie z którym chcesz się połączyć:",
     "description": "Header for the device selection list"
   },
   "connect_device_select_add_another": {
-    "message": "Add another device",
+    "message": "Dodaj nowe urządzenie",
     "description": "Button text for adding another device"
   },
   "connect_push_animation_description": {
-    "message": "To finish connecting, \nplease approve the request on your device.",
+    "message": "Aby dokończyć łączenie, \nzatwierdź prośbę na swoim urządzeniu.\n",
     "description": "Description for the push notification animation"
   },
   "connect_push_trouble": {
-    "message": "Trouble connecting?",
+    "message": "Problemy z połączeniem?",
     "description": "Text for link to QR code view if having trouble with push notification"
   },
   "connect_push_trouble_tooltip": {
-    "message": "If the push notification doesn't arrive in a few seconds, please check your mobile app",
+    "message": "Jeśli powiadomienie push nie przyjdzie w ciągu kilku sekund, sprawdź aplikację mobilną 2FAS Pass",
     "description": "Tooltip text explaining what to do if the push notification does not arrive"
   },
   "connect_push_trouble_tooltip_or": {
-    "message": "or",
+    "message": "albo",
     "description": "The word 'or' used between two options"
   },
   "connect_push_trouble_tooltip_use_qr": {
-    "message": "Use QR code",
+    "message": "Użyj kodu QR",
     "description": "Instruction to use QR code as an alternative method"
   },
   "details_header": {
-    "message": "details",
+    "message": "szczegóły",
     "description": "Header for the details section"
   },
   "details_field": {
-    "message": "field",
+    "message": "pole",
     "description": "Label for a single field in the item details"
   },
   "details_fields": {
-    "message": "fields",
+    "message": "pola",
     "description": "Label for multiple fields in the item details"
   },
   "details_password_overlay": {
-    "message": "This password is only available in your Vault.",
+    "message": "To hasło jest dostępne wyłącznie w twoim sejfie.",
     "description": "Message indicating that the password is stored only in the user's Vault"
   },
   "details_password_decrypt_error": {
-    "message": "Decrypting password error. Please resync with your mobile app.",
+    "message": "Nie udało się odszyfrować hasła. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
     "description": "Error message displayed when decrypting the password fails"
   },
   "details_secure_note_decrypt_error": {
-    "message": "Decrypting secure note error. Please resync with your mobile app.",
+    "message": "Nie udało się odszyfrować bezpiecznej notatki. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
     "description": "Error message displayed when decrypting the secure note fails"
   },
   "details_delete_header": {
-    "message": "No longer need this Item?",
+    "message": "Nie potrzebujesz już tego elementu?",
     "description": "Header for the delete login confirmation section"
   },
   "details_delete": {
-    "message": "Delete this Item from your Vault",
+    "message": "Usuń ten element ze swojego sejfu",
     "description": "Button label to delete the item from the Vault"
   },
   "details_name_required": {
-    "message": "Name is required.",
+    "message": "Nazwa jest wymagana",
     "description": "Validation message indicating that the name field is required"
   },
   "details_name_max_length": {
-    "message": "Name must be less than 256 characters.",
+    "message": "Nazwa musi mieć mniej niż 256 znaków.",
     "description": "Validation message indicating the maximum length for the name field"
   },
   "details_username_max_length": {
-    "message": "Username must be less than 256 characters.",
+    "message": "Nazwa użytkownika musi mieć mniej niż 256 znaków.",
     "description": "Validation message indicating the maximum length for the username field"
   },
   "details_uri_max_length": {
-    "message": "URL must be less than 2048 characters.",
+    "message": "Adres URL musi mieć mniej niż 2048 znaków.",
     "description": "Validation message indicating the maximum length for the URL field"
   },
   "details_item_not_found": {
-    "message": "Something went wrong. Item not found. Sync with your mobile app and try again.",
+    "message": "Wystąpił błąd. Nie znaleziono elementu. Zsynchronizuj z aplikacją mobilną i spróbuj ponownie.",
     "description": "Error shown when the requested item is not found, suggesting reconnection"
   },
   "details_security_type": {
-    "message": "Security Tier",
+    "message": "Poziom bezpieczeństwa",
     "description": "Label for the security type field in the item details"
   },
   "details_add_domain": {
-    "message": "Add domain",
+    "message": "Dodaj domenę",
     "description": "Button label to add a new domain to the login item"
   },
   "details_add_another_domain": {
-    "message": "Add another domain",
+    "message": "Dodaj kolejną domenę",
     "description": "Button label to add another domain when at least one exists"
   },
   "details_domain": {
-    "message": "Domain",
+    "message": "Domena",
     "description": "Label for domain field"
   },
   "details_domain_uri": {
-    "message": "Domain (URI URI_NUMBER)",
+    "message": "Domena (URI URI_NUMBER)",
     "description": "Header label for domain section with URI number"
   },
   "details_no_domain_available": {
-    "message": "No domain available",
+    "message": "Brak dostępnej domeny",
     "description": "Text shown when no domain is assigned to the item"
   },
   "details_name_copied": {
-    "message": "Name copied to clipboard",
+    "message": "Nazwa skopiowana do schowka",
     "description": "Success message shown when the name is copied to clipboard"
   },
   "details_change_password_in_service": {
-    "message": "Change password in the service",
+    "message": "Zmień hasło w ustawieniach serwisu",
     "description": "Button label to open the service's password change page"
   },
   "details_change_password_in_service_title": {
-    "message": "Open the service website in a new tab to change the password",
+    "message": "Otwórz stronę internetową serwisu w nowej karcie, aby zmienić hasło",
     "description": "Title for the change password section in the service"
   },
   "details_toggle_password_visibility": {
-    "message": "Toggle password visibility",
+    "message": "Włącz/wyłącz widoczność hasła",
     "description": "Title for the button that toggles password visibility"
   },
   "details_generate_password": {
-    "message": "Generate password",
+    "message": "Wygeneruj hasło",
     "description": "Title for the button that opens password generator"
   },
   "details_fetch_text": {
-    "message": "Data available only in the mobile app.",
+    "message": "Dane dostępne tylko w aplikacji mobilnej.",
     "description": "Text indicating that some data can be fetched from the mobile app"
   },
   "details_fetch_title": {
-    "message": "Fetch Highly Secret data",
+    "message": "Pobierz tajne dane",
     "description": "Title for the fetch highly secret data link"
   },
   "details_sif_not_fetched": {
-    "message": "This data is only available on your mobile app. Click the \"Fetch\" button at the top of this window to retrieve it.",
+    "message": "Te dane dostępne są tylko w aplikacji mobilnej. Kliknij „Pobierz” u góry tego okna aby je pobrać.",
     "description": "Message indicating that the highly secret data has not been fetched yet"
   },
   "details_notes_placeholder": {
-    "message": "Notes are empty",
+    "message": "Notatki są puste",
     "description": "Placeholder text for the notes input field"
   },
   "details_reveal_secure_note": {
-    "message": "Reveal Note",
+    "message": "Odsłoń notatkę",
     "description": "Button label to reveal the secure note content"
   },
   "details_additional_info": {
-    "message": "Additional info",
+    "message": "Dodatkowe informacje",
     "description": "Label for the additional info field in the item details"
   },
   "details_additional_info_placeholder": {
-    "message": "Additional info is empty",
+    "message": "Dodatkowe informacje są puste",
     "description": "Placeholder text for the additional info input field"
   },
   "details_card_number": {
-    "message": "Card number",
+    "message": "Numer karty",
     "description": "Label for the card number field in payment card details"
   },
   "details_card_number_decrypt_error": {
-    "message": "Decrypting card number error. Please resync with your mobile app.",
+    "message": "Nie udało się odszyfrować numeru karty. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
     "description": "Error message displayed when decrypting the card number fails"
   },
   "details_toggle_card_number_visibility": {
-    "message": "Toggle card number visibility",
+    "message": "Widoczność numeru karty",
     "description": "Title for the button that toggles card number visibility"
   },
   "details_expiration_date": {
-    "message": "Expiration date",
+    "message": "Data ważności",
     "description": "Label for the expiration date field in payment card details"
   },
   "details_expiration_date_decrypt_error": {
-    "message": "Decrypting expiration date error.",
+    "message": "Nie udało się odszyfrować daty ważności. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
     "description": "Error message displayed when decrypting the expiration date fails"
   },
   "details_toggle_expiration_date_visibility": {
-    "message": "Toggle expiration date visibility",
+    "message": "Widoczność daty ważności",
     "description": "Title for the button that toggles expiration date visibility"
   },
   "details_copy_expiration_date": {
-    "message": "Copy expiration date",
+    "message": "Skopiuj datę ważności",
     "description": "Title for the button that copies expiration date to clipboard"
   },
   "details_security_code": {
-    "message": "Security code",
+    "message": "Kod bezpieczeństwa",
     "description": "Label for the security code field in payment card details"
   },
   "details_security_code_decrypt_error": {
-    "message": "Decrypting security code error.",
+    "message": "Nie udało się odszyfrować kodu bezpieczeństwa. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
     "description": "Error message displayed when decrypting the security code fails"
   },
   "details_toggle_security_code_visibility": {
-    "message": "Toggle security code visibility",
+    "message": "Widoczność kodu bezpieczeństwa",
     "description": "Title for the button that toggles security code visibility"
   },
   "details_cardholder_required": {
-    "message": "Cardholder is required.",
+    "message": "Właściciel karty jest wymagany.",
     "description": "Validation message indicating that the cardholder field is required"
   },
   "details_cardholder_max_length": {
-    "message": "Cardholder must be less than 256 characters.",
+    "message": "Właściciel karty musi mieć mniej niż 256 znaków.",
     "description": "Validation message indicating the maximum length for the cardholder field"
   },
   "details_cardholder_copied": {
-    "message": "Cardholder copied to clipboard",
+    "message": "Właściciel karty skopiowany do schowka",
     "description": "Success message shown when the cardholder is copied to clipboard"
   },
   "details_card_number_required": {
-    "message": "Card number is required.",
+    "message": "Numer karty jest wymagany.",
     "description": "Validation message indicating that the card number field is required"
   },
   "details_card_number_invalid": {
-    "message": "Card number is invalid.",
+    "message": "Niepoprawny numer karty.",
     "description": "Validation message indicating that the card number is not valid"
   },
   "details_expiration_date_required": {
-    "message": "Expiration date is required.",
+    "message": "Data ważności jest wymagana.",
     "description": "Validation message indicating that the expiration date field is required"
   },
   "details_expiration_date_invalid": {
-    "message": "Expiration date is invalid.",
+    "message": "Niepoprawna data ważności.",
     "description": "Validation message indicating that the expiration date format is not valid"
   },
   "details_expiration_date_past": {
-    "message": "Expiration date cannot be in the past.",
+    "message": "Data ważności nie może być w przeszłości.",
     "description": "Validation message indicating that the expiration date must not be in the past"
   },
   "details_card_expired": {
-    "message": "This card has expired.",
+    "message": "Ta karta straciła ważność.",
     "description": "Informational message indicating that the payment card expiration date is in the past"
   },
   "details_security_code_required": {
-    "message": "Security code is required.",
+    "message": "Kod bezpieczeństwa jest wymagany",
     "description": "Validation message indicating that the security code field is required"
   },
   "details_security_code_invalid": {
-    "message": "Security code must be 3 or 4 digits.",
+    "message": "Kod bezpieczeństwa musi mieć conajmniej 3 lub 4 znaki.",
     "description": "Validation message indicating that the security code must be 3 or 4 digits"
   },
   "details_security_code_too_long": {
-    "message": "Security code is invalid.",
+    "message": "Niepoprawny kod bezpieczeństwa",
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
   "details_secure_note_text_max_length": {
-    "message": "Secure Note text must be less than 16384 characters.",
+    "message": "Notatka musi mieć mniej niż 16384 znaków.",
     "description": "Validation message indicating the maximum length for the secure note text field"
   },
   "details_additional_info_max_length": {
-    "message": "Additional info must be less than 16384 characters.",
+    "message": "Dodatkowe informacje muszą mieć mniej niż 16384 znaków.",
     "description": "Validation message indicating the maximum length for the additional info field"
   },
   "details_tags_label": {
-    "message": "Tags",
+    "message": "Tagi",
     "description": "Label for the tags field in details view"
   },
   "details_tags_no_tags": {
-    "message": "No Tags assigned",
+    "message": "Brak przypisanych tagów",
     "description": "Placeholder text when no tags are selected"
   },
   "details_tags_remove": {
-    "message": "Remove Tag",
+    "message": "Usuń tag",
     "description": "Tooltip for remove tag button"
   },
   "details_tags_add": {
-    "message": "Add Tag",
+    "message": "Dodaj tag",
     "description": "Tooltip for add tag button"
   },
   "details_tags_no_available": {
-    "message": "Create Tags in the mobile app",
+    "message": "Stwórz tagi w aplikacji mobilnej",
     "description": "Message shown when there are no more tags to add"
   },
   "details_tags_select_tag": {
-    "message": "Select Tag",
+    "message": "Wybierz tag",
     "description": "Placeholder text for the tag selection dropdown"
   },
   "error_fallback_header": {
-    "message": "Error occurred",
+    "message": "Wystąpił błąd",
     "description": "Header message displayed on the error fallback screen"
   },
   "error_fallback_description": {
-    "message": "Sorry, an unexpected error has occurred. Click the button below to retry.",
+    "message": "Przepraszamy, wystąpił błąd. Kliknij poniższy przycisk, aby spróbować ponownie.",
     "description": "Description message displayed on the error fallback screen"
   },
   "error_fallback_retry_button": {
-    "message": "Retry",
+    "message": "Spróbuj ponownie",
     "description": "Label for the retry button on the error fallback screen"
   },
   "error_fallback_copy_error_title": {
-    "message": "Copy Error Message to clipboard",
+    "message": "Skopiuj treść błędu do schowka",
     "description": "Title for the copy error message button on the error fallback screen"
   },
   "fetch_push_header": {
-    "message": "Check the 2FAS Pass push notification on your mobile device.",
+    "message": "Sprawdź powiadomienie push 2FAS Pass na swoim urządzeniu mobilnym.",
     "description": "Header prompting the user to check their device for a push notification"
   },
   "fetch_push_waiting_for_mobile": {
-    "message": "Waiting for mobile response...",
+    "message": "Oczekiwanie na odpowiedź...",
     "description": "Message displayed while waiting for a response from the mobile app"
   },
   "fetch_connection_error_header": {
-    "message": "Connection error! \nTry again later.",
+    "message": "Błąd połączenia!\nSpróbuj ponownie poźniej.",
     "description": "Error message displayed when there is a connection issue"
   },
   "fetch_token_unregistered_header": {
-    "message": "FCM token unregistered.",
+    "message": "Token FCM niezarejestrowany.",
     "description": "Error message displayed when the FCM token is unregistered"
   },
   "fetch_connection_timeout_header": {
-    "message": "Timed out \ndue to inactivity.",
+    "message": "Przekroczono limit\nczasu połączenia.",
     "description": "Error message displayed when the connection times out due to inactivity"
   },
   "fetch_continue_updating_header": {
-    "message": "Continue updating in the 2FAS Pass app",
+    "message": "Kontynuuj aktualizację w aplikacji 2FAS Pass",
     "description": "Header prompting the user to continue updating in the mobile app"
   },
   "fetch_continue_updating_description": {
-    "message": "To update this Item, continue on your \nmobile app. Please keep this window open.",
+    "message": "Aby zaktualizować ten element, kontynuuj w \naplikacji mobilnej. Pozostaw to okno otwarte.",
     "description": "Explains that the user should continue the process on their mobile phone"
   },
   "fetch_full_sync_description": {
-    "message": "To complete the sync process, continue in your mobile app. Please keep this window open.",
+    "message": "Aby zakończyć synchronizację, kontynuuj w aplikacji mobilnej. Pozostaw to okno otwarte.",
     "description": "Explains that the user should continue the full sync process on their mobile phone"
   },
   "fetch_sif_request_description": {
-    "message": "To fetch Item details, continue in your mobile app. Please keep this window open.",
+    "message": "Aby pobrać szczegóły elementu, kontynuuj w aplikacji mobilnej. Pozostaw to okno otwarte.",
     "description": "Explains that the user should continue the SIF request process on their mobile phone"
   },
   "fetch_delete_request_description": {
-    "message": "To delete this Item, continue in your mobile app. Please keep this window open.",
+    "message": "Aby usunąć ten element, kontynuuj w aplikacji mobilnej. Pozostaw to okno otwarte.",
     "description": "Explains that the user should continue the login deletion process on their mobile phone"
   },
   "fetch_add_request_description": {
-    "message": "To add this Item, continue in your mobile app. Please keep this window open.",
+    "message": "Aby dodać ten element, kontynuuj w aplikacji mobilnej. Pozostaw to okno otwarte.",
     "description": "Explains that the user should continue the login addition process on their mobile phone"
   },
   "fetch_delete_login_accept_toast": {
-    "message": "Item deleted",
+    "message": "Usunięto element",
     "description": "Toast message displayed when a login is successfully deleted"
   },
   "fetch_delete_login_cancel_toast": {
-    "message": "Item deletion canceled",
+    "message": "Usunięcie elementu anulowane",
     "description": "Toast message displayed when the user cancels the login deletion process"
   },
   "fetch_fetch_request_accept_toast": {
-    "message": "Fetch request accepted",
+    "message": "Zaakceptowano pobieranie danych",
     "description": "Toast message displayed when a fetch request is accepted"
   },
   "fetch_fetch_request_cancel_toast": {
-    "message": "Fetch request rejected",
+    "message": "Pobieranie danych odrzucone",
     "description": "Toast message displayed when a fetch request is rejected"
   },
   "fetch_new_login_added_toast": {
-    "message": "New Item added",
+    "message": "Dodano nowy element",
     "description": "Toast message displayed when a new login item is successfully added"
   },
   "fetch_new_login_added_t1_toast": {
-    "message": "New Item added in Tier 1 (only in the mobile app)",
+    "message": "Dodano nowy ściśle tajny element (dostępny tylko w aplikacji mobilnej)",
     "description": "Toast shown when a new login is added in tier 1, available only in the mobile app"
   },
   "fetch_new_login_added_in_another_vault_toast": {
-    "message": "New Item added in another Vault",
+    "message": "Nowy element został dodany w innym sejfie",
     "description": "Toast shown when a new login is added in another vault"
   },
   "fetch_new_login_cancel_toast": {
-    "message": "Item adding canceled",
+    "message": "Dodawanie elementu anulowane",
     "description": "Toast message displayed when the user cancels adding a new login item"
   },
   "fetch_generic_request_accept_toast": {
-    "message": "Data request accepted",
+    "message": "Zaakceptowano pobieranie danych",
     "description": "Toast message displayed when a unknown request is accepted"
   },
   "fetch_login_request_accept_toast": {
-    "message": "Password request accepted",
+    "message": "Zaakceptowano pobieranie danych",
     "description": "Toast message displayed when a password request is accepted"
   },
   "fetch_secureNote_request_accept_toast": {
-    "message": "Secure Note request accepted",
+    "message": "Zaakceptowano pobieranie danych",
     "description": "Toast message displayed when a secure note request is accepted"
   },
   "fetch_paymentCard_request_accept_toast": {
-    "message": "Card request accepted",
+    "message": "Zaakceptowano pobieranie danych",
     "description": "Toast message displayed when a payment card request is accepted"
   },
   "fetch_request_cancel_toast": {
-    "message": "Item request rejected",
+    "message": "Odrzucono pobieranie danych",
     "description": "Toast message displayed when a request is rejected"
   },
   "fetch_update_login_updated_toast": {
-    "message": "Item updated",
+    "message": "Zaktualizowano element",
     "description": "Toast message displayed when a login item is successfully updated"
   },
   "fetch_update_login_cancel_toast": {
-    "message": "Item update canceled",
+    "message": "Aktualizacja elementu anulowana",
     "description": "Toast message displayed when the user cancels updating a login item"
   },
   "fetch_update_login_added_in_t1_toast": {
-    "message": "Item updated in tier 1 (only in mobile app)",
+    "message": "Element zaktualizowany do poziomu ściśle tajnego (dostępny tylko w aplikacji mobilnej)",
     "description": "Toast shown when a login is updated in tier 1, available only in the mobile app"
   },
   "fetch_update_login_added_in_another_vault_toast": {
-    "message": "Item updated in another Vault",
+    "message": "Element został zaktualizowany w innym sejfie",
     "description": "Toast shown when a login is updated in another vault"
   },
   "fetch_full_sync_cancel_toast": {
-    "message": "Synchronization canceled",
+    "message": "Anulowano synchronizację",
     "description": "Toast message displayed when a full sync operation is canceled"
   },
   "fetch_full_sync_completed_toast": {
-    "message": "Synchronization completed",
+    "message": "Synchronizacja zakończona",
     "description": "Toast message displayed when a full sync operation is completed successfully"
   },
   "password_generator_title": {
-    "message": "Password generator",
+    "message": "Generator hasła",
     "description": "Title for the password generator page"
   },
   "password_generator_characters": {
-    "message": "Characters: COUNT",
+    "message": "Znaki: COUNT",
     "description": "Label showing the number of characters in password"
   },
   "password_generator_include": {
-    "message": "Include",
+    "message": "Uwzględnij",
     "description": "Label for the include options section"
   },
   "password_generator_regenerate": {
-    "message": "Generate password",
+    "message": "Wygeneruj hasło",
     "description": "Title for the regenerate password button"
   },
   "password_generator_uppercase": {
-    "message": "Uppercase characters",
+    "message": "Duże litery",
     "description": "Checkbox label for including uppercase letters"
   },
   "password_generator_numbers": {
-    "message": "Digits",
+    "message": "Cyfry",
     "description": "Checkbox label for including numbers"
   },
   "password_generator_special_chars": {
-    "message": "Special characters",
+    "message": "Znaki specjalne",
     "description": "Checkbox label for including special characters"
   },
   "password_generator_use_password": {
-    "message": "Use this Password",
+    "message": "Użyj tego hasła",
     "description": "Button text to use the generated password"
   },
   "password_generator_password_too_short": {
-    "message": "Password must be at least 6 characters long",
+    "message": "Hasło nie może być krótsze niż 6 znaków",
     "description": "Error message when password is too short"
   },
   "password_generator_data_error": {
-    "message": "Something went wrong. Go back and try again.",
+    "message": "Wystąpił błąd. Cofnij i spróbuj ponownie.",
     "description": "Error message displayed when there is a problem with the password generator data"
   },
   "settings_header": {
-    "message": "Settings",
+    "message": "Ustawienia",
     "description": "Header for the settings page"
   },
   "settings_preferences": {
-    "message": "Preferences",
+    "message": "Preferencje",
     "description": "Label for the preferences section in settings"
   },
   "settings_security": {
-    "message": "Security",
+    "message": "Bezpieczeństwo",
     "description": "Label for the security section in settings"
   },
   "settings_devices": {
-    "message": "Connected Devices",
+    "message": "Połączone urządzenia",
     "description": "Label for the trusted devices section in settings"
   },
   "settings_about": {
-    "message": "About 2FAS Pass",
+    "message": "Informacje o 2FAS Pass",
     "description": "Label for the about section in settings"
   },
   "settings_rate_us_chrome": {
-    "message": "Rate us in Chrome Web Store",
+    "message": "Oceń nas w Chrome",
     "description": "Prompt to rate the extension in the Chrome Web Store"
   },
   "settings_rate_us_firefox": {
-    "message": "Rate us in Firefox Browser Add-ons",
+    "message": "Oceń nas w Firefox",
     "description": "Prompt to rate the extension in Firefox Browser Add-ons"
   },
   "settings_rate_us_edge": {
-    "message": "Rate us in Microsoft Edge Addons",
+    "message": "Oceń nas w Miscrosoft Edge",
     "description": "Prompt to rate the extension in Microsoft Edge Add-ons"
   },
   "settings_rate_us_safari": {
-    "message": "Rate us in App Store",
+    "message": "Oceń nas w App Store",
     "description": "Prompt to rate the extension in the App Store"
   },
   "settings_about_header": {
-    "message": "About 2FAS Pass",
+    "message": "Informacje o 2FAS Pass",
     "description": "Header for the about section in settings"
   },
   "settings_about_thank_you": {
-    "message": "Thank you for using 2FAS Pass, \na Source-available project with cybersecurity at its heart.",
+    "message": "Dziękujemy za korzystanie z 2FAS Pass,\nz cyberbezpieczeństwem w sercu.",
     "description": "Thank you message for users of the 2FAS Pass extension"
   },
   "settings_about_thank_you_subheader": {
-    "message": "We do not keep your data. \nWe have no servers.",
+    "message": "Nie przechowujemy twoich danych.\nNie mamy serwerów.",
     "description": "Subheader emphasizing the privacy and security of the extension"
   },
   "settings_about_thank_you_description": {
-    "message": "We do not store your Items as we have no servers. You keep all of your Items in your 2FAS Pass mobile app. The ones you choose may also be stored in this Browser Extension. You decide when and how you use them.",
+    "message": "Nie przechowujemy Twoich elementów, ponieważ nie posiadamy serwerów. Wszystkie Twoje elementy znajdują się w aplikacji mobilnej 2FAS Pass. Te, które wybierzesz, mogą być również przechowywane w tym rozszerzeniu przeglądarki. To Ty decydujesz, kiedy i w jaki sposób ich używasz.",
     "description": "Explains that user data is stored in the mobile app or optionally in the extension"
   },
   "settings_visit_our_website": {
-    "message": "Visit our website",
+    "message": "Odwiedź naszą stronę",
     "description": "Link to the 2FAS Pass website"
   },
   "settings_privacy_policy": {
-    "message": "Privacy Policy",
+    "message": "Polityka prywatności",
     "description": "Link to the privacy policy of 2FAS Pass"
   },
   "settings_eula": {
-    "message": "Terms of Service (EULA)",
+    "message": "Warunki korzystania z usługi (EULA)",
     "description": "Link to the End User License Agreement for 2FAS Pass"
   },
   "settings_lets_connect": {
-    "message": "Let's connect",
+    "message": "Więcej o nas",
     "description": "Prompt to connect with the 2FAS Pass team or community"
   },
   "settings_save_prompt_header": {
-    "message": "\"Save Item\" prompt",
+    "message": "Zapisywanie elementów",
     "description": "Header for the save login prompt settings"
   },
   "settings_save_prompt_description": {
-    "message": "Choose how you want to be prompted to save your Item details.",
+    "message": "Wybierz sposób, pytania o zapisanie szczegółów elementu.",
     "description": "Description for configuring the save login prompt behavior"
   },
   "settings_save_prompt_pass": {
-    "message": "2FAS Pass prompt (default)",
+    "message": "Zapytanie 2FAS Pass (domyślne)",
     "description": "Option to use the 2FAS Pass-specific save login prompt"
   },
   "settings_save_prompt_pass_encrypted": {
-    "message": "Advanced 2FAS Pass prompt (additional encryption)",
+    "message": "Zaawansowane zapytanie 2FAS Pass (dodatkowe szyfrowanie)",
     "description": "Option to use the 2FAS Pass encrypted save login prompt"
   },
   "settings_save_prompt_browser": {
-    "message": "Browser default prompt",
+    "message": "Domyślne zapytanie przeglądarki",
     "description": "Option to use the browser's default save login prompt"
   },
   "settings_save_prompt_none": {
-    "message": "None",
+    "message": "Brak",
     "description": "Option to disable save login prompts"
   },
   "settings_safe_browsing": {
-    "message": "Turn on \"Safe browsing\" in Chrome",
+    "message": "Włącz \"Bezpieczne przeglądanie\" w Chrome",
     "description": "Option to enable safe browsing in Chrome"
   },
   "settings_safe_browsing_reports": {
-    "message": "Send \"Safe browsing\" reports to Chrome",
+    "message": "Wysyłaj raporty \"Bezpiecznego przeglądania\" do Chrome",
     "description": "Option to send safe browsing reports to Chrome"
   },
   "settings_only_on_restart": {
-    "message": "Only on restart",
+    "message": "Tylko po restarcie",
     "description": "Option to clear data only on browser restart"
   },
   "settings_don_t_clear": {
-    "message": "Don't clear automatically",
+    "message": "Nie czyść automatycznie",
     "description": "Option to disable automatic data clearing"
   },
   "settings_after_1_minute": {
-    "message": "After 1 minute",
+    "message": "Po 1 minucie",
     "description": "Option to clear data after 1 minute of inactivity"
   },
   "settings_after_5_minutes": {
-    "message": "After 5 minutes",
+    "message": "Po 5 minutach",
     "description": "Option to clear data after 5 minutes of inactivity"
   },
   "settings_after_15_minutes": {
-    "message": "After 15 minutes",
+    "message": "Po 15 minutach",
     "description": "Option to clear data after 15 minutes of inactivity"
   },
   "settings_after_30_minutes": {
-    "message": "After 30 minutes",
+    "message": "Po 30 minutach",
     "description": "Option to clear data after 30 minutes of inactivity"
   },
   "settings_after_60_minutes": {
-    "message": "After 60 minutes",
+    "message": "Po 60 minutach",
     "description": "Option to clear data after 60 minutes of inactivity"
   },
   "settings_idle_lock_header": {
-    "message": "Automatic lock when idle",
+    "message": "Automatyczna blokada przy braku aktywności",
     "description": "Header for the idle lock settings"
   },
   "settings_idle_lock_description": {
-    "message": "Select the time after which the Browser Extension will automatically lock itself if you don't use it.",
+    "message": "Wybierz czas, po upływie którego rozszerzenie przeglądarki automatycznie się zablokuje, jeśli nie będziesz z niego korzystać.",
     "description": "Description for configuring idle lock behavior"
   },
   "settings_idle_lock_tooltip_1": {
-    "message": "Autolock browser extensions when idle",
+    "message": "Automatycznie zablokuj rozszerzenie przeglądarki przy braku aktywności",
     "description": "Tooltip explaining that the idle lock setting applies only to the extension"
   },
   "settings_idle_lock_tooltip_2": {
-    "message": "This feature automatically locks the extension and clears all Items that have been transferred from your mobile app after the period of inactivity you set above.",
+    "message": "Ta funkcja automatycznie blokuje rozszerzenie i czyści wszystkie elementy przeniesione z aplikacji mobilnej po upływie ustawionego powyżej okresu braku aktywności.",
     "description": "Tooltip clarifying that the idle lock setting does not affect the mobile app"
   },
   "settings_idle_lock_tooltip_3": {
-    "message": "You can choose to lock it manually, automatically after a set amount of time, or when you restart the browser. Idle time refers to the inactivity of the whole computer, not only the browser.",
+    "message": "Możesz wybrać blokowanie ręczne, automatyczne po określonym czasie lub przy ponownym uruchomieniu przeglądarki. Czas braku aktywności odnosi się do całego komputera, a nie tylko przeglądarki.",
     "description": "Tooltip explaining that the idle lock function only applies to the extension"
   },
   "settings_auto_clear_clipboard_header": {
-    "message": "Auto clear clipboard",
+    "message": "Automatyczne czyszczenie schowka",
     "description": "Header for the auto clear clipboard settings"
   },
   "settings_auto_clear_clipboard_description": {
-    "message": "Select a time to clear the clipboard of data copied from this Browser Extension.",
+    "message": "Wybierz czas, po upływie którego dane skopiowane z tego rozszerzenia przeglądarki zostaną usunięte ze schowka.",
     "description": "Description for configuring clipboard auto-clear behavior"
   },
   "settings_auto_clear_clipboard_tooltip_1": {
-    "message": "Auto Clear Clipboard",
+    "message": "Automatyczne czyszczenie schowka",
     "description": "Tooltip explaining that the auto-clear setting applies only to data copied from the extension"
   },
   "settings_auto_clear_clipboard_tooltip_2": {
-    "message": "The “Auto Clear Clipboard” function automatically clears the clipboard contents after a specified period (can be changed above). This prevents the password from being permanently stored there.",
+    "message": "Funkcja „Automatyczne czyszczenie schowka” automatycznie usuwa zawartość schowka po określonym czasie (można go zmienić powyżej). Zapobiega to trwałemu przechowywaniu haseł.",
     "description": "Tooltip clarifying that the auto-clear setting does not affect data copied from outside the extension"
   },
   "settings_auto_clear_clipboard_tooltip_3": {
-    "message": "NOTE: This function has built-in browser limitations. For the clipboard to be cleared, the browser must be open and active; otherwise, it won't work.",
+    "message": "UWAGA: Ta funkcja ma wbudowane ograniczenia przeglądarki. Aby schowek został wyczyszczony, przeglądarka musi być otwarta i aktywna.",
     "description": "Tooltip explaining that the auto-clear function only applies to data copied from the extension"
   },
   "settings_theme": {
-    "message": "Theme",
+    "message": "Motyw",
     "description": "Label for the theme settings"
   },
   "settings_unknown": {
-    "message": "Unknown",
+    "message": "Nieznany",
     "description": "Label for unknown settings or values"
   },
   "settings_shortcut": {
-    "message": "Shortcut",
+    "message": "Skrót klawiszowy",
     "description": "Label for the shortcut settings"
   },
   "settings_shortcut_description": {
-    "message": "Use this shortcut to open the 2FAS Pass Browser Extension on any page.",
+    "message": "Użyj tego skrótu, aby otworzyć rozszerzenie przeglądarki 2FAS Pass na dowolnej stronie.",
     "description": "Description for configuring the extension shortcut"
   },
   "settings_shortcut_firefox_tooltip": {
-    "message": "You can set or change this shortcut in your browser settings.",
+    "message": "Możesz ustawić lub zmienić ten skrót w ustawieniach przeglądarki.",
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_shortcut_safari_tooltip": {
-    "message": "To set or change this shortcut, go to your browser settings, extensions, 2FAS Pass Browser Extension, then change the shortcut in the provided field.",
+    "message": "Aby ustawić lub zmienić ten skrót, przejdź do ustawień rozszerzeń przeglądarki, wybierz 2FAS Pass i zmień skrót w określonym polu.\n",
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_push_native": {
-    "message": "Native Browser's Notifications",
+    "message": "Natywne powiadomienia przeglądarki",
     "description": "Option to use the browser's native notification system"
   },
   "settings_push_custom": {
-    "message": "Custom 2FAS Pass Notifications",
+    "message": "Niestandardowe powiadomienia 2FAS Pass",
     "description": "Option to use custom notifications from 2FAS Pass"
   },
   "settings_notifications_header": {
-    "message": "Notifications",
+    "message": "Powiadomienia",
     "description": "Header for the notifications settings"
   },
   "settings_notifications_description": {
-    "message": "Choose a notification mechanism that will prompt you about communication between the 2FAS Pass mobile app and this browser extension.",
+    "message": "Wybierz typ powiadomień, który będzie informował Cię o komunikacji między aplikacją mobilną 2FAS Pass a tym rozszerzeniem przeglądarki.",
     "description": "Explains how to configure notifications for communication between the mobile app and extension"
   },
   "settings_notifications_send_test": {
-    "message": "Send test notification now",
+    "message": "Wyślij testowe powiadomienie",
     "description": "Button label to send a test notification"
   },
   "settings_allow_logs": {
-    "message": "Allow sending anonymous Crash logs",
+    "message": "Pozwól na wysyłanie anonimowych raportów o awariach",
     "description": "Option to enable sending anonymous crash logs"
   },
   "settings_ext_name_label": {
-    "message": "This browser's nickname",
+    "message": "Nazwa przeglądarki",
     "description": "Label for the browser nickname input field"
   },
   "settings_ext_name_placeholder": {
-    "message": "Enter your extension name",
+    "message": "Wprowadź nazwę rozszerzenia",
     "description": "Placeholder text for the browser nickname input field"
   },
   "settings_ext_name_validate_required": {
-    "message": "Please enter the extension name.",
+    "message": "Wprowadź nazwę rozszerzenia",
     "description": "Validation message when the extension name is not provided"
   },
   "settings_ext_name_validate_min_length": {
-    "message": "Please enter the extension name with at least 3 characters.",
+    "message": "Wprowadź nazwę rozszerzenia, nie krótszą niż 3 znaki,",
     "description": "Validation message when the extension name is too short"
   },
   "settings_ext_name_validate_max_length": {
-    "message": "Please enter the extension name with no more than 32 characters.",
+    "message": "Wprowadź nazwę rozszerzenia, nie dłuższą niż 32 znaki.",
     "description": "Validation message when the extension name is too long"
   },
   "settings_context_menu_text": {
-    "message": "Show this extension's options in the context menu",
+    "message": "Pokaż opcje tego rozszerzenia w menu kontekstowym.",
     "description": "Option to enable or disable the extension's context menu options"
   },
   "settings_excluded_domains": {
-    "message": "Ignored domains",
+    "message": "Ignorowane domeny",
     "description": "Label for the excluded domains settings"
   },
   "settings_excluded_domains_description": {
-    "message": "2FAS Pass will not suggest adding \nnew Items for the following domains.",
+    "message": "2FAS Pass nie będzie proponować dodawania \nnowych elementów dla następujących domen.",
     "description": "Explains that excluded domains won't prompt for adding new logins"
   },
   "settings_excluded_domains_empty": {
-    "message": "There are no ignored domains yet.",
+    "message": "Brak ignorowanych domen.",
     "description": "Message displayed when no domains are excluded"
   },
   "settings_excluded_domains_remove": {
-    "message": "Remove selected domain from the ignored list.",
+    "message": "Usuń wybraną domenę z listy ignorowanych.",
     "description": "Button label to remove a domain from the excluded list"
   },
   "settings_excluded_domains_remove_toast": {
-    "message": "Domain removed from the ignored list",
+    "message": "Domena usunięta z listy ignorowanych",
     "description": "Message displayed when a domain is successfully removed from the ignored list"
   },
   "settings_excluded_domains_add_required": {
-    "message": "Domain is required",
+    "message": "Domena jest wymagana",
     "description": "Validation message when trying to add an empty domain"
   },
   "settings_excluded_domains_add_invalid": {
-    "message": "Domain is invalid. Please enter a valid domain.",
+    "message": "Niepoprawna domena. Proszę wpisać poprawną.",
     "description": "Validation message when the provided domain is invalid"
   },
   "settings_excluded_domains_add_already_ignored": {
-    "message": "This domain is already ignored.",
+    "message": "Ta domena jest już ignorowana.",
     "description": "Validation message when trying to add a domain that is already in the ignored list"
   },
   "settings_excluded_domains_add_success": {
-    "message": "Successfully added domain to ignored list",
+    "message": "Pomyślnie dodano domenę do listy ignorowanych",
     "description": "Message displayed when a domain is successfully added to the ignored list"
   },
   "settings_excluded_domains_add_domain_text": {
-    "message": "Add domain",
+    "message": "Dodaj domenę",
     "description": "Label for the input field to add a new domain to the ignored list"
   },
   "settings_excluded_domains_add_another_domain_text": {
-    "message": "Add another domain",
+    "message": "Dodaj kolejną domenę",
     "description": "Label for the button to add another domain to the ignored list"
   },
   "settings_excluded_domains_add_input_placeholder": {
-    "message": "Enter domain to ignore",
+    "message": "Wprowadź domenę do ignorowania",
     "description": "Placeholder text for the input field to add a new domain to the ignored list"
   },
   "settings_excluded_domains_add_submit_title": {
-    "message": "Ignore this domain",
+    "message": "Ignoruj tę domenę",
     "description": "Title for the button to submit a new domain to the ignored list"
   },
   "settings_excluded_domains_add_cancel_title": {
-    "message": "Cancel ignoring this domain",
+    "message": "Anuluj ignorowanie tej domeny",
     "description": "Title for the button to cancel ignoring a new domain to the ignored list"
   },
   "settings_excluded_domains_remove_dialog_message": {
-    "message": "Are you sure you want to remove DOMAIN from the ignored domains list?",
+    "message": "Czy na pewno chcesz usunąć DOMAIN z listy ignorowanych domen?",
     "description": "Confirmation message when removing a domain from the ignored list"
   },
   "settings_excluded_domains_remove_dialog_message_replace_fallback": {
-    "message": "this domain",
+    "message": "ta domena",
     "description": "Fallback text for the domain placeholder in the remove domain confirmation dialog"
   },
   "settings_excluded_domains_remove_dialog_cancel_text": {
-    "message": "Cancel",
+    "message": "Anuluj",
     "description": "Cancel button text in the remove domain confirmation dialog"
   },
   "settings_excluded_domains_remove_dialog_confirm_text": {
-    "message": "Remove",
+    "message": "Usuń",
     "description": "Confirm button text in the remove domain confirmation dialog"
   },
   "settings_danger_zone": {
-    "message": "Danger Zone",
+    "message": "Ustawienia zaawansowane",
     "description": "Label for the danger zone section in settings"
   },
   "settings_danger_zone_reset": {
-    "message": "Reset Browser Extension",
+    "message": "Zresetuj rozszerzenie przeglądarki",
     "description": "Button label to reset the browser extension"
   },
   "settings_reset_header": {
-    "message": "Reset Browser Extension",
+    "message": "Zresetuj rozszerzenie przeglądarki",
     "description": "Header for the reset browser extension confirmation dialog"
   },
   "settings_reset_description": {
-    "message": "Resetting the 2FAS Pass Browser Extension will delete all settings associated with the extension.",
+    "message": "Zresetowanie rozszerzenia przeglądarki 2FAS Pass spowoduje usunięcie wszystkich ustawień powiązanych z tym rozszerzeniem.",
     "description": "Confirmation message for resetting the browser extension"
   },
   "settings_reset_action_confirm_button": {
-    "message": "Reset",
+    "message": "Resetuj",
     "description": "Button label to confirm the reset action"
   },
   "settings_reset_action_cancel_button": {
-    "message": "Cancel",
+    "message": "Anuluj",
     "description": "Button label to cancel the reset action"
   },
   "settings_devices_header": {
-    "message": "Connected Devices",
+    "message": "Połączone urządzenia",
     "description": "Header for the trusted devices section in settings"
   },
   "settings_devices_description": {
-    "message": "List of devices connected with this Browser Extension. Disconnect them from here if you no longer use them.",
+    "message": "Lista urządzeń połączonych z tym rozszerzeniem przeglądarki. Rozłącz je tutaj, jeśli już ich nie używasz.",
     "description": "Description for managing trusted devices"
   },
   "settings_devices_unknown_platform": {
-    "message": "Unknown",
+    "message": "Nieznana",
     "description": "Label for devices with an unknown platform"
   },
   "settings_devices_no_devices": {
-    "message": "No devices found.",
+    "message": "Nie znaleziono urządzeń.",
     "description": "Message displayed when there are no trusted devices found"
   },
   "settings_devices_current_device_title": {
-    "message": "This is your current device. You cannot disconnect it here.",
+    "message": "To twoje obecne urządzenie. Możesz rozłączyć je tutaj.",
     "description": "Warning message when disconnecting the current trusted device"
   },
   "settings_devices_name_header": {
-    "message": "Name",
+    "message": "Nazwa",
     "description": "Label for the device name column in the trusted devices list"
   },
   "settings_devices_platform_header": {
-    "message": "Platform",
+    "message": "Platforma",
     "description": "Label for the device platform column in the trusted devices list"
   },
   "settings_devices_last_connected_header": {
-    "message": "Last connected",
+    "message": "Ostatnie połączenie",
     "description": "Label for the last connected column in the trusted devices list"
   },
   "settings_devices_disconnect_title": {
-    "message": "Disconnect this device",
+    "message": "Rozłącz to urządzenie",
     "description": "Title for the disconnect trusted device button"
   },
   "settings_devices_dialog_message": {
-    "message": "Are you sure you want to disconnect this device?",
+    "message": "Czy na pewno chcesz rozłączyć to urządzenie?",
     "description": "Confirmation message when disconnecting a trusted device"
   },
   "settings_devices_dialog_submessage_current_device": {
-    "message": "This is your current device! Disconnecting it will block any future actions, such as fetching passwords.",
+    "message": "To twoje obecne urządzenie! Odłączenie go uniemożliwi wykonywanie dalszych działań, takich jak pobieranie haseł.",
     "description": "Warning sub-message when disconnecting the current trusted device"
   },
   "settings_devices_dialog_cancel_text": {
-    "message": "Cancel",
+    "message": "Anuluj",
     "description": "Cancel button text in the disconnect trusted device confirmation dialog"
   },
   "settings_devices_dialog_confirm_text": {
-    "message": "Disconnect",
+    "message": "Rozłącz",
     "description": "Confirm button text in the disconnect trusted device confirmation dialog"
   },
   "this_tab_matching_logins_header": {
-    "message": "Matching Items",
+    "message": "Pasujące elementy",
     "description": "Header for the section displaying matching login items"
   },
   "this_tab_matching_logins_header_no_logins": {
-    "message": "None of your Items match",
+    "message": "Brak pasujących elementów",
     "description": "Message displayed when no login items match the current tab"
   },
   "this_tab_all_logins_header": {
-    "message": "All Items",
+    "message": "Wszystkie elementy",
     "description": "Header for the section displaying all login items"
   },
   "this_tab_sort": {
-    "message": "Sort",
+    "message": "Sortowanie",
     "description": "Label for the sort functionality"
   },
   "this_tab_more_details": {
-    "message": "View details",
+    "message": "Zobacz szczegóły",
     "description": "Button label to view more details about a login item"
   },
   "this_tab_more_forget_password": {
-    "message": "Forget this password",
+    "message": "Zapomnij to hasło",
     "description": "Button label to forget the saved password for a login item"
   },
   "this_tab_more_forget_secure_note": {
-    "message": "Forget this note",
+    "message": "Zapomnij tą notatkę",
     "description": "Button label to forget the saved secure note"
   },
   "this_tab_more_forget_payment_card": {
-    "message": "Forget this card",
+    "message": "Zapomnij tą kartę",
     "description": "Button label to forget the saved payment card"
   },
   "this_tab_more_uris": {
-    "message": "Website URL(s):",
+    "message": "Adres(y) URL strony",
     "description": "Label for displaying associated website URLs of a login item"
   },
   "this_tab_copy_to_clipboard": {
-    "message": "Copy to clipboard",
+    "message": "Skopiuj do schowka",
     "description": "Button label to copy data to the clipboard"
   },
   "this_tab_autofill_success": {
-    "message": "Autofill successful",
+    "message": "Automatyczne wypełnianie udane",
     "description": "Message displayed when autofill operation is successful"
   },
   "this_tab_autofill_no_password": {
-    "message": "Username autofilled but no password found",
+    "message": "Uzupełniono nazwę użytkownika, ale nie znaleziono hasła.",
     "description": "Message displayed when no password is found for autofill"
   },
   "this_tab_autofill_fetch_password": {
-    "message": "Username autofilled. Fetch password from device to complete the autofill process.",
+    "message": "Autouzupełniono nazwę użytkownika. Pobierz hasło z urządzenia, aby zakończyć proces.",
     "description": "Message displayed when username is autofilled for a Highly Secret item that requires fetching password from device"
   },
   "this_tab_autofill_no_username_and_password": {
-    "message": "No username and password found.",
+    "message": "Nie znaleziono nazwy użytkownika i hasła.",
     "description": "Message displayed when no username and password are found for autofill"
   },
   "this_tab_can_t_autofill": {
-    "message": "Browser Extension can't autofill. Copy the Item details and paste them manually.",
+    "message": "Rozszerzenie przeglądarki nie może automatycznie uzupełnić danych. Skopiuj dane elementu i wklej je ręcznie.",
     "description": "Message shown when autofill isn't possible, suggesting manual copy-paste"
   },
   "this_tab_can_t_autofill_t2": {
-    "message": "Browser Extension can't autofill. Fetch Item details and paste them manually.",
+    "message": "Rozszerzenie przeglądarki nie może automatycznie wypełnić formularza. Pobierz szczegóły elementu i wklej je ręcznie.",
     "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
   },
   "this_tab_can_t_autofill_t2_failed": {
-    "message": "Browser Extension can't fully autofill the form.",
+    "message": "Rozszerzenie przeglądarki nie może automatycznie wypełnić całości formularza.",
     "description": "Message displayed when autofill operation fails or is incomplete"
   },
   "this_tab_can_t_find_inputs": {
-    "message": "No input field found. Can't autofill Item details.",
+    "message": "Nie znaleziono formularza. Nie można wypełnić danych elementu.",
     "description": "Message shown when input fields for autofill can't be found"
   },
   "this_tab_copy_password": {
-    "message": "Copy password",
+    "message": "Skopiuj hasło",
     "description": "Button label to copy the password to the clipboard"
   },
   "this_tab_fetch_password": {
-    "message": "Fetch password",
+    "message": "Pobierz hasło",
     "description": "Button label to fetch the password from the mobile app"
   },
   "this_tab_copy_username": {
-    "message": "Copy username",
+    "message": "Skopiuj nazwę użytkownika",
     "description": "Button label to copy the username to the clipboard"
   },
   "this_tab_copy_text": {
-    "message": "Copy note",
+    "message": "Kopiuj notatkę",
     "description": "Button label to copy text from a secure note to the clipboard"
   },
   "this_tab_copy_name": {
-    "message": "Copy name",
+    "message": "Kopiuj nazwę",
     "description": "Button label to copy the name of an item to the clipboard"
   },
   "this_tab_fetch_text": {
-    "message": "Fetch note",
+    "message": "Pobierz notatkę",
     "description": "Button label to fetch the text from the mobile app"
   },
   "this_tab_copy_card_number": {
-    "message": "Copy card number",
+    "message": "Kopiuj numer karty",
     "description": "Button label to copy the card number to the clipboard"
   },
   "this_tab_fetch_card_info": {
-    "message": "Fetch card info",
+    "message": "Pobierz informację karty",
     "description": "Button label to fetch the card info from the mobile app"
   },
   "this_tab_copy_card_security_code": {
-    "message": "Copy security code",
+    "message": "Kopiuj kod bezpieczeństwa",
     "description": "Button label to copy the security code to the clipboard"
   },
   "this_tab_fetch_card_security_code": {
-    "message": "Fetch security code",
+    "message": "Pobierz kod bezpieczeństwa",
     "description": "Button label to fetch the security code from the mobile app"
   },
   "this_tab_more_actions": {
-    "message": "More actions",
+    "message": "Więcej akcji",
     "description": "Label for a dropdown or menu containing additional actions"
   },
   "this_tab_autofill_fetch_card_data": {
-    "message": "Cardholder name autofilled. Fetch card details from device to complete the autofill process.",
+    "message": "Autouzupełniono właściciela karty. Pobierz hasło z urządzenia, aby zakończyć proces.",
     "description": "Message displayed when cardholder name is autofilled for a Highly Secret item that requires fetching card data from device"
   },
   "this_tab_autofill_no_card_data_available": {
-    "message": "Only cardholder name was available for autofill",
+    "message": "Tylko właściciel karty był dostępny do autouzupełnienia.",
     "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
   "this_tab_autofill_some_fields_not_available": {
@@ -1596,35 +1596,35 @@
     "description": "Message displayed when some payment card fields could not be autofilled"
   },
   "all_items_list_no_search_results": {
-    "message": "No search results. Please try again.",
+    "message": "Brak wyników wyszukiwania. Spróbuj ponownie.",
     "description": "Message displayed when no search results are found"
   },
   "filters_no_tags": {
-    "message": "No Tags available",
+    "message": "Brak dostępnych tagów",
     "description": "Message shown in the tag filter dropdown when there are no tags created yet"
   },
   "filters_button_title": {
-    "message": "Filter by Tag",
+    "message": "Filtrowanie tagami",
     "description": "Tooltip text for the filter button that opens tag selection dropdown"
   },
   "filters_clear_choice": {
-    "message": "Clear filters",
+    "message": "Wyczyść filtry",
     "description": "Option text to clear the selected tag filter"
   },
   "keep_item_popup_header": {
-    "message": "Data for the following Item \nsuccessfully fetched.",
+    "message": "Dane dla następującego elementu \nzostały pomyślnie pobrane.",
     "description": "Header message in popup after fetching login data for autofill"
   },
   "keep_item_popup_keep": {
-    "message": "Keep it for 3 minutes",
+    "message": "Zachowaj na 3 minuty",
     "description": "Button label to keep the fetched password for a limited time"
   },
   "keep_item_popup_dont_keep": {
-    "message": "Don't keep it",
+    "message": "Nie zachowuj",
     "description": "Button label to not keep the fetched password for a limited time"
   },
   "search_placeholder": {
-    "message": "Search among %AMOUNT% Items",
+    "message": "Wyszukaj wśród %AMOUNT% elementów",
     "description": "Placeholder text for the search input showing the number of available items"
   },
   "sort_az": {
@@ -1636,35 +1636,35 @@
     "description": "Sort option for sorting items from Z to A"
   },
   "sort_newest": {
-    "message": "Newest",
+    "message": "Najnowsze",
     "description": "Sort option for sorting items by most recently updated first"
   },
   "sort_oldest": {
-    "message": "Oldest",
+    "message": "Najstarsze",
     "description": "Sort option for sorting items by least recently updated first"
   },
   "tags_info_text": {
-    "message": "Showing AMOUNT Items Tagged: TAG_NAME",
+    "message": "Wyświetlanie AMOUNT elementów oznaczonych tagiem: TAG_NAME",
     "description": "Information text displaying the number of items with a specific tag"
   },
   "tags_info_clear_filter": {
-    "message": "Clear Tag filter",
+    "message": "Wyczyść filtr tagów",
     "description": "Button label to clear the selected tag filter"
   },
   "update_available": {
-    "message": "A new version of the extension is available!",
+    "message": "Nowa wersja rozszerzenia dostępna!",
     "description": "Notification message when a new extension update is available"
   },
   "update_button": {
-    "message": "Update",
+    "message": "Zaktualizuj",
     "description": "Button label to update the extension"
   },
   "update_button_title": {
-    "message": "Update the extension to the latest version",
+    "message": "Zaktualizuj do najnowszej wersji",
     "description": "Tooltip for the update button"
   },
   "update_manual_required": {
-    "message": "Please update the extension manually from your browser's extension settings",
+    "message": "Zaktualizuj rozszerzenie ręcznie w ustawieniach rozszerzeń przeglądarki.",
     "description": "Error message when automatic update is not available"
   },
   "login": {
@@ -1672,83 +1672,83 @@
     "description": "Label for the login functionality"
   },
   "login_plural": {
-    "message": "Logins",
+    "message": "Loginy",
     "description": "Label for multiple logins"
   },
   "username": {
-    "message": "Username / Email",
+    "message": "Nazwa użytkownika / Email",
     "description": "Label for the username or email field"
   },
   "password": {
-    "message": "Password",
+    "message": "Hasło",
     "description": "Label for the password field"
   },
   "placeholder_username": {
-    "message": "Type your username",
+    "message": "Wpisz nazwę użytkownika",
     "description": "Placeholder text for the username input field"
   },
   "placeholder_password": {
-    "message": "Type your password",
+    "message": "Wpisz hasło",
     "description": "Placeholder text for the password input field"
   },
   "notification_username_copied": {
-    "message": "Username copied to clipboard",
+    "message": "Nazwa użytkownika skopiowana do schowka",
     "description": "Notification message when the username is successfully copied to the clipboard"
   },
   "notification_password_copied": {
-    "message": "Password copied to clipboard",
+    "message": "Hasło skopiowane do schowka",
     "description": "Notification message when the password is successfully copied to the clipboard"
   },
   "error_login_not_found": {
-    "message": "Something went wrong. Login not found.",
+    "message": "Wystąpił błąd. Nie znaleziono loginu.",
     "description": "Error message displayed when the requested login item is not found"
   },
   "error_username_copy_failed": {
-    "message": "Failed to copy username to clipboard.",
+    "message": "Nie udało się skopiować nazwy użytkownika do schowka.",
     "description": "Error message displayed when copying the username to the clipboard fails"
   },
   "error_password_copy_failed": {
-    "message": "Failed to copy password to clipboard.",
+    "message": "Nie udało się skopiować hasła do schowka.",
     "description": "Error message displayed when copying the password to the clipboard fails"
   },
   "placeholder_domain_uri": {
-    "message": "e.g., https://2fas.com",
+    "message": "np. https://2fas.com",
     "description": "Placeholder text for the domain or URI input field"
   },
   "payment_card": {
-    "message": "Card",
+    "message": "Karta",
     "description": "Label for the payment card functionality"
   },
   "payment_card_plural": {
-    "message": "Cards",
+    "message": "Karty",
     "description": "Label for multiple payment cards"
   },
   "payment_card_name": {
-    "message": "Name",
+    "message": "Nazwa",
     "description": "Label for the payment card name field"
   },
   "payment_card_cardholder": {
-    "message": "Cardholder",
+    "message": "Właściciel karty",
     "description": "Label for the payment card cardholder field"
   },
   "payment_card_card_number": {
-    "message": "Card Number",
+    "message": "Numer karty",
     "description": "Label for the payment card number field"
   },
   "payment_card_expiration_date": {
-    "message": "Expiration Date",
+    "message": "Data ważności",
     "description": "Label for the payment card expiration date field"
   },
   "payment_card_security_code": {
-    "message": "Security Code",
+    "message": "Kod bezpieczeństwa",
     "description": "Label for the payment card security code field"
   },
   "placeholder_payment_card_name": {
-    "message": "Type the card name",
+    "message": "Wpisz nazwę karty",
     "description": "Placeholder text for the payment card name input field"
   },
   "placeholder_payment_card_cardholder": {
-    "message": "Type the cardholder's name",
+    "message": "Wpisz właściciela karty",
     "description": "Placeholder text for the cardholder name input field"
   },
   "placeholder_payment_card_number": {
@@ -1756,7 +1756,7 @@
     "description": "Placeholder text for the payment card number input field"
   },
   "placeholder_payment_card_expiration_date": {
-    "message": "MM/YY",
+    "message": "MM/RR",
     "description": "Placeholder text for the payment card expiration date input field"
   },
   "placeholder_payment_card_security_code": {
@@ -1764,91 +1764,91 @@
     "description": "Placeholder text for the payment card security code input field"
   },
   "notification_card_number_copied": {
-    "message": "Card number copied to clipboard",
+    "message": "Numer karty skopiowany do schowka",
     "description": "Notification message when the card number is successfully copied to the clipboard"
   },
   "notification_card_security_code_copied": {
-    "message": "Security code copied to clipboard",
+    "message": "Kod bezpieczeństwa skopiowany do schowka",
     "description": "Notification message when the security code is successfully copied to the clipboard"
   },
   "notification_expiration_date_copied": {
-    "message": "Expiration date copied to clipboard",
+    "message": "Data ważności skopiowana do schowka",
     "description": "Notification message when the expiration date is successfully copied to the clipboard"
   },
   "error_card_not_found": {
-    "message": "Something went wrong. Payment Card not found.",
+    "message": "Wystąpił błąd. Nie znaleziono karty płatniczej.",
     "description": "Error message displayed when the requested payment card is not found"
   },
   "error_card_number_copy_failed": {
-    "message": "Failed to copy card number to clipboard.",
+    "message": "Nie udało się skopiować numeru karty do schowka.",
     "description": "Error message displayed when copying the card number to the clipboard fails"
   },
   "error_card_security_code_copy_failed": {
-    "message": "Failed to copy security code to clipboard.",
+    "message": "Nie udało się skopiować kodu bezpieczeństwa do schowka.",
     "description": "Error message displayed when copying the security code to the clipboard fails"
   },
   "error_expiration_date_copy_failed": {
-    "message": "Failed to copy expiration date to clipboard.",
+    "message": "Nie udało się skopiować daty ważności do schowka.",
     "description": "Error message displayed when copying the expiration date to the clipboard fails"
   },
   "secure_note": {
-    "message": "Secure Note",
+    "message": "Notatka",
     "description": "Label for the secure note functionality"
   },
   "secure_note_note": {
-    "message": "Note",
+    "message": "Notatka",
     "description": "Label for the secure note text field"
   },
   "secure_note_plural": {
-    "message": "Secure Notes",
+    "message": "Notatki",
     "description": "Label for multiple secure notes"
   },
   "secure_note_placeholder": {
-    "message": "Add the Note",
+    "message": "Dodaj notatkę",
     "description": "Placeholder text for the secure note input field"
   },
   "secure_note_name": {
-    "message": "Name",
+    "message": "Nazwa",
     "description": "Placeholder text for the secure note name input field"
   },
   "secure_note_name_placeholder": {
-    "message": "Secure Note name",
+    "message": "Nazwa notatki",
     "description": "Placeholder text for the secure note name input field"
   },
   "secure_note_name_required": {
-    "message": "Secure Note name is required.",
+    "message": "Nazwa notatki jest wymagana",
     "description": "Validation message indicating that the secure note name is required"
   },
   "secure_note_name_max_length": {
-    "message": "Secure Note name must be less than 256 characters.",
+    "message": "Nazwa notatki musi mieć mniej niż 256 znaków.",
     "description": "Validation message indicating that the secure note title exceeds the maximum length"
   },
   "secure_note_text_max_length": {
-    "message": "Secure Note text must be less than 16384 characters.",
+    "message": "Notatka musi mieć mniej niż 16384 znaków.",
     "description": "Validation message indicating that the secure note text exceeds the maximum length"
   },
   "placeholder_secure_note": {
-    "message": "Type your Secure Note",
+    "message": "Wpisz bezpieczną notatkę",
     "description": "Placeholder text for the Secure Note text input field"
   },
   "placeholder_secure_note_empty": {
-    "message": "Note is empty",
+    "message": "Notatka jest pusta",
     "description": "Placeholder text when there is no Secure Note available"
   },
   "notification_secure_note_name_copied": {
-    "message": "Name copied to clipboard",
+    "message": "Nazwa skopiowana do schowka",
     "description": "Notification message when the secure note name is successfully copied to the clipboard"
   },
   "notification_secure_note_text_copied": {
-    "message": "Note copied to clipboard",
+    "message": "Notatka skopiowana do schowka",
     "description": "Notification message when the secure note text is successfully copied to the clipboard"
   },
   "error_secure_note_not_found": {
-    "message": "Something went wrong. Secure Note not found.",
+    "message": "Wystąpił błąd. Nie znaleziono notatki.",
     "description": "Error message displayed when the requested secure note is not found"
   },
   "error_secure_note_name_copy_failed": {
-    "message": "Failed to copy name to clipboard.",
+    "message": "Nie udało się skopiować nazwy do schowka.",
     "description": "Error message displayed when copying the secure note name to the clipboard fails"
   }
 }

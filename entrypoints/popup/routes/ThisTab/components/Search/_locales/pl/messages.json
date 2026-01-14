@@ -1,0 +1,6 @@
+{
+  "search_placeholder": {
+    "message": "Wyszukaj wśród %AMOUNT% elementów",
+    "description": "Placeholder text for the search input showing the number of available items"
+  }
+}

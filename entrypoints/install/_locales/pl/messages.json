@@ -1,0 +1,90 @@
+{
+  "install_please_pin_extension": {
+    "message": "Przypnij te rozszerzenie do paska zadań.",
+    "description": "Prompt asking the user to pin the browser extension to the toolbar"
+  },
+  "install_logging_settings_changed": {
+    "message": "Ustawienia „Raportów awarii” zmienione pomyślnie.",
+    "description": "Message displayed when crash log settings are successfully updated"
+  },
+  "install_privacy_text": {
+    "message": "Prywatność łączy się z bezpieczeństwem i wygodą.",
+    "description": "Text emphasizing the balance of privacy, security, and convenience"
+  },
+  "install_1_info": {
+    "message": "Rozszerznie przeglądarki zainstalowane pomyślnie!",
+    "description": "Message displayed when the browser extension is installed successfully"
+  },
+  "install_1_header": {
+    "message": "Przypnij aby mieć \nszybki dostęp do \nelementów",
+    "description": "Header encouraging the user to pin the extension for quick access"
+  },
+  "install_1_open_extension_menu": {
+    "message": "Otwórz menu rozszerzenia.",
+    "description": "Instruction to open the browser's extension menu"
+  },
+  "install_1_pin_extension": {
+    "message": "Przypnij 2FAS Pass do paska zadań.",
+    "description": "Instruction to pin the 2FAS Pass extension to the toolbar"
+  },
+  "install_2_info": {
+    "message": "Rozszerznie przeglądarki przypięte!",
+    "description": "Message displayed when the browser extension is successfully pinned"
+  },
+  "install_2_header": {
+    "message": "Zacznij korzystać\nz menedżera haseł",
+    "description": "Header encouraging the user to start using the password manager"
+  },
+  "install_2_click_icon": {
+    "message": "Kliknij ikonę, aby otworzyć rozszerzenie przeglądarki 2FAS Pass.",
+    "description": "Instruction to click the extension icon to open it"
+  },
+  "install_2_use_mobile_app": {
+    "message": "Dotknij \"Połącz\" w aplikacji mobilnej 2FAS Pass aby zeskanować kod QR.",
+    "description": "Instruction to use the mobile app to scan the QR code"
+  },
+  "install_3_info": {
+    "message": "Rozszerzenie jest odblokowane na czas tej sesji przeglądarki!",
+    "description": "Message displayed when the extension is unlocked for the current browser session"
+  },
+  "install_3_header": {
+    "message": "To rozszerzenie\nprzeglądarki jest\ngotowe do użycia",
+    "description": "Header indicating that the browser extension is ready to use"
+  },
+  "install_3_get_started": {
+    "message": "Oto wszystkie informacje potrzebne do rozpoczęcia",
+    "description": "Message introducing the user to the getting started guide"
+  },
+  "install_3_crash_logs_header": {
+    "message": "Zgoda na raporty o awariach",
+    "description": "Header for the section explaining crash log permissions"
+  },
+  "install_3_crash_logs_description": {
+    "message": "Jeśli chcesz wesprzeć rozwój tego projektu, możesz wyrazić zgodę na wysyłanie anonimowych raportów o awariach.",
+    "description": "Explains the purpose of sending anonymous crash logs to support the project"
+  },
+  "install_3_crash_logs_checkbox_description": {
+    "message": "Chcę udostępnić anonimowe raporty o awariach.",
+    "description": "Checkbox label for opting in to share anonymous crash logs"
+  },
+  "install_get_mobile_app": {
+    "message": "Pobierz aplikację mobilną",
+    "description": "Button label for downloading the mobile app"
+  },
+  "install_scan": {
+    "message": "Skanuj",
+    "description": "Button label for scanning the QR code with the mobile app"
+  },
+  "install_point_camera": {
+    "message": "Zeskanuj kod QR",
+    "description": "Tooltip text instructing the user to point their camera at the QR code"
+  },
+  "install_download_ios_app": {
+    "message": "Pobierz aplikację na iOS",
+    "description": "Button label for downloading the iOS app"
+  },
+  "install_download_android_app": {
+    "message": "Pobierz aplikację na Androida",
+    "description": "Button label for downloading the Android app"
+  }
+}

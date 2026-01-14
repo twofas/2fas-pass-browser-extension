@@ -1,0 +1,18 @@
+{
+  "top_bar_locked": {
+    "message": "Zablokowane",
+    "description": "Indicates that the extension is locked"
+  },
+  "top_bar_lock": {
+    "message": "Zablokuj",
+    "description": "Button to lock the extension"
+  },
+  "top_bar_add_new": {
+    "message": "Dodaj nowy",
+    "description": "Button to add a new item"
+  },
+  "top_bar_create_new": {
+    "message": "Dodaj",
+    "description": "Link to create a new item of a specific type"
+  }
+}
