@@ -127,7 +127,7 @@ function ThisTab (props) {
         const tagIndex = tagMap.get(tagId);
 
         if (tagIndex === undefined) {
-          await CatchError(new TwoFasError(TwoFasError.internalErrors.tagIndexError, { additional: { tagId } }));
+          await CatchError(new TwoFasError(TwoFasError.internalErrors.tagIndexError, { additional: { tagId }, apiLog: false }));
           continue;
         }
 
