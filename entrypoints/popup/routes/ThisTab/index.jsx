@@ -138,7 +138,7 @@ function ThisTab (props) {
     }, 600);
   }, []);
 
-  const initializeData = useCallback(async () => {
+  const refreshData = useCallback(async () => {
     try {
       const { url, items: fetchedItems, tags: fetchedTags } = await fetchInitialData();
 
@@ -150,12 +150,10 @@ function ThisTab (props) {
       if (fetchedItems.length === 0) {
         playEmptyStateAnimation();
       }
-
-      unwatchStorageVersion.current = watchStorageVersion();
     } catch (e) {
       await CatchError(e);
     }
-  }, [fetchInitialData, getMatchingLogins, validateTagsInItems, playEmptyStateAnimation, watchStorageVersion]);
+  }, [fetchInitialData, getMatchingLogins, validateTagsInItems, playEmptyStateAnimation]);
 
   const handleAnimationComplete = useCallback(e => {
     if (e === 'visible') {
@@ -243,17 +241,23 @@ function ThisTab (props) {
   const filteredItemsCount = filteredItemsData.filteredCount;
 
   useEffect(() => {
-    browser.runtime.onMessage.addListener(messageListener);
-    initializeData();
+    unwatchStorageVersion.current = watchStorageVersion();
 
     return () => {
-      browser.runtime.onMessage.removeListener(messageListener);
-
       if (unwatchStorageVersion.current) {
         unwatchStorageVersion.current();
       }
     };
-  }, [storageVersion, messageListener, initializeData]);
+  }, [watchStorageVersion]);
+
+  useEffect(() => {
+    browser.runtime.onMessage.addListener(messageListener);
+    refreshData();
+
+    return () => {
+      browser.runtime.onMessage.removeListener(messageListener);
+    };
+  }, [storageVersion, messageListener, refreshData]);
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
