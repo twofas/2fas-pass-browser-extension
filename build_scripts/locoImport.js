@@ -19,7 +19,8 @@ if (!process.env.LOCO_KEY) {
 }
 
 const urls = {
-  en: `https://localise.biz/api/export/locale/en.json?format=chrome&key=${process.env.LOCO_KEY}`
+  en: `https://localise.biz/api/export/locale/en.json?format=chrome&key=${process.env.LOCO_KEY}`,
+  pl: `https://localise.biz/api/export/locale/pl.json?format=chrome&key=${process.env.LOCO_KEY}`
 };
 
 const excludedDirsSet = new Set([
@@ -68,6 +69,45 @@ const getLanguages = urls => {
 };
 
 /**
+ * Function to ensure language directories and messages.json files exist for all languages.
+ * Creates missing directories and files based on the English (en) version structure.
+ * @param {Array<string>} localesFolders - An array of paths to the `_locales` folders.
+ * @param {Array<string>} languages - An array of language codes.
+ * @return {void}
+ */
+const ensureLanguageFilesExist = (localesFolders, languages) => {
+  localesFolders.forEach(folder => {
+    const enMessagesPath = path.join(folder, 'en', 'messages.json');
+
+    if (!fs.existsSync(enMessagesPath)) {
+      return;
+    }
+
+    const enContent = fs.readFileSync(enMessagesPath, 'utf8');
+    const enData = JSON.parse(enContent);
+
+    languages.forEach(language => {
+      if (language === 'en') {
+        return;
+      }
+
+      const languageDir = path.join(folder, language);
+      const messagesFilePath = path.join(languageDir, 'messages.json');
+
+      if (!fs.existsSync(languageDir)) {
+        fs.mkdirSync(languageDir, { recursive: true });
+        console.log(`Created directory: ${languageDir}`);
+      }
+
+      if (!fs.existsSync(messagesFilePath)) {
+        fs.writeFileSync(messagesFilePath, JSON.stringify(enData, null, 2), 'utf8');
+        console.log(`Created file: ${messagesFilePath}`);
+      }
+    });
+  });
+};
+
+/**
  * Function to get the paths of messages files for each language in the `_locales` folders.
  * @param {Array<string>} localesFolders - An array of paths to the `_locales` folders.
  * @param {Array<string>} languages - An array of language codes.
@@ -79,10 +119,12 @@ const getMessagesFiles = (localesFolders, languages) => {
   localesFolders.forEach(folder => {
     languages.forEach(language => {
       const messagesFilePath = path.join(folder, language, 'messages.json');
+
       if (fs.existsSync(messagesFilePath)) {
         if (!messagesFiles[language]) {
           messagesFiles[language] = [];
         }
+
         messagesFiles[language].push(messagesFilePath);
       }
     });
@@ -143,6 +185,8 @@ const downloadFiles = async urls => {
  * @return {void}
  */
 const updateFiles = (locoFiles, messagesContent) => {
+  const unusedKeysByLanguage = {};
+
   locoFiles.forEach(locoFile => {
     const { language, data } = locoFile;
     const localFilesForLanguage = messagesContent.filter(file => file.language === language);
@@ -154,7 +198,7 @@ const updateFiles = (locoFiles, messagesContent) => {
       localFilesForLanguage.forEach(file => {
         const fileKeys = Object.keys(file.data);
         const fileKeysSet = new Set(fileKeys);
-        
+
         if (fileKeysSet.has(key)) {
           file.data[key] = data[key];
           used = true;
@@ -162,18 +206,41 @@ const updateFiles = (locoFiles, messagesContent) => {
       });
 
       if (!used) {
-        console.log(`${key} not used!`);
+        if (!unusedKeysByLanguage[language]) {
+          unusedKeysByLanguage[language] = [];
+        }
+
+        unusedKeysByLanguage[language].push(key);
       }
     });
+  });
+
+  Object.keys(unusedKeysByLanguage).forEach(language => {
+    const unusedKeys = unusedKeysByLanguage[language];
+
+    if (unusedKeys.length > 0) {
+      console.log(`\n[${language}] ${unusedKeys.length} keys from Loco not found in local files:`);
+      unusedKeys.forEach(key => {
+        console.log(`  - ${key}`);
+      });
+    }
   });
 
   messagesContent.forEach(file => {
     fs.writeFileSync(file.path, JSON.stringify(file.data, null, 2), 'utf8');
   });
+
+  console.log(`\nUpdated ${messagesContent.length} messages.json files.`);
 };
 
 const localesFolders = getLocalesFolders('./', excludedDirsSet);
 const languages = getLanguages(urls);
+
+console.log(`Found ${localesFolders.length} _locales folders.`);
+console.log(`Languages to process: ${languages.join(', ')}\n`);
+
+ensureLanguageFilesExist(localesFolders, languages);
+
 const messagesFiles = getMessagesFiles(localesFolders, languages);
 const messagesContent = getMessagesContent(messagesFiles);
 
