@@ -104,6 +104,12 @@ function CardExpirationDate (props) {
   }, [localEditedExpirationDate, localDecryptedExpirationDate, sifDecryptError, form]);
 
   useEffect(() => {
+    if (data?.expirationDateEditable && isText(data?.editedExpirationDate) && localEditedExpirationDate === null) {
+      setLocalEditedExpirationDate(data.editedExpirationDate);
+    }
+  }, []);
+
+  useEffect(() => {
     const needsDecryption = localDecryptedExpirationDate === null &&
                            !isDecrypting &&
                            itemInstance?.expirationDateExists;
