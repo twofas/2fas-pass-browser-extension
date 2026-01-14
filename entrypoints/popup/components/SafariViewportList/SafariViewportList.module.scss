@@ -6,4 +6,16 @@
 
 .safari-viewport-list {
   contain: layout style;
+
+  > div {
+    &:last-child {
+      > div {
+        padding-bottom: 0;
+
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
 }
