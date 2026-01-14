@@ -9,8 +9,8 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import { Field } from 'react-final-form';
 import { motion } from 'motion/react';
-import { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
-import getTags from '@/partials/sessionStorage/getTags';
+import { useState, useRef, useCallback, useMemo, memo } from 'react';
+import useTags from '../../../../hooks/useTags';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import usePopupState from '../../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -54,25 +54,12 @@ const getTagName = (tagID, availableTags) => {
 */
 function Tags () {
   const { data, setData, setItem } = usePopupState();
+  const { tags: availableTags } = useTags();
 
-  const [availableTags, setAvailableTags] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const selectRef = useRef(null);
   const addButtonRef = useRef(null);
   const containerRef = useRef(null);
-
-  useEffect(() => {
-    const fetchTags = async () => {
-      try {
-        const tags = await getTags();
-        setAvailableTags(tags);
-      } catch (e) {
-        CatchError(e);
-      }
-    };
-
-    fetchTags();
-  }, []);
 
   const availableTagIds = useMemo(() => new Set(availableTags.map(tag => tag.id)), [availableTags]);
 
