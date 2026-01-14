@@ -35,7 +35,7 @@ class Tag {
     validate(isValidInteger(tagData.updatedAt), 'Invalid or missing updatedAt: must be an integer');
     validate(typeof tagData.name === 'string', `Invalid tagData.name must be a string`);
     validate(isValidInteger(tagData.position, 0, 999), 'Invalid or missing tagData.position: must be an integer between 0 and 999');
-    validateOptional(tagData.color, isValidHexColor, 'Invalid tagData.color: must be a hex color string (3 or 6 characters)');
+    validateOptional(tagData.color, value => typeof value === 'string', 'Invalid tagData.color: must be a string');
 
     this.id = tagData.id;
     this.deviceId = tagData.deviceId;
