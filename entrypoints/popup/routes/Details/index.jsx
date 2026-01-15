@@ -81,17 +81,8 @@ function Details(props) {
         } else {
           item = await matchModel({ ...location.state.data.item, securityType: originalItem?.securityType });
         }
-      } else if (location.state?.from === 'fetch' && originalItem && !storeData?.item) {
+      } else if (location.state?.from === 'fetch' && originalItem) {
         item = originalItem;
-      } else if (location.state?.from === 'fetch' && !location.state?.data && storeData?.item) {
-        try {
-          editedSecurityType = storeData.item.securityType;
-          item = await matchModel({ ...storeData.item, securityType: originalItem?.securityType });
-        } catch {
-          if (params.id) {
-            item = await getItem(params.deviceId, params.vaultId, params.id);
-          }
-        }
       } else if (storeData?.item) {
         if (location.state?.from !== 'thisTab') {
           try {
