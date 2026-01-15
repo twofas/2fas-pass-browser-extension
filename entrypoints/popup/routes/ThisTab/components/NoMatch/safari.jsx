@@ -6,11 +6,15 @@
 
 import S from '../../ThisTab.module.scss';
 
-/** 
+/**
 * Function to render the No Match component for Safari.
+* Safari uses static SVG images instead of Lottie animations.
+* @param {Object} props - The component props.
+* @param {Function} props.onAnimationReady - Callback when ready (not used in Safari as it uses static images).
 * @return {JSX.Element} The rendered component.
 */
-const NoMatchSafari = () => {
+// eslint-disable-next-line no-unused-vars
+const NoMatchSafari = ({ onAnimationReady }) => {
   return (
     <div className={`${S.thisTabMatchingLoginsEmpty} ${S.active}`}>
       <div className='theme-light'>

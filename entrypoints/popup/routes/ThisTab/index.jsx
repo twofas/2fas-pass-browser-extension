@@ -48,8 +48,6 @@ function ThisTab (props) {
   const { tags, fetchTags, validateTagsInItems } = useTags({ autoFetch: false });
 
   // Refs
-  const boxAnimationRef = useRef(null);
-  const boxAnimationDarkRef = useRef(null);
   const scrollableRef = useRef(null);
   const unwatchStorageVersion = useRef(null);
   const thisTabTopRef = useRef(null);
@@ -126,16 +124,14 @@ function ThisTab (props) {
 
   const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl), [sendUrl]);
 
-  const playEmptyStateAnimation = useCallback(() => {
-    setTimeout(() => {
-      if (boxAnimationRef?.current?.play) {
-        boxAnimationRef.current.play();
-      }
+  const handleAnimationReady = useCallback((lightRef, darkRef) => {
+    if (lightRef?.current?.play) {
+      lightRef.current.play();
+    }
 
-      if (boxAnimationDarkRef?.current?.play) {
-        boxAnimationDarkRef.current.play();
-      }
-    }, 600);
+    if (darkRef?.current?.play) {
+      darkRef.current.play();
+    }
   }, []);
 
   const refreshData = useCallback(async () => {
@@ -146,14 +142,10 @@ function ThisTab (props) {
         getMatchingLogins(fetchedItems, url),
         validateTagsInItems(fetchedTags, fetchedItems)
       ]);
-
-      if (fetchedItems.length === 0) {
-        playEmptyStateAnimation();
-      }
     } catch (e) {
       await CatchError(e);
     }
-  }, [fetchInitialData, getMatchingLogins, validateTagsInItems, playEmptyStateAnimation]);
+  }, [fetchInitialData, getMatchingLogins, validateTagsInItems]);
 
   const handleAnimationComplete = useCallback(e => {
     if (e === 'visible') {
@@ -300,8 +292,7 @@ function ThisTab (props) {
                   <NoMatch
                     matchingLoginsLength={matchingLogins?.length}
                     loading={loading}
-                    boxAnimationRef={boxAnimationRef}
-                    boxAnimationDarkRef={boxAnimationDarkRef}
+                    onAnimationReady={handleAnimationReady}
                   />
                 </div>
               </motion.div>
