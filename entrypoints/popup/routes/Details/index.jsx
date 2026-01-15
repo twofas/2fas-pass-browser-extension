@@ -56,7 +56,9 @@ function Details(props) {
       const pathname = location.pathname;
       const storeData = usePopupStateStore.getState().getData(pathname);
 
-      if (location.state?.data?.item) {
+      if (location.state?.resetOldData && originalItem) {
+        item = originalItem;
+      } else if (location.state?.data?.item) {
         editedSecurityType = location.state.data.item.securityType;
 
         if (location.state?.from === 'fetch' && originalItem) {
