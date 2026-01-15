@@ -6,12 +6,15 @@
 
 import { useRef, useEffect, useState } from 'react';
 
-/** 
+/**
 * Function to render the No Match component.
 * @param {Object} props - The component props.
+* @param {number} props.matchingLoginsLength - The number of matching logins.
+* @param {boolean} props.loading - Whether the component is loading.
+* @param {Function} props.onAnimationReady - Callback when the animation is ready to play.
 * @return {JSX.Element} The rendered component.
 */
-const NoMatch = ({ matchingLoginsLength, loading, boxAnimationRef, boxAnimationDarkRef }) => {
+const NoMatch = ({ matchingLoginsLength, loading, onAnimationReady }) => {
   const [loaded, setLoaded] = useState(false);
   const NoMatchComponent = useRef(null);
 
@@ -21,20 +24,19 @@ const NoMatch = ({ matchingLoginsLength, loading, boxAnimationRef, boxAnimationD
     } else {
       import('./default.jsx').then(module => { NoMatchComponent.current = module.default; setLoaded(true); });
     }
-  }, [matchingLoginsLength, loading]);
+  }, []);
 
   if (matchingLoginsLength > 0 || loading) {
     return null;
   }
-  
+
   if (!loaded) {
     return <div style={{ height: '86px' }} />;
   }
 
   return (
     <NoMatchComponent.current
-      boxAnimationRef={boxAnimationRef}
-      boxAnimationDarkRef={boxAnimationDarkRef}
+      onAnimationReady={onAnimationReady}
     />
   );
 };
