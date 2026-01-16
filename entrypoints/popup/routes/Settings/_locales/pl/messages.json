@@ -20,15 +20,15 @@
     "description": "Label for the about section in settings"
   },
   "settings_rate_us_chrome": {
-    "message": "Oceń nas w Chrome",
+    "message": "Oceń nas w sklepie Chrome",
     "description": "Prompt to rate the extension in the Chrome Web Store"
   },
   "settings_rate_us_firefox": {
-    "message": "Oceń nas w Firefox",
+    "message": "Oceń nas w sklepie Firefox",
     "description": "Prompt to rate the extension in Firefox Browser Add-ons"
   },
   "settings_rate_us_edge": {
-    "message": "Oceń nas w Miscrosoft Edge",
+    "message": "Oceń nas w sklepie Miscrosoft Edge",
     "description": "Prompt to rate the extension in Microsoft Edge Add-ons"
   },
   "settings_rate_us_safari": {
@@ -40,7 +40,7 @@
     "description": "Header for the about section in settings"
   },
   "settings_about_thank_you": {
-    "message": "Dziękujemy za korzystanie z 2FAS Pass,\nz cyberbezpieczeństwem w sercu.",
+    "message": "Dziękujemy za korzystanie z 2FAS Pass!",
     "description": "Thank you message for users of the 2FAS Pass extension"
   },
   "settings_about_thank_you_subheader": {

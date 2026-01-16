@@ -1611,10 +1611,6 @@
     "message": "Only cardholder name was available for autofill",
     "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
-  "notification_card_autofill_partial_message": {
-    "message": "Some card details could not be autofilled",
-    "description": "Message displayed when some payment card fields could not be autofilled"
-  },
   "all_items_list_no_search_results": {
     "message": "No search results. Please try again.",
     "description": "Message displayed when no search results are found"

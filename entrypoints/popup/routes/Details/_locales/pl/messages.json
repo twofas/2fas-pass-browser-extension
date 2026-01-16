@@ -1,14 +1,14 @@
 {
   "details_header_login": {
-    "message": "Szczegóły Loginu",
+    "message": "Szczegóły loginu",
     "description": "Header for the Login details section"
   },
   "details_header_payment_card": {
-    "message": "Szczegóły Karty Płatniczej",
+    "message": "Szczegóły karty",
     "description": "Header for the Payment Card details section"
   },
   "details_header_secure_note": {
-    "message": "Szczegóły Bezpiecznej Notatki",
+    "message": "Szczegóły notatki",
     "description": "Header for the Secure Note details section"
   },
   "details_field_one": {
@@ -16,7 +16,7 @@
     "description": "Label for a single field in the item details"
   },
   "details_field_many": {
-    "message": "póla",
+    "message": "pól",
     "description": "Label for multiple fields in the item details"
   },
   "details_field_few": {

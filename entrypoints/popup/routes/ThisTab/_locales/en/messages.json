@@ -125,6 +125,6 @@
   },
   "notification_card_autofill_partial_message": {
     "message": "Some card details could not be autofilled",
-    "description": "Message displayed when some payment card fields could not be autofilled"
+    "description": "Message when some payment card fields could not be autofilled"
   }
 }

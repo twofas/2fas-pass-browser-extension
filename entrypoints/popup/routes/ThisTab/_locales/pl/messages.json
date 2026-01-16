@@ -124,7 +124,7 @@
     "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
   "notification_card_autofill_partial_message": {
-    "message": "Some card details could not be autofilled",
-    "description": "Message displayed when some payment card fields could not be autofilled"
+    "message": "Niektóre szczegóły karty nie mogły być autouzupełnione",
+    "description": "Message when some payment card fields could not be autofilled"
   }
 }

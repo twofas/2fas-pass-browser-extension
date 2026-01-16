@@ -32,7 +32,7 @@
     "description": "Title for the notification when card autofill is only partially successful"
   },
   "notification_card_autofill_partial_message": {
-    "message": "Some card details could not be autofilled",
+    "message": "Niektóre szczegóły karty nie mogły być autouzupełnione",
     "description": "Message when some payment card fields could not be autofilled"
   },
   "notification_card_autofill_no_inputs_title": {
