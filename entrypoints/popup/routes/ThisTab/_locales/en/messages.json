@@ -123,7 +123,7 @@
     "message": "Only cardholder name was available for autofill",
     "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
-  "this_tab_autofill_some_fields_not_available": {
+  "notification_card_autofill_partial_message": {
     "message": "Some card details could not be autofilled",
     "description": "Message displayed when some payment card fields could not be autofilled"
   }

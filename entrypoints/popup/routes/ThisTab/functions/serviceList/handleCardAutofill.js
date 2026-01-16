@@ -272,7 +272,7 @@ const handleCardAutofill = async (item, navigate) => {
   const partialResponse = res.find(frameResponse => frameResponse.status === 'partial');
 
   if (isPartial && partialResponse?.failedFields) {
-    showToast(browser.i18n.getMessage('this_tab_autofill_some_fields_not_available'), 'info');
+    showToast(browser.i18n.getMessage('notification_card_autofill_partial_message'), 'info');
     return;
   }
 

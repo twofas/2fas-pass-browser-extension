@@ -241,7 +241,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
         eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
       }
     } else if (isOk && hasMissingInputs) {
-      const toastId = showToast(browser.i18n.getMessage('this_tab_autofill_some_fields_not_available'), 'info', false);
+      const toastId = showToast(browser.i18n.getMessage('notification_card_autofill_partial_message'), 'info', false);
 
       eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, {
         path: '/',
@@ -261,7 +261,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
         }
       });
     } else if (isPartial) {
-      showToast(browser.i18n.getMessage('this_tab_autofill_some_fields_not_available'), 'info');
+      showToast(browser.i18n.getMessage('notification_card_autofill_partial_message'), 'info');
       eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
     } else {
       const toastId = showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
