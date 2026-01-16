@@ -516,11 +516,11 @@
     "description": "Button label for downloading the Android app"
   },
   "bottom_bar_security_icon_tooltip_header": {
-    "message": "To jest twój Identikon. Znasz go tylko ty.",
+    "message": "To jest twoja Ikona identyfikacyjna, zapamiętaj ją.",
     "description": "Header for the tooltip explaining the purpose of the Identicon"
   },
   "bottom_bar_security_icon_tooltip_text": {
-    "message": "Upewnij się, że widzisz go za każdym razem, \ngdy korzystasz z rozszerzenia przeglądarki 2FAS Pass.",
+    "message": "Upewnij się, że widzisz go za każdym razem, gdy korzystasz z rozszerzenia przeglądarki 2FAS Pass.",
     "description": "Reminds the user to verify their Identicon for security purposes"
   },
   "top_bar_locked": {
@@ -1120,15 +1120,15 @@
     "description": "Label for the about section in settings"
   },
   "settings_rate_us_chrome": {
-    "message": "Oceń nas w Chrome",
+    "message": "Oceń nas w sklepie Chrome",
     "description": "Prompt to rate the extension in the Chrome Web Store"
   },
   "settings_rate_us_firefox": {
-    "message": "Oceń nas w Firefox",
+    "message": "Oceń nas w sklepie Firefox",
     "description": "Prompt to rate the extension in Firefox Browser Add-ons"
   },
   "settings_rate_us_edge": {
-    "message": "Oceń nas w Miscrosoft Edge",
+    "message": "Oceń nas w sklepie Miscrosoft Edge",
     "description": "Prompt to rate the extension in Microsoft Edge Add-ons"
   },
   "settings_rate_us_safari": {
@@ -1140,7 +1140,7 @@
     "description": "Header for the about section in settings"
   },
   "settings_about_thank_you": {
-    "message": "Dziękujemy za korzystanie z 2FAS Pass,\nz cyberbezpieczeństwem w sercu.",
+    "message": "Dziękujemy za korzystanie z 2FAS Pass!",
     "description": "Thank you message for users of the 2FAS Pass extension"
   },
   "settings_about_thank_you_subheader": {
@@ -1756,7 +1756,7 @@
     "description": "Label for the payment card expiration date field"
   },
   "payment_card_security_code": {
-    "message": "Kod bezpieczeństwa",
+    "message": "Kod bezp.",
     "description": "Label for the payment card security code field"
   },
   "placeholder_payment_card_name": {
