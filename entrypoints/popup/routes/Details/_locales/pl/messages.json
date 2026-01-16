@@ -1,15 +1,27 @@
 {
-  "details_header": {
-    "message": "szczegóły",
-    "description": "Header for the details section"
+  "details_header_login": {
+    "message": "Szczegóły Loginu",
+    "description": "Header for the Login details section"
   },
-  "details_field": {
+  "details_header_payment_card": {
+    "message": "Szczegóły Karty Płatniczej",
+    "description": "Header for the Payment Card details section"
+  },
+  "details_header_secure_note": {
+    "message": "Szczegóły Bezpiecznej Notatki",
+    "description": "Header for the Secure Note details section"
+  },
+  "details_field_one": {
     "message": "pole",
     "description": "Label for a single field in the item details"
   },
-  "details_fields": {
-    "message": "pola",
+  "details_field_many": {
+    "message": "póla",
     "description": "Label for multiple fields in the item details"
+  },
+  "details_field_few": {
+    "message": "pola",
+    "description": "Label for a few fields in the item details"
   },
   "details_password_overlay": {
     "message": "To hasło jest dostępne wyłącznie w twoim sejfie.",

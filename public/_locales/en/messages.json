@@ -579,9 +579,17 @@
     "message": "Security code is invalid.",
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
-  "add_new_header": {
-    "message": "Adding a new ITEM to \n2FAS Pass",
-    "description": "Header for the section to add a new item"
+  "add_new_header_login": {
+    "message": "Adding a new Login to \n2FAS Pass",
+    "description": "Header for the section to add a new Login item"
+  },
+  "add_new_header_payment_card": {
+    "message": "Adding a new Payment Card to \n2FAS Pass",
+    "description": "Header for the section to add a new Payment Card item"
+  },
+  "add_new_header_secure_note": {
+    "message": "Adding a new Secure Note to \n2FAS Pass",
+    "description": "Header for the section to add a new Secure Note item"
   },
   "add_new_subheader": {
     "message": "Start the process here and continue in the mobile app.",
@@ -659,17 +667,29 @@
     "message": "Use QR code",
     "description": "Instruction to use QR code as an alternative method"
   },
-  "details_header": {
-    "message": "details",
-    "description": "Header for the details section"
+  "details_header_login": {
+    "message": "Login details",
+    "description": "Header for the Login details section"
   },
-  "details_field": {
+  "details_header_payment_card": {
+    "message": "Payment Card details",
+    "description": "Header for the Payment Card details section"
+  },
+  "details_header_secure_note": {
+    "message": "Secure Note details",
+    "description": "Header for the Secure Note details section"
+  },
+  "details_field_one": {
     "message": "field",
     "description": "Label for a single field in the item details"
   },
-  "details_fields": {
+  "details_field_many": {
     "message": "fields",
     "description": "Label for multiple fields in the item details"
+  },
+  "details_field_few": {
+    "message": "fields",
+    "description": "Label for a few fields in the item details"
   },
   "details_password_overlay": {
     "message": "This password is only available in your Vault.",

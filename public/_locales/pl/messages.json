@@ -579,9 +579,17 @@
     "message": "Niepoprawny kod bezpieczeństwa",
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
-  "add_new_header": {
-    "message": "Dodawanie nowego ITEM\ndo 2FAS Pass",
-    "description": "Header for the section to add a new item"
+  "add_new_header_login": {
+    "message": "Dodawanie nowego Loginu do \n2FAS Pass",
+    "description": "Header for the section to add a new Login item"
+  },
+  "add_new_header_payment_card": {
+    "message": "Dodawanie nowej Karty Płatniczej do \n2FAS Pass",
+    "description": "Header for the section to add a new Payment Card item"
+  },
+  "add_new_header_secure_note": {
+    "message": "Dodawanie nowej Bezpiecznej Notatki do \n2FAS Pass",
+    "description": "Header for the section to add a new Secure Note item"
   },
   "add_new_subheader": {
     "message": "Rozpocznij proces tutaj i kontynuuj w aplikacji mobilnej.",
@@ -659,17 +667,29 @@
     "message": "Użyj kodu QR",
     "description": "Instruction to use QR code as an alternative method"
   },
-  "details_header": {
-    "message": "szczegóły",
-    "description": "Header for the details section"
+  "details_header_login": {
+    "message": "Szczegóły Loginu",
+    "description": "Header for the Login details section"
   },
-  "details_field": {
+  "details_header_payment_card": {
+    "message": "Szczegóły Karty Płatniczej",
+    "description": "Header for the Payment Card details section"
+  },
+  "details_header_secure_note": {
+    "message": "Szczegóły Bezpiecznej Notatki",
+    "description": "Header for the Secure Note details section"
+  },
+  "details_field_one": {
     "message": "pole",
     "description": "Label for a single field in the item details"
   },
-  "details_fields": {
-    "message": "pola",
+  "details_field_many": {
+    "message": "póla",
     "description": "Label for multiple fields in the item details"
+  },
+  "details_field_few": {
+    "message": "pola",
+    "description": "Label for a few fields in the item details"
   },
   "details_password_overlay": {
     "message": "To hasło jest dostępne wyłącznie w twoim sejfie.",

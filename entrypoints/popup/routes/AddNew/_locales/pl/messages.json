@@ -39,9 +39,17 @@
     "message": "Niepoprawny kod bezpieczeństwa",
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
-  "add_new_header": {
-    "message": "Dodawanie nowego ITEM\ndo 2FAS Pass",
-    "description": "Header for the section to add a new item"
+  "add_new_header_login": {
+    "message": "Dodawanie nowego Loginu do \n2FAS Pass",
+    "description": "Header for the section to add a new Login item"
+  },
+  "add_new_header_payment_card": {
+    "message": "Dodawanie nowej Karty Płatniczej do \n2FAS Pass",
+    "description": "Header for the section to add a new Payment Card item"
+  },
+  "add_new_header_secure_note": {
+    "message": "Dodawanie nowej Bezpiecznej Notatki do \n2FAS Pass",
+    "description": "Header for the section to add a new Secure Note item"
   },
   "add_new_subheader": {
     "message": "Rozpocznij proces tutaj i kontynuuj w aplikacji mobilnej.",

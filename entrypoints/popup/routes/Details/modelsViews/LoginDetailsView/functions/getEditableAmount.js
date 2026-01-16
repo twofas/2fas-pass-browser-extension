@@ -41,13 +41,18 @@ const getEditableAmount = () => {
 
   if (amount === 1) {
     return {
-      text: ` (1 ${browser.i18n.getMessage('details_field')})`,
+      text: ` (1 ${browser.i18n.getMessage('details_field_one')})`,
       amount: 1
     };
   }
 
+  const lastDigit = amount % 10;
+  const lastTwoDigits = amount % 100;
+  const isFew = (lastDigit >= 2 && lastDigit <= 4) && !(lastTwoDigits >= 12 && lastTwoDigits <= 14);
+  const pluralKey = isFew ? 'details_field_few' : 'details_field_many';
+
   return {
-    text: ` (${amount} ${browser.i18n.getMessage('details_fields')})`,
+    text: ` (${amount} ${browser.i18n.getMessage(pluralKey)})`,
     amount: amount
   };
 };

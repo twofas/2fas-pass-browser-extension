@@ -101,72 +101,77 @@ function SecureNoteAddNewView() {
   };
 
   return (
-    <Form onSubmit={onSubmit} initialValues={data} render={({ handleSubmit, submitting }) => ( // form
-      <form onSubmit={handleSubmit}>
-        <Field name='name'>
-          {({ input }) => (
-            <div className={`${pI.passInput} ${inputError === 'name' ? pI.error : ''}`}>
-              <div className={pI.passInputTop}>
-                <label htmlFor='add-new-name'>{browser.i18n.getMessage('secure_note_name')}</label>
+    <>
+      <h2>{browser.i18n.getMessage('add_new_header_secure_note')}</h2>
+      <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
+
+      <Form onSubmit={onSubmit} initialValues={data} render={({ handleSubmit, submitting }) => ( // form
+        <form onSubmit={handleSubmit}>
+          <Field name='name'>
+            {({ input }) => (
+              <div className={`${pI.passInput} ${inputError === 'name' ? pI.error : ''}`}>
+                <div className={pI.passInputTop}>
+                  <label htmlFor='add-new-name'>{browser.i18n.getMessage('secure_note_name')}</label>
+                </div>
+                <div className={pI.passInputBottom}>
+                  <input
+                    type='text'
+                    {...input}
+                    placeholder={browser.i18n.getMessage('secure_note_name_placeholder')}
+                    id='add-new-name'
+                    dir='ltr'
+                    spellCheck='false'
+                    autoCorrect='off'
+                    autoComplete='off'
+                    autoCapitalize='off'
+                    onChange={e => {
+                      input.onChange(e);
+                      setData('name', e.target.value);
+                    }}
+                  />
+                </div>
               </div>
-              <div className={pI.passInputBottom}>
-                <input
-                  type='text'
-                  {...input}
-                  placeholder={browser.i18n.getMessage('secure_note_name_placeholder')}
-                  id='add-new-name'
-                  dir='ltr'
-                  spellCheck='false'
-                  autoCorrect='off'
-                  autoComplete='off'
-                  autoCapitalize='off'
-                  onChange={e => {
-                    input.onChange(e);
-                    setData('name', e.target.value);
-                  }}
-                />
+            )}
+          </Field>
+          <Field name='text'>
+            {({ input }) => (
+              <div className={`${pI.passInput} ${inputError === 'text' ? pI.error : ''}`}>
+                <div className={pI.passInputTop}>
+                  <label htmlFor='add-new-text'>{browser.i18n.getMessage('secure_note_note')}</label>
+                </div>
+                <div className={pI.passInputBottom}>
+                  <textarea
+                    {...input}
+                    className={S.addNewSecureNoteTextarea}
+                    placeholder={browser.i18n.getMessage('secure_note_placeholder')}
+                    id='add-new-text'
+                    dir='ltr'
+                    spellCheck='false'
+                    autoCorrect='off'
+                    autoComplete='off'
+                    autoCapitalize='off'
+                    onChange={e => {
+                      input.onChange(e);
+                      setData('text', e.target.value);
+                    }}
+                  />
+                </div>
               </div>
-            </div>
-          )}
-        </Field>
-        <Field name='text'>
-          {({ input }) => (
-            <div className={`${pI.passInput} ${inputError === 'text' ? pI.error : ''}`}>
-              <div className={pI.passInputTop}>
-                <label htmlFor='add-new-text'>{browser.i18n.getMessage('secure_note_note')}</label>
-              </div>
-              <div className={pI.passInputBottom}>
-                <textarea
-                  {...input}
-                  className={S.addNewSecureNoteTextarea}
-                  placeholder={browser.i18n.getMessage('secure_note_placeholder')}
-                  id='add-new-text'
-                  dir='ltr'
-                  spellCheck='false'
-                  autoCorrect='off'
-                  autoComplete='off'
-                  autoCapitalize='off'
-                  onChange={e => {
-                    input.onChange(e);
-                    setData('text', e.target.value);
-                  }}
-                />
-              </div>
-            </div>
-          )}
-        </Field>
-        <div className={S.addNewButtons}>
-          <button
-            type='submit'
-            className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-            disabled={submitting || !data?.name || data?.name?.length === 0 ? 'disabled' : ''}
-          >
-            {browser.i18n.getMessage('continue')}
-          </button>
-        </div>
-      </form>
-    )}
-    />
+            )}
+          </Field>
+          <div className={S.addNewButtons}>
+            <button
+              type='submit'
+              className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
+              disabled={submitting || !data?.name || data?.name?.length === 0 ? 'disabled' : ''}
+            >
+              {browser.i18n.getMessage('continue')}
+            </button>
+          </div>
+        </form>
+      )}
+      />
+    </>
   );
 }
 

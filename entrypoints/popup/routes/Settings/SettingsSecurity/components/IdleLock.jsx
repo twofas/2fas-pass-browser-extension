@@ -56,7 +56,7 @@ function IdleLock () {
   const idleLockOptions = [
     {
       value: 'default',
-      label: premium ? browser.i18n.getMessage('settings_only_on_restart') : <span title={browser.i18n.getMessage('notification_idle_lock_premium_only')}><PremiumLockIcon /> Only on restart</span>,
+      label: premium ? browser.i18n.getMessage('settings_only_on_restart') : <span title={browser.i18n.getMessage('notification_idle_lock_premium_only')}><PremiumLockIcon /> {browser.i18n.getMessage('settings_only_on_restart')}</span>,
       isDisabled: !premium,
     },
     { value: 1, label: browser.i18n.getMessage('settings_after_1_minute') },

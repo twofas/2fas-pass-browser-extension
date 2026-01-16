@@ -1,15 +1,27 @@
 {
-  "details_header": {
-    "message": "details",
-    "description": "Header for the details section"
+  "details_header_login": {
+    "message": "Login details",
+    "description": "Header for the Login details section"
   },
-  "details_field": {
+  "details_header_payment_card": {
+    "message": "Payment Card details",
+    "description": "Header for the Payment Card details section"
+  },
+  "details_header_secure_note": {
+    "message": "Secure Note details",
+    "description": "Header for the Secure Note details section"
+  },
+  "details_field_one": {
     "message": "field",
     "description": "Label for a single field in the item details"
   },
-  "details_fields": {
+  "details_field_many": {
     "message": "fields",
     "description": "Label for multiple fields in the item details"
+  },
+  "details_field_few": {
+    "message": "fields",
+    "description": "Label for a few fields in the item details"
   },
   "details_password_overlay": {
     "message": "This password is only available in your Vault.",

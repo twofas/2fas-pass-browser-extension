@@ -28,6 +28,12 @@ const DetailsViews = {
   'PaymentCard': PaymentCardDetailsView
 };
 
+const DetailsHeaders = {
+  'Login': 'details_header_login',
+  'SecureNote': 'details_header_secure_note',
+  'PaymentCard': 'details_header_payment_card'
+};
+
 /**
 * Function to render the details component.
 * @param {Object} props - The component props.
@@ -225,7 +231,7 @@ function Details(props) {
         <section className={S.details}>
           <div className={S.detailsContainer}>
             <NavigationButton type='back' />
-            <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
+            <h2>{browser.i18n.getMessage(DetailsHeaders[constructorName])}</h2>
 
             <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
               <p>{browser.i18n.getMessage('details_fetch_text')}</p>
