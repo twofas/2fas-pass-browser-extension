@@ -15,6 +15,11 @@ export default defineConfig({
     }
   },
   vite: configEnv => ({
+    resolve: {
+      alias: {
+        'lottie-web': 'lottie-web/build/player/lottie_light'
+      }
+    },
     css: {
       modules: {
         localsConvention: 'camelCase'

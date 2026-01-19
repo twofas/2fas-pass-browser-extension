@@ -51,7 +51,7 @@
     "lint:fix": "eslint --fix"
   },
   "dependencies": {
-    "@lottiefiles/react-lottie-player": "^3.6.0",
+    "lottie-react": "^2.4.1",
     "@splidejs/react-splide": "^0.7.12",
     "@tanstack/react-virtual": "^3.13.18",
     "final-form": "^5.0.0",
