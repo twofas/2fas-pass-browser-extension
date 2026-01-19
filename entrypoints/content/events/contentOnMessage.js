@@ -13,6 +13,7 @@ import getDomainInfo from '../functions/getDomainInfo';
 import notification from '../functions/notification';
 import matchingLogins from '../functions/matchingLogins';
 import savePrompt from '../functions/savePrompt';
+import refreshTheme from '../functions/refreshTheme';
 
 /**
 * Function to handle messages on the content script.
@@ -37,7 +38,8 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       request?.action === REQUEST_ACTIONS.NOTIFICATION ||
       request?.action === REQUEST_ACTIONS.SAVE_PROMPT ||
       request?.action === REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE ||
-      request?.action === REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM
+      request?.action === REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM ||
+      request?.action === REQUEST_ACTIONS.REFRESH_THEME
     ) {
       if (!isTopFrame) {
         return false;
@@ -119,6 +121,12 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
         const userConfirmed = window.confirm(message);
 
         sendResponse({ status: 'ok', confirmed: userConfirmed });
+        break;
+      }
+
+      case REQUEST_ACTIONS.REFRESH_THEME: {
+        refreshTheme(request.theme, container);
+        sendResponse({ status: 'ok' });
         break;
       }
 

@@ -32,4 +32,5 @@ export const REQUEST_ACTIONS = Object.freeze({
   UPDATE_AVAILABLE: 'updateAvailable', // background, this_tab
   FOCUS_CHECK: 'focusCheck', // background, popup, focus
   NEW_POPUP: 'newPopup', // popup
+  REFRESH_THEME: 'refreshTheme', // content (top frame only)
 });

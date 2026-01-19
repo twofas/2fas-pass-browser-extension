@@ -57,6 +57,19 @@ function Theme () {
       document.documentElement.classList.add(`theme-${value}`);
 
       await storage.setItem('local:theme', value);
+
+      const tabs = await browser.tabs.query({});
+
+      tabs.forEach(tab => {
+        if (tab.id) {
+          browser.tabs.sendMessage(tab.id, {
+            action: REQUEST_ACTIONS.REFRESH_THEME,
+            theme: value,
+            target: REQUEST_TARGETS.CONTENT
+          }).catch(() => {});
+        }
+      });
+
       showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:theme') || 'unset';
