@@ -9,8 +9,8 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import { Field } from 'react-final-form';
 import { motion } from 'motion/react';
-import { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
-import getTags from '@/partials/sessionStorage/getTags';
+import { useState, useRef, useCallback, useMemo, memo } from 'react';
+import useTags from '../../../../hooks/useTags';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import usePopupState from '../../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -45,7 +45,7 @@ const noOptionsMessage = () => null;
 
 const getTagName = (tagID, availableTags) => {
   const tag = availableTags.find(t => t.id === tagID);
-  return tag ? tag.name : tagID;
+  return tag ? tag.name : null;
 };
 
 /**
@@ -54,28 +54,22 @@ const getTagName = (tagID, availableTags) => {
 */
 function Tags () {
   const { data, setData, setItem } = usePopupState();
+  const { tags: availableTags } = useTags();
 
-  const [availableTags, setAvailableTags] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const selectRef = useRef(null);
   const addButtonRef = useRef(null);
   const containerRef = useRef(null);
 
-  useEffect(() => {
-    const fetchTags = async () => {
-      try {
-        const tags = await getTags();
-        setAvailableTags(tags);
-      } catch (e) {
-        CatchError(e);
-      }
-    };
+  const availableTagIds = useMemo(() => new Set(availableTags.map(tag => tag.id)), [availableTags]);
 
-    fetchTags();
-  }, []);
+  const validTags = useMemo(
+    () => data.item.tags.filter(tagId => availableTagIds.has(tagId)),
+    [data.item.tags, availableTagIds]
+  );
 
   const options = useMemo(() => {
-    const selectedTagIdsSet = new Set(data.item.tags);
+    const selectedTagIdsSet = new Set(validTags);
     const unselectedTags = availableTags.filter(tag => !selectedTagIdsSet.has(tag.id));
 
     return unselectedTags.map(tag => ({
@@ -83,7 +77,7 @@ function Tags () {
       label: tag.name,
       tag: tag
     }));
-  }, [availableTags, data.item.tags]);
+  }, [availableTags, validTags]);
 
   const handleTagsEditable = async () => {
     if (data.tagsEditable) {
@@ -167,26 +161,26 @@ function Tags () {
           </div>
           <div className={pI.passInputBottomMotion}>
             <div className={`${S.tagsContainer} ${data.tagsEditable ? S.editable : S.disabled}`}>
-              {data.item.tags.length > 0 ? (
-                data.item.tags.map(tag => (
+              {validTags.length > 0 ? (
+                validTags.map(tagId => (
                   <motion.div
-                    key={tag}
+                    key={tagId}
                     className={`${S.tagsPill} ${data.tagsEditable ? S.editable : ''}`}
-                    title={getTagName(tag.id, availableTags)}
+                    title={getTagName(tagId, availableTags)}
                     variants={animationVariants}
                     initial='initial'
                     animate='animate'
                     exit='exit'
                     transition={{ duration: 0.2, ease: 'easeOut' }}
                   >
-                    <span className={S.tagsPillText} title={getTagName(tag, availableTags)}>
-                      {getTagName(tag, availableTags)}
+                    <span className={S.tagsPillText} title={getTagName(tagId, availableTags)}>
+                      {getTagName(tagId, availableTags)}
                     </span>
                     {data.tagsEditable && (
                       <button
                         type='button'
                         className={S.tagsPillDelete}
-                        onClick={() => handleRemoveTag(tag)}
+                        onClick={() => handleRemoveTag(tagId)}
                         title={browser.i18n.getMessage('details_tags_remove')}
                       >
                         <CloseIcon />

@@ -156,6 +156,12 @@ function CardSecurityCode (props) {
   }, [localEditedSecurityCode, localDecryptedSecurityCode, sifDecryptError, form]);
 
   useEffect(() => {
+    if (data?.securityCodeEditable && isText(data?.editedSecurityCode) && localEditedSecurityCode === null) {
+      setLocalEditedSecurityCode(data.editedSecurityCode);
+    }
+  }, []);
+
+  useEffect(() => {
     const needsDecryption = (data?.securityCodeEditable || data?.securityCodeVisible) &&
                            localDecryptedSecurityCode === null &&
                            !isDecrypting &&

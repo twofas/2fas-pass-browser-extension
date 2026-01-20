@@ -201,12 +201,6 @@
     }
   }
 
-  &:nth-last-child(2) {
-    &::after {
-      display: none;
-    }
-  }
-
   &.loading {
     pointer-events: none;
   }

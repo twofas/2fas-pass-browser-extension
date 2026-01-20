@@ -1,7 +1,7 @@
 {
   "name": "2fas-pass-browser-extension",
   "description": "This is the official 2FAS Pass Browser Extension project.",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "type": "module",
   "repository": {
     "type": "git",
@@ -55,7 +55,7 @@
     "@splidejs/react-splide": "^0.7.12",
     "@tanstack/react-virtual": "^3.13.18",
     "final-form": "^5.0.0",
-    "motion": "^12.25.0",
+    "motion": "^12.26.2",
     "parse-domain": "^8.2.2",
     "primereact": "^10.9.7",
     "qrcode": "^1.5.4",
@@ -70,7 +70,7 @@
     "uuid": "^13.0.0",
     "vite-plugin-svgr": "^4.5.0",
     "xss": "^1.0.15",
-    "zustand": "^5.0.9"
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@wxt-dev/module-react": "^1.1.5",
@@ -79,7 +79,7 @@
     "eslint-plugin-react": "^7.37.5",
     "sass-embedded": "1.97.2",
     "terser": "^5.44.1",
-    "vitest": "^4.0.16",
+    "vitest": "^4.0.17",
     "wxt": "^0.20.13"
   }
 }

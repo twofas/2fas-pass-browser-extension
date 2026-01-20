@@ -12,7 +12,6 @@ import getDomainFromTab from './functions/getDomainFromTab';
 import onMessage from './events/onMessage';
 import URIMatcher from '@/partials/URIMatcher';
 import getItems from '@/partials/sessionStorage/getItems';
-import getTags from '@/partials/sessionStorage/getTags';
 import { filterXSS } from 'xss';
 import sanitizeObject from '@/partials/functions/sanitizeObject';
 import getDomainFromMessage from './functions/getDomainFromMessage';
@@ -21,6 +20,7 @@ import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import { useTagFilter } from './components/Filters/hooks/useTagFilter';
 import { useSortFilter } from './components/Sort/hooks/useSortFilter';
+import useTags from '../../hooks/useTags';
 import DomainIcon from '@/assets/popup-window/domain.svg?react';
 import { AllItemsList, Filters, KeepItem, MatchingItemsList, ModelFilter, NoMatch, Search, Sort, TagsInfo, UpdateComponent } from './components';
 import { ItemListProvider } from './context/ItemListContext';
@@ -41,15 +41,13 @@ function ThisTab (props) {
   const [domain, setDomain] = useState('Unknown');
   const [url, setUrl] = useState('Unknown');
   const [items, setItems] = useState([]);
-  const [tags, setTags] = useState([]);
   const [matchingLogins, setMatchingLogins] = useState([]);
   const [storageVersion, setStorageVersion] = useState(null);
 
   const { data, setBatchData } = usePopupState();
+  const { tags, fetchTags, validateTagsInItems } = useTags({ autoFetch: false });
 
   // Refs
-  const boxAnimationRef = useRef(null);
-  const boxAnimationDarkRef = useRef(null);
   const scrollableRef = useRef(null);
   const unwatchStorageVersion = useRef(null);
   const thisTabTopRef = useRef(null);
@@ -100,7 +98,7 @@ function ThisTab (props) {
     const [domainData, fetchedItems, fetchedTags] = await Promise.all([
       getDomainFromTab(),
       getItems(),
-      getTags()
+      fetchTags()
     ]);
 
     const sanitizedDomain = filterXSS(domainData.domain);
@@ -111,39 +109,7 @@ function ThisTab (props) {
     setItems(fetchedItems);
 
     return { url: sanitizedUrl, items: fetchedItems, tags: fetchedTags };
-  }, []);
-
-  const getTagsAmount = useCallback(async (tags, services) => {
-    if (!Array.isArray(tags) || tags.length === 0) {
-      setTags([]);
-      return false;
-    }
-
-    const tagMap = new Map(tags.map((tag, index) => [tag.id, index]));
-    const servicesWithTags = services.filter(service => service?.tags && Array.isArray(service?.tags) && service?.tags?.length > 0);
-
-    for (const service of servicesWithTags) {
-      for (const tagId of service.tags) {
-        const tagIndex = tagMap.get(tagId);
-
-        if (tagIndex === undefined) {
-          await CatchError(new TwoFasError(TwoFasError.internalErrors.tagIndexError, { additional: { tagId } }));
-          continue;
-        }
-
-        if (!tags[tagIndex]?.amount || !Number.isInteger(tags[tagIndex]?.amount)) {
-          tags[tagIndex].amount = 0;
-        }
-
-        tags[tagIndex].amount += 1;
-      }
-    }
-
-    tags.sort((a, b) => a.name.localeCompare(b.name));
-
-    setTags(sanitizeObject(tags));
-    return true;
-  }, []);
+  }, [fetchTags]);
 
   const getMatchingLogins = useCallback(async (logins, domain) => {
     let matchingLogins = [];
@@ -158,36 +124,28 @@ function ThisTab (props) {
 
   const messageListener = useCallback((request, sender, sendResponse) => onMessage(request, sender, sendResponse, sendUrl), [sendUrl]);
 
-  const playEmptyStateAnimation = useCallback(() => {
-    setTimeout(() => {
-      if (boxAnimationRef?.current?.play) {
-        boxAnimationRef.current.play();
-      }
+  const handleAnimationReady = useCallback((lightRef, darkRef) => {
+    if (lightRef?.current?.play) {
+      lightRef.current.play();
+    }
 
-      if (boxAnimationDarkRef?.current?.play) {
-        boxAnimationDarkRef.current.play();
-      }
-    }, 600);
+    if (darkRef?.current?.play) {
+      darkRef.current.play();
+    }
   }, []);
 
-  const initializeData = useCallback(async () => {
+  const refreshData = useCallback(async () => {
     try {
       const { url, items: fetchedItems, tags: fetchedTags } = await fetchInitialData();
 
       await Promise.all([
         getMatchingLogins(fetchedItems, url),
-        getTagsAmount(fetchedTags, fetchedItems)
+        validateTagsInItems(fetchedTags, fetchedItems)
       ]);
-
-      if (fetchedItems.length === 0) {
-        playEmptyStateAnimation();
-      }
-
-      unwatchStorageVersion.current = watchStorageVersion();
     } catch (e) {
       await CatchError(e);
     }
-  }, [fetchInitialData, getMatchingLogins, getTagsAmount, playEmptyStateAnimation, watchStorageVersion]);
+  }, [fetchInitialData, getMatchingLogins, validateTagsInItems]);
 
   const handleAnimationComplete = useCallback(e => {
     if (e === 'visible') {
@@ -275,17 +233,23 @@ function ThisTab (props) {
   const filteredItemsCount = filteredItemsData.filteredCount;
 
   useEffect(() => {
-    browser.runtime.onMessage.addListener(messageListener);
-    initializeData();
+    unwatchStorageVersion.current = watchStorageVersion();
 
     return () => {
-      browser.runtime.onMessage.removeListener(messageListener);
-
       if (unwatchStorageVersion.current) {
         unwatchStorageVersion.current();
       }
     };
-  }, [storageVersion, messageListener, initializeData]);
+  }, [watchStorageVersion]);
+
+  useEffect(() => {
+    browser.runtime.onMessage.addListener(messageListener);
+    refreshData();
+
+    return () => {
+      browser.runtime.onMessage.removeListener(messageListener);
+    };
+  }, [storageVersion, messageListener, refreshData]);
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
@@ -328,8 +292,7 @@ function ThisTab (props) {
                   <NoMatch
                     matchingLoginsLength={matchingLogins?.length}
                     loading={loading}
-                    boxAnimationRef={boxAnimationRef}
-                    boxAnimationDarkRef={boxAnimationDarkRef}
+                    onAnimationReady={handleAnimationReady}
                   />
                 </div>
               </motion.div>
