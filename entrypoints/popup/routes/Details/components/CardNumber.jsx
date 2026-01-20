@@ -141,6 +141,12 @@ function CardNumber (props) {
   }, [localDecryptedCardNumber, form, setData]);
 
   useEffect(() => {
+    if (data?.cardNumberEditable && isText(data?.editedCardNumber) && localDecryptedCardNumber === null) {
+      setLocalDecryptedCardNumber(data.editedCardNumber);
+    }
+  }, []);
+
+  useEffect(() => {
     const needsDecryption = (data?.cardNumberEditable || data?.cardNumberVisible) &&
                            localDecryptedCardNumber === null &&
                            !isDecrypting &&
