@@ -59,9 +59,12 @@ const isVisible = domElement => {
 
     if (parentStyle.display !== 'contents') {
       const parentRect = parent.getBoundingClientRect();
+      const parentOverflow = parentStyle.overflow;
 
       if (parentRect.height === 0 || parentRect.width === 0) {
-        return false;
+        if (parentOverflow !== 'visible') {
+          return false;
+        }
       }
     }
 
