@@ -38,7 +38,8 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
     const tagOptions = tags.map(tag => ({
       value: tag.id,
       label: `${tag.name} (${tag.amount || 0})`,
-      tag
+      tag,
+      color: tag.color
     }));
 
     if (selectedTag) {
@@ -101,6 +102,7 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
         onMenuOpen={handleMenuOpen}
         className='react-select-pass-dropdown'
         classNamePrefix='react-select-tags'
+        menuPortalClassName='react-select-tags-filters__menu-portal'
         isClearable={false}
         isSearchable={false}
         triggerRef={buttonRef}

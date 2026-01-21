@@ -34,6 +34,7 @@ const CustomOption = memo(function CustomOption (option) {
 
   return (
     <div className='react-select-tags-details__option' onClick={handleClick}>
+      {option.data.color && <span className={`react-select-tags-details__option_color ${option.data.color}`}></span>}
       <span title={option.data.label}>
         {option.data.label}
       </span>
@@ -47,6 +48,11 @@ const noOptionsMessage = () => null;
 const getTagName = (tagID, availableTags) => {
   const tag = availableTags.find(t => t.id === tagID);
   return tag ? tag.name : null;
+};
+
+const getTagColor = (tagID, availableTags) => {
+  const tag = availableTags.find(t => t.id === tagID);
+  return tag ? tag.color : null;
 };
 
 /**
@@ -77,7 +83,8 @@ function Tags () {
     return unselectedTags.map(tag => ({
       value: tag.id,
       label: tag.name,
-      tag: tag
+      tag: tag,
+      color: tag.color
     }));
   }, [availableTags, validTags]);
 
@@ -175,6 +182,9 @@ function Tags () {
                     exit='exit'
                     transition={{ duration: 0.2, ease: 'easeOut' }}
                   >
+                    {getTagColor(tagId, availableTags) && (
+                      <span className={`${S.tagsPillColor} ${getTagColor(tagId, availableTags)}`}></span>
+                    )}
                     <span className={S.tagsPillText} title={getTagName(tagId, availableTags)}>
                       {getTagName(tagId, availableTags)}
                     </span>

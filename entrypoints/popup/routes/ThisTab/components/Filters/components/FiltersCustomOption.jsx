@@ -24,7 +24,7 @@ function FiltersCustomOption (props) {
     return (
       <div className='react-select-tags__option react-select-tags__option_disabled'>
         <span
-          className={data.value === null ? 'react-select-tags__option_clear' : ''}
+          className={data.value === null ? 'react-select-tags__option_text' : ''}
           title={data.label}
         >
           {data.label}
@@ -35,8 +35,9 @@ function FiltersCustomOption (props) {
 
   return (
     <div className='react-select-tags__option' onClick={handleClick}>
+      {data.color && <span className={`react-select-tags__option_color ${data.color}`}></span>}
       <span
-        className={data.value === null ? 'react-select-tags__option_clear' : ''}
+        className={data.value === null ? 'react-select-tags__option_text' : ''}
         title={data.label}
       >
         {data.label}

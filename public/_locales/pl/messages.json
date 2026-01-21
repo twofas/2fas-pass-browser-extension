@@ -468,7 +468,7 @@
     "description": "Instruction to click the extension icon to open it"
   },
   "install_2_use_mobile_app": {
-    "message": "Dotknij \"Połącz\" w aplikacji mobilnej 2FAS Pass, aby zeskanować kod QR.",
+    "message": "Kliknij \"Połącz\" w aplikacji mobilnej 2FAS Pass, aby zeskanować kod QR.",
     "description": "Instruction to use the mobile app to scan the QR code"
   },
   "install_3_info": {
@@ -1668,7 +1668,7 @@
     "description": "Sort option for sorting items by least recently updated first"
   },
   "tags_info_text": {
-    "message": "Wyświetlanie AMOUNT elementów oznaczonych tagiem: TAG_NAME",
+    "message": "AMOUNT elementów z tagiem: TAG_NAME",
     "description": "Information text displaying the number of items with a specific tag"
   },
   "tags_info_clear_filter": {

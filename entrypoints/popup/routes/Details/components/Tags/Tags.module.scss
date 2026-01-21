@@ -99,6 +99,78 @@
       }
     }
 
+    &-color {
+      border-radius: 50%;
+      flex-shrink: 0;
+      height: 9px;
+      margin-right: 2px;
+      width: 9px;
+
+      &:global(.gray) {
+        background-color: v.$tag-gray-light;
+
+        @include m.darkMode {
+          background-color: v.$tag-gray-dark;
+        }
+      }
+
+      &:global(.red) {
+        background-color: v.$tag-red-light;
+
+        @include m.darkMode {
+          background-color: v.$tag-red-dark;
+        }
+      }
+
+      &:global(.orange) {
+        background-color: v.$tag-orange-light;
+
+        @include m.darkMode {
+          background-color: v.$tag-orange-dark;
+        }
+      }
+
+      &:global(.yellow) {
+        background-color: v.$tag-yellow-light;
+
+        @include m.darkMode {
+          background-color: v.$tag-yellow-dark;
+        }
+      }
+
+      &:global(.green) {
+        background-color: v.$tag-green-light;
+
+        @include m.darkMode {
+          background-color: v.$tag-green-dark;
+        }
+      }
+
+      &:global(.cyan) {
+        background-color: v.$tag-cyan-light;
+
+        @include m.darkMode {
+          background-color: v.$tag-cyan-dark;
+        }
+      }
+
+      &:global(.indigo) {
+        background-color: v.$tag-indigo-light;
+
+        @include m.darkMode {
+          background-color: v.$tag-indigo-dark;
+        }
+      }
+
+      &:global(.purple) {
+        background-color: v.$tag-purple-light;
+
+        @include m.darkMode {
+          background-color: v.$tag-purple-dark;
+        }
+      }
+    }
+
     &-delete {
       align-items: center;
       background: transparent;

@@ -1019,12 +1019,11 @@
     box-shadow: none;
     margin-bottom: 0;
     margin-top: 0;
-    max-width: 200px;
     overflow: hidden;
     right: 0;
     top: 8px;
     transition: opacity v.$anim;
-    width: auto;
+    width: 220px;
     z-index: 9999;
 
     body.theme-light & {
@@ -1133,7 +1132,7 @@
     padding: 9px 12px;
     position: relative;
     transition: background-color v.$anim, color v.$anim;
-    width: 198px;
+    width: 220px;
 
     body.theme-light & {
       background-color: rgba(v.$hover-color-light, 0);
@@ -1307,8 +1306,176 @@
       &:first-of-type {
         padding-right: 8px;
       }
+
+      &.react-select-tags__option_color {
+        border-radius: 50%;
+        flex-shrink: 0;
+        height: 11px;
+        margin-right: 10px;
+        width: 11px;
+
+        &.gray {
+          body.theme-light & {
+            background-color: v.$tag-gray-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$tag-gray-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$tag-gray-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$tag-gray-dark;
+            }
+          }
+        }
+
+        &.red {
+          body.theme-light & {
+            background-color: v.$tag-red-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$tag-red-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$tag-red-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$tag-red-dark;
+            }
+          }
+        }
+
+        &.orange {
+          body.theme-light & {
+            background-color: v.$tag-orange-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$tag-orange-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$tag-orange-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$tag-orange-dark;
+            }
+          }
+        }
+
+        &.yellow {
+          body.theme-light & {
+            background-color: v.$tag-yellow-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$tag-yellow-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$tag-yellow-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$tag-yellow-dark;
+            }
+          }
+        }
+
+        &.green {
+          body.theme-light & {
+            background-color: v.$tag-green-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$tag-green-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$tag-green-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$tag-green-dark;
+            }
+          }
+        }
+
+        &.cyan {
+          body.theme-light & {
+            background-color: v.$tag-cyan-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$tag-cyan-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$tag-cyan-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$tag-cyan-dark;
+            }
+          }
+        }
+
+        &.indigo {
+          body.theme-light & {
+            background-color: v.$tag-indigo-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$tag-indigo-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$tag-indigo-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$tag-indigo-dark;
+            }
+          }
+        }
+
+        &.purple {
+          body.theme-light & {
+            background-color: v.$tag-purple-light;
+          }
+
+          body.theme-dark & {
+            background-color: v.$tag-purple-dark;
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$tag-purple-light;
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$tag-purple-dark;
+            }
+          }
+        }
+      }
       
-      &.react-select-tags__option_clear {
+      &.react-select-tags__option_text {
         body.theme-light & {
           color: v.$error-light;
         }
@@ -1384,16 +1551,183 @@
     display: flex;
     font-size: 12px;
     font-weight: 400;
-    justify-content: space-between;
+    gap: 0 8px;
     margin-bottom: 2px;
     overflow: hidden;
     padding: 8px 12px;
     transition: background-color v.$anim, color v.$anim;
-    
+
     span {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    &_color {
+      border-radius: 50%;
+      flex-shrink: 0;
+      height: 11px;
+      width: 11px;
+
+      &.gray {
+        body.theme-light & {
+          background-color: v.$tag-gray-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$tag-gray-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$tag-gray-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$tag-gray-dark;
+          }
+        }
+      }
+
+      &.red {
+        body.theme-light & {
+          background-color: v.$tag-red-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$tag-red-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$tag-red-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$tag-red-dark;
+          }
+        }
+      }
+
+      &.orange {
+        body.theme-light & {
+          background-color: v.$tag-orange-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$tag-orange-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$tag-orange-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$tag-orange-dark;
+          }
+        }
+      }
+
+      &.yellow {
+        body.theme-light & {
+          background-color: v.$tag-yellow-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$tag-yellow-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$tag-yellow-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$tag-yellow-dark;
+          }
+        }
+      }
+
+      &.green {
+        body.theme-light & {
+          background-color: v.$tag-green-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$tag-green-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$tag-green-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$tag-green-dark;
+          }
+        }
+      }
+
+      &.cyan {
+        body.theme-light & {
+          background-color: v.$tag-cyan-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$tag-cyan-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$tag-cyan-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$tag-cyan-dark;
+          }
+        }
+      }
+
+      &.indigo {
+        body.theme-light & {
+          background-color: v.$tag-indigo-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$tag-indigo-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$tag-indigo-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$tag-indigo-dark;
+          }
+        }
+      }
+
+      &.purple {
+        body.theme-light & {
+          background-color: v.$tag-purple-light;
+        }
+
+        body.theme-dark & {
+          background-color: v.$tag-purple-dark;
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$tag-purple-light;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$tag-purple-dark;
+          }
+        }
+      }
     }
 
     body.theme-light & {
