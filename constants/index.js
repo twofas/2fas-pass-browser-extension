@@ -23,6 +23,7 @@ export { default as supportedFeatures } from './supportedFeatures.js';
 export { default as SOCKET_PATHS } from './SOCKET_PATHS.js';
 export { default as userNameAttributes } from './userNameAttributes.js';
 export { default as userNameDeniedKeywords } from './userNameDeniedKeywords.js';
+export { default as parentContextDeniedKeywords } from './parentContextDeniedKeywords.js';
 export { default as userNameFormTexts } from './userNameFormTexts.js';
 export { default as userNameSelectors } from './userNameSelectors.js';
 export { default as userNameTexts } from './userNameTexts.js';
