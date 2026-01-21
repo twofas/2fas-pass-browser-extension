@@ -7,12 +7,14 @@
 import S from '../../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useEffect, useState, useCallback } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Function to render the Logs component.
 * @return {JSX.Element} The rendered component.
 */
 function Logs () {
+  const { getMessage } = useI18n();
   const [l, setL] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -47,12 +49,12 @@ function Logs () {
       setL(newValue);
 
       await storage.setItem('local:logging', newValue);
-      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
+      showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:logging');
       setL(previousValue !== null ? previousValue : false);
 
-      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
+      showToast(getMessage('error_general_setting'), 'error');
       await CatchError(e);
     }
   }, [l, isInitialized]);
@@ -74,7 +76,7 @@ function Logs () {
           </span>
 
           <span className={bS.passToggleText}>
-            <span>{browser.i18n.getMessage('settings_allow_logs')}</span>
+            <span>{getMessage('settings_allow_logs')}</span>
           </span>
         </label>
       </form>

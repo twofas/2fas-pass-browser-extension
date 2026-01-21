@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../styles/Item.module.scss';
+import { useI18n } from '@/partials/context/I18nContext';
 import handleCardNumber from '../../../functions/serviceList/handleCardNumber';
 import { useState, useRef, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
@@ -23,6 +24,7 @@ import ItemCopyIcon from '@/assets/popup-window/card-number.svg?react';
 * @return {JSX.Element} The rendered button element.
 */
 const CopyCardNumberBtn = ({ item, more, setMore }) => {
+  const { getMessage } = useI18n();
   const [scheduledTime, setScheduledTime] = useState(false);
   const loaderRef = useRef(null);
   const intervalIdRef = useRef(0);
@@ -87,7 +89,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
     return (
       <button
         onClick={async () => await handleCardNumber(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={browser.i18n.getMessage('this_tab_copy_card_number')}
+        title={getMessage('this_tab_copy_card_number')}
       >
         <ItemCopyIcon className={S.itemCopyCardNumber} />
       </button>
@@ -96,7 +98,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
     return (
       <button
         onClick={async () => await handleCardNumber(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={browser.i18n.getMessage('this_tab_copy_card_number')}
+        title={getMessage('this_tab_copy_card_number')}
         className={S.itemPasswordLoader}
       >
         <svg
@@ -126,7 +128,7 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
             contentType: PaymentCard.contentType
           }
         }}
-        title={browser.i18n.getMessage('this_tab_fetch_card_info')}
+        title={getMessage('this_tab_fetch_card_info')}
         prefetch='intent'
       >
         <ItemFetchIcon className={S.itemFetch} />

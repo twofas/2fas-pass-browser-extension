@@ -39,7 +39,8 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       request?.action === REQUEST_ACTIONS.SAVE_PROMPT ||
       request?.action === REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE ||
       request?.action === REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM ||
-      request?.action === REQUEST_ACTIONS.REFRESH_THEME
+      request?.action === REQUEST_ACTIONS.REFRESH_THEME ||
+      request?.action === REQUEST_ACTIONS.REFRESH_LANG
     ) {
       if (!isTopFrame) {
         return false;
@@ -126,6 +127,13 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
 
       case REQUEST_ACTIONS.REFRESH_THEME: {
         refreshTheme(request.theme, container);
+        sendResponse({ status: 'ok' });
+        break;
+      }
+
+      case REQUEST_ACTIONS.REFRESH_LANG: {
+        resetI18nCache();
+        initI18n();
         sendResponse({ status: 'ok' });
         break;
       }

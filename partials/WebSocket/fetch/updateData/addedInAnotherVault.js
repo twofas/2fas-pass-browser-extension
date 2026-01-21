@@ -44,7 +44,7 @@ const updateDataAddedInAnotherVault = async (state, messageId) => {
     return {
       returnUrl: '/',
       returnToast: {
-        text: browser.i18n.getMessage('fetch_update_login_added_in_another_vault_toast'),
+        text: getMessage('fetch_update_login_added_in_another_vault_toast'),
         type: 'success'
       }
     };

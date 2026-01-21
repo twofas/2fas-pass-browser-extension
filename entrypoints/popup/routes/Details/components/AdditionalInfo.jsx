@@ -12,6 +12,7 @@ import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import { useCallback } from 'react';
 import updateItem from '../functions/updateItem';
+import { useI18n } from '@/partials/context/I18nContext';
 
 
 const additionalInfoVariants = {
@@ -25,6 +26,7 @@ const additionalInfoVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function AdditionalInfo (props) {
+  const { getMessage } = useI18n();
   const { data, setData, setItem } = usePopupState();
 
   const { formData } = props;
@@ -65,7 +67,7 @@ function AdditionalInfo (props) {
         <div className={`${pI.passInput} ${data.additionalInfoEditable ? pI.resizable : pI.disabled} ${inputError === 'content.additionalInfo' ? pI.error : ''}`}>
           <div className={pI.passInputTop}>
             <div className={pI.passInputTopLabelLike}>
-              <span>{browser.i18n.getMessage('details_additional_info')}</span>
+              <span>{getMessage('details_additional_info')}</span>
             </div>
             <button
               type='button'
@@ -73,7 +75,7 @@ function AdditionalInfo (props) {
               onClick={handleAdditionalInfoEditable}
               tabIndex={-1}
             >
-              {data.additionalInfoEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data.additionalInfoEditable ? getMessage('cancel') : getMessage('edit')}
             </button>
           </div>
           <div className={pI.passInputBottomMotion}>
@@ -90,7 +92,7 @@ function AdditionalInfo (props) {
                   input.onChange(e);
                   handleAdditionalInfoChange(e);
                 }}
-                placeholder={browser.i18n.getMessage('details_additional_info_placeholder')}
+                placeholder={getMessage('details_additional_info_placeholder')}
                 id="additional-info"
                 disabled={!data.additionalInfoEditable ? 'disabled' : ''}
                 dir="ltr"

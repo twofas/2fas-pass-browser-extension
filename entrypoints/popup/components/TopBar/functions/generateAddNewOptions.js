@@ -13,15 +13,15 @@ import { supportedFeatures } from '@/constants';
 */
 const generateAddNewOptions = deviceSupportedFeatures => {
   const addNewOptions = [
-    { value: '/add-new/Login', label: browser.i18n.getMessage('login'), item: 'Login' }
+    { value: '/add-new/Login', label: getMessage('login'), item: 'Login' }
   ];
 
   if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
-    addNewOptions.push({ value: '/add-new/SecureNote', label: browser.i18n.getMessage('secure_note'), item: 'SecureNote' });
+    addNewOptions.push({ value: '/add-new/SecureNote', label: getMessage('secure_note'), item: 'SecureNote' });
   }
 
   if (deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard)) {
-    addNewOptions.push({ value: '/add-new/PaymentCard', label: browser.i18n.getMessage('payment_card'), item: 'PaymentCard' });
+    addNewOptions.push({ value: '/add-new/PaymentCard', label: getMessage('payment_card'), item: 'PaymentCard' });
   }
 
   return addNewOptions;

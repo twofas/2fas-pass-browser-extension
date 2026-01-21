@@ -44,7 +44,7 @@ const updateDataAddedInT1 = async (state, messageId) => {
     return {
       returnUrl: '/',
       returnToast: {
-        text: browser.i18n.getMessage('fetch_update_login_added_in_t1_toast'),
+        text: getMessage('fetch_update_login_added_in_t1_toast'),
         type: 'success'
       }
     };

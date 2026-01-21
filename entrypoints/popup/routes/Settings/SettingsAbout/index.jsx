@@ -6,6 +6,7 @@
 
 import S from '../Settings.module.scss';
 import { useState, useEffect, useRef } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
@@ -25,6 +26,7 @@ import GithubIcon from '@/assets/social/github.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function SettingsAbout (props) {
+  const { getMessage } = useI18n();
   const [loading, setLoading] = useState(true);
   const [version, setVersion] = useState('');
 
@@ -55,7 +57,7 @@ function SettingsAbout (props) {
           <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
             <div className={S.settingsSubmenu}>
               <div className={S.settingsSubmenuHeader}>
-                <h3>{browser.i18n.getMessage('settings_about_header')}</h3>
+                <h3>{getMessage('settings_about_header')}</h3>
               </div>
     
               <div className={S.settingsSubmenuBody}>
@@ -66,31 +68,31 @@ function SettingsAbout (props) {
                   </div>
 
                   <div className={S.settingsAboutText}>
-                    <h3>{browser.i18n.getMessage('settings_about_thank_you')}</h3>
-                    <h4>{browser.i18n.getMessage('settings_about_thank_you_subheader')}</h4>
-                    <p>{browser.i18n.getMessage('settings_about_thank_you_description')}</p>
+                    <h3>{getMessage('settings_about_thank_you')}</h3>
+                    <h4>{getMessage('settings_about_thank_you_subheader')}</h4>
+                    <p>{getMessage('settings_about_thank_you_description')}</p>
                   </div>
 
                   <div className={S.settingsAboutWebsite}>
-                    <h3>{browser.i18n.getMessage('settings_visit_our_website')}</h3>
+                    <h3>{getMessage('settings_visit_our_website')}</h3>
                     <a href="https://2fas.com/pass" className={S.settingsAboutWebsiteLink} target="_blank" rel="noopener noreferrer">
                       <Domain />
                       <span>2fas.com/pass</span>
                     </a>
 
-                    <h5>{browser.i18n.getMessage('settings_privacy_policy')}</h5>
+                    <h5>{getMessage('settings_privacy_policy')}</h5>
                     <a href="https://2fas.com/pass/privacy-policy/" className={`${S.settingsAboutWebsiteLink} ${S.additionalLink}`} target="_blank" rel="noopener noreferrer">
                       <Domain />
                       <span>2fas.com/pass/privacy-policy/</span>
                     </a>
 
-                    <h5>{browser.i18n.getMessage('settings_eula')}</h5>
+                    <h5>{getMessage('settings_eula')}</h5>
                     <a href="https://2fas.com/pass/eula/" className={`${S.settingsAboutWebsiteLink} ${S.additionalLink}`} target="_blank" rel="noopener noreferrer">
                       <Domain />
                       <span>2fas.com/pass/eula/</span>
                     </a>
 
-                    <h4>{browser.i18n.getMessage('settings_lets_connect')}</h4>
+                    <h4>{getMessage('settings_lets_connect')}</h4>
                     <div className={S.settingsAboutSocial}>
                       <ul>
                         <li>
@@ -125,7 +127,7 @@ function SettingsAbout (props) {
         <section className={S.settingsBottom}>
           <div className={S.settingsVersion}>
             <p>
-              <span>{browser.i18n.getMessage('version')}&nbsp;</span>
+              <span>{getMessage('version')}&nbsp;</span>
               <span>{version}</span>
             </p>
           </div>

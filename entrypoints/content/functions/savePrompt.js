@@ -186,7 +186,7 @@ const savePrompt = (request, sendResponse, container) => {
   n.top.appendChild(n.close);
 
   n.header = createElement('div', 'twofas-pass-notification-save-prompt-header');
-  n.headerText = createTextElement('p', request?.serviceTypeData?.type === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_header') : browser.i18n.getMessage('content_save_prompt_update_header'));
+  n.headerText = createTextElement('p', request?.serviceTypeData?.type === 'newService' ? getMessage('content_save_prompt_add_header') : getMessage('content_save_prompt_update_header'));
   n.header.appendChild(n.headerText);
 
   n.item.appendChild(n.top);
@@ -194,12 +194,12 @@ const savePrompt = (request, sendResponse, container) => {
 
   n.buttons = createElement('div', 'twofas-pass-notification-save-prompt-buttons');
 
-  const doNotAskButton = createTextElement('button', browser.i18n.getMessage('content_save_prompt_don_t_ask'));
+  const doNotAskButton = createTextElement('button', getMessage('content_save_prompt_don_t_ask'));
   doNotAskButton.classList.add('twofas-pass-notification-save-prompt-buttons-do-not-ask');
   doNotAskButton.addEventListener('click', () => doNotAsk(n, timers, sendResponse));
   n.buttons.appendChild(doNotAskButton);
 
-  const addLoginButtonText = request?.serviceTypeData?.type === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_login') : browser.i18n.getMessage('content_save_prompt_update_login');
+  const addLoginButtonText = request?.serviceTypeData?.type === 'newService' ? getMessage('content_save_prompt_add_login') : getMessage('content_save_prompt_update_login');
   const addLoginButton = createTextElement('button', addLoginButtonText);
   addLoginButton.classList.add('twofas-pass-notification-save-prompt-buttons-add-login');
   addLoginButton.addEventListener('click', () => {

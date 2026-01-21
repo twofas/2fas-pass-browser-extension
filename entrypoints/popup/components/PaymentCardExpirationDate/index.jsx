@@ -8,6 +8,7 @@ import S from './PaymentCardExpirationDate.module.scss';
 import { forwardRef, memo, useCallback, useRef, useEffect, useState, useMemo } from 'react';
 import CalendarIcon from '@/assets/popup-window/calendar.svg?react';
 import isExpirationDateInvalid from './validateExpirationDate';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const PANEL_CLASS = 'payment-card-expiration-date-panel';
 const PANEL_HEIGHT = 171;
@@ -30,6 +31,7 @@ const MIN_SPACE_REQUIRED = 8;
 * @return {JSX.Element} The rendered component.
 */
 const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabled, securityType, sifExists }, ref) => {
+  const { getMessage } = useI18n();
   const [primeReactComponents, setPrimeReactComponents] = useState({ InputMask: null, Calendar: null });
   const calendarRef = useRef(null);
   const buttonRef = useRef(null);
@@ -189,7 +191,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
           className={inputClassName}
           value={displayValue}
           onChange={e => onChange(e.target.value)}
-          placeholder={isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
+          placeholder={isHighlySecretWithoutSif ? '' : getMessage('placeholder_payment_card_expiration_date')}
           id={inputId}
           disabled={!InputMask || !Calendar || isHighlySecretWithoutSif}
         />
@@ -198,7 +200,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
           type='button'
           className={`${S.paymentCardExpirationDateButton} ${S.paymentCardExpirationDateButtonHidden}`}
           disabled
-          title={browser.i18n.getMessage('button_open_calendar')}
+          title={getMessage('button_open_calendar')}
           tabIndex={-1}
         >
           <CalendarIcon />
@@ -223,7 +225,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
         onSelect={handleInputSelect}
         mask='99/99'
         slotChar=' '
-        placeholder={browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
+        placeholder={getMessage('placeholder_payment_card_expiration_date')}
         id={inputId}
         disabled={disabled}
         autoClear={false}
@@ -234,7 +236,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
         className={`${S.paymentCardExpirationDateButton} ${disabled ? S.paymentCardExpirationDateButtonHidden : ''}`}
         onClick={handleCalendarButtonClick}
         disabled={disabled}
-        title={browser.i18n.getMessage('button_open_calendar')}
+        title={getMessage('button_open_calendar')}
         tabIndex={-1}
       >
         <CalendarIcon />

@@ -7,6 +7,7 @@
 import S from '../../Fetch.module.scss';
 import { useRef, useEffect, useState } from 'react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Function to render the continue update component.
@@ -14,6 +15,7 @@ import InfoIcon from '@/assets/popup-window/info.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 const ContinueUpdate = ({ fetchState }) => {
+  const { getMessage } = useI18n();
   const [loaded, setLoaded] = useState(false);
   const ContinueUpdateComponent = useRef(null);
 
@@ -35,13 +37,13 @@ const ContinueUpdate = ({ fetchState }) => {
 
   return (
     <div className={`${S.fetchCase} ${S.active}`}>
-      <h2>{browser.i18n.getMessage('fetch_continue_updating_header')}</h2>
+      <h2>{getMessage('fetch_continue_updating_header')}</h2>
       <div className={S.fetchCaseAnimation}>
         {loaded ? <ContinueUpdateComponent.current /> : <div style={{ height: '86px' }} />}
       </div>
       <div className={S.fetchCaseDescription}>
         <InfoIcon />
-        <p>{browser.i18n.getMessage('fetch_continue_updating_description')}</p>
+        <p>{getMessage('fetch_continue_updating_description')}</p>
       </div>
     </div>
   );

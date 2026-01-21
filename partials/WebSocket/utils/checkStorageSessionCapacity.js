@@ -20,7 +20,7 @@ const checkStorageSessionCapacity = async totalSize => {
     throw new TwoFasError(
       TwoFasError.errors.sessionStorageCapacityExceeded,
       {
-        visibleErrorMessage: browser.i18n.getMessage('error_storage_capacity_exceeded'),
+        visibleErrorMessage: getMessage('error_storage_capacity_exceeded'),
         additional: { storageSize, usedBytes, totalSize }
       });
   }

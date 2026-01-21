@@ -18,6 +18,8 @@ export default defineContentScript({
   cssInjectionMode: 'ui',
   async main (ctx) {
     try {
+      await initI18n();
+
       let handleMessage;
       const emptyFunc = () => {};
       const cryptoAvailable = isCryptoAvailable();

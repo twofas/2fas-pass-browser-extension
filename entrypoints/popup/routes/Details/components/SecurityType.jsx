@@ -7,27 +7,29 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import CustomTierOption from './CustomTierOption';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const selectComponents = { Option: CustomTierOption };
-
-const securityTiersOptions = [
-  { value: SECURITY_TIER.SECRET, label: browser.i18n.getMessage('tier_2_name'), description: browser.i18n.getMessage('tier_2_description') },
-  { value: SECURITY_TIER.HIGHLY_SECRET, label: browser.i18n.getMessage('tier_1_name'), description: browser.i18n.getMessage('tier_1_description') },
-  { value: SECURITY_TIER.TOP_SECRET, label: browser.i18n.getMessage('tier_0_name'), description: browser.i18n.getMessage('tier_0_description') }
-];
 
 /**
 * Function to render the security type selection field.
 * @return {JSX.Element} The rendered component.
 */
 function SecurityType () {
+  const { getMessage } = useI18n();
   const { data, setData, setItem } = usePopupState();
+
+  const securityTiersOptions = useMemo(() => [
+    { value: SECURITY_TIER.SECRET, label: getMessage('tier_2_name'), description: getMessage('tier_2_description') },
+    { value: SECURITY_TIER.HIGHLY_SECRET, label: getMessage('tier_1_name'), description: getMessage('tier_1_description') },
+    { value: SECURITY_TIER.TOP_SECRET, label: getMessage('tier_0_name'), description: getMessage('tier_0_description') }
+  ], [getMessage]);
 
   const handleTierEditable = async () => {
     if (data.tierEditable) {
@@ -63,14 +65,14 @@ function SecurityType () {
       {({ input }) => (
         <div className={pI.passInput}>
           <div className={pI.passInputTop}>
-            <label htmlFor="securityType">{browser.i18n.getMessage('details_security_type')}</label>
+            <label htmlFor="securityType">{getMessage('details_security_type')}</label>
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
               onClick={handleTierEditable}
               tabIndex={-1}
             >
-              {data.tierEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data.tierEditable ? getMessage('cancel') : getMessage('edit')}
             </button>
           </div>
           <div className={`${pI.passInputBottom} ${pI.switch}`}>

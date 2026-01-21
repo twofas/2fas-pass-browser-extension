@@ -27,29 +27,29 @@ const handlePassword = async (deviceId, vaultId, itemId, more, setMore) => {
   try {
     item = await getItem(deviceId, vaultId, itemId);
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
+    showToast(getMessage('error_login_not_found'), 'error');
     await CatchError(e);
     return;
   }
 
   if (!item) {
-    showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
+    showToast(getMessage('error_login_not_found'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handlePasswordNoService, { additional: { func: 'handlePassword' } }));
     return;
   }
 
   if (!item.sifExists) {
     navigator.clipboard.writeText('');
-    showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
+    showToast(getMessage('notification_password_copied'), 'success');
     return;
   }
 
   try {
     const decryptedData = await item.decryptSif();
     await copyValue(decryptedData.password, deviceId, vaultId, item.id, 'password');
-    showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
+    showToast(getMessage('notification_password_copied'), 'success');
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
+    showToast(getMessage('error_password_copy_failed'), 'error');
     await CatchError(e);
   }
 };

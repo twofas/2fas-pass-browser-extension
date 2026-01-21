@@ -7,6 +7,7 @@
 import S from './styles/AutofillErrorItem.module.scss';
 import generateIcon from '../../functions/serviceList/generateIcon';
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import getItem from '@/partials/sessionStorage/getItem';
 import AutofillErrorItemData from './components/AutofillErrorItemData';
 import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
@@ -19,6 +20,7 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @return {JSX.Element} The rendered component.
 */
 function AutofillErrorItem (props) {
+  const { getMessage } = useI18n();
   const [faviconError, setFaviconError] = useState(false);
   const [item, setItem] = useState(null);
   const ref = useRef(null);
@@ -91,7 +93,7 @@ function AutofillErrorItem (props) {
       <div className={S.autofillErrorItemContent}>
         <div className={S.autofillErrorItemContentHeader}>
           {generateIcon(item, faviconError, setFaviconError)}
-          <p>{item?.content?.name || browser.i18n.getMessage('no_item_name')}</p>
+          <p>{item?.content?.name || getMessage('no_item_name')}</p>
         </div>
         <AutofillErrorItemData item={item} />
       </div>

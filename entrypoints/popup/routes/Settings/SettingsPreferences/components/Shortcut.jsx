@@ -8,12 +8,14 @@ import S from '../../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import { useEffect, useState, Fragment, useCallback } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Function to render the Shortcut component.
 * @return {JSX.Element} The rendered component.
 */
 function Shortcut () {
+  const { getMessage } = useI18n();
   const [shortcut, setShortcut] = useState(null);
   const [shortcutLink, setShortcutLink] = useState('#');
   const [isInitialized, setIsInitialized] = useState(false);
@@ -89,7 +91,7 @@ function Shortcut () {
 
   const EmptyShortcutBox = () => (
     <div className={pI.passInputShortcutBoxKey}>
-      {isInitialized ? browser.i18n.getMessage('settings_unknown').toUpperCase() : '\u00A0'}
+      {isInitialized ? getMessage('settings_unknown').toUpperCase() : '\u00A0'}
     </div>
   );
 
@@ -146,7 +148,7 @@ function Shortcut () {
     });
 
     if (res.status === 'error') {
-      showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
+      showToast(getMessage('error_feature_wrong_data'), 'error');
     }
   }, [shortcutLink]);
 
@@ -161,34 +163,34 @@ function Shortcut () {
     <div className={S.settingsShortcut}>
       <div className={pI.passInput}>
         <div className={`${pI.passInputTop} ${((shortcutLink === 'firefox' && !openShortcutSettingsAvailable()) || (shortcutLink === 'safari')) ? S.settingsShortcutFirefoxInput : ''}`}>
-          <label htmlFor="shortcut">{browser.i18n.getMessage('settings_shortcut')}</label>
+          <label htmlFor="shortcut">{getMessage('settings_shortcut')}</label>
           <button
             type='button'
             className={`${bS.btn} ${bS.btnClear} ${((shortcutLink === 'firefox' && !openShortcutSettingsAvailable()) || (shortcutLink === 'safari')) ? S.settingsShortcutFirefoxBtn : ''}`} 
             onClick={onEditShortcut}
           >
             {{
-              'firefox': openShortcutSettingsAvailable() ? browser.i18n.getMessage('edit') : browser.i18n.getMessage('info'),
-              'safari': browser.i18n.getMessage('info')
-            }[shortcutLink] || browser.i18n.getMessage('edit')}
+              'firefox': openShortcutSettingsAvailable() ? getMessage('edit') : getMessage('info'),
+              'safari': getMessage('info')
+            }[shortcutLink] || getMessage('edit')}
           </button>
           {
             import.meta.env.BROWSER === 'firefox' ? (
               <div className={`${S.settingsShortcutFirefoxTooltip}`}>
-                <p>{browser.i18n.getMessage('settings_shortcut_firefox_tooltip')}</p>
+                <p>{getMessage('settings_shortcut_firefox_tooltip')}</p>
               </div>
             ) : null
           }
           {
             import.meta.env.BROWSER === 'safari' ? (
               <div className={`${S.settingsShortcutFirefoxTooltip}`}>
-                <p>{browser.i18n.getMessage('settings_shortcut_safari_tooltip')}</p>
+                <p>{getMessage('settings_shortcut_safari_tooltip')}</p>
               </div>
             ) : null
           }
         </div>
         <div className={pI.passInputDescription}>
-          <p>{browser.i18n.getMessage('settings_shortcut_description')}</p>
+          <p>{getMessage('settings_shortcut_description')}</p>
         </div>
         <div className={pI.passInputShortcut}>
           <div className={pI.passInputShortcutBox}>

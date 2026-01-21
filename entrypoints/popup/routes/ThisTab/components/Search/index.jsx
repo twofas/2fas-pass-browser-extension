@@ -6,6 +6,7 @@
 
 import S from './styles/Search.module.scss';
 import { useMemo, memo } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import { useSearchFilter } from './hooks/useSearchFilter';
 import SearchIcon from '@/assets/popup-window/search-icon.svg?react';
@@ -19,6 +20,7 @@ import ClearIcon from '@/assets/popup-window/clear.svg?react';
 * @return {JSX.Element} The rendered search component.
 */
 function Search ({ tagsWithFilteredAmounts, filteredItemsByModelLength }) {
+  const { getMessage } = useI18n();
   const { data } = usePopupState();
   const { handleSearchChange, clearSearch } = useSearchFilter();
 
@@ -32,7 +34,7 @@ function Search ({ tagsWithFilteredAmounts, filteredItemsByModelLength }) {
       amount = filteredItemsByModelLength || 0;
     }
 
-    return browser.i18n.getMessage('search_placeholder').replace('%AMOUNT%', amount);
+    return getMessage('search_placeholder').replace('%AMOUNT%', amount);
   }, [data?.selectedTag, filteredItemsByModelLength, tagsWithFilteredAmounts]);
 
   const containerClass = useMemo(() => {

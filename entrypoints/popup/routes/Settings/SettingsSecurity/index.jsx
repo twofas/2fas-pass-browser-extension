@@ -6,6 +6,7 @@
 
 import S from '../Settings.module.scss';
 import { lazy, useRef } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
@@ -20,6 +21,7 @@ const IdleLock = lazy(() => import('./components/IdleLock'));
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSecurity (props) {
+  const { getMessage } = useI18n();
   const scrollableRef = useRef(null);
   useScrollPosition(scrollableRef, false);
 
@@ -33,7 +35,7 @@ function SettingsSecurity (props) {
           <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
             <div className={S.settingsSubmenu}>
               <div className={S.settingsSubmenuHeader}>
-                <h3>{browser.i18n.getMessage('settings_security')}</h3>
+                <h3>{getMessage('settings_security')}</h3>
               </div>
     
               <div className={S.settingsSubmenuBody}>
@@ -42,7 +44,7 @@ function SettingsSecurity (props) {
                 <IdleLock />
     
                 {/* <div className={S.settingsAdvanced}>
-                  <h4>{browser.i18n.getMessage('advanced')}</h4>
+                  <h4>{getMessage('advanced')}</h4>
                 
                   <div className={S.settingsAdvancedContainer}>
                     <SafeBrowsing />

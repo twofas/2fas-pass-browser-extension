@@ -9,6 +9,7 @@ import { useCallback, useMemo, memo } from 'react';
 import usePopupStateStore from '../../store/popupState';
 import BackIcon from '@/assets/popup-window/back.svg?react';
 import CancelIcon from '@/assets/popup-window/cancel.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const IGNORED_PATHS = ['/password-generator'];
 
@@ -18,6 +19,7 @@ const IGNORED_PATHS = ['/password-generator'];
 * @return {JSX.Element} The rendered component.
 */
 function NavigationButton({ type, className, state, onClick }) {
+  const { getMessage } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const hrefArray = usePopupStateStore(s => s.href);
@@ -75,7 +77,7 @@ function NavigationButton({ type, className, state, onClick }) {
 
   const linkTo = type === 'cancel' ? '/' : '..';
   const linkClassName = `${type} ${className || ''}`;
-  const linkTitle = type ? browser.i18n.getMessage(type) : '';
+  const linkTitle = type ? getMessage(type) : '';
 
   return (
     <Link

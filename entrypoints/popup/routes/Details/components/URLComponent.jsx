@@ -18,6 +18,7 @@ import updateItem from '../functions/updateItem';
 import { useUriTempIds } from '../context/UriTempIdsContext';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import TrashIcon from '@/assets/popup-window/trash.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const urlVariants = {
   hidden: {
@@ -48,6 +49,7 @@ const urlVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function URLComponent (props) {
+  const { getMessage } = useI18n();
   const { data, setData, setItem } = usePopupState();
   const { urisWithTempIds, updateUri, removeUri, resetUri } = useUriTempIds();
 
@@ -55,13 +57,13 @@ function URLComponent (props) {
   const inputRef = useRef(null);
 
   const isEditable = data?.domainsEditable?.[uri._tempId];
-  const buttonText = isEditable === true ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit');
+  const buttonText = isEditable === true ? getMessage('cancel') : getMessage('edit');
   const isNew = uri.new;
 
   const handleCopyUri = useCallback(async index => {
     const uriText = data?.item?.content?.uris && data?.item?.content?.uris?.[index] ? data.item.content.uris[index].text : '';
     await copyValue(uriText, data.item.deviceId, data.item.vaultId, data.item.id, 'uri');
-    showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
+    showToast(getMessage('notification_uri_copied'), 'success');
   }, [data.item]);
 
   const handleUriEditable = async () => {
@@ -181,7 +183,7 @@ function URLComponent (props) {
           exit='hidden'
         >
             <div className={pI.passInputTop}>
-              <label htmlFor={`uri-${index}`}>{browser.i18n.getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
+              <label htmlFor={`uri-${index}`}>{getMessage('details_domain_uri').replace('URI_NUMBER', String(index + 1))}</label>
               <button type='button' className={`${bS.btn} ${bS.btnClear}`} onClick={handleUriEditable} tabIndex={-1}>{buttonText}</button>
             </div>
             <div className={pI.passInputBottom}>
@@ -194,7 +196,7 @@ function URLComponent (props) {
                   input.onChange(e);
                   handleUriChange(e);
                 }}
-                placeholder={browser.i18n.getMessage('placeholder_domain_uri')}
+                placeholder={getMessage('placeholder_domain_uri')}
                 id={`uri-${index}`}
                 disabled={!data?.domainsEditable?.[uri._tempId] ? 'disabled' : ''}
                 dir="ltr"
@@ -208,7 +210,7 @@ function URLComponent (props) {
                   type='button'
                   className={`${bS.btn} ${pI.iconButton}`}
                   onClick={() => handleCopyUri(index)}
-                  title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                  title={getMessage('this_tab_copy_to_clipboard')}
                   tabIndex={-1}
                 >
                   <CopyIcon />
@@ -217,7 +219,7 @@ function URLComponent (props) {
                   type='button'
                   className={`${bS.btn} ${pI.iconButton} ${pI.trashButton} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.hiddenButton}`}
                   onClick={handleRemoveUri}
-                  title={browser.i18n.getMessage('remove')}
+                  title={getMessage('remove')}
                   disabled={!data?.domainsEditable?.[uri._tempId]}
                 >
                   <TrashIcon />

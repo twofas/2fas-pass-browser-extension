@@ -48,7 +48,7 @@ const FetchOnClose = async (event, data) => {
       const toastMessage = await networkTest('fetch_connection_error_header');
 
       eventBus.emit(eventBus.EVENTS.FETCH.SET_FETCH_STATE, FETCH_STATE.CONNECTION_ERROR);
-      eventBus.emit(eventBus.EVENTS.FETCH.ERROR_TEXT, browser.i18n.getMessage(toastMessage));
+      eventBus.emit(eventBus.EVENTS.FETCH.ERROR_TEXT, getMessage(toastMessage));
       break;
     }
 
@@ -59,7 +59,7 @@ const FetchOnClose = async (event, data) => {
 
     case WEBSOCKET_STATES.MOBILE_DISCONNECTED: {
       eventBus.emit(eventBus.EVENTS.FETCH.SET_FETCH_STATE, FETCH_STATE.CONNECTION_ERROR);
-      eventBus.emit(eventBus.EVENTS.FETCH.ERROR_TEXT, browser.i18n.getMessage('error_mobile_disconnected'));
+      eventBus.emit(eventBus.EVENTS.FETCH.ERROR_TEXT, getMessage('error_mobile_disconnected'));
       break;
     }
 

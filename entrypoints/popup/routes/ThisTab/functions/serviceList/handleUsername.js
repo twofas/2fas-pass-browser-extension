@@ -27,13 +27,13 @@ const handleUsername = async (deviceId, vaultId, itemId, more, setMore) => {
   try {
     item = await getItem(deviceId, vaultId, itemId);
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
+    showToast(getMessage('error_login_not_found'), 'error');
     await CatchError(e);
     return;
   }
 
   if (!item) {
-    showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
+    showToast(getMessage('error_login_not_found'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handleUsernameNoService, { additional: { func: 'handleUsername' } }));
     return;
   }
@@ -41,9 +41,9 @@ const handleUsername = async (deviceId, vaultId, itemId, more, setMore) => {
   try {
     const { username } = item.content;
     await copyValue(username, deviceId, vaultId, item.id, 'username');
-    showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
+    showToast(getMessage('notification_username_copied'), 'success');
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_username_copy_failed'), 'error');
+    showToast(getMessage('error_username_copy_failed'), 'error');
     await CatchError(e);
   }
 };

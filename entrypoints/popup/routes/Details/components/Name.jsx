@@ -13,6 +13,7 @@ import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /** 
 * Function to render the name input field.
@@ -20,6 +21,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function Name (props) {
+  const { getMessage } = useI18n();
   const { data, setData, setItem } = usePopupState();
   const inputRef = useRef(null);
 
@@ -32,7 +34,7 @@ function Name (props) {
     }
 
     await copyValue(name, data.item.deviceId, data.item.vaultId, data.item.id, 'name');
-    showToast(browser.i18n.getMessage('details_name_copied'), 'success');
+    showToast(getMessage('details_name_copied'), 'success');
   }, [data.item.id]);
 
   const handleNameEditable = async () => {
@@ -75,14 +77,14 @@ function Name (props) {
       {({ input }) => (
         <div className={`${pI.passInput} ${data.nameEditable ? '' : pI.disabled} ${inputError === 'name' ? pI.error : ''}`}>
           <div className={pI.passInputTop}>
-            <label htmlFor="name">{browser.i18n.getMessage('name')}</label>
+            <label htmlFor="name">{getMessage('name')}</label>
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
               onClick={handleNameEditable}
               tabIndex={-1}
             >
-              {data.nameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data.nameEditable ? getMessage('cancel') : getMessage('edit')}
             </button>
           </div>
           <div className={pI.passInputBottom}>
@@ -94,7 +96,7 @@ function Name (props) {
                 input.onChange(e);
                 handleNameChange(e);
               }}
-              placeholder={browser.i18n.getMessage('placeholder_name')}
+              placeholder={getMessage('placeholder_name')}
               id="name"
               disabled={!data.nameEditable ? 'disabled' : ''}
               dir="ltr"
@@ -107,7 +109,7 @@ function Name (props) {
             type='button'
             className={`${bS.btn} ${pI.iconButton}`}
             onClick={() => handleCopyName(input.value)}
-            title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+            title={getMessage('this_tab_copy_to_clipboard')}
             tabIndex={-1}
           >
             <CopyIcon />

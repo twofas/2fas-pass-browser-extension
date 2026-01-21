@@ -9,7 +9,6 @@ import { useRef, useMemo } from 'react';
 import { useParams } from 'react-router';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import { itemsUiData } from '../../constants';
 import { Login, SecureNote, PaymentCard } from '@/models/itemModels';
 
 // Model Views

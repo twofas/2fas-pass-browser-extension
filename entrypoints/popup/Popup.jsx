@@ -19,6 +19,7 @@ import BottomBar from './components/BottomBar';
 import usePopupHref from './hooks/usePopupHref';
 import useNavigationEvents from './hooks/useNavigationEvents';
 import { ScrollableRefProvider } from './context/ScrollableRefProvider';
+import { I18nProvider } from '@/partials/context/I18nContext';
 import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
 import Connect from './routes/Connect';
@@ -390,9 +391,11 @@ function Popup() {
       }}
     >
       <HashRouter>
-        <AuthProvider>
-          <PopupMain />
-        </AuthProvider>
+        <I18nProvider>
+          <AuthProvider>
+            <PopupMain />
+          </AuthProvider>
+        </I18nProvider>
       </HashRouter>
     </ErrorBoundary>
   );

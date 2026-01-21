@@ -16,6 +16,7 @@ import calculateFetchSignature from './functions/calculateFetchSignature';
 import { getCurrentDevice, sendPush, getNTPTime, deletePush } from '@/partials/functions';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const PushNotification = lazy(() => import('./components/PushNotification'));
 const ConnectionError = lazy(() => import('./components/ConnectionError'));
@@ -23,41 +24,43 @@ const ConnectionTimeout = lazy(() => import('./components/ConnectionTimeout'));
 const ContinueUpdate = lazy(() => import('./components/ContinueUpdate'));
 
 /**
- * Generates a description message based on the pull request action type.
- * @param {string} action - The action type from PULL_REQUEST_TYPES.
- * @returns {string|undefined} The i18n description message or undefined for default action.
- */
-const getPushNotificationDescription = action => {
-  switch (action) {
-    case PULL_REQUEST_TYPES.SIF_REQUEST: {
-      return browser.i18n.getMessage('fetch_sif_request_description');
-    }
-
-    case PULL_REQUEST_TYPES.DELETE_DATA: {
-      return browser.i18n.getMessage('fetch_delete_request_description');
-    }
-
-    case PULL_REQUEST_TYPES.FULL_SYNC: {
-      return browser.i18n.getMessage('fetch_full_sync_description');
-    }
-
-    case PULL_REQUEST_TYPES.ADD_DATA: {
-      return browser.i18n.getMessage('fetch_add_request_description');
-    }
-
-    default: {
-      return undefined;
-    }
-  }
-};
-
-/**
 * Function to handle the Fetch component.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
 function Fetch(props) {
+  const { getMessage } = useI18n();
   const location = useLocation();
+
+  /**
+   * Generates a description message based on the pull request action type.
+   * @param {string} action - The action type from PULL_REQUEST_TYPES.
+   * @returns {string|undefined} The i18n description message or undefined for default action.
+   */
+  const getPushNotificationDescription = action => {
+    switch (action) {
+      case PULL_REQUEST_TYPES.SIF_REQUEST: {
+        return getMessage('fetch_sif_request_description');
+      }
+
+      case PULL_REQUEST_TYPES.DELETE_DATA: {
+        return getMessage('fetch_delete_request_description');
+      }
+
+      case PULL_REQUEST_TYPES.FULL_SYNC: {
+        return getMessage('fetch_full_sync_description');
+      }
+
+      case PULL_REQUEST_TYPES.ADD_DATA: {
+        return getMessage('fetch_add_request_description');
+      }
+
+      default: {
+        return undefined;
+      }
+    }
+  };
+
   const { state } = location;
 
   const navigate = useNavigate();
@@ -65,7 +68,7 @@ function Fetch(props) {
   let device;
 
   const [fetchState, setFetchState] = useState(FETCH_STATE.DEFAULT);
-  const [errorText, setErrorText] = useState(browser.i18n.getMessage('fetch_connection_error_header'));
+  const [errorText, setErrorText] = useState(getMessage('fetch_connection_error_header'));
   const abortControllerRef = useRef(null);
 
   const initConnection = async abortSignal => {
@@ -114,7 +117,7 @@ function Fetch(props) {
 
       if (!device?.sessionId || !device?.id || !device?.uuid) {
         setFetchState(FETCH_STATE.CONNECTION_ERROR);
-        setErrorText(browser.i18n.getMessage('error_general'));
+        setErrorText(getMessage('error_general'));
         return false;
       }
 
@@ -139,7 +142,7 @@ function Fetch(props) {
 
       if (json?.error === 'UNREGISTERED') {
         setFetchState(FETCH_STATE.CONNECTION_ERROR);
-        setErrorText(browser.i18n.getMessage('fetch_token_unregistered_header'));
+        setErrorText(getMessage('fetch_token_unregistered_header'));
         return false;
       }
 

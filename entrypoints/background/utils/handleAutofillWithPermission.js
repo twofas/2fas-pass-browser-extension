@@ -23,8 +23,8 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
 
     if (!storedDataJson) {
       return TwofasNotification.show({
-        Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-        Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+        Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+        Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
       }, tabId, true);
     }
 
@@ -33,8 +33,8 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
     await CatchError(e);
 
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
@@ -44,12 +44,12 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
     await storage.removeItem(storageKey);
 
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
-  const confirmMessage = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
+  const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
     .replace('DOMAINS', domains.join(', '));
 
   // Focus the tab before showing confirmation dialog
@@ -94,8 +94,8 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
     await storage.removeItem(storageKey);
 
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
@@ -103,8 +103,8 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
 
   if (!response) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
@@ -115,14 +115,14 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
 
     if (allNoInputs) {
       return TwofasNotification.show({
-        Title: browser.i18n.getMessage('notification_shortcut_autofill_no_username_and_password_title'),
-        Message: browser.i18n.getMessage('notification_shortcut_autofill_no_username_and_password_message')
+        Title: getMessage('notification_shortcut_autofill_no_username_and_password_title'),
+        Message: getMessage('notification_shortcut_autofill_no_username_and_password_message')
       }, tabId, true);
     }
 
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 

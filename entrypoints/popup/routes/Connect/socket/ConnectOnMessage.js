@@ -130,7 +130,7 @@ const ConnectOnMessage = async (json, data) => {
     }
   } catch (e) {
     await CatchError(e, async errObj => {
-      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: errObj?.visibleErrorMessage || browser.i18n.getMessage('error_general'), type: 'error' });
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: errObj?.visibleErrorMessage || getMessage('error_general'), type: 'error' });
       eventBus.emit(eventBus.EVENTS.CONNECT.LOADER, 264);
 
       if (data?.path === SOCKET_PATHS.CONNECT.QR) {

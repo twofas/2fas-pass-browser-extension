@@ -34,7 +34,7 @@ const ConnectOnClose = async (event, data) => {
           eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
         }
 
-        eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('error_general'), type: 'error' });
+        eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: getMessage('error_general'), type: 'error' });
       }
 
       break;
@@ -69,7 +69,7 @@ const ConnectOnClose = async (event, data) => {
         eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
       }
 
-      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage(toastMessage), type: 'error' });
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: getMessage(toastMessage), type: 'error' });
       break;
     }
 
@@ -78,7 +78,7 @@ const ConnectOnClose = async (event, data) => {
         eventBus.emit(eventBus.EVENTS.CONNECT.SOCKET_ERROR, true);
       }
 
-      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('error_scheme_mismatch'), type: 'error' });
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: getMessage('error_scheme_mismatch'), type: 'error' });
       break;
     }
 
@@ -89,7 +89,7 @@ const ConnectOnClose = async (event, data) => {
         eventBus.emit(eventBus.EVENTS.CONNECT.CHANGE_VIEW, CONNECT_VIEWS.DeviceSelect);
       }
 
-      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('error_timeout'), type: 'error' });
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: getMessage('error_timeout'), type: 'error' });
       break;
     }
 
@@ -101,7 +101,7 @@ const ConnectOnClose = async (event, data) => {
         eventBus.emit(eventBus.EVENTS.CONNECT.CHANGE_VIEW, CONNECT_VIEWS.DeviceSelect);
       }
 
-      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('error_mobile_disconnected'), type: 'error' });
+      eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: getMessage('error_mobile_disconnected'), type: 'error' });
       break;
     }
 

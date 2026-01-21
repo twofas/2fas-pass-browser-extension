@@ -42,7 +42,7 @@ const contextMenuNotConfigured = async () => {
     browser.contextMenus.create({
       id: '2fas-pass-not-configured',
       enabled: true,
-      title: browser.i18n.getMessage('background_contextMenuNotConfigured_connect'),
+      title: getMessage('background_contextMenuNotConfigured_connect'),
       type: 'normal',
       visible: true,
       contexts: getContexts()

@@ -6,6 +6,7 @@
 
 import S from '../../Settings.module.scss';
 import { useEffect, useState, lazy } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import isPaidDeviceConnected from '@/partials/functions/isPaidDeviceConnected';
 import PremiumLockIcon from '@/assets/popup-window/premium-lock.svg?react';
 import setIdleInterval from '@/partials/functions/setIdleInterval';
@@ -18,10 +19,12 @@ const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
 * @return {JSX.Element} The rendered component.
 */
 function IdleLock () {
+  const { getMessage } = useI18n();
+
   if (import.meta.env.BROWSER === 'safari') {
     return null;
   }
-  
+
   const [loading, setLoading] = useState(true);
   const [iL, setIL] = useState(null);
   const [disabled, setDisabled] = useState(true);
@@ -56,14 +59,14 @@ function IdleLock () {
   const idleLockOptions = [
     {
       value: 'default',
-      label: premium ? browser.i18n.getMessage('settings_only_on_restart') : <span title={browser.i18n.getMessage('notification_idle_lock_premium_only')}><PremiumLockIcon /> {browser.i18n.getMessage('settings_only_on_restart')}</span>,
+      label: premium ? getMessage('settings_only_on_restart') : <span title={getMessage('notification_idle_lock_premium_only')}><PremiumLockIcon /> {getMessage('settings_only_on_restart')}</span>,
       isDisabled: !premium,
     },
-    { value: 1, label: browser.i18n.getMessage('settings_after_1_minute') },
-    { value: 5, label: browser.i18n.getMessage('settings_after_5_minutes') },
-    { value: 15, label: browser.i18n.getMessage('settings_after_15_minutes') },
-    { value: 30, label: browser.i18n.getMessage('settings_after_30_minutes') },
-    { value: 60, label: browser.i18n.getMessage('settings_after_60_minutes') },
+    { value: 1, label: getMessage('settings_after_1_minute') },
+    { value: 5, label: getMessage('settings_after_5_minutes') },
+    { value: 15, label: getMessage('settings_after_15_minutes') },
+    { value: 30, label: getMessage('settings_after_30_minutes') },
+    { value: 60, label: getMessage('settings_after_60_minutes') },
   ];
 
   const handleIdleLockChange = async change => {
@@ -76,9 +79,9 @@ function IdleLock () {
       setIdleInterval(value);
       setIL(value);
 
-      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
+      showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
+      showToast(getMessage('error_general_setting'), 'error');
       await CatchError(e);
     } finally {
       setDisabled(false);
@@ -91,8 +94,8 @@ function IdleLock () {
 
   return (
     <div className={S.settingsIdleLock}>
-      <h4>{browser.i18n.getMessage('settings_idle_lock_header')}</h4>
-      <p>{browser.i18n.getMessage('settings_idle_lock_description')}</p>
+      <h4>{getMessage('settings_idle_lock_header')}</h4>
+      <p>{getMessage('settings_idle_lock_description')}</p>
     
       <form action="#" className={S.settingsIdleLockForm}>
         <AdvancedSelect
@@ -107,9 +110,9 @@ function IdleLock () {
         />
       </form>
       <Tooltip>
-        <h4>{browser.i18n.getMessage('settings_idle_lock_tooltip_1')}</h4>
-        <h5>{browser.i18n.getMessage('settings_idle_lock_tooltip_2')}</h5>
-        <p>{browser.i18n.getMessage('settings_idle_lock_tooltip_3')}</p>
+        <h4>{getMessage('settings_idle_lock_tooltip_1')}</h4>
+        <h5>{getMessage('settings_idle_lock_tooltip_2')}</h5>
+        <p>{getMessage('settings_idle_lock_tooltip_3')}</p>
       </Tooltip>
     </div>
   );

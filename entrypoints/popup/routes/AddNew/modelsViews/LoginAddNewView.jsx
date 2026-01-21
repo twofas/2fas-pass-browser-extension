@@ -23,6 +23,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import Login from '@/models/itemModels/Login';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const additionalVariants = {
   hidden: { maxHeight: '0px' },
@@ -34,6 +35,7 @@ const additionalVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function LoginAddNewView() {
+  const { getMessage } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const { data, setData } = usePopupState();
@@ -127,9 +129,9 @@ function LoginAddNewView() {
     try {
       const currentPassword = form.getFieldState('s_password').value;
       await copyValue(currentPassword, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'password');
-      showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
+      showToast(getMessage('notification_password_copied'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
+      showToast(getMessage('error_password_copy_failed'), 'error');
       await CatchError(e);
     }
   };
@@ -138,9 +140,9 @@ function LoginAddNewView() {
     try {
       const currentUrl = form.getFieldState('url').value;
       await copyValue(currentUrl, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'uri');
-      showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
+      showToast(getMessage('notification_uri_copied'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_uri_copy_failed'), 'error');
+      showToast(getMessage('error_uri_copy_failed'), 'error');
       await CatchError(e);
     }
   };
@@ -149,9 +151,9 @@ function LoginAddNewView() {
     try {
       const currentUsername = form.getFieldState('username').value;
       await copyValue(currentUsername, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'username');
-      showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
+      showToast(getMessage('notification_username_copied'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_username_copy_failed'), 'error');
+      showToast(getMessage('error_username_copy_failed'), 'error');
       await CatchError(e);
     }
   };
@@ -165,7 +167,7 @@ function LoginAddNewView() {
     const device = await getCurrentDevice();
 
     if (!device) {
-      return showToast(browser.i18n.getMessage('error_no_current_device'), 'error');
+      return showToast(getMessage('error_no_current_device'), 'error');
     }
 
     const deviceId = device.id;
@@ -206,8 +208,8 @@ function LoginAddNewView() {
 
   return (
     <>
-      <h2>{browser.i18n.getMessage('add_new_header_login')}</h2>
-      <h3>{browser.i18n.getMessage('add_new_subheader')}</h3>
+      <h2>{getMessage('add_new_header_login')}</h2>
+      <h3>{getMessage('add_new_subheader')}</h3>
 
       <Form onSubmit={onSubmit} initialValues={data} render={({ handleSubmit, form, submitting }) => (
         <form onSubmit={handleSubmit}>
@@ -224,13 +226,13 @@ function LoginAddNewView() {
             {({ input }) => (
               <div className={`${pI.passInput}`}>
                 <div className={pI.passInputTop}>
-                  <label htmlFor="add-new-url">{browser.i18n.getMessage('domain_uri')}</label>
+                  <label htmlFor="add-new-url">{getMessage('domain_uri')}</label>
                 </div>
                 <div className={pI.passInputBottom}>
                   <input
                     type="text"
                     {...input}
-                    placeholder={browser.i18n.getMessage('placeholder_domain_uri')}
+                    placeholder={getMessage('placeholder_domain_uri')}
                     id="add-new-url"
                     dir="ltr"
                     spellCheck="false"
@@ -247,7 +249,7 @@ function LoginAddNewView() {
                       type='button'
                       className={`${bS.btn} ${pI.iconButton}`}
                       onClick={() => handleCopyUrl(form)}
-                      title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                      title={getMessage('this_tab_copy_to_clipboard')}
                       tabIndex={-1}
                     >
                       <CopyIcon />
@@ -274,7 +276,7 @@ function LoginAddNewView() {
                       </span>
 
                       <span className={bS.passToggleText}>
-                        <span>{browser.i18n.getMessage('set_login_and_password_in_the_mobile_app')}</span>
+                        <span>{getMessage('set_login_and_password_in_the_mobile_app')}</span>
                       </span>
                     </label>
                   </div>
@@ -301,7 +303,7 @@ function LoginAddNewView() {
               {({ input }) => (
                 <div className={`${pI.passInput} ${data?.onMobile ? pI.disabled : ''} ${S.passInput}`}>
                   <div className={pI.passInputTop}>
-                    <label htmlFor="username">{browser.i18n.getMessage('username')}</label>
+                    <label htmlFor="username">{getMessage('username')}</label>
                   </div>
                   <div className={pI.passInputBottom}>
                     <input
@@ -309,7 +311,7 @@ function LoginAddNewView() {
                       {...input}
                       id="username"
                       disabled={data?.onMobile ? 'disabled' : ''}
-                      placeholder={browser.i18n.getMessage('placeholder_username')}
+                      placeholder={getMessage('placeholder_username')}
                       onChange={e => {
                         input.onChange(e);
                         setData('username', e.target.value);
@@ -320,7 +322,7 @@ function LoginAddNewView() {
                         type='button'
                         className={`${bS.btn} ${pI.iconButton}`}
                         onClick={() => handleCopyUsername(form)}
-                        title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                        title={getMessage('this_tab_copy_to_clipboard')}
                         disabled={data?.onMobile ? 'disabled' : ''}
                         tabIndex={-1}
                       >
@@ -335,13 +337,13 @@ function LoginAddNewView() {
               {({ input }) => (
                 <div className={`${pI.passInput} ${data?.onMobile ? pI.disabled : ''} ${S.passInput}`}>
                   <div className={pI.passInputTop}>
-                    <label htmlFor="s_password">{browser.i18n.getMessage('password')}</label>
+                    <label htmlFor="s_password">{getMessage('password')}</label>
                   </div>
                   <div className={pI.passInputBottom}>
                     <input
                       {...input}
                       type={data?.passwordVisible ? 'text' : 'password'}
-                      placeholder={browser.i18n.getMessage('placeholder_password')}
+                      placeholder={getMessage('placeholder_password')}
                       id="s_password"
                       disabled={data?.onMobile ? 'disabled' : ''}
                       dir="ltr"
@@ -359,7 +361,7 @@ function LoginAddNewView() {
                         type='button'
                         className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
                         onClick={handleGeneratePassword}
-                        title={browser.i18n.getMessage('details_generate_password')}
+                        title={getMessage('details_generate_password')}
                       >
                         <RefreshIcon />
                       </button>
@@ -367,7 +369,7 @@ function LoginAddNewView() {
                         type="button"
                         onClick={handlePasswordVisibleClick}
                         className={`${pI.iconButton} ${pI.visibleButton}`}
-                        title={browser.i18n.getMessage('details_toggle_password_visibility')}
+                        title={getMessage('details_toggle_password_visibility')}
                         tabIndex={-1}
                       >
                         <VisibleIcon />
@@ -376,7 +378,7 @@ function LoginAddNewView() {
                         type='button'
                         className={`${bS.btn} ${pI.iconButton}`}
                         onClick={() => handleCopyPassword(form)}
-                        title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                        title={getMessage('this_tab_copy_to_clipboard')}
                         tabIndex={-1}
                       >
                         <CopyIcon />
@@ -384,9 +386,9 @@ function LoginAddNewView() {
                     </div>
                   </div>
                   <Tooltip className={`${pI.passInputAdditional} tooltip`}>
-                    <h4>{browser.i18n.getMessage('add_new_learn_more_tooltip_header')}</h4>
-                    <h5>{browser.i18n.getMessage('add_new_learn_more_tooltip_content_1')}</h5>
-                    <p>{browser.i18n.getMessage('add_new_learn_more_tooltip_content_2')}</p>
+                    <h4>{getMessage('add_new_learn_more_tooltip_header')}</h4>
+                    <h5>{getMessage('add_new_learn_more_tooltip_content_1')}</h5>
+                    <p>{getMessage('add_new_learn_more_tooltip_content_2')}</p>
                   </Tooltip>
                 </div>
               )}
@@ -398,7 +400,7 @@ function LoginAddNewView() {
               className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
               disabled={submitting ? 'disabled' : ''}
             >
-              {browser.i18n.getMessage('continue')}
+              {getMessage('continue')}
             </button>
           </div>
         </form>

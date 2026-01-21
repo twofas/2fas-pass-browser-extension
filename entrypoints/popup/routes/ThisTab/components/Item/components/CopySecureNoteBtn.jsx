@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../styles/Item.module.scss';
+import { useI18n } from '@/partials/context/I18nContext';
 import handleSecureNoteText from '../../../functions/serviceList/handleSecureNoteText';
 import { useState, useRef, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
@@ -23,6 +24,7 @@ import ItemCopyIcon from '@/assets/popup-window/copy2.svg?react';
 * @return {JSX.Element} The rendered button element.
 */
 const CopySecureNoteBtn = ({ item, more, setMore }) => {
+  const { getMessage } = useI18n();
   const [scheduledTime, setScheduledTime] = useState(false);
   const loaderRef = useRef(null);
   const intervalIdRef = useRef(0);
@@ -87,7 +89,7 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
     return (
       <button
         onClick={async () => await handleSecureNoteText(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={browser.i18n.getMessage('this_tab_copy_text')}
+        title={getMessage('this_tab_copy_text')}
       >
         <ItemCopyIcon className={S.itemCopy2} />
       </button>
@@ -96,7 +98,7 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
     return (
       <button
         onClick={async () => await handleSecureNoteText(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={browser.i18n.getMessage('this_tab_copy_text')}
+        title={getMessage('this_tab_copy_text')}
         className={S.itemPasswordLoader}
       >
         <svg
@@ -126,7 +128,7 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
             contentType: SecureNote.contentType
           }
         }}
-        title={browser.i18n.getMessage('this_tab_fetch_text')}
+        title={getMessage('this_tab_fetch_text')}
         prefetch='intent'
       >
         <ItemFetchIcon className={S.itemFetch} />

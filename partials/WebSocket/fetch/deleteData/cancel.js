@@ -18,7 +18,7 @@ const deleteDataCancel = async messageId => {
     return {
       returnUrl: '/',
       returnToast: {
-        text: browser.i18n.getMessage('fetch_delete_login_cancel_toast'),
+        text: getMessage('fetch_delete_login_cancel_toast'),
         type: 'info'
       }
     };

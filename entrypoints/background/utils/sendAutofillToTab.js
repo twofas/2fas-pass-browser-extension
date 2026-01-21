@@ -23,8 +23,8 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
   if (!injectedCS) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
@@ -41,8 +41,8 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
   if (!item) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_lack_of_service_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_lack_of_service_message')
+      Title: getMessage('notification_send_autofill_to_tab_lack_of_service_title'),
+      Message: getMessage('notification_send_autofill_to_tab_lack_of_service_message')
     }, tabId, true);
   }
 
@@ -118,7 +118,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     if (needsPermission) {
       const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
 
-      const confirmMessage = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
+      const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
         .replace('DOMAINS', uniqueDomains.join(', '));
 
       const confirmResult = await sendMessageToTab(tabId, {
@@ -157,8 +157,8 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       if (errorResponses[0]?.status === 'error') {
         if (errorResponses[0]?.message === 'No username and password provided') {
           return TwofasNotification.show({
-            Title: browser.i18n.getMessage('notification_shortcut_autofill_no_username_and_password_title'),
-            Message: browser.i18n.getMessage('notification_shortcut_autofill_no_username_and_password_message')
+            Title: getMessage('notification_shortcut_autofill_no_username_and_password_title'),
+            Message: getMessage('notification_shortcut_autofill_no_username_and_password_message')
           }, tabId, true);
         }
       }
@@ -167,8 +167,8 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     await CatchError(e);
 
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 };

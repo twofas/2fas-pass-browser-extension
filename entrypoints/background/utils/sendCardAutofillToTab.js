@@ -23,8 +23,8 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
   if (!injectedCS) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
@@ -41,8 +41,8 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
   if (!item) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_lack_of_service_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_lack_of_service_message')
+      Title: getMessage('notification_send_autofill_to_tab_lack_of_service_title'),
+      Message: getMessage('notification_send_autofill_to_tab_lack_of_service_message')
     }, tabId, true);
   }
 
@@ -57,8 +57,8 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
   if (!hasCardData && !hasCardholderName) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_card_autofill_no_data_title'),
-      Message: browser.i18n.getMessage('notification_card_autofill_no_data_message')
+      Title: getMessage('notification_card_autofill_no_data_title'),
+      Message: getMessage('notification_card_autofill_no_data_message')
     }, tabId, true);
   }
 
@@ -77,8 +77,8 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       decryptedSecurityCode = decryptedValues.securityCode || '';
     } catch {
       return TwofasNotification.show({
-        Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-        Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+        Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+        Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
       }, tabId, true);
     }
 
@@ -111,8 +111,8 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
         if (cardNumberResult.status !== 'ok') {
           return TwofasNotification.show({
-            Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-            Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+            Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+            Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
           }, tabId, true);
         }
 
@@ -124,8 +124,8 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
         if (expirationDateResult.status !== 'ok') {
           return TwofasNotification.show({
-            Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-            Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+            Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+            Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
           }, tabId, true);
         }
 
@@ -137,8 +137,8 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
         if (securityCodeResult.status !== 'ok') {
           return TwofasNotification.show({
-            Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-            Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+            Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+            Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
           }, tabId, true);
         }
 
@@ -168,7 +168,7 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     if (needsPermission) {
       const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
 
-      const confirmMessage = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
+      const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
         .replace('DOMAINS', uniqueDomains.join(', '));
 
       // Focus the tab before showing confirmation dialog
@@ -232,15 +232,15 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     await CatchError(e);
 
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
   if (!response) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
@@ -248,8 +248,8 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
   if (relevantResponses.length === 0) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_card_autofill_no_inputs_title'),
-      Message: browser.i18n.getMessage('notification_card_autofill_no_inputs_message')
+      Title: getMessage('notification_card_autofill_no_inputs_title'),
+      Message: getMessage('notification_card_autofill_no_inputs_message')
     }, tabId, true);
   }
 
@@ -280,8 +280,8 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
   if (isPartial || hasMissingInputs) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_card_autofill_partial_title'),
-      Message: browser.i18n.getMessage('notification_card_autofill_partial_message')
+      Title: getMessage('notification_card_autofill_partial_title'),
+      Message: getMessage('notification_card_autofill_partial_message')
     }, tabId, true);
   }
 };

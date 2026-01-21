@@ -14,6 +14,7 @@ import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const usernameMobileVariants = {
   hidden: { maxHeight: '0px' },
@@ -26,6 +27,7 @@ const usernameMobileVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Username (props) {
+  const { getMessage } = useI18n();
   const { data, setData, setItem } = usePopupState();
   const inputRef = useRef(null);
 
@@ -39,7 +41,7 @@ function Username (props) {
       await copyValue(username, data.item.deviceId, data.item.vaultId, data.item.id, 'username');
     }
 
-    showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
+    showToast(getMessage('notification_username_copied'), 'success');
   }, [data.item.id]);
 
   const handleUsernameEditable = async () => {
@@ -99,14 +101,14 @@ function Username (props) {
       {({ input }) => (
         <div className={`${pI.passInput} ${data.usernameEditable && !data.usernameMobile ? '' : pI.disabled} ${inputError === 'username' ? pI.error : ''}`}>
           <div className={pI.passInputTop}>
-            <label htmlFor="username">{browser.i18n.getMessage('username')}</label>
+            <label htmlFor="username">{getMessage('username')}</label>
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear}`}
               onClick={handleUsernameEditable}
               tabIndex={-1}
             >
-              {data.usernameEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data.usernameEditable ? getMessage('cancel') : getMessage('edit')}
             </button>
           </div>
           <div className={pI.passInputBottom}>
@@ -118,7 +120,7 @@ function Username (props) {
                 input.onChange(e);
                 handleUsernameChange(e);
               }}
-              placeholder={browser.i18n.getMessage('placeholder_username')}
+              placeholder={getMessage('placeholder_username')}
               id="username"
               disabled={!data.usernameEditable || data.usernameMobile ? 'disabled' : ''}
               dir="ltr"
@@ -131,7 +133,7 @@ function Username (props) {
             type='button'
             className={`${bS.btn} ${pI.iconButton}`}
             onClick={() => handleCopyUsername(input.value)}
-            title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+            title={getMessage('this_tab_copy_to_clipboard')}
             tabIndex={-1}
           >
             <CopyIcon />
@@ -148,7 +150,7 @@ function Username (props) {
             <input type="checkbox" name="username-mobile" id="username-mobile" checked={data.usernameMobile} onChange={handleUsernameMobile} />
             <label htmlFor="username-mobile">
               <span className={bS.passToggleText}>
-                <span>{browser.i18n.getMessage('enter_on_mobile')}</span>
+                <span>{getMessage('enter_on_mobile')}</span>
               </span>
 
               <span className={bS.passToggleBox}>

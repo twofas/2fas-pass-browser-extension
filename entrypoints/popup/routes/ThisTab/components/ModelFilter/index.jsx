@@ -6,6 +6,7 @@
 
 import S from './styles/ModelFilter.module.scss';
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
@@ -24,6 +25,7 @@ const noOptionsMessage = () => null;
 * @return {JSX.Element} The rendered component.
 */
 const ModelFilter = props => {
+  const { getMessage } = useI18n();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [itemModelsOptions, setItemModelsOptions] = useState([]);
   const [deviceSupportedFeatures, setDeviceSupportedFeatures] = useState([]);
@@ -63,10 +65,10 @@ const ModelFilter = props => {
 
   const filterLabel = useMemo(() => {
     if (props.loading) {
-      return browser.i18n.getMessage('this_tab_all_logins_header');
+      return getMessage('this_tab_all_logins_header');
     }
 
-    return selectedOption?.label || browser.i18n.getMessage('this_tab_all_logins_header');
+    return selectedOption?.label || getMessage('this_tab_all_logins_header');
   }, [selectedOption, props.loading]);
 
   const handleModelChange = useCallback(selectedOpt => {
@@ -91,9 +93,9 @@ const ModelFilter = props => {
 
   useEffect(() => {
     if (deviceSupportedFeatures.length > 0) {
-      setItemModelsOptions(generateItemModelsOptions(deviceSupportedFeatures));
+      setItemModelsOptions(generateItemModelsOptions(deviceSupportedFeatures, getMessage));
     }
-  }, [deviceSupportedFeatures]);
+  }, [deviceSupportedFeatures, getMessage]);
 
   return (
     <div className={S.modelFilter}>

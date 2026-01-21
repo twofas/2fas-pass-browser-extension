@@ -9,7 +9,7 @@
 * @return {string} The name of the operating system.
 */
 const getOSName = () => {
-  let osName = browser.i18n.getMessage('unknownOS');
+  let osName = getMessage('unknownOS');
 
   if (navigator.userAgentData) {
     osName = navigator.userAgentData.platform;

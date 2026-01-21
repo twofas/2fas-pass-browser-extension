@@ -17,6 +17,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../../functions/updateItem';
 import CloseIcon from '@/assets/popup-window/close.svg?react';
 import PlusIcon from '@/assets/popup-window/add-new-2.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const animationVariants = {
   initial: { opacity: 0, scale: 0.8 },
@@ -53,6 +54,7 @@ const getTagName = (tagID, availableTags) => {
 * @return {JSX.Element} The rendered component.
 */
 function Tags () {
+  const { getMessage } = useI18n();
   const { data, setData, setItem } = usePopupState();
   const { tags: availableTags } = useTags();
 
@@ -95,7 +97,7 @@ function Tags () {
       setIsMenuOpen(false);
     } else {
       if (availableTags.length === 0) {
-        showToast(browser.i18n.getMessage('details_tags_no_available'), 'info');
+        showToast(getMessage('details_tags_no_available'), 'info');
         return;
       }
 
@@ -148,7 +150,7 @@ function Tags () {
         <div className={`${pI.passInput} ${data.tagsEditable ? pI.resizable : pI.disabled}`}>
           <div className={pI.passInputTop}>
             <div className={pI.passInputTopLabelLike}>
-              <span>{browser.i18n.getMessage('details_tags_label')}</span>
+              <span>{getMessage('details_tags_label')}</span>
             </div>
             <button
               type='button'
@@ -156,7 +158,7 @@ function Tags () {
               onClick={handleTagsEditable}
               tabIndex={-1}
             >
-              {data.tagsEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data.tagsEditable ? getMessage('cancel') : getMessage('edit')}
             </button>
           </div>
           <div className={pI.passInputBottomMotion}>
@@ -181,7 +183,7 @@ function Tags () {
                         type='button'
                         className={S.tagsPillDelete}
                         onClick={() => handleRemoveTag(tagId)}
-                        title={browser.i18n.getMessage('details_tags_remove')}
+                        title={getMessage('details_tags_remove')}
                       >
                         <CloseIcon />
                       </button>
@@ -191,7 +193,7 @@ function Tags () {
               ) : (
                 !data.tagsEditable && (
                   <span className={S.tagsPlaceholder}>
-                    {browser.i18n.getMessage('details_tags_no_tags')}
+                    {getMessage('details_tags_no_tags')}
                   </span>
                 )
               )}
@@ -203,10 +205,10 @@ function Tags () {
                     type='button'
                     className={S.tagsAddButton}
                     onClick={handleAddButtonClick}
-                    title={browser.i18n.getMessage('details_tags_add')}
+                    title={getMessage('details_tags_add')}
                   >
                     <PlusIcon />
-                    <span>{browser.i18n.getMessage('details_tags_add')}</span>
+                    <span>{getMessage('details_tags_add')}</span>
                   </button>
 
                   <AdvancedSelect
@@ -221,7 +223,7 @@ function Tags () {
                     classNamePrefix='react-select-tags-details'
                     isClearable={false}
                     isSearchable={false}
-                    placeholder={browser.i18n.getMessage('details_tags_select_tag')}
+                    placeholder={getMessage('details_tags_select_tag')}
                     noOptionsMessage={noOptionsMessage}
                     triggerRef={addButtonRef}
                     components={selectComponents}

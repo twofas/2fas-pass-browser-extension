@@ -171,6 +171,14 @@
     "message": "Motyw",
     "description": "Label for the theme settings"
   },
+  "settings_language": {
+    "message": "Język",
+    "description": "Label for the language settings"
+  },
+  "settings_language_default": {
+    "message": "Domyślny przeglądarki",
+    "description": "Option to use the browser's default language"
+  },
   "settings_unknown": {
     "message": "Nieznany",
     "description": "Label for unknown settings or values"

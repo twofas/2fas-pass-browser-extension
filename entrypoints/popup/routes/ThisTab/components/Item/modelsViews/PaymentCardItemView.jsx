@@ -6,6 +6,7 @@
 
 import S from '../styles/Item.module.scss';
 import { memo, useRef, useMemo, useCallback } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import handleAutofill from '../../../functions/serviceList/handleAutofill';
@@ -24,6 +25,7 @@ const selectComponents = { Option: ItemCustomOption };
 * @return {JSX.Element} The rendered component.
 */
 function PaymentCardItemView (props) {
+  const { getMessage } = useI18n();
   const moreBtnRef = useRef(null);
   const navigate = useNavigate();
 
@@ -46,8 +48,8 @@ function PaymentCardItemView (props) {
       >
         {generateIcon(props.data, null, null, props.loading)}
         <span>
-          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
-          {props.loading ? <Skeleton style={{ width: '60px' }} /> : <span>{props?.data?.content?.cardNumberMask ? `**** ${props?.data?.content?.cardNumberMask}` : browser.i18n.getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={{ width: '60px' }} /> : <span>{props?.data?.content?.cardNumberMask ? `**** ${props?.data?.content?.cardNumberMask}` : getMessage('no_item_name')}</span>}
         </span>
       </button>
       <div className={S.itemAdditionalButtons}>

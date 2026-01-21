@@ -19,7 +19,7 @@ const fullSyncCancel = async messageId => {
     return {
       returnUrl: '/',
       returnToast: {
-        text: browser.i18n.getMessage('fetch_full_sync_cancel_toast'),
+        text: getMessage('fetch_full_sync_cancel_toast'),
         type: 'info'
       }
     };

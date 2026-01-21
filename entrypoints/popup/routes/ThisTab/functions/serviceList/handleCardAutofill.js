@@ -10,11 +10,11 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 import PaymentCard from '@/models/itemModels/PaymentCard';
 
 const showT2Toast = () => {
-  showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
+  showToast(getMessage('this_tab_can_t_autofill_t2'), 'info');
 };
 
 const showGenericToast = () => {
-  showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
+  showToast(getMessage('this_tab_can_t_autofill'), 'info');
 };
 
 /**
@@ -117,7 +117,7 @@ const handleCardAutofill = async (item, navigate) => {
     if (!hasCardData && hasCardholderName) {
       sifDecrypt = false;
     } else if (!hasCardData && !hasCardholderName) {
-      showToast(browser.i18n.getMessage('this_tab_autofill_no_card_data'), 'error');
+      showToast(getMessage('this_tab_autofill_no_card_data'), 'error');
       return;
     }
   }
@@ -136,7 +136,7 @@ const handleCardAutofill = async (item, navigate) => {
       decryptedExpirationDate = decryptedValues.expirationDate || '';
       decryptedSecurityCode = decryptedValues.securityCode || '';
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
+      showToast(getMessage('error_autofill_failed'), 'error');
       await CatchError(e);
       return;
     }
@@ -152,7 +152,7 @@ const handleCardAutofill = async (item, navigate) => {
         const cardNumberResult = await encryptValueForTransmission(decryptedCardNumber);
 
         if (cardNumberResult.status !== 'ok') {
-          showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
+          showToast(getMessage('error_autofill_failed'), 'error');
           return;
         }
 
@@ -163,7 +163,7 @@ const handleCardAutofill = async (item, navigate) => {
         const expirationDateResult = await encryptValueForTransmission(decryptedExpirationDate);
 
         if (expirationDateResult.status !== 'ok') {
-          showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
+          showToast(getMessage('error_autofill_failed'), 'error');
           return;
         }
 
@@ -174,7 +174,7 @@ const handleCardAutofill = async (item, navigate) => {
         const securityCodeResult = await encryptValueForTransmission(decryptedSecurityCode);
 
         if (securityCodeResult.status !== 'ok') {
-          showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
+          showToast(getMessage('error_autofill_failed'), 'error');
           return;
         }
 
@@ -262,7 +262,7 @@ const handleCardAutofill = async (item, navigate) => {
   }
 
   if (!res) {
-    showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
+    showToast(getMessage('error_autofill_failed'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handleAutofillNoResponse, { additional: { func: 'handleCardAutofill' } }));
     return;
   }
@@ -272,7 +272,7 @@ const handleCardAutofill = async (item, navigate) => {
   const partialResponse = res.find(frameResponse => frameResponse.status === 'partial');
 
   if (isPartial && partialResponse?.failedFields) {
-    showToast(browser.i18n.getMessage('notification_card_autofill_partial_message'), 'info');
+    showToast(getMessage('notification_card_autofill_partial_message'), 'info');
     return;
   }
 
@@ -280,16 +280,16 @@ const handleCardAutofill = async (item, navigate) => {
     const separateWindow = await popupIsInSeparateWindow();
 
     if (!sifDecrypt && needsFetchSif) {
-      showToast(browser.i18n.getMessage('this_tab_autofill_fetch_card_data'), 'info');
+      showToast(getMessage('this_tab_autofill_fetch_card_data'), 'info');
     } else if (!sifDecrypt) {
-      showToast(browser.i18n.getMessage('this_tab_autofill_no_card_data_available'), 'info');
+      showToast(getMessage('this_tab_autofill_no_card_data_available'), 'info');
     } else if (!separateWindow) {
       await closeWindowIfNotInSeparateWindow(separateWindow);
     } else {
-      showToast(browser.i18n.getMessage('this_tab_autofill_success'), 'success');
+      showToast(getMessage('this_tab_autofill_success'), 'success');
     }
   } else {
-    showToast(browser.i18n.getMessage('this_tab_can_t_find_inputs'), 'info');
+    showToast(getMessage('this_tab_can_t_find_inputs'), 'info');
   }
 };
 

@@ -7,6 +7,7 @@
 import S from './styles/KeepItem.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useMemo, useState, useEffect, memo } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import { useLocation } from 'react-router';
 import { useKeepItem } from './hooks/useKeepItem';
 import AutofillErrorItem from '../AutofillErrorItem';
@@ -16,6 +17,7 @@ import AutofillErrorItem from '../AutofillErrorItem';
 * @return {JSX.Element} The rendered keep item popup component.
 */
 function KeepItem () {
+  const { getMessage } = useI18n();
   const location = useLocation();
   const { state } = location;
   const [autofillFailed, setAutofillFailed] = useState(false);
@@ -36,7 +38,7 @@ function KeepItem () {
   return (
     <div className={containerClass}>
       <div className={S.keepItemBox}>
-        <h2>{browser.i18n.getMessage('keep_item_popup_header')}</h2>
+        <h2>{getMessage('keep_item_popup_header')}</h2>
 
         <div className={S.keepItemBoxLoginItem}>
           <AutofillErrorItem
@@ -53,13 +55,13 @@ function KeepItem () {
             className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
             onClick={handleKeepItem}
           >
-            {browser.i18n.getMessage('keep_item_popup_keep')}
+            {getMessage('keep_item_popup_keep')}
           </button>
           <button
             className={`${bS.btn} ${bS.btnClear}`}
             onClick={handleDontKeepItem}
           >
-            {browser.i18n.getMessage('keep_item_popup_dont_keep')}
+            {getMessage('keep_item_popup_dont_keep')}
           </button>
         </div>
       </div>

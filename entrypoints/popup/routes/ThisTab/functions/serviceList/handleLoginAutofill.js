@@ -10,11 +10,11 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 import Login from '@/models/itemModels/Login';
 
 const showT2Toast = () => {
-  showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2'), 'info');
+  showToast(getMessage('this_tab_can_t_autofill_t2'), 'info');
 };
 
 const showGenericToast = () => {
-  showToast(browser.i18n.getMessage('this_tab_can_t_autofill'), 'info');
+  showToast(getMessage('this_tab_can_t_autofill'), 'info');
 };
 
 /**
@@ -113,7 +113,7 @@ const handleLoginAutofill = async (item, navigate) => {
     if (!hasPassword && hasUsername) {
       passwordDecrypt = false;
     } else if (!hasPassword && !hasUsername) {
-      showToast(browser.i18n.getMessage('this_tab_autofill_no_username_and_password'), 'error');
+      showToast(getMessage('this_tab_autofill_no_username_and_password'), 'error');
       return;
     }
   }
@@ -126,7 +126,7 @@ const handleLoginAutofill = async (item, navigate) => {
       const decryptedValue = await item.decryptSif();
       decryptedPassword = decryptedValue.password;
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
+      showToast(getMessage('error_autofill_failed'), 'error');
       await CatchError(e);
       return;
     }
@@ -139,7 +139,7 @@ const handleLoginAutofill = async (item, navigate) => {
       const passwordResult = await encryptValueForTransmission(decryptedPassword);
 
       if (passwordResult.status !== 'ok') {
-        showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
+        showToast(getMessage('error_autofill_failed'), 'error');
         return;
       }
 
@@ -208,7 +208,7 @@ const handleLoginAutofill = async (item, navigate) => {
   }
 
   if (!res) {
-    showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
+    showToast(getMessage('error_autofill_failed'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handleAutofillNoResponse, { additional: { func: 'handleLoginAutofill' } }));
     return;
   }
@@ -219,16 +219,16 @@ const handleLoginAutofill = async (item, navigate) => {
     const separateWindow = await popupIsInSeparateWindow();
 
     if (!passwordDecrypt && needsFetchPassword) {
-      showToast(browser.i18n.getMessage('this_tab_autofill_fetch_password'), 'info');
+      showToast(getMessage('this_tab_autofill_fetch_password'), 'info');
     } else if (!passwordDecrypt) {
-      showToast(browser.i18n.getMessage('this_tab_autofill_no_password'), 'info');
+      showToast(getMessage('this_tab_autofill_no_password'), 'info');
     } else if (!separateWindow) {
       await closeWindowIfNotInSeparateWindow(separateWindow);
     } else {
-      showToast(browser.i18n.getMessage('this_tab_autofill_success'), 'success');
+      showToast(getMessage('this_tab_autofill_success'), 'success');
     }
   } else {
-    showToast(browser.i18n.getMessage('this_tab_can_t_find_inputs'), 'info');
+    showToast(getMessage('this_tab_can_t_find_inputs'), 'info');
   }
 };
 

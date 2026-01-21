@@ -12,6 +12,7 @@ import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import { useCallback, useEffect, useRef } from 'react';
 import updateItem from '../functions/updateItem';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const notesVariants = {
   hidden: { height: 'auto', minHeight: '20px', maxHeight: '600px' },
@@ -23,6 +24,7 @@ const notesVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Notes () {
+  const { getMessage } = useI18n();
   const { data, setData, setItem } = usePopupState();
   const textareaRef = useRef(null);
 
@@ -73,7 +75,7 @@ function Notes () {
         <div className={`${pI.passInput} ${data.notesEditable ? pI.resizable : pI.disabled}`}>
           <div className={pI.passInputTop}>
             <div className={pI.passInputTopLabelLike}>
-              <span>{browser.i18n.getMessage('notes')}</span>
+              <span>{getMessage('notes')}</span>
             </div>
             <button
               type='button'
@@ -81,7 +83,7 @@ function Notes () {
               onClick={handleNotesEditable}
               tabIndex={-1}
             >
-              {data.notesEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data.notesEditable ? getMessage('cancel') : getMessage('edit')}
             </button>
           </div>
           <div className={pI.passInputBottomMotion}>
@@ -99,7 +101,7 @@ function Notes () {
                   input.onChange(e);
                   handleNotesChange(e);
                 }}
-                placeholder={browser.i18n.getMessage('details_notes_placeholder')}
+                placeholder={getMessage('details_notes_placeholder')}
                 id="notes"
                 disabled={!data.notesEditable ? 'disabled' : ''}
                 dir="ltr"

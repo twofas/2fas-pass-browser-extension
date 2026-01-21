@@ -7,6 +7,7 @@
 import S from '../../Fetch.module.scss';
 import { useRef, useEffect, useState } from 'react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Function to render the push notification component.
@@ -14,6 +15,7 @@ import InfoIcon from '@/assets/popup-window/info.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 const PushNotification = ({ fetchState, description }) => {
+  const { getMessage } = useI18n();
   const [loaded, setLoaded] = useState(false);
   const PushNotificationComponent = useRef(null);
 
@@ -35,13 +37,13 @@ const PushNotification = ({ fetchState, description }) => {
 
   return (
     <div className={`${S.fetchCase} ${S.active}`}>
-      <h2>{browser.i18n.getMessage('fetch_push_header')}</h2>
+      <h2>{getMessage('fetch_push_header')}</h2>
       <div className={S.fetchCaseAnimation}>
         {loaded ? <PushNotificationComponent.current /> : <div style={{ height: '86px' }} />}
       </div>
       <div className={S.fetchCaseDescription}>
         <InfoIcon />
-        <p>{description || browser.i18n.getMessage('fetch_continue_updating_description')}</p>
+        <p>{description || getMessage('fetch_continue_updating_description')}</p>
       </div>
     </div>
   );

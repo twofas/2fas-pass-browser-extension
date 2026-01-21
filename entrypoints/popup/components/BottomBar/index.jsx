@@ -16,6 +16,7 @@ import NewWindowIcon from '@/assets/popup-window/new-window.svg?react';
 import SettingsIcon from '@/assets/popup-window/settings.svg?react';
 import FullSyncIcon from '@/assets/popup-window/full-sync.svg?react';
 import ClearLink from '../ClearLink';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
  * Resolves the effective theme (light/dark) based on storage value and system preference.
@@ -52,6 +53,7 @@ const applyThemeToSecIcon = (secIcon, theme) => {
 * @return {JSX.Element} The rendered component.
 */
 function BottomBar () {
+  const { getMessage } = useI18n();
   const [secIconData, setSecIconData] = useState(null);
   const [effectiveTheme, setEffectiveTheme] = useState('light');
   const [separateWindow, setSeparateWindow] = useState(false);
@@ -104,7 +106,7 @@ function BottomBar () {
         });
 
         if (res.status === 'error') {
-          showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
+          showToast(getMessage('error_feature_wrong_data'), 'error');
         }
       } else if (location.pathname === '/blocked') {
         const res = await browser.runtime.sendMessage({
@@ -114,7 +116,7 @@ function BottomBar () {
         });
 
         if (res.status === 'error') {
-          showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
+          showToast(getMessage('error_feature_wrong_data'), 'error');
         }
       } else {
         const res = await browser.runtime.sendMessage({
@@ -124,7 +126,7 @@ function BottomBar () {
         });
 
         if (res.status === 'error') {
-          showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
+          showToast(getMessage('error_feature_wrong_data'), 'error');
         }
       }
 
@@ -190,10 +192,10 @@ function BottomBar () {
     [themedSvg, wsActive]
   );
 
-  const newWindowTitle = useMemo(() => browser.i18n.getMessage('open_in_new_window'), []);
-  const settingsTitle = useMemo(() => browser.i18n.getMessage('go_to_settings'), []);
-  const tooltipHeader = useMemo(() => browser.i18n.getMessage('bottom_bar_security_icon_tooltip_header'), []);
-  const tooltipText = useMemo(() => browser.i18n.getMessage('bottom_bar_security_icon_tooltip_text'), []);
+  const newWindowTitle = useMemo(() => getMessage('open_in_new_window'), []);
+  const settingsTitle = useMemo(() => getMessage('go_to_settings'), []);
+  const tooltipHeader = useMemo(() => getMessage('bottom_bar_security_icon_tooltip_header'), []);
+  const tooltipText = useMemo(() => getMessage('bottom_bar_security_icon_tooltip_text'), []);
 
   useEffect(() => {
     popupCheck()
@@ -285,11 +287,11 @@ function BottomBar () {
           <ClearLink
             to='/fetch'
             state={{ action: PULL_REQUEST_TYPES.FULL_SYNC, from: 'bottomBar', data: {} }}
-            title={browser.i18n.getMessage('sync_title')}
+            title={getMessage('sync_title')}
             prefetch='intent'
           >
             <FullSyncIcon />
-            <span>{browser.i18n.getMessage('sync')}</span>
+            <span>{getMessage('sync')}</span>
           </ClearLink>
         </div>
       </footer>

@@ -33,4 +33,5 @@ export const REQUEST_ACTIONS = Object.freeze({
   FOCUS_CHECK: 'focusCheck', // background, popup, focus
   NEW_POPUP: 'newPopup', // popup
   REFRESH_THEME: 'refreshTheme', // content (top frame only)
+  REFRESH_LANG: 'refreshLang', // content (top frame only)
 });

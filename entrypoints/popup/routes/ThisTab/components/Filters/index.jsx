@@ -7,6 +7,7 @@
 import S from './styles/Filters.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useRef, useMemo, useCallback, memo } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import FiltersCustomOption from './components/FiltersCustomOption';
 import FiltersIcon from '@/assets/popup-window/filters.svg?react';
@@ -22,6 +23,7 @@ const selectComponents = { Option: FiltersCustomOption };
 * @return {JSX.Element} The rendered filter dropdown component.
 */
 const Filters = ({ tags, selectedTag, onTagChange }) => {
+  const { getMessage } = useI18n();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const selectRef = useRef(null);
   const buttonRef = useRef(null);
@@ -29,7 +31,7 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
   const options = useMemo(() => {
     if (!tags || !Array.isArray(tags) || tags.length === 0) {
       return [
-        { value: 'noTags', label: browser.i18n.getMessage('filters_no_tags'), tag: null, isDisabled: true }
+        { value: 'noTags', label: getMessage('filters_no_tags'), tag: null, isDisabled: true }
       ];
     }
 
@@ -42,7 +44,7 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
     if (selectedTag) {
       tagOptions.push({
         value: null,
-        label: browser.i18n.getMessage('filters_clear_choice'),
+        label: getMessage('filters_clear_choice'),
         tag: null
       });
     }
@@ -84,7 +86,7 @@ const Filters = ({ tags, selectedTag, onTagChange }) => {
         ref={buttonRef}
         className={`${bS.btn} ${bS.btnFilter} ${isMenuOpen ? bS.btnFilterActive : ''}`}
         onClick={handleButtonClick}
-        title={browser.i18n.getMessage('filters_button_title')}
+        title={getMessage('filters_button_title')}
       >
         <FiltersIcon />
       </button>

@@ -4,4 +4,4 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export { default as itemsUiData } from './itemsUiData.jsx';
+export { default as getItemsUiData } from './itemsUiData.jsx';

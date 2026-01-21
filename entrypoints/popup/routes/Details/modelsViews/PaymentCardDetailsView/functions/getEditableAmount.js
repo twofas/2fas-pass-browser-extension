@@ -33,7 +33,7 @@ const getEditableAmount = () => {
 
   if (amount === 1) {
     return {
-      text: ` (1 ${browser.i18n.getMessage('details_field_one')})`,
+      text: ` (1 ${getMessage('details_field_one')})`,
       amount: 1
     };
   }
@@ -44,7 +44,7 @@ const getEditableAmount = () => {
   const pluralKey = isFew ? 'details_field_few' : 'details_field_many';
 
   return {
-    text: ` (${amount} ${browser.i18n.getMessage(pluralKey)})`,
+    text: ` (${amount} ${getMessage(pluralKey)})`,
     amount: amount
   };
 };

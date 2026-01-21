@@ -7,6 +7,7 @@
 import S from './ThisTab.module.scss';
 import { motion } from 'motion/react';
 import { useEffect, useState, useRef, useCallback, useMemo, memo, useContext } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
 import getDomainFromTab from './functions/getDomainFromTab';
 import onMessage from './events/onMessage';
@@ -36,6 +37,7 @@ const thisTabTopVariants = {
 * @return {JSX.Element} Element representing the ThisTab component.
 */
 function ThisTab (props) {
+  const { getMessage } = useI18n();
   const scrollableRefContext = useContext(ScrollableRefContext);
   const [loading, setLoading] = useState(true);
   const [domain, setDomain] = useState('Unknown');
@@ -271,7 +273,7 @@ function ThisTab (props) {
 
                 <div className={S.thisTabHeader}>
                   <h1>
-                    {loading ? '\u00A0' : (hasMatchingLogins ? browser.i18n.getMessage('this_tab_matching_logins_header') : browser.i18n.getMessage('this_tab_matching_logins_header_no_logins'))}
+                    {loading ? '\u00A0' : (hasMatchingLogins ? getMessage('this_tab_matching_logins_header') : getMessage('this_tab_matching_logins_header_no_logins'))}
                   </h1>
                   <h2 className={loading ? '' : S.loaded} title={url}>
                     <DomainIcon />
