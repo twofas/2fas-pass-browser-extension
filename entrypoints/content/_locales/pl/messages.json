@@ -24,11 +24,11 @@
     "description": "Button label to update an existing login item in 2FAS Pass"
   },
   "autofill_cross_domain_warning": {
-    "message": "Ten formularz znajduje się w innej domenie (CURRENT_DOMAIN) niż strona główna (TOP_DOMAIN). Czy chcesz kontynuować autouzupełnianie?",
+    "message": "Ten formularz znajduje się w innej domenie (CURRENT_DOMAIN) niż strona główna (TOP_DOMAIN). Czy chcesz kontynuować wypełnianie?",
     "description": "Warning shown when autofill is attempted on a cross-domain iframe"
   },
   "autofill_cross_domain_warning_no_access": {
-    "message": "Ten formularz znajduje się w domenie CURRENT_DOMAIN i jest osadzony w ramce iframe z innej domeny. Czy na pewno chcesz kontynuować autouzupełnianie?",
+    "message": "Ten formularz znajduje się w domenie CURRENT_DOMAIN i jest osadzony w ramce iframe z innej domeny. Czy na pewno chcesz kontynuować wypełnianie?",
     "description": "Warning shown when autofill is attempted on a cross-domain iframe and we cannot access the parent domain"
   }
 }

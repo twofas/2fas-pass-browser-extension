@@ -44,11 +44,11 @@
     "description": "Thank you message for users of the 2FAS Pass extension"
   },
   "settings_about_thank_you_subheader": {
-    "message": "Nie przechowujemy twoich danych.\nNie mamy serwerów.",
+    "message": "Nie przechowujemy danych.\nNie mamy serwerów.",
     "description": "Subheader emphasizing the privacy and security of the extension"
   },
   "settings_about_thank_you_description": {
-    "message": "Nie przechowujemy Twoich elementów, ponieważ nie posiadamy serwerów. Wszystkie Twoje elementy znajdują się w aplikacji mobilnej 2FAS Pass. Te, które wybierzesz, mogą być również przechowywane w tym rozszerzeniu przeglądarki. To Ty decydujesz, kiedy i w jaki sposób ich używasz.",
+    "message": "Nie przechowujemy twoich danych, ponieważ wszystkie elementy znajdują się w lokalnej aplikacji mobilnej 2FAS Pass. Te, które wybierzesz, mogą być również przechowywane w tym rozszerzeniu przeglądarki.",
     "description": "Explains that user data is stored in the mobile app or optionally in the extension"
   },
   "settings_visit_our_website": {
@@ -72,7 +72,7 @@
     "description": "Header for the save login prompt settings"
   },
   "settings_save_prompt_description": {
-    "message": "Wybierz sposób, pytania o zapisanie szczegółów elementu.",
+    "message": "Wybierz sposób pytania o zapisanie szczegółów elementu.",
     "description": "Description for configuring the save login prompt behavior"
   },
   "settings_save_prompt_pass": {
@@ -160,7 +160,7 @@
     "description": "Tooltip explaining that the auto-clear setting applies only to data copied from the extension"
   },
   "settings_auto_clear_clipboard_tooltip_2": {
-    "message": "Funkcja „Automatyczne czyszczenie schowka” automatycznie usuwa zawartość schowka po określonym czasie (można go zmienić powyżej). Zapobiega to trwałemu przechowywaniu haseł.",
+    "message": "Funkcja „Automatyczne czyszczenie schowka”, usuwa zawartość schowka po określonym czasie (można go zmienić powyżej). Zapobiega to trwałemu przechowywaniu haseł.",
     "description": "Tooltip clarifying that the auto-clear setting does not affect data copied from outside the extension"
   },
   "settings_auto_clear_clipboard_tooltip_3": {
@@ -196,7 +196,7 @@
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_shortcut_safari_tooltip": {
-    "message": "Aby ustawić lub zmienić ten skrót, przejdź do ustawień rozszerzeń przeglądarki, wybierz 2FAS Pass i zmień skrót w określonym polu.\n",
+    "message": "Aby ustawić lub zmienić ten skrót, przejdź do ustawień rozszerzeń przeglądarki, wybierz 2FAS Pass i zmień skrót w określonym polu.",
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_push_native": {
@@ -212,7 +212,7 @@
     "description": "Header for the notifications settings"
   },
   "settings_notifications_description": {
-    "message": "Wybierz typ powiadomień, który będzie informował Cię o komunikacji między aplikacją mobilną 2FAS Pass a tym rozszerzeniem przeglądarki.",
+    "message": "Wybierz typ powiadomień, który będzie informował o komunikacji między aplikacją mobilną 2FAS Pass a tym rozszerzeniem przeglądarki.",
     "description": "Explains how to configure notifications for communication between the mobile app and extension"
   },
   "settings_notifications_send_test": {
@@ -236,7 +236,7 @@
     "description": "Validation message when the extension name is not provided"
   },
   "settings_ext_name_validate_min_length": {
-    "message": "Wprowadź nazwę rozszerzenia, nie krótszą niż 3 znaki,",
+    "message": "Wprowadź nazwę rozszerzenia, nie krótszą niż 3 znaki.",
     "description": "Validation message when the extension name is too short"
   },
   "settings_ext_name_validate_max_length": {
@@ -272,7 +272,7 @@
     "description": "Validation message when trying to add an empty domain"
   },
   "settings_excluded_domains_add_invalid": {
-    "message": "Niepoprawna domena. Proszę wpisać poprawną.",
+    "message": "Nieprawidłowa domena. Spróbuj ponownie.",
     "description": "Validation message when the provided domain is invalid"
   },
   "settings_excluded_domains_add_already_ignored": {

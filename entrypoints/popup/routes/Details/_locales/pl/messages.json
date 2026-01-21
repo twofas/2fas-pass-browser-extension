@@ -116,7 +116,7 @@
     "description": "Title for the fetch highly secret data link"
   },
   "details_sif_not_fetched": {
-    "message": "Te dane dostępne są tylko w aplikacji mobilnej. Kliknij „Pobierz” u góry tego okna aby je pobrać.",
+    "message": "Te dane dostępne są tylko w aplikacji mobilnej. Kliknij „Pobierz” u góry tego okna, aby je pobrać.",
     "description": "Message indicating that the highly secret data has not been fetched yet"
   },
   "details_notes_placeholder": {
@@ -152,7 +152,7 @@
     "description": "Label for the expiration date field in payment card details"
   },
   "details_expiration_date_decrypt_error": {
-    "message": "Nie udało się odszyfrować daty ważności. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
+    "message": "Nie udało się odszyfrować daty ważności.",
     "description": "Error message displayed when decrypting the expiration date fails"
   },
   "details_toggle_expiration_date_visibility": {
@@ -168,7 +168,7 @@
     "description": "Label for the security code field in payment card details"
   },
   "details_security_code_decrypt_error": {
-    "message": "Nie udało się odszyfrować kodu bezpieczeństwa. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
+    "message": "Nie udało się odszyfrować kodu bezpieczeństwa.",
     "description": "Error message displayed when decrypting the security code fails"
   },
   "details_toggle_security_code_visibility": {
@@ -192,7 +192,7 @@
     "description": "Validation message indicating that the card number field is required"
   },
   "details_card_number_invalid": {
-    "message": "Niepoprawny numer karty.",
+    "message": "Nieprawidłowy numer karty.",
     "description": "Validation message indicating that the card number is not valid"
   },
   "details_expiration_date_required": {
@@ -200,7 +200,7 @@
     "description": "Validation message indicating that the expiration date field is required"
   },
   "details_expiration_date_invalid": {
-    "message": "Niepoprawna data ważności.",
+    "message": "Nieprawidłowa data ważności.",
     "description": "Validation message indicating that the expiration date format is not valid"
   },
   "details_expiration_date_past": {
@@ -212,7 +212,7 @@
     "description": "Informational message indicating that the payment card expiration date is in the past"
   },
   "details_security_code_required": {
-    "message": "Kod bezpieczeństwa jest wymagany",
+    "message": "Kod bezpieczeństwa jest wymagany.",
     "description": "Validation message indicating that the security code field is required"
   },
   "details_security_code_invalid": {
@@ -220,7 +220,7 @@
     "description": "Validation message indicating that the security code must be 3 or 4 digits"
   },
   "details_security_code_too_long": {
-    "message": "Niepoprawny kod bezpieczeństwa",
+    "message": "Nieprawidłowy kod bezpieczeństwa.",
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
   "details_secure_note_text_max_length": {

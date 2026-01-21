@@ -232,7 +232,7 @@
     "description": "Placeholder text for the browser nickname input field"
   },
   "settings_ext_name_validate_required": {
-    "message": "Please enter the extension name.",
+    "message": "Please enter the extension name",
     "description": "Validation message when the extension name is not provided"
   },
   "settings_ext_name_validate_min_length": {

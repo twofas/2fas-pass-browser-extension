@@ -24,7 +24,7 @@
     "description": "Placeholder text for the secure note name input field"
   },
   "secure_note_name_required": {
-    "message": "Nazwa notatki jest wymagana",
+    "message": "Nazwa notatki jest wymagana.",
     "description": "Validation message indicating that the secure note name is required"
   },
   "secure_note_name_max_length": {

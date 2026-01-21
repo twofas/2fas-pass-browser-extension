@@ -32,7 +32,7 @@
     "description": "Error message displayed when copying the URI to the clipboard fails"
   },
   "error_autofill_failed": {
-    "message": "Nieudane autouzupełnianie. Spróbuj ponownie.",
+    "message": "Nieudane wypełnianie. Spróbuj ponownie.",
     "description": "Error message displayed when the autofill operation fails"
   },
   "error_no_response_from_tab": {
@@ -80,11 +80,11 @@
     "description": "Description of the 2FAS Pass Browser Extension highlighting its features"
   },
   "autofill": {
-    "message": "Autouzupełnianie",
+    "message": "Wypełnianie",
     "description": "Label for the autofill functionality"
   },
   "autofillCommand": {
-    "message": "Autouzupełnianie 2FAS Pass",
+    "message": "Wypełnianie 2FAS Pass",
     "description": "Label for the command used to trigger autofill"
   },
   "fetch": {
@@ -188,7 +188,7 @@
     "description": "Option to enable dark mode for the interface"
   },
   "unset_mode": {
-    "message": "Domyślne ustawienia systemu",
+    "message": "Domyślny systemowy",
     "description": "Option to use the system's default mode for the interface"
   },
   "save": {
@@ -252,7 +252,7 @@
     "description": "Label for a state where no value is available"
   },
   "no_valid_domain": {
-    "message": "Nie wykryto prawidłowej domeny. Jeśli jest to domena niestandardowa, dodaj na jej początku odpowiedni protokół (np. https).",
+    "message": "Nie wykryto prawidłowej domeny. Jeśli jest to domena niestandardowa, dodaj odpowiedni protokół na początku (np. https).",
     "description": "Label for a state where no valid domain is provided"
   },
   "sync": {
@@ -296,7 +296,7 @@
     "description": "Title for the notification when there is no active tab for autofill"
   },
   "notification_shortcut_autofill_no_active_tab_message": {
-    "message": "Brak aktywnej karty do autouzupełniania.",
+    "message": "Brak aktywnej karty do autouzupełniania",
     "description": "Message for the notification when there is no active tab for autofill"
   },
   "notification_shortcut_autofill_internal_page_title": {
@@ -304,7 +304,7 @@
     "description": "Title for the notification when autofill is attempted on a browser internal page"
   },
   "notification_shortcut_autofill_internal_page_message": {
-    "message": "Przepraszamy, ale nie możemy automatycznie wypełniać danych na wewnętrznych stronach przeglądarki.",
+    "message": "Przepraszamy, ale nie możemy autouzupełnić danych na wewnętrznych stronach przeglądarki",
     "description": "Message shown when autofill isn't supported on browser internal pages"
   },
   "notification_settings_save_success": {
@@ -324,7 +324,7 @@
     "description": "Message for a test notification"
   },
   "notification_shortcut_autofill_no_username_and_password_title": {
-    "message": "Autouzupełnianie niemożliwe",
+    "message": "Wypełnianie niemożliwe",
     "description": "Title for the notification when no username and password are found"
   },
   "notification_shortcut_autofill_no_username_and_password_message": {
@@ -344,7 +344,7 @@
     "description": "Notification message when the error message is successfully copied to the clipboard"
   },
   "autofill_cross_domain_warning_popup": {
-    "message": "Ta strona zawiera formularze z zewnętrznych domen:\nDOMAINS\n\nCzy chcesz automatycznie uzupełnić dane w tych formularzach?",
+    "message": "Ta strona zawiera formularze z zewnętrznych domen:\nDOMAINS\n\nCzy chcesz wypełnić dane w tych formularzach?",
     "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
   },
   "placeholder_name": {
@@ -352,7 +352,7 @@
     "description": "Placeholder text for the name input field"
   },
   "background_contextMenuConfigured_no_accounts": {
-    "message": "Brak pasujących elementów dla tej domeny.",
+    "message": "Brak pasujących elementów dla tej domeny",
     "description": "Message displayed when no login items match the current domain in the context menu"
   },
   "background_contextMenuConfigured_add_account": {
@@ -376,15 +376,15 @@
     "description": "Title for the notification when the card has no data to autofill"
   },
   "notification_card_autofill_no_data_message": {
-    "message": "Ta karta nie ma danych do autouzupełnienia",
+    "message": "Ta karta nie ma danych do wypełnienia",
     "description": "Message for the notification when the card has no data to autofill"
   },
   "notification_card_autofill_partial_title": {
-    "message": "Częściowe autouzupełnienie",
+    "message": "Częściowe wypełnienie",
     "description": "Title for the notification when card autofill is only partially successful"
   },
   "notification_card_autofill_partial_message": {
-    "message": "Niektóre szczegóły karty nie mogły być autouzupełnione",
+    "message": "Niektóre szczegóły karty nie mogły być wypełnione",
     "description": "Message when some payment card fields could not be autofilled"
   },
   "notification_card_autofill_no_inputs_title": {
@@ -392,7 +392,7 @@
     "description": "Title for the notification when no card input fields are detected on the page"
   },
   "notification_card_autofill_no_inputs_message": {
-    "message": "Ta strona nie zawiera formularza danych karty, który można automatycznie uzupełnić.",
+    "message": "Ta strona nie zawiera formularza danych karty, który można wypełnić.",
     "description": "Message for the notification when no card input fields are detected on the page"
   },
   "content_matching_logins_title": {
@@ -420,11 +420,11 @@
     "description": "Button label to update an existing login item in 2FAS Pass"
   },
   "autofill_cross_domain_warning": {
-    "message": "Ten formularz znajduje się w innej domenie (CURRENT_DOMAIN) niż strona główna (TOP_DOMAIN). Czy chcesz kontynuować autouzupełnianie?",
+    "message": "Ten formularz znajduje się w innej domenie (CURRENT_DOMAIN) niż strona główna (TOP_DOMAIN). Czy chcesz kontynuować wypełnianie?",
     "description": "Warning shown when autofill is attempted on a cross-domain iframe"
   },
   "autofill_cross_domain_warning_no_access": {
-    "message": "Ten formularz znajduje się w domenie CURRENT_DOMAIN i jest osadzony w ramce iframe z innej domeny. Czy na pewno chcesz kontynuować autouzupełnianie?",
+    "message": "Ten formularz znajduje się w domenie CURRENT_DOMAIN i jest osadzony w ramce iframe z innej domeny. Czy na pewno chcesz kontynuować wypełnianie?",
     "description": "Warning shown when autofill is attempted on a cross-domain iframe and we cannot access the parent domain"
   },
   "install_please_pin_extension": {
@@ -468,11 +468,11 @@
     "description": "Instruction to click the extension icon to open it"
   },
   "install_2_use_mobile_app": {
-    "message": "Dotknij \"Połącz\" w aplikacji mobilnej 2FAS Pass aby zeskanować kod QR.",
+    "message": "Dotknij \"Połącz\" w aplikacji mobilnej 2FAS Pass, aby zeskanować kod QR.",
     "description": "Instruction to use the mobile app to scan the QR code"
   },
   "install_3_info": {
-    "message": "Rozszerzenie jest odblokowane na czas tej sesji przeglądarki!",
+    "message": "Rozszerzenie jest odblokowane na czas tej sesji przeglądarki",
     "description": "Message displayed when the extension is unlocked for the current browser session"
   },
   "install_3_header": {
@@ -516,11 +516,11 @@
     "description": "Button label for downloading the Android app"
   },
   "bottom_bar_security_icon_tooltip_header": {
-    "message": "To jest twoja Ikona identyfikacyjna, zapamiętaj ją.",
+    "message": "To jest twoja ikona identyfikacyjna, zapamiętaj ją.",
     "description": "Header for the tooltip explaining the purpose of the Identicon"
   },
   "bottom_bar_security_icon_tooltip_text": {
-    "message": "Upewnij się, że widzisz go za każdym razem, gdy korzystasz z rozszerzenia przeglądarki 2FAS Pass.",
+    "message": "Upewnij się, że widzisz go za każdym razem, \ngdy korzystasz z rozszerzenia przeglądarki 2FAS Pass.",
     "description": "Reminds the user to verify their Identicon for security purposes"
   },
   "top_bar_locked": {
@@ -544,15 +544,15 @@
     "description": "Validation message displayed when the Domain (URI) field is empty"
   },
   "add_new_validate_min_length": {
-    "message": "Wprowadź domenę (URI), nie krótszą niż 3 znaki.",
+    "message": "Wprowadź domenę (URI), nie krótszą niż 3 znaki",
     "description": "Validation message displayed when the Domain (URI) field has fewer than 3 characters"
   },
   "add_new_validate_invalid_domain": {
-    "message": "Wprowadź prawidłową domenę (URI).",
+    "message": "Wprowadź prawidłową domenę (URI)",
     "description": "Validation message displayed when the Domain (URI) entered is invalid"
   },
   "add_new_validate_card_name_required": {
-    "message": "Nazwa karty jest wyamagana",
+    "message": "Nazwa karty jest wymagana",
     "description": "Validation message displayed when the Card Name field is empty"
   },
   "add_new_validate_card_name_length": {
@@ -564,11 +564,11 @@
     "description": "Validation message displayed when the Cardholder field exceeds 255 characters"
   },
   "add_new_validate_card_number_invalid": {
-    "message": "Niepoprawny numer karty",
+    "message": "Nieprawidłowy numer karty",
     "description": "Validation message displayed when the Card Number field is invalid"
   },
   "add_new_validate_expiration_date_invalid": {
-    "message": "Niepoprawna data ważności",
+    "message": "Nieprawidłowa data ważności",
     "description": "Validation message displayed when the Expiration Date field is invalid"
   },
   "add_new_validate_security_code_invalid": {
@@ -576,7 +576,7 @@
     "description": "Validation message displayed when the Security Code field is invalid"
   },
   "add_new_security_code_too_long": {
-    "message": "Niepoprawny kod bezpieczeństwa",
+    "message": "Nieprawidłowy kod bezpieczeństwa.",
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
   "add_new_header_login": {
@@ -616,7 +616,7 @@
     "description": "Button label to open the external popup."
   },
   "connect_header": {
-    "message": "Zeskanuj ten kod QR za pomocą aplikacji mobilnej 2FAS Pass.",
+    "message": "Zeskanuj ten kod QR za pomocą aplikacji mobilnej 2FAS Pass",
     "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
   },
   "connect_description": {
@@ -628,7 +628,7 @@
     "description": "Message displayed while the connection process is ongoing"
   },
   "connect_connection_opened": {
-    "message": "Nawiązano połączenie.\nNie wyłączaj tego okienka",
+    "message": "Nawiązano połączenie.\nPozostaw to okno otwarte.",
     "description": "Message displayed when the connection is successfully opened"
   },
   "connect_push_cancelled": {
@@ -640,7 +640,7 @@
     "description": "Header prompting the user to select their device"
   },
   "connect_device_select_list_header": {
-    "message": "Wybierz urządzenie z którym chcesz się połączyć:",
+    "message": "Wybierz urządzenie, z którym chcesz się połączyć:",
     "description": "Header for the device selection list"
   },
   "connect_device_select_add_another": {
@@ -648,7 +648,7 @@
     "description": "Button text for adding another device"
   },
   "connect_push_animation_description": {
-    "message": "Aby dokończyć łączenie, \nzatwierdź prośbę na swoim urządzeniu.\n",
+    "message": "Aby dokończyć łączenie, \nzatwierdź prośbę na swoim urządzeniu.",
     "description": "Description for the push notification animation"
   },
   "connect_push_trouble": {
@@ -784,7 +784,7 @@
     "description": "Title for the fetch highly secret data link"
   },
   "details_sif_not_fetched": {
-    "message": "Te dane dostępne są tylko w aplikacji mobilnej. Kliknij „Pobierz” u góry tego okna aby je pobrać.",
+    "message": "Te dane dostępne są tylko w aplikacji mobilnej. Kliknij „Pobierz” u góry tego okna, aby je pobrać.",
     "description": "Message indicating that the highly secret data has not been fetched yet"
   },
   "details_notes_placeholder": {
@@ -820,7 +820,7 @@
     "description": "Label for the expiration date field in payment card details"
   },
   "details_expiration_date_decrypt_error": {
-    "message": "Nie udało się odszyfrować daty ważności. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
+    "message": "Nie udało się odszyfrować daty ważności.",
     "description": "Error message displayed when decrypting the expiration date fails"
   },
   "details_toggle_expiration_date_visibility": {
@@ -836,7 +836,7 @@
     "description": "Label for the security code field in payment card details"
   },
   "details_security_code_decrypt_error": {
-    "message": "Nie udało się odszyfrować kodu bezpieczeństwa. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
+    "message": "Nie udało się odszyfrować kodu bezpieczeństwa.",
     "description": "Error message displayed when decrypting the security code fails"
   },
   "details_toggle_security_code_visibility": {
@@ -860,7 +860,7 @@
     "description": "Validation message indicating that the card number field is required"
   },
   "details_card_number_invalid": {
-    "message": "Niepoprawny numer karty.",
+    "message": "Nieprawidłowy numer karty.",
     "description": "Validation message indicating that the card number is not valid"
   },
   "details_expiration_date_required": {
@@ -868,7 +868,7 @@
     "description": "Validation message indicating that the expiration date field is required"
   },
   "details_expiration_date_invalid": {
-    "message": "Niepoprawna data ważności.",
+    "message": "Nieprawidłowa data ważności.",
     "description": "Validation message indicating that the expiration date format is not valid"
   },
   "details_expiration_date_past": {
@@ -880,7 +880,7 @@
     "description": "Informational message indicating that the payment card expiration date is in the past"
   },
   "details_security_code_required": {
-    "message": "Kod bezpieczeństwa jest wymagany",
+    "message": "Kod bezpieczeństwa jest wymagany.",
     "description": "Validation message indicating that the security code field is required"
   },
   "details_security_code_invalid": {
@@ -888,7 +888,7 @@
     "description": "Validation message indicating that the security code must be 3 or 4 digits"
   },
   "details_security_code_too_long": {
-    "message": "Niepoprawny kod bezpieczeństwa",
+    "message": "Nieprawidłowy kod bezpieczeństwa.",
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
   "details_secure_note_text_max_length": {
@@ -1144,11 +1144,11 @@
     "description": "Thank you message for users of the 2FAS Pass extension"
   },
   "settings_about_thank_you_subheader": {
-    "message": "Nie przechowujemy twoich danych.\nNie mamy serwerów.",
+    "message": "Nie przechowujemy danych.\nNie mamy serwerów.",
     "description": "Subheader emphasizing the privacy and security of the extension"
   },
   "settings_about_thank_you_description": {
-    "message": "Nie przechowujemy Twoich elementów, ponieważ nie posiadamy serwerów. Wszystkie Twoje elementy znajdują się w aplikacji mobilnej 2FAS Pass. Te, które wybierzesz, mogą być również przechowywane w tym rozszerzeniu przeglądarki. To Ty decydujesz, kiedy i w jaki sposób ich używasz.",
+    "message": "Nie przechowujemy twoich danych, ponieważ wszystkie elementy znajdują się w lokalnej aplikacji mobilnej 2FAS Pass. Te, które wybierzesz, mogą być również przechowywane w tym rozszerzeniu przeglądarki.",
     "description": "Explains that user data is stored in the mobile app or optionally in the extension"
   },
   "settings_visit_our_website": {
@@ -1172,7 +1172,7 @@
     "description": "Header for the save login prompt settings"
   },
   "settings_save_prompt_description": {
-    "message": "Wybierz sposób, pytania o zapisanie szczegółów elementu.",
+    "message": "Wybierz sposób pytania o zapisanie szczegółów elementu.",
     "description": "Description for configuring the save login prompt behavior"
   },
   "settings_save_prompt_pass": {
@@ -1260,7 +1260,7 @@
     "description": "Tooltip explaining that the auto-clear setting applies only to data copied from the extension"
   },
   "settings_auto_clear_clipboard_tooltip_2": {
-    "message": "Funkcja „Automatyczne czyszczenie schowka” automatycznie usuwa zawartość schowka po określonym czasie (można go zmienić powyżej). Zapobiega to trwałemu przechowywaniu haseł.",
+    "message": "Funkcja „Automatyczne czyszczenie schowka”, usuwa zawartość schowka po określonym czasie (można go zmienić powyżej). Zapobiega to trwałemu przechowywaniu haseł.",
     "description": "Tooltip clarifying that the auto-clear setting does not affect data copied from outside the extension"
   },
   "settings_auto_clear_clipboard_tooltip_3": {
@@ -1296,7 +1296,7 @@
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_shortcut_safari_tooltip": {
-    "message": "Aby ustawić lub zmienić ten skrót, przejdź do ustawień rozszerzeń przeglądarki, wybierz 2FAS Pass i zmień skrót w określonym polu.\n",
+    "message": "Aby ustawić lub zmienić ten skrót, przejdź do ustawień rozszerzeń przeglądarki, wybierz 2FAS Pass i zmień skrót w określonym polu.",
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_push_native": {
@@ -1312,7 +1312,7 @@
     "description": "Header for the notifications settings"
   },
   "settings_notifications_description": {
-    "message": "Wybierz typ powiadomień, który będzie informował Cię o komunikacji między aplikacją mobilną 2FAS Pass a tym rozszerzeniem przeglądarki.",
+    "message": "Wybierz typ powiadomień, który będzie informował o komunikacji między aplikacją mobilną 2FAS Pass a tym rozszerzeniem przeglądarki.",
     "description": "Explains how to configure notifications for communication between the mobile app and extension"
   },
   "settings_notifications_send_test": {
@@ -1336,7 +1336,7 @@
     "description": "Validation message when the extension name is not provided"
   },
   "settings_ext_name_validate_min_length": {
-    "message": "Wprowadź nazwę rozszerzenia, nie krótszą niż 3 znaki,",
+    "message": "Wprowadź nazwę rozszerzenia, nie krótszą niż 3 znaki.",
     "description": "Validation message when the extension name is too short"
   },
   "settings_ext_name_validate_max_length": {
@@ -1372,7 +1372,7 @@
     "description": "Validation message when trying to add an empty domain"
   },
   "settings_excluded_domains_add_invalid": {
-    "message": "Niepoprawna domena. Proszę wpisać poprawną.",
+    "message": "Nieprawidłowa domena. Spróbuj ponownie.",
     "description": "Validation message when the provided domain is invalid"
   },
   "settings_excluded_domains_add_already_ignored": {
@@ -1536,15 +1536,15 @@
     "description": "Button label to copy data to the clipboard"
   },
   "this_tab_autofill_success": {
-    "message": "Automatyczne wypełnianie udane",
+    "message": "Wypełnianie zakończone",
     "description": "Message displayed when autofill operation is successful"
   },
   "this_tab_autofill_no_password": {
-    "message": "Uzupełniono nazwę użytkownika, ale nie znaleziono hasła.",
+    "message": "Wypełniono nazwę użytkownika, ale nie znaleziono hasła.",
     "description": "Message displayed when no password is found for autofill"
   },
   "this_tab_autofill_fetch_password": {
-    "message": "Autouzupełniono nazwę użytkownika. Pobierz hasło z urządzenia, aby zakończyć proces.",
+    "message": "Wypełniono nazwę użytkownika. Pobierz hasło z urządzenia, aby zakończyć proces.",
     "description": "Message displayed when username is autofilled for a Highly Secret item that requires fetching password from device"
   },
   "this_tab_autofill_no_username_and_password": {
@@ -1552,15 +1552,15 @@
     "description": "Message displayed when no username and password are found for autofill"
   },
   "this_tab_can_t_autofill": {
-    "message": "Rozszerzenie przeglądarki nie może automatycznie uzupełnić danych. Skopiuj dane elementu i wklej je ręcznie.",
+    "message": "Rozszerzenie przeglądarki nie może autouzupełnić danych. Skopiuj dane elementu i wklej je ręcznie.",
     "description": "Message shown when autofill isn't possible, suggesting manual copy-paste"
   },
   "this_tab_can_t_autofill_t2": {
-    "message": "Rozszerzenie przeglądarki nie może automatycznie wypełnić formularza. Pobierz szczegóły elementu i wklej je ręcznie.",
+    "message": "Rozszerzenie przeglądarki nie może wypełnić formularza. Pobierz szczegóły elementu i wklej je ręcznie.",
     "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
   },
   "this_tab_can_t_autofill_t2_failed": {
-    "message": "Rozszerzenie przeglądarki nie może automatycznie wypełnić całości formularza.",
+    "message": "Rozszerzenie przeglądarki nie może wypełnić całości formularza.",
     "description": "Message displayed when autofill operation fails or is incomplete"
   },
   "this_tab_can_t_find_inputs": {
@@ -1612,11 +1612,11 @@
     "description": "Label for a dropdown or menu containing additional actions"
   },
   "this_tab_autofill_fetch_card_data": {
-    "message": "Autouzupełniono właściciela karty. Pobierz hasło z urządzenia, aby zakończyć proces.",
+    "message": "Wypełniono właściciela karty. Pobierz hasło z urządzenia, aby zakończyć proces.",
     "description": "Message displayed when cardholder name is autofilled for a Highly Secret item that requires fetching card data from device"
   },
   "this_tab_autofill_no_card_data_available": {
-    "message": "Tylko właściciel karty był dostępny do autouzupełnienia.",
+    "message": "Tylko właściciel karty był dostępny do wypełnienia",
     "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
   "all_items_list_no_search_results": {
@@ -1636,7 +1636,7 @@
     "description": "Option text to clear the selected tag filter"
   },
   "keep_item_popup_header": {
-    "message": "Dane dla następującego elementu \nzostały pomyślnie pobrane.",
+    "message": "Szczegóły elementu pobrane pomyślnie.",
     "description": "Header message in popup after fetching login data for autofill"
   },
   "keep_item_popup_keep": {
@@ -1708,7 +1708,7 @@
     "description": "Label for the password field"
   },
   "placeholder_username": {
-    "message": "Wpisz nazwę użytkownika",
+    "message": "Wpisz użytkownika",
     "description": "Placeholder text for the username input field"
   },
   "placeholder_password": {
@@ -1840,7 +1840,7 @@
     "description": "Placeholder text for the secure note name input field"
   },
   "secure_note_name_required": {
-    "message": "Nazwa notatki jest wymagana",
+    "message": "Nazwa notatki jest wymagana.",
     "description": "Validation message indicating that the secure note name is required"
   },
   "secure_note_name_max_length": {

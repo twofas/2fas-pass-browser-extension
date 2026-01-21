@@ -4,11 +4,11 @@
     "description": "Description of the 2FAS Pass Browser Extension highlighting its features"
   },
   "autofill": {
-    "message": "Autouzupełnianie",
+    "message": "Wypełnianie",
     "description": "Label for the autofill functionality"
   },
   "autofillCommand": {
-    "message": "Autouzupełnianie 2FAS Pass",
+    "message": "Wypełnianie 2FAS Pass",
     "description": "Label for the command used to trigger autofill"
   },
   "fetch": {
@@ -112,7 +112,7 @@
     "description": "Option to enable dark mode for the interface"
   },
   "unset_mode": {
-    "message": "Domyślne ustawienia systemu",
+    "message": "Domyślny systemowy",
     "description": "Option to use the system's default mode for the interface"
   },
   "save": {
@@ -176,7 +176,7 @@
     "description": "Label for a state where no value is available"
   },
   "no_valid_domain": {
-    "message": "Nie wykryto prawidłowej domeny. Jeśli jest to domena niestandardowa, dodaj na jej początku odpowiedni protokół (np. https).",
+    "message": "Nie wykryto prawidłowej domeny. Jeśli jest to domena niestandardowa, dodaj odpowiedni protokół na początku (np. https).",
     "description": "Label for a state where no valid domain is provided"
   },
   "sync": {

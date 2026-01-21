@@ -16,7 +16,7 @@
     "description": "Label for the password field"
   },
   "placeholder_username": {
-    "message": "Wpisz nazwę użytkownika",
+    "message": "Wpisz użytkownika",
     "description": "Placeholder text for the username input field"
   },
   "placeholder_password": {

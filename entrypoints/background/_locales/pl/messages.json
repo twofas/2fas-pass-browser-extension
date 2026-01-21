@@ -1,6 +1,6 @@
 {
   "background_contextMenuConfigured_no_accounts": {
-    "message": "Brak pasujących elementów dla tej domeny.",
+    "message": "Brak pasujących elementów dla tej domeny",
     "description": "Message displayed when no login items match the current domain in the context menu"
   },
   "background_contextMenuConfigured_add_account": {
@@ -24,15 +24,15 @@
     "description": "Title for the notification when the card has no data to autofill"
   },
   "notification_card_autofill_no_data_message": {
-    "message": "Ta karta nie ma danych do autouzupełnienia",
+    "message": "Ta karta nie ma danych do wypełnienia",
     "description": "Message for the notification when the card has no data to autofill"
   },
   "notification_card_autofill_partial_title": {
-    "message": "Częściowe autouzupełnienie",
+    "message": "Częściowe wypełnienie",
     "description": "Title for the notification when card autofill is only partially successful"
   },
   "notification_card_autofill_partial_message": {
-    "message": "Niektóre szczegóły karty nie mogły być autouzupełnione",
+    "message": "Niektóre szczegóły karty nie mogły być wypełnione",
     "description": "Message when some payment card fields could not be autofilled"
   },
   "notification_card_autofill_no_inputs_title": {
@@ -40,7 +40,7 @@
     "description": "Title for the notification when no card input fields are detected on the page"
   },
   "notification_card_autofill_no_inputs_message": {
-    "message": "Ta strona nie zawiera formularza danych karty, który można automatycznie uzupełnić.",
+    "message": "Ta strona nie zawiera formularza danych karty, który można wypełnić.",
     "description": "Message for the notification when no card input fields are detected on the page"
   }
 }

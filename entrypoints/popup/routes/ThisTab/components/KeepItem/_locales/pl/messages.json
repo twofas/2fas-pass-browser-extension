@@ -1,6 +1,6 @@
 {
   "keep_item_popup_header": {
-    "message": "Dane dla następującego elementu \nzostały pomyślnie pobrane.",
+    "message": "Szczegóły elementu pobrane pomyślnie.",
     "description": "Header message in popup after fetching login data for autofill"
   },
   "keep_item_popup_keep": {

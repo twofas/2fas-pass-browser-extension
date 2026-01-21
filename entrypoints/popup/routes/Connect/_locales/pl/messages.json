@@ -1,6 +1,6 @@
 {
   "connect_header": {
-    "message": "Zeskanuj ten kod QR za pomocą aplikacji mobilnej 2FAS Pass.",
+    "message": "Zeskanuj ten kod QR za pomocą aplikacji mobilnej 2FAS Pass",
     "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
   },
   "connect_description": {
@@ -12,7 +12,7 @@
     "description": "Message displayed while the connection process is ongoing"
   },
   "connect_connection_opened": {
-    "message": "Nawiązano połączenie.\nNie wyłączaj tego okienka",
+    "message": "Nawiązano połączenie.\nPozostaw to okno otwarte.",
     "description": "Message displayed when the connection is successfully opened"
   },
   "connect_push_cancelled": {
@@ -24,7 +24,7 @@
     "description": "Header prompting the user to select their device"
   },
   "connect_device_select_list_header": {
-    "message": "Wybierz urządzenie z którym chcesz się połączyć:",
+    "message": "Wybierz urządzenie, z którym chcesz się połączyć:",
     "description": "Header for the device selection list"
   },
   "connect_device_select_add_another": {
@@ -32,7 +32,7 @@
     "description": "Button text for adding another device"
   },
   "connect_push_animation_description": {
-    "message": "Aby dokończyć łączenie, \nzatwierdź prośbę na swoim urządzeniu.\n",
+    "message": "Aby dokończyć łączenie, \nzatwierdź prośbę na swoim urządzeniu.",
     "description": "Description for the push notification animation"
   },
   "connect_push_trouble": {

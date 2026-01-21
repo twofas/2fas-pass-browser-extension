@@ -52,7 +52,7 @@
     "description": "Message displayed when username is autofilled for a Highly Secret item that requires fetching password from device"
   },
   "this_tab_autofill_no_username_and_password": {
-    "message": "No username and password found.",
+    "message": "No username and password found",
     "description": "Message displayed when no username and password are found for autofill"
   },
   "this_tab_can_t_autofill": {

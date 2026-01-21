@@ -32,7 +32,7 @@
     "description": "Error message displayed when copying the URI to the clipboard fails"
   },
   "error_autofill_failed": {
-    "message": "Nieudane autouzupełnianie. Spróbuj ponownie.",
+    "message": "Nieudane wypełnianie. Spróbuj ponownie.",
     "description": "Error message displayed when the autofill operation fails"
   },
   "error_no_response_from_tab": {

@@ -40,15 +40,15 @@
     "description": "Button label to copy data to the clipboard"
   },
   "this_tab_autofill_success": {
-    "message": "Automatyczne wypełnianie udane",
+    "message": "Wypełnianie zakończone",
     "description": "Message displayed when autofill operation is successful"
   },
   "this_tab_autofill_no_password": {
-    "message": "Uzupełniono nazwę użytkownika, ale nie znaleziono hasła.",
+    "message": "Wypełniono nazwę użytkownika, ale nie znaleziono hasła.",
     "description": "Message displayed when no password is found for autofill"
   },
   "this_tab_autofill_fetch_password": {
-    "message": "Autouzupełniono nazwę użytkownika. Pobierz hasło z urządzenia, aby zakończyć proces.",
+    "message": "Wypełniono nazwę użytkownika. Pobierz hasło z urządzenia, aby zakończyć proces.",
     "description": "Message displayed when username is autofilled for a Highly Secret item that requires fetching password from device"
   },
   "this_tab_autofill_no_username_and_password": {
@@ -56,15 +56,15 @@
     "description": "Message displayed when no username and password are found for autofill"
   },
   "this_tab_can_t_autofill": {
-    "message": "Rozszerzenie przeglądarki nie może automatycznie uzupełnić danych. Skopiuj dane elementu i wklej je ręcznie.",
+    "message": "Rozszerzenie przeglądarki nie może autouzupełnić danych. Skopiuj dane elementu i wklej je ręcznie.",
     "description": "Message shown when autofill isn't possible, suggesting manual copy-paste"
   },
   "this_tab_can_t_autofill_t2": {
-    "message": "Rozszerzenie przeglądarki nie może automatycznie wypełnić formularza. Pobierz szczegóły elementu i wklej je ręcznie.",
+    "message": "Rozszerzenie przeglądarki nie może wypełnić formularza. Pobierz szczegóły elementu i wklej je ręcznie.",
     "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
   },
   "this_tab_can_t_autofill_t2_failed": {
-    "message": "Rozszerzenie przeglądarki nie może automatycznie wypełnić całości formularza.",
+    "message": "Rozszerzenie przeglądarki nie może wypełnić całości formularza.",
     "description": "Message displayed when autofill operation fails or is incomplete"
   },
   "this_tab_can_t_find_inputs": {
@@ -116,15 +116,15 @@
     "description": "Label for a dropdown or menu containing additional actions"
   },
   "this_tab_autofill_fetch_card_data": {
-    "message": "Autouzupełniono właściciela karty. Pobierz hasło z urządzenia, aby zakończyć proces.",
+    "message": "Wypełniono właściciela karty. Pobierz hasło z urządzenia, aby zakończyć proces.",
     "description": "Message displayed when cardholder name is autofilled for a Highly Secret item that requires fetching card data from device"
   },
   "this_tab_autofill_no_card_data_available": {
-    "message": "Tylko właściciel karty był dostępny do autouzupełnienia.",
+    "message": "Tylko właściciel karty był dostępny do wypełnienia",
     "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
   "notification_card_autofill_partial_message": {
-    "message": "Niektóre szczegóły karty nie mogły być autouzupełnione",
+    "message": "Niektóre szczegóły karty nie mogły być wypełnione",
     "description": "Message when some payment card fields could not be autofilled"
   }
 }

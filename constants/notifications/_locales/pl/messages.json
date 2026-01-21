@@ -20,7 +20,7 @@
     "description": "Title for the notification when there is no active tab for autofill"
   },
   "notification_shortcut_autofill_no_active_tab_message": {
-    "message": "Brak aktywnej karty do autouzupełniania.",
+    "message": "Brak aktywnej karty do autouzupełniania",
     "description": "Message for the notification when there is no active tab for autofill"
   },
   "notification_shortcut_autofill_internal_page_title": {
@@ -28,7 +28,7 @@
     "description": "Title for the notification when autofill is attempted on a browser internal page"
   },
   "notification_shortcut_autofill_internal_page_message": {
-    "message": "Przepraszamy, ale nie możemy automatycznie wypełniać danych na wewnętrznych stronach przeglądarki.",
+    "message": "Przepraszamy, ale nie możemy autouzupełnić danych na wewnętrznych stronach przeglądarki",
     "description": "Message shown when autofill isn't supported on browser internal pages"
   },
   "notification_settings_save_success": {
@@ -48,7 +48,7 @@
     "description": "Message for a test notification"
   },
   "notification_shortcut_autofill_no_username_and_password_title": {
-    "message": "Autouzupełnianie niemożliwe",
+    "message": "Wypełnianie niemożliwe",
     "description": "Title for the notification when no username and password are found"
   },
   "notification_shortcut_autofill_no_username_and_password_message": {
@@ -68,7 +68,7 @@
     "description": "Notification message when the error message is successfully copied to the clipboard"
   },
   "autofill_cross_domain_warning_popup": {
-    "message": "Ta strona zawiera formularze z zewnętrznych domen:\nDOMAINS\n\nCzy chcesz automatycznie uzupełnić dane w tych formularzach?",
+    "message": "Ta strona zawiera formularze z zewnętrznych domen:\nDOMAINS\n\nCzy chcesz wypełnić dane w tych formularzach?",
     "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
   }
 }

@@ -40,11 +40,11 @@
     "description": "Instruction to click the extension icon to open it"
   },
   "install_2_use_mobile_app": {
-    "message": "Dotknij \"Połącz\" w aplikacji mobilnej 2FAS Pass aby zeskanować kod QR.",
+    "message": "Kliknij \"Połącz\" w aplikacji mobilnej 2FAS Pass, aby zeskanować kod QR.",
     "description": "Instruction to use the mobile app to scan the QR code"
   },
   "install_3_info": {
-    "message": "Rozszerzenie jest odblokowane na czas tej sesji przeglądarki!",
+    "message": "Rozszerzenie jest odblokowane na czas tej sesji przeglądarki",
     "description": "Message displayed when the extension is unlocked for the current browser session"
   },
   "install_3_header": {
