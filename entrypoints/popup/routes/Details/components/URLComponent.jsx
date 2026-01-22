@@ -8,7 +8,7 @@ import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useMemo } from 'react';
 import { motion } from 'motion/react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupState from '../../../store/popupState/usePopupState';
@@ -55,6 +55,16 @@ function URLComponent (props) {
 
   const { inputError, uri, index } = props;
   const inputRef = useRef(null);
+
+  const isUriInvalid = useMemo(() => {
+    const uriText = uri?.text;
+
+    if (!uriText || uriText.length === 0) {
+      return false;
+    }
+
+    return uriText.length > 2048;
+  }, [uri?.text]);
 
   const isEditable = data?.domainsEditable?.[uri._tempId];
   const buttonText = isEditable === true ? getMessage('cancel') : getMessage('edit');
@@ -191,6 +201,7 @@ function URLComponent (props) {
                 type="text"
                 {...input}
                 ref={inputRef}
+                className={isUriInvalid ? pI.inputTextError : ''}
                 value={uri.text}
                 onChange={e => {
                   input.onChange(e);

@@ -40,6 +40,16 @@ function SecureNoteText (props) {
   const [localEditedText, setLocalEditedText] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
 
+  const isTextInvalid = useMemo(() => {
+    const text = localEditedText ?? localDecryptedText;
+
+    if (!text || text.length === 0) {
+      return false;
+    }
+
+    return text.length > 16384;
+  }, [localEditedText, localDecryptedText]);
+
   const itemInstance = useMemo(() => {
     if (!data.item) {
       return null;
@@ -270,7 +280,7 @@ function SecureNoteText (props) {
                   value={getTextValue()}
                   placeholder={!sifDecryptError && (originalItem?.isT3orT2WithSif || data?.sifEditable) ? getMessage('placeholder_secure_note_empty') : ''}
                   id='editedSif'
-                  className={S.detailsSecureNoteTextarea}
+                  className={`${S.detailsSecureNoteTextarea}${isTextInvalid ? ` ${pI.inputTextError}` : ''}`}
                   style={{ height: `${textareaHeight}px`, overflowY: textareaOverflow }}
                   disabled={!data?.sifEditable || sifDecryptError}
                   onChange={handleTextChange}

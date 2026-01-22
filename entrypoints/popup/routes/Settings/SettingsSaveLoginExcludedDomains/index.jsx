@@ -6,7 +6,7 @@
 
 import S from '../Settings.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
@@ -31,6 +31,32 @@ function SettingsSaveLoginExcludedDomains (props) {
   const [excludedDomains, setExcludedDomains] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [domainToRemove, setDomainToRemove] = useState(null);
+
+  const isIgnoredDomainInvalid = useMemo(() => {
+    const value = data?.inputValue;
+
+    if (!value || value.length === 0) {
+      return false;
+    }
+
+    if (!URIMatcher.isUrl(value, true)) {
+      return true;
+    }
+
+    let domain;
+
+    try {
+      domain = getDomain(value);
+    } catch {
+      return true;
+    }
+
+    if (excludedDomains.includes(domain)) {
+      return true;
+    }
+
+    return false;
+  }, [data?.inputValue, excludedDomains]);
 
   const removeExcludedDomain = async domain => {
     const updatedDomains = excludedDomains.filter((d) => d !== domain);
@@ -206,6 +232,7 @@ function SettingsSaveLoginExcludedDomains (props) {
                                     type='text'
                                     {...input}
                                     id='ignored-domain'
+                                    className={isIgnoredDomainInvalid ? pI.inputTextError : ''}
                                     placeholder={getMessage('settings_excluded_domains_add_input_placeholder')}
                                     dir='ltr'
                                     spellCheck='true'

@@ -7,7 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useMemo } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -27,6 +27,16 @@ function Name (props) {
 
   const { formData } = props;
   const { inputError } = formData;
+
+  const isNameInvalid = useMemo(() => {
+    const name = data?.item?.content?.name;
+
+    if (!name || name.length === 0) {
+      return false;
+    }
+
+    return name.length > 255;
+  }, [data?.item?.content?.name]);
 
   const handleCopyName = useCallback(async name => {
     if (!name) {
@@ -92,6 +102,7 @@ function Name (props) {
               type="text"
               {...input}
               ref={inputRef}
+              className={isNameInvalid ? pI.inputTextError : ''}
               onChange={e => {
                 input.onChange(e);
                 handleNameChange(e);

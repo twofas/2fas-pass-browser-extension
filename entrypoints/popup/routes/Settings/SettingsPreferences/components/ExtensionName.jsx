@@ -7,7 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import S from '../../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import { Form, Field } from 'react-final-form';
 import { filterXSS } from 'xss';
@@ -22,6 +22,20 @@ function ExtensionName () {
   const { data, setData } = usePopupState();
 
   const [isInitialized, setIsInitialized] = useState(false);
+
+  const isExtNameInvalid = useMemo(() => {
+    const name = data.extName;
+
+    if (!name || name.length === 0) {
+      return false;
+    }
+
+    if (name.length < 3 || name.length > 32) {
+      return true;
+    }
+
+    return false;
+  }, [data.extName]);
 
   useEffect(() => {
     const getExtName = async () => {
@@ -112,6 +126,7 @@ function ExtensionName () {
                     type="text"
                     {...input}
                     id="ext-name"
+                    className={isExtNameInvalid ? pI.inputTextError : ''}
                     placeholder={getMessage('settings_ext_name_placeholder')}
                     dir="ltr"
                     spellCheck="true"

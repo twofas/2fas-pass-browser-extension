@@ -10,7 +10,7 @@ import { Field } from 'react-final-form';
 import { motion } from 'motion/react';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import updateItem from '../functions/updateItem';
 import { useI18n } from '@/partials/context/I18nContext';
 
@@ -31,6 +31,16 @@ function AdditionalInfo (props) {
 
   const { formData } = props;
   const { inputError } = formData;
+
+  const isAdditionalInfoInvalid = useMemo(() => {
+    const info = data?.item?.content?.additionalInfo;
+
+    if (!info || info.length === 0) {
+      return false;
+    }
+
+    return info.length > 16384;
+  }, [data?.item?.content?.additionalInfo]);
 
   const handleAdditionalInfoEditable = async () => {
     if (data.additionalInfoEditable) {
@@ -88,6 +98,7 @@ function AdditionalInfo (props) {
             >
               <textarea
                 {...input}
+                className={isAdditionalInfoInvalid ? pI.inputTextError : ''}
                 onChange={e => {
                   input.onChange(e);
                   handleAdditionalInfoChange(e);

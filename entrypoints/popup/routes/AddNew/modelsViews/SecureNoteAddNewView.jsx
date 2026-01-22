@@ -7,7 +7,7 @@
 import S from '../AddNew.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { memo, useState } from 'react';
+import { memo, useState, useMemo } from 'react';
 import usePopupState from '../../../store/popupState/usePopupState';
 import { Form, Field } from 'react-final-form';
 import { getCurrentDevice } from '@/partials/functions';
@@ -27,6 +27,26 @@ function SecureNoteAddNewView() {
   const { data, setData, setBatchData } = usePopupState();
 
   const [inputError, setInputError] = useState(undefined);
+
+  const isNameInvalid = useMemo(() => {
+    const name = data?.name;
+
+    if (!name || name.length === 0) {
+      return false;
+    }
+
+    return name.length > 255;
+  }, [data?.name]);
+
+  const isTextInvalid = useMemo(() => {
+    const text = data?.text;
+
+    if (!text || text.length === 0) {
+      return false;
+    }
+
+    return text.length > 16384;
+  }, [data?.text]);
 
   const validate = values => {
     const errors = {};
@@ -119,6 +139,7 @@ function SecureNoteAddNewView() {
                   <input
                     type='text'
                     {...input}
+                    className={isNameInvalid ? pI.inputTextError : ''}
                     placeholder={getMessage('secure_note_name_placeholder')}
                     id='add-new-name'
                     dir='ltr'
@@ -144,7 +165,7 @@ function SecureNoteAddNewView() {
                 <div className={pI.passInputBottom}>
                   <textarea
                     {...input}
-                    className={S.addNewSecureNoteTextarea}
+                    className={`${S.addNewSecureNoteTextarea}${isTextInvalid ? ` ${pI.inputTextError}` : ''}`}
                     placeholder={getMessage('secure_note_placeholder')}
                     id='add-new-text'
                     dir='ltr'
