@@ -18,7 +18,6 @@ const mockMessages = {
 
 describe('getMessage', () => {
   let browserI18nGetMessageSpy;
-  let browserRuntimeGetURLSpy;
   let storageGetItemSpy;
   let fetchSpy;
 
@@ -27,7 +26,7 @@ describe('getMessage', () => {
     resetI18nCache();
 
     browserI18nGetMessageSpy = vi.spyOn(browser.i18n, 'getMessage').mockImplementation(key => `native_${key}`);
-    browserRuntimeGetURLSpy = vi.spyOn(browser.runtime, 'getURL').mockImplementation(path => `chrome-extension://test-id${path}`);
+    vi.spyOn(browser.runtime, 'getURL').mockImplementation(path => `chrome-extension://test-id${path}`);
     storageGetItemSpy = vi.spyOn(storage, 'getItem').mockResolvedValue(null);
 
     fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
