@@ -40,6 +40,8 @@ struct ContentView: View {
             VStack {
                 Image(.twoPASSLogo)
                     .renderingMode(.original)
+                    .resizable()
+                    .scaledToFit()
                     .frame(width: 519, height: 141)
                 Spacer()
                     .frame(height: 95)
