@@ -8,7 +8,7 @@
     "description": "Label for multiple logins"
   },
   "username": {
-    "message": "Nazwa użytkownika / Email",
+    "message": "Użytkownik / Email",
     "description": "Label for the username or email field"
   },
   "password": {

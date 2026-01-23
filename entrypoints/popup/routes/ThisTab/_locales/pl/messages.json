@@ -100,7 +100,7 @@
     "description": "Button label to copy the card number to the clipboard"
   },
   "this_tab_fetch_card_info": {
-    "message": "Pobierz informację karty",
+    "message": "Pobierz dane karty",
     "description": "Button label to fetch the card info from the mobile app"
   },
   "this_tab_copy_card_security_code": {

@@ -64,11 +64,11 @@
     "description": "Error message displayed when there is an issue with the shortcut settings"
   },
   "error_no_network_connection": {
-    "message": "Brak połączenia z internetem. Sprawdź swoje połączenie i spróbuj ponownie.",
+    "message": "Brak połączenia z internetem. Sprawdź połączenie i spróbuj ponownie.",
     "description": "Error message displayed when there is no network connection"
   },
   "error_connection_error": {
-    "message": "Błąd połączenia. Sprawdź swoje połączenie z internetem i spróbuj ponownie.",
+    "message": "Błąd połączenia. Sprawdź połączenie z internetem i spróbuj ponownie.",
     "description": "Error message displayed when a connection error occurs"
   },
   "error_error_message_copy_failed": {

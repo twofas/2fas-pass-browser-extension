@@ -68,7 +68,7 @@
     "description": "Label for the name field"
   },
   "enter_on_mobile": {
-    "message": "Wprowadzę je w aplikacji mobilnej",
+    "message": "Wprowadź w aplikacji mobilnej",
     "description": "Option to enter data manually in the mobile app"
   },
   "autogenerate_on_mobile": {
@@ -76,7 +76,7 @@
     "description": "Option to autogenerate a password in the mobile app"
   },
   "set_login_and_password_in_the_mobile_app": {
-    "message": "Ustaw nazwę użytkownika i hasło w aplikacji mobilnej",
+    "message": "Ustaw użytkownika i hasło w aplikacji mobilnej",
     "description": "Instruction to set login and password in the mobile app"
   },
   "reload": {
@@ -104,15 +104,15 @@
     "description": "Label for advanced settings or options"
   },
   "light_mode": {
-    "message": "Tryb jasny",
+    "message": "Jasny",
     "description": "Option to enable light mode for the interface"
   },
   "dark_mode": {
-    "message": "Tryb ciemny",
+    "message": "Ciemny",
     "description": "Option to enable dark mode for the interface"
   },
   "unset_mode": {
-    "message": "Domyślny systemowy",
+    "message": "Systemowy",
     "description": "Option to use the system's default mode for the interface"
   },
   "save": {
@@ -144,7 +144,7 @@
     "description": "Button label to access additional information"
   },
   "tier_0_name": {
-    "message": "Ściśle tajne",
+    "message": "Ściśle tajny",
     "description": "Label for the highest security tier"
   },
   "tier_0_description": {
@@ -152,7 +152,7 @@
     "description": "Description for the top-secret security tier"
   },
   "tier_1_name": {
-    "message": "Tajne",
+    "message": "Tajny",
     "description": "Label for the second-highest security tier"
   },
   "tier_1_description": {
@@ -160,7 +160,7 @@
     "description": "Explains the ultra-secure tier where passwords are shared after mobile app confirmation"
   },
   "tier_2_name": {
-    "message": "Poufne",
+    "message": "Poufny",
     "description": "Label for the standard security tier"
   },
   "tier_2_description": {
@@ -184,7 +184,7 @@
     "description": "Label for the sync functionality"
   },
   "sync_title": {
-    "message": "Zsynchronizuj z aplikacją mobilną 2FAS Pass.",
+    "message": "Synchronizuj z aplikacją mobilną 2FAS Pass.",
     "description": "Title for the sync data section"
   },
   "ssh_key": {

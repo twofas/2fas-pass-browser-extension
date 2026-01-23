@@ -28,11 +28,11 @@
     "description": "Message indicating that the password is stored only in the user's Vault"
   },
   "details_password_decrypt_error": {
-    "message": "Nie udało się odszyfrować hasła. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
+    "message": "Nie udało się odszyfrować hasła. Synchronizuj rozszerzenie z aplikacją mobilną.",
     "description": "Error message displayed when decrypting the password fails"
   },
   "details_secure_note_decrypt_error": {
-    "message": "Nie udało się odszyfrować bezpiecznej notatki. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
+    "message": "Nie udało się odszyfrować bezpiecznej notatki. Synchronizuj rozszerzenie z aplikacją mobilną.",
     "description": "Error message displayed when decrypting the secure note fails"
   },
   "details_delete_header": {
@@ -40,7 +40,7 @@
     "description": "Header for the delete login confirmation section"
   },
   "details_delete": {
-    "message": "Usuń ten element ze swojego sejfu",
+    "message": "Usuń ten element z sejfu",
     "description": "Button label to delete the item from the Vault"
   },
   "details_name_required": {
@@ -60,7 +60,7 @@
     "description": "Validation message indicating the maximum length for the URL field"
   },
   "details_item_not_found": {
-    "message": "Wystąpił błąd. Nie znaleziono elementu. Zsynchronizuj z aplikacją mobilną i spróbuj ponownie.",
+    "message": "Wystąpił błąd. Nie znaleziono elementu. Synchronizuj z aplikacją mobilną i spróbuj ponownie.",
     "description": "Error shown when the requested item is not found, suggesting reconnection"
   },
   "details_security_type": {
@@ -140,7 +140,7 @@
     "description": "Label for the card number field in payment card details"
   },
   "details_card_number_decrypt_error": {
-    "message": "Nie udało się odszyfrować numeru karty. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
+    "message": "Nie udało się odszyfrować numeru karty. Synchronizuj rozszerzenie z aplikacją mobilną.",
     "description": "Error message displayed when decrypting the card number fails"
   },
   "details_toggle_card_number_visibility": {
@@ -164,7 +164,7 @@
     "description": "Title for the button that copies expiration date to clipboard"
   },
   "details_security_code": {
-    "message": "Kod bezpieczeństwa",
+    "message": "Kod bezp.",
     "description": "Label for the security code field in payment card details"
   },
   "details_security_code_decrypt_error": {

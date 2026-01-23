@@ -64,11 +64,11 @@
     "description": "Error message displayed when there is an issue with the shortcut settings"
   },
   "error_no_network_connection": {
-    "message": "Brak połączenia z internetem. Sprawdź swoje połączenie i spróbuj ponownie.",
+    "message": "Brak połączenia z internetem. Sprawdź połączenie i spróbuj ponownie.",
     "description": "Error message displayed when there is no network connection"
   },
   "error_connection_error": {
-    "message": "Błąd połączenia. Sprawdź swoje połączenie z internetem i spróbuj ponownie.",
+    "message": "Błąd połączenia. Sprawdź połączenie z internetem i spróbuj ponownie.",
     "description": "Error message displayed when a connection error occurs"
   },
   "error_error_message_copy_failed": {
@@ -144,7 +144,7 @@
     "description": "Label for the name field"
   },
   "enter_on_mobile": {
-    "message": "Wprowadzę je w aplikacji mobilnej",
+    "message": "Wprowadź w aplikacji mobilnej",
     "description": "Option to enter data manually in the mobile app"
   },
   "autogenerate_on_mobile": {
@@ -152,7 +152,7 @@
     "description": "Option to autogenerate a password in the mobile app"
   },
   "set_login_and_password_in_the_mobile_app": {
-    "message": "Ustaw nazwę użytkownika i hasło w aplikacji mobilnej",
+    "message": "Ustaw użytkownika i hasło w aplikacji mobilnej",
     "description": "Instruction to set login and password in the mobile app"
   },
   "reload": {
@@ -180,15 +180,15 @@
     "description": "Label for advanced settings or options"
   },
   "light_mode": {
-    "message": "Tryb jasny",
+    "message": "Jasny",
     "description": "Option to enable light mode for the interface"
   },
   "dark_mode": {
-    "message": "Tryb ciemny",
+    "message": "Ciemny",
     "description": "Option to enable dark mode for the interface"
   },
   "unset_mode": {
-    "message": "Domyślny systemowy",
+    "message": "Systemowy",
     "description": "Option to use the system's default mode for the interface"
   },
   "save": {
@@ -220,7 +220,7 @@
     "description": "Button label to access additional information"
   },
   "tier_0_name": {
-    "message": "Ściśle tajne",
+    "message": "Ściśle tajny",
     "description": "Label for the highest security tier"
   },
   "tier_0_description": {
@@ -228,7 +228,7 @@
     "description": "Description for the top-secret security tier"
   },
   "tier_1_name": {
-    "message": "Tajne",
+    "message": "Tajny",
     "description": "Label for the second-highest security tier"
   },
   "tier_1_description": {
@@ -236,7 +236,7 @@
     "description": "Explains the ultra-secure tier where passwords are shared after mobile app confirmation"
   },
   "tier_2_name": {
-    "message": "Poufne",
+    "message": "Poufny",
     "description": "Label for the standard security tier"
   },
   "tier_2_description": {
@@ -260,7 +260,7 @@
     "description": "Label for the sync functionality"
   },
   "sync_title": {
-    "message": "Zsynchronizuj z aplikacją mobilną 2FAS Pass.",
+    "message": "Synchronizuj z aplikacją mobilną 2FAS Pass.",
     "description": "Title for the sync data section"
   },
   "ssh_key": {
@@ -350,6 +350,226 @@
   "placeholder_name": {
     "message": "Wpisz nazwę elementu",
     "description": "Placeholder text for the name input field"
+  },
+  "primereact_month_january": {
+    "message": "Styczeń",
+    "description": "PrimeReact Calendar month name for January"
+  },
+  "primereact_month_february": {
+    "message": "Luty",
+    "description": "PrimeReact Calendar month name for February"
+  },
+  "primereact_month_march": {
+    "message": "Marzec",
+    "description": "PrimeReact Calendar month name for March"
+  },
+  "primereact_month_april": {
+    "message": "Kwiecień",
+    "description": "PrimeReact Calendar month name for April"
+  },
+  "primereact_month_may": {
+    "message": "Maj",
+    "description": "PrimeReact Calendar month name for May"
+  },
+  "primereact_month_june": {
+    "message": "Czerwiec",
+    "description": "PrimeReact Calendar month name for June"
+  },
+  "primereact_month_july": {
+    "message": "Lipiec",
+    "description": "PrimeReact Calendar month name for July"
+  },
+  "primereact_month_august": {
+    "message": "Sierpień",
+    "description": "PrimeReact Calendar month name for August"
+  },
+  "primereact_month_september": {
+    "message": "Wrzesień",
+    "description": "PrimeReact Calendar month name for September"
+  },
+  "primereact_month_october": {
+    "message": "Październik",
+    "description": "PrimeReact Calendar month name for October"
+  },
+  "primereact_month_november": {
+    "message": "Listopad",
+    "description": "PrimeReact Calendar month name for November"
+  },
+  "primereact_month_december": {
+    "message": "Grudzień",
+    "description": "PrimeReact Calendar month name for December"
+  },
+  "primereact_month_short_jan": {
+    "message": "Sty",
+    "description": "PrimeReact Calendar short month name for January"
+  },
+  "primereact_month_short_feb": {
+    "message": "Lut",
+    "description": "PrimeReact Calendar short month name for February"
+  },
+  "primereact_month_short_mar": {
+    "message": "Mar",
+    "description": "PrimeReact Calendar short month name for March"
+  },
+  "primereact_month_short_apr": {
+    "message": "Kwi",
+    "description": "PrimeReact Calendar short month name for April"
+  },
+  "primereact_month_short_may": {
+    "message": "Maj",
+    "description": "PrimeReact Calendar short month name for May"
+  },
+  "primereact_month_short_jun": {
+    "message": "Cze",
+    "description": "PrimeReact Calendar short month name for June"
+  },
+  "primereact_month_short_jul": {
+    "message": "Lip",
+    "description": "PrimeReact Calendar short month name for July"
+  },
+  "primereact_month_short_aug": {
+    "message": "Sie",
+    "description": "PrimeReact Calendar short month name for August"
+  },
+  "primereact_month_short_sep": {
+    "message": "Wrz",
+    "description": "PrimeReact Calendar short month name for September"
+  },
+  "primereact_month_short_oct": {
+    "message": "Paź",
+    "description": "PrimeReact Calendar short month name for October"
+  },
+  "primereact_month_short_nov": {
+    "message": "Lis",
+    "description": "PrimeReact Calendar short month name for November"
+  },
+  "primereact_month_short_dec": {
+    "message": "Gru",
+    "description": "PrimeReact Calendar short month name for December"
+  },
+  "primereact_day_sunday": {
+    "message": "Niedziela",
+    "description": "PrimeReact Calendar day name for Sunday"
+  },
+  "primereact_day_monday": {
+    "message": "Poniedziałek",
+    "description": "PrimeReact Calendar day name for Monday"
+  },
+  "primereact_day_tuesday": {
+    "message": "Wtorek",
+    "description": "PrimeReact Calendar day name for Tuesday"
+  },
+  "primereact_day_wednesday": {
+    "message": "Środa",
+    "description": "PrimeReact Calendar day name for Wednesday"
+  },
+  "primereact_day_thursday": {
+    "message": "Czwartek",
+    "description": "PrimeReact Calendar day name for Thursday"
+  },
+  "primereact_day_friday": {
+    "message": "Piątek",
+    "description": "PrimeReact Calendar day name for Friday"
+  },
+  "primereact_day_saturday": {
+    "message": "Sobota",
+    "description": "PrimeReact Calendar day name for Saturday"
+  },
+  "primereact_day_short_sun": {
+    "message": "Ndz",
+    "description": "PrimeReact Calendar short day name for Sunday"
+  },
+  "primereact_day_short_mon": {
+    "message": "Pon",
+    "description": "PrimeReact Calendar short day name for Monday"
+  },
+  "primereact_day_short_tue": {
+    "message": "Wt",
+    "description": "PrimeReact Calendar short day name for Tuesday"
+  },
+  "primereact_day_short_wed": {
+    "message": "Śr",
+    "description": "PrimeReact Calendar short day name for Wednesday"
+  },
+  "primereact_day_short_thu": {
+    "message": "Czw",
+    "description": "PrimeReact Calendar short day name for Thursday"
+  },
+  "primereact_day_short_fri": {
+    "message": "Pt",
+    "description": "PrimeReact Calendar short day name for Friday"
+  },
+  "primereact_day_short_sat": {
+    "message": "Sob",
+    "description": "PrimeReact Calendar short day name for Saturday"
+  },
+  "primereact_day_min_su": {
+    "message": "Nd",
+    "description": "PrimeReact Calendar minimal day name for Sunday"
+  },
+  "primereact_day_min_mo": {
+    "message": "Pn",
+    "description": "PrimeReact Calendar minimal day name for Monday"
+  },
+  "primereact_day_min_tu": {
+    "message": "Wt",
+    "description": "PrimeReact Calendar minimal day name for Tuesday"
+  },
+  "primereact_day_min_we": {
+    "message": "Śr",
+    "description": "PrimeReact Calendar minimal day name for Wednesday"
+  },
+  "primereact_day_min_th": {
+    "message": "Cz",
+    "description": "PrimeReact Calendar minimal day name for Thursday"
+  },
+  "primereact_day_min_fr": {
+    "message": "Pt",
+    "description": "PrimeReact Calendar minimal day name for Friday"
+  },
+  "primereact_day_min_sa": {
+    "message": "So",
+    "description": "PrimeReact Calendar minimal day name for Saturday"
+  },
+  "primereact_today": {
+    "message": "Dzisiaj",
+    "description": "PrimeReact Calendar today button label"
+  },
+  "primereact_clear": {
+    "message": "Wyczyść",
+    "description": "PrimeReact Calendar clear button label"
+  },
+  "primereact_choose_month": {
+    "message": "Wybierz miesiąc",
+    "description": "PrimeReact Calendar choose month accessibility label"
+  },
+  "primereact_choose_year": {
+    "message": "Wybierz rok",
+    "description": "PrimeReact Calendar choose year accessibility label"
+  },
+  "primereact_prev_month": {
+    "message": "Poprzedni miesiąc",
+    "description": "PrimeReact Calendar previous month button accessibility label"
+  },
+  "primereact_next_month": {
+    "message": "Następny miesiąc",
+    "description": "PrimeReact Calendar next month button accessibility label"
+  },
+  "primereact_prev_year": {
+    "message": "Poprzedni rok",
+    "description": "PrimeReact Calendar previous year button accessibility label"
+  },
+  "primereact_next_year": {
+    "message": "Następny rok",
+    "description": "PrimeReact Calendar next year button accessibility label"
+  },
+  "primereact_prev_decade": {
+    "message": "Poprzednia dekada",
+    "description": "PrimeReact Calendar previous decade button accessibility label"
+  },
+  "primereact_next_decade": {
+    "message": "Następna dekada",
+    "description": "PrimeReact Calendar next decade button accessibility label"
   },
   "background_contextMenuConfigured_no_accounts": {
     "message": "Brak pasujących elementów dla tej domeny",
@@ -516,11 +736,11 @@
     "description": "Button label for downloading the Android app"
   },
   "bottom_bar_security_icon_tooltip_header": {
-    "message": "To jest twoja ikona identyfikacyjna, zapamiętaj ją.",
+    "message": "To jest twoja ikona identyfikacyjna.",
     "description": "Header for the tooltip explaining the purpose of the Identicon"
   },
   "bottom_bar_security_icon_tooltip_text": {
-    "message": "Upewnij się, że widzisz go za każdym razem, \ngdy korzystasz z rozszerzenia przeglądarki 2FAS Pass.",
+    "message": "Upewnij się, że ją widzisz, za każdym\nrazem, gdy korzystasz z\nrozszerzenia przeglądarki 2FAS Pass.",
     "description": "Reminds the user to verify their Identicon for security purposes"
   },
   "top_bar_locked": {
@@ -696,11 +916,11 @@
     "description": "Message indicating that the password is stored only in the user's Vault"
   },
   "details_password_decrypt_error": {
-    "message": "Nie udało się odszyfrować hasła. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
+    "message": "Nie udało się odszyfrować hasła. Synchronizuj rozszerzenie z aplikacją mobilną.",
     "description": "Error message displayed when decrypting the password fails"
   },
   "details_secure_note_decrypt_error": {
-    "message": "Nie udało się odszyfrować bezpiecznej notatki. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
+    "message": "Nie udało się odszyfrować bezpiecznej notatki. Synchronizuj rozszerzenie z aplikacją mobilną.",
     "description": "Error message displayed when decrypting the secure note fails"
   },
   "details_delete_header": {
@@ -708,7 +928,7 @@
     "description": "Header for the delete login confirmation section"
   },
   "details_delete": {
-    "message": "Usuń ten element ze swojego sejfu",
+    "message": "Usuń ten element z sejfu",
     "description": "Button label to delete the item from the Vault"
   },
   "details_name_required": {
@@ -728,7 +948,7 @@
     "description": "Validation message indicating the maximum length for the URL field"
   },
   "details_item_not_found": {
-    "message": "Wystąpił błąd. Nie znaleziono elementu. Zsynchronizuj z aplikacją mobilną i spróbuj ponownie.",
+    "message": "Wystąpił błąd. Nie znaleziono elementu. Synchronizuj z aplikacją mobilną i spróbuj ponownie.",
     "description": "Error shown when the requested item is not found, suggesting reconnection"
   },
   "details_security_type": {
@@ -808,7 +1028,7 @@
     "description": "Label for the card number field in payment card details"
   },
   "details_card_number_decrypt_error": {
-    "message": "Nie udało się odszyfrować numeru karty. Zsynchronizuj rozszerzenie z aplikacją mobilną.",
+    "message": "Nie udało się odszyfrować numeru karty. Synchronizuj rozszerzenie z aplikacją mobilną.",
     "description": "Error message displayed when decrypting the card number fails"
   },
   "details_toggle_card_number_visibility": {
@@ -832,7 +1052,7 @@
     "description": "Title for the button that copies expiration date to clipboard"
   },
   "details_security_code": {
-    "message": "Kod bezpieczeństwa",
+    "message": "Kod bezp.",
     "description": "Label for the security code field in payment card details"
   },
   "details_security_code_decrypt_error": {
@@ -1176,15 +1396,15 @@
     "description": "Description for configuring the save login prompt behavior"
   },
   "settings_save_prompt_pass": {
-    "message": "Zapytanie 2FAS Pass (domyślne)",
+    "message": "Domyślny 2FAS Pass",
     "description": "Option to use the 2FAS Pass-specific save login prompt"
   },
   "settings_save_prompt_pass_encrypted": {
-    "message": "Zaawansowane zapytanie 2FAS Pass (dodatkowe szyfrowanie)",
+    "message": "Zaawansowany 2FAS Pass (dodatkowe szyfrowanie)",
     "description": "Option to use the 2FAS Pass encrypted save login prompt"
   },
   "settings_save_prompt_browser": {
-    "message": "Domyślne zapytanie przeglądarki",
+    "message": "Domyślny przeglądarki",
     "description": "Option to use the browser's default save login prompt"
   },
   "settings_save_prompt_none": {
@@ -1300,11 +1520,11 @@
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_push_native": {
-    "message": "Natywne powiadomienia przeglądarki",
+    "message": "Domyślne powiadomienia przeglądarki",
     "description": "Option to use the browser's native notification system"
   },
   "settings_push_custom": {
-    "message": "Niestandardowe powiadomienia 2FAS Pass",
+    "message": "Powiadomienia 2FAS Pass",
     "description": "Option to use custom notifications from 2FAS Pass"
   },
   "settings_notifications_header": {
@@ -1424,15 +1644,15 @@
     "description": "Label for the danger zone section in settings"
   },
   "settings_danger_zone_reset": {
-    "message": "Zresetuj rozszerzenie przeglądarki",
+    "message": "Resetuj rozszerzenie przeglądarki",
     "description": "Button label to reset the browser extension"
   },
   "settings_reset_header": {
-    "message": "Zresetuj rozszerzenie przeglądarki",
+    "message": "Resetuj rozszerzenie przeglądarki",
     "description": "Header for the reset browser extension confirmation dialog"
   },
   "settings_reset_description": {
-    "message": "Zresetowanie rozszerzenia przeglądarki 2FAS Pass spowoduje usunięcie wszystkich ustawień powiązanych z tym rozszerzeniem.",
+    "message": "Reset rozszerzenia przeglądarki 2FAS Pass spowoduje usunięcie wszystkich ustawień powiązanych z tym rozszerzeniem.",
     "description": "Confirmation message for resetting the browser extension"
   },
   "settings_reset_action_confirm_button": {
@@ -1596,7 +1816,7 @@
     "description": "Button label to copy the card number to the clipboard"
   },
   "this_tab_fetch_card_info": {
-    "message": "Pobierz informację karty",
+    "message": "Pobierz dane karty",
     "description": "Button label to fetch the card info from the mobile app"
   },
   "this_tab_copy_card_security_code": {
@@ -1700,7 +1920,7 @@
     "description": "Label for multiple logins"
   },
   "username": {
-    "message": "Nazwa użytkownika / Email",
+    "message": "Użytkownik / Email",
     "description": "Label for the username or email field"
   },
   "password": {

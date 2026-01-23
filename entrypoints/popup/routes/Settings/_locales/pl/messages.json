@@ -76,15 +76,15 @@
     "description": "Description for configuring the save login prompt behavior"
   },
   "settings_save_prompt_pass": {
-    "message": "Zapytanie 2FAS Pass (domyślne)",
+    "message": "Domyślny 2FAS Pass",
     "description": "Option to use the 2FAS Pass-specific save login prompt"
   },
   "settings_save_prompt_pass_encrypted": {
-    "message": "Zaawansowane zapytanie 2FAS Pass (dodatkowe szyfrowanie)",
+    "message": "Zaawansowany 2FAS Pass (dodatkowe szyfrowanie)",
     "description": "Option to use the 2FAS Pass encrypted save login prompt"
   },
   "settings_save_prompt_browser": {
-    "message": "Domyślne zapytanie przeglądarki",
+    "message": "Domyślny przeglądarki",
     "description": "Option to use the browser's default save login prompt"
   },
   "settings_save_prompt_none": {
@@ -200,11 +200,11 @@
     "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
   },
   "settings_push_native": {
-    "message": "Natywne powiadomienia przeglądarki",
+    "message": "Domyślne powiadomienia przeglądarki",
     "description": "Option to use the browser's native notification system"
   },
   "settings_push_custom": {
-    "message": "Niestandardowe powiadomienia 2FAS Pass",
+    "message": "Powiadomienia 2FAS Pass",
     "description": "Option to use custom notifications from 2FAS Pass"
   },
   "settings_notifications_header": {
@@ -324,15 +324,15 @@
     "description": "Label for the danger zone section in settings"
   },
   "settings_danger_zone_reset": {
-    "message": "Zresetuj rozszerzenie przeglądarki",
+    "message": "Resetuj rozszerzenie przeglądarki",
     "description": "Button label to reset the browser extension"
   },
   "settings_reset_header": {
-    "message": "Zresetuj rozszerzenie przeglądarki",
+    "message": "Resetuj rozszerzenie przeglądarki",
     "description": "Header for the reset browser extension confirmation dialog"
   },
   "settings_reset_description": {
-    "message": "Zresetowanie rozszerzenia przeglądarki 2FAS Pass spowoduje usunięcie wszystkich ustawień powiązanych z tym rozszerzeniem.",
+    "message": "Reset rozszerzenia przeglądarki 2FAS Pass spowoduje usunięcie wszystkich ustawień powiązanych z tym rozszerzeniem.",
     "description": "Confirmation message for resetting the browser extension"
   },
   "settings_reset_action_confirm_button": {
