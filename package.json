@@ -40,6 +40,7 @@
     "generate-enc-keys-dev": "node ./build_scripts/generateEncKeys.js mode=DEVELOPMENT",
     "generate-enc-keys-prod": "node ./build_scripts/generateEncKeys.js mode=PRODUCTION",
     "loco-import": "node ./build_scripts/locoImport.js",
+    "loco-safari-import": "node ./build_scripts/locoSafariImport.js",
     "prepare": "wxt prepare",
     "analyze": "wxt build --analyze --analyze-open",
     "test": "vitest --run",
