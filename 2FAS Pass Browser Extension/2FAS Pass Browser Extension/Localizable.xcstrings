@@ -1,116 +1,176 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "buttonCTA" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OPEN SAFARI EXTENSIONS PREFERENCES"
-          }
+    "sourceLanguage": "en",
+    "strings": {
+        "buttonCTA": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Open Safari Extensions settings"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Otwórz ustawienia rozszerzeń Safari"
+                    }
+                }
+            }
+        },
+        "errorContent": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Something went wrong. Try to restart the app"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Wystąpił błąd. Zrestartuj aplikację"
+                    }
+                }
+            }
+        },
+        "errorTitle": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Error"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Błąd"
+                    }
+                }
+            }
+        },
+        "noteOff": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "You can turn it on in Safari Extensions settings."
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Możesz je włączyć w ustawieniach rozszerzeń Safari."
+                    }
+                }
+            }
+        },
+        "noteOn": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "You can turn it off in Safari Extensions settings."
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Możesz je wyłączyć w ustawieniach rozszerzeń Safari."
+                    }
+                }
+            }
+        },
+        "stateContinuation": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "is currently"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "jest obecnie"
+                    }
+                }
+            }
+        },
+        "stateOff": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "off"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "wył."
+                    }
+                }
+            }
+        },
+        "stateOn": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "on"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "wł."
+                    }
+                }
+            }
+        },
+        "stateTitle": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "2FAS Pass Browser Extension"
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Rozszerzenie przeglądarki 2FAS Pass"
+                    }
+                }
+            }
+        },
+        "stateUnknown": {
+            "extractionState": "manual",
+            "localizations": {
+                "en": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "You can turn on 2FAS Pass Browser Extension in Safari Extensions settings."
+                    }
+                },
+                "pl": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Możesz włączyć rozszerzenie 2FAS Pass w ustawieniach rozszerzeń Safari."
+                    }
+                }
+            }
         }
-      }
     },
-    "errorContent" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Something went wrong. Try to restart the app"
-          }
-        }
-      }
-    },
-    "errorTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Error"
-          }
-        }
-      }
-    },
-    "noteOff" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You can turn it on in Safari Extensions preferences."
-          }
-        }
-      }
-    },
-    "noteOn" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You can turn it off in Safari Extensions preferences."
-          }
-        }
-      }
-    },
-    "stateContinuation" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "is currently"
-          }
-        }
-      }
-    },
-    "stateOff" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "off"
-          }
-        }
-      }
-    },
-    "stateOn" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "on"
-          }
-        }
-      }
-    },
-    "stateTitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2FAS Pass Browser Extension"
-          }
-        }
-      }
-    },
-    "stateUnknown" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You can turn on 2FAS Pass Browser Extension in Safari Extensions preferences."
-          }
-        }
-      }
-    }
-  },
-  "version" : "1.0"
+    "version": "1.0"
 }
