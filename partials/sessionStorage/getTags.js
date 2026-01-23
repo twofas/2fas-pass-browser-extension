@@ -98,8 +98,6 @@ const getTags = async () => {
     }
   }).filter(Boolean);
 
-  console.log(mapped);
-
   return mapped;
 };
 
