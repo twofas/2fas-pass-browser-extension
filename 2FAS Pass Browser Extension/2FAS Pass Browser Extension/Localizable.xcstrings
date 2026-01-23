@@ -115,7 +115,7 @@
                 "pl": {
                     "stringUnit": {
                         "state": "translated",
-                        "value": "wył."
+                        "value": "wyłaczone"
                     }
                 }
             }
@@ -132,7 +132,7 @@
                 "pl": {
                     "stringUnit": {
                         "state": "translated",
-                        "value": "wł."
+                        "value": "włączone"
                     }
                 }
             }
