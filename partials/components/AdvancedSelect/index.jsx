@@ -83,8 +83,18 @@ function AdvancedSelect (props) {
       return;
     }
 
-    menuPortalElement.style.opacity = '0';
-    menuPortalElement.style.pointerEvents = 'none';
+    const initialCssText = menuPortalElement.style.cssText || '';
+    const hasOpacity = /opacity:/i.test(initialCssText);
+    const hasPointerEvents = /pointer-events:/i.test(initialCssText);
+
+    if (hasOpacity || hasPointerEvents) {
+      const hiddenCssText = initialCssText
+        .replace(/opacity:\s*\d+\s*!important;?/gi, 'opacity: 0 !important;')
+        .replace(/pointer-events:\s*\w+\s*!important;?/gi, 'pointer-events: none !important;');
+      menuPortalElement.style.cssText = hiddenCssText;
+    } else {
+      menuPortalElement.style.cssText = `${initialCssText} opacity: 0 !important; pointer-events: none !important;`;
+    }
 
     const classNamePrefix = props?.classNamePrefix || 'react-select';
     const menuListSelector = `.${classNamePrefix}__menu-list`;
@@ -153,37 +163,36 @@ function AdvancedSelect (props) {
 
       const menuWidth = menuElementRect.width || rect.width;
 
+      const hiddenStyles = 'opacity: 0 !important; pointer-events: none !important;';
+      let baseCssText;
+
       if (hasCenteredPositioning) {
         const triggerCenterX = rect.left + (rect.width / 2);
-        const cssText = `position: fixed !important; left: ${triggerCenterX}px !important; transform: translateX(-50%) !important; z-index: 9999 !important;`;
-        menuPortalElement.style.cssText = cssText;
+        baseCssText = `position: fixed !important; left: ${triggerCenterX}px !important; transform: translateX(-50%) !important; z-index: 9999 !important; ${hiddenStyles}`;
       } else if (hasRightZeroPositioning) {
         const rightValue = window.innerWidth - rect.right;
         const calculatedLeftEdge = rect.right - menuWidth;
 
-        let cssText;
-
         if (calculatedLeftEdge < 0) {
-          cssText = `position: fixed !important; left: ${rect.left}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
+          baseCssText = `position: fixed !important; left: ${rect.left}px !important; width: ${menuWidth}px !important; z-index: 9999 !important; ${hiddenStyles}`;
         } else {
-          cssText = `position: fixed !important; right: ${rightValue}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
+          baseCssText = `position: fixed !important; right: ${rightValue}px !important; width: ${menuWidth}px !important; z-index: 9999 !important; ${hiddenStyles}`;
         }
-
-        menuPortalElement.style.cssText = cssText;
       } else {
-        const cssText = `position: fixed !important; left: ${rect.left}px !important; width: ${rect.width}px !important; z-index: 9999 !important;`;
-        menuPortalElement.style.cssText = cssText;
+        baseCssText = `position: fixed !important; left: ${rect.left}px !important; width: ${rect.width}px !important; z-index: 9999 !important; ${hiddenStyles}`;
       }
+
+      let verticalCss;
 
       if (shouldPlaceOnTop) {
         const topValue = rect.top - realMenuHeight - menuGap;
-        const verticalCss = ` top: ${topValue}px !important; bottom: auto !important;`;
-        menuPortalElement.style.cssText += verticalCss;
+        verticalCss = `top: ${topValue}px !important; bottom: auto !important;`;
       } else {
         const topValue = rect.bottom + menuGap;
-        const verticalCss = ` top: ${topValue}px !important; bottom: auto !important;`;
-        menuPortalElement.style.cssText += verticalCss;
+        verticalCss = `top: ${topValue}px !important; bottom: auto !important;`;
       }
+
+      menuPortalElement.style.cssText = `${baseCssText} ${verticalCss}`;
 
       menuElement.style.cssText = `margin-top: 0 !important; margin-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; top: 0 !important; left: 0 !important; right: auto !important; bottom: auto !important; z-index: 9999 !important; position: relative !important; transform: none !important;`;
 
@@ -194,8 +203,11 @@ function AdvancedSelect (props) {
       }
 
       requestAnimationFrame(() => {
-        menuPortalElement.style.opacity = '1';
-        menuPortalElement.style.pointerEvents = 'auto';
+        const currentCssText = menuPortalElement.style.cssText;
+        const visibleCssText = currentCssText
+          .replace(/opacity:\s*0\s*!important;?/gi, 'opacity: 1 !important;')
+          .replace(/pointer-events:\s*none\s*!important;?/gi, 'pointer-events: auto !important;');
+        menuPortalElement.style.cssText = visibleCssText;
       });
     };
 
@@ -237,8 +249,11 @@ function AdvancedSelect (props) {
     const menuPortalElement = document.getElementById('select-menu-portal');
 
     if (menuPortalElement) {
-      menuPortalElement.style.opacity = '0';
-      menuPortalElement.style.pointerEvents = 'none';
+      const currentCssText = menuPortalElement.style.cssText;
+      const hiddenCssText = currentCssText
+        .replace(/opacity:\s*1\s*!important;?/gi, 'opacity: 0 !important;')
+        .replace(/pointer-events:\s*auto\s*!important;?/gi, 'pointer-events: none !important;');
+      menuPortalElement.style.cssText = hiddenCssText;
     }
 
     if (activeMenuCloseCallback === closeCallbackRef.current) {
