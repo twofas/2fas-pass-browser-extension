@@ -9,6 +9,24 @@ import { useRef, useCallback, useEffect, useState } from 'react';
 
 let activeMenuCloseCallback = null;
 
+const hidePortal = menuPortalElement => {
+  if (!menuPortalElement) {
+    return;
+  }
+
+  menuPortalElement.classList.remove('select-portal-visible');
+  menuPortalElement.classList.add('select-portal-hidden');
+};
+
+const showPortal = menuPortalElement => {
+  if (!menuPortalElement) {
+    return;
+  }
+
+  menuPortalElement.classList.remove('select-portal-hidden');
+  menuPortalElement.classList.add('select-portal-visible');
+};
+
 /**
 * Function component for an advanced select dropdown that closes when clicking outside and positions menu smartly.
 * @param {Object} props - The component props.
@@ -83,18 +101,7 @@ function AdvancedSelect (props) {
       return;
     }
 
-    const initialCssText = menuPortalElement.style.cssText || '';
-    const hasOpacity = /opacity:/i.test(initialCssText);
-    const hasPointerEvents = /pointer-events:/i.test(initialCssText);
-
-    if (hasOpacity || hasPointerEvents) {
-      const hiddenCssText = initialCssText
-        .replace(/opacity:\s*\d+\s*!important;?/gi, 'opacity: 0 !important;')
-        .replace(/pointer-events:\s*\w+\s*!important;?/gi, 'pointer-events: none !important;');
-      menuPortalElement.style.cssText = hiddenCssText;
-    } else {
-      menuPortalElement.style.cssText = `${initialCssText} opacity: 0 !important; pointer-events: none !important;`;
-    }
+    hidePortal(menuPortalElement);
 
     const classNamePrefix = props?.classNamePrefix || 'react-select';
     const menuListSelector = `.${classNamePrefix}__menu-list`;
@@ -163,23 +170,22 @@ function AdvancedSelect (props) {
 
       const menuWidth = menuElementRect.width || rect.width;
 
-      const hiddenStyles = 'opacity: 0 !important; pointer-events: none !important;';
       let baseCssText;
 
       if (hasCenteredPositioning) {
         const triggerCenterX = rect.left + (rect.width / 2);
-        baseCssText = `position: fixed !important; left: ${triggerCenterX}px !important; transform: translateX(-50%) !important; z-index: 9999 !important; ${hiddenStyles}`;
+        baseCssText = `position: fixed !important; left: ${triggerCenterX}px !important; transform: translateX(-50%) !important; z-index: 9999 !important;`;
       } else if (hasRightZeroPositioning) {
         const rightValue = window.innerWidth - rect.right;
         const calculatedLeftEdge = rect.right - menuWidth;
 
         if (calculatedLeftEdge < 0) {
-          baseCssText = `position: fixed !important; left: ${rect.left}px !important; width: ${menuWidth}px !important; z-index: 9999 !important; ${hiddenStyles}`;
+          baseCssText = `position: fixed !important; left: ${rect.left}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
         } else {
-          baseCssText = `position: fixed !important; right: ${rightValue}px !important; width: ${menuWidth}px !important; z-index: 9999 !important; ${hiddenStyles}`;
+          baseCssText = `position: fixed !important; right: ${rightValue}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
         }
       } else {
-        baseCssText = `position: fixed !important; left: ${rect.left}px !important; width: ${rect.width}px !important; z-index: 9999 !important; ${hiddenStyles}`;
+        baseCssText = `position: fixed !important; left: ${rect.left}px !important; width: ${rect.width}px !important; z-index: 9999 !important;`;
       }
 
       let verticalCss;
@@ -203,11 +209,7 @@ function AdvancedSelect (props) {
       }
 
       requestAnimationFrame(() => {
-        const currentCssText = menuPortalElement.style.cssText;
-        const visibleCssText = currentCssText
-          .replace(/opacity:\s*0\s*!important;?/gi, 'opacity: 1 !important;')
-          .replace(/pointer-events:\s*none\s*!important;?/gi, 'pointer-events: auto !important;');
-        menuPortalElement.style.cssText = visibleCssText;
+        showPortal(menuPortalElement);
       });
     };
 
@@ -247,14 +249,7 @@ function AdvancedSelect (props) {
 
   const handleMenuClose = useCallback(() => {
     const menuPortalElement = document.getElementById('select-menu-portal');
-
-    if (menuPortalElement) {
-      const currentCssText = menuPortalElement.style.cssText;
-      const hiddenCssText = currentCssText
-        .replace(/opacity:\s*1\s*!important;?/gi, 'opacity: 0 !important;')
-        .replace(/pointer-events:\s*auto\s*!important;?/gi, 'pointer-events: none !important;');
-      menuPortalElement.style.cssText = hiddenCssText;
-    }
+    hidePortal(menuPortalElement);
 
     if (activeMenuCloseCallback === closeCallbackRef.current) {
       activeMenuCloseCallback = null;

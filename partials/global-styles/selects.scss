@@ -6,6 +6,18 @@
 
 @use "variables" as v;
 
+#select-menu-portal {
+  &.select-portal-hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  &.select-portal-visible {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
 .react-select-container {
   &.react-select--is-disabled {
     .react-select__control {
