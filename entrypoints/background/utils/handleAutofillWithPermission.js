@@ -76,16 +76,12 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
 
   // Check if all domains are in the trusted domains list
   const trustedDomains = await storage.getItem('local:crossDomainTrustedDomains') || [];
-  const allDomainsTrusted = domains.every(domain => trustedDomains.includes(domain));
+  const untrustedDomains = domains.filter(domain => !trustedDomains.includes(domain));
 
   let confirmResult;
 
-  if (!allDomainsTrusted) {
-    const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
-      .replace('DOMAINS', domains.join(', '));
-
+  if (untrustedDomains.length > 0) {
     // Focus the tab before showing confirmation dialog
-    // window.confirm() requires the tab to be active/focused to show the dialog
     try {
       const tab = await browser.tabs.get(tabId);
 
@@ -96,11 +92,14 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
       await new Promise(resolve => setTimeout(resolve, 100));
     } catch { }
 
+    const theme = await storage.getItem('local:theme');
+
     try {
       confirmResult = await sendMessageToTab(tabId, {
         action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
         target: REQUEST_TARGETS.CONTENT,
-        message: confirmMessage
+        domains: untrustedDomains,
+        theme
       });
     } catch (e) {
       await CatchError(e);
@@ -111,6 +110,12 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
     if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
       await storage.removeItem(storageKey);
       return;
+    }
+
+    // Save newly trusted domains if user selected any
+    if (confirmResult?.trustedDomains?.length > 0) {
+      const updatedTrustedDomains = [...new Set([...trustedDomains, ...confirmResult.trustedDomains])];
+      await storage.setItem('local:crossDomainTrustedDomains', updatedTrustedDomains);
     }
   }
 

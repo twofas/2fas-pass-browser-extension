@@ -163,33 +163,42 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     });
 
     const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
-    const needsPermission = crossDomainFrames.length > 0;
 
-    if (needsPermission) {
+    if (crossDomainFrames.length > 0) {
       const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
+      const trustedDomains = await storage.getItem('local:crossDomainTrustedDomains') || [];
+      const untrustedDomains = uniqueDomains.filter(domain => !trustedDomains.includes(domain));
 
-      const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
-        .replace('DOMAINS', uniqueDomains.join(', '));
+      if (untrustedDomains.length > 0) {
+        // Focus the tab before showing confirmation dialog
+        try {
+          const tab = await browser.tabs.get(tabId);
 
-      // Focus the tab before showing confirmation dialog
-      try {
-        const tab = await browser.tabs.get(tabId);
+          await browser.windows.update(tab.windowId, { focused: true });
+          await browser.tabs.update(tabId, { active: true });
 
-        await browser.windows.update(tab.windowId, { focused: true });
-        await browser.tabs.update(tabId, { active: true });
+          await new Promise(resolve => setTimeout(resolve, 100));
+        } catch { }
 
-        await new Promise(resolve => setTimeout(resolve, 100));
-      } catch { }
+        const theme = await storage.getItem('local:theme');
 
-      const confirmResult = await sendMessageToTab(tabId, {
-        action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
-        target: REQUEST_TARGETS.CONTENT,
-        message: confirmMessage
-      });
+        const confirmResult = await sendMessageToTab(tabId, {
+          action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+          target: REQUEST_TARGETS.CONTENT,
+          domains: untrustedDomains,
+          theme
+        });
 
-      if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-        iframePermissionGranted = false;
-        return;
+        if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+          iframePermissionGranted = false;
+          return;
+        }
+
+        // Save newly trusted domains if user selected any
+        if (confirmResult?.trustedDomains?.length > 0) {
+          const updatedTrustedDomains = [...new Set([...trustedDomains, ...confirmResult.trustedDomains])];
+          await storage.setItem('local:crossDomainTrustedDomains', updatedTrustedDomains);
+        }
       }
     }
   } catch (e) {

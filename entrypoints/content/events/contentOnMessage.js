@@ -14,6 +14,7 @@ import notification from '../functions/notification';
 import matchingLogins from '../functions/matchingLogins';
 import savePrompt from '../functions/savePrompt';
 import refreshTheme from '../functions/refreshTheme';
+import crossDomainConfirmDialog from '../functions/crossDomainConfirmDialog';
 
 /**
 * Function to handle messages on the content script.
@@ -118,10 +119,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       }
 
       case REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM: {
-        const message = request.message || '';
-        const userConfirmed = window.confirm(message);
-
-        sendResponse({ status: 'ok', confirmed: userConfirmed });
+        crossDomainConfirmDialog(request, sendResponse, container);
         break;
       }
 
@@ -133,8 +131,10 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
 
       case REQUEST_ACTIONS.REFRESH_LANG: {
         resetI18nCache();
-        initI18n();
-        sendResponse({ status: 'ok' });
+        initI18n()
+          .then(() => { sendResponse({ status: 'ok' }); })
+          .catch(() => { sendResponse({ status: 'error' }); });
+
         break;
       }
 

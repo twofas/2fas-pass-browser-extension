@@ -10,7 +10,21 @@ let isInitialized = false;
 let initPromise = null;
 
 /**
+ * Checks if running in content script context.
+ * Content scripts don't have access to browser.tabs API.
+ * @return {boolean} True if in content script context.
+ */
+const isContentScript = () => {
+  try {
+    return typeof browser.tabs === 'undefined';
+  } catch {
+    return true;
+  }
+};
+
+/**
  * Loads messages JSON file for the specified language.
+ * Only used by background/popup - content scripts use loadMessagesFromBackground.
  * @param {string} lang - Language code ('en' or 'pl').
  * @return {Promise<Object|null>} Messages object or null on error.
  */
@@ -24,14 +38,40 @@ const loadMessagesFile = async lang => {
     }
 
     return await response.json();
-  } catch (e) {
-    CatchError(e);
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Requests i18n messages from background script.
+ * Used by content scripts that cannot directly fetch extension resources.
+ * @return {Promise<Object|null>} Object with lang and messages, or null on error.
+ */
+const loadMessagesFromBackground = async () => {
+  try {
+    const response = await browser.runtime.sendMessage({
+      action: REQUEST_ACTIONS.GET_I18N_DATA,
+      target: REQUEST_TARGETS.BACKGROUND
+    });
+
+    if (response?.status === 'ok') {
+      return {
+        lang: response.lang,
+        messages: response.messages
+      };
+    }
+
+    return null;
+  } catch {
     return null;
   }
 };
 
 /**
  * Initializes the i18n module by loading language setting and messages.
+ * In background/popup: loads from storage and fetches messages file.
+ * In content scripts: requests data directly from background script.
  * @return {Promise<void>} A promise that resolves when initialization is complete.
  */
 const initI18n = async () => {
@@ -41,17 +81,29 @@ const initI18n = async () => {
 
   initPromise = (async () => {
     try {
-      const langSetting = await storage.getItem('local:lang');
-      cachedLang = langSetting || 'default';
+      if (isContentScript()) {
+        const backgroundData = await loadMessagesFromBackground();
 
-      if (cachedLang !== 'default') {
-        const messages = await loadMessagesFile(cachedLang);
-
-        if (messages) {
-          cachedMessages = messages;
+        if (backgroundData) {
+          cachedLang = backgroundData.lang || 'default';
+          cachedMessages = backgroundData.messages || null;
         } else {
           cachedLang = 'default';
           cachedMessages = null;
+        }
+      } else {
+        const langSetting = await storage.getItem('local:lang');
+        cachedLang = langSetting || 'default';
+
+        if (cachedLang !== 'default') {
+          const messages = await loadMessagesFile(cachedLang);
+
+          if (messages) {
+            cachedMessages = messages;
+          } else {
+            cachedLang = 'default';
+            cachedMessages = null;
+          }
         }
       }
 
@@ -91,11 +143,12 @@ const resetI18nCache = () => {
 };
 
 /**
- * Returns the current i18n state for React context.
- * @return {Object} Current state with lang and isInitialized.
+ * Returns the current i18n state for React context and background script.
+ * @return {Object} Current state with lang, messages, and isInitialized.
  */
 const getI18nState = () => ({
   lang: cachedLang,
+  messages: cachedMessages,
   isInitialized
 });
 

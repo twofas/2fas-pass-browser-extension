@@ -34,4 +34,5 @@ export const REQUEST_ACTIONS = Object.freeze({
   NEW_POPUP: 'newPopup', // popup
   REFRESH_THEME: 'refreshTheme', // content (top frame only)
   REFRESH_LANG: 'refreshLang', // content (top frame only)
+  GET_I18N_DATA: 'getI18nData', // background (returns lang and messages for content scripts)
 });

@@ -51,6 +51,20 @@ const refreshTheme = (theme, container) => {
     return;
   }
 
+  const validTheme = (theme === 'light' || theme === 'dark') ? theme : 'unset';
+
+  // Refresh cross-domain dialog if open
+  const crossDomainDialog = container.querySelector('.twofas-pass-cross-domain-dialog');
+
+  if (crossDomainDialog) {
+    crossDomainDialog.classList.remove('light', 'dark', 'unset');
+    crossDomainDialog.classList.add(validTheme);
+
+    const logoContainer = crossDomainDialog.querySelector('.twofas-pass-cross-domain-dialog-top-logo');
+    updateLogoSvg(logoContainer, validTheme);
+  }
+
+  // Refresh notification items
   const notificationContainer = container.querySelector(S.notification.container);
 
   if (!notificationContainer) {
@@ -62,8 +76,6 @@ const refreshTheme = (theme, container) => {
   if (!notificationItems || notificationItems.length === 0) {
     return;
   }
-
-  const validTheme = (theme === 'light' || theme === 'dark') ? theme : 'unset';
 
   notificationItems.forEach(item => {
     if (item.classList.contains('twofas-pass-old')) {

@@ -30,5 +30,33 @@
   "autofill_cross_domain_warning_no_access": {
     "message": "This form is on CURRENT_DOMAIN which appears to be in a cross-domain iframe. Do you want to continue with autofill?",
     "description": "Warning shown when autofill is attempted on a cross-domain iframe and we cannot access the parent domain"
+  },
+  "content_cross_domain_dialog_title": {
+    "message": "Cross-domain autofill",
+    "description": "Title for the cross-domain confirmation dialog"
+  },
+  "content_cross_domain_dialog_message": {
+    "message": "This page contains forms from external domains. Do you want to autofill data in these frames?",
+    "description": "Message explaining that the page has cross-domain iframes with forms"
+  },
+  "content_cross_domain_dialog_cancel": {
+    "message": "Cancel",
+    "description": "Button to cancel autofill and close the dialog"
+  },
+  "content_cross_domain_dialog_autofill": {
+    "message": "Autofill",
+    "description": "Button to confirm and proceed with autofill"
+  },
+  "content_cross_domain_dialog_trust_domain": {
+    "message": "Trust this domain",
+    "description": "Button to trust a single domain and proceed with autofill"
+  },
+  "content_cross_domain_dialog_trust_domains_header": {
+    "message": "Or select domains to trust:",
+    "description": "Header text above the multi-domain trust checkbox list"
+  },
+  "content_cross_domain_dialog_trust_selected": {
+    "message": "Trust selected and autofill",
+    "description": "Button to trust selected domains and proceed with autofill"
   }
 }
