@@ -74,9 +74,8 @@ export default defineConfig({
     },
     plugins: [svgr()]
   }),
-  manifest: ({ browser, manifestVersion }) => {
+  manifest: ({ browser }) => {
     const manifestObj = {
-      manifest_version: manifestVersion,
       name: '2FAS Pass Browser Extension',
       short_name: '2FAS Pass',
       author: 'Two Factor Authentication Service, Inc.',
