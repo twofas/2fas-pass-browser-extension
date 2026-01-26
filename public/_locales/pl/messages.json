@@ -347,6 +347,14 @@
     "message": "Ta strona zawiera formularze z zewnętrznych domen:\nDOMAINS\n\nCzy chcesz wypełnić dane w tych formularzach?",
     "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
   },
+  "notification_autofill_partial_title": {
+    "message": "Częściowe autouzupełnianie",
+    "description": "Title for the notification when autofill only partially succeeded"
+  },
+  "notification_autofill_failed_open_popup": {
+    "message": "Otwórz popup, aby ręcznie skopiować niewypełnione dane",
+    "description": "Message for the notification when autofill failed, suggesting to open popup for manual copy"
+  },
   "placeholder_name": {
     "message": "Wpisz nazwę elementu",
     "description": "Placeholder text for the name input field"
@@ -1838,6 +1846,10 @@
   "this_tab_autofill_no_card_data_available": {
     "message": "Tylko właściciel karty był dostępny do wypełnienia",
     "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
+  },
+  "this_tab_autofill_partial": {
+    "message": "Niektóre pola nie mogły być wypełnione. Skopiuj brakujące dane ręcznie.",
+    "description": "Message displayed when autofill partially succeeded but some fields could not be filled"
   },
   "all_items_list_no_search_results": {
     "message": "Brak wyników wyszukiwania. Spróbuj ponownie.",

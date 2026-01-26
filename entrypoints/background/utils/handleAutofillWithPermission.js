@@ -8,6 +8,31 @@ import { sendMessageToAllFrames, sendMessageToTab } from '@/partials/functions';
 import TwofasNotification from '@/partials/TwofasNotification';
 
 /**
+* Stores autofill failure data for KeepItem display when popup reopens.
+* @async
+* @param {number} tabId - The ID of the tab.
+* @param {Object} closeData - The close data containing item and SIF info.
+* @return {Promise<void>}
+*/
+const storeAutofillFailureData = async (tabId, closeData) => {
+  if (!closeData) {
+    return;
+  }
+
+  const failureKey = `session:autofillT2FailedPending-${tabId}`;
+
+  await storage.setItem(failureKey, JSON.stringify({
+    action: 'autofillT2Failed',
+    vaultId: closeData.vaultId,
+    deviceId: closeData.deviceId,
+    itemId: closeData.itemId,
+    s_password: closeData.s_password,
+    hkdfSaltAB: closeData.hkdfSaltAB,
+    sessionKeyForHKDF: closeData.sessionKeyForHKDF
+  }));
+};
+
+/**
 * Handles Login autofill with cross-domain permission confirmation.
 * @async
 * @param {number} tabId - The ID of the tab to autofill.
@@ -38,7 +63,7 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
     }, tabId, true);
   }
 
-  const { actionData } = storedData;
+  const { actionData, closeData } = storedData;
 
   if (!actionData) {
     await storage.removeItem(storageKey);
@@ -92,37 +117,52 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   } catch (e) {
     await CatchError(e);
     await storage.removeItem(storageKey);
+    await storeAutofillFailureData(tabId, closeData);
 
     return TwofasNotification.show({
       Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Message: getMessage('notification_autofill_failed_open_popup')
     }, tabId, true);
   }
 
   await storage.removeItem(storageKey);
 
   if (!response) {
+    await storeAutofillFailureData(tabId, closeData);
+
     return TwofasNotification.show({
       Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Message: getMessage('notification_autofill_failed_open_popup')
     }, tabId, true);
   }
 
   const isOk = response.some(frameResponse => frameResponse.status === 'ok');
-
-  if (!isOk) {
-    const allNoInputs = response.every(frameResponse => frameResponse.status === 'error' && frameResponse.message === 'No input fields found');
-
-    if (allNoInputs) {
-      return TwofasNotification.show({
-        Title: getMessage('notification_shortcut_autofill_no_username_and_password_title'),
-        Message: getMessage('notification_shortcut_autofill_no_username_and_password_message')
-      }, tabId, true);
+  const allFieldsFilled = response.every(frameResponse => {
+    if (frameResponse.status !== 'ok') {
+      return frameResponse.message === 'No input fields found';
     }
 
+    const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
+    const couldFillPassword = !actionData.password || frameResponse.canAutofillPassword !== false;
+
+    return couldFillUsername && couldFillPassword;
+  });
+
+  if (!isOk) {
+    await storeAutofillFailureData(tabId, closeData);
+
     return TwofasNotification.show({
-      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_shortcut_autofill_no_username_and_password_title'),
+      Message: getMessage('notification_autofill_failed_open_popup')
+    }, tabId, true);
+  }
+
+  if (!allFieldsFilled && closeData) {
+    await storeAutofillFailureData(tabId, closeData);
+
+    return TwofasNotification.show({
+      Title: getMessage('notification_autofill_partial_title'),
+      Message: getMessage('notification_autofill_failed_open_popup')
     }, tabId, true);
   }
 

@@ -182,7 +182,12 @@ const handleLoginAutofill = async (item, navigate) => {
       const storageKey = `session:autofillData-${tab.id}`;
 
       await storage.setItem(storageKey, JSON.stringify({
-        actionData
+        actionData,
+        closeData: {
+          vaultId: item.vaultId,
+          deviceId: item.deviceId,
+          itemId: item.id
+        }
       }));
 
       browser.runtime.sendMessage({
@@ -208,12 +213,39 @@ const handleLoginAutofill = async (item, navigate) => {
   }
 
   if (!res) {
+    if (isHighlySecret) {
+      const toastId = showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
+
+      navigate('/', {
+        state: {
+          action: 'autofillT2Failed',
+          vaultId: item.vaultId,
+          deviceId: item.deviceId,
+          itemId: item.id,
+          toastId
+        }
+      });
+
+      return;
+    }
+
     showToast(getMessage('error_autofill_failed'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handleAutofillNoResponse, { additional: { func: 'handleLoginAutofill' } }));
+
     return;
   }
 
   const isOk = res.some(frameResponse => frameResponse.status === 'ok');
+  const allFieldsFilled = res.every(frameResponse => {
+    if (frameResponse.status !== 'ok') {
+      return frameResponse.message === 'No input fields found';
+    }
+
+    const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
+    const couldFillPassword = !actionData.password || frameResponse.canAutofillPassword !== false;
+
+    return couldFillUsername && couldFillPassword;
+  });
 
   if (isOk) {
     const separateWindow = await popupIsInSeparateWindow();
@@ -222,12 +254,40 @@ const handleLoginAutofill = async (item, navigate) => {
       showToast(getMessage('this_tab_autofill_fetch_password'), 'info');
     } else if (!passwordDecrypt) {
       showToast(getMessage('this_tab_autofill_no_password'), 'info');
+    } else if (!allFieldsFilled && isHighlySecret) {
+      const toastId = showToast(getMessage('this_tab_autofill_partial'), 'info', false);
+
+      navigate('/', {
+        state: {
+          action: 'autofillT2Failed',
+          vaultId: item.vaultId,
+          deviceId: item.deviceId,
+          itemId: item.id,
+          toastId
+        }
+      });
     } else if (!separateWindow) {
       await closeWindowIfNotInSeparateWindow(separateWindow);
     } else {
       showToast(getMessage('this_tab_autofill_success'), 'success');
     }
   } else {
+    if (isHighlySecret) {
+      const toastId = showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
+
+      navigate('/', {
+        state: {
+          action: 'autofillT2Failed',
+          vaultId: item.vaultId,
+          deviceId: item.deviceId,
+          itemId: item.id,
+          toastId
+        }
+      });
+
+      return;
+    }
+
     showToast(getMessage('this_tab_can_t_find_inputs'), 'info');
   }
 };

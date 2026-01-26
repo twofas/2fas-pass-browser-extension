@@ -49,6 +49,8 @@ function ThisTab (props) {
   const { data, setBatchData } = usePopupState();
   const { tags, fetchTags, validateTagsInItems } = useTags({ autoFetch: false });
 
+  useAutofillFailedCheck();
+
   // Refs
   const scrollableRef = useRef(null);
   const unwatchStorageVersion = useRef(null);

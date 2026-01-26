@@ -123,8 +123,8 @@
     "message": "Only cardholder name was available for autofill",
     "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
-  "notification_card_autofill_partial_message": {
-    "message": "Some card details could not be autofilled",
-    "description": "Message when some payment card fields could not be autofilled"
+  "this_tab_autofill_partial": {
+    "message": "Some fields could not be autofilled. Copy unfilled details manually.",
+    "description": "Message displayed when autofill partially succeeded but some fields could not be filled"
   }
 }
