@@ -200,6 +200,7 @@ const matchingLogins = (request, sendResponse, container) => {
 
   n.header = createElement('div', 'twofas-pass-notification-matching-logins-header');
   n.headerText = createTextElement('span', getMessage('content_matching_logins_title'));
+  n.headerText.setAttribute('data-i18n-key', 'content_matching_logins_title');
   n.header.appendChild(n.headerText);
 
   n.item.appendChild(n.top);
@@ -298,7 +299,12 @@ const matchingLogins = (request, sendResponse, container) => {
     }
 
     const itemAccount = createElement('span');
-    const itemAccountName = createTextElement('span', item.content.name || getMessage('no_item_name'));
+    const hasItemName = item.content.name && item.content.name.length > 0;
+    const itemAccountName = createTextElement('span', hasItemName ? item.content.name : getMessage('no_item_name'));
+
+    if (!hasItemName) {
+      itemAccountName.setAttribute('data-i18n-key', 'no_item_name');
+    }
 
     let itemAccountUsername;
 
@@ -306,8 +312,9 @@ const matchingLogins = (request, sendResponse, container) => {
       itemAccountUsername = createTextElement('span', item.content.username);
     }
 
-    const itemSecondaryBtnText = (item.securityType === SECURITY_TIER.SECRET || item.t2WithPassword === true) ? getMessage('autofill') : getMessage('fetch');
-    const itemSecondaryBtn = createTextElement('span', itemSecondaryBtnText, 'twofas-pass-notification-matching-logins-item-secondary-btn');
+    const itemSecondaryBtnKey = (item.securityType === SECURITY_TIER.SECRET || item.t2WithPassword === true) ? 'autofill' : 'fetch';
+    const itemSecondaryBtn = createTextElement('span', getMessage(itemSecondaryBtnKey), 'twofas-pass-notification-matching-logins-item-secondary-btn');
+    itemSecondaryBtn.setAttribute('data-i18n-key', itemSecondaryBtnKey);
 
     itemAccount.appendChild(itemAccountName);
 

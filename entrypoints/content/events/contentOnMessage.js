@@ -14,6 +14,7 @@ import notification from '../functions/notification';
 import matchingLogins from '../functions/matchingLogins';
 import savePrompt from '../functions/savePrompt';
 import refreshTheme from '../functions/refreshTheme';
+import refreshLang from '../functions/refreshLang';
 import crossDomainConfirmDialog from '../functions/crossDomainConfirmDialog';
 
 /**
@@ -132,7 +133,10 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       case REQUEST_ACTIONS.REFRESH_LANG: {
         resetI18nCache();
         initI18n()
-          .then(() => { sendResponse({ status: 'ok' }); })
+          .then(() => {
+            refreshLang(container);
+            sendResponse({ status: 'ok' });
+          })
           .catch(() => { sendResponse({ status: 'error' }); });
 
         break;

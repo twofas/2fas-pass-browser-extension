@@ -48,10 +48,12 @@ const crossDomainConfirmDialog = (request, sendResponse, container) => {
 
   const header = createElement('div', 'twofas-pass-cross-domain-dialog-header');
   const headerText = createTextElement('h3', getMessage('content_cross_domain_dialog_title'));
+  headerText.setAttribute('data-i18n-key', 'content_cross_domain_dialog_title');
   header.appendChild(headerText);
 
   const message = createElement('div', 'twofas-pass-cross-domain-dialog-message');
   const messageText = createTextElement('p', getMessage('content_cross_domain_dialog_message'));
+  messageText.setAttribute('data-i18n-key', 'content_cross_domain_dialog_message');
   message.appendChild(messageText);
 
   const domainsList = createElement('div', 'twofas-pass-cross-domain-dialog-domains');
@@ -71,10 +73,12 @@ const crossDomainConfirmDialog = (request, sendResponse, container) => {
   const cancelBtn = createTextElement('button', getMessage('content_cross_domain_dialog_cancel'));
   cancelBtn.className = 'twofas-pass-cross-domain-dialog-btn twofas-pass-cross-domain-dialog-btn-cancel';
   cancelBtn.type = 'button';
+  cancelBtn.setAttribute('data-i18n-key', 'content_cross_domain_dialog_cancel');
 
   const autofillBtn = createTextElement('button', getMessage('content_cross_domain_dialog_autofill'));
   autofillBtn.className = 'twofas-pass-cross-domain-dialog-btn twofas-pass-cross-domain-dialog-btn-autofill';
   autofillBtn.type = 'button';
+  autofillBtn.setAttribute('data-i18n-key', 'content_cross_domain_dialog_autofill');
 
   buttons.appendChild(cancelBtn);
   buttons.appendChild(autofillBtn);
@@ -89,6 +93,7 @@ const crossDomainConfirmDialog = (request, sendResponse, container) => {
     const trustBtn = createTextElement('button', getMessage('content_cross_domain_dialog_trust_domain'));
     trustBtn.className = 'twofas-pass-cross-domain-dialog-btn twofas-pass-cross-domain-dialog-btn-trust';
     trustBtn.type = 'button';
+    trustBtn.setAttribute('data-i18n-key', 'content_cross_domain_dialog_trust_domain');
 
     trustBtn.addEventListener('click', () => {
       cleanup();
@@ -103,6 +108,7 @@ const crossDomainConfirmDialog = (request, sendResponse, container) => {
   } else {
     const trustHeader = createElement('div', 'twofas-pass-cross-domain-dialog-trust-header');
     const trustHeaderText = createTextElement('span', getMessage('content_cross_domain_dialog_trust_domains_header'));
+    trustHeaderText.setAttribute('data-i18n-key', 'content_cross_domain_dialog_trust_domains_header');
     trustHeader.appendChild(trustHeaderText);
     trustSection.appendChild(trustHeader);
 
@@ -141,6 +147,7 @@ const crossDomainConfirmDialog = (request, sendResponse, container) => {
     trustConfirmBtn.className = 'twofas-pass-cross-domain-dialog-btn twofas-pass-cross-domain-dialog-btn-trust';
     trustConfirmBtn.type = 'button';
     trustConfirmBtn.disabled = true;
+    trustConfirmBtn.setAttribute('data-i18n-key', 'content_cross_domain_dialog_trust_selected');
 
     trustConfirmBtn.addEventListener('click', () => {
       if (selectedTrustDomains.size === 0) {
