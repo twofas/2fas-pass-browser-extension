@@ -49,38 +49,44 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
     }, tabId, true);
   }
 
-  const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
-    .replace('DOMAINS', domains.join(', '));
-
-  // Focus the tab before showing confirmation dialog
-  // window.confirm() requires the tab to be active/focused to show the dialog
-  try {
-    const tab = await browser.tabs.get(tabId);
-
-    await browser.windows.update(tab.windowId, { focused: true });
-    await browser.tabs.update(tabId, { active: true });
-
-    // Small delay to ensure tab is fully focused before showing dialog
-    await new Promise(resolve => setTimeout(resolve, 100));
-  } catch { }
+  // Check if all domains are in the trusted domains list
+  const trustedDomains = await storage.getItem('local:crossDomainTrustedDomains') || [];
+  const allDomainsTrusted = domains.every(domain => trustedDomains.includes(domain));
 
   let confirmResult;
 
-  try {
-    confirmResult = await sendMessageToTab(tabId, {
-      action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
-      target: REQUEST_TARGETS.CONTENT,
-      message: confirmMessage
-    });
-  } catch (e) {
-    await CatchError(e);
-    await storage.removeItem(storageKey);
-    return;
-  }
+  if (!allDomainsTrusted) {
+    const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
+      .replace('DOMAINS', domains.join(', '));
 
-  if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-    await storage.removeItem(storageKey);
-    return;
+    // Focus the tab before showing confirmation dialog
+    // window.confirm() requires the tab to be active/focused to show the dialog
+    try {
+      const tab = await browser.tabs.get(tabId);
+
+      await browser.windows.update(tab.windowId, { focused: true });
+      await browser.tabs.update(tabId, { active: true });
+
+      // Small delay to ensure tab is fully focused before showing dialog
+      await new Promise(resolve => setTimeout(resolve, 100));
+    } catch { }
+
+    try {
+      confirmResult = await sendMessageToTab(tabId, {
+        action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+        target: REQUEST_TARGETS.CONTENT,
+        message: confirmMessage
+      });
+    } catch (e) {
+      await CatchError(e);
+      await storage.removeItem(storageKey);
+      return;
+    }
+
+    if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+      await storage.removeItem(storageKey);
+      return;
+    }
   }
 
   actionData.iframePermissionGranted = true;

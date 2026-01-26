@@ -78,42 +78,48 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
         // For shortcut-initiated autofill, handle cross-domain permission directly
         // instead of delegating to background (so we can wait for result)
         if (closeData.windowClose) {
-          const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
-            .replace('DOMAINS', uniqueDomains.join(', '));
+          // Check if all domains are in the trusted domains list
+          const trustedDomains = await storage.getItem('local:crossDomainTrustedDomains') || [];
+          const allDomainsTrusted = uniqueDomains.every(domain => trustedDomains.includes(domain));
 
-          // Focus the tab before showing confirm dialog
-          try {
-            const tab = await browser.tabs.get(tabId);
+          if (!allDomainsTrusted) {
+            const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
+              .replace('DOMAINS', uniqueDomains.join(', '));
 
-            await browser.windows.update(tab.windowId, { focused: true });
-            await browser.tabs.update(tabId, { active: true });
-            await new Promise(resolve => setTimeout(resolve, 100));
-          } catch { }
+            // Focus the tab before showing confirm dialog
+            try {
+              const tab = await browser.tabs.get(tabId);
 
-          let confirmResult;
+              await browser.windows.update(tab.windowId, { focused: true });
+              await browser.tabs.update(tabId, { active: true });
+              await new Promise(resolve => setTimeout(resolve, 100));
+            } catch { }
 
-          try {
-            confirmResult = await sendMessageToTab(tabId, {
-              action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
-              target: REQUEST_TARGETS.CONTENT,
-              message: confirmMessage
-            });
-          } catch (e) {
-            await CatchError(e);
+            let confirmResult;
 
-            showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info');
-            await tryWindowClose();
+            try {
+              confirmResult = await sendMessageToTab(tabId, {
+                action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+                target: REQUEST_TARGETS.CONTENT,
+                message: confirmMessage
+              });
+            } catch (e) {
+              await CatchError(e);
 
-            return true;
+              showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info');
+              await tryWindowClose();
+
+              return true;
+            }
+
+            if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+              // User declined cross-domain autofill
+              await tryWindowClose();
+              return true;
+            }
           }
 
-          if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-            // User declined cross-domain autofill
-            await tryWindowClose();
-            return true;
-          }
-
-          // User confirmed, proceed with autofill (handled below after this block)
+          // All domains trusted or user confirmed, proceed with autofill (handled below after this block)
           // Don't return here - let it fall through to the autofill logic
         } else {
           // For regular popup, delegate to background
@@ -279,42 +285,48 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
         // For shortcut-initiated autofill, handle cross-domain permission directly
         if (closeData.windowClose) {
-          const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
-            .replace('DOMAINS', uniqueDomains.join(', '));
+          // Check if all domains are in the trusted domains list
+          const trustedDomains = await storage.getItem('local:crossDomainTrustedDomains') || [];
+          const allDomainsTrusted = uniqueDomains.every(domain => trustedDomains.includes(domain));
 
-          // Focus the tab before showing confirm dialog
-          try {
-            const tab = await browser.tabs.get(tabId);
+          if (!allDomainsTrusted) {
+            const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
+              .replace('DOMAINS', uniqueDomains.join(', '));
 
-            await browser.windows.update(tab.windowId, { focused: true });
-            await browser.tabs.update(tabId, { active: true });
-            await new Promise(resolve => setTimeout(resolve, 100));
-          } catch { }
+            // Focus the tab before showing confirm dialog
+            try {
+              const tab = await browser.tabs.get(tabId);
 
-          let confirmResult;
+              await browser.windows.update(tab.windowId, { focused: true });
+              await browser.tabs.update(tabId, { active: true });
+              await new Promise(resolve => setTimeout(resolve, 100));
+            } catch { }
 
-          try {
-            confirmResult = await sendMessageToTab(tabId, {
-              action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
-              target: REQUEST_TARGETS.CONTENT,
-              message: confirmMessage
-            });
-          } catch (e) {
-            await CatchError(e);
+            let confirmResult;
 
-            showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info');
-            await tryWindowClose();
+            try {
+              confirmResult = await sendMessageToTab(tabId, {
+                action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+                target: REQUEST_TARGETS.CONTENT,
+                message: confirmMessage
+              });
+            } catch (e) {
+              await CatchError(e);
 
-            return true;
+              showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info');
+              await tryWindowClose();
+
+              return true;
+            }
+
+            if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+              // User declined cross-domain autofill
+              await tryWindowClose();
+              return true;
+            }
           }
 
-          if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-            // User declined cross-domain autofill
-            await tryWindowClose();
-            return true;
-          }
-
-          // User confirmed, proceed with autofill (handled below)
+          // All domains trusted or user confirmed, proceed with autofill (handled below)
         } else {
           // For regular popup, delegate to background
           const storageKey = `session:autofillCardData-${tabId}`;
