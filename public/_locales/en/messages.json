@@ -1723,6 +1723,86 @@
     "message": "Disconnect",
     "description": "Confirm button text in the disconnect trusted device confirmation dialog"
   },
+  "settings_cross_domain_header": {
+    "message": "Cross-domain autofill",
+    "description": "Header for the cross-domain iframe autofill settings"
+  },
+  "settings_cross_domain_description": {
+    "message": "When a login form is embedded in an iframe from a different domain, 2FAS Pass will ask for your confirmation before autofilling. You can manage trusted domains that skip this prompt.",
+    "description": "Description explaining the cross-domain iframe autofill security feature"
+  },
+  "settings_cross_domain_trusted_domains": {
+    "message": "Trusted domains",
+    "description": "Link text to navigate to the trusted domains management page for cross-domain autofill"
+  },
+  "settings_cross_domains_description": {
+    "message": "Cross-domain autofill prompts will be \nskipped for the following domains.",
+    "description": "Explains that trusted domains won't show cross-domain confirmation prompts"
+  },
+  "settings_cross_domains_empty": {
+    "message": "There are no trusted domains yet.",
+    "description": "Message displayed when no domains are trusted for cross-domain autofill"
+  },
+  "settings_cross_domains_remove": {
+    "message": "Remove selected domain from the trusted list.",
+    "description": "Button label to remove a domain from the trusted list"
+  },
+  "settings_cross_domains_remove_toast": {
+    "message": "Domain removed from the trusted list",
+    "description": "Message displayed when a domain is successfully removed from the trusted list"
+  },
+  "settings_cross_domains_add_required": {
+    "message": "Domain is required",
+    "description": "Validation message when trying to add an empty domain"
+  },
+  "settings_cross_domains_add_invalid": {
+    "message": "Domain is invalid. Please enter a valid domain.",
+    "description": "Validation message when the provided domain is invalid"
+  },
+  "settings_cross_domains_add_already_trusted": {
+    "message": "This domain is already trusted.",
+    "description": "Validation message when trying to add a domain that is already in the trusted list"
+  },
+  "settings_cross_domains_add_success": {
+    "message": "Successfully added domain to trusted list",
+    "description": "Message displayed when a domain is successfully added to the trusted list"
+  },
+  "settings_cross_domains_add_domain_text": {
+    "message": "Add domain",
+    "description": "Label for the input field to add a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_another_domain_text": {
+    "message": "Add another domain",
+    "description": "Label for the button to add another domain to the trusted list"
+  },
+  "settings_cross_domains_add_input_placeholder": {
+    "message": "Enter domain to trust",
+    "description": "Placeholder text for the input field to add a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_submit_title": {
+    "message": "Trust this domain",
+    "description": "Title for the button to submit a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_cancel_title": {
+    "message": "Cancel trusting this domain",
+    "description": "Title for the button to cancel trusting a new domain"
+  },
+  "settings_cross_domains_remove_dialog_message": {
+    "message": "Are you sure you want to remove DOMAIN from the trusted domains list?",
+    "description": "Confirmation message when removing a domain from the trusted list"
+  },
+  "settings_cross_domains_remove_dialog_message_replace_fallback": {
+    "message": "this domain",
+    "description": "Fallback text for the domain placeholder in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_remove_dialog_cancel_text": {
+    "message": "Cancel",
+    "description": "Cancel button text in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_remove_dialog_confirm_text": {
+    "message": "Remove",
+    "description": "Confirm button text in the remove domain confirmation dialog"
+  },
   "this_tab_matching_logins_header": {
     "message": "Matching Items",
     "description": "Header for the section displaying matching login items"

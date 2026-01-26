@@ -12,6 +12,7 @@ import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 
 const AutoClearClipboard = lazy(() => import('./components/AutoClearClipboard'));
 const IdleLock = lazy(() => import('./components/IdleLock'));
+const CrossDomain = lazy(() => import('./components/CrossDomain'));
 // const SafeBrowsing = lazy(() => import('./components/SafeBrowsing'));
 // const SafeBrowsingReports = lazy(() => import('./components/SafeBrowsingReports'));
 
@@ -39,8 +40,8 @@ function SettingsSecurity (props) {
               </div>
     
               <div className={S.settingsSubmenuBody}>
+                <CrossDomain />
                 <AutoClearClipboard />
-    
                 <IdleLock />
     
                 {/* <div className={S.settingsAdvanced}>

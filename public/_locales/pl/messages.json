@@ -1723,6 +1723,86 @@
     "message": "Rozłącz",
     "description": "Confirm button text in the disconnect trusted device confirmation dialog"
   },
+  "settings_cross_domain_header": {
+    "message": "Autouzupełnianie między domenami",
+    "description": "Header for the cross-domain iframe autofill settings"
+  },
+  "settings_cross_domain_description": {
+    "message": "Gdy formularz logowania jest osadzony w ramce iframe z innej domeny, 2FAS Pass poprosi o potwierdzenie przed autouzupełnieniem. Możesz zarządzać zaufanymi domenami, które pomijają ten monit.",
+    "description": "Description explaining the cross-domain iframe autofill security feature"
+  },
+  "settings_cross_domain_trusted_domains": {
+    "message": "Zaufane domeny",
+    "description": "Link text to navigate to the trusted domains management page for cross-domain autofill"
+  },
+  "settings_cross_domains_description": {
+    "message": "Monity o autouzupełnianie między domenami będą \npominięte dla następujących domen.",
+    "description": "Explains that trusted domains won't show cross-domain confirmation prompts"
+  },
+  "settings_cross_domains_empty": {
+    "message": "Brak zaufanych domen.",
+    "description": "Message displayed when no domains are trusted for cross-domain autofill"
+  },
+  "settings_cross_domains_remove": {
+    "message": "Usuń wybraną domenę z listy zaufanych.",
+    "description": "Button label to remove a domain from the trusted list"
+  },
+  "settings_cross_domains_remove_toast": {
+    "message": "Domena usunięta z listy zaufanych",
+    "description": "Message displayed when a domain is successfully removed from the trusted list"
+  },
+  "settings_cross_domains_add_required": {
+    "message": "Domena jest wymagana",
+    "description": "Validation message when trying to add an empty domain"
+  },
+  "settings_cross_domains_add_invalid": {
+    "message": "Nieprawidłowa domena. Spróbuj ponownie.",
+    "description": "Validation message when the provided domain is invalid"
+  },
+  "settings_cross_domains_add_already_trusted": {
+    "message": "Ta domena jest już zaufana.",
+    "description": "Validation message when trying to add a domain that is already in the trusted list"
+  },
+  "settings_cross_domains_add_success": {
+    "message": "Pomyślnie dodano domenę do listy zaufanych",
+    "description": "Message displayed when a domain is successfully added to the trusted list"
+  },
+  "settings_cross_domains_add_domain_text": {
+    "message": "Dodaj domenę",
+    "description": "Label for the input field to add a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_another_domain_text": {
+    "message": "Dodaj kolejną domenę",
+    "description": "Label for the button to add another domain to the trusted list"
+  },
+  "settings_cross_domains_add_input_placeholder": {
+    "message": "Wprowadź domenę do zaufania",
+    "description": "Placeholder text for the input field to add a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_submit_title": {
+    "message": "Zaufaj tej domenie",
+    "description": "Title for the button to submit a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_cancel_title": {
+    "message": "Anuluj dodawanie zaufanej domeny",
+    "description": "Title for the button to cancel trusting a new domain"
+  },
+  "settings_cross_domains_remove_dialog_message": {
+    "message": "Czy na pewno chcesz usunąć DOMAIN z listy zaufanych domen?",
+    "description": "Confirmation message when removing a domain from the trusted list"
+  },
+  "settings_cross_domains_remove_dialog_message_replace_fallback": {
+    "message": "tę domenę",
+    "description": "Fallback text for the domain placeholder in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_remove_dialog_cancel_text": {
+    "message": "Anuluj",
+    "description": "Cancel button text in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_remove_dialog_confirm_text": {
+    "message": "Usuń",
+    "description": "Confirm button text in the remove domain confirmation dialog"
+  },
   "this_tab_matching_logins_header": {
     "message": "Pasujące elementy",
     "description": "Header for the section displaying matching login items"

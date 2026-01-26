@@ -266,7 +266,7 @@
   &-theme,
   &-push,
   &-clear-clipboard,
-  // &-idle-lock,
+  &-cross-domain,
   &-save-password-prompt {
     margin-bottom: 32px;
   }
@@ -601,71 +601,70 @@
     }
   }
 
-  &-save-password-prompt,
-  &-danger-zone {
-    &-excluded-domains-link,
-    &-link {
-      align-items: center;
-      background-color: rgba(v.$hover-color-light, 0);
-      border-radius: 6px;
-      display: flex;
-      justify-content: space-between;
-      margin-left: -12px;
-      margin-right: -12px;
-      margin-top: 4px;
-      padding: 12px;
-      transition: background-color v.$anim;
-      width: calc(100% + 24px);
+  &-cross-domain-link,
+  &-save-password-prompt-excluded-domains-link,
+  &-danger-zone-link {
+    align-items: center;
+    background-color: rgba(v.$hover-color-light, 0);
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    margin-left: -12px;
+    margin-right: -12px;
+    margin-top: 4px;
+    padding: 12px;
+    transition: background-color v.$anim;
+    width: calc(100% + 24px);
+
+    @include m.darkMode {
+      background-color: rgba(v.$hover-color-dark, 0);
+    }
+
+    &:hover,
+    &:focus {
+      background-color: rgba(v.$hover-color-light, 1);
 
       @include m.darkMode {
-        background-color: rgba(v.$hover-color-dark, 0);
-      }
-
-      &:hover {
-        background-color: rgba(v.$hover-color-light, 1);
-
-        @include m.darkMode {
-          background-color: rgba(v.$hover-color-dark, 1);
-        }
-
-        span {
-          color: v.$primary-color-light;
-
-          @include m.darkMode {
-            color: v.$primary-color-dark;
-          }
-        }
-
-        svg {
-          fill: v.$primary-color-light;
-
-          @include m.darkMode {
-            fill: v.$primary-color-dark;
-          }
-        }
+        background-color: rgba(v.$hover-color-dark, 1);
       }
 
       span {
-        color: v.$primary-text-light;
-        font-size: 12px;
-        font-weight: 500;
-        line-height: 1;
-        transition: color v.$anim;
+        color: v.$primary-color-light;
 
         @include m.darkMode {
-          color: v.$primary-text-dark;
+          color: v.$primary-color-dark;
         }
       }
 
       svg {
-        height: 10px;
-        fill: v.$object-light;
-        transition: fill v.$anim;
-        width: auto;
+        fill: v.$primary-color-light;
 
         @include m.darkMode {
-          fill: v.$object-dark;
+          fill: v.$primary-color-dark;
         }
+      }
+    }
+
+    span {
+      color: v.$primary-text-light;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1;
+      transition: color v.$anim;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    svg {
+      fill: v.$object-light;
+      height: 10px;
+      transition: fill v.$anim;
+      width: auto;
+
+      @include m.darkMode {
+        fill: v.$object-dark;
       }
     }
   }
@@ -1011,7 +1010,7 @@
     color: v.$primary-text-light;
     font-size: 16px;
     font-weight: 600;
-    line-height: 1.5;
+    line-height: 1;
     text-align: center;
 
     @include m.darkMode {
