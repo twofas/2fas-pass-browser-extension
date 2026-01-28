@@ -72,7 +72,7 @@
     "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
   },
   "notification_autofill_partial_title": {
-    "message": "Częściowe autouzupełnianie",
+    "message": "Częściowe wypełnienie",
     "description": "Title for the notification when autofill only partially succeeded"
   },
   "notification_autofill_failed_open_popup": {

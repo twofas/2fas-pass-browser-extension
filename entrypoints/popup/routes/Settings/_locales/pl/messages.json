@@ -396,11 +396,11 @@
     "description": "Confirm button text in the disconnect trusted device confirmation dialog"
   },
   "settings_cross_domain_header": {
-    "message": "Autouzupełnianie między domenami",
+    "message": "Autouzupełnianie w zewnętrznych domenach",
     "description": "Header for the cross-domain iframe autofill settings"
   },
   "settings_cross_domain_description": {
-    "message": "Gdy formularz logowania jest osadzony w ramce iframe z innej domeny, 2FAS Pass poprosi o potwierdzenie przed autouzupełnieniem. Możesz zarządzać zaufanymi domenami, które pomijają ten monit.",
+    "message": "Gdy formularz logowania jest osadzony w ramce iframe z innej domeny, 2FAS Pass poprosi o potwierdzenie przed wypełnieniem. Możesz zarządzać zaufanymi domenami, które pominą te potwierdzenie.",
     "description": "Description explaining the cross-domain iframe autofill security feature"
   },
   "settings_cross_domain_trusted_domains": {
@@ -408,7 +408,7 @@
     "description": "Link text to navigate to the trusted domains management page for cross-domain autofill"
   },
   "settings_cross_domains_description": {
-    "message": "Monity o autouzupełnianie między domenami będą \npominięte dla następujących domen.",
+    "message": "Potwierdzenie autouzupełniania w zewnętrznych domenach\nbędzie pominięte dla następujących domen.",
     "description": "Explains that trusted domains won't show cross-domain confirmation prompts"
   },
   "settings_cross_domains_empty": {
@@ -448,7 +448,7 @@
     "description": "Label for the button to add another domain to the trusted list"
   },
   "settings_cross_domains_add_input_placeholder": {
-    "message": "Wprowadź domenę do zaufania",
+    "message": "Wprowadź zaufaną domenę",
     "description": "Placeholder text for the input field to add a new domain to the trusted list"
   },
   "settings_cross_domains_add_submit_title": {

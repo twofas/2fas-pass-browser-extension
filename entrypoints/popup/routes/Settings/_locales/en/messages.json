@@ -448,7 +448,7 @@
     "description": "Label for the button to add another domain to the trusted list"
   },
   "settings_cross_domains_add_input_placeholder": {
-    "message": "Enter domain to trust",
+    "message": "Enter trusted domain",
     "description": "Placeholder text for the input field to add a new domain to the trusted list"
   },
   "settings_cross_domains_add_submit_title": {
