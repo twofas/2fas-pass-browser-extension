@@ -186,8 +186,12 @@ function LoginAddNewView() {
       formData.content.username = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       formData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
     } else {
-      formData.content.username = { value: e.username ? e.username : '', action: REQUEST_STRING_ACTIONS.SET };
-      formData.content.s_password = { value: e.s_password ? e.s_password : '', action: REQUEST_STRING_ACTIONS.SET };
+      formData.content.username = e.username
+        ? { value: e.username, action: REQUEST_STRING_ACTIONS.SET }
+        : { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
+      formData.content.s_password = e.s_password
+        ? { value: e.s_password, action: REQUEST_STRING_ACTIONS.SET }
+        : { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
     }
 
     return navigate('/fetch', {
