@@ -30,33 +30,5 @@
   "autofill_cross_domain_warning_no_access": {
     "message": "Ten formularz znajduje się w domenie CURRENT_DOMAIN i jest osadzony w ramce iframe z innej domeny. Czy na pewno chcesz kontynuować wypełnianie?",
     "description": "Warning shown when autofill is attempted on a cross-domain iframe and we cannot access the parent domain"
-  },
-  "content_cross_domain_dialog_title": {
-    "message": "Wypełnianie między domenami",
-    "description": "Title for the cross-domain confirmation dialog"
-  },
-  "content_cross_domain_dialog_message": {
-    "message": "Ta strona zawiera formularze z zewnętrznych domen. Czy chcesz wypełnić dane w tych ramkach?",
-    "description": "Message explaining that the page has cross-domain iframes with forms"
-  },
-  "content_cross_domain_dialog_cancel": {
-    "message": "Anuluj",
-    "description": "Button to cancel autofill and close the dialog"
-  },
-  "content_cross_domain_dialog_autofill": {
-    "message": "Wypełnij",
-    "description": "Button to confirm and proceed with autofill"
-  },
-  "content_cross_domain_dialog_trust_domain": {
-    "message": "Zaufaj tej domenie",
-    "description": "Button to trust a single domain and proceed with autofill"
-  },
-  "content_cross_domain_dialog_trust_domains_header": {
-    "message": "Lub wybierz domeny, którym chcesz zaufać:",
-    "description": "Header text above the multi-domain trust checkbox list"
-  },
-  "content_cross_domain_dialog_trust_selected": {
-    "message": "Zaufaj wybranym i wypełnij",
-    "description": "Button to trust selected domains and proceed with autofill"
   }
 }

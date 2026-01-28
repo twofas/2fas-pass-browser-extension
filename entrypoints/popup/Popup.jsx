@@ -34,7 +34,6 @@ const SettingsSecurity = lazy(() => import('./routes/Settings/SettingsSecurity')
 const SettingsDevices = lazy(() => import('./routes/Settings/SettingsDevices'));
 const SettingsReset = lazy(() => import('./routes/Settings/SettingsReset'));
 const SettingsSaveLoginExcludedDomains = lazy(() => import('./routes/Settings/SettingsSaveLoginExcludedDomains'));
-const SettingsCrossDomains = lazy(() => import('./routes/Settings/SettingsCrossDomains'));
 const Fetch = lazy(() => import('./routes/Fetch'));
 const FetchExternal = lazy(() => import('./routes/FetchExternal'));
 const Details = lazy(() => import('./routes/Details'));
@@ -50,7 +49,6 @@ const routeConfig = [
   { path: '/settings/about', component: SettingsAbout, isProtectedRoute: false },
   { path: '/settings/preferences', component: SettingsPreferences, isProtectedRoute: false },
   { path: '/settings/security', component: SettingsSecurity, isProtectedRoute: false },
-  { path: '/settings/security/cross-domain', component: SettingsCrossDomains, isProtectedRoute: false },
   { path: '/settings/devices', component: SettingsDevices, isProtectedRoute: false },
   { path: '/settings/preferences/reset', component: SettingsReset, isProtectedRoute: false },
   { path: '/settings/preferences/save-login-excluded-domains', component: SettingsSaveLoginExcludedDomains, isProtectedRoute: false },

@@ -25,16 +25,6 @@ const closeNotification = (n, timers) => {
     timers.visible = null;
   }
 
-  if (timers.maxHeight1 !== null) {
-    clearTimeout(timers.maxHeight1);
-    timers.maxHeight1 = null;
-  }
-
-  if (timers.maxHeight2 !== null) {
-    clearTimeout(timers.maxHeight2);
-    timers.maxHeight2 = null;
-  }
-
   if (timers.cleanup !== null) {
     clearTimeout(timers.cleanup);
     timers.cleanup = null;
@@ -184,8 +174,6 @@ const matchingLogins = (request, sendResponse, container) => {
 
   const timers = {
     visible: null,
-    maxHeight1: null,
-    maxHeight2: null,
     cleanup: null
   };
 
@@ -340,24 +328,6 @@ const matchingLogins = (request, sendResponse, container) => {
 
     timers.visible = null;
   }, 200);
-
-  timers.maxHeight1 = setTimeout(() => {
-    if (n && n.items) {
-      const itemsHeight = Array.from(n.items.children).reduce((total, child) => total + child.offsetHeight, 0);
-      n.items.style.setProperty('max-height', `${itemsHeight}px`, 'important');
-    }
-
-    timers.maxHeight1 = null;
-  }, 201);
-
-  timers.maxHeight2 = setTimeout(() => {
-    if (n && n.item && n.items) {
-      const itemsHeight = Array.from(n.items.children).reduce((total, child) => total + child.offsetHeight, 0);
-      n.item.style.maxHeight = `${n.item.offsetHeight + itemsHeight}px`;
-    }
-
-    timers.maxHeight2 = null;
-  }, 202);
 };
 
 export default matchingLogins;

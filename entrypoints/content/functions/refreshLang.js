@@ -16,31 +16,7 @@ const refreshLang = container => {
     return;
   }
 
-  refreshCrossDomainDialog(container);
   refreshNotificationItems(container);
-};
-
-/**
- * Refreshes text in cross-domain dialog if open.
- * @param {HTMLElement} container - The shadow DOM container element.
- * @return {void}
- */
-const refreshCrossDomainDialog = container => {
-  const dialog = container.querySelector('.twofas-pass-cross-domain-dialog');
-
-  if (!dialog) {
-    return;
-  }
-
-  const elementsWithKeys = dialog.querySelectorAll('[data-i18n-key]');
-
-  elementsWithKeys.forEach(el => {
-    const key = el.getAttribute('data-i18n-key');
-
-    if (key) {
-      el.textContent = getMessage(key);
-    }
-  });
 };
 
 /**

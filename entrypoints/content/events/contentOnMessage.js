@@ -15,7 +15,6 @@ import matchingLogins from '../functions/matchingLogins';
 import savePrompt from '../functions/savePrompt';
 import refreshTheme from '../functions/refreshTheme';
 import refreshLang from '../functions/refreshLang';
-import crossDomainConfirmDialog from '../functions/crossDomainConfirmDialog';
 
 /**
 * Function to handle messages on the content script.
@@ -33,9 +32,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       return false;
     }
 
-    // IS TOP FRAME CHECK
     if (
-      // request?.action === REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK ||
       request?.action === REQUEST_ACTIONS.MATCHING_LOGINS ||
       request?.action === REQUEST_ACTIONS.NOTIFICATION ||
       request?.action === REQUEST_ACTIONS.SAVE_PROMPT ||
@@ -120,7 +117,10 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       }
 
       case REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM: {
-        crossDomainConfirmDialog(request, sendResponse, container);
+        const message = request.message || '';
+        const userConfirmed = window.confirm(message);
+
+        sendResponse({ status: 'ok', confirmed: userConfirmed });
         break;
       }
 

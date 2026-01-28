@@ -9,7 +9,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 
-/** 
+/**
 * Function to send autofill data to a specific tab.
 * @async
 * @param {number} tabId - The ID of the tab to which the autofill data should be sent.
@@ -113,29 +113,22 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     });
 
     const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
+    const needsPermission = crossDomainFrames.length > 0;
 
-    if (crossDomainFrames.length > 0) {
+    if (needsPermission) {
       const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
-      const trustedDomains = await storage.getItem('local:crossDomainTrustedDomains') || [];
-      const untrustedDomains = uniqueDomains.filter(domain => !trustedDomains.includes(domain));
 
-      if (untrustedDomains.length > 0) {
-        const theme = await storage.getItem('local:theme');
+      const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
+        .replace('DOMAINS', uniqueDomains.join(', '));
 
-        const confirmResult = await sendMessageToTab(tabId, {
-          action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
-          target: REQUEST_TARGETS.CONTENT,
-          domains: untrustedDomains,
-          theme
-        });
+      const confirmResult = await sendMessageToTab(tabId, {
+        action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+        target: REQUEST_TARGETS.CONTENT,
+        message: confirmMessage
+      });
 
-        if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-          iframePermissionGranted = false;
-        } else if (confirmResult?.trustedDomains?.length > 0) {
-          // Save newly trusted domains if user selected any
-          const updatedTrustedDomains = [...new Set([...trustedDomains, ...confirmResult.trustedDomains])];
-          await storage.setItem('local:crossDomainTrustedDomains', updatedTrustedDomains);
-        }
+      if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+        iframePermissionGranted = false;
       }
     }
   } catch (e) {
