@@ -9,8 +9,9 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useEffect } from 'react';
 import focusPopupWindow from '@/partials/functions/focusPopupWindow';
 import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
+import { useI18n } from '@/partials/context/I18nContext';
 
-/** 
+/**
 * Function to focus the popup window in a separate window.
 * @async
 * @return {void}
@@ -20,35 +21,37 @@ const focusPopupInSeparateWindow = async () => {
   tryWindowClose();
 };
 
-/** 
-* Function to handle the opening of the popup window.
-* @async
-* @return {void}
-*/
-const handleOpenPopupButton = async () => {
-  const focused = await focusPopupWindow();
-
-  if (!focused) {
-    const res = await browser.runtime.sendMessage({
-      action: REQUEST_ACTIONS.OPEN_POPUP_WINDOW_IN_NEW_WINDOW,
-      target: REQUEST_TARGETS.BACKGROUND,
-      pathname: '/'
-    });
-
-    if (res.status === 'error') {
-      showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
-    }
-  }
-
-  tryWindowClose();
-};
-
-/** 
+/**
 * Function component that renders the Blocked page.
 * @param {Object} props - The properties passed to the component.
 * @return {JSX.Element} The rendered Blocked component.
 */
 function Blocked (props) {
+  const { getMessage } = useI18n();
+
+  /**
+  * Function to handle the opening of the popup window.
+  * @async
+  * @return {void}
+  */
+  const handleOpenPopupButton = async () => {
+    const focused = await focusPopupWindow();
+
+    if (!focused) {
+      const res = await browser.runtime.sendMessage({
+        action: REQUEST_ACTIONS.OPEN_POPUP_WINDOW_IN_NEW_WINDOW,
+        target: REQUEST_TARGETS.BACKGROUND,
+        pathname: '/'
+      });
+
+      if (res.status === 'error') {
+        showToast(getMessage('error_feature_wrong_data'), 'error');
+      }
+    }
+
+    tryWindowClose();
+  };
+
   useEffect(() => {
     if (import.meta.env.BROWSER !== 'safari') {
       focusPopupInSeparateWindow();
@@ -59,12 +62,12 @@ function Blocked (props) {
     <div className={`${props.className ? props.className : ''}`}>
       <div>
         <section className={S.blocked}>
-          <h1>{browser.i18n.getMessage('blocked_text')}</h1>
+          <h1>{getMessage('blocked_text')}</h1>
           <button
             className={`${bS.btn} ${bS.btnTheme} ${bS.btnQrReload}`}
             onClick={handleOpenPopupButton}
           >
-            {browser.i18n.getMessage('blocked_button')}
+            {getMessage('blocked_button')}
           </button>
         </section>
       </div>

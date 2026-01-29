@@ -4,10 +4,16 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { itemsUiData } from '@/entrypoints/popup/constants';
+import { useMemo } from 'react';
+import { getItemsUiData } from '@/entrypoints/popup/constants';
 import ClearLink from '../../ClearLink';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const AddNewCustomOption = option => {
+  const { getMessage } = useI18n();
+
+  const itemsUiData = useMemo(() => getItemsUiData(getMessage), [getMessage]);
+
   const handleClick = () => {
     if (option?.selectProps?.setIsMenuOpen) {
       option.selectProps.setIsMenuOpen(false);
@@ -18,7 +24,7 @@ const AddNewCustomOption = option => {
     <div className={`react-select-add-new__option ${option?.selectProps?.pathname === option.data.value ? 'active' : ''}`}>
       <ClearLink
         to={option.data.value}
-        title={`${browser.i18n.getMessage('top_bar_create_new')} ${option.data.label}`}
+        title={`${getMessage('top_bar_create_new')} ${option.data.label}`}
         onClick={handleClick}
       >
         <span className={`react-select-add-new__option-icon ${itemsUiData[option.data.item].selectClassName}`}>

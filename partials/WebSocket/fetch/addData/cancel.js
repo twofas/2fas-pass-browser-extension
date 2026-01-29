@@ -18,7 +18,7 @@ const newDataCancel = async messageId => {
     return {
       returnUrl: '/',
       returnToast: {
-        text: browser.i18n.getMessage('fetch_new_login_cancel_toast'),
+        text: getMessage('fetch_new_login_cancel_toast'),
         type: 'info'
       }
     };

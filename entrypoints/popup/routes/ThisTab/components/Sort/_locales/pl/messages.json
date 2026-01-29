@@ -1,0 +1,18 @@
+{
+  "sort_az": {
+    "message": "A-Z",
+    "description": "Sort option for sorting items from A to Z"
+  },
+  "sort_za": {
+    "message": "Z-A",
+    "description": "Sort option for sorting items from Z to A"
+  },
+  "sort_newest": {
+    "message": "Najnowsze",
+    "description": "Sort option for sorting items by most recently updated first"
+  },
+  "sort_oldest": {
+    "message": "Najstarsze",
+    "description": "Sort option for sorting items by least recently updated first"
+  }
+}

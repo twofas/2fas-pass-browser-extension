@@ -1,0 +1,18 @@
+{
+  "error_fallback_header": {
+    "message": "Wystąpił błąd",
+    "description": "Header message displayed on the error fallback screen"
+  },
+  "error_fallback_description": {
+    "message": "Przepraszamy, wystąpił błąd. Kliknij poniższy przycisk, aby spróbować ponownie.",
+    "description": "Description message displayed on the error fallback screen"
+  },
+  "error_fallback_retry_button": {
+    "message": "Spróbuj ponownie",
+    "description": "Label for the retry button on the error fallback screen"
+  },
+  "error_fallback_copy_error_title": {
+    "message": "Skopiuj treść błędu do schowka",
+    "description": "Title for the copy error message button on the error fallback screen"
+  }
+}

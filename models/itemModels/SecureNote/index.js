@@ -38,7 +38,7 @@ class SecureNote extends Item {
 
     this.internalData = {
       ...this.internalData,
-      uiName: browser.i18n.getMessage('secure_note')
+      uiName: getMessage('secure_note')
     };
 
     // Secure Input Fields
@@ -89,11 +89,11 @@ class SecureNote extends Item {
 
   get dropdownList () {
     const dO = [
-      { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
+      { value: 'details', label: getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
     ];
 
     if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
-      dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_secure_note'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
+      dO.push({ value: 'forget', label: getMessage('this_tab_more_forget_secure_note'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
     }
 
     return dO;

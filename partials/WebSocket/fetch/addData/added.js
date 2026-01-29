@@ -98,7 +98,7 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
     return {
       returnUrl: '/',
       returnToast: {
-        text: browser.i18n.getMessage('fetch_new_login_added_toast'),
+        text: getMessage('fetch_new_login_added_toast'),
         type: 'success'
       }
     };

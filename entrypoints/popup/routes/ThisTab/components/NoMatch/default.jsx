@@ -5,63 +5,66 @@
 // See LICENSE file for full terms
 
 import S from '../../ThisTab.module.scss';
-import { Player } from '@lottiefiles/react-lottie-player';
-import { useRef, useCallback } from 'react';
+import Lottie from 'lottie-react';
+import { useState, useEffect } from 'react';
 
 /**
 * Function to render the No Match component for default browsers.
 * @param {Object} props - The component props.
-* @param {Function} props.onAnimationReady - Callback when the animation is ready to play.
+* @param {Function} props.onAnimationReady - Callback when the animation is ready to play (unused, kept for API compatibility).
 * @return {JSX.Element} The rendered component.
 */
+// eslint-disable-next-line no-unused-vars
 const NoMatchDefault = ({ onAnimationReady }) => {
-  const boxAnimationRef = useRef(null);
-  const boxAnimationDarkRef = useRef(null);
-  const lightReady = useRef(false);
-  const darkReady = useRef(false);
+  const [lightAnimationData, setLightAnimationData] = useState(null);
+  const [darkAnimationData, setDarkAnimationData] = useState(null);
 
-  const handleLightEvent = useCallback(event => {
-    if (event === 'load' && !lightReady.current) {
-      lightReady.current = true;
+  useEffect(() => {
+    const loadAnimations = async () => {
+      const lightUrl = browser.runtime.getURL('/animations/box.json');
+      const darkUrl = browser.runtime.getURL('/animations/box-dark.json');
 
-      if (darkReady.current && onAnimationReady) {
-        onAnimationReady(boxAnimationRef, boxAnimationDarkRef);
-      }
-    }
-  }, [onAnimationReady]);
+      const [lightResponse, darkResponse] = await Promise.all([
+        fetch(lightUrl),
+        fetch(darkUrl)
+      ]);
 
-  const handleDarkEvent = useCallback(event => {
-    if (event === 'load' && !darkReady.current) {
-      darkReady.current = true;
+      const [lightData, darkData] = await Promise.all([
+        lightResponse.json(),
+        darkResponse.json()
+      ]);
 
-      if (lightReady.current && onAnimationReady) {
-        onAnimationReady(boxAnimationRef, boxAnimationDarkRef);
-      }
-    }
-  }, [onAnimationReady]);
+      setLightAnimationData(lightData);
+      setDarkAnimationData(darkData);
+    };
+
+    loadAnimations();
+  }, []);
+
+  if (!lightAnimationData || !darkAnimationData) {
+    return (
+      <div className={`${S.thisTabMatchingLoginsEmpty} ${S.active}`}>
+        <div style={{ height: '86px', width: '120px' }} />
+      </div>
+    );
+  }
 
   return (
     <div className={`${S.thisTabMatchingLoginsEmpty} ${S.active}`}>
       <div className='theme-light'>
-        <Player
-          autoplay={false}
+        <Lottie
+          animationData={lightAnimationData}
+          autoplay={true}
           loop={false}
-          keepLastFrame={true}
-          src={`${browser.runtime.getURL('/animations/box.json')}`}
           style={{ height: '86px', width: '120px' }}
-          ref={boxAnimationRef}
-          onEvent={handleLightEvent}
         />
       </div>
       <div className="theme-dark">
-        <Player
-          autoplay={false}
+        <Lottie
+          animationData={darkAnimationData}
+          autoplay={true}
           loop={false}
-          keepLastFrame={true}
-          src={`${browser.runtime.getURL('/animations/box-dark.json')}`}
           style={{ height: '86px', width: '120px' }}
-          ref={boxAnimationDarkRef}
-          onEvent={handleDarkEvent}
         />
       </div>
     </div>

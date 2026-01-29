@@ -8,6 +8,7 @@ import '@/partials/TwofasNotification/TwofasNotification.scss';
 import S from '../../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useEffect, useState, useCallback } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import TwofasNotification from '@/partials/TwofasNotification';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
@@ -16,6 +17,7 @@ import AdvancedSelect from '@/partials/components/AdvancedSelect';
 * @return {JSX.Element} The rendered component.
 */
 function Push () {
+  const { getMessage } = useI18n();
   const defaultPushValue = import.meta.env.BROWSER === 'safari' ? false : true;
   const [push, setPush] = useState(defaultPushValue);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -42,8 +44,8 @@ function Push () {
   }, [defaultPushValue]);
 
   const pushOptions = [
-    { value: true, label: browser.i18n.getMessage('settings_push_native') },
-    { value: false, label: browser.i18n.getMessage('settings_push_custom') }
+    { value: true, label: getMessage('settings_push_native') },
+    { value: false, label: getMessage('settings_push_custom') }
   ];
 
   const handlePushChange = useCallback(async change => {
@@ -56,20 +58,20 @@ function Push () {
       setPush(value);
 
       await storage.setItem('local:nativePush', value);
-      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
+      showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:nativePush') || defaultPushValue;
       setPush(previousValue);
 
-      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
+      showToast(getMessage('error_general_setting'), 'error');
       await CatchError(e);
     }
   }, [isInitialized, defaultPushValue]);
 
   const handlePushTest = useCallback(() => {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_test_title'),
-      Message: browser.i18n.getMessage('notification_test_message')
+      Title: getMessage('notification_test_title'),
+      Message: getMessage('notification_test_message')
     });
   }, []);
 
@@ -79,8 +81,8 @@ function Push () {
 
   return (
     <div className={S.settingsPush}>
-      <h4>{browser.i18n.getMessage('settings_notifications_header')}</h4>
-      <p>{browser.i18n.getMessage('settings_notifications_description')}</p>
+      <h4>{getMessage('settings_notifications_header')}</h4>
+      <p>{getMessage('settings_notifications_description')}</p>
 
       <form action="#" className={S.settingsPushForm}>
         <AdvancedSelect
@@ -99,7 +101,7 @@ function Push () {
         onClick={handlePushTest}
         disabled={!isInitialized ? 'disabled' : ''}
       >
-        {browser.i18n.getMessage('settings_notifications_send_test')}
+        {getMessage('settings_notifications_send_test')}
       </button>
     </div>
   );

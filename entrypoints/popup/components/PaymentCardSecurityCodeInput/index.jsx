@@ -9,6 +9,7 @@ import { forwardRef, memo, useMemo, useRef, useLayoutEffect, useCallback, useSta
 import getSecurityCodeMask from './getSecurityCodeMask';
 import isSecurityCodeInvalid from './validateSecurityCode';
 import isSecurityCodeTooLong from './isSecurityCodeTooLong';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * PaymentCardSecurityCodeInput component with dynamic mask based on card type.
@@ -26,6 +27,7 @@ import isSecurityCodeTooLong from './isSecurityCodeTooLong';
 * @return {JSX.Element} The rendered component.
 */
 const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumber, securityType, sifExists, onTooLongChange, ...inputProps }, ref) => {
+  const { getMessage } = useI18n();
   const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
@@ -104,7 +106,7 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
         className={inputClassName}
         type='text'
         value={displayValue}
-        placeholder={browser.i18n.getMessage('placeholder_payment_card_security_code')}
+        placeholder={getMessage('placeholder_payment_card_security_code')}
         id={id}
         onChange={e => onChange(e)}
         disabled
@@ -122,7 +124,7 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
       slotChar=' '
       autoClear={false}
       value={displayValue}
-      placeholder={browser.i18n.getMessage('placeholder_payment_card_security_code')}
+      placeholder={getMessage('placeholder_payment_card_security_code')}
       id={id}
       onChange={handleChange}
       onMouseDown={handleMouseDown}

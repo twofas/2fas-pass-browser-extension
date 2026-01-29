@@ -23,6 +23,7 @@ import LogoDark from '@/assets/logo-dark.svg?react';
 import LockedIcon from '@/assets/popup-window/locked.svg?react';
 import LockIcon from '@/assets/popup-window/lock.svg?react';
 import AddNewIcon from '@/assets/popup-window/add-new.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const selectComponents = { Option: AddNewCustomOption };
 const noOptionsMessage = () => null;
@@ -32,6 +33,7 @@ const noOptionsMessage = () => null;
 * @return {JSX.Element} The rendered component.
 */
 function TopBar() {
+  const { getMessage } = useI18n();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -155,7 +157,7 @@ function TopBar() {
             <button
               type='button'
               onClick={handleLogoClick}
-              title={browser.i18n.getMessage('scroll_to_top')}
+              title={getMessage('scroll_to_top')}
             >
               <Logo className="theme-light" />
               <LogoDark className="theme-dark" />
@@ -163,7 +165,7 @@ function TopBar() {
           ) : (
             <Link
               to='/'
-              title={browser.i18n.getMessage('go_to_home_page')}
+              title={getMessage('go_to_home_page')}
               prefetch='render'
             >
               <Logo className="theme-light" />
@@ -179,12 +181,12 @@ function TopBar() {
             onClick={handleLockClick}
           >
             <span className={bS.btnLockedDisabled}>
-              <span>{browser.i18n.getMessage('top_bar_locked')}</span>
+              <span>{getMessage('top_bar_locked')}</span>
               <LockedIcon />
             </span>
 
             <span className={bS.btnLockedActive}>
-              <span>{browser.i18n.getMessage('top_bar_lock')}</span>
+              <span>{getMessage('top_bar_lock')}</span>
               <LockIcon />
             </span>
           </button>
@@ -197,7 +199,7 @@ function TopBar() {
             type='button'
             onClick={handleAddNewClick}
           >
-            <span>{browser.i18n.getMessage('top_bar_add_new')}</span>
+            <span>{getMessage('top_bar_add_new')}</span>
             <AddNewIcon />
           </button>
 

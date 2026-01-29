@@ -1,0 +1,122 @@
+{
+  "fetch_push_header": {
+    "message": "Sprawdź powiadomienie push 2FAS Pass na swoim urządzeniu mobilnym.",
+    "description": "Header prompting the user to check their device for a push notification"
+  },
+  "fetch_push_waiting_for_mobile": {
+    "message": "Oczekiwanie na odpowiedź...",
+    "description": "Message displayed while waiting for a response from the mobile app"
+  },
+  "fetch_connection_error_header": {
+    "message": "Błąd połączenia!\nSpróbuj ponownie poźniej.",
+    "description": "Error message displayed when there is a connection issue"
+  },
+  "fetch_token_unregistered_header": {
+    "message": "Token FCM niezarejestrowany.",
+    "description": "Error message displayed when the FCM token is unregistered"
+  },
+  "fetch_connection_timeout_header": {
+    "message": "Przekroczono limit\nczasu połączenia.",
+    "description": "Error message displayed when the connection times out due to inactivity"
+  },
+  "fetch_continue_updating_header": {
+    "message": "Kontynuuj aktualizację w aplikacji 2FAS Pass",
+    "description": "Header prompting the user to continue updating in the mobile app"
+  },
+  "fetch_continue_updating_description": {
+    "message": "Aby zaktualizować ten element, kontynuuj w \naplikacji mobilnej. Pozostaw to okno otwarte.",
+    "description": "Explains that the user should continue the process on their mobile phone"
+  },
+  "fetch_full_sync_description": {
+    "message": "Aby zakończyć synchronizację, kontynuuj w aplikacji mobilnej. Pozostaw to okno otwarte.",
+    "description": "Explains that the user should continue the full sync process on their mobile phone"
+  },
+  "fetch_sif_request_description": {
+    "message": "Aby pobrać szczegóły elementu, kontynuuj w aplikacji mobilnej. Pozostaw to okno otwarte.",
+    "description": "Explains that the user should continue the SIF request process on their mobile phone"
+  },
+  "fetch_delete_request_description": {
+    "message": "Aby usunąć ten element, kontynuuj w aplikacji mobilnej. Pozostaw to okno otwarte.",
+    "description": "Explains that the user should continue the login deletion process on their mobile phone"
+  },
+  "fetch_add_request_description": {
+    "message": "Aby dodać ten element, kontynuuj w aplikacji mobilnej. Pozostaw to okno otwarte.",
+    "description": "Explains that the user should continue the login addition process on their mobile phone"
+  },
+  "fetch_delete_login_accept_toast": {
+    "message": "Usunięto element",
+    "description": "Toast message displayed when a login is successfully deleted"
+  },
+  "fetch_delete_login_cancel_toast": {
+    "message": "Usunięcie elementu anulowane",
+    "description": "Toast message displayed when the user cancels the login deletion process"
+  },
+  "fetch_fetch_request_accept_toast": {
+    "message": "Zaakceptowano pobieranie danych",
+    "description": "Toast message displayed when a fetch request is accepted"
+  },
+  "fetch_fetch_request_cancel_toast": {
+    "message": "Pobieranie danych odrzucone",
+    "description": "Toast message displayed when a fetch request is rejected"
+  },
+  "fetch_new_login_added_toast": {
+    "message": "Dodano nowy element",
+    "description": "Toast message displayed when a new login item is successfully added"
+  },
+  "fetch_new_login_added_t1_toast": {
+    "message": "Dodano nowy ściśle tajny element (dostępny tylko w aplikacji mobilnej)",
+    "description": "Toast shown when a new login is added in tier 1, available only in the mobile app"
+  },
+  "fetch_new_login_added_in_another_vault_toast": {
+    "message": "Nowy element został dodany w innym sejfie",
+    "description": "Toast shown when a new login is added in another vault"
+  },
+  "fetch_new_login_cancel_toast": {
+    "message": "Dodawanie elementu anulowane",
+    "description": "Toast message displayed when the user cancels adding a new login item"
+  },
+  "fetch_generic_request_accept_toast": {
+    "message": "Zaakceptowano pobieranie danych",
+    "description": "Toast message displayed when a unknown request is accepted"
+  },
+  "fetch_login_request_accept_toast": {
+    "message": "Zaakceptowano pobieranie danych",
+    "description": "Toast message displayed when a password request is accepted"
+  },
+  "fetch_secureNote_request_accept_toast": {
+    "message": "Zaakceptowano pobieranie danych",
+    "description": "Toast message displayed when a secure note request is accepted"
+  },
+  "fetch_paymentCard_request_accept_toast": {
+    "message": "Zaakceptowano pobieranie danych",
+    "description": "Toast message displayed when a payment card request is accepted"
+  },
+  "fetch_request_cancel_toast": {
+    "message": "Odrzucono pobieranie danych",
+    "description": "Toast message displayed when a request is rejected"
+  },
+  "fetch_update_login_updated_toast": {
+    "message": "Zaktualizowano element",
+    "description": "Toast message displayed when a login item is successfully updated"
+  },
+  "fetch_update_login_cancel_toast": {
+    "message": "Aktualizacja elementu anulowana",
+    "description": "Toast message displayed when the user cancels updating a login item"
+  },
+  "fetch_update_login_added_in_t1_toast": {
+    "message": "Element zaktualizowany do poziomu ściśle tajnego (dostępny tylko w aplikacji mobilnej)",
+    "description": "Toast shown when a login is updated in tier 1, available only in the mobile app"
+  },
+  "fetch_update_login_added_in_another_vault_toast": {
+    "message": "Element został zaktualizowany w innym sejfie",
+    "description": "Toast shown when a login is updated in another vault"
+  },
+  "fetch_full_sync_cancel_toast": {
+    "message": "Anulowano synchronizację",
+    "description": "Toast message displayed when a full sync operation is canceled"
+  },
+  "fetch_full_sync_completed_toast": {
+    "message": "Synchronizacja zakończona",
+    "description": "Toast message displayed when a full sync operation is completed successfully"
+  }
+}

@@ -13,6 +13,7 @@ import { Form } from 'react-final-form';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import SecureNote from '@/models/itemModels/SecureNote';
 import { PULL_REQUEST_TYPES } from '@/constants';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const Name = lazy(() => import('../../components/Name'));
 const SecureNoteText = lazy(() => import('../../components/SecureNoteText'));
@@ -27,6 +28,7 @@ const DangerZone = lazy(() => import('../../components/DangerZone'));
 * @return {JSX.Element} The rendered component.
 */
 function SecureNoteDetailsView(props) {
+  const { getMessage } = useI18n();
   const { data } = usePopupState();
   const [inputError, setInputError] = useState(undefined);
 
@@ -56,9 +58,9 @@ function SecureNoteDetailsView(props) {
     const errors = {};
 
     if (!values?.content?.name || values?.content?.name?.length <= 0) {
-      errors.name = browser.i18n.getMessage('details_name_required');
+      errors.name = getMessage('details_name_required');
     } else if (values.content?.name?.length > 255) {
-      errors.name = browser.i18n.getMessage('details_name_max_length');
+      errors.name = getMessage('details_name_max_length');
     }
 
     if (data.sifEditable) {
@@ -69,7 +71,7 @@ function SecureNoteDetailsView(props) {
           errors.content = {};
         }
 
-        errors.content.s_text = browser.i18n.getMessage('details_secure_note_text_max_length');
+        errors.content.s_text = getMessage('details_secure_note_text_max_length');
       }
     }
 
@@ -78,7 +80,7 @@ function SecureNoteDetailsView(props) {
         errors.content = {};
       }
 
-      errors.content.additionalInfo = browser.i18n.getMessage('details_additional_info_max_length');
+      errors.content.additionalInfo = getMessage('details_additional_info_max_length');
     }
 
     const firstError = getFirstError(errors);
@@ -173,7 +175,7 @@ function SecureNoteDetailsView(props) {
               className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
               disabled={(getEditableAmount().amount <= 0 || submitting) ? 'disabled' : ''}
             >
-              {browser.i18n.getMessage('update')}{getEditableAmount().text}
+              {getMessage('update')}{getEditableAmount().text}
             </button>
           </div>
 

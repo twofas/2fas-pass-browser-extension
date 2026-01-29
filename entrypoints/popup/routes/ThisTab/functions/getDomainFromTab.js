@@ -17,8 +17,8 @@ const getDomainFromTab = async () => {
 
   const onCatch = () => {
     return {
-      domain: browser.i18n.getMessage('unknown'),
-      url: browser.i18n.getMessage('unknown')
+      domain: getMessage('unknown'),
+      url: getMessage('unknown')
     };
   };
 
@@ -26,8 +26,8 @@ const getDomainFromTab = async () => {
 
   if (!tab) {
     return {
-      domain: browser.i18n.getMessage('unknown'),
-      url: browser.i18n.getMessage('unknown')
+      domain: getMessage('unknown'),
+      url: getMessage('unknown')
     };
   }
 
@@ -35,14 +35,14 @@ const getDomainFromTab = async () => {
     url = new URL(tab?.url);
   } catch {
     return {
-      domain: browser.i18n.getMessage('unknown'),
-      url: browser.i18n.getMessage('unknown')
+      domain: getMessage('unknown'),
+      url: getMessage('unknown')
     };
   }
 
   if (!correctProtocols.has(url.protocol)) {
     return {
-      domain: browser.i18n.getMessage('browser_internal_page'),
+      domain: getMessage('browser_internal_page'),
       url: url.href
     };
   }

@@ -9,6 +9,24 @@ import { useRef, useCallback, useEffect, useState } from 'react';
 
 let activeMenuCloseCallback = null;
 
+const hidePortal = menuPortalElement => {
+  if (!menuPortalElement) {
+    return;
+  }
+
+  menuPortalElement.classList.remove('select-portal-visible');
+  menuPortalElement.classList.add('select-portal-hidden');
+};
+
+const showPortal = menuPortalElement => {
+  if (!menuPortalElement) {
+    return;
+  }
+
+  menuPortalElement.classList.remove('select-portal-hidden');
+  menuPortalElement.classList.add('select-portal-visible');
+};
+
 /**
 * Function component for an advanced select dropdown that closes when clicking outside and positions menu smartly.
 * @param {Object} props - The component props.
@@ -83,8 +101,7 @@ function AdvancedSelect (props) {
       return;
     }
 
-    menuPortalElement.style.opacity = '0';
-    menuPortalElement.style.pointerEvents = 'none';
+    hidePortal(menuPortalElement);
 
     const classNamePrefix = props?.classNamePrefix || 'react-select';
     const menuListSelector = `.${classNamePrefix}__menu-list`;
@@ -153,37 +170,35 @@ function AdvancedSelect (props) {
 
       const menuWidth = menuElementRect.width || rect.width;
 
+      let baseCssText;
+
       if (hasCenteredPositioning) {
         const triggerCenterX = rect.left + (rect.width / 2);
-        const cssText = `position: fixed !important; left: ${triggerCenterX}px !important; transform: translateX(-50%) !important; z-index: 9999 !important;`;
-        menuPortalElement.style.cssText = cssText;
+        baseCssText = `position: fixed !important; left: ${triggerCenterX}px !important; transform: translateX(-50%) !important; z-index: 9999 !important;`;
       } else if (hasRightZeroPositioning) {
         const rightValue = window.innerWidth - rect.right;
         const calculatedLeftEdge = rect.right - menuWidth;
 
-        let cssText;
-
         if (calculatedLeftEdge < 0) {
-          cssText = `position: fixed !important; left: ${rect.left}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
+          baseCssText = `position: fixed !important; left: ${rect.left}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
         } else {
-          cssText = `position: fixed !important; right: ${rightValue}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
+          baseCssText = `position: fixed !important; right: ${rightValue}px !important; width: ${menuWidth}px !important; z-index: 9999 !important;`;
         }
-
-        menuPortalElement.style.cssText = cssText;
       } else {
-        const cssText = `position: fixed !important; left: ${rect.left}px !important; width: ${rect.width}px !important; z-index: 9999 !important;`;
-        menuPortalElement.style.cssText = cssText;
+        baseCssText = `position: fixed !important; left: ${rect.left}px !important; width: ${rect.width}px !important; z-index: 9999 !important;`;
       }
+
+      let verticalCss;
 
       if (shouldPlaceOnTop) {
         const topValue = rect.top - realMenuHeight - menuGap;
-        const verticalCss = ` top: ${topValue}px !important; bottom: auto !important;`;
-        menuPortalElement.style.cssText += verticalCss;
+        verticalCss = `top: ${topValue}px !important; bottom: auto !important;`;
       } else {
         const topValue = rect.bottom + menuGap;
-        const verticalCss = ` top: ${topValue}px !important; bottom: auto !important;`;
-        menuPortalElement.style.cssText += verticalCss;
+        verticalCss = `top: ${topValue}px !important; bottom: auto !important;`;
       }
+
+      menuPortalElement.style.cssText = `${baseCssText} ${verticalCss}`;
 
       menuElement.style.cssText = `margin-top: 0 !important; margin-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; top: 0 !important; left: 0 !important; right: auto !important; bottom: auto !important; z-index: 9999 !important; position: relative !important; transform: none !important;`;
 
@@ -194,8 +209,7 @@ function AdvancedSelect (props) {
       }
 
       requestAnimationFrame(() => {
-        menuPortalElement.style.opacity = '1';
-        menuPortalElement.style.pointerEvents = 'auto';
+        showPortal(menuPortalElement);
       });
     };
 
@@ -235,11 +249,7 @@ function AdvancedSelect (props) {
 
   const handleMenuClose = useCallback(() => {
     const menuPortalElement = document.getElementById('select-menu-portal');
-
-    if (menuPortalElement) {
-      menuPortalElement.style.opacity = '0';
-      menuPortalElement.style.pointerEvents = 'none';
-    }
+    hidePortal(menuPortalElement);
 
     if (activeMenuCloseCallback === closeCallbackRef.current) {
       activeMenuCloseCallback = null;

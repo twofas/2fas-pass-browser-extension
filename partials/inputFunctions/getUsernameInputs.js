@@ -8,9 +8,10 @@ import { ignoredTypes, userNameSelectors, userNameAttributes, userNameWords, use
 import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
+import hasParentContextDeniedKeyword from '../functions/hasParentContextDeniedKeyword';
 
 /**
-* Filters out inputs that contain denied keywords in their name or id.
+* Filters out inputs that contain denied keywords in their name, id, or parent elements.
 * @param {HTMLInputElement} input - The input element to check.
 * @return {boolean} True if the input should be kept, false otherwise.
 */
@@ -19,7 +20,15 @@ const filterDeniedKeywords = input => {
   const id = (input.id || '').toLowerCase();
   const hasDeniedWord = userNameDeniedKeywords.some(word => name.includes(word) || id.includes(word));
 
-  return !hasDeniedWord;
+  if (hasDeniedWord) {
+    return false;
+  }
+
+  if (hasParentContextDeniedKeyword(input)) {
+    return false;
+  }
+
+  return true;
 };
 
 /**
@@ -77,7 +86,24 @@ const getUsernameInputsFromRoot = (rootNode, userNameSelector) => {
 };
 
 /**
+* Checks if an input is inside one of the given forms.
+* @param {HTMLInputElement} input - The input element to check.
+* @param {HTMLFormElement[]} forms - The forms to check against.
+* @return {boolean} True if input is inside one of the forms.
+*/
+const isInputInForms = (input, forms) => {
+  if (!forms || forms.length === 0) {
+    return false;
+  }
+
+  const inputForm = input.closest('form');
+
+  return forms.some(form => form === inputForm);
+};
+
+/**
 * Gets the username input elements from the document, including those inside shadow DOMs.
+* Prioritizes inputs that share a form with password inputs.
 * @param {HTMLFormElement[]|null} passwordForms - The password form elements to search within.
 * @return {HTMLInputElement[]} The array of username input elements.
 */
@@ -109,6 +135,14 @@ const getUsernameInputs = (passwordForms = null) => {
   const visibleInputs = userNameInputs.filter(input => isVisible(input));
   const uniqueInputs = visibleInputs.filter(uniqueElementOnly);
   const filteredInputs = uniqueInputs.filter(filterDeniedKeywords);
+
+  if (passwordForms && passwordForms.length > 0 && filteredInputs.length > 0) {
+    const inputsInPasswordForms = filteredInputs.filter(input => isInputInForms(input, passwordForms));
+
+    if (inputsInPasswordForms.length > 0) {
+      return inputsInPasswordForms;
+    }
+  }
 
   return filteredInputs;
 };

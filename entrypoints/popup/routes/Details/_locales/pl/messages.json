@@ -1,0 +1,234 @@
+{
+  "details_header_login": {
+    "message": "Szczegóły loginu",
+    "description": "Header for the Login details section"
+  },
+  "details_header_payment_card": {
+    "message": "Szczegóły karty",
+    "description": "Header for the Payment Card details section"
+  },
+  "details_header_secure_note": {
+    "message": "Szczegóły notatki",
+    "description": "Header for the Secure Note details section"
+  },
+  "details_field_one": {
+    "message": "pole",
+    "description": "Label for a single field in the item details"
+  },
+  "details_field_many": {
+    "message": "pól",
+    "description": "Label for multiple fields in the item details"
+  },
+  "details_field_few": {
+    "message": "pola",
+    "description": "Label for a few fields in the item details"
+  },
+  "details_password_overlay": {
+    "message": "To hasło jest dostępne wyłącznie w twoim sejfie.",
+    "description": "Message indicating that the password is stored only in the user's Vault"
+  },
+  "details_password_decrypt_error": {
+    "message": "Nie udało się odszyfrować hasła. Synchronizuj rozszerzenie z aplikacją mobilną.",
+    "description": "Error message displayed when decrypting the password fails"
+  },
+  "details_secure_note_decrypt_error": {
+    "message": "Nie udało się odszyfrować bezpiecznej notatki. Synchronizuj rozszerzenie z aplikacją mobilną.",
+    "description": "Error message displayed when decrypting the secure note fails"
+  },
+  "details_delete_header": {
+    "message": "Nie potrzebujesz już tego elementu?",
+    "description": "Header for the delete login confirmation section"
+  },
+  "details_delete": {
+    "message": "Usuń ten element z sejfu",
+    "description": "Button label to delete the item from the Vault"
+  },
+  "details_name_required": {
+    "message": "Nazwa jest wymagana",
+    "description": "Validation message indicating that the name field is required"
+  },
+  "details_name_max_length": {
+    "message": "Nazwa musi mieć mniej niż 256 znaków.",
+    "description": "Validation message indicating the maximum length for the name field"
+  },
+  "details_username_max_length": {
+    "message": "Nazwa użytkownika musi mieć mniej niż 256 znaków.",
+    "description": "Validation message indicating the maximum length for the username field"
+  },
+  "details_uri_max_length": {
+    "message": "Adres URL musi mieć mniej niż 2048 znaków.",
+    "description": "Validation message indicating the maximum length for the URL field"
+  },
+  "details_item_not_found": {
+    "message": "Wystąpił błąd. Nie znaleziono elementu. Synchronizuj z aplikacją mobilną i spróbuj ponownie.",
+    "description": "Error shown when the requested item is not found, suggesting reconnection"
+  },
+  "details_security_type": {
+    "message": "Poziom bezpieczeństwa",
+    "description": "Label for the security type field in the item details"
+  },
+  "details_add_domain": {
+    "message": "Dodaj domenę",
+    "description": "Button label to add a new domain to the login item"
+  },
+  "details_add_another_domain": {
+    "message": "Dodaj kolejną domenę",
+    "description": "Button label to add another domain when at least one exists"
+  },
+  "details_domain": {
+    "message": "Domena",
+    "description": "Label for domain field"
+  },
+  "details_domain_uri": {
+    "message": "Domena (URI URI_NUMBER)",
+    "description": "Header label for domain section with URI number"
+  },
+  "details_no_domain_available": {
+    "message": "Brak dostępnej domeny",
+    "description": "Text shown when no domain is assigned to the item"
+  },
+  "details_name_copied": {
+    "message": "Nazwa skopiowana do schowka",
+    "description": "Success message shown when the name is copied to clipboard"
+  },
+  "details_change_password_in_service": {
+    "message": "Zmień hasło w ustawieniach serwisu",
+    "description": "Button label to open the service's password change page"
+  },
+  "details_change_password_in_service_title": {
+    "message": "Otwórz stronę internetową serwisu w nowej karcie, aby zmienić hasło",
+    "description": "Title for the change password section in the service"
+  },
+  "details_toggle_password_visibility": {
+    "message": "Włącz/wyłącz widoczność hasła",
+    "description": "Title for the button that toggles password visibility"
+  },
+  "details_generate_password": {
+    "message": "Wygeneruj hasło",
+    "description": "Title for the button that opens password generator"
+  },
+  "details_fetch_text": {
+    "message": "Dane dostępne tylko w aplikacji mobilnej.",
+    "description": "Text indicating that some data can be fetched from the mobile app"
+  },
+  "details_fetch_title": {
+    "message": "Pobierz tajne dane",
+    "description": "Title for the fetch highly secret data link"
+  },
+  "details_sif_not_fetched": {
+    "message": "Te dane dostępne są tylko w aplikacji mobilnej. Kliknij „Pobierz” u góry tego okna, aby je pobrać.",
+    "description": "Message indicating that the highly secret data has not been fetched yet"
+  },
+  "details_notes_placeholder": {
+    "message": "Notatki są puste",
+    "description": "Placeholder text for the notes input field"
+  },
+  "details_reveal_secure_note": {
+    "message": "Odsłoń notatkę",
+    "description": "Button label to reveal the secure note content"
+  },
+  "details_additional_info": {
+    "message": "Dodatkowe informacje",
+    "description": "Label for the additional info field in the item details"
+  },
+  "details_additional_info_placeholder": {
+    "message": "Dodatkowe informacje są puste",
+    "description": "Placeholder text for the additional info input field"
+  },
+  "details_card_number": {
+    "message": "Numer karty",
+    "description": "Label for the card number field in payment card details"
+  },
+  "details_card_number_decrypt_error": {
+    "message": "Nie udało się odszyfrować numeru karty. Synchronizuj rozszerzenie z aplikacją mobilną.",
+    "description": "Error message displayed when decrypting the card number fails"
+  },
+  "details_toggle_card_number_visibility": {
+    "message": "Widoczność numeru karty",
+    "description": "Title for the button that toggles card number visibility"
+  },
+  "details_expiration_date": {
+    "message": "Data ważności",
+    "description": "Label for the expiration date field in payment card details"
+  },
+  "details_expiration_date_decrypt_error": {
+    "message": "Nie udało się odszyfrować daty ważności.",
+    "description": "Error message displayed when decrypting the expiration date fails"
+  },
+  "details_toggle_expiration_date_visibility": {
+    "message": "Widoczność daty ważności",
+    "description": "Title for the button that toggles expiration date visibility"
+  },
+  "details_copy_expiration_date": {
+    "message": "Skopiuj datę ważności",
+    "description": "Title for the button that copies expiration date to clipboard"
+  },
+  "details_security_code": {
+    "message": "Kod bezp.",
+    "description": "Label for the security code field in payment card details"
+  },
+  "details_security_code_decrypt_error": {
+    "message": "Nie udało się odszyfrować kodu bezpieczeństwa.",
+    "description": "Error message displayed when decrypting the security code fails"
+  },
+  "details_toggle_security_code_visibility": {
+    "message": "Widoczność kodu bezpieczeństwa",
+    "description": "Title for the button that toggles security code visibility"
+  },
+  "details_cardholder_required": {
+    "message": "Właściciel karty jest wymagany.",
+    "description": "Validation message indicating that the cardholder field is required"
+  },
+  "details_cardholder_max_length": {
+    "message": "Właściciel karty musi mieć mniej niż 256 znaków.",
+    "description": "Validation message indicating the maximum length for the cardholder field"
+  },
+  "details_cardholder_copied": {
+    "message": "Właściciel karty skopiowany do schowka",
+    "description": "Success message shown when the cardholder is copied to clipboard"
+  },
+  "details_card_number_required": {
+    "message": "Numer karty jest wymagany.",
+    "description": "Validation message indicating that the card number field is required"
+  },
+  "details_card_number_invalid": {
+    "message": "Nieprawidłowy numer karty.",
+    "description": "Validation message indicating that the card number is not valid"
+  },
+  "details_expiration_date_required": {
+    "message": "Data ważności jest wymagana.",
+    "description": "Validation message indicating that the expiration date field is required"
+  },
+  "details_expiration_date_invalid": {
+    "message": "Nieprawidłowa data ważności.",
+    "description": "Validation message indicating that the expiration date format is not valid"
+  },
+  "details_expiration_date_past": {
+    "message": "Data ważności nie może być w przeszłości.",
+    "description": "Validation message indicating that the expiration date must not be in the past"
+  },
+  "details_card_expired": {
+    "message": "Ta karta straciła ważność.",
+    "description": "Informational message indicating that the payment card expiration date is in the past"
+  },
+  "details_security_code_required": {
+    "message": "Kod bezpieczeństwa jest wymagany.",
+    "description": "Validation message indicating that the security code field is required"
+  },
+  "details_security_code_invalid": {
+    "message": "Kod bezpieczeństwa musi mieć conajmniej 3 lub 4 znaki.",
+    "description": "Validation message indicating that the security code must be 3 or 4 digits"
+  },
+  "details_security_code_too_long": {
+    "message": "Nieprawidłowy kod bezpieczeństwa.",
+    "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
+  },
+  "details_secure_note_text_max_length": {
+    "message": "Notatka musi mieć mniej niż 16384 znaków.",
+    "description": "Validation message indicating the maximum length for the secure note text field"
+  },
+  "details_additional_info_max_length": {
+    "message": "Dodatkowe informacje muszą mieć mniej niż 16384 znaków.",
+    "description": "Validation message indicating the maximum length for the additional info field"
+  }
+}

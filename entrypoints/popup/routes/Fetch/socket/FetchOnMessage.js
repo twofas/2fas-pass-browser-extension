@@ -91,7 +91,7 @@ const FetchOnMessage = async (json, data) => {
   } catch (e) {
     await CatchError(e, async errObj => {
       eventBus.emit(eventBus.EVENTS.FETCH.SET_FETCH_STATE, FETCH_STATE.CONNECTION_ERROR);
-      eventBus.emit(eventBus.EVENTS.FETCH.ERROR_TEXT, errObj?.additional?.errorMessage || browser.i18n.getMessage('error_general')); // FUTURE - Base on error code
+      eventBus.emit(eventBus.EVENTS.FETCH.ERROR_TEXT, errObj?.additional?.errorMessage || getMessage('error_general')); // FUTURE - Base on error code
 
       if (data?.state?.deviceId && data?.state?.notificationId) {
         await deletePush(data.state.deviceId, data.state.notificationId);

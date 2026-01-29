@@ -10,12 +10,15 @@ import GooglePlay from '@/assets/install-page/googleplay.png?react';
 import ScanIcon from '@/assets/install-page/scan.svg?react';
 import PassIosQR from '@/assets/install-page/pass-ios-qr.svg?react';
 import PassAndroidQR from '@/assets/install-page/pass-android-qr.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
-/** 
+/**
 * Function component for the DownloadMobileAppDefault.
 * @return {JSX.Element} The rendered component.
 */
 const DownloadMobileAppDefault = () => {
+  const { getMessage } = useI18n();
+  
   return (
     <>
       <div className={S.appsDownload}>
@@ -23,7 +26,7 @@ const DownloadMobileAppDefault = () => {
           href="https://apps.apple.com/us/app/2fas-pass/id6504464955"
           target="_blank"
           rel="noopener noreferrer"
-          title={browser.i18n.getMessage('install_download_ios_app')}
+          title={getMessage('install_download_ios_app')}
         >
           <img
             className={S.appStore}
@@ -35,10 +38,10 @@ const DownloadMobileAppDefault = () => {
         <button className={S.appsDownloadButton} type='button'>
           <span className={S.appsDownloadButtonContent}>
             <ScanIcon />
-            <span>{browser.i18n.getMessage('install_scan')}</span>
+            <span>{getMessage('install_scan')}</span>
           </span>
           <span className={S.appsDownloadButtonTooltip}>
-            <span>{browser.i18n.getMessage('install_point_camera')}</span>
+            <span>{getMessage('install_point_camera')}</span>
             <PassIosQR />
           </span>
         </button>
@@ -48,7 +51,7 @@ const DownloadMobileAppDefault = () => {
           href="https://play.google.com/store/apps/details?id=com.twofasapp.pass"
           target="_blank"
           rel="noopener noreferrer"
-          title={browser.i18n.getMessage('install_download_android_app')}
+          title={getMessage('install_download_android_app')}
         >
           <img
             className={S.googlePlay}
@@ -60,10 +63,10 @@ const DownloadMobileAppDefault = () => {
         <button className={S.appsDownloadButton} type='button'>
           <span className={S.appsDownloadButtonContent}>
             <ScanIcon />
-            <span>{browser.i18n.getMessage('install_scan')}</span>
+            <span>{getMessage('install_scan')}</span>
           </span>
           <span className={S.appsDownloadButtonTooltip}>
-            <span>{browser.i18n.getMessage('install_point_camera')}</span>
+            <span>{getMessage('install_point_camera')}</span>
             <PassAndroidQR />
           </span>
         </button>

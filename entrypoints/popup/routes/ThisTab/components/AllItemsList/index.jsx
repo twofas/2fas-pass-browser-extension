@@ -8,6 +8,7 @@ import S from './styles/AllItemsList.module.scss';
 import Item from '../Item';
 import SafariViewportList from '@/entrypoints/popup/components/SafariViewportList';
 import { useMemo, memo, useCallback } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import { sortFunction } from '@/partials/functions';
 import isItemsCorrect from '../../functions/isItemsCorrect';
 import EmptyListIcon from '@/assets/popup-window/empty-list.svg?react';
@@ -24,6 +25,7 @@ import EmptyListIcon from '@/assets/popup-window/empty-list.svg?react';
 * @return {JSX.Element|null} The rendered item list or null.
 */
 function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFilter }) {
+  const { getMessage } = useI18n();
   const renderItem = useCallback(item => <Item data={item} key={item.id} loading={loading} />, [loading]);
 
   const itemsData = useMemo(() => {
@@ -120,7 +122,7 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
       <div className={`${S.allItemsList} ${S.noData}`}>
         <div>
           <EmptyListIcon />
-          <span>{browser.i18n.getMessage('all_items_list_no_search_results')}</span>
+          <span>{getMessage('all_items_list_no_search_results')}</span>
         </div>
       </div>
     );

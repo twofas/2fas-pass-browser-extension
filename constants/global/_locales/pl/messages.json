@@ -1,0 +1,202 @@
+{
+  "appDesc": {
+    "message": "2FAS Pass to menedżer haseł nowej generacji, bez kompromisów w zakresie bezpieczeństwa i kontroli nad danymi.",
+    "description": "Description of the 2FAS Pass Browser Extension highlighting its features"
+  },
+  "autofill": {
+    "message": "Wypełnianie",
+    "description": "Label for the autofill functionality"
+  },
+  "autofillCommand": {
+    "message": "Wypełnianie 2FAS Pass",
+    "description": "Label for the command used to trigger autofill"
+  },
+  "fetch": {
+    "message": "Pobierz",
+    "description": "Label for the fetch functionality"
+  },
+  "continue": {
+    "message": "Kontynuuj",
+    "description": "Button label to proceed with an action"
+  },
+  "continue_without_pinning": {
+    "message": "Kontynuuj bez przypięcia",
+    "description": "Button label to proceed without pinning the extension"
+  },
+  "open_in_new_window": {
+    "message": "Otwórz w nowym oknie",
+    "description": "Option to open a link or page in a new browser window"
+  },
+  "go_to_settings": {
+    "message": "Przejdź do ustawień",
+    "description": "Button label to navigate to the settings page"
+  },
+  "fetch_from_mobile": {
+    "message": "Pobierz z aplikacji",
+    "description": "Option to fetch data from the mobile app"
+  },
+  "go_to_home_page": {
+    "message": "Przejdź na stronę główną",
+    "description": "Button label to navigate to the home page"
+  },
+  "scroll_to_top": {
+    "message": "Przewiń do góry",
+    "description": "Button label to scroll to the top of the page"
+  },
+  "cancel": {
+    "message": "Anuluj",
+    "description": "Button label to cancel an action"
+  },
+  "edit": {
+    "message": "Edytuj",
+    "description": "Button label to edit an item"
+  },
+  "info": {
+    "message": "Info",
+    "description": "Label for displaying information"
+  },
+  "domain_uri": {
+    "message": "Domena (URI)",
+    "description": "Label for the domain or URI field"
+  },
+  "domain_uri_index": {
+    "message": "Domena (URI %INDEX%)",
+    "description": "Label for a specific domain or URI with an index"
+  },
+  "name": {
+    "message": "Nazwa",
+    "description": "Label for the name field"
+  },
+  "enter_on_mobile": {
+    "message": "Wprowadź w aplikacji mobilnej",
+    "description": "Option to enter data manually in the mobile app"
+  },
+  "autogenerate_on_mobile": {
+    "message": "Automatycznie wygeneruj hasło w aplikacji mobilnej",
+    "description": "Option to autogenerate a password in the mobile app"
+  },
+  "set_login_and_password_in_the_mobile_app": {
+    "message": "Ustaw użytkownika i hasło w aplikacji mobilnej",
+    "description": "Instruction to set login and password in the mobile app"
+  },
+  "reload": {
+    "message": "Odśwież",
+    "description": "Button label to reload the page or data"
+  },
+  "update": {
+    "message": "Aktualizuj",
+    "description": "Button label to update an item or data"
+  },
+  "try_again": {
+    "message": "Spróbuj ponownie",
+    "description": "Button label to retry an action"
+  },
+  "version": {
+    "message": "Wersja",
+    "description": "Label for displaying the version of the extension"
+  },
+  "back": {
+    "message": "Cofnij",
+    "description": "Button label to navigate to the previous page or step"
+  },
+  "advanced": {
+    "message": "Zaawansowane",
+    "description": "Label for advanced settings or options"
+  },
+  "light_mode": {
+    "message": "Jasny",
+    "description": "Option to enable light mode for the interface"
+  },
+  "dark_mode": {
+    "message": "Ciemny",
+    "description": "Option to enable dark mode for the interface"
+  },
+  "unset_mode": {
+    "message": "Systemowy",
+    "description": "Option to use the system's default mode for the interface"
+  },
+  "save": {
+    "message": "Zapisz",
+    "description": "Button label to save changes"
+  },
+  "or": {
+    "message": "albo",
+    "description": "Text used to indicate an alternative option"
+  },
+  "unknown": {
+    "message": "Nieznany",
+    "description": "Label for an unknown value or state"
+  },
+  "browser_internal_page": {
+    "message": "Wewnętrzna strona przeglądarki",
+    "description": "Label for a browser's internal page"
+  },
+  "close": {
+    "message": "Zamknij",
+    "description": "Button label to close a window or dialog"
+  },
+  "notes": {
+    "message": "Notatki",
+    "description": "Label for a section or field to add notes"
+  },
+  "learn_more": {
+    "message": "Dowiedz się więcej",
+    "description": "Button label to access additional information"
+  },
+  "tier_0_name": {
+    "message": "Ściśle tajny",
+    "description": "Label for the highest security tier"
+  },
+  "tier_0_description": {
+    "message": "Nie udostępniaj tego elementu rozszerzeniu przeglądarki 2FAS Pass i wpisuj go ręcznie.",
+    "description": "Description for the top-secret security tier"
+  },
+  "tier_1_name": {
+    "message": "Tajny",
+    "description": "Label for the second-highest security tier"
+  },
+  "tier_1_description": {
+    "message": "Dostęp do szczegółów elementu musi być potwierdzony w aplikacji mobilnej 2FAS Pass.",
+    "description": "Explains the ultra-secure tier where passwords are shared after mobile app confirmation"
+  },
+  "tier_2_name": {
+    "message": "Poufny",
+    "description": "Label for the standard security tier"
+  },
+  "tier_2_description": {
+    "message": "Uzyskaj dostęp do tego elementu bezpośrednio z rozszerzenia przeglądarki 2FAS Pass.",
+    "description": "Explains the secure tier where passwords are accessed directly from the extension"
+  },
+  "no_item_name": {
+    "message": "Brak nazwy elementu",
+    "description": "Label for a state where no item name is available"
+  },
+  "no_value": {
+    "message": "Brak wartości",
+    "description": "Label for a state where no value is available"
+  },
+  "no_valid_domain": {
+    "message": "Nie wykryto prawidłowej domeny. Jeśli jest to domena niestandardowa, dodaj odpowiedni protokół na początku (np. https).",
+    "description": "Label for a state where no valid domain is provided"
+  },
+  "sync": {
+    "message": "Synchronizuj",
+    "description": "Label for the sync functionality"
+  },
+  "sync_title": {
+    "message": "Synchronizuj z aplikacją mobilną 2FAS Pass.",
+    "description": "Title for the sync data section"
+  },
+  "ssh_key": {
+    "message": "Klucz SSH",
+    "description": "Label for the SSH key functionality"
+  },
+  "item": {
+    "message": "Element",
+    "description": "Generic label for an item"
+  },
+  "button_open_calendar": {
+    "message": "Otwórz kalendarz",
+    "description": "Button title for opening the calendar popup to select expiration date"
+  }
+}

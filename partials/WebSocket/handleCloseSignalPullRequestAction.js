@@ -9,6 +9,7 @@ import TwoFasWebSocket from '@/partials/WebSocket';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import closeWindowIfNotInSeparateWindow from '../functions/closeWindowIfNotInSeparateWindow';
 import sendMessageToAllFrames from '../functions/sendMessageToAllFrames';
+import sendMessageToTab from '../functions/sendMessageToTab';
 import tryWindowClose from '../browserInfo/tryWindowClose';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 
@@ -28,7 +29,9 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     socket.close();
   } catch { }
 
-  if (closeData?.windowClose) {
+  // Handle windowClose ONLY if no autofill action is present
+  // If autofill is needed, the window will close after autofill completes
+  if (closeData?.windowClose && !closeData?.action) {
     await tryWindowClose();
   }
 
@@ -71,31 +74,67 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
       if (needsPermission) {
         const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
-        const storageKey = `session:autofillData-${tabId}`;
 
-        // FUTURE - improve that
-        await storage.setItem(storageKey, JSON.stringify({
-          actionData,
-          closeData: {
-            vaultId: closeData.vaultId,
-            deviceId: closeData.deviceId,
-            itemId: closeData.itemId,
-            s_password: closeData.s_password,
-            hkdfSaltAB: closeData.hkdfSaltAB,
-            sessionKeyForHKDF: closeData.sessionKeyForHKDF
+        if (closeData.windowClose) {
+          const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
+            .replace('DOMAINS', uniqueDomains.join(', '));
+
+          try {
+            const tab = await browser.tabs.get(tabId);
+
+            await browser.windows.update(tab.windowId, { focused: true });
+            await browser.tabs.update(tabId, { active: true });
+            await new Promise(resolve => setTimeout(resolve, 100));
+          } catch { }
+
+          let confirmResult;
+
+          try {
+            confirmResult = await sendMessageToTab(tabId, {
+              action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+              target: REQUEST_TARGETS.CONTENT,
+              message: confirmMessage
+            });
+          } catch (e) {
+            await CatchError(e);
+
+            showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info');
+            await tryWindowClose();
+
+            return true;
           }
-        }));
 
-        browser.runtime.sendMessage({
-          action: REQUEST_ACTIONS.AUTOFILL_WITH_PERMISSION,
-          target: REQUEST_TARGETS.BACKGROUND,
-          tabId,
-          storageKey,
-          domains: uniqueDomains
-        });
+          if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+            await tryWindowClose();
+            return true;
+          }
+        } else {
+          // For regular popup, delegate to background
+          const storageKey = `session:autofillData-${tabId}`;
 
-        eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
-        return true;
+          await storage.setItem(storageKey, JSON.stringify({
+            actionData,
+            closeData: {
+              vaultId: closeData.vaultId,
+              deviceId: closeData.deviceId,
+              itemId: closeData.itemId,
+              s_password: closeData.s_password,
+              hkdfSaltAB: closeData.hkdfSaltAB,
+              sessionKeyForHKDF: closeData.sessionKeyForHKDF
+            }
+          }));
+
+          browser.runtime.sendMessage({
+            action: REQUEST_ACTIONS.AUTOFILL_WITH_PERMISSION,
+            target: REQUEST_TARGETS.BACKGROUND,
+            tabId,
+            storageKey,
+            domains: uniqueDomains
+          });
+
+          eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
+          return true;
+        }
       }
     } catch (e) {
       await CatchError(e);
@@ -105,6 +144,16 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
     const autofillRes = await sendMessageToAllFrames(tabId, actionData);
     const isOk = autofillRes?.some(frameResponse => frameResponse.status === 'ok');
+    const allFieldsFilled = autofillRes?.every(frameResponse => {
+      if (frameResponse.status !== 'ok') {
+        return frameResponse.message === 'No input fields found';
+      }
+
+      const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
+      const couldFillPassword = !actionData.password || frameResponse.canAutofillPassword !== false;
+
+      return couldFillUsername && couldFillPassword;
+    });
 
     if (isOk) {
       try {
@@ -122,15 +171,61 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
         });
       } catch { }
 
+      if (!allFieldsFilled) {
+        // Focus popup window when showing KeepItem for shortcut-initiated autofill
+        if (closeData.windowClose) {
+          try {
+            const currentWindow = await browser.windows.getCurrent();
+
+            await browser.windows.update(currentWindow.id, { focused: true });
+          } catch { }
+        }
+
+        const toastId = showToast(getMessage('this_tab_autofill_partial'), 'info', false);
+
+        eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, {
+          path: '/',
+          options: {
+            state: {
+              action: 'autofillT2Failed',
+              vaultId: closeData.vaultId,
+              deviceId: closeData.deviceId,
+              itemId: closeData.itemId,
+              s_password: closeData.s_password,
+              hkdfSaltAB: closeData.hkdfSaltAB,
+              sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+              toastId
+            }
+          }
+        });
+
+        return true;
+      }
+
+      // For shortcut-initiated autofill, close the window after success
+      if (closeData.windowClose) {
+        await tryWindowClose();
+        return true;
+      }
+
       const separateWindow = await popupIsInSeparateWindow();
       await closeWindowIfNotInSeparateWindow(separateWindow);
 
       if (separateWindow || (!window || typeof window?.close !== 'function' || import.meta.env.BROWSER === 'safari')) {
-        showToast(browser.i18n.getMessage('this_tab_autofill_success'), 'success');
+        showToast(getMessage('this_tab_autofill_success'), 'success');
         eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
       }
     } else {
-      const toastId = showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
+      // Focus popup window when showing KeepItem for shortcut-initiated autofill
+      if (closeData.windowClose) {
+        try {
+          const currentWindow = await browser.windows.getCurrent();
+
+          await browser.windows.update(currentWindow.id, { focused: true });
+        } catch { }
+      }
+
+      const toastId = showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
 
       eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, {
         path: '/',
@@ -174,32 +269,69 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
       if (needsPermission) {
         const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
-        const storageKey = `session:autofillCardData-${tabId}`;
 
-        await storage.setItem(storageKey, JSON.stringify({
-          actionData,
-          closeData: {
-            vaultId: closeData.vaultId,
-            deviceId: closeData.deviceId,
-            itemId: closeData.itemId,
-            s_cardNumber: closeData.s_cardNumber,
-            s_expirationDate: closeData.s_expirationDate,
-            s_securityCode: closeData.s_securityCode,
-            hkdfSaltAB: closeData.hkdfSaltAB,
-            sessionKeyForHKDF: closeData.sessionKeyForHKDF
+        if (closeData.windowClose) {
+          const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
+            .replace('DOMAINS', uniqueDomains.join(', '));
+
+          try {
+            const tab = await browser.tabs.get(tabId);
+
+            await browser.windows.update(tab.windowId, { focused: true });
+            await browser.tabs.update(tabId, { active: true });
+            await new Promise(resolve => setTimeout(resolve, 100));
+          } catch { }
+
+          let confirmResult;
+
+          try {
+            confirmResult = await sendMessageToTab(tabId, {
+              action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+              target: REQUEST_TARGETS.CONTENT,
+              message: confirmMessage
+            });
+          } catch (e) {
+            await CatchError(e);
+
+            showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info');
+            await tryWindowClose();
+
+            return true;
           }
-        }));
 
-        browser.runtime.sendMessage({
-          action: REQUEST_ACTIONS.AUTOFILL_CARD_WITH_PERMISSION,
-          target: REQUEST_TARGETS.BACKGROUND,
-          tabId,
-          storageKey,
-          domains: uniqueDomains
-        });
+          if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+            await tryWindowClose();
+            return true;
+          }
+        } else {
+          // For regular popup, delegate to background
+          const storageKey = `session:autofillCardData-${tabId}`;
 
-        eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
-        return true;
+          await storage.setItem(storageKey, JSON.stringify({
+            actionData,
+            closeData: {
+              vaultId: closeData.vaultId,
+              deviceId: closeData.deviceId,
+              itemId: closeData.itemId,
+              s_cardNumber: closeData.s_cardNumber,
+              s_expirationDate: closeData.s_expirationDate,
+              s_securityCode: closeData.s_securityCode,
+              hkdfSaltAB: closeData.hkdfSaltAB,
+              sessionKeyForHKDF: closeData.sessionKeyForHKDF
+            }
+          }));
+
+          browser.runtime.sendMessage({
+            action: REQUEST_ACTIONS.AUTOFILL_CARD_WITH_PERMISSION,
+            target: REQUEST_TARGETS.BACKGROUND,
+            tabId,
+            storageKey,
+            domains: uniqueDomains
+          });
+
+          eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
+          return true;
+        }
       }
     } catch (e) {
       await CatchError(e);
@@ -233,15 +365,30 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     const hasMissingInputs = allMissingInputFields.length > 0;
 
     if (isOk && !isPartial && !hasMissingInputs) {
+      // For shortcut-initiated autofill, close the window after success
+      if (closeData.windowClose) {
+        await tryWindowClose();
+        return true;
+      }
+
       const separateWindow = await popupIsInSeparateWindow();
       await closeWindowIfNotInSeparateWindow(separateWindow);
 
       if (separateWindow || (!window || typeof window?.close !== 'function' || import.meta.env.BROWSER === 'safari')) {
-        showToast(browser.i18n.getMessage('this_tab_autofill_success'), 'success');
+        showToast(getMessage('this_tab_autofill_success'), 'success');
         eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
       }
     } else if (isOk && hasMissingInputs) {
-      const toastId = showToast(browser.i18n.getMessage('this_tab_autofill_some_fields_not_available'), 'info', false);
+      // Focus popup window when showing KeepItem for shortcut-initiated autofill
+      if (closeData.windowClose) {
+        try {
+          const currentWindow = await browser.windows.getCurrent();
+
+          await browser.windows.update(currentWindow.id, { focused: true });
+        } catch { }
+      }
+
+      const toastId = showToast(getMessage('notification_card_autofill_partial_message'), 'info', false);
 
       eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, {
         path: '/',
@@ -261,10 +408,19 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
         }
       });
     } else if (isPartial) {
-      showToast(browser.i18n.getMessage('this_tab_autofill_some_fields_not_available'), 'info');
+      showToast(getMessage('notification_card_autofill_partial_message'), 'info');
       eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
     } else {
-      const toastId = showToast(browser.i18n.getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
+      // Focus popup window when showing KeepItem for shortcut-initiated autofill
+      if (closeData.windowClose) {
+        try {
+          const currentWindow = await browser.windows.getCurrent();
+
+          await browser.windows.update(currentWindow.id, { focused: true });
+        } catch { }
+      }
+
+      const toastId = showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
 
       eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, {
         path: '/',

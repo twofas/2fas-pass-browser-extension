@@ -20,6 +20,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import ExternalLinkIcon from '@/assets/popup-window/new-tab.svg?react';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const passwordMobileVariants = {
   hidden: { maxHeight: '0px' },
@@ -37,6 +38,7 @@ const changePasswordVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Password (props) {
+  const { getMessage } = useI18n();
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
@@ -151,7 +153,7 @@ function Password (props) {
     return (
       <div className={pI.passInputBottomOverlay}>
         <InfoIcon />
-        <span>{browser.i18n.getMessage('details_password_decrypt_error')}</span>
+        <span>{getMessage('details_password_decrypt_error')}</span>
       </div>
     );
   };
@@ -192,9 +194,9 @@ function Password (props) {
       }
 
       await copyValue(passwordToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'password');
-      showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
+      showToast(getMessage('notification_password_copied'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
+      showToast(getMessage('error_password_copy_failed'), 'error');
       await CatchError(e);
       return;
     }
@@ -208,7 +210,7 @@ function Password (props) {
     // FUTURE - move to separate component
     return (
       <div className={pI.passInputTooltip}>
-        <span>{browser.i18n.getMessage('details_sif_not_fetched')}</span>
+        <span>{getMessage('details_sif_not_fetched')}</span>
       </div>
     );
   };
@@ -340,14 +342,14 @@ function Password (props) {
       {() => (
           <div className={`${pI.passInput} ${!data?.passwordEditable || data?.passwordMobile || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''}`}>
             <div className={pI.passInputTop}>
-              <label htmlFor='editedSif'>{browser.i18n.getMessage('password')}</label>
+              <label htmlFor='editedSif'>{getMessage('password')}</label>
               <button
                 type='button'
                 className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
                 onClick={handleEditableClick}
                 tabIndex={-1}
               >
-                {data?.passwordEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+                {data?.passwordEditable ? getMessage('cancel') : getMessage('edit')}
               </button>
             </div>
             <div className={pI.passInputBottom}>
@@ -355,7 +357,7 @@ function Password (props) {
                 ref={inputRef}
                 value={getPasswordValue()}
                 type={data?.passwordVisible || (data?.passwordEditable && isFocused) ? 'text' : 'password'}
-                placeholder={!sifDecryptError && !isDecrypting && (!data?.passwordMobile && originalItem?.isT3orT2WithSif || data?.passwordEditable) ? browser.i18n.getMessage('placeholder_password') : ''}
+                placeholder={!sifDecryptError && !isDecrypting && (!data?.passwordMobile && originalItem?.isT3orT2WithSif || data?.passwordEditable) ? getMessage('placeholder_password') : ''}
                 id='editedSif'
                 onChange={handlePasswordChange}
                 onFocus={() => setIsFocused(true)}
@@ -371,7 +373,7 @@ function Password (props) {
                 <ClearLink
                   to='/password-generator'
                   className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton} ${!data?.passwordEditable || data?.passwordMobile || sifDecryptError ? pI.hiddenButton : ''}`}
-                  title={browser.i18n.getMessage('details_generate_password')}
+                  title={getMessage('details_generate_password')}
                   state={{ from: 'details', data: { item: data.item } }}
                 >
                   <RefreshIcon />
@@ -380,7 +382,7 @@ function Password (props) {
                   type="button"
                   onClick={handlePasswordVisibleClick}
                   className={`${pI.iconButton} ${pI.visibleButton} ${!originalItem?.isT3orT2WithSif || data?.passwordEditable || sifDecryptError ? pI.hiddenButton : ''}`}
-                  title={browser.i18n.getMessage('details_toggle_password_visibility')}
+                  title={getMessage('details_toggle_password_visibility')}
                   tabIndex={-1}
                 >
                   <VisibleIcon />
@@ -390,7 +392,7 @@ function Password (props) {
                     type='button'
                     className={`${bS.btn} ${pI.iconButton}`}
                     onClick={handleCopyPassword}
-                    title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                    title={getMessage('this_tab_copy_to_clipboard')}
                     tabIndex={-1}
                   >
                     <CopyIcon />
@@ -416,7 +418,7 @@ function Password (props) {
                   </span>
 
                   <span className={bS.passToggleText}>
-                    <span>{browser.i18n.getMessage('autogenerate_on_mobile')}</span>
+                    <span>{getMessage('autogenerate_on_mobile')}</span>
                   </span>
                 </label>
               </div>
@@ -433,9 +435,9 @@ function Password (props) {
                   type="button"
                   onClick={handleChangePasswordClick}
                   className={`${bS.btn} ${bS.btnClear} ${pI.passInputLinkButton}`}
-                  title={browser.i18n.getMessage('details_change_password_in_service_title')}
+                  title={getMessage('details_change_password_in_service_title')}
                 >
-                  <span>{browser.i18n.getMessage('details_change_password_in_service')}</span>
+                  <span>{getMessage('details_change_password_in_service')}</span>
                   <ExternalLinkIcon />
                 </button>
               </motion.div>

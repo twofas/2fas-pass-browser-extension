@@ -49,12 +49,17 @@ const onStorageChange = async (change, areaName, migrations) => {
       try {
         if (change.contextMenu) {
           const contextMenu = change.contextMenu.newValue;
-    
+
           if (contextMenu === false) {
             await browser.contextMenus.removeAll();
           } else {
             await initContextMenu();
           }
+        }
+
+        if (change.lang) {
+          resetI18nCache();
+          await initI18n();
         }
       } catch (e) {
         await CatchError(e);

@@ -93,11 +93,7 @@ const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key,
 
   await sendPullRequestCompleted(messageId);
 
-  if (state?.from === 'shortcut') {
-    return { windowClose: true };
-  }
-
-  return {
+  const result = {
     action: 'autofill',
     actionData,
     deviceId: state.data.deviceId,
@@ -107,6 +103,12 @@ const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key,
     hkdfSaltAB,
     sessionKeyForHKDF
   };
+
+  if (state?.from === 'shortcut') {
+    result.windowClose = true;
+  }
+
+  return result;
 };
 
 /**
@@ -180,11 +182,7 @@ const handlePaymentCardAutofillAccept = async (info, state, item, encryptionItem
 
   await sendPullRequestCompleted(messageId);
 
-  if (state?.from === 'shortcut') {
-    return { windowClose: true };
-  }
-
-  return {
+  const result = {
     action: 'autofillCard',
     actionData,
     deviceId: state.data.deviceId,
@@ -196,6 +194,12 @@ const handlePaymentCardAutofillAccept = async (info, state, item, encryptionItem
     hkdfSaltAB,
     sessionKeyForHKDF
   };
+
+  if (state?.from === 'shortcut') {
+    result.windowClose = true;
+  }
+
+  return result;
 };
 
 /**
@@ -286,7 +290,7 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
       returnUrl,
       returnState: { from: 'fetch' },
       returnToast: {
-        text: browser.i18n.getMessage(`fetch_${item.contentType ?? 'generic'}_request_accept_toast`),
+        text: getMessage(`fetch_${item.contentType ?? 'generic'}_request_accept_toast`),
         type: 'success'
       }
     };

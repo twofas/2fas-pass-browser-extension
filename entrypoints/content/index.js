@@ -9,6 +9,7 @@ import contentOnMessage from './events/contentOnMessage';
 import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
 import ifCtxIsInvalid from '@/partials/contentScript/ifCtxIsInvalid';
 import setupStyleObserver from './utils/setupStyleObserver';
+import topLayerManager from './utils/topLayerManager';
 
 export default defineContentScript({
   matches: ['https://*/*', 'http://*/*'],
@@ -18,7 +19,10 @@ export default defineContentScript({
   cssInjectionMode: 'ui',
   async main (ctx) {
     try {
+      await initI18n();
+
       let handleMessage;
+      let topLayerCleanup = null;
       const emptyFunc = () => {};
       const cryptoAvailable = isCryptoAvailable();
 
@@ -26,6 +30,11 @@ export default defineContentScript({
         browser.runtime.onMessage.removeListener(handleMessage);
         window.removeEventListener('error', emptyFunc);
         window.removeEventListener('unhandledrejection', emptyFunc);
+
+        if (topLayerCleanup) {
+          topLayerCleanup();
+          topLayerCleanup = null;
+        }
       };
 
       if (ctx?.isTopFrame && ctx?.isValid) {
@@ -40,7 +49,15 @@ export default defineContentScript({
             shadow.children[0].setAttribute('style', 'pointer-events: none !important;');
             shadow.children[0].getElementsByTagName('body')[0].style = 'margin: 0 !important; padding: 0 !important; overflow: hidden !important;';
 
-            setupStyleObserver(shadowHost, standardStyles);
+            const styleObserver = setupStyleObserver(shadowHost, standardStyles);
+
+            const topLayer = topLayerManager(
+              shadowHost,
+              styleObserver.disconnect,
+              styleObserver.reconnect
+            );
+
+            topLayerCleanup = topLayer.cleanup;
 
             handleMessage = (request, sender, sendResponse) => {
               if (ifCtxIsInvalid(ctx, removeListeners)) {

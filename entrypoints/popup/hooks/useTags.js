@@ -13,7 +13,8 @@ let tagsCache = {
   tags: [],
   loading: true,
   error: null,
-  lastFetchTime: null
+  lastFetchTime: null,
+  storageVersion: null
 };
 
 const listeners = new Set();
@@ -103,6 +104,26 @@ const useTags = (options = {}) => {
     if (autoFetch) {
       fetchTags();
     }
+  }, []);
+
+  useEffect(() => {
+    const unwatch = storage.watch('session:storageVersion', async newVersion => {
+      if (newVersion !== null && newVersion !== tagsCache.storageVersion) {
+        setTagsCache({ storageVersion: newVersion, loading: true });
+
+        try {
+          const fetchedTags = await getTags();
+          setTagsCache({ tags: fetchedTags, loading: false, error: null, lastFetchTime: Date.now(), storageVersion: newVersion });
+        } catch (e) {
+          setTagsCache({ error: e, loading: false });
+          await CatchError(e);
+        }
+      }
+    });
+
+    return () => {
+      unwatch();
+    };
   }, []);
 
   return {

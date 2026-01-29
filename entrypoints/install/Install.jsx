@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import S from './Install.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, lazy, useCallback, useRef } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import getKey from '@/partials/sessionStorage/getKey';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import { motion } from 'motion/react';
@@ -47,6 +48,7 @@ const stepVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function Install () {
+  const { getMessage } = useI18n();
   const [stepVisible, setStepVisible] = useState(0);
   const [appsVisible, setAppsVisible] = useState(false);
   const [logs, setLogs] = useState(false);
@@ -71,7 +73,7 @@ function Install () {
       goToStep(2);
       await openPopup();
     } else {
-      showToast(browser.i18n.getMessage('install_please_pin_extension'), 'error');
+      showToast(getMessage('install_please_pin_extension'), 'error');
     }
   };
 
@@ -152,9 +154,9 @@ function Install () {
     try {
       await storage.setItem('local:logging', !logs);
       setLogs(!logs);
-      showToast(browser.i18n.getMessage('install_logging_settings_changed'), 'success');
+      showToast(getMessage('install_logging_settings_changed'), 'success');
     } catch {
-      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
+      showToast(getMessage('error_general_setting'), 'error');
     }
   };
 
@@ -273,9 +275,9 @@ function Install () {
                   >
                     <h2>
                       <Check />
-                      <span>{browser.i18n.getMessage('install_1_info')}</span>
+                      <span>{getMessage('install_1_info')}</span>
                     </h2>
-                    <h1>{browser.i18n.getMessage('install_1_header')}</h1>
+                    <h1>{getMessage('install_1_header')}</h1>
                     <ul className={S.installList}>
                       <li className={S.installListItem}>
                         <span className={S.installListItemNumber}>
@@ -285,7 +287,7 @@ function Install () {
                             <Puzzle className={S.installListItemNumberImgPuzzle} />
                           </span>
                         </span>
-                        <span className={S.installListItemText}>{browser.i18n.getMessage('install_1_open_extension_menu')}</span>
+                        <span className={S.installListItemText}>{getMessage('install_1_open_extension_menu')}</span>
                       </li>
                       <li className={S.installListItem}>
                         <span className={S.installListItemNumber}>
@@ -295,13 +297,13 @@ function Install () {
                             <Pin className={S.installListItemNumberImgPin} />
                           </span>
                         </span>
-                        <span className={S.installListItemText}>{browser.i18n.getMessage('install_1_pin_extension')}</span>
+                        <span className={S.installListItemText}>{getMessage('install_1_pin_extension')}</span>
                       </li>
                     </ul>
                     <div className={S.installButtons}>
-                      <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnInstallPage}`} onClick={handleContinue}>{browser.i18n.getMessage('continue')}</button>
+                      <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnInstallPage}`} onClick={handleContinue}>{getMessage('continue')}</button>
                       <button className={`${bS.btn} ${bS.btnClear} ${bS.btnInstallPageWoPinning}`} onClick={handleContinueWoPinning}>
-                        <span>{browser.i18n.getMessage('continue_without_pinning')}</span>
+                        <span>{getMessage('continue_without_pinning')}</span>
                         <Arrow />
                       </button>
                     </div>
@@ -314,9 +316,9 @@ function Install () {
                   >
                     <h2>
                       <Check />
-                      <span className={S.installPinnedText}>{browser.i18n.getMessage('install_2_info')}</span>
+                      <span className={S.installPinnedText}>{getMessage('install_2_info')}</span>
                     </h2>
-                    <h1>{browser.i18n.getMessage('install_2_header')}</h1>
+                    <h1>{getMessage('install_2_header')}</h1>
                     <ul className={S.installList}>
                       <li className={S.installListItem}>
                         <span className={S.installListItemNumber}>
@@ -326,7 +328,7 @@ function Install () {
                             <Shield className={S.installListItemNumberImgShield} />
                           </span>
                         </span>
-                        <span className={S.installListItemText}>{browser.i18n.getMessage('install_2_click_icon')}</span>
+                        <span className={S.installListItemText}>{getMessage('install_2_click_icon')}</span>
                       </li>
                       <li className={S.installListItem}>
                         <span className={S.installListItemNumber}>
@@ -336,7 +338,7 @@ function Install () {
                             <Qr className={S.installListItemNumberImgQr} />
                           </span>
                         </span>
-                        <span className={S.installListItemText}>{browser.i18n.getMessage('install_2_use_mobile_app')}</span>
+                        <span className={S.installListItemText}>{getMessage('install_2_use_mobile_app')}</span>
                       </li>
                     </ul>
 
@@ -352,11 +354,11 @@ function Install () {
                   >
                     <h2>
                       <Check />
-                      <span className={S.installPinnedText}>{browser.i18n.getMessage('install_3_info')}</span>
+                      <span className={S.installPinnedText}>{getMessage('install_3_info')}</span>
                     </h2>
-                    <h1>{browser.i18n.getMessage('install_3_header')}</h1>
+                    <h1>{getMessage('install_3_header')}</h1>
                     <h3>
-                      <span>{browser.i18n.getMessage('install_3_get_started')}</span>
+                      <span>{getMessage('install_3_get_started')}</span>
                       <ArrowDecorLight className='theme-light' />
                       <ArrowDecorDark className='theme-dark' />
                     </h3>
@@ -364,10 +366,10 @@ function Install () {
                     <div className={S.installContainerContentLeftLogs}>
                       <h4>
                         <LogsIcon />
-                        <span>{browser.i18n.getMessage('install_3_crash_logs_header')}</span>
+                        <span>{getMessage('install_3_crash_logs_header')}</span>
                       </h4>
 
-                      <p>{browser.i18n.getMessage('install_3_crash_logs_description')}</p>
+                      <p>{getMessage('install_3_crash_logs_description')}</p>
 
                       <form action="#" className={`${bS.passToggle} ${S.installContainerContentLeftLogsForm}`}>
                         <input type="checkbox" name="pass-logs" id="pass-logs" defaultChecked={logs} onChange={handleLogsChange} />
@@ -377,7 +379,7 @@ function Install () {
                           </span>
                   
                           <span className={`${bS.passToggleText} ${S.installContainerContentLeftLogsFormText}`}>
-                            <span>{browser.i18n.getMessage('install_3_crash_logs_checkbox_description')}</span>
+                            <span>{getMessage('install_3_crash_logs_checkbox_description')}</span>
                           </span>
                         </label>
                       </form>
@@ -411,7 +413,7 @@ function Install () {
                   >
                     <a href="https://2fas.com/pass/be-video" target='_blank' rel="noopener noreferrer" className={S.installContainerContentRightBoxExternalVideo}>
                       <PlayIcon />
-                      <img src={VideoPoster} alt={browser.i18n.getMessage('install_3_get_started')} loading="lazy" />
+                      <img src={VideoPoster} alt={getMessage('install_3_get_started')} loading="lazy" />
                     </a>
                   </motion.div>
                 </div>
@@ -427,7 +429,7 @@ function Install () {
               </div>
 
               <div>
-                <h6>{browser.i18n.getMessage('install_privacy_text')}</h6>
+                <h6>{getMessage('install_privacy_text')}</h6>
               </div>
             </div>
           </div>

@@ -122,6 +122,18 @@ const onMessage = (request, sender, sendResponse, migrations) => {
         break;
       }
 
+      case REQUEST_ACTIONS.GET_I18N_DATA: {
+        const i18nState = getI18nState();
+        sendResponse({
+          status: 'ok',
+          lang: i18nState.lang,
+          messages: i18nState.messages,
+          isInitialized: i18nState.isInitialized
+        });
+
+        break;
+      }
+
       default: {
         sendResponse({ status: 'error', message: 'Wrong action' });
         break;

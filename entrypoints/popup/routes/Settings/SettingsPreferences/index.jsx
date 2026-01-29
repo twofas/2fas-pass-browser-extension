@@ -6,8 +6,10 @@
 
 import S from '../Settings.module.scss';
 import { useRef } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import ExtensionName from './components/ExtensionName';
+import Language from './components/Language';
 import Shortcut from './components/Shortcut';
 import Push from './components/Push';
 import Theme from './components/Theme';
@@ -24,6 +26,7 @@ import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function SettingsPreferences (props) {
+  const { getMessage } = useI18n();
   const scrollableRef = useRef(null);
   useScrollPosition(scrollableRef, false);
 
@@ -37,18 +40,19 @@ function SettingsPreferences (props) {
           <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
             <div className={S.settingsSubmenu}>
               <div className={S.settingsSubmenuHeader}>
-                <h3>{browser.i18n.getMessage('settings_preferences')}</h3>
+                <h3>{getMessage('settings_preferences')}</h3>
               </div>
     
               <div className={S.settingsSubmenuBody}>
                 <ExtensionName />
+                <Language />
                 <Shortcut />
                 <Push />
                 <Theme />
                 <SavePasswordPrompt />
 
                 <div className={S.settingsAdvanced}>
-                  <h4>{browser.i18n.getMessage('advanced')}</h4>
+                  <h4>{getMessage('advanced')}</h4>
 
                   <div className={S.settingsAdvancedContainer}>
                     <ContextMenu />
@@ -57,10 +61,10 @@ function SettingsPreferences (props) {
                 </div>
 
                 <div className={S.settingsDangerZone}>
-                  <h4>{browser.i18n.getMessage('settings_danger_zone')}</h4>
+                  <h4>{getMessage('settings_danger_zone')}</h4>
 
                   <ClearLink to='/settings/preferences/reset' className={S.settingsDangerZoneLink}>
-                    <span>{browser.i18n.getMessage('settings_danger_zone_reset')}</span>
+                    <span>{getMessage('settings_danger_zone_reset')}</span>
                     <MenuArrowIcon />
                   </ClearLink>
                 </div>

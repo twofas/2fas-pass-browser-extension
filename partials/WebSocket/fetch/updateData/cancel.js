@@ -21,7 +21,7 @@ const updateDataCancel = async (deviceId, vaultId, itemId, messageId) => {
     const navigationOptions = {
       returnUrl: `/details/${deviceId}/${vaultId}/${itemId}`,
       returnToast: {
-        text: browser.i18n.getMessage('fetch_update_login_cancel_toast'),
+        text: getMessage('fetch_update_login_cancel_toast'),
         type: 'info'
       }
     };

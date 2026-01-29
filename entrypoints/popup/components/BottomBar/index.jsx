@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './BottomBar.module.scss';
-import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import { PULL_REQUEST_TYPES, CONNECT_VIEWS } from '@/constants';
@@ -16,46 +16,76 @@ import NewWindowIcon from '@/assets/popup-window/new-window.svg?react';
 import SettingsIcon from '@/assets/popup-window/settings.svg?react';
 import FullSyncIcon from '@/assets/popup-window/full-sync.svg?react';
 import ClearLink from '../ClearLink';
+import { useI18n } from '@/partials/context/I18nContext';
 
-/** 
-* Function to get the security icon.
-* @async
-* @return {Promise<string>} The SVG content of the security icon.
-*/
-const getSecIcon = async () => {
-  const secIcon = await storage.getItem('local:securityIcon');
-  let t = await storage.getItem('local:theme');
-
-  if (t === 'unset') {
-    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    t = isDarkMode ? 'dark' : 'light';
+/**
+ * Resolves the effective theme (light/dark) based on storage value and system preference.
+ * @param {string} themeValue - The theme value from storage ('light', 'dark', or 'unset').
+ * @return {string} The effective theme ('light' or 'dark').
+ */
+const resolveEffectiveTheme = themeValue => {
+  if (themeValue === 'unset' || !themeValue) {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 
-  // FUTURE - theme change proofing
-  return secIcon.icon
-    .replaceAll('fill="SEC_COLOR_1"', `fill="${secIcon.colors[0][t]}"`)
-    .replaceAll('fill="SEC_COLOR_2"', `fill="${secIcon.colors[1][t]}"`)
-    .replaceAll('fill="SEC_COLOR_3"', `fill="${secIcon.colors[2][t]}"`);
+  return themeValue;
 };
 
-/** 
+/**
+ * Applies theme colors to the security icon SVG template.
+ * @param {object} secIcon - The security icon object with icon template and colors.
+ * @param {string} theme - The theme to apply ('light' or 'dark').
+ * @return {string|null} The themed SVG string or null if invalid.
+ */
+const applyThemeToSecIcon = (secIcon, theme) => {
+  if (!secIcon?.icon || !secIcon?.colors) {
+    return null;
+  }
+
+  return secIcon.icon
+    .replaceAll('fill="SEC_COLOR_1"', `fill="${secIcon.colors[0][theme]}"`)
+    .replaceAll('fill="SEC_COLOR_2"', `fill="${secIcon.colors[1][theme]}"`)
+    .replaceAll('fill="SEC_COLOR_3"', `fill="${secIcon.colors[2]?.[theme] || secIcon.colors[0][theme]}"`);
+};
+
+/**
 * Function component for the BottomBar.
 * @return {JSX.Element} The rendered component.
 */
 function BottomBar () {
-  const [securityIcon, setSecurityIcon] = useState('');
+  const { getMessage } = useI18n();
+  const [secIconData, setSecIconData] = useState(null);
+  const [effectiveTheme, setEffectiveTheme] = useState('light');
   const [separateWindow, setSeparateWindow] = useState(false);
   const [newWindowDisabled, setNewWindowDisabled] = useState(false);
 
+  const svgContainerRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { wsActive } = useWS();
   const { configured } = useAuthState();
   const { connectView } = useConnectView();
 
-  const setSecIcon = useCallback(async () => {
-    const svgContent = await getSecIcon();
-    setSecurityIcon(svgContent);
+  const themedSvg = useMemo(
+    () => applyThemeToSecIcon(secIconData, effectiveTheme),
+    [secIconData, effectiveTheme]
+  );
+
+  const loadSecurityIconData = useCallback(async () => {
+    try {
+      const [secIcon, themeValue] = await Promise.all([
+        storage.getItem('local:securityIcon'),
+        storage.getItem('local:theme')
+      ]);
+
+      if (secIcon) {
+        setSecIconData(secIcon);
+      }
+
+      setEffectiveTheme(resolveEffectiveTheme(themeValue));
+    } catch (e) {
+      CatchError(e);
+    }
   }, []);
 
   const popupCheck = useCallback(async () => {
@@ -76,7 +106,7 @@ function BottomBar () {
         });
 
         if (res.status === 'error') {
-          showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
+          showToast(getMessage('error_feature_wrong_data'), 'error');
         }
       } else if (location.pathname === '/blocked') {
         const res = await browser.runtime.sendMessage({
@@ -86,7 +116,7 @@ function BottomBar () {
         });
 
         if (res.status === 'error') {
-          showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
+          showToast(getMessage('error_feature_wrong_data'), 'error');
         }
       } else {
         const res = await browser.runtime.sendMessage({
@@ -96,7 +126,7 @@ function BottomBar () {
         });
 
         if (res.status === 'error') {
-          showToast(browser.i18n.getMessage('error_feature_wrong_data'), 'error');
+          showToast(getMessage('error_feature_wrong_data'), 'error');
         }
       }
 
@@ -158,23 +188,66 @@ function BottomBar () {
   }, [configured, location.pathname]);
 
   const secIconClass = useMemo(() =>
-    `${S.bottombarSecIcon} ${securityIcon ? S.active : ''} ${wsActive ? S.wsActive : ''}`,
-    [securityIcon, wsActive]
+    `${S.bottombarSecIcon} ${themedSvg ? S.active : ''} ${wsActive ? S.wsActive : ''}`,
+    [themedSvg, wsActive]
   );
 
-  const newWindowTitle = useMemo(() => browser.i18n.getMessage('open_in_new_window'), []);
-  const settingsTitle = useMemo(() => browser.i18n.getMessage('go_to_settings'), []);
-  const tooltipHeader = useMemo(() => browser.i18n.getMessage('bottom_bar_security_icon_tooltip_header'), []);
-  const tooltipText = useMemo(() => browser.i18n.getMessage('bottom_bar_security_icon_tooltip_text'), []);
+  const newWindowTitle = useMemo(() => getMessage('open_in_new_window'), []);
+  const settingsTitle = useMemo(() => getMessage('go_to_settings'), []);
+  const tooltipHeader = useMemo(() => getMessage('bottom_bar_security_icon_tooltip_header'), []);
+  const tooltipText = useMemo(() => getMessage('bottom_bar_security_icon_tooltip_text'), []);
 
   useEffect(() => {
-    try {
-      popupCheck()
-        .then(setSecIcon);
-    } catch (e) {
-      CatchError(e);
+    popupCheck()
+      .then(loadSecurityIconData)
+      .catch(CatchError);
+  }, [popupCheck, loadSecurityIconData]);
+
+  useEffect(() => {
+    const handleThemeChange = async newThemeValue => {
+      setEffectiveTheme(resolveEffectiveTheme(newThemeValue));
+    };
+
+    const unwatchTheme = storage.watch('local:theme', handleThemeChange);
+
+    return () => {
+      unwatchTheme();
+    };
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const handleSystemThemeChange = async () => {
+      const currentTheme = await storage.getItem('local:theme');
+
+      if (currentTheme === 'unset' || !currentTheme) {
+        setEffectiveTheme(resolveEffectiveTheme(currentTheme));
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleSystemThemeChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!svgContainerRef.current || !themedSvg) {
+      return;
     }
-  }, [popupCheck, setSecIcon]);
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(themedSvg, 'image/svg+xml');
+    const svgElement = doc.querySelector('svg');
+    const parseError = doc.querySelector('parsererror');
+
+    if (svgElement && !parseError) {
+      svgContainerRef.current.innerHTML = '';
+      svgContainerRef.current.appendChild(svgElement.cloneNode(true));
+    }
+  }, [themedSvg]);
 
   return (
     <>
@@ -202,7 +275,7 @@ function BottomBar () {
         </div>
 
         <div className={secIconClass}>
-          <div className={S.bottombarSecIconContent} dangerouslySetInnerHTML={{ __html: securityIcon }} />
+          <div className={S.bottombarSecIconContent} ref={svgContainerRef} />
         </div>
 
         <p className={S.bottombarSecIconTooltip}>
@@ -214,11 +287,11 @@ function BottomBar () {
           <ClearLink
             to='/fetch'
             state={{ action: PULL_REQUEST_TYPES.FULL_SYNC, from: 'bottomBar', data: {} }}
-            title={browser.i18n.getMessage('sync_title')}
+            title={getMessage('sync_title')}
             prefetch='intent'
           >
             <FullSyncIcon />
-            <span>{browser.i18n.getMessage('sync')}</span>
+            <span>{getMessage('sync')}</span>
           </ClearLink>
         </div>
       </footer>

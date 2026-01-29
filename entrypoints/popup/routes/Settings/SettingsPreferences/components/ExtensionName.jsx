@@ -7,7 +7,8 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import S from '../../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import { Form, Field } from 'react-final-form';
 import { filterXSS } from 'xss';
 import usePopupState from '../../../../store/popupState/usePopupState';
@@ -17,9 +18,24 @@ import usePopupState from '../../../../store/popupState/usePopupState';
 * @return {JSX.Element} The rendered component.
 */
 function ExtensionName () {
+  const { getMessage } = useI18n();
   const { data, setData } = usePopupState();
 
   const [isInitialized, setIsInitialized] = useState(false);
+
+  const isExtNameInvalid = useMemo(() => {
+    const name = data.extName;
+
+    if (!name || name.length === 0) {
+      return false;
+    }
+
+    if (name.length < 3 || name.length > 32) {
+      return true;
+    }
+
+    return false;
+  }, [data.extName]);
 
   useEffect(() => {
     const getExtName = async () => {
@@ -49,11 +65,11 @@ function ExtensionName () {
     const errors = {};
 
     if (!values['ext-name']) {
-      errors['ext-name'] = browser.i18n.getMessage('settings_ext_name_validate_required');
+      errors['ext-name'] = getMessage('settings_ext_name_validate_required');
     } else if (values['ext-name'].length < 3) {
-      errors['ext-name'] = browser.i18n.getMessage('settings_ext_name_validate_min_length');
+      errors['ext-name'] = getMessage('settings_ext_name_validate_min_length');
     } else if (values['ext-name'].length > 32) {
-      errors['ext-name'] = browser.i18n.getMessage('settings_ext_name_validate_max_length');
+      errors['ext-name'] = getMessage('settings_ext_name_validate_max_length');
     }
 
     if (errors['ext-name']) {
@@ -77,9 +93,9 @@ function ExtensionName () {
       // Update local state to reflect the change
       setData('extName', browserInfo.name);
 
-      showToast(browser.i18n.getMessage('notification_extension_name_update_success'), 'success');
+      showToast(getMessage('notification_extension_name_update_success'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_saving_extension_name'), 'error');
+      showToast(getMessage('error_saving_extension_name'), 'error');
       await CatchError(e);
     }
 
@@ -96,13 +112,13 @@ function ExtensionName () {
             {({ input }) => (
                <div className={`${pI.passInput} ${pI.bigMargin}`}>
                 <div className={pI.passInputTop}>
-                  <label htmlFor="ext-name">{browser.i18n.getMessage('settings_ext_name_label')}</label>
+                  <label htmlFor="ext-name">{getMessage('settings_ext_name_label')}</label>
                   <button
                     type="submit"
                     className={`${bS.btn} ${bS.btnClear}`}
                     disabled={submitting || !isInitialized ? 'disabled' : ''}
                   >
-                    {browser.i18n.getMessage('save')}
+                    {getMessage('save')}
                   </button>
                 </div>
                 <div className={pI.passInputBottom}>
@@ -110,7 +126,8 @@ function ExtensionName () {
                     type="text"
                     {...input}
                     id="ext-name"
-                    placeholder={browser.i18n.getMessage('settings_ext_name_placeholder')}
+                    className={isExtNameInvalid ? pI.inputTextError : ''}
+                    placeholder={getMessage('settings_ext_name_placeholder')}
                     dir="ltr"
                     spellCheck="true"
                     autoCorrect="on"

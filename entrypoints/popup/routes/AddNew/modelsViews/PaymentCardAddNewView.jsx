@@ -20,12 +20,14 @@ import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCar
 import isCardNumberInvalid from '@/entrypoints/popup/components/PaymentCardNumberInput/validateCardNumber';
 import isExpirationDateInvalid from '@/entrypoints/popup/components/PaymentCardExpirationDate/validateExpirationDate';
 import isSecurityCodeInvalid from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/validateSecurityCode';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /** 
 * PaymentCardAddNewView component for adding a new Payment Card.
 * @return {JSX.Element} The rendered component.
 */
 function PaymentCardAddNewView () {
+  const { getMessage } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const { data, setData, setBatchData } = usePopupState();
@@ -49,24 +51,24 @@ function PaymentCardAddNewView () {
     const errors = {};
 
     if (!values?.name || values?.name?.length <= 0) {
-      errors.name = browser.i18n.getMessage('add_new_validate_card_name_required');
+      errors.name = getMessage('add_new_validate_card_name_required');
     } else if (values.name?.length > 255) {
-      errors.name = browser.i18n.getMessage('add_new_validate_card_name_length');
+      errors.name = getMessage('add_new_validate_card_name_length');
     }
 
     if (values?.cardHolder && values.cardHolder?.length > 255) {
-      errors.cardHolder = browser.i18n.getMessage('add_new_validate_cardholder_length');
+      errors.cardHolder = getMessage('add_new_validate_cardholder_length');
     }
 
     if (values?.cardNumber && values.cardNumber?.length > 0) {
       const cleanCardNumber = values.cardNumber.replace(/\s/g, '');
 
       if (cleanCardNumber.length < 13 || cleanCardNumber.length > 19) {
-        errors.cardNumber = browser.i18n.getMessage('add_new_validate_card_number_invalid');
+        errors.cardNumber = getMessage('add_new_validate_card_number_invalid');
       } else if (!PAYMENT_CARD_REGEX.test(cleanCardNumber)) {
-        errors.cardNumber = browser.i18n.getMessage('add_new_validate_card_number_invalid');
+        errors.cardNumber = getMessage('add_new_validate_card_number_invalid');
       } else if (!PaymentCard.isValidLuhn(cleanCardNumber)) {
-        errors.cardNumber = browser.i18n.getMessage('add_new_validate_card_number_invalid');
+        errors.cardNumber = getMessage('add_new_validate_card_number_invalid');
       }
     }
 
@@ -74,20 +76,20 @@ function PaymentCardAddNewView () {
       const expDateParts = values.expirationDate.split('/');
 
       if (expDateParts.length !== 2) {
-        errors.expirationDate = browser.i18n.getMessage('add_new_validate_expiration_date_invalid');
+        errors.expirationDate = getMessage('add_new_validate_expiration_date_invalid');
       } else {
         const month = parseInt(expDateParts[0], 10);
         const year = parseInt(expDateParts[1], 10);
 
         if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
-          errors.expirationDate = browser.i18n.getMessage('add_new_validate_expiration_date_invalid');
+          errors.expirationDate = getMessage('add_new_validate_expiration_date_invalid');
         }
       }
     }
 
     if (values?.securityCode && values.securityCode?.length > 0) {
       if (!/^\d{3,4}$/.test(values.securityCode)) {
-        errors.securityCode = browser.i18n.getMessage('add_new_validate_security_code_invalid');
+        errors.securityCode = getMessage('add_new_validate_security_code_invalid');
       }
     }
 
@@ -130,7 +132,7 @@ function PaymentCardAddNewView () {
     const device = await getCurrentDevice();
 
     if (!device) {
-      return showToast(browser.i18n.getMessage('error_no_current_device'), 'error');
+      return showToast(getMessage('error_no_current_device'), 'error');
     }
 
     const deviceId = device.id;
@@ -159,144 +161,149 @@ function PaymentCardAddNewView () {
   };
 
   return (
-    <Form onSubmit={onSubmit} initialValues={data} render={({ handleSubmit, submitting }) => ( // form
-      <form onSubmit={handleSubmit}>
-        <Field name='name'>
-          {({ input }) => (
-            <div className={`${pI.passInput} ${inputError === 'name' ? pI.error : ''}`}>
-              <div className={pI.passInputTop}>
-                <label htmlFor='add-new-name'>{browser.i18n.getMessage('payment_card_name')}</label>
-              </div>
-              <div className={pI.passInputBottom}>
-                <input
-                  type='text'
-                  {...input}
-                  placeholder={browser.i18n.getMessage('placeholder_payment_card_name')}
-                  id='add-new-name'
-                  dir='ltr'
-                  spellCheck='false'
-                  autoCorrect='off'
-                  autoComplete='off'
-                  autoCapitalize='off'
-                  onChange={e => {
-                    input.onChange(e);
-                    setData('name', e.target.value);
-                  }}
-                />
-              </div>
-            </div>
-          )}
-        </Field>
-        <Field name='cardHolder'>
-          {({ input }) => (
-            <div className={`${pI.passInput} ${inputError === 'cardHolder' ? pI.error : ''}`}>
-              <div className={pI.passInputTop}>
-                <label htmlFor='add-new-cardHolder'>{browser.i18n.getMessage('payment_card_cardholder')}</label>
-              </div>
-              <div className={pI.passInputBottom}>
-                <input
-                  type='text'
-                  {...input}
-                  placeholder={browser.i18n.getMessage('placeholder_payment_card_cardholder')}
-                  id='add-new-cardHolder'
-                  dir='ltr'
-                  spellCheck='false'
-                  autoCorrect='off'
-                  autoComplete='off'
-                  autoCapitalize='off'
-                  onChange={e => {
-                    input.onChange(e);
-                    setData('cardHolder', e.target.value);
-                  }}
-                />
-              </div>
-            </div>
-          )}
-        </Field>
-        <Field name='cardNumber'>
-          {({ input }) => (
-            <div className={`${pI.passInput} ${inputError === 'cardNumber' ? pI.error : ''}`}>
-              <div className={pI.passInputTop}>
-                <label htmlFor='add-new-cardNumber'>{browser.i18n.getMessage('payment_card_card_number')}</label>
-              </div>
-              <div className={pI.passInputBottom}>
-                <PaymentCardNumberInput
-                  {...input}
-                  id='add-new-cardNumber'
-                  onChange={e => {
-                    input.onChange(e);
-                    setData('cardNumber', e.target.value);
-                  }}
-                />
-              </div>
-            </div>
-          )}
-        </Field>
-        <div className={S.addNewSplitBox}>
-          <Field name='expirationDate'>
+    <>
+      <h2>{getMessage('add_new_header_payment_card')}</h2>
+      <h3>{getMessage('add_new_subheader')}</h3>
+
+      <Form onSubmit={onSubmit} initialValues={data} render={({ handleSubmit, submitting }) => ( // form
+        <form onSubmit={handleSubmit}>
+          <Field name='name'>
             {({ input }) => (
-              <div className={`${pI.passInput} ${inputError === 'expirationDate' ? pI.error : ''}`}>
+              <div className={`${pI.passInput} ${inputError === 'name' ? pI.error : ''}`}>
                 <div className={pI.passInputTop}>
-                  <label htmlFor='add-new-expirationDate'>{browser.i18n.getMessage('payment_card_expiration_date')}</label>
+                  <label htmlFor='add-new-name'>{getMessage('payment_card_name')}</label>
                 </div>
                 <div className={pI.passInputBottom}>
-                  <PaymentCardExpirationDate
-                    value={input.value}
-                    inputId='add-new-expirationDate'
-                    onChange={formattedValue => {
-                      input.onChange(formattedValue);
-                      setData('expirationDate', formattedValue);
-                    }}
-                  />
-                </div>
-                <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
-                  <p className={paymentCardExpirationDateValidation(input.value) ? '' : pI.empty}>{paymentCardExpirationDateValidation(input.value) ? browser.i18n.getMessage('details_card_expired') : ''}</p>
-                </div>
-              </div>
-            )}
-          </Field>
-          <Field name='securityCode'>
-            {({ input }) => (
-              <div className={`${pI.passInput} ${inputError === 'securityCode' ? pI.error : ''}`}>
-                <div className={pI.passInputTop}>
-                  <label htmlFor='add-new-securityCode'>{browser.i18n.getMessage('payment_card_security_code')}</label>
-                </div>
-                <div className={pI.passInputBottom}>
-                  <PaymentCardSecurityCodeInput
+                  <input
+                    type='text'
                     {...input}
-                    id='add-new-securityCode'
-                    cardNumber={data?.cardNumber}
+                    placeholder={getMessage('placeholder_payment_card_name')}
+                    id='add-new-name'
+                    dir='ltr'
+                    spellCheck='false'
+                    autoCorrect='off'
+                    autoComplete='off'
+                    autoCapitalize='off'
                     onChange={e => {
                       input.onChange(e);
-                      setData('securityCode', e.target.value);
+                      setData('name', e.target.value);
                     }}
-                    onTooLongChange={handleSecurityCodeTooLongChange}
                   />
-                </div>
-                <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
-                  <p className={securityCodeTooLong ? '' : pI.empty}>{securityCodeTooLong ? browser.i18n.getMessage('add_new_security_code_too_long') : ''}</p>
                 </div>
               </div>
             )}
           </Field>
-        </div>
-        <div className={S.addNewButtons}>
-          <button
-            type='submit'
-            className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-            disabled={
-              submitting ||
-              !data?.name || data?.name?.length === 0 ||
-              hasLiveValidationErrors
-              ? 'disabled' : ''
-            }
-          >
-            {browser.i18n.getMessage('continue')}
-          </button>
-        </div>
-      </form>
-    )}
-    />
+          <Field name='cardHolder'>
+            {({ input }) => (
+              <div className={`${pI.passInput} ${inputError === 'cardHolder' ? pI.error : ''}`}>
+                <div className={pI.passInputTop}>
+                  <label htmlFor='add-new-cardHolder'>{getMessage('payment_card_cardholder')}</label>
+                </div>
+                <div className={pI.passInputBottom}>
+                  <input
+                    type='text'
+                    {...input}
+                    placeholder={getMessage('placeholder_payment_card_cardholder')}
+                    id='add-new-cardHolder'
+                    dir='ltr'
+                    spellCheck='false'
+                    autoCorrect='off'
+                    autoComplete='off'
+                    autoCapitalize='off'
+                    onChange={e => {
+                      input.onChange(e);
+                      setData('cardHolder', e.target.value);
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </Field>
+          <Field name='cardNumber'>
+            {({ input }) => (
+              <div className={`${pI.passInput} ${inputError === 'cardNumber' ? pI.error : ''}`}>
+                <div className={pI.passInputTop}>
+                  <label htmlFor='add-new-cardNumber'>{getMessage('payment_card_card_number')}</label>
+                </div>
+                <div className={pI.passInputBottom}>
+                  <PaymentCardNumberInput
+                    {...input}
+                    id='add-new-cardNumber'
+                    onChange={e => {
+                      input.onChange(e);
+                      setData('cardNumber', e.target.value);
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </Field>
+          <div className={S.addNewSplitBox}>
+            <Field name='expirationDate'>
+              {({ input }) => (
+                <div className={`${pI.passInput} ${inputError === 'expirationDate' ? pI.error : ''}`}>
+                  <div className={pI.passInputTop}>
+                    <label htmlFor='add-new-expirationDate'>{getMessage('payment_card_expiration_date')}</label>
+                  </div>
+                  <div className={pI.passInputBottom}>
+                    <PaymentCardExpirationDate
+                      value={input.value}
+                      inputId='add-new-expirationDate'
+                      onChange={formattedValue => {
+                        input.onChange(formattedValue);
+                        setData('expirationDate', formattedValue);
+                      }}
+                    />
+                  </div>
+                  <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
+                    <p className={paymentCardExpirationDateValidation(input.value) ? '' : pI.empty}>{paymentCardExpirationDateValidation(input.value) ? getMessage('details_card_expired') : ''}</p>
+                  </div>
+                </div>
+              )}
+            </Field>
+            <Field name='securityCode'>
+              {({ input }) => (
+                <div className={`${pI.passInput} ${inputError === 'securityCode' ? pI.error : ''}`}>
+                  <div className={pI.passInputTop}>
+                    <label htmlFor='add-new-securityCode'>{getMessage('payment_card_security_code')}</label>
+                  </div>
+                  <div className={pI.passInputBottom}>
+                    <PaymentCardSecurityCodeInput
+                      {...input}
+                      id='add-new-securityCode'
+                      cardNumber={data?.cardNumber}
+                      onChange={e => {
+                        input.onChange(e);
+                        setData('securityCode', e.target.value);
+                      }}
+                      onTooLongChange={handleSecurityCodeTooLongChange}
+                    />
+                  </div>
+                  <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
+                    <p className={securityCodeTooLong ? '' : pI.empty}>{securityCodeTooLong ? getMessage('add_new_security_code_too_long') : ''}</p>
+                  </div>
+                </div>
+              )}
+            </Field>
+          </div>
+          <div className={S.addNewButtons}>
+            <button
+              type='submit'
+              className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
+              disabled={
+                submitting ||
+                !data?.name || data?.name?.length === 0 ||
+                hasLiveValidationErrors
+                ? 'disabled' : ''
+              }
+            >
+              {getMessage('continue')}
+            </button>
+          </div>
+        </form>
+      )}
+      />
+    </>
   );
 }
 

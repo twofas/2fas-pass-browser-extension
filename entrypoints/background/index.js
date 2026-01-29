@@ -15,6 +15,8 @@ export default defineBackground({
   * @return {void}
   */
   main () {
+    initI18n();
+
     const tabsInputData = {};
     const tabUpdateData = {};
     const savePromptActions = [];

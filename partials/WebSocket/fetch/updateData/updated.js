@@ -107,7 +107,7 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
       returnUrl: `/details/${state.data.deviceId}/${info.data.vaultId}/${state.data.itemId}`,
       returnState: { from: 'fetch', resetOldData: true },
       returnToast: {
-        text: browser.i18n.getMessage('fetch_update_login_updated_toast'),
+        text: getMessage('fetch_update_login_updated_toast'),
         type: 'success'
       }
     };

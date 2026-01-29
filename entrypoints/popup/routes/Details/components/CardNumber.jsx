@@ -17,6 +17,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Renders the card number input field for PaymentCard details view.
@@ -26,6 +27,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function CardNumber (props) {
+  const { getMessage } = useI18n();
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
@@ -171,7 +173,7 @@ function CardNumber (props) {
     return (
       <div className={pI.passInputBottomOverlay}>
         <InfoIcon />
-        <span>{browser.i18n.getMessage('details_card_number_decrypt_error')}</span>
+        <span>{getMessage('details_card_number_decrypt_error')}</span>
       </div>
     );
   };
@@ -183,7 +185,7 @@ function CardNumber (props) {
 
     return (
       <div className={pI.passInputTooltip}>
-        <span>{browser.i18n.getMessage('details_sif_not_fetched')}</span>
+        <span>{getMessage('details_sif_not_fetched')}</span>
       </div>
     );
   };
@@ -227,9 +229,9 @@ function CardNumber (props) {
       }
 
       await copyValue(cardNumberToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'cardNumber');
-      showToast(browser.i18n.getMessage('notification_card_number_copied'), 'success');
+      showToast(getMessage('notification_card_number_copied'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_card_number_copy_failed'), 'error');
+      showToast(getMessage('error_card_number_copy_failed'), 'error');
       await CatchError(e);
     }
   };
@@ -280,7 +282,7 @@ function CardNumber (props) {
   const renderInput = () => {
     const isEditable = data?.cardNumberEditable;
     const isVisible = data?.cardNumberVisible;
-    const placeholder = isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_number');
+    const placeholder = isHighlySecretWithoutSif ? '' : getMessage('placeholder_payment_card_number');
 
     // Not editable and not visible - show masked value
     if (!isEditable && !isVisible) {
@@ -352,14 +354,14 @@ function CardNumber (props) {
       {() => (
         <div className={`${pI.passInput} ${!data?.cardNumberEditable || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''}`}>
           <div className={pI.passInputTop}>
-            <label htmlFor='editedCardNumber'>{browser.i18n.getMessage('details_card_number')}</label>
+            <label htmlFor='editedCardNumber'>{getMessage('details_card_number')}</label>
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
               onClick={handleEditableClick}
               tabIndex={-1}
             >
-              {data?.cardNumberEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data?.cardNumberEditable ? getMessage('cancel') : getMessage('edit')}
             </button>
           </div>
           <div className={pI.passInputBottom}>
@@ -370,7 +372,7 @@ function CardNumber (props) {
                 type='button'
                 onClick={handleCardNumberVisibleClick}
                 className={`${pI.iconButton} ${pI.visibleButton} ${!originalItem?.isT3orT2WithSif || data?.cardNumberEditable || sifDecryptError ? pI.hiddenButton : ''}`}
-                title={browser.i18n.getMessage('details_toggle_card_number_visibility')}
+                title={getMessage('details_toggle_card_number_visibility')}
                 tabIndex={-1}
               >
                 <VisibleIcon />
@@ -380,7 +382,7 @@ function CardNumber (props) {
                   type='button'
                   className={`${bS.btn} ${pI.iconButton}`}
                   onClick={handleCopyCardNumber}
-                  title={browser.i18n.getMessage('this_tab_copy_card_number')}
+                  title={getMessage('this_tab_copy_card_number')}
                   tabIndex={-1}
                 >
                   <CopyIcon />

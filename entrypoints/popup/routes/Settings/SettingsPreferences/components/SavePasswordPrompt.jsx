@@ -6,6 +6,7 @@
 
 import S from '../../Settings.module.scss';
 import { useEffect, useState, useCallback } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
 import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
@@ -15,6 +16,8 @@ import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function SavePasswordPrompt () {
+  const { getMessage } = useI18n();
+
   if (import.meta.env.BROWSER === 'safari') {
     return null; // Safari does not support this feature
   }
@@ -49,10 +52,10 @@ function SavePasswordPrompt () {
   }, []);
 
   const promptOptions = [
-    { value: 'default', label: browser.i18n.getMessage('settings_save_prompt_pass') },
-    { value: 'default_encrypted', label: browser.i18n.getMessage('settings_save_prompt_pass_encrypted') },
-    { value: 'browser', label: browser.i18n.getMessage('settings_save_prompt_browser') },
-    { value: 'none', label: browser.i18n.getMessage('settings_save_prompt_none') },
+    { value: 'default', label: getMessage('settings_save_prompt_pass') },
+    { value: 'default_encrypted', label: getMessage('settings_save_prompt_pass_encrypted') },
+    { value: 'browser', label: getMessage('settings_save_prompt_browser') },
+    { value: 'none', label: getMessage('settings_save_prompt_none') },
   ];
 
   const handleSavePasswordPromptChange = useCallback(async change => {
@@ -70,20 +73,20 @@ function SavePasswordPrompt () {
         value: value === 'browser'
       }).catch(() => {});
 
-      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
+      showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:savePrompt') || 'default';
       setSP(previousValue);
 
-      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
+      showToast(getMessage('error_general_setting'), 'error');
       await CatchError(e);
     }
   }, [isInitialized]);
 
   return (
     <div className={S.settingsSavePasswordPrompt}>
-      <h4>{browser.i18n.getMessage('settings_save_prompt_header')}</h4>
-      <p>{browser.i18n.getMessage('settings_save_prompt_description')}</p>
+      <h4>{getMessage('settings_save_prompt_header')}</h4>
+      <p>{getMessage('settings_save_prompt_description')}</p>
 
       <form action="#" className={S.settingsSavePasswordPromptForm}>
         <AdvancedSelect
@@ -104,7 +107,7 @@ function SavePasswordPrompt () {
           className={S.settingsSavePasswordPromptExcludedDomainsLink}
           prefetch='intent'
         >
-          <span>{browser.i18n.getMessage('settings_excluded_domains')}</span>
+          <span>{getMessage('settings_excluded_domains')}</span>
           <MenuArrowIcon />
         </ClearLink>
       ) : null}

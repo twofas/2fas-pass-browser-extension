@@ -27,13 +27,13 @@ const handleName = async (deviceId, vaultId, itemId, more, setMore) => {
   try {
     item = await getItem(deviceId, vaultId, itemId);
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_secure_note_not_found'), 'error');
+    showToast(getMessage('error_secure_note_not_found'), 'error');
     await CatchError(e);
     return;
   }
 
   if (!item) {
-    showToast(browser.i18n.getMessage('error_secure_note_not_found'), 'error');
+    showToast(getMessage('error_secure_note_not_found'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handleNameNoService, { additional: { func: 'handleName' } }));
     return;
   }
@@ -41,9 +41,9 @@ const handleName = async (deviceId, vaultId, itemId, more, setMore) => {
   try {
     const { name } = item.content;
     await copyValue(name, deviceId, vaultId, item.id, 'name');
-    showToast(browser.i18n.getMessage('notification_secure_note_name_copied'), 'success');
+    showToast(getMessage('notification_secure_note_name_copied'), 'success');
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_secure_note_name_copy_failed'), 'error');
+    showToast(getMessage('error_secure_note_name_copy_failed'), 'error');
     await CatchError(e);
   }
 };

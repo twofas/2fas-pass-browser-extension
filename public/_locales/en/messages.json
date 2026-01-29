@@ -347,9 +347,237 @@
     "message": "This page contains forms from external domains:\nDOMAINS\n\nDo you want to autofill data in these frames?",
     "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
   },
+  "notification_autofill_partial_title": {
+    "message": "Partial autofill",
+    "description": "Title for the notification when autofill only partially succeeded"
+  },
+  "notification_autofill_failed_open_popup": {
+    "message": "Open popup to copy unfilled details manually",
+    "description": "Message for the notification when autofill failed, suggesting to open popup for manual copy"
+  },
   "placeholder_name": {
     "message": "Type your Item name",
     "description": "Placeholder text for the name input field"
+  },
+  "primereact_month_january": {
+    "message": "January",
+    "description": "PrimeReact Calendar month name for January"
+  },
+  "primereact_month_february": {
+    "message": "February",
+    "description": "PrimeReact Calendar month name for February"
+  },
+  "primereact_month_march": {
+    "message": "March",
+    "description": "PrimeReact Calendar month name for March"
+  },
+  "primereact_month_april": {
+    "message": "April",
+    "description": "PrimeReact Calendar month name for April"
+  },
+  "primereact_month_may": {
+    "message": "May",
+    "description": "PrimeReact Calendar month name for May"
+  },
+  "primereact_month_june": {
+    "message": "June",
+    "description": "PrimeReact Calendar month name for June"
+  },
+  "primereact_month_july": {
+    "message": "July",
+    "description": "PrimeReact Calendar month name for July"
+  },
+  "primereact_month_august": {
+    "message": "August",
+    "description": "PrimeReact Calendar month name for August"
+  },
+  "primereact_month_september": {
+    "message": "September",
+    "description": "PrimeReact Calendar month name for September"
+  },
+  "primereact_month_october": {
+    "message": "October",
+    "description": "PrimeReact Calendar month name for October"
+  },
+  "primereact_month_november": {
+    "message": "November",
+    "description": "PrimeReact Calendar month name for November"
+  },
+  "primereact_month_december": {
+    "message": "December",
+    "description": "PrimeReact Calendar month name for December"
+  },
+  "primereact_month_short_jan": {
+    "message": "Jan",
+    "description": "PrimeReact Calendar short month name for January"
+  },
+  "primereact_month_short_feb": {
+    "message": "Feb",
+    "description": "PrimeReact Calendar short month name for February"
+  },
+  "primereact_month_short_mar": {
+    "message": "Mar",
+    "description": "PrimeReact Calendar short month name for March"
+  },
+  "primereact_month_short_apr": {
+    "message": "Apr",
+    "description": "PrimeReact Calendar short month name for April"
+  },
+  "primereact_month_short_may": {
+    "message": "May",
+    "description": "PrimeReact Calendar short month name for May"
+  },
+  "primereact_month_short_jun": {
+    "message": "Jun",
+    "description": "PrimeReact Calendar short month name for June"
+  },
+  "primereact_month_short_jul": {
+    "message": "Jul",
+    "description": "PrimeReact Calendar short month name for July"
+  },
+  "primereact_month_short_aug": {
+    "message": "Aug",
+    "description": "PrimeReact Calendar short month name for August"
+  },
+  "primereact_month_short_sep": {
+    "message": "Sep",
+    "description": "PrimeReact Calendar short month name for September"
+  },
+  "primereact_month_short_oct": {
+    "message": "Oct",
+    "description": "PrimeReact Calendar short month name for October"
+  },
+  "primereact_month_short_nov": {
+    "message": "Nov",
+    "description": "PrimeReact Calendar short month name for November"
+  },
+  "primereact_month_short_dec": {
+    "message": "Dec",
+    "description": "PrimeReact Calendar short month name for December"
+  },
+  "primereact_day_sunday": {
+    "message": "Sunday",
+    "description": "PrimeReact Calendar day name for Sunday"
+  },
+  "primereact_day_monday": {
+    "message": "Monday",
+    "description": "PrimeReact Calendar day name for Monday"
+  },
+  "primereact_day_tuesday": {
+    "message": "Tuesday",
+    "description": "PrimeReact Calendar day name for Tuesday"
+  },
+  "primereact_day_wednesday": {
+    "message": "Wednesday",
+    "description": "PrimeReact Calendar day name for Wednesday"
+  },
+  "primereact_day_thursday": {
+    "message": "Thursday",
+    "description": "PrimeReact Calendar day name for Thursday"
+  },
+  "primereact_day_friday": {
+    "message": "Friday",
+    "description": "PrimeReact Calendar day name for Friday"
+  },
+  "primereact_day_saturday": {
+    "message": "Saturday",
+    "description": "PrimeReact Calendar day name for Saturday"
+  },
+  "primereact_day_short_sun": {
+    "message": "Sun",
+    "description": "PrimeReact Calendar short day name for Sunday"
+  },
+  "primereact_day_short_mon": {
+    "message": "Mon",
+    "description": "PrimeReact Calendar short day name for Monday"
+  },
+  "primereact_day_short_tue": {
+    "message": "Tue",
+    "description": "PrimeReact Calendar short day name for Tuesday"
+  },
+  "primereact_day_short_wed": {
+    "message": "Wed",
+    "description": "PrimeReact Calendar short day name for Wednesday"
+  },
+  "primereact_day_short_thu": {
+    "message": "Thu",
+    "description": "PrimeReact Calendar short day name for Thursday"
+  },
+  "primereact_day_short_fri": {
+    "message": "Fri",
+    "description": "PrimeReact Calendar short day name for Friday"
+  },
+  "primereact_day_short_sat": {
+    "message": "Sat",
+    "description": "PrimeReact Calendar short day name for Saturday"
+  },
+  "primereact_day_min_su": {
+    "message": "Su",
+    "description": "PrimeReact Calendar minimal day name for Sunday"
+  },
+  "primereact_day_min_mo": {
+    "message": "Mo",
+    "description": "PrimeReact Calendar minimal day name for Monday"
+  },
+  "primereact_day_min_tu": {
+    "message": "Tu",
+    "description": "PrimeReact Calendar minimal day name for Tuesday"
+  },
+  "primereact_day_min_we": {
+    "message": "We",
+    "description": "PrimeReact Calendar minimal day name for Wednesday"
+  },
+  "primereact_day_min_th": {
+    "message": "Th",
+    "description": "PrimeReact Calendar minimal day name for Thursday"
+  },
+  "primereact_day_min_fr": {
+    "message": "Fr",
+    "description": "PrimeReact Calendar minimal day name for Friday"
+  },
+  "primereact_day_min_sa": {
+    "message": "Sa",
+    "description": "PrimeReact Calendar minimal day name for Saturday"
+  },
+  "primereact_today": {
+    "message": "Today",
+    "description": "PrimeReact Calendar today button label"
+  },
+  "primereact_clear": {
+    "message": "Clear",
+    "description": "PrimeReact Calendar clear button label"
+  },
+  "primereact_choose_month": {
+    "message": "Choose Month",
+    "description": "PrimeReact Calendar choose month accessibility label"
+  },
+  "primereact_choose_year": {
+    "message": "Choose Year",
+    "description": "PrimeReact Calendar choose year accessibility label"
+  },
+  "primereact_prev_month": {
+    "message": "Previous Month",
+    "description": "PrimeReact Calendar previous month button accessibility label"
+  },
+  "primereact_next_month": {
+    "message": "Next Month",
+    "description": "PrimeReact Calendar next month button accessibility label"
+  },
+  "primereact_prev_year": {
+    "message": "Previous Year",
+    "description": "PrimeReact Calendar previous year button accessibility label"
+  },
+  "primereact_next_year": {
+    "message": "Next Year",
+    "description": "PrimeReact Calendar next year button accessibility label"
+  },
+  "primereact_prev_decade": {
+    "message": "Previous Decade",
+    "description": "PrimeReact Calendar previous decade button accessibility label"
+  },
+  "primereact_next_decade": {
+    "message": "Next Decade",
+    "description": "PrimeReact Calendar next decade button accessibility label"
   },
   "background_contextMenuConfigured_no_accounts": {
     "message": "There are no matching Items for this domain",
@@ -472,7 +700,7 @@
     "description": "Instruction to use the mobile app to scan the QR code"
   },
   "install_3_info": {
-    "message": "Extension is unlocked for this browser's session!",
+    "message": "Extension is unlocked for this browser's session",
     "description": "Message displayed when the extension is unlocked for the current browser session"
   },
   "install_3_header": {
@@ -544,7 +772,7 @@
     "description": "Validation message displayed when the Domain (URI) field is empty"
   },
   "add_new_validate_min_length": {
-    "message": "Please enter the Domain (URI) with at least 3 characters.",
+    "message": "Please enter the Domain (URI) with at least 3 characters",
     "description": "Validation message displayed when the Domain (URI) field has fewer than 3 characters"
   },
   "add_new_validate_invalid_domain": {
@@ -556,11 +784,11 @@
     "description": "Validation message displayed when the Card Name field is empty"
   },
   "add_new_validate_card_name_length": {
-    "message": "Card name must be less than 256 characters",
+    "message": "Card name must be less than 256 characters.",
     "description": "Validation message displayed when the Card Name field exceeds 255 characters"
   },
   "add_new_validate_cardholder_length": {
-    "message": "Cardholder must be less than 256 characters",
+    "message": "Cardholder must be less than 256 characters.",
     "description": "Validation message displayed when the Cardholder field exceeds 255 characters"
   },
   "add_new_validate_card_number_invalid": {
@@ -572,16 +800,24 @@
     "description": "Validation message displayed when the Expiration Date field is invalid"
   },
   "add_new_validate_security_code_invalid": {
-    "message": "Security code must be 3 or 4 digits",
+    "message": "Security code must be 3 or 4 digits.",
     "description": "Validation message displayed when the Security Code field is invalid"
   },
   "add_new_security_code_too_long": {
     "message": "Security code is invalid.",
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
-  "add_new_header": {
-    "message": "Adding a new ITEM to \n2FAS Pass",
-    "description": "Header for the section to add a new item"
+  "add_new_header_login": {
+    "message": "Adding a new Login to \n2FAS Pass",
+    "description": "Header for the section to add a new Login item"
+  },
+  "add_new_header_payment_card": {
+    "message": "Adding a new Payment Card to \n2FAS Pass",
+    "description": "Header for the section to add a new Payment Card item"
+  },
+  "add_new_header_secure_note": {
+    "message": "Adding a new Secure Note to \n2FAS Pass",
+    "description": "Header for the section to add a new Secure Note item"
   },
   "add_new_subheader": {
     "message": "Start the process here and continue in the mobile app.",
@@ -659,17 +895,29 @@
     "message": "Use QR code",
     "description": "Instruction to use QR code as an alternative method"
   },
-  "details_header": {
-    "message": "details",
-    "description": "Header for the details section"
+  "details_header_login": {
+    "message": "Login details",
+    "description": "Header for the Login details section"
   },
-  "details_field": {
+  "details_header_payment_card": {
+    "message": "Payment Card details",
+    "description": "Header for the Payment Card details section"
+  },
+  "details_header_secure_note": {
+    "message": "Secure Note details",
+    "description": "Header for the Secure Note details section"
+  },
+  "details_field_one": {
     "message": "field",
     "description": "Label for a single field in the item details"
   },
-  "details_fields": {
+  "details_field_many": {
     "message": "fields",
     "description": "Label for multiple fields in the item details"
+  },
+  "details_field_few": {
+    "message": "fields",
+    "description": "Label for a few fields in the item details"
   },
   "details_password_overlay": {
     "message": "This password is only available in your Vault.",
@@ -764,7 +1012,7 @@
     "description": "Title for the fetch highly secret data link"
   },
   "details_sif_not_fetched": {
-    "message": "This information is only available on your mobile phone. Click the \"Fetch\" button at the top of this window to retrieve it.",
+    "message": "This data is only available on your mobile app. Click the \"Fetch\" button at the top of this window to retrieve it.",
     "description": "Message indicating that the highly secret data has not been fetched yet"
   },
   "details_notes_placeholder": {
@@ -944,23 +1192,23 @@
     "description": "Header prompting the user to continue updating in the mobile app"
   },
   "fetch_continue_updating_description": {
-    "message": "To update this Item, continue on your \nmobile phone. Please keep this window open.",
+    "message": "To update this Item, continue on your \nmobile app. Please keep this window open.",
     "description": "Explains that the user should continue the process on their mobile phone"
   },
   "fetch_full_sync_description": {
-    "message": "To complete the sync process, continue on your mobile device. Please keep this window open.",
+    "message": "To complete the sync process, continue in your mobile app. Please keep this window open.",
     "description": "Explains that the user should continue the full sync process on their mobile phone"
   },
   "fetch_sif_request_description": {
-    "message": "To fetch Item details, continue on your mobile device. Please keep this window open.",
+    "message": "To fetch Item details, continue in your mobile app. Please keep this window open.",
     "description": "Explains that the user should continue the SIF request process on their mobile phone"
   },
   "fetch_delete_request_description": {
-    "message": "To delete this Item, continue on your mobile device. Please keep this window open.",
+    "message": "To delete this Item, continue in your mobile app. Please keep this window open.",
     "description": "Explains that the user should continue the login deletion process on their mobile phone"
   },
   "fetch_add_request_description": {
-    "message": "To add this Item, continue on your mobile device. Please keep this window open.",
+    "message": "To add this Item, continue in your mobile app. Please keep this window open.",
     "description": "Explains that the user should continue the login addition process on their mobile phone"
   },
   "fetch_delete_login_accept_toast": {
@@ -1251,6 +1499,14 @@
     "message": "Theme",
     "description": "Label for the theme settings"
   },
+  "settings_language": {
+    "message": "Language",
+    "description": "Label for the language settings"
+  },
+  "settings_language_default": {
+    "message": "Browser default",
+    "description": "Option to use the browser's default language"
+  },
   "settings_unknown": {
     "message": "Unknown",
     "description": "Label for unknown settings or values"
@@ -1304,7 +1560,7 @@
     "description": "Placeholder text for the browser nickname input field"
   },
   "settings_ext_name_validate_required": {
-    "message": "Please enter the extension name.",
+    "message": "Please enter the extension name",
     "description": "Validation message when the extension name is not provided"
   },
   "settings_ext_name_validate_min_length": {
@@ -1467,6 +1723,86 @@
     "message": "Disconnect",
     "description": "Confirm button text in the disconnect trusted device confirmation dialog"
   },
+  "settings_cross_domain_header": {
+    "message": "Cross-domain autofill",
+    "description": "Header for the cross-domain iframe autofill settings"
+  },
+  "settings_cross_domain_description": {
+    "message": "When a login form is embedded in an iframe from a different domain, 2FAS Pass will ask for your confirmation before autofilling. You can manage trusted domains that skip this prompt.",
+    "description": "Description explaining the cross-domain iframe autofill security feature"
+  },
+  "settings_cross_domain_trusted_domains": {
+    "message": "Trusted domains",
+    "description": "Link text to navigate to the trusted domains management page for cross-domain autofill"
+  },
+  "settings_cross_domains_description": {
+    "message": "Cross-domain autofill prompts will be \nskipped for the following domains.",
+    "description": "Explains that trusted domains won't show cross-domain confirmation prompts"
+  },
+  "settings_cross_domains_empty": {
+    "message": "There are no trusted domains yet.",
+    "description": "Message displayed when no domains are trusted for cross-domain autofill"
+  },
+  "settings_cross_domains_remove": {
+    "message": "Remove selected domain from the trusted list.",
+    "description": "Button label to remove a domain from the trusted list"
+  },
+  "settings_cross_domains_remove_toast": {
+    "message": "Domain removed from the trusted list",
+    "description": "Message displayed when a domain is successfully removed from the trusted list"
+  },
+  "settings_cross_domains_add_required": {
+    "message": "Domain is required",
+    "description": "Validation message when trying to add an empty domain"
+  },
+  "settings_cross_domains_add_invalid": {
+    "message": "Domain is invalid. Please enter a valid domain.",
+    "description": "Validation message when the provided domain is invalid"
+  },
+  "settings_cross_domains_add_already_trusted": {
+    "message": "This domain is already trusted.",
+    "description": "Validation message when trying to add a domain that is already in the trusted list"
+  },
+  "settings_cross_domains_add_success": {
+    "message": "Successfully added domain to trusted list",
+    "description": "Message displayed when a domain is successfully added to the trusted list"
+  },
+  "settings_cross_domains_add_domain_text": {
+    "message": "Add domain",
+    "description": "Label for the input field to add a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_another_domain_text": {
+    "message": "Add another domain",
+    "description": "Label for the button to add another domain to the trusted list"
+  },
+  "settings_cross_domains_add_input_placeholder": {
+    "message": "Enter trusted domain",
+    "description": "Placeholder text for the input field to add a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_submit_title": {
+    "message": "Trust this domain",
+    "description": "Title for the button to submit a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_cancel_title": {
+    "message": "Cancel trusting this domain",
+    "description": "Title for the button to cancel trusting a new domain"
+  },
+  "settings_cross_domains_remove_dialog_message": {
+    "message": "Are you sure you want to remove DOMAIN from the trusted domains list?",
+    "description": "Confirmation message when removing a domain from the trusted list"
+  },
+  "settings_cross_domains_remove_dialog_message_replace_fallback": {
+    "message": "this domain",
+    "description": "Fallback text for the domain placeholder in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_remove_dialog_cancel_text": {
+    "message": "Cancel",
+    "description": "Cancel button text in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_remove_dialog_confirm_text": {
+    "message": "Remove",
+    "description": "Confirm button text in the remove domain confirmation dialog"
+  },
   "this_tab_matching_logins_header": {
     "message": "Matching Items",
     "description": "Header for the section displaying matching login items"
@@ -1516,11 +1852,11 @@
     "description": "Message displayed when no password is found for autofill"
   },
   "this_tab_autofill_fetch_password": {
-    "message": "Username autofilled. Fetch password from device to complete.",
+    "message": "Username autofilled. Fetch password from device to complete the autofill process.",
     "description": "Message displayed when username is autofilled for a Highly Secret item that requires fetching password from device"
   },
   "this_tab_autofill_no_username_and_password": {
-    "message": "No username and password found.",
+    "message": "No username and password found",
     "description": "Message displayed when no username and password are found for autofill"
   },
   "this_tab_can_t_autofill": {
@@ -1584,16 +1920,16 @@
     "description": "Label for a dropdown or menu containing additional actions"
   },
   "this_tab_autofill_fetch_card_data": {
-    "message": "Cardholder name autofilled. Fetch card details from device to complete.",
+    "message": "Cardholder name autofilled. Fetch card details from device to complete the autofill process.",
     "description": "Message displayed when cardholder name is autofilled for a Highly Secret item that requires fetching card data from device"
   },
   "this_tab_autofill_no_card_data_available": {
     "message": "Only cardholder name was available for autofill",
     "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
   },
-  "this_tab_autofill_some_fields_not_available": {
-    "message": "Some card details could not be autofilled",
-    "description": "Message displayed when some payment card fields could not be autofilled"
+  "this_tab_autofill_partial": {
+    "message": "Some fields could not be autofilled. Copy unfilled details manually.",
+    "description": "Message displayed when autofill partially succeeded but some fields could not be filled"
   },
   "all_items_list_no_search_results": {
     "message": "No search results. Please try again.",
@@ -1612,7 +1948,7 @@
     "description": "Option text to clear the selected tag filter"
   },
   "keep_item_popup_header": {
-    "message": "Data for the following Item \nsuccessfully fetched.",
+    "message": "Item details successfully fetched.",
     "description": "Header message in popup after fetching login data for autofill"
   },
   "keep_item_popup_keep": {

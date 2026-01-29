@@ -27,29 +27,29 @@ const handleCardNumber = async (deviceId, vaultId, itemId, more, setMore) => {
   try {
     item = await getItem(deviceId, vaultId, itemId);
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_card_not_found'), 'error');
+    showToast(getMessage('error_card_not_found'), 'error');
     await CatchError(e);
     return;
   }
 
   if (!item) {
-    showToast(browser.i18n.getMessage('error_card_not_found'), 'error');
+    showToast(getMessage('error_card_not_found'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handlePasswordNoService, { additional: { func: 'handleCardNumber' } }));
     return;
   }
 
   if (!item.sifExists) {
     navigator.clipboard.writeText('');
-    showToast(browser.i18n.getMessage('notification_card_number_copied'), 'success');
+    showToast(getMessage('notification_card_number_copied'), 'success');
     return;
   }
 
   try {
     const decryptedData = await item.decryptSif();
     await copyValue(decryptedData.cardNumber, deviceId, vaultId, item.id, 'cardNumber');
-    showToast(browser.i18n.getMessage('notification_card_number_copied'), 'success');
+    showToast(getMessage('notification_card_number_copied'), 'success');
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_card_number_copy_failed'), 'error');
+    showToast(getMessage('error_card_number_copy_failed'), 'error');
     await CatchError(e);
   }
 };

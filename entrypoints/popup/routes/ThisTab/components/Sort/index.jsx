@@ -7,18 +7,12 @@
 import S from './styles/Sort.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useRef, useEffect, useMemo, memo, useCallback } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import SortIcon from '@/assets/popup-window/sort.svg?react';
 import SortCustomOption from './components/SortCustomOption';
 
 const selectComponents = { Option: SortCustomOption };
-
-const options = [
-  { value: 'az', label: browser.i18n.getMessage('sort_az') },
-  { value: 'za', label: browser.i18n.getMessage('sort_za') },
-  { value: 'newest', label: browser.i18n.getMessage('sort_newest') },
-  { value: 'oldest', label: browser.i18n.getMessage('sort_oldest') }
-];
 
 /**
 * Sort component for selecting item ordering with dropdown menu.
@@ -29,9 +23,17 @@ const options = [
 * @return {JSX.Element} The rendered sort dropdown component.
 */
 const Sort = ({ selectedSort, onSortChange, forceClose }) => {
+  const { getMessage } = useI18n();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const selectRef = useRef(null);
   const buttonRef = useRef(null);
+
+  const options = useMemo(() => [
+    { value: 'az', label: getMessage('sort_az') },
+    { value: 'za', label: getMessage('sort_za') },
+    { value: 'newest', label: getMessage('sort_newest') },
+    { value: 'oldest', label: getMessage('sort_oldest') }
+  ], [getMessage]);
 
   const selectedOption = useMemo(() => {
     if (!selectedSort) {
@@ -39,7 +41,7 @@ const Sort = ({ selectedSort, onSortChange, forceClose }) => {
     }
 
     return options.find(opt => opt.value === selectedSort) || null;
-  }, [selectedSort]);
+  }, [selectedSort, options]);
 
   const handleButtonClick = useCallback(() => {
     setIsMenuOpen(prev => !prev);
@@ -73,7 +75,7 @@ const Sort = ({ selectedSort, onSortChange, forceClose }) => {
         ref={buttonRef}
         className={`${bS.btn} ${bS.btnFilter} ${bS.sort} ${isMenuOpen ? bS.btnFilterActive : ''}`}
         onClick={handleButtonClick}
-        title={browser.i18n.getMessage('filters_button_title')}
+        title={getMessage('filters_button_title')}
       >
         <SortIcon />
       </button>

@@ -1,0 +1,130 @@
+{
+  "this_tab_matching_logins_header": {
+    "message": "Pasujące elementy",
+    "description": "Header for the section displaying matching login items"
+  },
+  "this_tab_matching_logins_header_no_logins": {
+    "message": "Brak pasujących elementów",
+    "description": "Message displayed when no login items match the current tab"
+  },
+  "this_tab_all_logins_header": {
+    "message": "Wszystkie elementy",
+    "description": "Header for the section displaying all login items"
+  },
+  "this_tab_sort": {
+    "message": "Sortowanie",
+    "description": "Label for the sort functionality"
+  },
+  "this_tab_more_details": {
+    "message": "Zobacz szczegóły",
+    "description": "Button label to view more details about a login item"
+  },
+  "this_tab_more_forget_password": {
+    "message": "Zapomnij to hasło",
+    "description": "Button label to forget the saved password for a login item"
+  },
+  "this_tab_more_forget_secure_note": {
+    "message": "Zapomnij tą notatkę",
+    "description": "Button label to forget the saved secure note"
+  },
+  "this_tab_more_forget_payment_card": {
+    "message": "Zapomnij tą kartę",
+    "description": "Button label to forget the saved payment card"
+  },
+  "this_tab_more_uris": {
+    "message": "Adres(y) URL strony",
+    "description": "Label for displaying associated website URLs of a login item"
+  },
+  "this_tab_copy_to_clipboard": {
+    "message": "Skopiuj do schowka",
+    "description": "Button label to copy data to the clipboard"
+  },
+  "this_tab_autofill_success": {
+    "message": "Wypełnianie zakończone",
+    "description": "Message displayed when autofill operation is successful"
+  },
+  "this_tab_autofill_no_password": {
+    "message": "Wypełniono nazwę użytkownika, ale nie znaleziono hasła.",
+    "description": "Message displayed when no password is found for autofill"
+  },
+  "this_tab_autofill_fetch_password": {
+    "message": "Wypełniono nazwę użytkownika. Pobierz hasło z urządzenia, aby zakończyć proces.",
+    "description": "Message displayed when username is autofilled for a Highly Secret item that requires fetching password from device"
+  },
+  "this_tab_autofill_no_username_and_password": {
+    "message": "Nie znaleziono nazwy użytkownika i hasła.",
+    "description": "Message displayed when no username and password are found for autofill"
+  },
+  "this_tab_can_t_autofill": {
+    "message": "Rozszerzenie przeglądarki nie może autouzupełnić danych. Skopiuj dane elementu i wklej je ręcznie.",
+    "description": "Message shown when autofill isn't possible, suggesting manual copy-paste"
+  },
+  "this_tab_can_t_autofill_t2": {
+    "message": "Rozszerzenie przeglądarki nie może wypełnić formularza. Pobierz szczegóły elementu i wklej je ręcznie.",
+    "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
+  },
+  "this_tab_can_t_autofill_t2_failed": {
+    "message": "Rozszerzenie przeglądarki nie może wypełnić całości formularza.",
+    "description": "Message displayed when autofill operation fails or is incomplete"
+  },
+  "this_tab_can_t_find_inputs": {
+    "message": "Nie znaleziono formularza. Nie można wypełnić danych elementu.",
+    "description": "Message shown when input fields for autofill can't be found"
+  },
+  "this_tab_copy_password": {
+    "message": "Skopiuj hasło",
+    "description": "Button label to copy the password to the clipboard"
+  },
+  "this_tab_fetch_password": {
+    "message": "Pobierz hasło",
+    "description": "Button label to fetch the password from the mobile app"
+  },
+  "this_tab_copy_username": {
+    "message": "Skopiuj nazwę użytkownika",
+    "description": "Button label to copy the username to the clipboard"
+  },
+  "this_tab_copy_text": {
+    "message": "Kopiuj notatkę",
+    "description": "Button label to copy text from a secure note to the clipboard"
+  },
+  "this_tab_copy_name": {
+    "message": "Kopiuj nazwę",
+    "description": "Button label to copy the name of an item to the clipboard"
+  },
+  "this_tab_fetch_text": {
+    "message": "Pobierz notatkę",
+    "description": "Button label to fetch the text from the mobile app"
+  },
+  "this_tab_copy_card_number": {
+    "message": "Kopiuj numer karty",
+    "description": "Button label to copy the card number to the clipboard"
+  },
+  "this_tab_fetch_card_info": {
+    "message": "Pobierz dane karty",
+    "description": "Button label to fetch the card info from the mobile app"
+  },
+  "this_tab_copy_card_security_code": {
+    "message": "Kopiuj kod bezpieczeństwa",
+    "description": "Button label to copy the security code to the clipboard"
+  },
+  "this_tab_fetch_card_security_code": {
+    "message": "Pobierz kod bezpieczeństwa",
+    "description": "Button label to fetch the security code from the mobile app"
+  },
+  "this_tab_more_actions": {
+    "message": "Więcej akcji",
+    "description": "Label for a dropdown or menu containing additional actions"
+  },
+  "this_tab_autofill_fetch_card_data": {
+    "message": "Wypełniono właściciela karty. Pobierz hasło z urządzenia, aby zakończyć proces.",
+    "description": "Message displayed when cardholder name is autofilled for a Highly Secret item that requires fetching card data from device"
+  },
+  "this_tab_autofill_no_card_data_available": {
+    "message": "Tylko właściciel karty był dostępny do wypełnienia",
+    "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
+  },
+  "this_tab_autofill_partial": {
+    "message": "Niektóre pola nie mogły być wypełnione. Skopiuj brakujące dane ręcznie.",
+    "description": "Message displayed when autofill partially succeeded but some fields could not be filled"
+  }
+}

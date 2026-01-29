@@ -1,0 +1,78 @@
+{
+  "payment_card": {
+    "message": "Karta",
+    "description": "Label for the payment card functionality"
+  },
+  "payment_card_plural": {
+    "message": "Karty",
+    "description": "Label for multiple payment cards"
+  },
+  "payment_card_name": {
+    "message": "Nazwa",
+    "description": "Label for the payment card name field"
+  },
+  "payment_card_cardholder": {
+    "message": "Właściciel karty",
+    "description": "Label for the payment card cardholder field"
+  },
+  "payment_card_card_number": {
+    "message": "Numer karty",
+    "description": "Label for the payment card number field"
+  },
+  "payment_card_expiration_date": {
+    "message": "Data ważności",
+    "description": "Label for the payment card expiration date field"
+  },
+  "payment_card_security_code": {
+    "message": "Kod bezp.",
+    "description": "Label for the payment card security code field"
+  },
+  "placeholder_payment_card_name": {
+    "message": "Wpisz nazwę karty",
+    "description": "Placeholder text for the payment card name input field"
+  },
+  "placeholder_payment_card_cardholder": {
+    "message": "Wpisz właściciela karty",
+    "description": "Placeholder text for the cardholder name input field"
+  },
+  "placeholder_payment_card_number": {
+    "message": "0000 0000 0000 0000",
+    "description": "Placeholder text for the payment card number input field"
+  },
+  "placeholder_payment_card_expiration_date": {
+    "message": "MM/RR",
+    "description": "Placeholder text for the payment card expiration date input field"
+  },
+  "placeholder_payment_card_security_code": {
+    "message": "_ _ _",
+    "description": "Placeholder text for the payment card security code input field"
+  },
+  "notification_card_number_copied": {
+    "message": "Numer karty skopiowany do schowka",
+    "description": "Notification message when the card number is successfully copied to the clipboard"
+  },
+  "notification_card_security_code_copied": {
+    "message": "Kod bezpieczeństwa skopiowany do schowka",
+    "description": "Notification message when the security code is successfully copied to the clipboard"
+  },
+  "notification_expiration_date_copied": {
+    "message": "Data ważności skopiowana do schowka",
+    "description": "Notification message when the expiration date is successfully copied to the clipboard"
+  },
+  "error_card_not_found": {
+    "message": "Wystąpił błąd. Nie znaleziono karty płatniczej.",
+    "description": "Error message displayed when the requested payment card is not found"
+  },
+  "error_card_number_copy_failed": {
+    "message": "Nie udało się skopiować numeru karty do schowka.",
+    "description": "Error message displayed when copying the card number to the clipboard fails"
+  },
+  "error_card_security_code_copy_failed": {
+    "message": "Nie udało się skopiować kodu bezpieczeństwa do schowka.",
+    "description": "Error message displayed when copying the security code to the clipboard fails"
+  },
+  "error_expiration_date_copy_failed": {
+    "message": "Nie udało się skopiować daty ważności do schowka.",
+    "description": "Error message displayed when copying the expiration date to the clipboard fails"
+  }
+}

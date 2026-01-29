@@ -8,6 +8,7 @@ import S from '../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Link, useNavigate } from 'react-router';
 import { useRef } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
@@ -26,7 +27,7 @@ const resetExtension = async () => {
   });
 
   if (res.status === 'error') {
-    showToast(browser.i18n.getMessage('error_general'), 'error');
+    showToast(getMessage('error_general'), 'error');
   }
 
   await tryWindowClose();
@@ -38,6 +39,7 @@ const resetExtension = async () => {
 * @return {JSX.Element} The rendered component.
 */
 function SettingsReset (props) {
+  const { getMessage } = useI18n();
   const navigate = useNavigate();
 
   const scrollableRef = useRef(null);
@@ -53,7 +55,7 @@ function SettingsReset (props) {
           <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
             <div className={S.settingsSubmenu}>
               <div className={S.settingsSubmenuHeader}>
-                <h3>{browser.i18n.getMessage('settings_reset_header')}</h3>
+                <h3>{getMessage('settings_reset_header')}</h3>
               </div>
     
               <div className={S.settingsSubmenuBody}>
@@ -61,14 +63,14 @@ function SettingsReset (props) {
                   <div className={S.settingsResetText}>
                     <WarningIconLight className='theme-light' />
                     <WarningIconDark className='theme-dark' />
-                    <p>{browser.i18n.getMessage('settings_reset_description')}</p>
+                    <p>{getMessage('settings_reset_description')}</p>
                   </div>
                   <div className={S.settingsResetButtons}>
                     <button
                       className={`${bS.btn} ${bS.btnClear} ${bS.btnReset}`}
                       onClick={resetExtension}
                     >
-                      {browser.i18n.getMessage('settings_reset_action_confirm_button')}
+                      {getMessage('settings_reset_action_confirm_button')}
                     </button>
                     <Link
                       to='..'
@@ -79,7 +81,7 @@ function SettingsReset (props) {
                       }}
                       prefetch='intent'
                     >
-                      {browser.i18n.getMessage('settings_reset_action_cancel_button')}
+                      {getMessage('settings_reset_action_cancel_button')}
                     </Link>
                   </div>
                 </div>

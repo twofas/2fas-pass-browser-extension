@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../../components/Item/styles/Item.module.scss';
+import { useI18n } from '@/partials/context/I18nContext';
 import handlePassword from '../handlePassword';
 import { useState, useRef, useLayoutEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
@@ -23,6 +24,7 @@ import ItemPasswordIcon from '@/assets/popup-window/service-password.svg?react';
 * @return {JSX.Element} The rendered button element.
 */
 const PasswordBtn = ({ item, more, setMore }) => {
+  const { getMessage } = useI18n();
   const [scheduledTime, setScheduledTime] = useState(false);
   const loaderRef = useRef(null);
   const intervalIdRef = useRef(0);
@@ -104,7 +106,7 @@ const PasswordBtn = ({ item, more, setMore }) => {
     return (
       <button
         onClick={async () => await handlePassword(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={browser.i18n.getMessage('this_tab_copy_password')}
+        title={getMessage('this_tab_copy_password')}
       >
         <ItemPasswordIcon className={S.itemPassword} />
       </button>
@@ -113,7 +115,7 @@ const PasswordBtn = ({ item, more, setMore }) => {
     return (
       <button
         onClick={async () => await handlePassword(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={browser.i18n.getMessage('this_tab_copy_password')}
+        title={getMessage('this_tab_copy_password')}
         className={S.itemPasswordLoader}
       >
         <svg
@@ -143,7 +145,7 @@ const PasswordBtn = ({ item, more, setMore }) => {
           }
         }}
         onClick={() => { if (more) { setMore(false); } }}
-        title={browser.i18n.getMessage('this_tab_fetch_password')}
+        title={getMessage('this_tab_fetch_password')}
         prefetch='intent'
       >
         <ItemFetchIcon className={S.itemFetch} />

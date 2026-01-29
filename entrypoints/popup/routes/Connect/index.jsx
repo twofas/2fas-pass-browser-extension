@@ -23,6 +23,7 @@ import { getNTPTime, sendPush, networkTest } from '@/partials/functions';
 import { PULL_REQUEST_TYPES, SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import usePopupState from '../../store/popupState/usePopupState';
+import { useI18n } from '@/partials/context/I18nContext';
 import IphoneIconLight from '@/assets/popup-window/device-select/device-iphone-light.svg?react';
 import IphoneIconDark from '@/assets/popup-window/device-select/device-iphone-dark.svg?react';
 import AndroidIconLight from '@/assets/popup-window/device-select/device-android-light.svg?react';
@@ -46,6 +47,7 @@ const viewVariants = {
 * @return {JSX.Element} The rendered Connect component.
 */
 function Connect (props) {
+  const { getMessage } = useI18n();
   const [qrCode, setQrCode] = useState(null);
   const [socketError, setSocketError] = useState(false);
   const [connectingLoader, setConnectingLoader] = useState(264);
@@ -98,7 +100,7 @@ function Connect (props) {
     } catch (e) {
       await CatchError(e, () => {
         setSocketError(true);
-        showConnectToast({ message: browser.i18n.getMessage('error_general'), type: 'error' });
+        showConnectToast({ message: getMessage('error_general'), type: 'error' });
         setConnectingLoader(264);
       });
 
@@ -129,7 +131,7 @@ function Connect (props) {
 
     if (!socketCreated) {
       setSocketError(true);
-      showConnectToast({ message: browser.i18n.getMessage('error_general'), type: 'error' });
+      showConnectToast({ message: getMessage('error_general'), type: 'error' });
       setConnectingLoader(264);
       return;
     }
@@ -141,7 +143,7 @@ function Connect (props) {
       setQrCode(qr);
     } catch {
       setSocketError(true);
-      showConnectToast({ message: browser.i18n.getMessage('error_general'), type: 'error' });
+      showConnectToast({ message: getMessage('error_general'), type: 'error' });
       setConnectingLoader(264);
     }
   }, []);
@@ -248,7 +250,7 @@ function Connect (props) {
 
         if (json?.error === 'UNREGISTERED') {
           setSocketError(true);
-          showConnectToast({ message: browser.i18n.getMessage('fetch_token_unregistered_header'), type: 'error' });
+          showConnectToast({ message: getMessage('fetch_token_unregistered_header'), type: 'error' });
           return false;
         }
 
@@ -259,7 +261,7 @@ function Connect (props) {
       } catch (e) {
         setConnectView(CONNECT_VIEWS.DeviceSelect);
         const toastMessage = await networkTest('error_general');
-        showConnectToast({ message: browser.i18n.getMessage(toastMessage), type: 'error' });
+        showConnectToast({ message: getMessage(toastMessage), type: 'error' });
         await CatchError(e);
       }
     } catch {
@@ -596,7 +598,7 @@ function Connect (props) {
           animate={connectView === CONNECT_VIEWS.QrView ? 'visible' : 'hidden'}
         >
             <div className={S.connectContainer}>
-              <h1>{browser.i18n.getMessage('connect_header')}</h1>
+              <h1>{getMessage('connect_header')}</h1>
 
               {readyDevices.length > 0 && (
                 <NavigationButton
@@ -607,7 +609,7 @@ function Connect (props) {
 
               <div className={`${S.connectContainerQr} ${socketError ? S.error : ''}`}>
                 <div className={S.connectContainerQrErrorContent}>
-                  <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnQrReload}`} onClick={handleSocketReload}>{browser.i18n.getMessage('reload')}</button>
+                  <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnQrReload}`} onClick={handleSocketReload}>{getMessage('reload')}</button>
                 </div>
 
                 <QR qrCode={qrCode} />
@@ -615,7 +617,7 @@ function Connect (props) {
 
               <div className={S.connectDescription}>
                 <InfoIcon />
-                <p>{browser.i18n.getMessage('connect_description')}</p>
+                <p>{getMessage('connect_description')}</p>
               </div>
             </div>
           </motion.section>
@@ -629,8 +631,8 @@ function Connect (props) {
             animate={connectView === CONNECT_VIEWS.DeviceSelect ? 'visible' : 'hidden'}
           >
             <div className={S.deviceSelectContainer}>
-              <h1>{browser.i18n.getMessage('connect_device_select_header')}</h1>
-              <h2>{browser.i18n.getMessage('connect_device_select_list_header')}</h2>
+              <h1>{getMessage('connect_device_select_header')}</h1>
+              <h2>{getMessage('connect_device_select_list_header')}</h2>
 
               <div className={S.deviceSelectContainerList}>
                 <div className={S.deviceSelectContainerListContainer}>
@@ -700,7 +702,7 @@ function Connect (props) {
                   className={`${bS.btn} ${bS.btnClear}`}
                   onClick={() => { setConnectView(CONNECT_VIEWS.QrView); }}
                 >
-                  <span>{browser.i18n.getMessage('connect_device_select_add_another')}</span>
+                  <span>{getMessage('connect_device_select_add_another')}</span>
                   <DeviceQrIcon />
                 </button>
               </div>
@@ -722,11 +724,11 @@ function Connect (props) {
                   <circle cx="48" cy="48" r="42" />
                 </svg>
 
-                <span>{browser.i18n.getMessage('connect_connecting')}</span>
+                <span>{getMessage('connect_connecting')}</span>
               </div>
 
               <div className={S.progressDescription}>
-                <p>{browser.i18n.getMessage('connect_connection_opened')}</p>
+                <p>{getMessage('connect_connection_opened')}</p>
               </div>
 
               <div className={`${S.progressDeviceName} ${deviceName ? S.visible : ''}`}>
@@ -749,7 +751,7 @@ function Connect (props) {
                 onClick={handleCancelPushSent}
               />
 
-              <PushNotification description={browser.i18n.getMessage('connect_push_animation_description')} />
+              <PushNotification description={getMessage('connect_push_animation_description')} />
 
               <div className={`${S.pushDeviceName} ${deviceName ? S.visible : ''}`}>
                 <span>{deviceName}</span>
@@ -757,16 +759,16 @@ function Connect (props) {
 
               <div className={S.pushAdditional}>
                 <div className={`${S.pushAdditionalTrouble} ${bS.btn} ${bS.btnClear}`}>
-                  <span>{browser.i18n.getMessage('connect_push_trouble')}</span>
+                  <span>{getMessage('connect_push_trouble')}</span>
 
                   <div className={S.pushAdditionalTooltip}>
-                    <span>{browser.i18n.getMessage('connect_push_trouble_tooltip')}</span>
-                    <span>{browser.i18n.getMessage('connect_push_trouble_tooltip_or')}</span>
+                    <span>{getMessage('connect_push_trouble_tooltip')}</span>
+                    <span>{getMessage('connect_push_trouble_tooltip_or')}</span>
                     <button
                       className={`${bS.btn} ${bS.btnClear}`}
                       onClick={handleSwitchToQrFromPushSent}
                     >
-                      <span>{browser.i18n.getMessage('connect_push_trouble_tooltip_use_qr')}</span>
+                      <span>{getMessage('connect_push_trouble_tooltip_use_qr')}</span>
                       <DeviceQrIcon />
                     </button>
                   </div>

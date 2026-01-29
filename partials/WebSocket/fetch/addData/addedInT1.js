@@ -18,7 +18,7 @@ const newDataAddedInT1 = async messageId => {
     return {
       returnUrl: '/',
       returnToast: {
-        text: browser.i18n.getMessage('fetch_new_login_added_t1_toast'),
+        text: getMessage('fetch_new_login_added_t1_toast'),
         type: 'success'
       }
     };

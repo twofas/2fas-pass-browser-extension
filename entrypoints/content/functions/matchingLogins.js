@@ -25,16 +25,6 @@ const closeNotification = (n, timers) => {
     timers.visible = null;
   }
 
-  if (timers.maxHeight1 !== null) {
-    clearTimeout(timers.maxHeight1);
-    timers.maxHeight1 = null;
-  }
-
-  if (timers.maxHeight2 !== null) {
-    clearTimeout(timers.maxHeight2);
-    timers.maxHeight2 = null;
-  }
-
   if (timers.cleanup !== null) {
     clearTimeout(timers.cleanup);
     timers.cleanup = null;
@@ -184,8 +174,6 @@ const matchingLogins = (request, sendResponse, container) => {
 
   const timers = {
     visible: null,
-    maxHeight1: null,
-    maxHeight2: null,
     cleanup: null
   };
 
@@ -199,7 +187,8 @@ const matchingLogins = (request, sendResponse, container) => {
   n.top.appendChild(n.close);
 
   n.header = createElement('div', 'twofas-pass-notification-matching-logins-header');
-  n.headerText = createTextElement('span', browser.i18n.getMessage('content_matching_logins_title'));
+  n.headerText = createTextElement('span', getMessage('content_matching_logins_title'));
+  n.headerText.setAttribute('data-i18n-key', 'content_matching_logins_title');
   n.header.appendChild(n.headerText);
 
   n.item.appendChild(n.top);
@@ -298,7 +287,12 @@ const matchingLogins = (request, sendResponse, container) => {
     }
 
     const itemAccount = createElement('span');
-    const itemAccountName = createTextElement('span', item.content.name || browser.i18n.getMessage('no_item_name'));
+    const hasItemName = item.content.name && item.content.name.length > 0;
+    const itemAccountName = createTextElement('span', hasItemName ? item.content.name : getMessage('no_item_name'));
+
+    if (!hasItemName) {
+      itemAccountName.setAttribute('data-i18n-key', 'no_item_name');
+    }
 
     let itemAccountUsername;
 
@@ -306,8 +300,9 @@ const matchingLogins = (request, sendResponse, container) => {
       itemAccountUsername = createTextElement('span', item.content.username);
     }
 
-    const itemSecondaryBtnText = (item.securityType === SECURITY_TIER.SECRET || item.t2WithPassword === true) ? browser.i18n.getMessage('autofill') : browser.i18n.getMessage('fetch');
-    const itemSecondaryBtn = createTextElement('span', itemSecondaryBtnText, 'twofas-pass-notification-matching-logins-item-secondary-btn');
+    const itemSecondaryBtnKey = (item.securityType === SECURITY_TIER.SECRET || item.t2WithPassword === true) ? 'autofill' : 'fetch';
+    const itemSecondaryBtn = createTextElement('span', getMessage(itemSecondaryBtnKey), 'twofas-pass-notification-matching-logins-item-secondary-btn');
+    itemSecondaryBtn.setAttribute('data-i18n-key', itemSecondaryBtnKey);
 
     itemAccount.appendChild(itemAccountName);
 
@@ -333,24 +328,6 @@ const matchingLogins = (request, sendResponse, container) => {
 
     timers.visible = null;
   }, 200);
-
-  timers.maxHeight1 = setTimeout(() => {
-    if (n && n.items) {
-      const itemsHeight = Array.from(n.items.children).reduce((total, child) => total + child.offsetHeight, 0);
-      n.items.style.setProperty('max-height', `${itemsHeight}px`, 'important');
-    }
-
-    timers.maxHeight1 = null;
-  }, 201);
-
-  timers.maxHeight2 = setTimeout(() => {
-    if (n && n.item && n.items) {
-      const itemsHeight = Array.from(n.items.children).reduce((total, child) => total + child.offsetHeight, 0);
-      n.item.style.maxHeight = `${n.item.offsetHeight + itemsHeight}px`;
-    }
-
-    timers.maxHeight2 = null;
-  }, 202);
 };
 
 export default matchingLogins;

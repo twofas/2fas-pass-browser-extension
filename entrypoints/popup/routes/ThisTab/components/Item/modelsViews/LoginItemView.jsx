@@ -6,6 +6,7 @@
 
 import S from '../styles/Item.module.scss';
 import { memo, useMemo, useState, useRef, useCallback } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import { useNavigate } from 'react-router';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import handleAutofill from '../../../functions/serviceList/handleAutofill';
@@ -24,6 +25,7 @@ const selectComponents = { Option: ItemCustomOption };
 * @return {JSX.Element} The rendered component.
 */
 function LoginItemView (props) {
+  const { getMessage } = useI18n();
   const [faviconError, setFaviconError] = useState(false);
   const moreBtnRef = useRef(null);
   const navigate = useNavigate();
@@ -52,7 +54,7 @@ function LoginItemView (props) {
       >
         {generateIcon(props.data, faviconError, setFaviconError, props.loading)}
         <span>
-          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || getMessage('no_item_name')}</span>}
           {props.loading ? <Skeleton style={{ width: '60px' }} /> : (props?.data?.content?.username && props?.data?.content?.username?.length > 0 ? <span>{props.data.content.username}</span> : null)}
         </span>
       </button>

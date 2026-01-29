@@ -44,7 +44,8 @@ const hydrateAndSetInitialRoute = async () => {
 
 await Promise.all([
   setTheme(),
-  hydrateAndSetInitialRoute()
+  hydrateAndSetInitialRoute(),
+  initI18n()
 ]);
 
 preloadInterFontAsync();

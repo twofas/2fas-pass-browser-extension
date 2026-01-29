@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../../components/Item/styles/Item.module.scss';
+import { useI18n } from '@/partials/context/I18nContext';
 import ItemMoreIcon from '@/assets/popup-window/service-more.svg?react';
 
 /** 
@@ -15,6 +16,8 @@ import ItemMoreIcon from '@/assets/popup-window/service-more.svg?react';
 * @return {JSX.Element} The rendered button element.
 */
 const MoreBtn = ({ more, setMore, ref }) => {
+  const { getMessage } = useI18n();
+
   const handleClick = event => {
     event.stopPropagation();
     setMore(!more);
@@ -29,7 +32,7 @@ const MoreBtn = ({ more, setMore, ref }) => {
       className={`${S.itemMoreBtn} ${more ? S.active : ''}`}
       onClick={handleClick}
       onMouseDown={handleMouseDown}
-      title={browser.i18n.getMessage('this_tab_more_actions')}
+      title={getMessage('this_tab_more_actions')}
       ref={ref}
     >
       <ItemMoreIcon className={S.itemMore} />

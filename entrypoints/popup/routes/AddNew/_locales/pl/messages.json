@@ -1,0 +1,70 @@
+{
+  "add_new_validate_require": {
+    "message": "Wprowadź domenę (URI)",
+    "description": "Validation message displayed when the Domain (URI) field is empty"
+  },
+  "add_new_validate_min_length": {
+    "message": "Wprowadź domenę (URI), nie krótszą niż 3 znaki",
+    "description": "Validation message displayed when the Domain (URI) field has fewer than 3 characters"
+  },
+  "add_new_validate_invalid_domain": {
+    "message": "Wprowadź prawidłową domenę (URI)",
+    "description": "Validation message displayed when the Domain (URI) entered is invalid"
+  },
+  "add_new_validate_card_name_required": {
+    "message": "Nazwa karty jest wymagana",
+    "description": "Validation message displayed when the Card Name field is empty"
+  },
+  "add_new_validate_card_name_length": {
+    "message": "Nazwa karty musi mieć mniej niż 256 znaków.",
+    "description": "Validation message displayed when the Card Name field exceeds 255 characters"
+  },
+  "add_new_validate_cardholder_length": {
+    "message": "Właściciel karty musi mieć mniej niż 256 znaków.",
+    "description": "Validation message displayed when the Cardholder field exceeds 255 characters"
+  },
+  "add_new_validate_card_number_invalid": {
+    "message": "Nieprawidłowy numer karty",
+    "description": "Validation message displayed when the Card Number field is invalid"
+  },
+  "add_new_validate_expiration_date_invalid": {
+    "message": "Nieprawidłowa data ważności",
+    "description": "Validation message displayed when the Expiration Date field is invalid"
+  },
+  "add_new_validate_security_code_invalid": {
+    "message": "Kod bezpieczeństwa musi mieć conajmniej 3 lub 4 znaki.",
+    "description": "Validation message displayed when the Security Code field is invalid"
+  },
+  "add_new_security_code_too_long": {
+    "message": "Nieprawidłowy kod bezpieczeństwa.",
+    "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
+  },
+  "add_new_header_login": {
+    "message": "Dodawanie nowego loginu do \n2FAS Pass",
+    "description": "Header for the section to add a new Login item"
+  },
+  "add_new_header_payment_card": {
+    "message": "Dodawanie nowej karty do \n2FAS Pass",
+    "description": "Header for the section to add a new Payment Card item"
+  },
+  "add_new_header_secure_note": {
+    "message": "Dodawanie nowej notatki do \n2FAS Pass",
+    "description": "Header for the section to add a new Secure Note item"
+  },
+  "add_new_subheader": {
+    "message": "Rozpocznij proces tutaj i kontynuuj w aplikacji mobilnej.",
+    "description": "Subheader explaining that the process starts in the browser and continues in the mobile app"
+  },
+  "add_new_learn_more_tooltip_header": {
+    "message": "Bezpieczeństwo jest naszym priorytetem",
+    "description": "Header for the tooltip explaining security measures"
+  },
+  "add_new_learn_more_tooltip_content_1": {
+    "message": "Domyślnie nie prosimy o podanie nazwy użytkownika ani o wygenerowanie hasła za pomocą rozszerzenia przeglądarki. Zamiast tego zachęcamy do wykonania tych czynności bezpośrednio w aplikacji mobilnej.",
+    "description": "Explains the default security approach of creating login and password in the mobile app"
+  },
+  "add_new_learn_more_tooltip_content_2": {
+    "message": "Możesz wpisać swoją nazwę użytkownika i/lub hasło w powyższym formularzu i zapisać je w sejfie w aplikacji mobilnej.",
+    "description": "Explains the option to enter login and password in the browser extension and save it to the mobile app"
+  }
+}

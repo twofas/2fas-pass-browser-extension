@@ -12,23 +12,23 @@ const getRatingText = () => {
   switch (import.meta.env.BROWSER) {
     case 'chrome':
     case 'opera': {
-      return browser.i18n.getMessage('settings_rate_us_chrome');
+      return getMessage('settings_rate_us_chrome');
     }
 
     case 'firefox': {
-      return browser.i18n.getMessage('settings_rate_us_firefox');
+      return getMessage('settings_rate_us_firefox');
     }
 
     case 'edge': {
-      return browser.i18n.getMessage('settings_rate_us_edge');
+      return getMessage('settings_rate_us_edge');
     }
 
     case 'safari': {
-      return browser.i18n.getMessage('settings_rate_us_safari');
+      return getMessage('settings_rate_us_safari');
     }
 
     default: {
-      return browser.i18n.getMessage('settings_rate_us_chrome');
+      return getMessage('settings_rate_us_chrome');
     }
   }
 };

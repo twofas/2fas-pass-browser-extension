@@ -18,6 +18,7 @@ import isCardNumberInvalid from '@/entrypoints/popup/components/PaymentCardNumbe
 import isExpirationDateInvalid from '@/entrypoints/popup/components/PaymentCardExpirationDate/validateExpirationDate';
 import isSecurityCodeInvalid from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/validateSecurityCode';
 import isSecurityCodeTooLong from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/isSecurityCodeTooLong';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const Name = lazy(() => import('../../components/Name'));
 const CardHolder = lazy(() => import('../../components/CardHolder'));
@@ -35,6 +36,7 @@ const DangerZone = lazy(() => import('../../components/DangerZone'));
 * @return {JSX.Element} The rendered component.
 */
 function PaymentCardDetailsView(props) {
+  const { getMessage } = useI18n();
   const { data } = usePopupState();
   const [inputError, setInputError] = useState(undefined);
 
@@ -54,15 +56,15 @@ function PaymentCardDetailsView(props) {
 
     if (data.nameEditable) {
       if (!values?.content?.name || values?.content?.name?.length <= 0) {
-        errors.name = browser.i18n.getMessage('details_name_required');
+        errors.name = getMessage('details_name_required');
       } else if (values.content?.name?.length > 255) {
-        errors.name = browser.i18n.getMessage('details_name_max_length');
+        errors.name = getMessage('details_name_max_length');
       }
     }
 
     if (data.cardHolderEditable) {
       if (values?.content?.cardHolder && values.content?.cardHolder?.length > 255) {
-        errors.cardHolder = browser.i18n.getMessage('details_cardholder_max_length');
+        errors.cardHolder = getMessage('details_cardholder_max_length');
       }
     }
 
@@ -73,11 +75,11 @@ function PaymentCardDetailsView(props) {
         const cleanCardNumber = cardNumber.replace(/\s/g, '');
 
         if (cleanCardNumber.length < 13 || cleanCardNumber.length > 19) {
-          errors.cardNumber = browser.i18n.getMessage('details_card_number_invalid');
+          errors.cardNumber = getMessage('details_card_number_invalid');
         } else if (!PAYMENT_CARD_REGEX.test(cleanCardNumber)) {
-          errors.cardNumber = browser.i18n.getMessage('details_card_number_invalid');
+          errors.cardNumber = getMessage('details_card_number_invalid');
         } else if (!PaymentCard.isValidLuhn(cleanCardNumber)) {
-          errors.cardNumber = browser.i18n.getMessage('details_card_number_invalid');
+          errors.cardNumber = getMessage('details_card_number_invalid');
         }
       }
     }
@@ -89,13 +91,13 @@ function PaymentCardDetailsView(props) {
         const expDateParts = expirationDate.split('/');
 
         if (expDateParts.length !== 2) {
-          errors.expirationDate = browser.i18n.getMessage('details_expiration_date_invalid');
+          errors.expirationDate = getMessage('details_expiration_date_invalid');
         } else {
           const month = parseInt(expDateParts[0], 10);
           const year = parseInt(expDateParts[1], 10);
 
           if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
-            errors.expirationDate = browser.i18n.getMessage('details_expiration_date_invalid');
+            errors.expirationDate = getMessage('details_expiration_date_invalid');
           }
         }
       }
@@ -106,7 +108,7 @@ function PaymentCardDetailsView(props) {
 
       if (securityCode && securityCode.length > 0) {
         if (!/^\d{3,4}$/.test(securityCode)) {
-          errors.securityCode = browser.i18n.getMessage('details_security_code_invalid');
+          errors.securityCode = getMessage('details_security_code_invalid');
         }
       }
     }
@@ -226,7 +228,7 @@ function PaymentCardDetailsView(props) {
               className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
               disabled={(getEditableAmount().amount <= 0 || submitting || hasLiveValidationErrors) ? 'disabled' : ''}
             >
-              {browser.i18n.getMessage('update')}{getEditableAmount().text}
+              {getMessage('update')}{getEditableAmount().text}
             </button>
           </div>
 

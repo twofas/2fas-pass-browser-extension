@@ -6,6 +6,7 @@
 
 import S from '../styles/AutofillErrorItem.module.scss';
 import { memo, useState, useEffect, useCallback } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import { copyValue } from '@/partials/functions';
 
@@ -49,6 +50,7 @@ const COPY_MESSAGES = {
 * @return {JSX.Element} The rendered component.
 */
 const AutofillErrorItemDataLine = memo(function AutofillErrorItemDataLine (props) {
+  const { getMessage } = useI18n();
   const { name, value, displayValue, type, deviceId, vaultId, itemId } = props;
 
   const handleCopy = useCallback(async () => {
@@ -56,24 +58,24 @@ const AutofillErrorItemDataLine = memo(function AutofillErrorItemDataLine (props
 
     try {
       await copyValue(value, deviceId, vaultId, itemId, type);
-      showToast(browser.i18n.getMessage(messages.success), 'success');
+      showToast(getMessage(messages.success), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage(messages.error), 'error');
+      showToast(getMessage(messages.error), 'error');
       await CatchError(e);
     }
-  }, [value, deviceId, vaultId, itemId, type]);
+  }, [value, deviceId, vaultId, itemId, type, getMessage]);
 
   return (
     <div className={S.autofillErrorItemContentDataLine}>
       <div className={S.autofillErrorItemContentDataLineContent}>
-        <h4>{name || browser.i18n.getMessage('no_item_name')}</h4>
-        <p>{displayValue || browser.i18n.getMessage('no_value')}</p>
+        <h4>{name || getMessage('no_item_name')}</h4>
+        <p>{displayValue || getMessage('no_value')}</p>
       </div>
       <div className={S.autofillErrorItemContentDataLineActions}>
         <button
           type='button'
           onClick={handleCopy}
-          title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+          title={getMessage('this_tab_copy_to_clipboard')}
         >
           <CopyIcon />
         </button>
@@ -86,12 +88,13 @@ const AutofillErrorItemDataLine = memo(function AutofillErrorItemDataLine (props
 * Builds item data array for Login items.
 * @param {Object} item - The Login item instance.
 * @param {Object} decryptedSif - Decrypted secure input fields.
+* @param {Function} getMessage - The i18n getMessage function.
 * @return {Array<Object>} Array of data line objects.
 */
-const buildLoginData = (item, decryptedSif) => {
+const buildLoginData = (item, decryptedSif, getMessage) => {
   return [
     {
-      name: browser.i18n.getMessage('username'),
+      name: getMessage('username'),
       value: item.content.username || '',
       displayValue: item.content.username || '',
       type: 'username',
@@ -100,7 +103,7 @@ const buildLoginData = (item, decryptedSif) => {
       itemId: item.id
     },
     {
-      name: browser.i18n.getMessage('password'),
+      name: getMessage('password'),
       value: decryptedSif?.password || '',
       displayValue: '••••••',
       type: 'password',
@@ -128,12 +131,13 @@ const getCardNumberDisplayValue = cardNumberMask => {
 * Builds item data array for PaymentCard items.
 * @param {Object} item - The PaymentCard item instance.
 * @param {Object} decryptedSif - Decrypted secure input fields.
+* @param {Function} getMessage - The i18n getMessage function.
 * @return {Array<Object>} Array of data line objects.
 */
-const buildPaymentCardData = (item, decryptedSif) => {
+const buildPaymentCardData = (item, decryptedSif, getMessage) => {
   return [
     {
-      name: browser.i18n.getMessage('payment_card_cardholder'),
+      name: getMessage('payment_card_cardholder'),
       value: item.content.cardHolder || '',
       displayValue: item.content.cardHolder || '',
       type: 'cardHolder',
@@ -142,7 +146,7 @@ const buildPaymentCardData = (item, decryptedSif) => {
       itemId: item.id
     },
     {
-      name: browser.i18n.getMessage('payment_card_card_number'),
+      name: getMessage('payment_card_card_number'),
       value: decryptedSif?.cardNumber || '',
       displayValue: getCardNumberDisplayValue(item.content.cardNumberMask),
       type: 'cardNumber',
@@ -151,7 +155,7 @@ const buildPaymentCardData = (item, decryptedSif) => {
       itemId: item.id
     },
     {
-      name: browser.i18n.getMessage('payment_card_security_code'),
+      name: getMessage('payment_card_security_code'),
       value: decryptedSif?.securityCode || '',
       displayValue: '•••',
       type: 'securityCode',
@@ -160,7 +164,7 @@ const buildPaymentCardData = (item, decryptedSif) => {
       itemId: item.id
     },
     {
-      name: browser.i18n.getMessage('payment_card_expiration_date'),
+      name: getMessage('payment_card_expiration_date'),
       value: decryptedSif?.expirationDate || '',
       displayValue: decryptedSif?.expirationDate || '',
       type: 'expirationDate',
@@ -178,6 +182,7 @@ const buildPaymentCardData = (item, decryptedSif) => {
 * @return {JSX.Element|null} The rendered component or null if no data.
 */
 function AutofillErrorItemData (props) {
+  const { getMessage } = useI18n();
   const { item } = props;
   const [itemData, setItemData] = useState([]);
 
@@ -199,12 +204,12 @@ function AutofillErrorItemData (props) {
 
       switch (item?.constructor?.name) {
         case 'Login': {
-          setItemData(buildLoginData(item, decryptedSif));
+          setItemData(buildLoginData(item, decryptedSif, getMessage));
           break;
         }
 
         case 'PaymentCard': {
-          setItemData(buildPaymentCardData(item, decryptedSif));
+          setItemData(buildPaymentCardData(item, decryptedSif, getMessage));
           break;
         }
 
@@ -214,7 +219,7 @@ function AutofillErrorItemData (props) {
     };
 
     buildItemData();
-  }, [item]);
+  }, [item, getMessage]);
 
   if (itemData.length === 0) {
     return null;

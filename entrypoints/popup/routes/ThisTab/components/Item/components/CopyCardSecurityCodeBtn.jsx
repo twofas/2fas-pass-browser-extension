@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../styles/Item.module.scss';
+import { useI18n } from '@/partials/context/I18nContext';
 import handleCardSecurityCode from '../../../functions/serviceList/handleCardSecurityCode';
 import ItemCopyIcon from '@/assets/popup-window/card-security-code.svg?react';
 
@@ -17,11 +18,13 @@ import ItemCopyIcon from '@/assets/popup-window/card-security-code.svg?react';
 * @return {JSX.Element} The rendered button element.
 */
 const CopyCardSecurityCodeBtn = ({ item, more, setMore }) => {
+  const { getMessage } = useI18n();
+
   if (item?.securityType === SECURITY_TIER.SECRET) {
     return (
       <button
         onClick={async () => await handleCardSecurityCode(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={browser.i18n.getMessage('this_tab_copy_card_security_code')}
+        title={getMessage('this_tab_copy_card_security_code')}
       >
         <ItemCopyIcon className={S.itemCopySecurityCode} />
       </button>
@@ -30,7 +33,7 @@ const CopyCardSecurityCodeBtn = ({ item, more, setMore }) => {
     return (
       <button
         onClick={async () => await handleCardSecurityCode(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={browser.i18n.getMessage('this_tab_copy_card_security_code')}
+        title={getMessage('this_tab_copy_card_security_code')}
       >
         <ItemCopyIcon className={S.itemCopySecurityCode} />
       </button>
