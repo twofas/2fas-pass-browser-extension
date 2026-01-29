@@ -12,6 +12,7 @@
   display: flex;
   flex-grow: 1;
   gap: 0 8px;
+  position: relative;
 }
 
 .payment-card-expiration-date-input {
@@ -127,17 +128,36 @@
 }
 
 :global(.payment-card-expiration-date-panel) {
+  bottom: calc(100% + 8px) !important;
   display: block !important;
   left: auto !important;
   opacity: 0;
   pointer-events: none;
-  position: fixed !important;
-  right: 24px !important;
+  position: absolute !important;
+  right: 0 !important;
+  top: auto !important;
   transform: none !important;
   transition: opacity .15s ease-out;
   z-index: 9999 !important;
 
-  &:global(.p-connected-overlay-enter-done) {
+  &:global(.position-below) {
+    bottom: auto !important;
+    top: calc(100% + 8px) !important;
+  }
+
+  &:global(.align-left) {
+    left: 0 !important;
+    right: auto !important;
+  }
+
+  &:global(.align-right) {
+    left: auto !important;
+    right: 0 !important;
+  }
+
+  &:global(.p-connected-overlay-enter-done),
+  &:has(:global(.p-monthpicker)),
+  &:has(:global(.p-yearpicker)) {
     opacity: 1;
     pointer-events: auto;
   }

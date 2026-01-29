@@ -186,7 +186,9 @@ const savePrompt = (request, sendResponse, container) => {
   n.top.appendChild(n.close);
 
   n.header = createElement('div', 'twofas-pass-notification-save-prompt-header');
-  n.headerText = createTextElement('p', request?.serviceTypeData?.type === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_header') : browser.i18n.getMessage('content_save_prompt_update_header'));
+  const headerKey = request?.serviceTypeData?.type === 'newService' ? 'content_save_prompt_add_header' : 'content_save_prompt_update_header';
+  n.headerText = createTextElement('p', getMessage(headerKey));
+  n.headerText.setAttribute('data-i18n-key', headerKey);
   n.header.appendChild(n.headerText);
 
   n.item.appendChild(n.top);
@@ -194,14 +196,16 @@ const savePrompt = (request, sendResponse, container) => {
 
   n.buttons = createElement('div', 'twofas-pass-notification-save-prompt-buttons');
 
-  const doNotAskButton = createTextElement('button', browser.i18n.getMessage('content_save_prompt_don_t_ask'));
+  const doNotAskButton = createTextElement('button', getMessage('content_save_prompt_don_t_ask'));
   doNotAskButton.classList.add('twofas-pass-notification-save-prompt-buttons-do-not-ask');
+  doNotAskButton.setAttribute('data-i18n-key', 'content_save_prompt_don_t_ask');
   doNotAskButton.addEventListener('click', () => doNotAsk(n, timers, sendResponse));
   n.buttons.appendChild(doNotAskButton);
 
-  const addLoginButtonText = request?.serviceTypeData?.type === 'newService' ? browser.i18n.getMessage('content_save_prompt_add_login') : browser.i18n.getMessage('content_save_prompt_update_login');
-  const addLoginButton = createTextElement('button', addLoginButtonText);
+  const addLoginButtonKey = request?.serviceTypeData?.type === 'newService' ? 'content_save_prompt_add_login' : 'content_save_prompt_update_login';
+  const addLoginButton = createTextElement('button', getMessage(addLoginButtonKey));
   addLoginButton.classList.add('twofas-pass-notification-save-prompt-buttons-add-login');
+  addLoginButton.setAttribute('data-i18n-key', addLoginButtonKey);
   addLoginButton.addEventListener('click', () => {
     if (request?.serviceTypeData?.type === 'newService') {
       return newLogin(n, timers, sendResponse);

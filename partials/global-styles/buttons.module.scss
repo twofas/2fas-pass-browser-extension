@@ -702,6 +702,8 @@
     }
 
     .pass-toggle-text {
+      text-align: left;
+      
       > span {
         color: v.$primary-text-light;
         font-size: 12px;

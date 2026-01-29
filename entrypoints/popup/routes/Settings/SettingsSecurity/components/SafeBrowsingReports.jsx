@@ -7,12 +7,14 @@
 import S from '../../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useEffect, useState } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Function to render the Safe Browsing Reports component.
 * @return {JSX.Element} The rendered component.
 */
 function SafeBrowsingReports () {
+  const { getMessage } = useI18n();
   const [loading, setLoading] = useState(true);
   const [sbr, setSbr] = useState(null);
   const [disabled, setDisabled] = useState(true);
@@ -38,9 +40,9 @@ function SafeBrowsingReports () {
     try {
       await browser.privacy.services.safeBrowsingExtendedReportingEnabled.set({ value: !sbr });
       setSbr(!sbr);
-      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
+      showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
+      showToast(getMessage('error_general_setting'), 'error');
       await CatchError(e);
     } finally {
       setDisabled(false);
@@ -61,7 +63,7 @@ function SafeBrowsingReports () {
           </span>
   
           <span className={bS.passToggleText}>
-            <span>{browser.i18n.getMessage('settings_safe_browsing_reports')}</span>
+            <span>{getMessage('settings_safe_browsing_reports')}</span>
           </span>
         </label>
       </form>

@@ -18,6 +18,7 @@ import getSecurityCodeMask from '@/entrypoints/popup/components/PaymentCardSecur
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Renders the security code input field for PaymentCard details view.
@@ -27,6 +28,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function CardSecurityCode (props) {
+  const { getMessage } = useI18n();
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
@@ -186,7 +188,7 @@ function CardSecurityCode (props) {
     return (
       <div className={pI.passInputBottomOverlay}>
         <InfoIcon />
-        <span>{browser.i18n.getMessage('details_security_code_decrypt_error')}</span>
+        <span>{getMessage('details_security_code_decrypt_error')}</span>
       </div>
     );
   };
@@ -198,7 +200,7 @@ function CardSecurityCode (props) {
 
     return (
       <div className={pI.passInputTooltip}>
-        <span>{browser.i18n.getMessage('details_sif_not_fetched')}</span>
+        <span>{getMessage('details_sif_not_fetched')}</span>
       </div>
     );
   };
@@ -249,9 +251,9 @@ function CardSecurityCode (props) {
       }
 
       await copyValue(securityCodeToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'securityCode');
-      showToast(browser.i18n.getMessage('notification_card_security_code_copied'), 'success');
+      showToast(getMessage('notification_card_security_code_copied'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_card_security_code_copy_failed'), 'error');
+      showToast(getMessage('error_card_security_code_copy_failed'), 'error');
       await CatchError(e);
     }
   };
@@ -376,14 +378,14 @@ function CardSecurityCode (props) {
       {() => (
         <div className={`${pI.passInput} ${!data?.securityCodeEditable || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''}`}>
           <div className={pI.passInputTop}>
-            <label htmlFor='editedSecurityCode'>{browser.i18n.getMessage('details_security_code')}</label>
+            <label htmlFor='editedSecurityCode'>{getMessage('details_security_code')}</label>
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
               onClick={handleEditableClick}
               tabIndex={-1}
             >
-              {data?.securityCodeEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data?.securityCodeEditable ? getMessage('cancel') : getMessage('edit')}
             </button>
           </div>
           <div className={pI.passInputBottom}>
@@ -394,7 +396,7 @@ function CardSecurityCode (props) {
                 type='button'
                 onClick={handleSecurityCodeVisibleClick}
                 className={`${pI.iconButton} ${pI.visibleButton} ${!originalItem?.isT3orT2WithSif || data?.securityCodeEditable || sifDecryptError ? pI.hiddenButton : ''}`}
-                title={browser.i18n.getMessage('details_toggle_security_code_visibility')}
+                title={getMessage('details_toggle_security_code_visibility')}
                 tabIndex={-1}
               >
                 <VisibleIcon />
@@ -404,7 +406,7 @@ function CardSecurityCode (props) {
                   type='button'
                   className={`${bS.btn} ${pI.iconButton}`}
                   onClick={handleCopySecurityCode}
-                  title={browser.i18n.getMessage('this_tab_copy_card_security_code')}
+                  title={getMessage('this_tab_copy_card_security_code')}
                   tabIndex={-1}
                 >
                   <CopyIcon />
@@ -416,7 +418,7 @@ function CardSecurityCode (props) {
             {generateErrorOverlay()}
           </div>
           <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
-            <p className={securityCodeTooLong ? '' : pI.empty}>{securityCodeTooLong ? browser.i18n.getMessage('details_security_code_too_long') : ''}</p>
+            <p className={securityCodeTooLong ? '' : pI.empty}>{securityCodeTooLong ? getMessage('details_security_code_too_long') : ''}</p>
           </div>
         </div>
       )}

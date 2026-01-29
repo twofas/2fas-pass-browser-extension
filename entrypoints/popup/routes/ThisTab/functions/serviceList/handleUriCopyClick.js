@@ -19,9 +19,9 @@ const handleUriCopyClick = async option => {
 
   try {
     await copyValue(option.data.value, option.data.deviceId, option.data.vaultId, option.data.itemId, 'uri');
-    showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
+    showToast(getMessage('notification_uri_copied'), 'success');
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_uri_copy_failed'), 'error');
+    showToast(getMessage('error_uri_copy_failed'), 'error');
     await CatchError(e);
   }
 };

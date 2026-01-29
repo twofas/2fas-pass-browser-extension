@@ -6,7 +6,8 @@
 
 import S from '../Settings.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import { Form, Field } from 'react-final-form';
 import URIMatcher from '@/partials/URIMatcher';
 import getDomain from '@/partials/functions/getDomain';
@@ -23,6 +24,7 @@ import CancelIcon from '@/assets/popup-window/close.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function SettingsSaveLoginExcludedDomains (props) {
+  const { getMessage } = useI18n();
   const { data, setData, setBatchData } = usePopupState();
 
   const [loading, setLoading] = useState(true);
@@ -30,24 +32,50 @@ function SettingsSaveLoginExcludedDomains (props) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [domainToRemove, setDomainToRemove] = useState(null);
 
+  const isIgnoredDomainInvalid = useMemo(() => {
+    const value = data?.inputValue;
+
+    if (!value || value.length === 0) {
+      return false;
+    }
+
+    if (!URIMatcher.isUrl(value, true)) {
+      return true;
+    }
+
+    let domain;
+
+    try {
+      domain = getDomain(value);
+    } catch {
+      return true;
+    }
+
+    if (excludedDomains.includes(domain)) {
+      return true;
+    }
+
+    return false;
+  }, [data?.inputValue, excludedDomains]);
+
   const removeExcludedDomain = async domain => {
     const updatedDomains = excludedDomains.filter((d) => d !== domain);
     setExcludedDomains(updatedDomains);
     await storage.setItem('local:savePromptIgnoreDomains', updatedDomains);
-    showToast(browser.i18n.getMessage('settings_excluded_domains_remove_toast'), 'success');
+    showToast(getMessage('settings_excluded_domains_remove_toast'), 'success');
   };
 
   const generateExcludedDomains = () => {
     if (excludedDomains.length === 0) {
       return (
         <div className={S.settingsExcludedDomainsEmpty}>
-          <p>{browser.i18n.getMessage('settings_excluded_domains_empty')}</p>
+          <p>{getMessage('settings_excluded_domains_empty')}</p>
         </div>
       );
     } else {
       return (
         <div className={S.settingsExcludedDomainsContent}>
-          <h4>{browser.i18n.getMessage('settings_excluded_domains_description')}</h4>
+          <h4>{getMessage('settings_excluded_domains_description')}</h4>
 
           {excludedDomains.map((domain, index) => {
             return (
@@ -57,7 +85,7 @@ function SettingsSaveLoginExcludedDomains (props) {
               >
                 <p>{domain}</p>
                 <button
-                  title={browser.i18n.getMessage('settings_excluded_domains_remove')}
+                  title={getMessage('settings_excluded_domains_remove')}
                   onClick={() => showConfirmDialog(domain)}
                 >
                   <TrashIcon />
@@ -93,9 +121,9 @@ function SettingsSaveLoginExcludedDomains (props) {
     const errors = {};
 
     if (!values['ignored-domain']) {
-      errors['ignored-domain'] = browser.i18n.getMessage('settings_excluded_domains_add_required');
+      errors['ignored-domain'] = getMessage('settings_excluded_domains_add_required');
     } else if (!URIMatcher.isUrl(values['ignored-domain'], true)) {
-      errors['ignored-domain'] = browser.i18n.getMessage('settings_excluded_domains_add_invalid');
+      errors['ignored-domain'] = getMessage('settings_excluded_domains_add_invalid');
     }
 
     let domain;
@@ -103,12 +131,12 @@ function SettingsSaveLoginExcludedDomains (props) {
     try {
       domain = getDomain(values['ignored-domain']);
     } catch {
-      errors['ignored-domain'] = browser.i18n.getMessage('settings_excluded_domains_add_invalid');
+      errors['ignored-domain'] = getMessage('settings_excluded_domains_add_invalid');
     }
 
     const excludedDomainsSet = new Set(excludedDomains);
     if (excludedDomainsSet.has(domain)) {
-      errors['ignored-domain'] = browser.i18n.getMessage('settings_excluded_domains_add_already_ignored');
+      errors['ignored-domain'] = getMessage('settings_excluded_domains_add_already_ignored');
     }
 
     if (errors['ignored-domain']) {
@@ -132,7 +160,7 @@ function SettingsSaveLoginExcludedDomains (props) {
       inputValue: ''
     });
     form.reset();
-    showToast(browser.i18n.getMessage('settings_excluded_domains_add_success'), 'success');
+    showToast(getMessage('settings_excluded_domains_add_success'), 'success');
   };
 
   useEffect(() => {
@@ -173,7 +201,7 @@ function SettingsSaveLoginExcludedDomains (props) {
             <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
               <div className={S.settingsSubmenu}>
                 <div className={S.settingsSubmenuHeader}>
-                  <h3>{browser.i18n.getMessage('settings_excluded_domains')}</h3>
+                  <h3>{getMessage('settings_excluded_domains')}</h3>
                 </div>
 
                 <div className={`${S.settingsSubmenuBody} ${S.smallMargin}`}>
@@ -186,7 +214,7 @@ function SettingsSaveLoginExcludedDomains (props) {
                       setData('newDomainForm', true);
                     }}>
                       <AddNewIcon />
-                      <span>{excludedDomains.length > 0 ? browser.i18n.getMessage('settings_excluded_domains_add_another_domain_text') : browser.i18n.getMessage('settings_excluded_domains_add_domain_text')}</span>
+                      <span>{excludedDomains.length > 0 ? getMessage('settings_excluded_domains_add_another_domain_text') : getMessage('settings_excluded_domains_add_domain_text')}</span>
                     </button>
                   </div>
                   
@@ -204,7 +232,8 @@ function SettingsSaveLoginExcludedDomains (props) {
                                     type='text'
                                     {...input}
                                     id='ignored-domain'
-                                    placeholder={browser.i18n.getMessage('settings_excluded_domains_add_input_placeholder')}
+                                    className={isIgnoredDomainInvalid ? pI.inputTextError : ''}
+                                    placeholder={getMessage('settings_excluded_domains_add_input_placeholder')}
                                     dir='ltr'
                                     spellCheck='true'
                                     autoCorrect='on'
@@ -215,7 +244,7 @@ function SettingsSaveLoginExcludedDomains (props) {
                                       className={pI.iconButton}
                                       disabled={submitting ? 'disabled' : ''}
                                       type='submit'
-                                      title={browser.i18n.getMessage('settings_excluded_domains_add_submit_title')}
+                                      title={getMessage('settings_excluded_domains_add_submit_title')}
                                     >
                                       <AddNewIcon className={S.iconNew} />
                                     </button>
@@ -223,7 +252,7 @@ function SettingsSaveLoginExcludedDomains (props) {
                                       className={pI.iconButton}
                                       disabled={submitting ? 'disabled' : ''}
                                       type='button'
-                                      title={browser.i18n.getMessage('settings_excluded_domains_add_cancel_title')}
+                                      title={getMessage('settings_excluded_domains_add_cancel_title')}
                                       onClick={() => {
                                         setBatchData({
                                           newDomainForm: false,
@@ -252,9 +281,9 @@ function SettingsSaveLoginExcludedDomains (props) {
 
       <ConfirmDialog
         open={dialogOpen}
-        message={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_message').replace('DOMAIN', domainToRemove || browser.i18n.getMessage('settings_excluded_domains_remove_dialog_message_replace_fallback'))}
-        cancelText={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_cancel_text')}
-        confirmText={browser.i18n.getMessage('settings_excluded_domains_remove_dialog_confirm_text')}
+        message={getMessage('settings_excluded_domains_remove_dialog_message').replace('DOMAIN', domainToRemove || getMessage('settings_excluded_domains_remove_dialog_message_replace_fallback'))}
+        cancelText={getMessage('settings_excluded_domains_remove_dialog_cancel_text')}
+        confirmText={getMessage('settings_excluded_domains_remove_dialog_confirm_text')}
         onCancel={handleDialogCancel}
         onConfirm={handleDialogConfirm}
       />

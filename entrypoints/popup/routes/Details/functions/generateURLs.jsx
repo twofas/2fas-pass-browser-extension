@@ -15,6 +15,7 @@ import URIMatcher from '@/partials/URIMatcher';
 import { useUriTempIds } from '../context/UriTempIdsContext';
 import updateItem from './updateItem';
 import AddIcon from '@/assets/popup-window/add-new-2.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Component to generate and manage URL inputs.
@@ -22,6 +23,7 @@ import AddIcon from '@/assets/popup-window/add-new-2.svg?react';
 * @return {JSX.Element} The rendered URLs or empty state.
 */
 function GenerateURLs (props) {
+  const { getMessage } = useI18n();
   const { data, setData, setItem } = usePopupState();
   const { urisWithTempIds, addUri } = useUriTempIds();
 
@@ -68,7 +70,7 @@ function GenerateURLs (props) {
         ) : (
           <div className={`${pI.passInput} ${pI.disabled}`}>
             <div className={pI.passInputTop}>
-              <label>{browser.i18n.getMessage('details_no_domain_available')}</label>
+              <label>{getMessage('details_no_domain_available')}</label>
             </div>
           </div>
         )}
@@ -80,7 +82,7 @@ function GenerateURLs (props) {
           onClick={handleAddUri}
         >
           <AddIcon />
-          <span>{urisWithTempIds?.length > 0 ? browser.i18n.getMessage('details_add_another_domain') : browser.i18n.getMessage('details_add_domain')}</span>
+          <span>{urisWithTempIds?.length > 0 ? getMessage('details_add_another_domain') : getMessage('details_add_domain')}</span>
         </button>
       </div>
     </>

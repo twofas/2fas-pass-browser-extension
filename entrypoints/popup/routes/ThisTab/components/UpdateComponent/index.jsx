@@ -6,6 +6,7 @@
 
 import S from './UpdateComponent.module.scss';
 import { useCallback, useState, useEffect } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import { motion } from 'motion/react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 
@@ -35,6 +36,7 @@ const updateBarVariants = {
 * @return {JSX.Element} Element representing the UpdateComponent.
 */
 function UpdateComponent () {
+  const { getMessage } = useI18n();
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const handleUpdate = useCallback(async () => {
@@ -44,7 +46,7 @@ function UpdateComponent () {
       } else if (browser?.runtime?.restart) {
         await browser.runtime.restart();
       } else {
-        showToast(browser.i18n.getMessage('update_manual_required'), 'error');
+        showToast(getMessage('update_manual_required'), 'error');
       }
     } catch (e) {
       await CatchError(e);
@@ -93,16 +95,16 @@ function UpdateComponent () {
       <div className={S.updateContainerBox}>
         <div className={S.updateContainerBoxContent}>
           <span className={S.updateContainerBoxText}>
-            {browser.i18n.getMessage('update_available')}
+            {getMessage('update_available')}
           </span>
         </div>
         <button
           className={S.updateContainerBoxButton}
           onClick={handleUpdate}
-          title={browser.i18n.getMessage('update_button_title')}
+          title={getMessage('update_button_title')}
         >
           <RefreshIcon />
-          {browser.i18n.getMessage('update_button')}
+          {getMessage('update_button')}
         </button>
       </div>
     </motion.div>

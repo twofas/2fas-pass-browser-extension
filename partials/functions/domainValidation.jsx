@@ -14,7 +14,7 @@ import URIMatcher from '@/partials/URIMatcher';
 */
 const domainValidation = value => {
   if (!value) {
-    return <p className={pI.empty}>{browser.i18n.getMessage('no_valid_domain')}</p>;
+    return <p className={pI.empty}>{getMessage('no_valid_domain')}</p>;
   }
 
   let normalizedUrl;
@@ -22,14 +22,14 @@ const domainValidation = value => {
   try {
     normalizedUrl = URIMatcher.normalizeUrl(value, true);
   } catch {
-    return <p>{browser.i18n.getMessage('no_valid_domain')}</p>;
+    return <p>{getMessage('no_valid_domain')}</p>;
   }
 
   if (!URIMatcher.isUrl(normalizedUrl, true)) {
-    return <p>{browser.i18n.getMessage('no_valid_domain')}</p>;
+    return <p>{getMessage('no_valid_domain')}</p>;
   }
 
-  return <p className={pI.empty}>{browser.i18n.getMessage('no_valid_domain')}</p>;
+  return <p className={pI.empty}>{getMessage('no_valid_domain')}</p>;
 };
 
 export default domainValidation;

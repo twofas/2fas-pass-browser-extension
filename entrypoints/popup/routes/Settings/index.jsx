@@ -6,6 +6,7 @@
 
 import S from './Settings.module.scss';
 import { useState, useEffect, useRef } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import getRatingLink from './functions/getRatingLink';
 import getRatingText from './functions/getRatingText';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
@@ -20,6 +21,7 @@ import StarIcon from '@/assets/popup-window/star.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function Settings (props) {
+  const { getMessage } = useI18n();
   const [version, setVersion] = useState('');
   const ratingLink = getRatingLink();
   const ratingText = getRatingText();
@@ -44,31 +46,31 @@ function Settings (props) {
           <NavigationButton type='cancel' />
 
           <div className={S.settingsContainer}>
-            <h2>{browser.i18n.getMessage('settings_header')}</h2>
+            <h2>{getMessage('settings_header')}</h2>
 
             <div className={S.settingsMenu}>
               <ul>
                 <li>
                   <ClearLink to='/settings/preferences' prefetch='intent'>
-                    <span>{browser.i18n.getMessage('settings_preferences')}</span>
+                    <span>{getMessage('settings_preferences')}</span>
                     <MenuArrowIcon />
                   </ClearLink>
                 </li>
                 <li>
                   <ClearLink to='/settings/security' prefetch='intent'>
-                    <span>{browser.i18n.getMessage('settings_security')}</span>
+                    <span>{getMessage('settings_security')}</span>
                     <MenuArrowIcon />
                   </ClearLink>
                 </li>
                 <li>
                   <ClearLink to='/settings/devices' prefetch='intent'>
-                    <span>{browser.i18n.getMessage('settings_devices')}</span>
+                    <span>{getMessage('settings_devices')}</span>
                     <MenuArrowIcon />
                   </ClearLink>
                 </li>
                 <li>
                   <ClearLink to='/settings/about' prefetch='intent'>
-                    <span>{browser.i18n.getMessage('settings_about')}</span>
+                    <span>{getMessage('settings_about')}</span>
                     <MenuArrowIcon />
                   </ClearLink>
                 </li>
@@ -80,7 +82,7 @@ function Settings (props) {
         <section className={S.settingsBottom}>
           <div className={S.settingsVersion}>
             <p>
-              <span>{browser.i18n.getMessage('version')}&nbsp;</span>
+              <span>{getMessage('version')}&nbsp;</span>
               <span>{version}</span>
             </p>
           </div>

@@ -101,7 +101,7 @@ const processFullSyncVaultsData = async (checksum, chunksData, encryptionDataKey
   return {
     returnUrl: '/',
     returnToast: {
-      text: browser.i18n.getMessage('fetch_full_sync_completed_toast'),
+      text: getMessage('fetch_full_sync_completed_toast'),
       type: 'success'
     }
   };

@@ -1,0 +1,222 @@
+{
+  "primereact_month_january": {
+    "message": "January",
+    "description": "PrimeReact Calendar month name for January"
+  },
+  "primereact_month_february": {
+    "message": "February",
+    "description": "PrimeReact Calendar month name for February"
+  },
+  "primereact_month_march": {
+    "message": "March",
+    "description": "PrimeReact Calendar month name for March"
+  },
+  "primereact_month_april": {
+    "message": "April",
+    "description": "PrimeReact Calendar month name for April"
+  },
+  "primereact_month_may": {
+    "message": "May",
+    "description": "PrimeReact Calendar month name for May"
+  },
+  "primereact_month_june": {
+    "message": "June",
+    "description": "PrimeReact Calendar month name for June"
+  },
+  "primereact_month_july": {
+    "message": "July",
+    "description": "PrimeReact Calendar month name for July"
+  },
+  "primereact_month_august": {
+    "message": "August",
+    "description": "PrimeReact Calendar month name for August"
+  },
+  "primereact_month_september": {
+    "message": "September",
+    "description": "PrimeReact Calendar month name for September"
+  },
+  "primereact_month_october": {
+    "message": "October",
+    "description": "PrimeReact Calendar month name for October"
+  },
+  "primereact_month_november": {
+    "message": "November",
+    "description": "PrimeReact Calendar month name for November"
+  },
+  "primereact_month_december": {
+    "message": "December",
+    "description": "PrimeReact Calendar month name for December"
+  },
+  "primereact_month_short_jan": {
+    "message": "Jan",
+    "description": "PrimeReact Calendar short month name for January"
+  },
+  "primereact_month_short_feb": {
+    "message": "Feb",
+    "description": "PrimeReact Calendar short month name for February"
+  },
+  "primereact_month_short_mar": {
+    "message": "Mar",
+    "description": "PrimeReact Calendar short month name for March"
+  },
+  "primereact_month_short_apr": {
+    "message": "Apr",
+    "description": "PrimeReact Calendar short month name for April"
+  },
+  "primereact_month_short_may": {
+    "message": "May",
+    "description": "PrimeReact Calendar short month name for May"
+  },
+  "primereact_month_short_jun": {
+    "message": "Jun",
+    "description": "PrimeReact Calendar short month name for June"
+  },
+  "primereact_month_short_jul": {
+    "message": "Jul",
+    "description": "PrimeReact Calendar short month name for July"
+  },
+  "primereact_month_short_aug": {
+    "message": "Aug",
+    "description": "PrimeReact Calendar short month name for August"
+  },
+  "primereact_month_short_sep": {
+    "message": "Sep",
+    "description": "PrimeReact Calendar short month name for September"
+  },
+  "primereact_month_short_oct": {
+    "message": "Oct",
+    "description": "PrimeReact Calendar short month name for October"
+  },
+  "primereact_month_short_nov": {
+    "message": "Nov",
+    "description": "PrimeReact Calendar short month name for November"
+  },
+  "primereact_month_short_dec": {
+    "message": "Dec",
+    "description": "PrimeReact Calendar short month name for December"
+  },
+  "primereact_day_sunday": {
+    "message": "Sunday",
+    "description": "PrimeReact Calendar day name for Sunday"
+  },
+  "primereact_day_monday": {
+    "message": "Monday",
+    "description": "PrimeReact Calendar day name for Monday"
+  },
+  "primereact_day_tuesday": {
+    "message": "Tuesday",
+    "description": "PrimeReact Calendar day name for Tuesday"
+  },
+  "primereact_day_wednesday": {
+    "message": "Wednesday",
+    "description": "PrimeReact Calendar day name for Wednesday"
+  },
+  "primereact_day_thursday": {
+    "message": "Thursday",
+    "description": "PrimeReact Calendar day name for Thursday"
+  },
+  "primereact_day_friday": {
+    "message": "Friday",
+    "description": "PrimeReact Calendar day name for Friday"
+  },
+  "primereact_day_saturday": {
+    "message": "Saturday",
+    "description": "PrimeReact Calendar day name for Saturday"
+  },
+  "primereact_day_short_sun": {
+    "message": "Sun",
+    "description": "PrimeReact Calendar short day name for Sunday"
+  },
+  "primereact_day_short_mon": {
+    "message": "Mon",
+    "description": "PrimeReact Calendar short day name for Monday"
+  },
+  "primereact_day_short_tue": {
+    "message": "Tue",
+    "description": "PrimeReact Calendar short day name for Tuesday"
+  },
+  "primereact_day_short_wed": {
+    "message": "Wed",
+    "description": "PrimeReact Calendar short day name for Wednesday"
+  },
+  "primereact_day_short_thu": {
+    "message": "Thu",
+    "description": "PrimeReact Calendar short day name for Thursday"
+  },
+  "primereact_day_short_fri": {
+    "message": "Fri",
+    "description": "PrimeReact Calendar short day name for Friday"
+  },
+  "primereact_day_short_sat": {
+    "message": "Sat",
+    "description": "PrimeReact Calendar short day name for Saturday"
+  },
+  "primereact_day_min_su": {
+    "message": "Su",
+    "description": "PrimeReact Calendar minimal day name for Sunday"
+  },
+  "primereact_day_min_mo": {
+    "message": "Mo",
+    "description": "PrimeReact Calendar minimal day name for Monday"
+  },
+  "primereact_day_min_tu": {
+    "message": "Tu",
+    "description": "PrimeReact Calendar minimal day name for Tuesday"
+  },
+  "primereact_day_min_we": {
+    "message": "We",
+    "description": "PrimeReact Calendar minimal day name for Wednesday"
+  },
+  "primereact_day_min_th": {
+    "message": "Th",
+    "description": "PrimeReact Calendar minimal day name for Thursday"
+  },
+  "primereact_day_min_fr": {
+    "message": "Fr",
+    "description": "PrimeReact Calendar minimal day name for Friday"
+  },
+  "primereact_day_min_sa": {
+    "message": "Sa",
+    "description": "PrimeReact Calendar minimal day name for Saturday"
+  },
+  "primereact_today": {
+    "message": "Today",
+    "description": "PrimeReact Calendar today button label"
+  },
+  "primereact_clear": {
+    "message": "Clear",
+    "description": "PrimeReact Calendar clear button label"
+  },
+  "primereact_choose_month": {
+    "message": "Choose Month",
+    "description": "PrimeReact Calendar choose month accessibility label"
+  },
+  "primereact_choose_year": {
+    "message": "Choose Year",
+    "description": "PrimeReact Calendar choose year accessibility label"
+  },
+  "primereact_prev_month": {
+    "message": "Previous Month",
+    "description": "PrimeReact Calendar previous month button accessibility label"
+  },
+  "primereact_next_month": {
+    "message": "Next Month",
+    "description": "PrimeReact Calendar next month button accessibility label"
+  },
+  "primereact_prev_year": {
+    "message": "Previous Year",
+    "description": "PrimeReact Calendar previous year button accessibility label"
+  },
+  "primereact_next_year": {
+    "message": "Next Year",
+    "description": "PrimeReact Calendar next year button accessibility label"
+  },
+  "primereact_prev_decade": {
+    "message": "Previous Decade",
+    "description": "PrimeReact Calendar previous decade button accessibility label"
+  },
+  "primereact_next_decade": {
+    "message": "Next Decade",
+    "description": "PrimeReact Calendar next decade button accessibility label"
+  }
+}

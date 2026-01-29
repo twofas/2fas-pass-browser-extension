@@ -7,6 +7,7 @@
 import S from '../../Fetch.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useRef, useEffect, useState } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Function to render the connection timeout component.
@@ -14,6 +15,7 @@ import { useRef, useEffect, useState } from 'react';
 * @return {JSX.Element} The rendered component.
 */
 const ConnectionTimeout = ({ fetchState, tryAgainHandle }) => {
+  const { getMessage } = useI18n();
   const [loaded, setLoaded] = useState(false);
   const ConnectionTimeoutComponent = useRef(null);
 
@@ -35,12 +37,12 @@ const ConnectionTimeout = ({ fetchState, tryAgainHandle }) => {
 
   return (
     <div className={`${S.fetchCase} ${S.active}`}>
-      <h2>{browser.i18n.getMessage('fetch_connection_timeout_header')}</h2>
+      <h2>{getMessage('fetch_connection_timeout_header')}</h2>
       <div className={S.fetchCaseAnimation}>
         {loaded ? <ConnectionTimeoutComponent.current /> : <div style={{ height: '86px' }} />}
       </div>
       <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction} ${bS.btnPushRetry}`} onClick={tryAgainHandle}>
-        {browser.i18n.getMessage('try_again')}
+        {getMessage('try_again')}
       </button>
     </div>
   );

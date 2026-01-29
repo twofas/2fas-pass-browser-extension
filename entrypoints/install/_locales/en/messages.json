@@ -44,7 +44,7 @@
     "description": "Instruction to use the mobile app to scan the QR code"
   },
   "install_3_info": {
-    "message": "Extension is unlocked for this browser's session!",
+    "message": "Extension is unlocked for this browser's session",
     "description": "Message displayed when the extension is unlocked for the current browser session"
   },
   "install_3_header": {

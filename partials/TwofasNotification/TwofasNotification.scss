@@ -271,6 +271,8 @@
       align-items: flex-start !important;
       display: flex !important;
       flex-direction: column !important;
+      height: 100% !important;
+      max-height: 100% !important;
       text-align: left !important;
 
       &.light {
@@ -286,6 +288,14 @@
 
           &-header {
             color: v.$primary-text-light !important;
+          }
+
+          &-items {
+            scrollbar-color: v.$secondary-text-light transparent !important;
+
+            &::-webkit-scrollbar-thumb {
+              background-color: v.$secondary-text-light !important;
+            }
           }
 
           &-item {
@@ -349,6 +359,14 @@
 
           &-header {
             color: v.$primary-text-dark !important;
+          }
+
+          &-items {
+            scrollbar-color: v.$secondary-text-dark transparent !important;
+
+            &::-webkit-scrollbar-thumb {
+              background-color: v.$secondary-text-dark !important;
+            }
           }
 
           &-item {
@@ -416,6 +434,14 @@
               color: v.$primary-text-light !important;
             }
 
+            &-items {
+              scrollbar-color: v.$secondary-text-light transparent !important;
+
+              &::-webkit-scrollbar-thumb {
+                background-color: v.$secondary-text-light !important;
+              }
+            }
+
             &-item {
               &-btn {
                 background-color: v.$primary-bg-light !important;
@@ -477,6 +503,14 @@
 
             &-header {
               color: v.$primary-text-dark !important;
+            }
+
+            &-items {
+              scrollbar-color: v.$secondary-text-dark transparent !important;
+
+              &::-webkit-scrollbar-thumb {
+                background-color: v.$secondary-text-dark !important;
+              }
             }
 
             &-item {
@@ -748,9 +782,12 @@
 
   &-matching-logins {
     display: flex !important;
+    flex: 1 !important;
     flex-direction: column !important;
-    flex-shrink: 0 !important;
+    height: 100% !important;
+    min-height: 0 !important;
     text-align: left !important;
+    width: 100% !important;
 
     &-top {
       align-items: flex-start !important;
@@ -808,13 +845,28 @@
 
     &-items {
       display: flex !important;
+      flex: 1 !important;
       flex-direction: column !important;
-      flex-shrink: 0 !important;
-      max-height: 0 !important;
+      min-height: 0 !important;
       opacity: 0 !important;
-      overflow: hidden !important;
-      transition: opacity v.$anim, max-height v.$anim !important;
+      overflow-y: auto !important;
+      scrollbar-color: v.$secondary-text-dark transparent !important;
+      scrollbar-width: thin !important;
+      transition: opacity v.$anim !important;
       width: 100% !important;
+
+      &::-webkit-scrollbar {
+        width: 6px !important;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent !important;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: v.$secondary-text-dark !important;
+        border-radius: 3px !important;
+      }
     }
 
     &-item {

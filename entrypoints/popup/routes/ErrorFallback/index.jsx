@@ -9,6 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import ToastsContent from '../../components/ToastsContent';
 import usePopupStateStore from '../../store/popupState';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Function to render the Not Found component.
@@ -16,6 +17,7 @@ import usePopupStateStore from '../../store/popupState';
 * @return {JSX.Element} The rendered component.
 */
 function ErrorFallback (props) {
+  const { getMessage } = useI18n();
   const clearAllData = usePopupStateStore(state => state.clearAllData);
 
   const handleRetry = () => {
@@ -27,9 +29,9 @@ function ErrorFallback (props) {
     if (props?.error?.message) {
       try {
         navigator.clipboard.writeText(props.error.message);
-        showToast(browser.i18n.getMessage('notification_error_message_copied'), 'success');
+        showToast(getMessage('notification_error_message_copied'), 'success');
       } catch {
-        showToast(browser.i18n.getMessage('error_error_message_copy_failed'), 'error');
+        showToast(getMessage('error_error_message_copy_failed'), 'error');
       }
     }
   };
@@ -40,14 +42,14 @@ function ErrorFallback (props) {
         <div className={S.errorFallbackContainer}>
           <section className={S.errorFallback}>
             <div className={S.errorFallbackInfo}>
-              <h1>{browser.i18n.getMessage('error_fallback_header')}</h1>
-              <p>{browser.i18n.getMessage('error_fallback_description')}</p>
+              <h1>{getMessage('error_fallback_header')}</h1>
+              <p>{getMessage('error_fallback_description')}</p>
 
               <button
                 className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction} ${bS.btnErrorFallback}`}
                 onClick={handleRetry}
               >
-                {browser.i18n.getMessage('error_fallback_retry_button')}
+                {getMessage('error_fallback_retry_button')}
               </button>
             </div>
 
@@ -55,7 +57,7 @@ function ErrorFallback (props) {
               <pre>{props?.error?.message}</pre>
               <button
                 className={S.errorFallbackDetailsCopyButton}
-                title={browser.i18n.getMessage('error_fallback_copy_error_title')}
+                title={getMessage('error_fallback_copy_error_title')}
                 onClick={handleCopyErrorMessage}
                 tabIndex={-1}
               >

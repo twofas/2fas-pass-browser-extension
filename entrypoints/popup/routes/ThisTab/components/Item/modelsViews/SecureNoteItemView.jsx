@@ -6,6 +6,7 @@
 
 import S from '../styles/Item.module.scss';
 import { memo, useRef, useMemo } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import generateIcon from '../../../functions/serviceList/generateIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import Skeleton from '../../Skeleton';
@@ -22,6 +23,7 @@ const selectComponents = { Option: ItemCustomOption };
 * @return {JSX.Element} The rendered component.
 */
 function SecureNoteItemView (props) {
+  const { getMessage } = useI18n();
   const moreBtnRef = useRef(null);
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
 
@@ -33,7 +35,7 @@ function SecureNoteItemView (props) {
       >
         {generateIcon(props.data, null, null, props.loading)}
         <span>
-          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || browser.i18n.getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || getMessage('no_item_name')}</span>}
         </span>
       </div>
       <div className={S.itemAdditionalButtons}>

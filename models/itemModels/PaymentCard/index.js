@@ -52,7 +52,7 @@ export default class PaymentCard extends Item {
 
     this.internalData = {
       ...this.internalData,
-      uiName: browser.i18n.getMessage('payment_card')
+      uiName: getMessage('payment_card')
     };
 
     // Secure Input Fields
@@ -163,11 +163,11 @@ export default class PaymentCard extends Item {
 
   get dropdownList () {
     const dO = [
-      { value: 'details', label: browser.i18n.getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
+      { value: 'details', label: getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
     ];
 
     if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
-      dO.push({ value: 'forget', label: browser.i18n.getMessage('this_tab_more_forget_payment_card'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
+      dO.push({ value: 'forget', label: getMessage('this_tab_more_forget_payment_card'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
     }
 
     return dO;
@@ -191,7 +191,7 @@ export default class PaymentCard extends Item {
       return {
         id: `2fas-pass-autofill-${this.deviceId}|${this.vaultId}|${this.id}`,
         enabled: true,
-        title: `${browser.i18n.getMessage('autofill')} ${this.content.name}`,
+        title: `${getMessage('autofill')} ${this.content.name}`,
         type: 'normal',
         visible: true,
         parentId: '2fas-pass-payment-cards',
@@ -206,7 +206,7 @@ export default class PaymentCard extends Item {
       return {
         id: `2fas-pass-fetch-${this.deviceId}|${this.vaultId}|${this.id}|${this.contentType}`,
         enabled: true,
-        title: `${browser.i18n.getMessage('fetch')} ${this.content.name}...`,
+        title: `${getMessage('fetch')} ${this.content.name}...`,
         type: 'normal',
         visible: true,
         parentId: '2fas-pass-payment-cards',

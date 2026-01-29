@@ -1,0 +1,82 @@
+{
+  "notification_send_autofill_to_tab_lack_of_service_title": {
+    "message": "Błąd",
+    "description": "Title for the notification when the autofill service is not found"
+  },
+  "notification_send_autofill_to_tab_lack_of_service_message": {
+    "message": "Nie znaleziono serwisu",
+    "description": "Message for the notification when the autofill service is not found"
+  },
+  "notification_send_autofill_to_tab_autofill_error_title": {
+    "message": "Błąd",
+    "description": "Title for the notification when an autofill error occurs"
+  },
+  "notification_send_autofill_to_tab_autofill_error_message": {
+    "message": "Nieudane autouzupełnianie. Spróbuj ponownie.",
+    "description": "Message for the notification when an autofill error occurs"
+  },
+  "notification_shortcut_autofill_no_active_tab_title": {
+    "message": "Brak aktywnej karty",
+    "description": "Title for the notification when there is no active tab for autofill"
+  },
+  "notification_shortcut_autofill_no_active_tab_message": {
+    "message": "Brak aktywnej karty do autouzupełniania",
+    "description": "Message for the notification when there is no active tab for autofill"
+  },
+  "notification_shortcut_autofill_internal_page_title": {
+    "message": "Wewnętrzna strona przeglądarki",
+    "description": "Title for the notification when autofill is attempted on a browser internal page"
+  },
+  "notification_shortcut_autofill_internal_page_message": {
+    "message": "Przepraszamy, ale nie możemy autouzupełnić danych na wewnętrznych stronach przeglądarki",
+    "description": "Message shown when autofill isn't supported on browser internal pages"
+  },
+  "notification_settings_save_success": {
+    "message": "Zmiany zapisane pomyślnie",
+    "description": "Notification shown when settings are saved successfully"
+  },
+  "notification_idle_lock_premium_only": {
+    "message": "Opcja „Tylko przy ponownym uruchomieniu” jest funkcją premium. Ulepsz plan do unlimited w aplikacji mobilnej.",
+    "description": "Notification message when the idle lock feature is unlimited plan only"
+  },
+  "notification_test_title": {
+    "message": "2FAS Pass",
+    "description": "Title for a test notification"
+  },
+  "notification_test_message": {
+    "message": "To jest testowe powiadomienie",
+    "description": "Message for a test notification"
+  },
+  "notification_shortcut_autofill_no_username_and_password_title": {
+    "message": "Wypełnianie niemożliwe",
+    "description": "Title for the notification when no username and password are found"
+  },
+  "notification_shortcut_autofill_no_username_and_password_message": {
+    "message": "Nie znaleziono nazwy użytkownika i hasła.",
+    "description": "Message for the notification when no username and password are found"
+  },
+  "notification_extension_name_update_success": {
+    "message": "Zaktualizowano nazwę rozszerzenia",
+    "description": "Notification message when the extension name is successfully updated"
+  },
+  "notification_uri_copied": {
+    "message": "URI skopiowane do schowka",
+    "description": "Notification message when the URI is successfully copied to the clipboard"
+  },
+  "notification_error_message_copied": {
+    "message": "Treść błędu skopiowana do schowka",
+    "description": "Notification message when the error message is successfully copied to the clipboard"
+  },
+  "autofill_cross_domain_warning_popup": {
+    "message": "Ta strona zawiera formularze z zewnętrznych domen:\nDOMAINS\n\nCzy chcesz wypełnić dane w tych formularzach?",
+    "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
+  },
+  "notification_autofill_partial_title": {
+    "message": "Częściowe wypełnienie",
+    "description": "Title for the notification when autofill only partially succeeded"
+  },
+  "notification_autofill_failed_open_popup": {
+    "message": "Otwórz popup, aby ręcznie skopiować niewypełnione dane",
+    "description": "Message for the notification when autofill failed, suggesting to open popup for manual copy"
+  }
+}

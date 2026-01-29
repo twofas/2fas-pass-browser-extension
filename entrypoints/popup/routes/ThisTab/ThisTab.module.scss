@@ -126,8 +126,13 @@
     &-empty {
       text-align: center;
 
-      img,
-      lottie-player {
+      > div {
+        > div {
+          display: inline-block;
+        }
+      }
+
+      img {
         display: none;
         height: auto;
         width: 120px;

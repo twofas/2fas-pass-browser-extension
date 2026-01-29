@@ -16,6 +16,7 @@ import { matchModel, Login } from '@/models/itemModels';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import ClearLink from '../../components/ClearLink';
 import ServiceFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 // Model Views
 import LoginDetailsView from './modelsViews/LoginDetailsView';
@@ -28,12 +29,19 @@ const DetailsViews = {
   'PaymentCard': PaymentCardDetailsView
 };
 
+const DetailsHeaders = {
+  'Login': 'details_header_login',
+  'SecureNote': 'details_header_secure_note',
+  'PaymentCard': 'details_header_payment_card'
+};
+
 /**
 * Function to render the details component.
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
 function Details(props) {
+  const { getMessage } = useI18n();
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
@@ -103,7 +111,7 @@ function Details(props) {
       }
 
       if (!item) {
-        showToast(browser.i18n.getMessage('details_item_not_found'), 'error');
+        showToast(getMessage('details_item_not_found'), 'error');
         navigate('/');
         return;
       }
@@ -208,7 +216,7 @@ function Details(props) {
 
   useEffect(() => {
     if (!loading && constructorName && !DetailsViews[constructorName]) {
-      showToast(browser.i18n.getMessage('details_item_not_found'), 'error');
+      showToast(getMessage('details_item_not_found'), 'error');
       navigate('/');
     }
   }, [loading, constructorName, navigate]);
@@ -225,10 +233,10 @@ function Details(props) {
         <section className={S.details}>
           <div className={S.detailsContainer}>
             <NavigationButton type='back' />
-            <h2>{originalItem?.internalData?.uiName} {browser.i18n.getMessage('details_header')}</h2>
+            <h2>{getMessage(DetailsHeaders[constructorName])}</h2>
 
             <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
-              <p>{browser.i18n.getMessage('details_fetch_text')}</p>
+              <p>{getMessage('details_fetch_text')}</p>
               <ClearLink
                 to='/fetch'
                 state={{
@@ -241,10 +249,10 @@ function Details(props) {
                     contentType: data.item.contentType
                   }
                 }}
-                title={browser.i18n.getMessage('details_fetch_title')}
+                title={getMessage('details_fetch_title')}
               >
                 <ServiceFetchIcon />
-                <span>{browser.i18n.getMessage('fetch')}</span>
+                <span>{getMessage('fetch')}</span>
               </ClearLink>
             </div>
 

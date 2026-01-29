@@ -37,3 +37,6 @@ CLAUDE.md
 .env.mcp
 .serena
 .aim
+.playwright-mcp
+AGENTS.md
+.mcp.json

@@ -15,6 +15,7 @@ import { isText } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
 import SecureNote from '@/models/itemModels/SecureNote';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
  /**
 * Function to render the Secure Note text input field.
@@ -24,6 +25,7 @@ import InfoIcon from '@/assets/popup-window/info.svg?react';
 const TEXTAREA_LINE_HEIGHT = 19;
 
 function SecureNoteText (props) {
+  const { getMessage } = useI18n();
   const { sifDecryptError, formData } = props;
   const { form, originalItem, inputError } = formData;
 
@@ -37,6 +39,16 @@ function SecureNoteText (props) {
   const [localDecryptedText, setLocalDecryptedText] = useState(null);
   const [localEditedText, setLocalEditedText] = useState(null);
   const [isDecrypting, setIsDecrypting] = useState(false);
+
+  const isTextInvalid = useMemo(() => {
+    const text = localEditedText ?? localDecryptedText;
+
+    if (!text || text.length === 0) {
+      return false;
+    }
+
+    return text.length > 16384;
+  }, [localEditedText, localDecryptedText]);
 
   const itemInstance = useMemo(() => {
     if (!data.item) {
@@ -189,7 +201,7 @@ function SecureNoteText (props) {
     return (
       <div className={pI.passInputBottomOverlay}>
         <InfoIcon />
-        <span>{browser.i18n.getMessage('details_secure_note_decrypt_error')}</span>
+        <span>{getMessage('details_secure_note_decrypt_error')}</span>
       </div>
     );
   };
@@ -202,7 +214,7 @@ function SecureNoteText (props) {
     // FUTURE - move to separate component
     return (
       <div className={pI.passInputTooltip}>
-        <span>{browser.i18n.getMessage('details_sif_not_fetched')}</span>
+        <span>{getMessage('details_sif_not_fetched')}</span>
       </div>
     );
   };
@@ -251,14 +263,14 @@ function SecureNoteText (props) {
       {() => (
           <div className={`${pI.passInput} ${!data?.sifEditable || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''} ${inputError === 'content.s_text' ? pI.error : ''}`}>
             <div className={pI.passInputTop}>
-              <label htmlFor='editedSif'>{browser.i18n.getMessage('secure_note_note')}</label>
+              <label htmlFor='editedSif'>{getMessage('secure_note_note')}</label>
               <button
                 type='button'
                 className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
                 onClick={handleEditableClick}
                 tabIndex={-1}
               >
-                {data?.sifEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+                {data?.sifEditable ? getMessage('cancel') : getMessage('edit')}
               </button>
             </div>
             <div className={pI.passInputBottom}>
@@ -266,9 +278,9 @@ function SecureNoteText (props) {
                 <textarea
                   ref={textareaRef}
                   value={getTextValue()}
-                  placeholder={!sifDecryptError && (originalItem?.isT3orT2WithSif || data?.sifEditable) ? browser.i18n.getMessage('placeholder_secure_note_empty') : ''}
+                  placeholder={!sifDecryptError && (originalItem?.isT3orT2WithSif || data?.sifEditable) ? getMessage('placeholder_secure_note_empty') : ''}
                   id='editedSif'
-                  className={S.detailsSecureNoteTextarea}
+                  className={`${S.detailsSecureNoteTextarea}${isTextInvalid ? ` ${pI.inputTextError}` : ''}`}
                   style={{ height: `${textareaHeight}px`, overflowY: textareaOverflow }}
                   disabled={!data?.sifEditable || sifDecryptError}
                   onChange={handleTextChange}
@@ -307,7 +319,7 @@ function SecureNoteText (props) {
                     </span>
 
                     <span className={bS.passToggleText}>
-                      <span>{browser.i18n.getMessage('details_reveal_secure_note')}</span>
+                      <span>{getMessage('details_reveal_secure_note')}</span>
                     </span>
                   </label>
                 </div>

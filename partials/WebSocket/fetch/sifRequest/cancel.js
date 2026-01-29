@@ -18,7 +18,7 @@ const sifRequestCancel = async messageId => {
     return {
       returnUrl: '/',
       returnToast: {
-        text: browser.i18n.getMessage('fetch_request_cancel_toast'),
+        text: getMessage('fetch_request_cancel_toast'),
         type: 'info'
       }
     };

@@ -44,7 +44,7 @@ const deleteDataAccept = async (state, messageId) => {
     return {
       returnUrl: '/',
       returnToast: {
-        text: browser.i18n.getMessage('fetch_delete_login_accept_toast'),
+        text: getMessage('fetch_delete_login_accept_toast'),
         type: 'success'
       }
     };

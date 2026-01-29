@@ -23,6 +23,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import Login from '@/models/itemModels/Login';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const additionalVariants = {
   hidden: { maxHeight: '0px' },
@@ -34,6 +35,7 @@ const additionalVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function LoginAddNewView() {
+  const { getMessage } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
   const { data, setData } = usePopupState();
@@ -127,9 +129,9 @@ function LoginAddNewView() {
     try {
       const currentPassword = form.getFieldState('s_password').value;
       await copyValue(currentPassword, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'password');
-      showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
+      showToast(getMessage('notification_password_copied'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_password_copy_failed'), 'error');
+      showToast(getMessage('error_password_copy_failed'), 'error');
       await CatchError(e);
     }
   };
@@ -138,9 +140,9 @@ function LoginAddNewView() {
     try {
       const currentUrl = form.getFieldState('url').value;
       await copyValue(currentUrl, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'uri');
-      showToast(browser.i18n.getMessage('notification_uri_copied'), 'success');
+      showToast(getMessage('notification_uri_copied'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_uri_copy_failed'), 'error');
+      showToast(getMessage('error_uri_copy_failed'), 'error');
       await CatchError(e);
     }
   };
@@ -149,9 +151,9 @@ function LoginAddNewView() {
     try {
       const currentUsername = form.getFieldState('username').value;
       await copyValue(currentUsername, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'username');
-      showToast(browser.i18n.getMessage('notification_username_copied'), 'success');
+      showToast(getMessage('notification_username_copied'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_username_copy_failed'), 'error');
+      showToast(getMessage('error_username_copy_failed'), 'error');
       await CatchError(e);
     }
   };
@@ -165,7 +167,7 @@ function LoginAddNewView() {
     const device = await getCurrentDevice();
 
     if (!device) {
-      return showToast(browser.i18n.getMessage('error_no_current_device'), 'error');
+      return showToast(getMessage('error_no_current_device'), 'error');
     }
 
     const deviceId = device.id;
@@ -184,8 +186,12 @@ function LoginAddNewView() {
       formData.content.username = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       formData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
     } else {
-      formData.content.username = { value: e.username ? e.username : '', action: REQUEST_STRING_ACTIONS.SET };
-      formData.content.s_password = { value: e.s_password ? e.s_password : '', action: REQUEST_STRING_ACTIONS.SET };
+      formData.content.username = e.username
+        ? { value: e.username, action: REQUEST_STRING_ACTIONS.SET }
+        : { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
+      formData.content.s_password = e.s_password
+        ? { value: e.s_password, action: REQUEST_STRING_ACTIONS.SET }
+        : { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
     }
 
     return navigate('/fetch', {
@@ -205,141 +211,33 @@ function LoginAddNewView() {
   }
 
   return (
-    <Form onSubmit={onSubmit} initialValues={data} render={({ handleSubmit, form, submitting }) => (
-      <form onSubmit={handleSubmit}>
-        <Field name="password-minlength" value={data?.minLength || ''}>
-          {({ input }) => <input type="hidden" {...input} id="password-minlength" />}
-        </Field>
-        <Field name="password-maxlength" value={data?.maxLength || ''}>
-          {({ input }) => <input type="hidden" {...input} id="password-maxlength" />}
-        </Field>
-        <Field name="password-pattern" value={data?.pattern || ''}>
-          {({ input }) => <input type="hidden" {...input} id="password-pattern" />}
-        </Field>
-        <Field name="url">
-          {({ input }) => (
-            <div className={`${pI.passInput}`}>
-              <div className={pI.passInputTop}>
-                <label htmlFor="add-new-url">{browser.i18n.getMessage('domain_uri')}</label>
-              </div>
-              <div className={pI.passInputBottom}>
-                <input
-                  type="text"
-                  {...input}
-                  placeholder={browser.i18n.getMessage('placeholder_domain_uri')}
-                  id="add-new-url"
-                  dir="ltr"
-                  spellCheck="false"
-                  autoCorrect="off"
-                  autoComplete="off"
-                  autoCapitalize="off"
-                  onChange={e => {
-                    input.onChange(e);
-                    setData('url', e.target.value);
-                  }}
-                />
-                <div className={pI.passInputBottomButtons}>
-                  <button
-                    type='button'
-                    className={`${bS.btn} ${pI.iconButton}`}
-                    onClick={() => handleCopyUrl(form)}
-                    title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
-                    tabIndex={-1}
-                  >
-                    <CopyIcon />
-                  </button>
-                </div>
-              </div>
-              <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
-                {domainValidation(input.value)}
-              </div>
-              <div className={pI.passInputAdditional}>
-                <div className={`${bS.passToggle} ${bS.loaded}`}>
-                  <input
-                    type="checkbox"
-                    name="set-in-mobile"
-                    id="set-in-mobile"
-                    checked={data?.onMobile}
-                    onChange={() => {
-                      setData('onMobile', !data?.onMobile);
-                    }}
-                  />
-                  <label htmlFor="set-in-mobile">
-                    <span className={bS.passToggleBox}>
-                      <span className={bS.passToggleBoxCircle}></span>
-                    </span>
+    <>
+      <h2>{getMessage('add_new_header_login')}</h2>
+      <h3>{getMessage('add_new_subheader')}</h3>
 
-                    <span className={bS.passToggleText}>
-                      <span>{browser.i18n.getMessage('set_login_and_password_in_the_mobile_app')}</span>
-                    </span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          )}
-        </Field>
-        <motion.div
-          className={`${S.addNewAdditional} ${data?.additionalOverflow ? S.overflowH : ''}`}
-          variants={additionalVariants}
-          initial={data?.onMobile !== false ? 'hidden' : 'visible'}
-          transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
-          animate={data?.onMobile ? 'hidden' : 'visible'}
-          onAnimationStart={() => { setData('additionalOverflow', true); }}
-          onAnimationComplete={() => {
-            if (!data?.onMobile) {
-              setData('additionalOverflow', false);
-            } else {
-              setData('additionalOverflow', true);
-            }
-          }}
-        >
-          <Field name="username">
+      <Form onSubmit={onSubmit} initialValues={data} render={({ handleSubmit, form, submitting }) => (
+        <form onSubmit={handleSubmit}>
+          <Field name="password-minlength" value={data?.minLength || ''}>
+            {({ input }) => <input type="hidden" {...input} id="password-minlength" />}
+          </Field>
+          <Field name="password-maxlength" value={data?.maxLength || ''}>
+            {({ input }) => <input type="hidden" {...input} id="password-maxlength" />}
+          </Field>
+          <Field name="password-pattern" value={data?.pattern || ''}>
+            {({ input }) => <input type="hidden" {...input} id="password-pattern" />}
+          </Field>
+          <Field name="url">
             {({ input }) => (
-              <div className={`${pI.passInput} ${data?.onMobile ? pI.disabled : ''} ${S.passInput}`}>
+              <div className={`${pI.passInput}`}>
                 <div className={pI.passInputTop}>
-                  <label htmlFor="username">{browser.i18n.getMessage('username')}</label>
+                  <label htmlFor="add-new-url">{getMessage('domain_uri')}</label>
                 </div>
                 <div className={pI.passInputBottom}>
                   <input
                     type="text"
                     {...input}
-                    id="username"
-                    disabled={data?.onMobile ? 'disabled' : ''}
-                    placeholder={browser.i18n.getMessage('placeholder_username')}
-                    onChange={e => {
-                      input.onChange(e);
-                      setData('username', e.target.value);
-                    }}
-                  />
-                  <div className={pI.passInputBottomButtons}>
-                    <button
-                      type='button'
-                      className={`${bS.btn} ${pI.iconButton}`}
-                      onClick={() => handleCopyUsername(form)}
-                      title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
-                      disabled={data?.onMobile ? 'disabled' : ''}
-                      tabIndex={-1}
-                    >
-                      <CopyIcon />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </Field>
-          <Field name="s_password">
-            {({ input }) => (
-              <div className={`${pI.passInput} ${data?.onMobile ? pI.disabled : ''} ${S.passInput}`}>
-                <div className={pI.passInputTop}>
-                  <label htmlFor="s_password">{browser.i18n.getMessage('password')}</label>
-                </div>
-                <div className={pI.passInputBottom}>
-                  <input
-                    {...input}
-                    type={data?.passwordVisible ? 'text' : 'password'}
-                    placeholder={browser.i18n.getMessage('placeholder_password')}
-                    id="s_password"
-                    disabled={data?.onMobile ? 'disabled' : ''}
+                    placeholder={getMessage('placeholder_domain_uri')}
+                    id="add-new-url"
                     dir="ltr"
                     spellCheck="false"
                     autoCorrect="off"
@@ -347,59 +245,172 @@ function LoginAddNewView() {
                     autoCapitalize="off"
                     onChange={e => {
                       input.onChange(e);
-                      setData('s_password', e.target.value);
+                      setData('url', e.target.value);
                     }}
                   />
                   <div className={pI.passInputBottomButtons}>
                     <button
                       type='button'
-                      className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
-                      onClick={handleGeneratePassword}
-                      title={browser.i18n.getMessage('details_generate_password')}
-                    >
-                      <RefreshIcon />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handlePasswordVisibleClick}
-                      className={`${pI.iconButton} ${pI.visibleButton}`}
-                      title={browser.i18n.getMessage('details_toggle_password_visibility')}
-                      tabIndex={-1}
-                    >
-                      <VisibleIcon />
-                    </button>
-                    <button
-                      type='button'
                       className={`${bS.btn} ${pI.iconButton}`}
-                      onClick={() => handleCopyPassword(form)}
-                      title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+                      onClick={() => handleCopyUrl(form)}
+                      title={getMessage('this_tab_copy_to_clipboard')}
                       tabIndex={-1}
                     >
                       <CopyIcon />
                     </button>
                   </div>
                 </div>
-                <Tooltip className={`${pI.passInputAdditional} tooltip`}>
-                  <h4>{browser.i18n.getMessage('add_new_learn_more_tooltip_header')}</h4>
-                  <h5>{browser.i18n.getMessage('add_new_learn_more_tooltip_content_1')}</h5>
-                  <p>{browser.i18n.getMessage('add_new_learn_more_tooltip_content_2')}</p>
-                </Tooltip>
+                <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
+                  {domainValidation(input.value)}
+                </div>
+                <div className={pI.passInputAdditional}>
+                  <div className={`${bS.passToggle} ${bS.loaded}`}>
+                    <input
+                      type="checkbox"
+                      name="set-in-mobile"
+                      id="set-in-mobile"
+                      checked={data?.onMobile}
+                      onChange={() => {
+                        setData('onMobile', !data?.onMobile);
+                      }}
+                    />
+                    <label htmlFor="set-in-mobile">
+                      <span className={bS.passToggleBox}>
+                        <span className={bS.passToggleBoxCircle}></span>
+                      </span>
+
+                      <span className={bS.passToggleText}>
+                        <span>{getMessage('set_login_and_password_in_the_mobile_app')}</span>
+                      </span>
+                    </label>
+                  </div>
+                </div>
               </div>
             )}
           </Field>
-        </motion.div>
-        <div className={S.addNewButtons}>
-          <button
-            type="submit"
-            className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-            disabled={submitting ? 'disabled' : ''}
+          <motion.div
+            className={`${S.addNewAdditional} ${data?.additionalOverflow ? S.overflowH : ''}`}
+            variants={additionalVariants}
+            initial={data?.onMobile !== false ? 'hidden' : 'visible'}
+            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
+            animate={data?.onMobile ? 'hidden' : 'visible'}
+            onAnimationStart={() => { setData('additionalOverflow', true); }}
+            onAnimationComplete={() => {
+              if (!data?.onMobile) {
+                setData('additionalOverflow', false);
+              } else {
+                setData('additionalOverflow', true);
+              }
+            }}
           >
-            {browser.i18n.getMessage('continue')}
-          </button>
-        </div>
-      </form>
-    )}
-    />
+            <Field name="username">
+              {({ input }) => (
+                <div className={`${pI.passInput} ${data?.onMobile ? pI.disabled : ''} ${S.passInput}`}>
+                  <div className={pI.passInputTop}>
+                    <label htmlFor="username">{getMessage('username')}</label>
+                  </div>
+                  <div className={pI.passInputBottom}>
+                    <input
+                      type="text"
+                      {...input}
+                      id="username"
+                      disabled={data?.onMobile ? 'disabled' : ''}
+                      placeholder={getMessage('placeholder_username')}
+                      onChange={e => {
+                        input.onChange(e);
+                        setData('username', e.target.value);
+                      }}
+                    />
+                    <div className={pI.passInputBottomButtons}>
+                      <button
+                        type='button'
+                        className={`${bS.btn} ${pI.iconButton}`}
+                        onClick={() => handleCopyUsername(form)}
+                        title={getMessage('this_tab_copy_to_clipboard')}
+                        disabled={data?.onMobile ? 'disabled' : ''}
+                        tabIndex={-1}
+                      >
+                        <CopyIcon />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Field>
+            <Field name="s_password">
+              {({ input }) => (
+                <div className={`${pI.passInput} ${data?.onMobile ? pI.disabled : ''} ${S.passInput}`}>
+                  <div className={pI.passInputTop}>
+                    <label htmlFor="s_password">{getMessage('password')}</label>
+                  </div>
+                  <div className={pI.passInputBottom}>
+                    <input
+                      {...input}
+                      type={data?.passwordVisible ? 'text' : 'password'}
+                      placeholder={getMessage('placeholder_password')}
+                      id="s_password"
+                      disabled={data?.onMobile ? 'disabled' : ''}
+                      dir="ltr"
+                      spellCheck="false"
+                      autoCorrect="off"
+                      autoComplete="off"
+                      autoCapitalize="off"
+                      onChange={e => {
+                        input.onChange(e);
+                        setData('s_password', e.target.value);
+                      }}
+                    />
+                    <div className={pI.passInputBottomButtons}>
+                      <button
+                        type='button'
+                        className={`${bS.btn} ${pI.iconButton} ${pI.refreshButton}`}
+                        onClick={handleGeneratePassword}
+                        title={getMessage('details_generate_password')}
+                      >
+                        <RefreshIcon />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handlePasswordVisibleClick}
+                        className={`${pI.iconButton} ${pI.visibleButton}`}
+                        title={getMessage('details_toggle_password_visibility')}
+                        tabIndex={-1}
+                      >
+                        <VisibleIcon />
+                      </button>
+                      <button
+                        type='button'
+                        className={`${bS.btn} ${pI.iconButton}`}
+                        onClick={() => handleCopyPassword(form)}
+                        title={getMessage('this_tab_copy_to_clipboard')}
+                        tabIndex={-1}
+                      >
+                        <CopyIcon />
+                      </button>
+                    </div>
+                  </div>
+                  <Tooltip className={`${pI.passInputAdditional} tooltip`}>
+                    <h4>{getMessage('add_new_learn_more_tooltip_header')}</h4>
+                    <h5>{getMessage('add_new_learn_more_tooltip_content_1')}</h5>
+                    <p>{getMessage('add_new_learn_more_tooltip_content_2')}</p>
+                  </Tooltip>
+                </div>
+              )}
+            </Field>
+          </motion.div>
+          <div className={S.addNewButtons}>
+            <button
+              type="submit"
+              className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
+              disabled={submitting ? 'disabled' : ''}
+            >
+              {getMessage('continue')}
+            </button>
+          </div>
+        </form>
+      )}
+      />
+    </>
   );
 }
 

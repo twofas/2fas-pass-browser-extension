@@ -14,8 +14,12 @@ const isVisible = domElement => {
     return false;
   }
 
+  let browserVisibilityAPIAvailable = false;
+  let browserVisible = true;
+
   if (typeof domElement.checkVisibility === 'function') {
-    const browserVisible = domElement.checkVisibility({
+    browserVisibilityAPIAvailable = true;
+    browserVisible = domElement.checkVisibility({
       contentVisibilityAuto: true,
       opacityProperty: true,
       visibilityProperty: true
@@ -57,11 +61,18 @@ const isVisible = domElement => {
       return false;
     }
 
-    if (parentStyle.display !== 'contents') {
+    // Only check parent dimensions if browser visibility API is not available.
+    // Modern browsers' checkVisibility() handles positioned elements correctly
+    // (e.g., modals with position:fixed that escape parent overflow).
+    // Our manual overflow check can produce false negatives in these cases.
+    if (!browserVisibilityAPIAvailable && parentStyle.display !== 'contents') {
       const parentRect = parent.getBoundingClientRect();
+      const parentOverflow = parentStyle.overflow;
 
       if (parentRect.height === 0 || parentRect.width === 0) {
-        return false;
+        if (parentOverflow !== 'visible') {
+          return false;
+        }
       }
     }
 

@@ -30,13 +30,13 @@ const handleAutofill = async (deviceId, vaultId, itemId, navigate, more, setMore
   try {
     item = await getItem(deviceId, vaultId, itemId);
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
+    showToast(getMessage('error_login_not_found'), 'error');
     await CatchError(e);
     return;
   }
 
   if (!item) {
-    showToast(browser.i18n.getMessage('error_login_not_found'), 'error');
+    showToast(getMessage('error_login_not_found'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handleAutofillNoService, { additional: { func: 'handleAutofill' } }));
     return;
   }
@@ -49,7 +49,7 @@ const handleAutofill = async (deviceId, vaultId, itemId, navigate, more, setMore
       await handleCardAutofill(item, navigate);
       break;
     default:
-      showToast(browser.i18n.getMessage('error_autofill_failed'), 'error');
+      showToast(getMessage('error_autofill_failed'), 'error');
       await CatchError(new TwoFasError(TwoFasError.internalErrors.handleAutofillNoService, { additional: { func: 'handleAutofill', contentType: item.contentType } }));
       break;
   }

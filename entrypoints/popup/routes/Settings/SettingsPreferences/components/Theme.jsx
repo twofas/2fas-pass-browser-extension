@@ -6,6 +6,7 @@
 
 import S from '../../Settings.module.scss';
 import { useEffect, useState, useCallback } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 /**
@@ -13,6 +14,7 @@ import AdvancedSelect from '@/partials/components/AdvancedSelect';
 * @return {JSX.Element} The rendered component.
 */
 function Theme () {
+  const { getMessage } = useI18n();
   const [t, setT] = useState('unset');
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -36,9 +38,9 @@ function Theme () {
   }, []);
 
   const themeOptions = [
-    { value: 'unset', label: browser.i18n.getMessage('unset_mode') },
-    { value: 'light', label: browser.i18n.getMessage('light_mode') },
-    { value: 'dark', label: browser.i18n.getMessage('dark_mode') }
+    { value: 'unset', label: getMessage('unset_mode') },
+    { value: 'light', label: getMessage('light_mode') },
+    { value: 'dark', label: getMessage('dark_mode') }
   ];
 
   const handleThemeChange = useCallback(async change => {
@@ -57,7 +59,20 @@ function Theme () {
       document.documentElement.classList.add(`theme-${value}`);
 
       await storage.setItem('local:theme', value);
-      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
+
+      const tabs = await browser.tabs.query({});
+
+      tabs.forEach(tab => {
+        if (tab.id) {
+          browser.tabs.sendMessage(tab.id, {
+            action: REQUEST_ACTIONS.REFRESH_THEME,
+            theme: value,
+            target: REQUEST_TARGETS.CONTENT
+          }).catch(() => {});
+        }
+      });
+
+      showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:theme') || 'unset';
       setT(previousValue);
@@ -68,14 +83,14 @@ function Theme () {
       document.documentElement.classList.remove('theme-light', 'theme-dark', 'theme-unset');
       document.documentElement.classList.add(`theme-${previousValue}`);
 
-      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
+      showToast(getMessage('error_general_setting'), 'error');
       await CatchError(e);
     }
   }, [isInitialized]);
 
   return (
     <div className={S.settingsTheme}>
-      <h4>{browser.i18n.getMessage('settings_theme')}</h4>
+      <h4>{getMessage('settings_theme')}</h4>
 
       <form action="#">
         <AdvancedSelect

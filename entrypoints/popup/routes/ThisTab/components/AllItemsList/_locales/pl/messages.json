@@ -1,0 +1,6 @@
+{
+  "all_items_list_no_search_results": {
+    "message": "Brak wyników wyszukiwania. Spróbuj ponownie.",
+    "description": "Message displayed when no search results are found"
+  }
+}

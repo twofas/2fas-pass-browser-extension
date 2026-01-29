@@ -23,8 +23,8 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
 
     if (!storedDataJson) {
       return TwofasNotification.show({
-        Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-        Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+        Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+        Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
       }, tabId, true);
     }
 
@@ -33,8 +33,8 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
     await CatchError(e);
 
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
@@ -44,23 +44,20 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
     await storage.removeItem(storageKey);
 
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
-  const confirmMessage = browser.i18n.getMessage('autofill_cross_domain_warning_popup')
+  const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
     .replace('DOMAINS', domains.join(', '));
 
-  // Focus the tab before showing confirmation dialog
-  // window.confirm() requires the tab to be active/focused to show the dialog
   try {
     const tab = await browser.tabs.get(tabId);
 
     await browser.windows.update(tab.windowId, { focused: true });
     await browser.tabs.update(tabId, { active: true });
 
-    // Small delay to ensure tab is fully focused before showing dialog
     await new Promise(resolve => setTimeout(resolve, 100));
   } catch { }
 
@@ -94,8 +91,8 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
     await storage.removeItem(storageKey);
 
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
@@ -103,8 +100,8 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
 
   if (!response) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
@@ -112,8 +109,8 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
 
   if (relevantResponses.length === 0) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_card_autofill_no_inputs_title'),
-      Message: browser.i18n.getMessage('notification_card_autofill_no_inputs_message')
+      Title: getMessage('notification_card_autofill_no_inputs_title'),
+      Message: getMessage('notification_card_autofill_no_inputs_message')
     }, tabId, true);
   }
 
@@ -140,8 +137,8 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
 
   if (!isOk && !isPartial) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: browser.i18n.getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
@@ -151,8 +148,8 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
 
   if (isPartial || hasMissingInputs) {
     return TwofasNotification.show({
-      Title: browser.i18n.getMessage('notification_card_autofill_partial_title'),
-      Message: browser.i18n.getMessage('notification_card_autofill_partial_message')
+      Title: getMessage('notification_card_autofill_partial_title'),
+      Message: getMessage('notification_card_autofill_partial_message')
     }, tabId, true);
   }
 };

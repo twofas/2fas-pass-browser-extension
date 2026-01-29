@@ -10,6 +10,7 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 import usePopupState from '../../../store/popupState/usePopupState';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
 import ChevronIcon from '@/assets/popup-window/chevron.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const dangerZoneVariants = {
   hidden: { maxHeight: '0px' },
@@ -22,6 +23,7 @@ const dangerZoneVariants = {
 * @return {JSX.Element} The rendered component.
 */
 function DangerZone (props) {
+  const { getMessage } = useI18n();
   const { data, setData } = usePopupState();
 
   const { formData } = props;
@@ -35,7 +37,7 @@ function DangerZone (props) {
         onClick={() => setData('dangerZoneOpened', !data.dangerZoneOpened)}
         disabled={submitting ? 'disabled' : ''}
       >
-        <span>{browser.i18n.getMessage('settings_danger_zone')}</span>
+        <span>{getMessage('settings_danger_zone')}</span>
         <ChevronIcon />
       </button>
 
@@ -46,7 +48,7 @@ function DangerZone (props) {
         transition={{ duration: 0.2, ease: 'easeOut' }}
         animate={data.dangerZoneOpened ? 'visible' : 'hidden'}
       >
-        <p>{browser.i18n.getMessage('details_delete_header')}</p>
+        <p>{getMessage('details_delete_header')}</p>
         <ClearLink
           to='/fetch'
           state={{
@@ -62,7 +64,7 @@ function DangerZone (props) {
           className={S.detailsDangerZoneBodyButton}
           prefetch='intent'
         >
-          <span>{browser.i18n.getMessage('details_delete')}</span>
+          <span>{getMessage('details_delete')}</span>
         </ClearLink>
       </motion.div>
     </div>

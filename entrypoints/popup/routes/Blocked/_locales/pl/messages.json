@@ -1,0 +1,10 @@
+{
+  "blocked_text": {
+    "message": "Ten widok jest zablokowany.\nUżyj otwartego okienka.",
+    "description": "This view is blocked. Please use the external popup."
+  },
+  "blocked_button": {
+    "message": "Otwórz okienko",
+    "description": "Button label to open the external popup."
+  }
+}

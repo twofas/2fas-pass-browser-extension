@@ -6,6 +6,7 @@
 
 import S from '../../Settings.module.scss';
 import { useEffect, useState, lazy } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 
 const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
@@ -15,6 +16,7 @@ const Tooltip = lazy(() => import('@/entrypoints/popup/components/Tooltip'));
 * @return {JSX.Element} The rendered component.
 */
 function AutoClearClipboard () {
+  const { getMessage } = useI18n();
   const [loading, setLoading] = useState(true);
   const [cC, setCC] = useState(null);
   const [disabled, setDisabled] = useState(true);
@@ -40,11 +42,11 @@ function AutoClearClipboard () {
   }, []);
 
   const autoClearClipboardOptions = [
-    { value: 'default', label: browser.i18n.getMessage('settings_don_t_clear') },
-    { value: 1, label: browser.i18n.getMessage('settings_after_1_minute') },
-    { value: 5, label: browser.i18n.getMessage('settings_after_5_minutes') },
-    { value: 15, label: browser.i18n.getMessage('settings_after_15_minutes') },
-    { value: 30, label: browser.i18n.getMessage('settings_after_30_minutes') }
+    { value: 'default', label: getMessage('settings_don_t_clear') },
+    { value: 1, label: getMessage('settings_after_1_minute') },
+    { value: 5, label: getMessage('settings_after_5_minutes') },
+    { value: 15, label: getMessage('settings_after_15_minutes') },
+    { value: 30, label: getMessage('settings_after_30_minutes') }
   ];
 
   const handleAutoClearClipboardChange = async change => {
@@ -54,7 +56,7 @@ function AutoClearClipboard () {
       const clipboardReadPermission = await browser.permissions.request({ permissions: ['clipboardRead'] });
       
       if (!clipboardReadPermission) {
-        showToast(browser.i18n.getMessage('error_auto_clear_clipboard_permission_denied'), 'error');
+        showToast(getMessage('error_auto_clear_clipboard_permission_denied'), 'error');
         setDisabled(false);
         return;
       }
@@ -65,9 +67,9 @@ function AutoClearClipboard () {
       await storage.setItem('local:autoClearClipboard', value);
       setCC(value);
 
-      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
+      showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
+      showToast(getMessage('error_general_setting'), 'error');
       await CatchError(e);
     } finally {
       setDisabled(false);
@@ -80,8 +82,8 @@ function AutoClearClipboard () {
 
   return (
     <div className={S.settingsClearClipboard}>
-      <h4>{browser.i18n.getMessage('settings_auto_clear_clipboard_header')}</h4>
-      <p>{browser.i18n.getMessage('settings_auto_clear_clipboard_description')}</p>
+      <h4>{getMessage('settings_auto_clear_clipboard_header')}</h4>
+      <p>{getMessage('settings_auto_clear_clipboard_description')}</p>
     
       <form action="#" className={S.settingsClearClipboardForm}>
         <AdvancedSelect
@@ -96,9 +98,9 @@ function AutoClearClipboard () {
         />
       </form>
       <Tooltip type='bottom'>
-        <h4>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_1')}</h4>
-        <h5>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_2')}</h5>
-        <p>{browser.i18n.getMessage('settings_auto_clear_clipboard_tooltip_3')}</p>
+        <h4>{getMessage('settings_auto_clear_clipboard_tooltip_1')}</h4>
+        <h5>{getMessage('settings_auto_clear_clipboard_tooltip_2')}</h5>
+        <p>{getMessage('settings_auto_clear_clipboard_tooltip_3')}</p>
       </Tooltip>
     </div>
   );

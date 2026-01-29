@@ -6,6 +6,7 @@
 
 import S from '../Settings.module.scss';
 import { useState, useRef, useEffect } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import DisconnectIcon from '@/assets/popup-window/disconnect-device.svg?react';
@@ -18,6 +19,7 @@ import ConfirmDialog from '@/entrypoints/popup/components/ConfirmDialog';
 * @return {JSX.Element} The rendered component.
 */
 function SettingsDevices (props) {
+  const { getMessage } = useI18n();
   const [loading, setLoading] = useState(true);
   const [devices, setDevices] = useState([]);
   const [currentDevice, setCurrentDevice] = useState(null);
@@ -32,31 +34,31 @@ function SettingsDevices (props) {
     switch (platform) {
       case 'android': return 'Android';
       case 'ios': return 'iOS';
-      default: return browser.i18n.getMessage('settings_devices_unknown_platform');
+      default: return getMessage('settings_devices_unknown_platform');
     }
   };
 
   const generateDevicesList = () => {
     if (devices.length === 0 && !loading) {
-      return <p className={S.settingsDevicesListEmpty}>{browser.i18n.getMessage('settings_devices_no_devices')}</p>;
+      return <p className={S.settingsDevicesListEmpty}>{getMessage('settings_devices_no_devices')}</p>;
     }
 
     return devices.map(device => (
       <div
         key={device.id}
         className={`${S.settingsDevicesListItem} ${device.id === currentDevice?.id ? S.currentDevice : ''}`}
-        title={device.id === currentDevice?.id ? browser.i18n.getMessage('settings_devices_current_device_title') : ''}
+        title={device.id === currentDevice?.id ? getMessage('settings_devices_current_device_title') : ''}
       >
         <div className={S.settingsDevicesListItemContent}>
-          <h5><strong>{browser.i18n.getMessage('settings_devices_name_header')}: </strong>{device.name}</h5>
-          <h6><strong>{browser.i18n.getMessage('settings_devices_platform_header')}: </strong>{generatePlatformName(device.platform)}</h6>
-          <p><strong>{browser.i18n.getMessage('settings_devices_last_connected_header')}: </strong>{new Date(device.updatedAt).toLocaleString()}</p>
+          <h5><strong>{getMessage('settings_devices_name_header')}: </strong>{device.name}</h5>
+          <h6><strong>{getMessage('settings_devices_platform_header')}: </strong>{generatePlatformName(device.platform)}</h6>
+          <p><strong>{getMessage('settings_devices_last_connected_header')}: </strong>{new Date(device.updatedAt).toLocaleString()}</p>
         </div>
         {currentDevice?.id !== device.id && (
           <div className={S.settingsDevicesListItemActions}>
             <button
               className={S.settingsDevicesListItemActionsRemove}
-              title={browser.i18n.getMessage('settings_devices_disconnect_title')}
+              title={getMessage('settings_devices_disconnect_title')}
               onClick={() => showConfirmDialog(device.id)}
             >
               <DisconnectIcon />
@@ -128,12 +130,12 @@ function SettingsDevices (props) {
             <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
               <div className={S.settingsSubmenu}>
                 <div className={S.settingsSubmenuHeader}>
-                  <h3>{browser.i18n.getMessage('settings_devices_header')}</h3>
+                  <h3>{getMessage('settings_devices_header')}</h3>
                 </div>
       
                 <div className={S.settingsSubmenuBody}>
                   <div className={S.settingsDevices}>
-                    <h4>{browser.i18n.getMessage('settings_devices_description')}</h4>
+                    <h4>{getMessage('settings_devices_description')}</h4>
                     <div className={S.settingsDevicesList}>
                       {generateDevicesList()}
                     </div>
@@ -147,10 +149,10 @@ function SettingsDevices (props) {
 
       <ConfirmDialog 
         open={dialogOpen}
-        message={browser.i18n.getMessage('settings_devices_dialog_message')}
-        subMessage={currentDevice?.id === chosenDeviceId ? browser.i18n.getMessage('settings_devices_dialog_submessage_current_device') : null}
-        cancelText={browser.i18n.getMessage('settings_devices_dialog_cancel_text')}
-        confirmText={browser.i18n.getMessage('settings_devices_dialog_confirm_text')}
+        message={getMessage('settings_devices_dialog_message')}
+        subMessage={currentDevice?.id === chosenDeviceId ? getMessage('settings_devices_dialog_submessage_current_device') : null}
+        cancelText={getMessage('settings_devices_dialog_cancel_text')}
+        confirmText={getMessage('settings_devices_dialog_confirm_text')}
         onCancel={handleDialogCancel}
         onConfirm={handleDialogConfirm}
       />

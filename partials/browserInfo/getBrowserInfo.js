@@ -72,7 +72,7 @@ const getBrowserInfo = () => {
   browserVersion = getBrowserVersion(userAgent, versionRegex[browserName]);
 
   return {
-    name: `${browserName} ${browser.i18n.getMessage('background_get_browser_info_on')} ${osName} (${randomID})`,
+    name: `${browserName} ${getMessage('background_get_browser_info_on')} ${osName} (${randomID})`,
     browserName,
     browserVersion
   };

@@ -17,6 +17,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import usePopupState from '../../store/popupState/usePopupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const PASSWORD_GENERATOR_DEFAULTS = {
   characters: 16,
@@ -26,6 +27,7 @@ const PASSWORD_GENERATOR_DEFAULTS = {
 };
 
 function PasswordGenerator (props) {
+  const { getMessage } = useI18n();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -154,7 +156,7 @@ function PasswordGenerator (props) {
     const returnTo = data?.returnTo || location?.state?.from;
 
     if (!returnTo) {
-      showToast(browser.i18n.getMessage('password_generator_data_error'));
+      showToast(getMessage('password_generator_data_error'));
       return;
     }
 
@@ -169,7 +171,7 @@ function PasswordGenerator (props) {
       const item = data.item;
 
       if (!item?.id) {
-        showToast(browser.i18n.getMessage('password_generator_data_error'));
+        showToast(getMessage('password_generator_data_error'));
         return;
       }
 
@@ -180,7 +182,7 @@ function PasswordGenerator (props) {
         }
       });
     } else {
-      showToast(browser.i18n.getMessage('password_generator_data_error'));
+      showToast(getMessage('password_generator_data_error'));
       return;
     }
   };
@@ -191,7 +193,7 @@ function PasswordGenerator (props) {
         <section className={S.passwordGenerator}>
           <div className={S.passwordGeneratorContainer}>
             <NavigationButton type='back' />
-            <h2>{browser.i18n.getMessage('password_generator_title')}</h2>
+            <h2>{getMessage('password_generator_title')}</h2>
 
             <Form
               onSubmit={onSubmit}
@@ -203,7 +205,7 @@ function PasswordGenerator (props) {
                       {({ input }) => (
                         <div className={`${pI.passInput} ${pI.disabled} ${pI.withoutMargin}`}>
                           <div className={pI.passInputTop}>
-                            <label htmlFor="password">{browser.i18n.getMessage('password')}</label>
+                            <label htmlFor="password">{getMessage('password')}</label>
                           </div>
                           <div className={pI.passInputBottom}>
                             <PasswordInput
@@ -215,7 +217,7 @@ function PasswordGenerator (props) {
                                 type='button'
                                 onClick={() => regeneratePassword(form)}
                                 className={bS.btnIcon}
-                                title={browser.i18n.getMessage('password_generator_regenerate')}
+                                title={getMessage('password_generator_regenerate')}
                               >
                                 <RefreshIcon />
                               </button>
@@ -224,14 +226,14 @@ function PasswordGenerator (props) {
                                 onClick={async () => {
                                   try {
                                     await copyValue(input.value, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'password');
-                                    showToast(browser.i18n.getMessage('notification_password_copied'), 'success');
+                                    showToast(getMessage('notification_password_copied'), 'success');
                                   } catch (e) {
                                     await CatchError(e);
-                                    showToast(browser.i18n.getMessage('error_copy_password'));
+                                    showToast(getMessage('error_copy_password'));
                                   }
                                 }}
                                 className={bS.btnIcon}
-                                title={browser.i18n.getMessage('copy_to_clipboard')}
+                                title={getMessage('copy_to_clipboard')}
                                 tabIndex={-1}
                               >
                                 <CopyIcon />
@@ -257,7 +259,7 @@ function PasswordGenerator (props) {
                           
                           return (
                             <>
-                              <h3>{browser.i18n.getMessage('password_generator_characters').replace('COUNT', input.value)}</h3>
+                              <h3>{getMessage('password_generator_characters').replace('COUNT', input.value)}</h3>
                               <style>
                                 {`
                                   .${S.passwordGeneratorFormCharacters} input[type="range"]::-webkit-slider-runnable-track {
@@ -287,7 +289,7 @@ function PasswordGenerator (props) {
                     </div>
 
                     <div className={S.passwordGeneratorFormInclude}>
-                      <h3>{browser.i18n.getMessage('password_generator_include')}</h3>
+                      <h3>{getMessage('password_generator_include')}</h3>
                       
                       <div className={S.passwordGeneratorFormIncludeGrid}>
                         <div className={bS.passToggle}>
@@ -309,7 +311,7 @@ function PasswordGenerator (props) {
                                     <span className={bS.passToggleBoxCircle} />
                                   </span>
                                   <span className={bS.passToggleText}>
-                                    <span>{browser.i18n.getMessage('password_generator_uppercase')}</span>
+                                    <span>{getMessage('password_generator_uppercase')}</span>
                                   </span>
                                 </label>
                               </>
@@ -336,7 +338,7 @@ function PasswordGenerator (props) {
                                     <span className={bS.passToggleBoxCircle} />
                                   </span>
                                   <span className={bS.passToggleText}>
-                                    <span>{browser.i18n.getMessage('password_generator_numbers')}</span>
+                                    <span>{getMessage('password_generator_numbers')}</span>
                                   </span>
                                 </label>
                               </>
@@ -363,7 +365,7 @@ function PasswordGenerator (props) {
                                     <span className={bS.passToggleBoxCircle} />
                                   </span>
                                   <span className={bS.passToggleText}>
-                                    <span>{browser.i18n.getMessage('password_generator_special_chars')}</span>
+                                    <span>{getMessage('password_generator_special_chars')}</span>
                                   </span>
                                 </label>
                               </>
@@ -378,7 +380,7 @@ function PasswordGenerator (props) {
                         className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
                         type='submit'
                       >
-                        {browser.i18n.getMessage('password_generator_use_password')}
+                        {getMessage('password_generator_use_password')}
                       </button>
                     </div>
                   </form>

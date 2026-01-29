@@ -70,5 +70,13 @@
   "autofill_cross_domain_warning_popup": {
     "message": "This page contains forms from external domains:\nDOMAINS\n\nDo you want to autofill data in these frames?",
     "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
+  },
+  "notification_autofill_partial_title": {
+    "message": "Partial autofill",
+    "description": "Title for the notification when autofill only partially succeeded"
+  },
+  "notification_autofill_failed_open_popup": {
+    "message": "Open popup to copy unfilled details manually",
+    "description": "Message for the notification when autofill failed, suggesting to open popup for manual copy"
   }
 }

@@ -1,6 +1,6 @@
 {
   "keep_item_popup_header": {
-    "message": "Data for the following Item \nsuccessfully fetched.",
+    "message": "Item details successfully fetched.",
     "description": "Header message in popup after fetching login data for autofill"
   },
   "keep_item_popup_keep": {

@@ -6,16 +6,18 @@
 
 @font-face {
   font-family: 'Twofas-Pass-Inter';
+  font-display: swap;
+  font-optical-sizing: auto;
   font-style: normal;
   font-weight: 100 900;
-  font-display: swap;
   src: url("/fonts/inter.woff2") format('woff2');
 }
 
 @font-face {
   font-family: 'Montserrat';
+  font-display: swap;
+  font-optical-sizing: auto;
   font-style: normal;
   font-weight: 100 900;
-  font-display: swap;
   src: url("/fonts/montserrat.woff2") format('woff2');
 }

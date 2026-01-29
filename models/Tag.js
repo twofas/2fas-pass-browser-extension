@@ -6,6 +6,7 @@
 
 class Tag {
   static contentVersion = 1;
+  static Colors = Object.freeze(['gray', 'red', 'orange', 'yellow', 'green', 'cyan', 'indigo', 'purple' ]);
 
   constructor (tagData, vaultId = null, deviceId = null) {
     validate(tagData && typeof tagData === 'object', 'Invalid tag data');
@@ -35,7 +36,6 @@ class Tag {
     validate(isValidInteger(tagData.updatedAt), 'Invalid or missing updatedAt: must be an integer');
     validate(typeof tagData.name === 'string', `Invalid tagData.name must be a string`);
     validate(isValidInteger(tagData.position, 0, 999), 'Invalid or missing tagData.position: must be an integer between 0 and 999');
-    validateOptional(tagData.color, value => typeof value === 'string', 'Invalid tagData.color: must be a string');
 
     this.id = tagData.id;
     this.deviceId = tagData.deviceId;
@@ -43,6 +43,14 @@ class Tag {
     this.updatedAt = tagData.updatedAt;
     this.name = tagData.name;
     this.position = tagData.position;
+
+    if (typeof tagData?.color === 'string') {
+      if (Tag.Colors.includes(tagData.color)) {
+        this.color = tagData.color;
+      } else {
+        this.color = 'gray';
+      }
+    }
   }
 }
 

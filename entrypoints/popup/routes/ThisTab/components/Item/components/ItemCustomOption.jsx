@@ -4,6 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { useI18n } from '@/partials/context/I18nContext';
 import handleUriCopyClick from '../../../functions/serviceList/handleUriCopyClick';
 import handleUriClick from '../../../functions/serviceList/handleUriClick';
 import handleForgetPassword from '../../../functions/serviceList/handleForgetPassword';
@@ -19,6 +20,8 @@ import TrashIcon from '@/assets/popup-window/trash.svg?react';
 * @return {JSX.Element} The rendered custom option.
 */
 const ItemCustomOption = option => {
+  const { getMessage } = useI18n();
+
   switch (option?.data?.type) {
     case 'details': {
       return (
@@ -29,7 +32,7 @@ const ItemCustomOption = option => {
             prefetch='intent'
           >
             <DetailsIcon />
-            <span>{browser.i18n.getMessage('this_tab_more_details')}</span>
+            <span>{getMessage('this_tab_more_details')}</span>
           </ClearLink>
         </div>
       );
@@ -77,7 +80,7 @@ const ItemCustomOption = option => {
           <button
             className={`react-select-dropdown__option--copy ${option.data.value === 'details' || option.data.value === 'uris:' ? 'hidden' : ''}`}
             onClick={() => handleUriCopyClick(option)}
-            title={browser.i18n.getMessage('this_tab_copy_to_clipboard')}
+            title={getMessage('this_tab_copy_to_clipboard')}
             type='button'
           >
             <CopyIcon />

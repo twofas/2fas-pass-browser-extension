@@ -27,29 +27,29 @@ const handleSecureNoteText = async (deviceId, vaultId, itemId, more, setMore) =>
   try {
     item = await getItem(deviceId, vaultId, itemId);
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_secure_note_not_found'), 'error');
+    showToast(getMessage('error_secure_note_not_found'), 'error');
     await CatchError(e);
     return;
   }
 
   if (!item) {
-    showToast(browser.i18n.getMessage('error_secure_note_not_found'), 'error');
+    showToast(getMessage('error_secure_note_not_found'), 'error');
     await CatchError(new TwoFasError(TwoFasError.internalErrors.handlePasswordNoService, { additional: { func: 'handlePassword' } }));
     return;
   }
 
   if (!item.sifExists) {
     navigator.clipboard.writeText('');
-    showToast(browser.i18n.getMessage('notification_secure_note_text_copied'), 'success');
+    showToast(getMessage('notification_secure_note_text_copied'), 'success');
     return;
   }
 
   try {
     const decryptedData = await item.decryptSif();
     await copyValue(decryptedData.text, deviceId, vaultId, item.id, 'text');
-    showToast(browser.i18n.getMessage('notification_secure_note_text_copied'), 'success');
+    showToast(getMessage('notification_secure_note_text_copied'), 'success');
   } catch (e) {
-    showToast(browser.i18n.getMessage('error_secure_note_name_copy_failed'), 'error');
+    showToast(getMessage('error_secure_note_name_copy_failed'), 'error');
     await CatchError(e);
   }
 };

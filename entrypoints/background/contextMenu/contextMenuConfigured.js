@@ -100,7 +100,7 @@ const contextMenuConfigured = async (items = null, retryAttempt = 0) => {
       browser.contextMenus.create({
         id: '2fas-pass-no-accounts',
         enabled: false,
-        title: browser.i18n.getMessage('background_contextMenuConfigured_no_accounts'),
+        title: getMessage('background_contextMenuConfigured_no_accounts'),
         type: 'normal',
         visible: false,
         parentId: '2fas-pass-configured',
@@ -127,7 +127,7 @@ const contextMenuConfigured = async (items = null, retryAttempt = 0) => {
       browser.contextMenus.create({
         id: '2fas-pass-add-account',
         enabled: true,
-        title: browser.i18n.getMessage('background_contextMenuConfigured_add_account'),
+        title: getMessage('background_contextMenuConfigured_add_account'),
         type: 'normal',
         visible: true,
         parentId: '2fas-pass-configured',
@@ -156,7 +156,7 @@ const contextMenuConfigured = async (items = null, retryAttempt = 0) => {
         browser.contextMenus.create({
           id: '2fas-pass-payment-cards',
           enabled: true,
-          title: browser.i18n.getMessage('background_contextMenuConfigured_cards'),
+          title: getMessage('background_contextMenuConfigured_cards'),
           type: 'normal',
           visible: true,
           parentId: '2fas-pass-configured',

@@ -28,7 +28,7 @@ function ToastCloseButton ({ closeToast }) {
   }, []);
 
   return (
-    <button className='Toastify__toast-close' onClick={closeToast} ref={btnRef} title={browser.i18n.getMessage('close')}>
+    <button className='Toastify__toast-close' onClick={closeToast} ref={btnRef} title={getMessage('close')}>
       <BtnIcon />
     </button>
   );

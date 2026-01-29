@@ -37,6 +37,14 @@
     }
   }
 
+  .input-text-error {
+    color: v.$error-light !important;
+
+    @include m.darkMode {
+      color: v.$error-dark !important;
+    }
+  }
+
   &.big-margin {
     margin-bottom: 32px;
   }

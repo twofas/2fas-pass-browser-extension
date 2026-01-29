@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../../components/Item/styles/Item.module.scss';
+import { useI18n } from '@/partials/context/I18nContext';
 import handleUsername from '../handleUsername';
 import ItemUsernameIcon from '@/assets/popup-window/service-username.svg?react';
 
@@ -19,10 +20,12 @@ import ItemUsernameIcon from '@/assets/popup-window/service-username.svg?react';
 * @return {JSX.Element} The rendered button element.
 */
 const UsernameBtn = ({ deviceId, vaultId, itemId, more, setMore }) => {
+  const { getMessage } = useI18n();
+
   return (
     <button
       onClick={async () => await handleUsername(deviceId, vaultId, itemId, more, setMore)}
-      title={browser.i18n.getMessage('this_tab_copy_username')}
+      title={getMessage('this_tab_copy_username')}
     >
       <ItemUsernameIcon className={S.itemUsername} />
     </button>

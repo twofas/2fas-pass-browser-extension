@@ -1,0 +1,54 @@
+{
+  "connect_header": {
+    "message": "Zeskanuj ten kod QR za pomocą aplikacji mobilnej 2FAS Pass",
+    "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
+  },
+  "connect_description": {
+    "message": "Zrób to przy pierwszym uruchomieniu rozszerzenia przeglądarki, aby bezpiecznie połączyć je z aplikacją mobilną.",
+    "description": "Explains the need to scan the QR code for secure access during each browser launch"
+  },
+  "connect_connecting": {
+    "message": "Łączenie…",
+    "description": "Message displayed while the connection process is ongoing"
+  },
+  "connect_connection_opened": {
+    "message": "Nawiązano połączenie.\nPozostaw to okno otwarte.",
+    "description": "Message displayed when the connection is successfully opened"
+  },
+  "connect_push_cancelled": {
+    "message": "Połączenie anulowane w aplikacji mobilnej.",
+    "description": "Message displayed when the connection is cancelled by the user from the mobile app"
+  },
+  "connect_device_select_header": {
+    "message": "Twoje urządzenia",
+    "description": "Header prompting the user to select their device"
+  },
+  "connect_device_select_list_header": {
+    "message": "Wybierz urządzenie, z którym chcesz się połączyć:",
+    "description": "Header for the device selection list"
+  },
+  "connect_device_select_add_another": {
+    "message": "Dodaj nowe urządzenie",
+    "description": "Button text for adding another device"
+  },
+  "connect_push_animation_description": {
+    "message": "Aby dokończyć łączenie, \nzatwierdź prośbę na swoim urządzeniu.",
+    "description": "Description for the push notification animation"
+  },
+  "connect_push_trouble": {
+    "message": "Problemy z połączeniem?",
+    "description": "Text for link to QR code view if having trouble with push notification"
+  },
+  "connect_push_trouble_tooltip": {
+    "message": "Jeśli powiadomienie push nie przyjdzie w ciągu kilku sekund, sprawdź aplikację mobilną 2FAS Pass",
+    "description": "Tooltip text explaining what to do if the push notification does not arrive"
+  },
+  "connect_push_trouble_tooltip_or": {
+    "message": "albo",
+    "description": "The word 'or' used between two options"
+  },
+  "connect_push_trouble_tooltip_use_qr": {
+    "message": "Użyj kodu QR",
+    "description": "Instruction to use QR code as an alternative method"
+  }
+}

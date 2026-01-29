@@ -15,6 +15,7 @@ import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import Login from '@/models/itemModels/Login';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import { UriTempIdsProvider } from '../../context/UriTempIdsContext';
+import { useI18n } from '@/partials/context/I18nContext';
 
 const Name = lazy(() => import('../../components/Name'));
 const Username = lazy(() => import('../../components/Username'));
@@ -30,6 +31,7 @@ const DangerZone = lazy(() => import('../../components/DangerZone'));
 * @return {JSX.Element} The rendered component.
 */
 function LoginDetailsView(props) {
+  const { getMessage } = useI18n();
   const { data } = usePopupState();
   const [inputError, setInputError] = useState(undefined);
 
@@ -39,19 +41,19 @@ function LoginDetailsView(props) {
     const errors = {};
 
     if (!values?.content?.name || values?.content?.name?.length <= 0) {
-      errors.name = browser.i18n.getMessage('details_name_required');
+      errors.name = getMessage('details_name_required');
     } else if (values?.content?.name?.length > 255) {
-      errors.name = browser.i18n.getMessage('details_name_max_length');
+      errors.name = getMessage('details_name_max_length');
     } 
     
     if (values?.content?.username && values?.content?.username?.length > 255) {
-      errors.username = browser.i18n.getMessage('details_username_max_length');
+      errors.username = getMessage('details_username_max_length');
     }
 
     if (values?.content?.uris && Array.isArray(values.content.uris)) {
       values?.content?.uris.forEach((uri, index) => {
         if (uri?.text?.length > 2048) {
-          errors[`uris[${index}]`] = browser.i18n.getMessage('details_uri_max_length');
+          errors[`uris[${index}]`] = getMessage('details_uri_max_length');
         }
       });
     }
@@ -184,7 +186,7 @@ function LoginDetailsView(props) {
                 className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
                 disabled={(getEditableAmount().amount <= 0 || submitting) ? 'disabled' : ''}
               >
-                {browser.i18n.getMessage('update')}{getEditableAmount().text}
+                {getMessage('update')}{getEditableAmount().text}
               </button>
             </div>
 

@@ -8,6 +8,7 @@ import S from './PaymentCardNumberInput.module.scss';
 import { forwardRef, memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
 import getCardNumberMask from './getCardNumberMask';
 import isCardNumberInvalid from './validateCardNumber';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * PaymentCardNumberInput component with dynamic mask based on card type.
@@ -24,6 +25,7 @@ import isCardNumberInvalid from './validateCardNumber';
 * @return {JSX.Element} The rendered component.
 */
 const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, sifExists, placeholder, ...inputProps }, ref) => {
+  const { getMessage } = useI18n();
   const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
@@ -81,7 +83,7 @@ const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, 
     onChange(e);
   }, [id, onChange]);
 
-  const effectivePlaceholder = placeholder ?? (isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_number'));
+  const effectivePlaceholder = placeholder ?? (isHighlySecretWithoutSif ? '' : getMessage('placeholder_payment_card_number'));
 
   const inputClassName = `${S.paymentCardNumberInput}${isInvalid ? ` ${S.paymentCardNumberInputError}` : ''}`;
 

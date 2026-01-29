@@ -6,6 +6,7 @@
 
 import S from './styles/TagsInfo.module.scss';
 import { useMemo, memo } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import { useTagFilter } from '../Filters/hooks/useTagFilter';
 import ClearIcon from '@/assets/popup-window/clear.svg?react';
@@ -18,6 +19,7 @@ import ClearIcon from '@/assets/popup-window/clear.svg?react';
 * @return {JSX.Element} The rendered tag info component.
 */
 function TagsInfo ({ tagsWithFilteredAmounts, filteredItemsCount }) {
+  const { getMessage } = useI18n();
   const { data } = usePopupState();
   const { clearTagFilter } = useTagFilter();
 
@@ -41,13 +43,13 @@ function TagsInfo ({ tagsWithFilteredAmounts, filteredItemsCount }) {
   }, [isActive]);
 
   const infoText = useMemo(() => {
-    return browser.i18n.getMessage('tags_info_text')
+    return getMessage('tags_info_text')
       .replace('AMOUNT', filteredItemsCount)
       .replace('TAG_NAME', currentTagInfo?.name || '');
   }, [filteredItemsCount, currentTagInfo?.name]);
 
   const clearButtonTitle = useMemo(() => {
-    return browser.i18n.getMessage('tags_info_clear_filter');
+    return getMessage('tags_info_clear_filter');
   }, []);
 
   return (

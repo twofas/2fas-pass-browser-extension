@@ -8,17 +8,19 @@ import S from './PaymentCardExpirationDate.module.scss';
 import { forwardRef, memo, useCallback, useRef, useEffect, useState, useMemo } from 'react';
 import CalendarIcon from '@/assets/popup-window/calendar.svg?react';
 import isExpirationDateInvalid from './validateExpirationDate';
+import { useI18n } from '@/partials/context/I18nContext';
+import { InputMask } from 'primereact/inputmask';
+import { Calendar } from 'primereact/calendar';
 
 const PANEL_CLASS = 'payment-card-expiration-date-panel';
-const PANEL_HEIGHT = 171;
-const BOTTOM_BAR_HEIGHT = 72;
-const TOP_BAR_HEIGHT = 56;
-const MIN_SPACE_REQUIRED = 8;
+const PANEL_WIDTH = 220;
+const PANEL_HEIGHT = 183;
+const PANEL_GAP = 8;
+const VIEWPORT_PADDING = 8;
 
 /**
 * PaymentCardExpirationDate component for selecting card expiration date.
 * Uses InputMask with MM/YY format and a calendar button for month picker popup.
-* Lazy loads PrimeReact components for optimized bundle size.
 * @param {Object} props - Component props.
 * @param {string} props.value - The expiration date value in MM/YY format.
 * @param {Function} props.onChange - Change handler function receiving formatted string.
@@ -30,11 +32,49 @@ const MIN_SPACE_REQUIRED = 8;
 * @return {JSX.Element} The rendered component.
 */
 const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabled, securityType, sifExists }, ref) => {
-  const [primeReactComponents, setPrimeReactComponents] = useState({ InputMask: null, Calendar: null });
+  const { getMessage } = useI18n();
+  const [containerElement, setContainerElement] = useState(null);
+  const [positionClasses, setPositionClasses] = useState('');
   const calendarRef = useRef(null);
   const buttonRef = useRef(null);
   const isOpenRef = useRef(false);
-  const loadedRef = useRef(false);
+
+  const containerCallbackRef = useCallback(node => {
+    if (node) {
+      setContainerElement(node);
+    }
+  }, []);
+
+  const calculatePosition = useCallback(() => {
+    if (!buttonRef.current) {
+      return;
+    }
+
+    const buttonRect = buttonRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+    const spaceAbove = buttonRect.top;
+    const spaceBelow = viewportHeight - buttonRect.bottom;
+    const shouldPlaceBelow = spaceAbove < PANEL_HEIGHT + PANEL_GAP && spaceBelow >= PANEL_HEIGHT + PANEL_GAP;
+    const panelLeftEdge = buttonRect.right - PANEL_WIDTH;
+    const shouldAlignLeft = panelLeftEdge < VIEWPORT_PADDING;
+    const panelRightEdge = buttonRect.left + PANEL_WIDTH;
+    const shouldAlignRight = !shouldAlignLeft && panelRightEdge > viewportWidth - VIEWPORT_PADDING;
+    let classes = '';
+
+    if (shouldPlaceBelow) {
+      classes += ' position-below';
+    }
+
+    if (shouldAlignLeft) {
+      classes += ' align-left';
+    } else if (shouldAlignRight) {
+      classes += ' align-right';
+    }
+
+    setPositionClasses(classes);
+  }, []);
+
   const { handleMouseDown: handleInputMouseDown, handleFocus: handleInputFocus, handleClick: handleInputClick, handleDoubleClick: handleInputDoubleClick, handleKeyDown: handleInputKeyDown, handleKeyUp: handleInputKeyUp, handleSelect: handleInputSelect } = useInputMaskFocus();
 
   const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
@@ -89,38 +129,13 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
 
     onChange(formattedValue);
 
-    if (calendarRef.current) {
+    const overlayPanel = calendarRef.current?.overlayRef?.current;
+    const isYearPickerVisible = overlayPanel?.querySelector('.p-yearpicker');
+
+    if (calendarRef.current && !isYearPickerVisible) {
       calendarRef.current.hide();
     }
   }, [formatDateToExpiration, onChange]);
-
-  const positionPanel = useCallback(() => {
-    if (!buttonRef.current) {
-      return;
-    }
-
-    const panel = document.querySelector(`.${PANEL_CLASS}`);
-
-    if (!panel) {
-      return;
-    }
-
-    const buttonRect = buttonRef.current.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const spaceBelow = viewportHeight - buttonRect.bottom - BOTTOM_BAR_HEIGHT - MIN_SPACE_REQUIRED;
-    const spaceAbove = buttonRect.top - TOP_BAR_HEIGHT - MIN_SPACE_REQUIRED;
-    const shouldPlaceOnTop = spaceBelow < PANEL_HEIGHT && spaceAbove > PANEL_HEIGHT;
-
-    let topPosition;
-
-    if (shouldPlaceOnTop) {
-      topPosition = buttonRect.top - PANEL_HEIGHT - MIN_SPACE_REQUIRED;
-    } else {
-      topPosition = buttonRect.bottom + MIN_SPACE_REQUIRED;
-    }
-
-    panel.style.top = `${topPosition}px`;
-  }, []);
 
   const handleCalendarButtonClick = useCallback(() => {
     if (!calendarRef.current) {
@@ -130,58 +145,44 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
     if (isOpenRef.current) {
       calendarRef.current.hide();
     } else {
+      calculatePosition();
       calendarRef.current.show();
     }
-  }, []);
+  }, [calculatePosition]);
 
   const handleCalendarShow = useCallback(() => {
     isOpenRef.current = true;
-    requestAnimationFrame(() => {
-      positionPanel();
-    });
-  }, [positionPanel]);
+  }, []);
 
   const handleCalendarHide = useCallback(() => {
     isOpenRef.current = false;
   }, []);
 
-  useEffect(() => {
-    if (loadedRef.current) {
+  const handleScroll = useCallback(e => {
+    if (!isOpenRef.current || !calendarRef.current) {
       return;
     }
 
-    loadedRef.current = true;
+    const overlayPanel = calendarRef.current?.overlayRef?.current;
 
-    Promise.all([
-      import('primereact/inputmask'),
-      import('primereact/calendar')
-    ]).then(([inputMaskModule, calendarModule]) => {
-      setPrimeReactComponents({
-        InputMask: inputMaskModule.InputMask,
-        Calendar: calendarModule.Calendar
-      });
-    });
+    if (overlayPanel && overlayPanel.contains(e.target)) {
+      return;
+    }
+
+    calendarRef.current.hide();
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (isOpenRef.current && calendarRef.current) {
-        calendarRef.current.hide();
-      }
-    };
-
     window.addEventListener('scroll', handleScroll, true);
 
     return () => {
       window.removeEventListener('scroll', handleScroll, true);
     };
-  }, []);
-
-  const { InputMask, Calendar } = primeReactComponents;
+  }, [handleScroll]);
 
   const inputClassName = `${S.paymentCardExpirationDateInput}${isInvalid ? ` ${S.paymentCardExpirationDateInputError}` : ''}`;
 
-  if (!InputMask || !Calendar || isHighlySecretWithoutSif) {
+  if (isHighlySecretWithoutSif) {
     return (
       <div className={S.paymentCardExpirationDate}>
         <input
@@ -189,16 +190,16 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
           className={inputClassName}
           value={displayValue}
           onChange={e => onChange(e.target.value)}
-          placeholder={isHighlySecretWithoutSif ? '' : browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
+          placeholder=''
           id={inputId}
-          disabled={!InputMask || !Calendar || isHighlySecretWithoutSif}
+          disabled
         />
         <button
           ref={buttonRef}
           type='button'
           className={`${S.paymentCardExpirationDateButton} ${S.paymentCardExpirationDateButtonHidden}`}
           disabled
-          title={browser.i18n.getMessage('button_open_calendar')}
+          title={getMessage('button_open_calendar')}
           tabIndex={-1}
         >
           <CalendarIcon />
@@ -208,7 +209,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
   }
 
   return (
-    <div className={S.paymentCardExpirationDate}>
+    <div ref={containerCallbackRef} className={S.paymentCardExpirationDate}>
       <InputMask
         ref={ref}
         className={inputClassName}
@@ -223,7 +224,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
         onSelect={handleInputSelect}
         mask='99/99'
         slotChar=' '
-        placeholder={browser.i18n.getMessage('placeholder_payment_card_expiration_date')}
+        placeholder={getMessage('placeholder_payment_card_expiration_date')}
         id={inputId}
         disabled={disabled}
         autoClear={false}
@@ -234,7 +235,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
         className={`${S.paymentCardExpirationDateButton} ${disabled ? S.paymentCardExpirationDateButtonHidden : ''}`}
         onClick={handleCalendarButtonClick}
         disabled={disabled}
-        title={browser.i18n.getMessage('button_open_calendar')}
+        title={getMessage('button_open_calendar')}
         tabIndex={-1}
       >
         <CalendarIcon />
@@ -242,7 +243,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
       <Calendar
         ref={calendarRef}
         className={S.paymentCardExpirationDateCalendar}
-        panelClassName={PANEL_CLASS}
+        panelClassName={`${PANEL_CLASS}${positionClasses}`}
         value={parseExpirationToDate(displayValue)}
         onChange={handleCalendarChange}
         onShow={handleCalendarShow}
@@ -250,6 +251,7 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
         view='month'
         dateFormat='mm/yy'
         disabled={disabled}
+        appendTo={containerElement}
       />
     </div>
   );

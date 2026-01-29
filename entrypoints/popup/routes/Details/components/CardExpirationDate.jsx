@@ -14,6 +14,7 @@ import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Renders the expiration date input field for PaymentCard details view.
@@ -23,6 +24,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 * @return {JSX.Element} The rendered component.
 */
 function CardExpirationDate (props) {
+  const { getMessage } = useI18n();
   const { sifDecryptError, formData } = props;
   const { form, originalItem } = formData;
 
@@ -133,7 +135,7 @@ function CardExpirationDate (props) {
     return (
       <div className={pI.passInputBottomOverlay}>
         <InfoIcon />
-        <span>{browser.i18n.getMessage('details_expiration_date_decrypt_error')}</span>
+        <span>{getMessage('details_expiration_date_decrypt_error')}</span>
       </div>
     );
   };
@@ -145,7 +147,7 @@ function CardExpirationDate (props) {
 
     return (
       <div className={pI.passInputTooltip}>
-        <span>{browser.i18n.getMessage('details_sif_not_fetched')}</span>
+        <span>{getMessage('details_sif_not_fetched')}</span>
       </div>
     );
   };
@@ -179,9 +181,9 @@ function CardExpirationDate (props) {
       }
 
       await copyValue(expirationDateToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'expirationDate');
-      showToast(browser.i18n.getMessage('notification_expiration_date_copied'), 'success');
+      showToast(getMessage('notification_expiration_date_copied'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_expiration_date_copy_failed'), 'error');
+      showToast(getMessage('error_expiration_date_copy_failed'), 'error');
       await CatchError(e);
     }
   };
@@ -202,14 +204,14 @@ function CardExpirationDate (props) {
       {() => (
         <div className={`${pI.passInput} ${!data?.expirationDateEditable || sifDecryptError ? pI.disabled : ''} ${!originalItem?.isT3orT2WithSif ? pI.nonFetched : ''}`}>
           <div className={pI.passInputTop}>
-            <label htmlFor='editedExpirationDate'>{browser.i18n.getMessage('details_expiration_date')}</label>
+            <label htmlFor='editedExpirationDate'>{getMessage('details_expiration_date')}</label>
             <button
               type='button'
               className={`${bS.btn} ${bS.btnClear} ${!originalItem?.isT3orT2WithSif || sifDecryptError ? bS.btnHidden : ''}`}
               onClick={handleEditableClick}
               tabIndex={-1}
             >
-              {data?.expirationDateEditable ? browser.i18n.getMessage('cancel') : browser.i18n.getMessage('edit')}
+              {data?.expirationDateEditable ? getMessage('cancel') : getMessage('edit')}
             </button>
           </div>
           <div className={pI.passInputBottom}>
@@ -229,7 +231,7 @@ function CardExpirationDate (props) {
                   type='button'
                   className={`${bS.btn} ${pI.iconButton}`}
                   onClick={handleCopyExpirationDate}
-                  title={browser.i18n.getMessage('details_copy_expiration_date')}
+                  title={getMessage('details_copy_expiration_date')}
                   tabIndex={-1}
                 >
                   <CopyIcon />
@@ -241,7 +243,7 @@ function CardExpirationDate (props) {
             {generateErrorOverlay()}
           </div>
           <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
-            <p className={paymentCardExpirationDateValidation(getExpirationDateValue()) ? '' : pI.empty}>{paymentCardExpirationDateValidation(getExpirationDateValue()) ? browser.i18n.getMessage('details_card_expired') : ''}</p>
+            <p className={paymentCardExpirationDateValidation(getExpirationDateValue()) ? '' : pI.empty}>{paymentCardExpirationDateValidation(getExpirationDateValue()) ? getMessage('details_card_expired') : ''}</p>
           </div>
         </div>
       )}

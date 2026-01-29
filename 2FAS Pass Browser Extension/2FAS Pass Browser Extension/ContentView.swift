@@ -40,6 +40,8 @@ struct ContentView: View {
             VStack {
                 Image(.twoPASSLogo)
                     .renderingMode(.original)
+                    .resizable()
+                    .scaledToFit()
                     .frame(width: 519, height: 141)
                 Spacer()
                     .frame(height: 95)
@@ -83,6 +85,7 @@ struct ContentView: View {
                     }, label: {
                         HStack(spacing: 24) {
                             Text(verbatim: presenter.buttonCTA)
+                                .textCase(.uppercase)
                                 .font(Font.custom(fontBold, size: 15))
                                 .foregroundColor(.white)
                             Image(.arrow)

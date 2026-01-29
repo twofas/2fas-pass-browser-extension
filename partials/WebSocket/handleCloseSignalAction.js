@@ -20,7 +20,7 @@ const handleCloseSignalAction = async (newSessionId, uuid, closeData) => {
 
   if (closeData?.returnUrl === '/') {
     eventBus.emit(eventBus.EVENTS.CONNECT.CHANGE_VIEW, CONNECT_VIEWS.DeviceSelect);
-    eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: browser.i18n.getMessage('connect_push_cancelled'), type: 'info' });
+    eventBus.emit(eventBus.EVENTS.CONNECT.SHOW_TOAST, { message: getMessage('connect_push_cancelled'), type: 'info' });
   }
 
   try {

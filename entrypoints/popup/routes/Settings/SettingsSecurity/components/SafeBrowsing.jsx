@@ -7,12 +7,14 @@
 import S from '../../Settings.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useEffect, useState } from 'react';
+import { useI18n } from '@/partials/context/I18nContext';
 
 /**
 * Function to render the Safe Browsing component.
 * @return {JSX.Element} The rendered component.
 */
 function SafeBrowsing () {
+  const { getMessage } = useI18n();
   const [loading, setLoading] = useState(true);
   const [sB, setSB] = useState(null);
   const [disabled, setDisabled] = useState(true);
@@ -38,9 +40,9 @@ function SafeBrowsing () {
     try {
       await browser.privacy.services.safeBrowsingEnabled.set({ value: !sB });
       setSB(!sB);
-      showToast(browser.i18n.getMessage('notification_settings_save_success'), 'success');
+      showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
-      showToast(browser.i18n.getMessage('error_general_setting'), 'error');
+      showToast(getMessage('error_general_setting'), 'error');
       await CatchError(e);
     } finally {
       setDisabled(false);
@@ -61,7 +63,7 @@ function SafeBrowsing () {
           </span>
   
           <span className={bS.passToggleText}>
-            <span>{browser.i18n.getMessage('settings_safe_browsing')}</span>
+            <span>{getMessage('settings_safe_browsing')}</span>
           </span>
         </label>
       </form>

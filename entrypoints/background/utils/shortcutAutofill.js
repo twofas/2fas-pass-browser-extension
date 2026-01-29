@@ -41,8 +41,8 @@ const shortcutAutofill = async () => {
 
   if (!tabs || tabs.length <= 0) {
     return TwofasNotification.show({
-      title: browser.i18n.getMessage('notification_shortcut_autofill_no_active_tab_title'),
-      message: browser.i18n.getMessage('notification_shortcut_autofill_no_active_tab_message')
+      title: getMessage('notification_shortcut_autofill_no_active_tab_title'),
+      message: getMessage('notification_shortcut_autofill_no_active_tab_message')
     }, null, true);
   }
 
@@ -51,8 +51,8 @@ const shortcutAutofill = async () => {
 
   if (tabIsInternal(tab)) {
     return TwofasNotification.show({
-      title: browser.i18n.getMessage('notification_shortcut_autofill_internal_page_title'),
-      message: browser.i18n.getMessage('notification_shortcut_autofill_internal_page_message')
+      title: getMessage('notification_shortcut_autofill_internal_page_title'),
+      message: getMessage('notification_shortcut_autofill_internal_page_message')
     }, tab.id, true);
   }
 
