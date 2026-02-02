@@ -18,7 +18,7 @@ export { default as generateNonce } from './generateNonce.js';
 export { default as getCurrentDevice } from './getCurrentDevice.js';
 export { default as getInputClickPosition } from './getInputClickPosition.js';
 export { default as getDomain } from './getDomain.js';
-export { default as getLastActiveTab } from './getLastActiveTab.js';
+export { default as getLastActiveTab, setTestContext, clearTestContext } from './getLastActiveTab.js';
 export { default as getLoaderProgress } from './getLoaderProgress.js';
 export { default as getNTPTime } from './getNTPTime.js';
 export { default as getPopupWindowData } from './getPopupWindowData.js';
