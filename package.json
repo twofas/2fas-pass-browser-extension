@@ -56,7 +56,7 @@
     "@tanstack/react-virtual": "^3.13.18",
     "final-form": "^5.0.0",
     "lottie-react": "^2.4.1",
-    "motion": "^12.30.0",
+    "motion": "^12.31.1",
     "parse-domain": "^8.2.2",
     "primereact": "^10.9.7",
     "qrcode": "^1.5.4",
