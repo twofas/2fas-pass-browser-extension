@@ -23,9 +23,9 @@ import { I18nProvider } from '@/partials/context/I18nContext';
 import PrimeReactLocaleProvider from '@/partials/context/PrimeReactLocaleProvider';
 import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
-import Connect from './routes/Connect';
 import { ErrorBoundary } from 'react-error-boundary';
 
+const Connect = lazy(() => import('./routes/Connect'));
 const AddNew = lazy(() => import('./routes/AddNew'));
 const Settings = lazy(() => import('./routes/Settings'));
 const SettingsAbout = lazy(() => import('./routes/Settings/SettingsAbout'));

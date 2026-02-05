@@ -4,7 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import qrcode from 'qrcode';
 import compressPublicKey from '@/partials/functions/compressPublicKey';
 
 /** 
@@ -28,6 +27,8 @@ const generateQR = async (ephemeralPublicKey, sessionID, signature) => {
     const data = `${config.scheme}:${sessionID}:${compressedPersistentPublicKeyHex}:${compressedEphemeralPublicKeyHex}:${signature}`;
     const dataB64 = btoa(data);
   
+    const { default: qrcode } = await import('qrcode');
+
     const qrCode = await qrcode.toDataURL(dataB64,
       {
         type: 'image/jpeg',
