@@ -761,14 +761,14 @@ function Connect (props) {
                 onClick={handleCancelPushSent}
               />
 
-              <PushNotification description={getMessage('connect_push_animation_description')} />
+              <PushNotification />
 
               <div className={`${S.pushDeviceName} ${deviceName ? S.visible : ''}`}>
                 <span>{deviceName}</span>
               </div>
 
               <div className={S.pushAdditional}>
-                <div className={`${S.pushAdditionalTrouble} ${bS.btn} ${bS.btnClear}`}>
+                <div className={`${S.pushAdditionalTrouble} ${bS.btn} ${bS.btnOutline}`}>
                   <span>{getMessage('connect_push_trouble')}</span>
 
                   <div className={S.pushAdditionalTooltip}>

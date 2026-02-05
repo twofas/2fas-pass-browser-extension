@@ -1168,8 +1168,12 @@
     "description": "Title for the copy error message button on the error fallback screen"
   },
   "fetch_push_header": {
-    "message": "Check the 2FAS Pass push notification on your mobile device.",
+    "message": "Approve the request\nin the 2FAS Pass app",
     "description": "Header prompting the user to check their device for a push notification"
+  },
+  "fetch_push_subheader": {
+    "message": "Check your mobile device",
+    "description": "Subheader explaining that the user should approve the request on their mobile phone"
   },
   "fetch_push_waiting_for_mobile": {
     "message": "Waiting for mobile response...",
