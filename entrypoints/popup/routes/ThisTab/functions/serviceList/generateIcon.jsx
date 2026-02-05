@@ -51,15 +51,17 @@ const generateIcon = (item, faviconError, setFaviconError, loading) => {
     case 'Login': {
       if ((!item?.content?.iconType && item?.content?.iconType !== 0) || item?.content?.iconType === 1 || faviconError) {
         // Label
-        const style = {};
+        const labelColor = (item?.content?.labelColor && HEX_REGEX.test(item?.content?.labelColor)) ? item.content.labelColor : null;
 
-        if (item?.content?.labelColor && HEX_REGEX.test(item?.content?.labelColor)) {
-          style.backgroundColor = item.content.labelColor;
-        }
+        const iconLabelRef = el => {
+          if (el && labelColor) {
+            el.style.setProperty('background', labelColor, 'important');
+          }
+        };
 
         return (
-          <span className={S.iconLabel} style={style}>
-            <span style={{ color: item.content.textColor }}>{item?.content?.labelText?.toUpperCase() || (item?.content?.name || '').substring(0, 2).toUpperCase() || ''}</span>
+          <span className={S.iconLabel} ref={iconLabelRef}>
+            <span style={{ color: item.textColor }}>{item?.content?.labelText?.toUpperCase() || (item?.content?.name || '').substring(0, 2).toUpperCase() || ''}</span>
           </span>
         );
       } else if (item?.content?.iconType === 0) {
@@ -199,7 +201,7 @@ const generateIcon = (item, faviconError, setFaviconError, loading) => {
 
       return (
         <span className={S.iconLabel} style={style}>
-          <span style={{ color: item.content.textColor }}>{item?.content?.labelText?.toUpperCase() || (item?.content?.name || '').substring(0, 2).toUpperCase() || ''}</span>
+          <span style={{ color: item.textColor }}>{item?.content?.labelText?.toUpperCase() || (item?.content?.name || '').substring(0, 2).toUpperCase() || ''}</span>
         </span>
       );
     }
