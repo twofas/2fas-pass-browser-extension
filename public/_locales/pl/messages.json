@@ -836,11 +836,11 @@
     "description": "Explains the option to enter login and password in the browser extension and save it to the mobile app"
   },
   "blocked_text": {
-    "message": "Ten widok jest zablokowany.\nUżyj otwartego okienka.",
+    "message": "Ten widok jest zablokowany.\nUżyj otwartego okna.",
     "description": "This view is blocked. Please use the external popup."
   },
   "blocked_button": {
-    "message": "Otwórz okienko",
+    "message": "Otwórz okno",
     "description": "Button label to open the external popup."
   },
   "connect_header": {
@@ -936,7 +936,7 @@
     "description": "Header for the delete login confirmation section"
   },
   "details_delete": {
-    "message": "Usuń ten element z sejfu",
+    "message": "Usuń go z sejfu",
     "description": "Button label to delete the item from the Vault"
   },
   "details_name_required": {
@@ -1170,6 +1170,10 @@
   "fetch_push_header": {
     "message": "Sprawdź powiadomienie push 2FAS Pass na swoim urządzeniu mobilnym.",
     "description": "Header prompting the user to check their device for a push notification"
+  },
+  "fetch_push_subheader": {
+    "message": "Sprawdź swoje urządzenie mobilne",
+    "description": "Subheader explaining that the user should approve the request on their mobile phone"
   },
   "fetch_push_waiting_for_mobile": {
     "message": "Oczekiwanie na odpowiedź...",

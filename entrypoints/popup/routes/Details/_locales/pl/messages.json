@@ -40,7 +40,7 @@
     "description": "Header for the delete login confirmation section"
   },
   "details_delete": {
-    "message": "Usuń ten element z sejfu",
+    "message": "Usuń go z sejfu",
     "description": "Button label to delete the item from the Vault"
   },
   "details_name_required": {
