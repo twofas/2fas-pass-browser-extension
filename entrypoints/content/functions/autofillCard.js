@@ -426,18 +426,28 @@ const autofillCard = async request => {
   const isTopFrame = window.self === window.top;
 
   if (!isTopFrame) {
-    if (request.crossDomainAllowedDomains) {
-      let frameHostname = '';
+    let frameHostname = '';
+    let isCrossDomain = false;
 
-      try {
-        frameHostname = new URL(window.location.href).hostname;
-      } catch { }
+    try {
+      frameHostname = new URL(window.location.href).hostname;
+    } catch { }
 
-      if (!request.crossDomainAllowedDomains.includes(frameHostname)) {
+    try {
+      const topHostname = new URL(window.top.location.href).hostname;
+      isCrossDomain = frameHostname !== topHostname;
+    } catch {
+      isCrossDomain = true;
+    }
+
+    if (isCrossDomain) {
+      if (request.crossDomainAllowedDomains) {
+        if (!request.crossDomainAllowedDomains.includes(frameHostname)) {
+          return { status: 'cancelled', message: 'Cross-domain autofill not permitted', filledFields };
+        }
+      } else if (!request.iframePermissionGranted) {
         return { status: 'cancelled', message: 'Cross-domain autofill not permitted', filledFields };
       }
-    } else if (!request.iframePermissionGranted) {
-      return { status: 'cancelled', message: 'Cross-domain autofill not permitted', filledFields };
     }
   }
 

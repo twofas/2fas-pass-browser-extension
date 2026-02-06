@@ -167,9 +167,11 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   }
 
   if (!allFieldsFilled && closeData) {
-    await storeAutofillFailureData(tabId, closeData);
+    if (closeData.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+      await storeAutofillFailureData(tabId, closeData);
 
-    return openPopup();
+      return openPopup();
+    }
   }
 
   try {

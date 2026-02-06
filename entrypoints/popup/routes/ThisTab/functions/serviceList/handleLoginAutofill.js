@@ -176,7 +176,8 @@ const handleLoginAutofill = async (item, navigate) => {
         closeData: {
           vaultId: item.vaultId,
           deviceId: item.deviceId,
-          itemId: item.id
+          itemId: item.id,
+          securityType: item.securityType
         }
       }));
 
