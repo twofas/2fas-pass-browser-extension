@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, saveCrossDomainPreferences } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, saveCrossDomainPreferences, openPopup } from '@/partials/functions';
 import TwofasNotification from '@/partials/TwofasNotification';
 
 /**
@@ -137,10 +137,7 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
     await storage.removeItem(storageKey);
     await storeAutofillFailureData(tabId, closeData);
 
-    return TwofasNotification.show({
-      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: getMessage('notification_autofill_failed_open_popup')
-    }, tabId, true);
+    return openPopup();
   }
 
   await storage.removeItem(storageKey);
@@ -148,10 +145,7 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   if (!response) {
     await storeAutofillFailureData(tabId, closeData);
 
-    return TwofasNotification.show({
-      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: getMessage('notification_autofill_failed_open_popup')
-    }, tabId, true);
+    return openPopup();
   }
 
   const isOk = response.some(frameResponse => frameResponse.status === 'ok');
@@ -169,19 +163,13 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   if (!isOk) {
     await storeAutofillFailureData(tabId, closeData);
 
-    return TwofasNotification.show({
-      Title: getMessage('notification_shortcut_autofill_no_username_and_password_title'),
-      Message: getMessage('notification_autofill_failed_open_popup')
-    }, tabId, true);
+    return openPopup();
   }
 
   if (!allFieldsFilled && closeData) {
     await storeAutofillFailureData(tabId, closeData);
 
-    return TwofasNotification.show({
-      Title: getMessage('notification_autofill_partial_title'),
-      Message: getMessage('notification_autofill_failed_open_popup')
-    }, tabId, true);
+    return openPopup();
   }
 
   try {
