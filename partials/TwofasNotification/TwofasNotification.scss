@@ -1095,6 +1095,7 @@
 }
 
 .twofas-pass-cross-domain-dialog {
+  --dropdown-col-width: 154px;
   background-color: transparent !important;
   border: 0 !important;
   box-sizing: border-box !important;
@@ -1228,7 +1229,7 @@
 
         &:last-child {
           border-left: 1px solid transparent !important;
-          width: 154px !important;
+          width: var(--dropdown-col-width) !important;
         }
       }
     }
@@ -1257,11 +1258,15 @@
 
     &-row {
       align-items: center !important;
-      border-radius: 8px !important;
+      border-bottom: 1px solid transparent !important;
       display: flex !important;
       flex-direction: row !important;
       justify-content: space-between !important;
       width: 100% !important;
+
+      &:last-child {
+        border-bottom: 0 !important;
+      }
     }
   }
 
@@ -1279,7 +1284,7 @@
   &-dropdown {
     border-left: 1px solid transparent !important;
     position: relative !important;
-    width: 154px !important;
+    width: var(--dropdown-col-width) !important;
 
     &-trigger {
       align-items: center !important;
@@ -1293,6 +1298,7 @@
       font-weight: 400 !important;
       gap: 2px !important;
       justify-content: space-between !important;
+      outline: none !important;
       padding: 17px 12px !important;
       width: 100% !important;
 
@@ -1333,7 +1339,7 @@
     &-item {
       align-items: center !important;
       appearance: none !important;
-      border: 0;
+      border: 0 !important;
       border-bottom: 1px solid transparent !important;
       cursor: pointer !important;
       display: flex !important;
@@ -1553,6 +1559,10 @@
       }
     }
 
+    .twofas-pass-cross-domain-dialog-table-row {
+      border-color: v.$divider-light !important;
+    }
+
     .twofas-pass-cross-domain-dialog-btn-cancel {
       background-color: transparent !important;
       border-color: v.$primary-color-light !important;
@@ -1688,6 +1698,10 @@
       &::-webkit-scrollbar-thumb {
         background-color: v.$hover-on-hover-dark !important;
       }
+    }
+
+    .twofas-pass-cross-domain-dialog-table-row {
+      border-color: v.$divider-dark !important;
     }
 
     .twofas-pass-cross-domain-dialog-btn-cancel {
@@ -1828,6 +1842,10 @@
         }
       }
 
+      .twofas-pass-cross-domain-dialog-table-row {
+        border-color: v.$divider-light !important;
+      }
+
       .twofas-pass-cross-domain-dialog-btn-cancel {
         background-color: transparent !important;
         border-color: v.$primary-color-light !important;
@@ -1963,6 +1981,10 @@
         &::-webkit-scrollbar-thumb {
           background-color: v.$hover-on-hover-dark !important;
         }
+      }
+
+      .twofas-pass-cross-domain-dialog-table-row {
+        border-color: v.$divider-dark !important;
       }
 
       .twofas-pass-cross-domain-dialog-btn-cancel {
