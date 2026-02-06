@@ -37,6 +37,10 @@ function AdvancedSelect (props) {
   const selectRef = useRef(null);
   const closeCallbackRef = useRef(null);
   const [internalMenuIsOpen, setInternalMenuIsOpen] = useState(false);
+  const onMenuOpenRef = useRef(props?.onMenuOpen);
+  const onMenuCloseRef = useRef(props?.onMenuClose);
+  onMenuOpenRef.current = props?.onMenuOpen;
+  onMenuCloseRef.current = props?.onMenuClose;
 
   const handleClickOutside = useCallback(event => {
     if (!props?.menuIsOpen) {
@@ -61,7 +65,7 @@ function AdvancedSelect (props) {
       activeMenuCloseCallback();
       activeMenuCloseCallback = null;
     }
-  }, [props?.triggerRef, props?.menuIsOpen, props?.classNamePrefix]);
+  }, [props?.triggerRef, props?.menuIsOpen]);
 
   const calculateMenuPosition = useCallback(() => {
     let triggerElement = props?.triggerRef?.current;
@@ -230,8 +234,8 @@ function AdvancedSelect (props) {
         }
       }
 
-      if (props?.onMenuClose && typeof props?.onMenuClose === 'function') {
-        props.onMenuClose();
+      if (onMenuCloseRef.current && typeof onMenuCloseRef.current === 'function') {
+        onMenuCloseRef.current();
       }
 
       setInternalMenuIsOpen(false);
@@ -242,10 +246,10 @@ function AdvancedSelect (props) {
 
     calculateMenuPosition();
 
-    if (props?.onMenuOpen && typeof props?.onMenuOpen === 'function') {
-      props.onMenuOpen();
+    if (onMenuOpenRef.current && typeof onMenuOpenRef.current === 'function') {
+      onMenuOpenRef.current();
     }
-  }, [calculateMenuPosition, props]);
+  }, [calculateMenuPosition]);
 
   const handleMenuClose = useCallback(() => {
     const menuPortalElement = document.getElementById('select-menu-portal');
@@ -257,10 +261,10 @@ function AdvancedSelect (props) {
 
     setInternalMenuIsOpen(false);
 
-    if (props?.onMenuClose && typeof props?.onMenuClose === 'function') {
-      props.onMenuClose();
+    if (onMenuCloseRef.current && typeof onMenuCloseRef.current === 'function') {
+      onMenuCloseRef.current();
     }
-  }, [props]);
+  }, []);
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
@@ -280,8 +284,8 @@ function AdvancedSelect (props) {
         }
 
         closeCallbackRef.current = () => {
-          if (props?.onMenuClose && typeof props?.onMenuClose === 'function') {
-            props.onMenuClose();
+          if (onMenuCloseRef.current && typeof onMenuCloseRef.current === 'function') {
+            onMenuCloseRef.current();
           }
         };
 
@@ -328,7 +332,7 @@ function AdvancedSelect (props) {
         window.removeEventListener('scroll', handleScroll, true);
       };
     }
-  }, [props?.menuIsOpen, internalMenuIsOpen, calculateMenuPosition, props]);
+  }, [props?.menuIsOpen, internalMenuIsOpen, calculateMenuPosition]);
 
   const menuPortalTarget = document.getElementById('select-menu-portal');
 
