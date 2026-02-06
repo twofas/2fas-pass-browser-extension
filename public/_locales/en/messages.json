@@ -696,11 +696,11 @@
     "description": "Description for the never autofill dropdown option"
   },
   "content_cross_domain_dialog_cancel": {
-    "message": "Cancel",
+    "message": "Not now",
     "description": "Cancel button text in the cross-domain dialog"
   },
   "content_cross_domain_dialog_accept": {
-    "message": "Accept",
+    "message": "Autofill",
     "description": "Accept button text in the cross-domain dialog"
   },
   "install_please_pin_extension": {
