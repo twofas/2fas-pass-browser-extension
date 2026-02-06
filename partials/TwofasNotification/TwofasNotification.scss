@@ -1093,3 +1093,644 @@
     }
   }
 }
+
+.twofas-pass-cross-domain-dialog {
+  background-color: transparent !important;
+  border: 0 !important;
+  box-sizing: border-box !important;
+  font-family: Arial, sans-serif !important;
+  margin: auto !important;
+  max-height: 90vh !important;
+  max-width: 500px !important;
+  outline: none !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  pointer-events: auto !important;
+  user-select: none !important;
+  width: 90vw !important;
+
+  &::backdrop {
+    animation: twofas-pass-dialog-backdrop .2s ease-out !important;
+    background-color: rgba(0, 0, 0, .5) !important;
+    pointer-events: none !important;
+  }
+
+  * {
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    font-family: Arial, sans-serif !important;
+    pointer-events: auto !important;
+  }
+
+  &-content {
+    animation: twofas-pass-dialog-open .2s ease-out !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    width: 100% !important;
+  }
+
+  &-top {
+    align-items: center !important;
+    border-bottom: 1px solid transparent !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    padding: 13px 19px 15px !important;
+    width: 100% !important;
+
+    &-logo {
+      svg {
+        height: 32px !important;
+        width: auto !important;
+      }
+    }
+
+    &-close {
+      appearance: none !important;
+      background: transparent !important;
+      border: 0 !important;
+      cursor: pointer !important;
+      display: inline-flex;
+      outline: none !important;
+      padding: 0 !important;
+
+      svg {
+        height: 32px !important;
+        width: 32px !important;
+      }
+    }
+  }
+
+  &-header {
+    margin-bottom: 35px !important;
+    padding-top: 41px;
+    text-align: center !important;
+    width: 100% !important;
+
+    h3 {
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      line-height: 1.3 !important;
+      margin: 0 0 18px !important;
+    }
+
+    p {
+      font-size: 14px !important;
+      font-weight: 400 !important;
+      line-height: 1.4 !important;
+      margin: 0 auto !important;
+      max-width: 320px !important;
+    }
+  }
+
+  &-table {
+    margin-bottom: 22px !important;
+    padding: 0 32px !important;
+    width: 100% !important;
+
+    &-content {
+      border-radius: 6px !important;
+    }
+
+    &-header {
+      border-bottom: 1px solid transparent !important;
+      display: flex !important;
+      flex-direction: row !important;
+      font-size: 14px !important;
+      font-weight: 500 !important;
+      width: 100% !important;
+
+      span {
+        display: inline-block;
+        padding: 17px 12px !important;
+        text-align: left !important;
+
+        &:first-child {
+          flex: 1 !important;
+        }
+
+        &:last-child {
+          border-left: 1px solid transparent !important;
+          width: 154px !important;
+        }
+      }
+    }
+
+    &-rows {
+      display: flex !important;
+      flex-direction: column !important;
+      max-height: 184px !important;
+      overflow-y: auto !important;
+      width: 100% !important;
+
+      &::-webkit-scrollbar {
+        width: 6px !important;
+      }
+
+      &::-webkit-scrollbar-track {
+        box-shadow: none !important;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 3px !important;
+      }
+    }
+
+    &-row {
+      align-items: center !important;
+      border-radius: 8px !important;
+      display: flex !important;
+      flex-direction: row !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+    }
+  }
+
+  &-domain-text {
+    flex: 1 !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    max-width: 200px !important;
+    overflow: hidden !important;
+    padding: 17px 12px !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  &-dropdown {
+    border-left: 1px solid transparent !important;
+    position: relative !important;
+    width: 154px !important;
+
+    &-trigger {
+      align-items: center !important;
+      appearance: none !important;
+      background-color: transparent !important;
+      border: 0 !important;
+      cursor: pointer !important;
+      display: flex !important;
+      flex-direction: row !important;
+      font-size: 12px !important;
+      font-weight: 400 !important;
+      gap: 2px !important;
+      justify-content: space-between !important;
+      padding: 17px 12px !important;
+      width: 100% !important;
+
+      &-icon {
+        align-items: center !important;
+        border-radius: 4px !important;
+        display: inline-flex !important;
+        height: 23px !important;
+        justify-content: center !important;
+        transition: background-color v.$anim !important;
+        width: 23px !important;
+      }
+
+      svg {
+        height: 6px !important;
+        transition: transform v.$anim !important;
+        width: 10px !important;
+      }
+    }
+
+    &-menu {
+      border: 1px solid transparent !important;
+      border-radius: 6px !important;
+      display: none !important;
+      flex-direction: column !important;
+      min-width: 251px !important;
+      position: fixed !important;
+      z-index: 2147483647 !important;
+    }
+
+    &.open &-trigger svg {
+      transform: rotate(180deg) !important;
+    }
+
+    &.open &-menu {
+      display: flex !important;
+    }
+
+    &-item {
+      align-items: center !important;
+      appearance: none !important;
+      border: 0;
+      border-bottom: 1px solid transparent !important;
+      cursor: pointer !important;
+      display: flex !important;
+      flex-direction: row !important;
+      gap: 8px !important;
+      padding: 8px 10px !important;
+      text-align: left !important;
+      width: 100% !important;
+
+      &-text {
+        display: flex !important;
+        flex: 1 !important;
+        flex-direction: column !important;
+        gap: 3px !important;
+      }
+
+      &-label {
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        line-height: 1.3 !important;
+      }
+
+      &-desc {
+        font-size: 10px !important;
+        font-weight: 400 !important;
+        line-height: 1.3 !important;
+      }
+
+      &-circle {
+        border: 1.5px solid transparent !important;
+        border-radius: 50% !important;
+        flex-shrink: 0 !important;
+        height: 18px !important;
+        position: relative !important;
+        transition: background-color v.$anim, border-color v.$anim !important;
+        width: 18px !important;
+
+        &::after {
+          border-bottom: 1.5px solid transparent !important;
+          border-left: 1.5px solid transparent !important;
+          content: '' !important;
+          display: block !important;
+          height: 4px !important;
+          left: 4px !important;
+          opacity: 0 !important;
+          position: absolute !important;
+          top: 4px !important;
+          transform: rotate(-45deg) !important;
+          transition: opacity v.$anim !important;
+          width: 7px !important;
+        }
+      }
+
+      &.active &-circle::after {
+        opacity: 1 !important;
+      }
+    }
+  }
+
+  &-buttons {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    justify-content: center !important;
+    padding: 0 32px 40px !important;
+    width: 100% !important;
+  }
+
+  &-btn {
+    appearance: none !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    flex: 1 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    padding: 14px 20px !important;
+    transition: opacity v.$anim !important;
+
+    &:hover,
+    &:focus {
+      opacity: .9 !important;
+    }
+
+    &-cancel {
+      border-width: 1px !important;
+      border-style: solid !important;
+    }
+
+    &-accept {
+      border: 0 !important;
+    }
+  }
+
+  &.light {
+    .twofas-pass-cross-domain-dialog-content {
+      background-color: v.$primary-bg-light !important;
+      box-shadow: none !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-top {
+      border-color: v.$divider-light !important;
+
+      &-close {
+        svg {
+          fill: v.$hover-color-light !important;
+          stroke: v.$primary-color-light !important;
+        }
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-header {
+      h3 {
+        color: v.$primary-text-light !important;
+      }
+
+      p {
+        color: v.$primary-text-light !important;
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-table {
+      &-content {
+        background-color: v.$primary-box-bg-light !important;
+      }
+
+      &-header {
+        border-color: v.$divider-light !important;
+
+        span {
+          border-color: v.$divider-light !important;
+          color: v.$primary-text-light !important;
+        }
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-domain-text {
+      color: v.$secondary-text-light !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-dropdown {
+      border-color: v.$divider-light !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-dropdown-trigger {
+      color: v.$secondary-text-light !important;
+
+      &:hover {
+        .twofas-pass-cross-domain-dialog-dropdown-trigger-icon {
+          background-color: v.$hover-color-light !important;
+        }
+      }
+
+      &-icon {
+        background-color: rgba(v.$hover-color-light, 0) !important;
+      }
+
+      svg {
+        fill: v.$primary-color-light !important;
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-dropdown-menu {
+      background-color: v.$card-bg-light !important;
+      border-color: v.$object-stroke-light !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-dropdown-item {
+      background-color: transparent !important;
+      border-color: v.$object-stroke-light !important;
+      color: v.$primary-text-light !important;
+
+      &:hover,
+      &:focus {
+        background-color: v.$hover-color-light !important;
+      }
+
+      &-circle {
+        border-color: v.$object-stroke-light !important;
+      }
+
+      &.active .twofas-pass-cross-domain-dialog-dropdown-item-circle {
+        background-color: v.$primary-color-light !important;
+        border-color: v.$primary-color-light !important;
+
+        &::after {
+          border-color: v.$card-bg-light !important;
+        }
+      }
+
+      &-desc {
+        color: v.$secondary-text-light !important;
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-table-rows {
+      scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light !important;
+
+      &::-webkit-scrollbar-thumb {
+        background-color: v.$hover-on-hover-light !important;
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-btn-cancel {
+      background-color: transparent !important;
+      border-color: v.$primary-color-light !important;
+      color: v.$primary-color-light !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-btn-accept {
+      background-color: v.$primary-color-light !important;
+      color: v.$tertiary-text-light !important;
+    }
+  }
+
+  &.dark {
+    .twofas-pass-cross-domain-dialog-content {
+      background-color: v.$primary-bg-dark !important;
+      box-shadow: none !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-top {
+      border-color: v.$divider-dark !important;
+
+      &-close {
+        svg {
+          fill: v.$hover-color-dark !important;
+          stroke: v.$primary-color-dark !important;
+        }
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-header {
+      h3 {
+        color: v.$primary-text-dark !important;
+      }
+
+      p {
+        color: v.$primary-text-dark !important;
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-table {
+      &-content {
+        background-color: v.$primary-box-bg-dark !important;
+      }
+
+      &-header {
+        border-color: v.$divider-dark !important;
+
+        span {
+          border-color: v.$divider-dark !important;
+          color: v.$primary-text-dark !important;
+        }
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-domain-text {
+      color: v.$secondary-text-dark !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-dropdown {
+      border-color: v.$divider-dark !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-dropdown-trigger {
+      color: v.$secondary-text-dark !important;
+
+      &:hover {
+        .twofas-pass-cross-domain-dialog-dropdown-trigger-icon {
+          background-color: v.$hover-color-dark !important;
+        }
+      }
+
+      &-icon {
+        background-color: rgba(v.$hover-color-dark, 0) !important;
+      }
+
+      svg {
+        fill: v.$primary-color-dark !important;
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-dropdown-menu {
+      background-color: v.$card-bg-dark !important;
+      border-color: v.$object-stroke-dark !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-dropdown-item {
+      background-color: transparent !important;
+      border-color: v.$object-stroke-dark !important;
+      color: v.$primary-text-dark !important;
+
+      &:hover,
+      &:focus {
+        background-color: v.$hover-color-dark !important;
+      }
+
+      &-circle {
+        border-color: v.$object-stroke-dark !important;
+      }
+
+      &.active .twofas-pass-cross-domain-dialog-dropdown-item-circle {
+        background-color: v.$primary-color-dark !important;
+        border-color: v.$primary-color-dark !important;
+
+        &::after {
+          border-color: v.$card-bg-dark !important;
+        }
+      }
+
+      &-desc {
+        color: v.$secondary-text-dark !important;
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-table-rows {
+      scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark !important;
+
+      &::-webkit-scrollbar-thumb {
+        background-color: v.$hover-on-hover-dark !important;
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-btn-cancel {
+      background-color: transparent !important;
+      border-color: v.$primary-color-dark !important;
+      color: v.$primary-color-dark !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-btn-accept {
+      background-color: v.$primary-color-dark !important;
+      color: v.$tertiary-text-dark !important;
+    }
+  }
+
+  &.unset {
+    @media all and (prefers-color-scheme: light) {
+
+    }
+
+    @media all and (prefers-color-scheme: dark) {
+
+    }
+  }
+
+  @media (max-width: 540px) {
+    .twofas-pass-cross-domain-dialog-table-header {
+      display: none !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-table-row {
+      flex-direction: column !important;
+      gap: 6px !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-domain-text {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-dropdown {
+      width: 100% !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-buttons {
+      flex-direction: column !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-btn {
+      width: 100% !important;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .twofas-pass-cross-domain-dialog-content {
+      padding: 14px !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-header h3 {
+      font-size: 16px !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-header p {
+      font-size: 13px !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-btn {
+      font-size: 13px !important;
+      padding: 12px 16px !important;
+    }
+  }
+
+  @keyframes twofas-pass-dialog-open {
+    from {
+      opacity: 0;
+      transform: scale(.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes twofas-pass-dialog-backdrop {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+}

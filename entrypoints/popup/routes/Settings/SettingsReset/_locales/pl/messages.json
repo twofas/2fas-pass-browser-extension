@@ -1,0 +1,18 @@
+{
+  "settings_reset_header": {
+    "message": "Resetuj rozszerzenie przeglądarki",
+    "description": "Header for the reset browser extension confirmation dialog"
+  },
+  "settings_reset_description": {
+    "message": "Reset rozszerzenia przeglądarki 2FAS Pass spowoduje usunięcie wszystkich ustawień powiązanych z tym rozszerzeniem.",
+    "description": "Confirmation message for resetting the browser extension"
+  },
+  "settings_reset_action_confirm_button": {
+    "message": "Resetuj",
+    "description": "Button label to confirm the reset action"
+  },
+  "settings_reset_action_cancel_button": {
+    "message": "Anuluj",
+    "description": "Button label to cancel the reset action"
+  }
+}

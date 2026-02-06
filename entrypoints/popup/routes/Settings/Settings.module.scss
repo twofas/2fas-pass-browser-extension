@@ -166,6 +166,19 @@
       }
     }
 
+    &-subtitle {
+      color: v.$secondary-text-light;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.3333;
+      margin-top: 8px;
+      text-align: center;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
+      }
+    }
+
     &-body {
       margin-top: 33px;
       padding: 0 8px;
@@ -179,7 +192,7 @@
         font-size: 14px;
         font-weight: 500;
         line-height: 1;
-        margin-bottom: 12px;
+        margin-bottom: 5px;
 
         @include m.darkMode {
           color: v.$primary-text-dark;
@@ -192,6 +205,10 @@
         font-weight: 400;
         line-height: 1.3333;
         margin-bottom: 16px;
+
+        &.no-margin {
+          margin-bottom: 0;
+        }
       }
     }
   }
@@ -274,6 +291,64 @@
   &-clear-clipboard {
     &:last-of-type {
       margin-bottom: 0;
+    }
+  }
+
+  &-cross-domain-tabs {
+    display: flex;
+    gap: 0 4px;
+    margin: 16px 8px 0;
+    padding: 3px;
+    background-color: v.$hover-color-light;
+    border-radius: 8px;
+
+    @include m.darkMode {
+      background-color: v.$hover-color-dark;
+    }
+  }
+
+  &-cross-domain-tab {
+    border-radius: 6px;
+    color: v.$primary-text-light;
+    flex: 1;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    padding: 11px 12px;
+    transition: background-color v.$anim, color v.$anim;
+
+    @include m.darkMode {
+      color: v.$primary-text-dark;
+    }
+
+    &:hover,
+    &:focus {
+      color: v.$primary-text-light;
+
+      @include m.darkMode {
+        color: v.$primary-text-dark;
+      }
+    }
+
+    &-active {
+      background-color: v.$primary-box-bg-light;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+      color: v.$primary-color-light;
+
+      @include m.darkMode {
+        background-color: v.$primary-box-bg-dark;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+        color: v.$primary-color-dark;
+      }
+
+      &:hover,
+      &:focus {
+        color: v.$primary-color-light;
+
+        @include m.darkMode {
+          color: v.$primary-color-dark;
+        }
+      }
     }
   }
 

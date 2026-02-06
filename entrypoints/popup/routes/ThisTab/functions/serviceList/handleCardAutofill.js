@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, resolveCrossDomainPermissions } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import PaymentCard from '@/models/itemModels/PaymentCard';
@@ -217,22 +217,12 @@ const handleCardAutofill = async (item, navigate) => {
   encryptedExpirationDateB64 = null;
   encryptedSecurityCodeB64 = null;
 
-  // Check for cross-domain iframes that need permission
   try {
-    const permissionResults = await sendMessageToAllFrames(tab.id, {
-      action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
-      target: REQUEST_TARGETS.CONTENT,
-      autofillType: 'card'
-    });
+    const resolution = await resolveCrossDomainPermissions(tab.id, 'card');
 
-    const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
-    const needsPermission = crossDomainFrames.length > 0;
-
-    if (needsPermission) {
-      const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
-
-      // Store action data and delegate to background script
-      // This is necessary because focusing the tab will close the popup
+    if (resolution.allBlocked) {
+      actionData.crossDomainAllowedDomains = [];
+    } else if (resolution.needsDialog) {
       const storageKey = `session:autofillCardData-${tab.id}`;
 
       await storage.setItem(storageKey, JSON.stringify({
@@ -244,10 +234,12 @@ const handleCardAutofill = async (item, navigate) => {
         target: REQUEST_TARGETS.BACKGROUND,
         tabId: tab.id,
         storageKey,
-        domains: uniqueDomains
+        domains: [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]
       });
 
       return;
+    } else if (resolution.crossDomainAllowedDomains.length > 0) {
+      actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
     }
   } catch (e) {
     await CatchError(e);

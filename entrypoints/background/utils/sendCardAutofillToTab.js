@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission, resolveCrossDomainPermissions, saveCrossDomainPreferences } from '@/partials/functions';
 import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
@@ -154,23 +154,12 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   }
 
   let iframePermissionGranted = true;
+  let crossDomainAllowedDomains = null;
 
   try {
-    const permissionResults = await sendMessageToAllFrames(tabId, {
-      action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
-      target: REQUEST_TARGETS.CONTENT,
-      autofillType: 'card'
-    });
+    const resolution = await resolveCrossDomainPermissions(tabId, 'card');
 
-    const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
-    const needsPermission = crossDomainFrames.length > 0;
-
-    if (needsPermission) {
-      const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
-
-      const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
-        .replace('DOMAINS', uniqueDomains.join(', '));
-
+    if (resolution.needsDialog) {
       try {
         const tab = await browser.tabs.get(tabId);
 
@@ -183,13 +172,21 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       const confirmResult = await sendMessageToTab(tabId, {
         action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
         target: REQUEST_TARGETS.CONTENT,
-        message: confirmMessage
+        unknownDomains: resolution.unknownDomains,
+        theme: await storage.getItem('local:theme')
       });
 
       if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
         iframePermissionGranted = false;
         return;
       }
+
+      await saveCrossDomainPreferences(confirmResult.domainPreferences);
+      crossDomainAllowedDomains = [...resolution.crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
+    } else if (resolution.allBlocked) {
+      crossDomainAllowedDomains = [];
+    } else {
+      crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
     }
   } catch (e) {
     await CatchError(e);
@@ -203,6 +200,10 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     cryptoAvailable,
     iframePermissionGranted
   };
+
+  if (crossDomainAllowedDomains) {
+    actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
+  }
 
   if (encryptedCardNumberB64) {
     actionData.cardNumber = encryptedCardNumberB64;

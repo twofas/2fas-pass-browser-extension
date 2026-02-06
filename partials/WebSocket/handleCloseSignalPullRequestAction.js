@@ -10,6 +10,8 @@ import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindo
 import closeWindowIfNotInSeparateWindow from '../functions/closeWindowIfNotInSeparateWindow';
 import sendMessageToAllFrames from '../functions/sendMessageToAllFrames';
 import sendMessageToTab from '../functions/sendMessageToTab';
+import resolveCrossDomainPermissions from '../functions/resolveCrossDomainPermissions';
+import saveCrossDomainPreferences from '../functions/saveCrossDomainPreferences';
 import tryWindowClose from '../browserInfo/tryWindowClose';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 
@@ -60,25 +62,13 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
     actionData.hasPasswordInAnyFrame = hasPasswordInAnyFrame;
 
-    let needsPermission = false;
-
     try {
-      const permissionResults = await sendMessageToAllFrames(tabId, {
-        action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
-        target: REQUEST_TARGETS.CONTENT,
-        autofillType: 'login'
-      });
+      const resolution = await resolveCrossDomainPermissions(tabId, 'login');
 
-      const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
-      needsPermission = crossDomainFrames.length > 0;
-
-      if (needsPermission) {
-        const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
-
+      if (resolution.allBlocked) {
+        actionData.crossDomainAllowedDomains = [];
+      } else if (resolution.needsDialog) {
         if (closeData.windowClose) {
-          const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
-            .replace('DOMAINS', uniqueDomains.join(', '));
-
           try {
             const tab = await browser.tabs.get(tabId);
 
@@ -93,7 +83,8 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
             confirmResult = await sendMessageToTab(tabId, {
               action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
               target: REQUEST_TARGETS.CONTENT,
-              message: confirmMessage
+              unknownDomains: resolution.unknownDomains,
+              theme: await storage.getItem('local:theme')
             });
           } catch (e) {
             await CatchError(e);
@@ -108,8 +99,10 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
             await tryWindowClose();
             return true;
           }
+
+          await saveCrossDomainPreferences(confirmResult.domainPreferences);
+          actionData.crossDomainAllowedDomains = [...resolution.crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
         } else {
-          // For regular popup, delegate to background
           const storageKey = `session:autofillData-${tabId}`;
 
           await storage.setItem(storageKey, JSON.stringify({
@@ -129,12 +122,14 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
             target: REQUEST_TARGETS.BACKGROUND,
             tabId,
             storageKey,
-            domains: uniqueDomains
+            domains: [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]
           });
 
           eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
           return true;
         }
+      } else if (resolution.crossDomainAllowedDomains.length > 0) {
+        actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
       }
     } catch (e) {
       await CatchError(e);
@@ -255,25 +250,13 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
       await CatchError(e);
     }
 
-    let needsPermission = false;
-
     try {
-      const permissionResults = await sendMessageToAllFrames(tabId, {
-        action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
-        target: REQUEST_TARGETS.CONTENT,
-        autofillType: 'card'
-      });
+      const resolution = await resolveCrossDomainPermissions(tabId, 'card');
 
-      const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
-      needsPermission = crossDomainFrames.length > 0;
-
-      if (needsPermission) {
-        const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
-
+      if (resolution.allBlocked) {
+        actionData.crossDomainAllowedDomains = [];
+      } else if (resolution.needsDialog) {
         if (closeData.windowClose) {
-          const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
-            .replace('DOMAINS', uniqueDomains.join(', '));
-
           try {
             const tab = await browser.tabs.get(tabId);
 
@@ -288,7 +271,8 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
             confirmResult = await sendMessageToTab(tabId, {
               action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
               target: REQUEST_TARGETS.CONTENT,
-              message: confirmMessage
+              unknownDomains: resolution.unknownDomains,
+              theme: await storage.getItem('local:theme')
             });
           } catch (e) {
             await CatchError(e);
@@ -303,8 +287,10 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
             await tryWindowClose();
             return true;
           }
+
+          await saveCrossDomainPreferences(confirmResult.domainPreferences);
+          actionData.crossDomainAllowedDomains = [...resolution.crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
         } else {
-          // For regular popup, delegate to background
           const storageKey = `session:autofillCardData-${tabId}`;
 
           await storage.setItem(storageKey, JSON.stringify({
@@ -326,12 +312,14 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
             target: REQUEST_TARGETS.BACKGROUND,
             tabId,
             storageKey,
-            domains: uniqueDomains
+            domains: [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]
           });
 
           eventBus.emit(eventBus.EVENTS.FETCH.NAVIGATE, { path: '/' });
           return true;
         }
+      } else if (resolution.crossDomainAllowedDomains.length > 0) {
+        actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
       }
     } catch (e) {
       await CatchError(e);

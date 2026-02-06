@@ -114,13 +114,30 @@ const autofill = async request => {
 
   const isTopFrame = window.self === window.top;
 
-  if (!isTopFrame && !request.iframePermissionGranted) {
-    return {
-      status: 'cancelled',
-      message: 'Cross-domain autofill not permitted',
-      canAutofillPassword,
-      canAutofillUsername
-    };
+  if (!isTopFrame) {
+    if (request.crossDomainAllowedDomains) {
+      let frameHostname = '';
+
+      try {
+        frameHostname = new URL(window.location.href).hostname;
+      } catch { }
+
+      if (!request.crossDomainAllowedDomains.includes(frameHostname)) {
+        return {
+          status: 'cancelled',
+          message: 'Cross-domain autofill not permitted',
+          canAutofillPassword,
+          canAutofillUsername
+        };
+      }
+    } else if (!request.iframePermissionGranted) {
+      return {
+        status: 'cancelled',
+        message: 'Cross-domain autofill not permitted',
+        canAutofillPassword,
+        canAutofillUsername
+      };
+    }
   }
 
   if (canFillUsername) {

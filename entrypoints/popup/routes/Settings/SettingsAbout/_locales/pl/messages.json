@@ -1,0 +1,50 @@
+{
+  "settings_rate_us_chrome": {
+    "message": "Oceń nas w sklepie Chrome",
+    "description": "Prompt to rate the extension in the Chrome Web Store"
+  },
+  "settings_rate_us_firefox": {
+    "message": "Oceń nas w sklepie Firefox",
+    "description": "Prompt to rate the extension in Firefox Browser Add-ons"
+  },
+  "settings_rate_us_edge": {
+    "message": "Oceń nas w sklepie Miscrosoft Edge",
+    "description": "Prompt to rate the extension in Microsoft Edge Add-ons"
+  },
+  "settings_rate_us_safari": {
+    "message": "Oceń nas w App Store",
+    "description": "Prompt to rate the extension in the App Store"
+  },
+  "settings_about_header": {
+    "message": "Informacje o 2FAS Pass",
+    "description": "Header for the about section in settings"
+  },
+  "settings_about_thank_you": {
+    "message": "Dziękujemy za korzystanie z 2FAS Pass!",
+    "description": "Thank you message for users of the 2FAS Pass extension"
+  },
+  "settings_about_thank_you_subheader": {
+    "message": "Nie przechowujemy danych.\nNie mamy serwerów.",
+    "description": "Subheader emphasizing the privacy and security of the extension"
+  },
+  "settings_about_thank_you_description": {
+    "message": "Nie przechowujemy twoich danych, ponieważ wszystkie elementy znajdują się w lokalnej aplikacji mobilnej 2FAS Pass. Te, które wybierzesz, mogą być również przechowywane w tym rozszerzeniu przeglądarki.",
+    "description": "Explains that user data is stored in the mobile app or optionally in the extension"
+  },
+  "settings_visit_our_website": {
+    "message": "Odwiedź naszą stronę",
+    "description": "Link to the 2FAS Pass website"
+  },
+  "settings_privacy_policy": {
+    "message": "Polityka prywatności",
+    "description": "Link to the privacy policy of 2FAS Pass"
+  },
+  "settings_eula": {
+    "message": "Warunki korzystania z usługi (EULA)",
+    "description": "Link to the End User License Agreement for 2FAS Pass"
+  },
+  "settings_lets_connect": {
+    "message": "Więcej o nas",
+    "description": "Prompt to connect with the 2FAS Pass team or community"
+  }
+}

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, saveCrossDomainPreferences } from '@/partials/functions';
 import TwofasNotification from '@/partials/TwofasNotification';
 
 /**
@@ -49,38 +49,59 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
     }, tabId, true);
   }
 
-  const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
-    .replace('DOMAINS', domains.join(', '));
+  let trustedList = [];
+  let untrustedList = [];
 
   try {
-    const tab = await browser.tabs.get(tabId);
-
-    await browser.windows.update(tab.windowId, { focused: true });
-    await browser.tabs.update(tabId, { active: true });
-
-    await new Promise(resolve => setTimeout(resolve, 100));
+    trustedList = (await storage.getItem('local:crossDomainTrustedDomains')) || [];
   } catch { }
 
-  let confirmResult;
-
   try {
-    confirmResult = await sendMessageToTab(tabId, {
-      action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
-      target: REQUEST_TARGETS.CONTENT,
-      message: confirmMessage
-    });
-  } catch (e) {
-    await CatchError(e);
-    await storage.removeItem(storageKey);
-    return;
-  }
+    untrustedList = (await storage.getItem('local:crossDomainUntrustedDomains')) || [];
+  } catch { }
 
-  if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-    await storage.removeItem(storageKey);
-    return;
+  const unknownDomains = domains.filter(d => !trustedList.includes(d) && !untrustedList.includes(d));
+  const trustedDomains = domains.filter(d => trustedList.includes(d));
+  const allBlocked = unknownDomains.length === 0 && trustedDomains.length === 0;
+
+  let crossDomainAllowedDomains = allBlocked ? [] : [...trustedDomains];
+
+  if (unknownDomains.length > 0) {
+    try {
+      const tab = await browser.tabs.get(tabId);
+
+      await browser.windows.update(tab.windowId, { focused: true });
+      await browser.tabs.update(tabId, { active: true });
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+    } catch { }
+
+    let confirmResult;
+
+    try {
+      confirmResult = await sendMessageToTab(tabId, {
+        action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+        target: REQUEST_TARGETS.CONTENT,
+        unknownDomains,
+        theme: await storage.getItem('local:theme')
+      });
+    } catch (e) {
+      await CatchError(e);
+      await storage.removeItem(storageKey);
+      return;
+    }
+
+    if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+      await storage.removeItem(storageKey);
+      return;
+    }
+
+    await saveCrossDomainPreferences(confirmResult.domainPreferences);
+    crossDomainAllowedDomains = [...crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
   }
 
   actionData.iframePermissionGranted = true;
+  actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
 
   let response;
 

@@ -1,0 +1,90 @@
+{
+  "settings_safe_browsing": {
+    "message": "Włącz \"Bezpieczne przeglądanie\" w Chrome",
+    "description": "Option to enable safe browsing in Chrome"
+  },
+  "settings_safe_browsing_reports": {
+    "message": "Wysyłaj raporty \"Bezpiecznego przeglądania\" do Chrome",
+    "description": "Option to send safe browsing reports to Chrome"
+  },
+  "settings_only_on_restart": {
+    "message": "Tylko po restarcie",
+    "description": "Option to clear data only on browser restart"
+  },
+  "settings_don_t_clear": {
+    "message": "Nie czyść automatycznie",
+    "description": "Option to disable automatic data clearing"
+  },
+  "settings_after_1_minute": {
+    "message": "Po 1 minucie",
+    "description": "Option to clear data after 1 minute of inactivity"
+  },
+  "settings_after_5_minutes": {
+    "message": "Po 5 minutach",
+    "description": "Option to clear data after 5 minutes of inactivity"
+  },
+  "settings_after_15_minutes": {
+    "message": "Po 15 minutach",
+    "description": "Option to clear data after 15 minutes of inactivity"
+  },
+  "settings_after_30_minutes": {
+    "message": "Po 30 minutach",
+    "description": "Option to clear data after 30 minutes of inactivity"
+  },
+  "settings_after_60_minutes": {
+    "message": "Po 60 minutach",
+    "description": "Option to clear data after 60 minutes of inactivity"
+  },
+  "settings_idle_lock_header": {
+    "message": "Automatyczna blokada przy braku aktywności",
+    "description": "Header for the idle lock settings"
+  },
+  "settings_idle_lock_description": {
+    "message": "Wybierz czas, po upływie którego rozszerzenie przeglądarki automatycznie się zablokuje, jeśli nie będziesz z niego korzystać.",
+    "description": "Description for configuring idle lock behavior"
+  },
+  "settings_idle_lock_tooltip_1": {
+    "message": "Automatycznie zablokuj rozszerzenie przeglądarki przy braku aktywności",
+    "description": "Tooltip explaining that the idle lock setting applies only to the extension"
+  },
+  "settings_idle_lock_tooltip_2": {
+    "message": "Ta funkcja automatycznie blokuje rozszerzenie i czyści wszystkie elementy przeniesione z aplikacji mobilnej po upływie ustawionego powyżej okresu braku aktywności.",
+    "description": "Tooltip clarifying that the idle lock setting does not affect the mobile app"
+  },
+  "settings_idle_lock_tooltip_3": {
+    "message": "Możesz wybrać blokowanie ręczne, automatyczne po określonym czasie lub przy ponownym uruchomieniu przeglądarki. Czas braku aktywności odnosi się do całego komputera, a nie tylko przeglądarki.",
+    "description": "Tooltip explaining that the idle lock function only applies to the extension"
+  },
+  "settings_auto_clear_clipboard_header": {
+    "message": "Automatyczne czyszczenie schowka",
+    "description": "Header for the auto clear clipboard settings"
+  },
+  "settings_auto_clear_clipboard_description": {
+    "message": "Wybierz czas, po upływie którego dane skopiowane z tego rozszerzenia przeglądarki zostaną usunięte ze schowka.",
+    "description": "Description for configuring clipboard auto-clear behavior"
+  },
+  "settings_auto_clear_clipboard_tooltip_1": {
+    "message": "Automatyczne czyszczenie schowka",
+    "description": "Tooltip explaining that the auto-clear setting applies only to data copied from the extension"
+  },
+  "settings_auto_clear_clipboard_tooltip_2": {
+    "message": "Funkcja \"Automatyczne czyszczenie schowka\", usuwa zawartość schowka po określonym czasie (można go zmienić powyżej). Zapobiega to trwałemu przechowywaniu haseł.",
+    "description": "Tooltip clarifying that the auto-clear setting does not affect data copied from outside the extension"
+  },
+  "settings_auto_clear_clipboard_tooltip_3": {
+    "message": "UWAGA: Ta funkcja ma wbudowane ograniczenia przeglądarki. Aby schowek został wyczyszczony, przeglądarka musi być otwarta i aktywna.",
+    "description": "Tooltip explaining that the auto-clear function only applies to data copied from the extension"
+  },
+  "settings_cross_domain_header": {
+    "message": "Autouzupełnianie cross-domain",
+    "description": "Header for the cross-domain iframe autofill settings"
+  },
+  "settings_cross_domain_description": {
+    "message": "Domeny z niestandardowymi ustawieniami autouzupełniania.",
+    "description": "Description explaining the cross-domain iframe autofill security feature"
+  },
+  "settings_cross_domain_button": {
+    "message": "Domeny autouzupełniania",
+    "description": "Link text to navigate to the cross-domain autofill settings page"
+  }
+}
