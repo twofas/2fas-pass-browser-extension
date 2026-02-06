@@ -1129,7 +1129,21 @@
     flex-direction: column !important;
     max-height: 80vh !important;
     overflow-y: auto !important;
+    scrollbar-width: thin !important;
     width: 100% !important;
+
+    &::-webkit-scrollbar {
+      width: 8px !important;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 4px !important;
+    }
   }
 
   &-top {
@@ -1224,18 +1238,20 @@
       flex-direction: column !important;
       max-height: 184px !important;
       overflow-y: auto !important;
+      scrollbar-width: thin !important;
       width: 100% !important;
 
       &::-webkit-scrollbar {
-        width: 6px !important;
+        width: 8px !important;
       }
 
       &::-webkit-scrollbar-track {
+        background-color: transparent !important;
         box-shadow: none !important;
       }
 
       &::-webkit-scrollbar-thumb {
-        border-radius: 3px !important;
+        border-radius: 4px !important;
       }
     }
 
@@ -1513,8 +1529,24 @@
       }
     }
 
+    .twofas-pass-cross-domain-dialog-content {
+      scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light !important;
+
+      &::-webkit-scrollbar {
+        background-color: v.$primary-bg-light !important;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: v.$hover-on-hover-light !important;
+      }
+    }
+
     .twofas-pass-cross-domain-dialog-table-rows {
       scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light !important;
+
+      &::-webkit-scrollbar {
+        background-color: v.$primary-box-bg-light !important;
+      }
 
       &::-webkit-scrollbar-thumb {
         background-color: v.$hover-on-hover-light !important;
@@ -1634,8 +1666,24 @@
       }
     }
 
+    .twofas-pass-cross-domain-dialog-content {
+      scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark !important;
+
+      &::-webkit-scrollbar {
+        background-color: v.$primary-bg-dark !important;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: v.$hover-on-hover-dark !important;
+      }
+    }
+
     .twofas-pass-cross-domain-dialog-table-rows {
       scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark !important;
+
+      &::-webkit-scrollbar {
+        background-color: v.$primary-box-bg-dark !important;
+      }
 
       &::-webkit-scrollbar-thumb {
         background-color: v.$hover-on-hover-dark !important;
@@ -1756,8 +1804,24 @@
         }
       }
 
+      .twofas-pass-cross-domain-dialog-content {
+        scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light !important;
+
+        &::-webkit-scrollbar {
+          background-color: v.$primary-bg-light !important;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: v.$hover-on-hover-light !important;
+        }
+      }
+
       .twofas-pass-cross-domain-dialog-table-rows {
         scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light !important;
+
+        &::-webkit-scrollbar {
+          background-color: v.$primary-box-bg-light !important;
+        }
 
         &::-webkit-scrollbar-thumb {
           background-color: v.$hover-on-hover-light !important;
@@ -1877,8 +1941,24 @@
         }
       }
 
+      .twofas-pass-cross-domain-dialog-content {
+        scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark !important;
+
+        &::-webkit-scrollbar {
+          background-color: v.$primary-bg-dark !important;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: v.$hover-on-hover-dark !important;
+        }
+      }
+
       .twofas-pass-cross-domain-dialog-table-rows {
         scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark !important;
+
+        &::-webkit-scrollbar {
+          background-color: v.$primary-box-bg-dark !important;
+        }
 
         &::-webkit-scrollbar-thumb {
           background-color: v.$hover-on-hover-dark !important;
@@ -1899,26 +1979,23 @@
   }
 
   @media (max-width: 540px) {
+    .twofas-pass-cross-domain-dialog-table {
+      padding: 0 16px !important;
+    }
+
     .twofas-pass-cross-domain-dialog-table-header {
       display: none !important;
     }
 
-    .twofas-pass-cross-domain-dialog-table-row {
-      flex-direction: column !important;
-      gap: 6px !important;
-    }
-
     .twofas-pass-cross-domain-dialog-domain-text {
-      max-width: 100% !important;
-      width: 100% !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-dropdown {
-      width: 100% !important;
+      max-width: none !important;
+      min-width: 0 !important;
+      padding: 12px !important;
     }
 
     .twofas-pass-cross-domain-dialog-buttons {
       flex-direction: column !important;
+      padding: 0 16px 24px !important;
     }
 
     .twofas-pass-cross-domain-dialog-btn {
@@ -1927,21 +2004,55 @@
   }
 
   @media (max-width: 360px) {
-    .twofas-pass-cross-domain-dialog-content {
-      padding: 14px !important;
+    .twofas-pass-cross-domain-dialog-header {
+      margin-bottom: 20px !important;
+      padding-top: 24px !important;
+
+      h3 {
+        font-size: 15px !important;
+      }
+
+      p {
+        font-size: 13px !important;
+        max-width: none !important;
+        padding: 0 12px !important;
+      }
     }
 
-    .twofas-pass-cross-domain-dialog-header h3 {
-      font-size: 16px !important;
+    .twofas-pass-cross-domain-dialog-table {
+      padding: 0 12px !important;
     }
 
-    .twofas-pass-cross-domain-dialog-header p {
-      font-size: 13px !important;
+    .twofas-pass-cross-domain-dialog-buttons {
+      padding: 0 12px 20px !important;
     }
 
     .twofas-pass-cross-domain-dialog-btn {
       font-size: 13px !important;
       padding: 12px 16px !important;
+    }
+  }
+
+  @media (max-height: 600px) {
+    .twofas-pass-cross-domain-dialog-top {
+      padding: 10px 16px !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-header {
+      margin-bottom: 16px !important;
+      padding-top: 20px !important;
+
+      h3 {
+        margin-bottom: 10px !important;
+      }
+    }
+
+    .twofas-pass-cross-domain-dialog-table {
+      margin-bottom: 12px !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-buttons {
+      padding-bottom: 20px !important;
     }
   }
 
