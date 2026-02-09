@@ -234,10 +234,11 @@ function Password (props) {
       setData('passwordEditable', false);
       form.change('editedSif', '');
     } else {
-      await decryptPasswordOnDemand();
+      const decryptedPassword = await decryptPasswordOnDemand();
       setBatchData({
         passwordVisible: false,
-        passwordEditable: true
+        passwordEditable: true,
+        editedSif: decryptedPassword || ''
       });
     }
   };
