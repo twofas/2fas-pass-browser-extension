@@ -60,7 +60,7 @@ const handleLoginAutofill = async (item, navigate) => {
   const hasPassword = item.sifExists;
   const hasUsername = item?.content.username && item.content.username.length > 0;
   let passwordDecrypt = true;
-  let needsFetchPassword = false;
+  let pageHasPasswordInputs = false;
 
   if (isHighlySecret) {
     let canAutofill = false;
@@ -83,6 +83,8 @@ const handleLoginAutofill = async (item, navigate) => {
       showT2Toast();
       return;
     }
+
+    pageHasPasswordInputs = canAutofillPassword;
 
     if (canAutofillPassword) {
       if (!hasPassword) {
@@ -107,7 +109,6 @@ const handleLoginAutofill = async (item, navigate) => {
       }
     } else {
       passwordDecrypt = false;
-      needsFetchPassword = hasPassword;
     }
   } else if (item.securityType === SECURITY_TIER.SECRET) {
     if (!hasPassword && hasUsername) {
@@ -240,12 +241,16 @@ const handleLoginAutofill = async (item, navigate) => {
     return couldFillUsername && couldFillPassword;
   });
 
+  if (!isHighlySecret) {
+    pageHasPasswordInputs = res.some(r => r.canAutofillPassword);
+  }
+
   if (isOk) {
     const separateWindow = await popupIsInSeparateWindow();
 
-    if (!passwordDecrypt && needsFetchPassword) {
+    if (!passwordDecrypt && pageHasPasswordInputs && !hasPassword && isHighlySecret) {
       showToast(getMessage('this_tab_autofill_fetch_password'), 'info');
-    } else if (!passwordDecrypt) {
+    } else if (!passwordDecrypt && pageHasPasswordInputs && !hasPassword) {
       showToast(getMessage('this_tab_autofill_no_password'), 'info');
     } else if (!allFieldsFilled && isHighlySecret) {
       const toastId = showToast(getMessage('this_tab_autofill_partial'), 'info', false);
