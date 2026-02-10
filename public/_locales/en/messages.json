@@ -1536,7 +1536,7 @@
     "description": "Validation message when trying to add a domain that exists in the other list"
   },
   "settings_cross_domains_untrusted_add_success": {
-    "message": "Successfully added domain to blocked list",
+    "message": "Successfully added domain to the blocked list",
     "description": "Message displayed when a domain is successfully added to the untrusted list"
   },
   "settings_cross_domains_untrusted_add_domain_text": {
@@ -1556,7 +1556,7 @@
     "description": "Title for the button to submit a new domain to the untrusted list"
   },
   "settings_cross_domains_untrusted_add_cancel_title": {
-    "message": "Cancel blocking this domain",
+    "message": "Stop blocking this domain",
     "description": "Title for the button to cancel blocking a new domain"
   },
   "settings_cross_domains_untrusted_remove_dialog_message": {
