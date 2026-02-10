@@ -253,20 +253,25 @@ const PopupMain = memo(() => {
   const sectionRef = useRef(null);
   const resizeObserverRef = useRef(null);
   const mutationObserverRef = useRef(null);
+  const rafIdRef = useRef(null);
 
   const checkScrollable = useCallback(() => {
-    if (!sectionRef.current) {
-      return;
-    }
+    cancelAnimationFrame(rafIdRef.current);
 
-    const scrollableChild = sectionRef.current.querySelector(`.${S.passScreen} > div`);
+    rafIdRef.current = requestAnimationFrame(() => {
+      if (!sectionRef.current) {
+        return;
+      }
 
-    if (scrollableChild) {
-      const hasScrollbar = scrollableChild.scrollHeight > scrollableChild.clientHeight;
-      setIsScrollable(hasScrollbar);
-    } else {
-      setIsScrollable(false);
-    }
+      const scrollableChild = sectionRef.current.querySelector(`.${S.passScreen} > div`);
+
+      if (scrollableChild) {
+        const hasScrollbar = scrollableChild.scrollHeight > scrollableChild.clientHeight;
+        setIsScrollable(hasScrollbar);
+      } else {
+        setIsScrollable(false);
+      }
+    });
   }, []);
 
   const classNames = useMemo(() => {
@@ -294,6 +299,8 @@ const PopupMain = memo(() => {
     });
 
     return () => {
+      cancelAnimationFrame(rafIdRef.current);
+
       if (resizeObserverRef.current) {
         resizeObserverRef.current.disconnect();
         resizeObserverRef.current = null;
