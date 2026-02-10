@@ -76,7 +76,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       }
 
       case REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION: {
-        checkIframePermission(request.autofillType)
+        checkIframePermission(request.autofillType, request.dataFields)
           .then(result => { sendResponse(result); })
           .catch(() => { sendResponse({ needsPermission: false, frameInfo: {} }); });
 

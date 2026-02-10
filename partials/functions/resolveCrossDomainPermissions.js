@@ -13,10 +13,11 @@ import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready.
 * @async
 * @param {number} tabId - The ID of the tab to check.
 * @param {string} autofillType - The type of autofill ('login' or 'card').
+* @param {Object} [dataFields] - Flags indicating which data fields are available for autofill.
 * @return {Promise<Object>} Classification result with needsDialog, allAllowed, allBlocked,
 *   trustedDomains, untrustedDomains, unknownDomains arrays.
 */
-const resolveCrossDomainPermissions = async (tabId, autofillType) => {
+const resolveCrossDomainPermissions = async (tabId, autofillType, dataFields) => {
   const result = {
     needsDialog: false,
     allAllowed: true,
@@ -39,7 +40,8 @@ const resolveCrossDomainPermissions = async (tabId, autofillType) => {
     permissionResults = await sendMessageToAllFrames(tabId, {
       action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
       target: REQUEST_TARGETS.CONTENT,
-      autofillType
+      autofillType,
+      dataFields
     });
   } catch (e) {
     await CatchError(e);

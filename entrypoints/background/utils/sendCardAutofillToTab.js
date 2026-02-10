@@ -157,7 +157,12 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   let crossDomainAllowedDomains = null;
 
   try {
-    const resolution = await resolveCrossDomainPermissions(tabId, 'card');
+    const resolution = await resolveCrossDomainPermissions(tabId, 'card', {
+      hasCardholderName,
+      hasCardNumber: hasCardData,
+      hasExpirationDate: hasCardData,
+      hasSecurityCode: hasCardData
+    });
 
     if (resolution.needsDialog) {
       try {

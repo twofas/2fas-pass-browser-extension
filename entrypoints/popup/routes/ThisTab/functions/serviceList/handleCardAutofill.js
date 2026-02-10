@@ -218,7 +218,12 @@ const handleCardAutofill = async (item, navigate) => {
   encryptedSecurityCodeB64 = null;
 
   try {
-    const resolution = await resolveCrossDomainPermissions(tab.id, 'card');
+    const resolution = await resolveCrossDomainPermissions(tab.id, 'card', {
+      hasCardholderName,
+      hasCardNumber: sifDecrypt,
+      hasExpirationDate: sifDecrypt,
+      hasSecurityCode: sifDecrypt
+    });
 
     if (resolution.allBlocked) {
       actionData.crossDomainAllowedDomains = [];

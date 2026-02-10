@@ -108,7 +108,10 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   let crossDomainAllowedDomains = null;
 
   try {
-    const resolution = await resolveCrossDomainPermissions(tabId, 'login');
+    const resolution = await resolveCrossDomainPermissions(tabId, 'login', {
+      hasUsername: !noUsername,
+      hasPassword: !noPassword
+    });
 
     if (resolution.needsDialog) {
       const confirmResult = await sendMessageToTab(tabId, {

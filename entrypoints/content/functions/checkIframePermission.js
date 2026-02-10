@@ -12,31 +12,31 @@ import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPay
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
 
 /**
-* Checks if this frame has autofillable inputs based on the autofill type.
+* Checks if this frame has autofillable inputs that match the available data.
 * @param {string} autofillType - The type of autofill ('card' or 'login').
-* @return {boolean} True if this frame has relevant inputs.
+* @param {Object} [dataFields] - Flags indicating which data fields are available.
+* @return {boolean} True if this frame has relevant inputs for available data.
 */
-const hasAutofillableInputs = autofillType => {
+const hasAutofillableInputs = (autofillType, dataFields = {}) => {
   if (autofillType === 'card') {
-    const cardNumberInputs = getPaymentCardNumberInputs();
-    const cardholderNameInputs = getPaymentCardholderNameInputs();
-    const expirationDateInputs = getPaymentCardExpirationDateInputs();
-    const securityCodeInputs = getPaymentCardSecurityCodeInputs();
+    const { hasCardholderName = true, hasCardNumber = true, hasExpirationDate = true, hasSecurityCode = true } = dataFields;
 
-    return cardNumberInputs.length > 0 ||
-      cardholderNameInputs.length > 0 ||
-      expirationDateInputs.length > 0 ||
-      securityCodeInputs.length > 0;
+    return (hasCardNumber && getPaymentCardNumberInputs().length > 0) ||
+      (hasCardholderName && getPaymentCardholderNameInputs().length > 0) ||
+      (hasExpirationDate && getPaymentCardExpirationDateInputs().length > 0) ||
+      (hasSecurityCode && getPaymentCardSecurityCodeInputs().length > 0);
   }
 
   if (autofillType === 'login') {
+    const { hasUsername = true, hasPassword = true } = dataFields;
     const passwordInputs = getPasswordInputs();
     const passwordForms = passwordInputs
       .map(input => input.closest('form'))
       .filter(Boolean);
     const usernameInputs = getUsernameInputs(passwordForms);
 
-    return passwordInputs.length > 0 || usernameInputs.length > 0;
+    return (hasPassword && passwordInputs.length > 0) ||
+      (hasUsername && usernameInputs.length > 0);
   }
 
   return false;
@@ -48,9 +48,10 @@ const hasAutofillableInputs = autofillType => {
 * Only returns needsPermission: true if the frame is cross-domain AND has autofillable inputs.
 * Does NOT show confirm dialog - that should be handled by the caller.
 * @param {string} autofillType - The type of autofill ('card' or 'login').
+* @param {Object} [dataFields] - Flags indicating which data fields are available.
 * @return {Promise<{needsPermission: boolean, frameInfo: Object}>}
 */
-const checkIframePermission = async autofillType => {
+const checkIframePermission = async (autofillType, dataFields) => {
   const frameInfo = {
     isTopFrame: window.self === window.top,
     hostname: '',
@@ -84,7 +85,7 @@ const checkIframePermission = async autofillType => {
     return { needsPermission: false, frameInfo };
   }
 
-  const hasInputs = hasAutofillableInputs(autofillType);
+  const hasInputs = hasAutofillableInputs(autofillType, dataFields);
 
   if (!hasInputs) {
     return { needsPermission: false, frameInfo };

@@ -132,19 +132,23 @@ const handleLoginAutofill = async (item, navigate) => {
       return;
     }
 
-    const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
+    if (decryptedPassword) {
+      const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
 
-    if (!cryptoAvailable) {
-      encryptedValueB64 = decryptedPassword;
-    } else {
-      const passwordResult = await encryptValueForTransmission(decryptedPassword);
+      if (!cryptoAvailable) {
+        encryptedValueB64 = decryptedPassword;
+      } else {
+        const passwordResult = await encryptValueForTransmission(decryptedPassword);
 
-      if (passwordResult.status !== 'ok') {
-        showToast(getMessage('error_autofill_failed'), 'error');
-        return;
+        if (passwordResult.status !== 'ok') {
+          showToast(getMessage('error_autofill_failed'), 'error');
+          return;
+        }
+
+        encryptedValueB64 = passwordResult.data;
       }
-
-      encryptedValueB64 = passwordResult.data;
+    } else {
+      passwordDecrypt = false;
     }
 
     decryptedPassword = '';
@@ -165,7 +169,10 @@ const handleLoginAutofill = async (item, navigate) => {
   encryptedValueB64 = null;
 
   try {
-    const resolution = await resolveCrossDomainPermissions(tab.id, 'login');
+    const resolution = await resolveCrossDomainPermissions(tab.id, 'login', {
+      hasUsername,
+      hasPassword: passwordDecrypt
+    });
 
     if (resolution.allBlocked) {
       actionData.crossDomainAllowedDomains = [];
@@ -250,7 +257,7 @@ const handleLoginAutofill = async (item, navigate) => {
 
     if (!passwordDecrypt && pageHasPasswordInputs && !hasPassword && isHighlySecret) {
       showToast(getMessage('this_tab_autofill_fetch_password'), 'info');
-    } else if (!passwordDecrypt && pageHasPasswordInputs && !hasPassword) {
+    } else if (!passwordDecrypt && pageHasPasswordInputs) {
       showToast(getMessage('this_tab_autofill_no_password'), 'info');
     } else if (!allFieldsFilled && isHighlySecret && !hasPassword) {
       const toastId = showToast(getMessage('this_tab_autofill_partial'), 'info', false);
