@@ -5,12 +5,14 @@
 // See LICENSE file for full terms
 
 import { badgeIcons } from '@/constants';
-import getAllTabsIds from '../../tabs/getAllTabsIds';
 
-/** 
+/**
 * Function to set the browser action badge icon based on the configured state.
+* When called without tabId, sets the global default icon for all tabs.
+* When called with tabId, sets a per-tab override for that specific tab.
 * @async
 * @param {boolean} configured - Indicates whether the application is configured.
+* @param {number|null} tabId - Optional tab ID for per-tab override.
 * @return {Promise<void>} A promise that resolves when the badge icon is set.
 */
 const setBadgeIcon = async (configured, tabId = null) => {
@@ -21,15 +23,7 @@ const setBadgeIcon = async (configured, tabId = null) => {
   const icons = badgeIcons();
   const path = configured ? icons.configured : icons.notConfigured;
 
-  if (tabId) {
-    await browser.action.setIcon({ path, tabId }).catch(() => {});
-  } else {
-    const tabsIds = await getAllTabsIds();
-
-    if (tabsIds.length > 0) {
-      await Promise.all(tabsIds.map(id => browser.action.setIcon({ path, tabId: id }).catch(() => {})));
-    }
-  }
+  await browser.action.setIcon(tabId ? { path, tabId } : { path }).catch(() => {});
 };
 
 export default setBadgeIcon;

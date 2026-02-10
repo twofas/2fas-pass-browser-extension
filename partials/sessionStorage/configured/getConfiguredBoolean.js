@@ -6,10 +6,9 @@
 
 import getConfigured from './getConfigured';
 
-/** 
+/**
 * Gets the configured boolean value.
 * @async
-* @param {string} key - The key to look up.
 * @return {Promise<boolean>} The configured boolean value.
 */
 const getConfiguredBoolean = async () => {
@@ -17,7 +16,12 @@ const getConfiguredBoolean = async () => {
     const configuredValue = await getConfigured();
     return configuredValue < Date.now();
   } catch {
-    return false;
+    try {
+      const sv = await storage.getItem('session:storageVersion');
+      return typeof sv === 'number' && sv > 0;
+    } catch {
+      return false;
+    }
   }
 };
 

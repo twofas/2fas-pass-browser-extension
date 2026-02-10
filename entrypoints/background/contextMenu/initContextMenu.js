@@ -18,14 +18,17 @@ const initContextMenu = async (items = null) => {
   try {
     const contextMenuSetting = await storage.getItem('local:contextMenu');
 
-    if (contextMenuSetting === null || contextMenuSetting === true) {
-      const configured = await getConfiguredBoolean();
+    if (contextMenuSetting === false) {
+      await browser.contextMenus.removeAll();
+      return;
+    }
 
-      if (configured) {
-        await contextMenuConfigured(items);
-      } else {
-        await contextMenuNotConfigured();
-      }
+    const configured = await getConfiguredBoolean();
+
+    if (configured) {
+      await contextMenuConfigured(items);
+    } else {
+      await contextMenuNotConfigured();
     }
   } catch (e) {
     await CatchError(e);

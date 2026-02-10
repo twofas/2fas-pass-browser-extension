@@ -6,7 +6,7 @@
 
 import getKey from '../getKey';
 
-/** 
+/**
 * Sets the configured value in session storage.
 * @async
 * @param {any} value - The value to set.
@@ -21,13 +21,13 @@ const setConfigured = async value => {
     storage.getItem('local:persistentPrivateKey'),
     storage.getItem('local:persistentPublicKey')
   ]);
-  
+
   const [configuredNonceAB, persistentPrivateKeyAB, persistentPublicKeyAB] = await Promise.all([
     Promise.resolve(Base64ToArrayBuffer(configuredNonceB64)),
     Promise.resolve(Base64ToArrayBuffer(persistentPrivateKeyB64)),
     Promise.resolve(Base64ToArrayBuffer(persistentPublicKeyB64))
   ]);
-  
+
   const [persistentPrivateKey, persistentPublicKey] = await Promise.all([
     crypto.subtle.importKey('pkcs8', persistentPrivateKeyAB, { name: 'ECDH', namedCurve: 'P-256' }, false, ['deriveBits'] ),
     crypto.subtle.importKey('spki', persistentPublicKeyAB, { name: 'ECDH', namedCurve: 'P-256' }, false, [] )
@@ -48,7 +48,7 @@ const setConfigured = async value => {
   );
 
   const valueAB = StringToArrayBuffer(valueStr);
-  
+
   const encryptedValue = await crypto.subtle.encrypt(
     { name: 'AES-GCM', iv: configuredNonceAB },
     aesKey,

@@ -31,7 +31,11 @@ const updateBadge = async (configured, services = null, tabId = null) => {
     } catch {}
   }
 
-  await Promise.all(tabsIds.map(id => setBadgeIcon(configured, id).catch(() => {})));
+  await setBadgeIcon(configured).catch(() => {});
+
+  if (tabsIds.length > 0) {
+    await Promise.all(tabsIds.map(id => setBadgeIcon(configured, id).catch(() => {})));
+  }
 
   if (configured) {
     if (!services || services.length === 0) {

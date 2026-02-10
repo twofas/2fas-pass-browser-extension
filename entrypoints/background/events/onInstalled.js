@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import initContextMenu from '../contextMenu/initContextMenu';
-import { openInstallPage, updateBadge } from '../utils';
+import { openInstallPage, updateBadge, setBadgeLocked } from '../utils';
 import runMigrations from '../migrations';
 import setIdleInterval from '@/partials/functions/setIdleInterval';
 import getItems from '@/partials/sessionStorage/getItems';
@@ -46,6 +46,8 @@ const onInstalled = async (details, migrations) => {
     if (import.meta.env.BROWSER !== 'safari') {
       browser.runtime.setUninstallURL(`https://2fas.com/pass/byebye/`);
     }
+
+    await setBadgeLocked().catch(() => {});
 
     try {
       await openInstallPage();
