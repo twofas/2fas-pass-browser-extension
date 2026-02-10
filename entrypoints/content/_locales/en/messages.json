@@ -72,11 +72,11 @@
     "description": "Description for the never autofill dropdown option"
   },
   "content_cross_domain_dialog_cancel": {
-    "message": "Not now",
+    "message": "Cancel",
     "description": "Cancel button text in the cross-domain dialog"
   },
   "content_cross_domain_dialog_accept": {
-    "message": "Autofill",
+    "message": "Accept",
     "description": "Accept button text in the cross-domain dialog"
   }
 }
