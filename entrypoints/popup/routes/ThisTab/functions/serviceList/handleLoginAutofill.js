@@ -207,7 +207,7 @@ const handleLoginAutofill = async (item, navigate) => {
   }
 
   if (!res) {
-    if (isHighlySecret) {
+    if (isHighlySecret && !hasPassword) {
       const toastId = showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
 
       navigate('/', {
@@ -252,7 +252,7 @@ const handleLoginAutofill = async (item, navigate) => {
       showToast(getMessage('this_tab_autofill_fetch_password'), 'info');
     } else if (!passwordDecrypt && pageHasPasswordInputs && !hasPassword) {
       showToast(getMessage('this_tab_autofill_no_password'), 'info');
-    } else if (!allFieldsFilled && isHighlySecret) {
+    } else if (!allFieldsFilled && isHighlySecret && !hasPassword) {
       const toastId = showToast(getMessage('this_tab_autofill_partial'), 'info', false);
 
       navigate('/', {
@@ -270,7 +270,7 @@ const handleLoginAutofill = async (item, navigate) => {
       showToast(getMessage('this_tab_autofill_success'), 'success');
     }
   } else {
-    if (isHighlySecret) {
+    if (isHighlySecret && !hasPassword) {
       const toastId = showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
 
       navigate('/', {
