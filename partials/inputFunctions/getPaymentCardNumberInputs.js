@@ -96,7 +96,7 @@ const securityCodeKeywords = [
 ];
 
 const expirationKeywords = [
-  'exp', 'expiry', 'expiration', 'valid', 'month', 'year', 'mm', 'yy'
+  'exp', 'expiry', 'expiration', 'valid', 'month', 'year', 'mm', 'yy', 'period'
 ];
 
 /**
