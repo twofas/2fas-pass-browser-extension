@@ -16,8 +16,9 @@ import amex from '@/assets/popup-window/payment-cards/amex.svg';
 import discover from '@/assets/popup-window/payment-cards/discover.svg';
 import dinnersLight from '@/assets/popup-window/payment-cards/dinners_light.svg';
 import dinnersDark from '@/assets/popup-window/payment-cards/dinners_dark.svg';
-import jcb from '@/assets/popup-window/payment-cards/jcb.png';
-import unionPay from '@/assets/popup-window/payment-cards/unionPay.svg';
+import jcb from '@/assets/popup-window/payment-cards/jcb.svg';
+import unionPayLight from '@/assets/popup-window/payment-cards/unionpay_light.svg';
+import unionPayDark from '@/assets/popup-window/payment-cards/unionpay_dark.svg';
 import Skeleton from '../../components/Skeleton';
 import SecureNoteIcon from '@/assets/popup-window/items/secure-note.svg?react';
 import PaymentCardIcon from '@/assets/popup-window/items/payment-card.svg?react';
@@ -29,7 +30,7 @@ const CARD_ISSUER_ICONS = {
   Discover: { light: discover, dark: discover },
   DinersClub: { light: dinnersLight, dark: dinnersDark },
   JCB: { light: jcb, dark: jcb },
-  UnionPay: { light: unionPay, dark: unionPay }
+  UnionPay: { light: unionPayLight, dark: unionPayDark }
 };
 
 /** 
