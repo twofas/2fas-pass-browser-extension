@@ -4,6 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import '@splidejs/react-splide/css/core';
 import S from './Connect.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, useCallback, useRef, memo, lazy } from 'react';
@@ -12,8 +13,6 @@ import { useAuthActions } from '@/hooks/useAuth';
 import useConnectView from '../../hooks/useConnectView';
 import { generateSessionKeysNonces, generateEphemeralKeys, generateSessionID, calculateConnectSignature, generateQR } from './functions';
 import calculateFetchSignature from '../Fetch/functions/calculateFetchSignature';
-import ConnectOnMessage from './socket/ConnectOnMessage';
-import ConnectOnClose from './socket/ConnectOnClose';
 import TwoFasWebSocket from '@/partials/WebSocket';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import DeviceQrIcon from '@/assets/popup-window/device-qr.svg?react';
@@ -93,6 +92,11 @@ function Connect (props) {
   const initQRConnection = useCallback(async () => {
     let sessionID, signature, qr, socket;
 
+    const socketHandlersPromise = Promise.all([
+      import('./socket/ConnectOnMessage'),
+      import('./socket/ConnectOnClose')
+    ]);
+
     try {
       sessionID = await generateSessionID();
       signature = await calculateConnectSignature(ephemeralDataRef.current.publicKey, sessionID);
@@ -137,6 +141,7 @@ function Connect (props) {
     }
 
     try {
+      const [{ default: ConnectOnMessage }, { default: ConnectOnClose }] = await socketHandlersPromise;
       socket.open();
       socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralDataRef.current.uuid, path: SOCKET_PATHS.CONNECT.QR });
       socket.addEventListener('close', ConnectOnClose, { path: SOCKET_PATHS.CONNECT.QR });
@@ -242,6 +247,11 @@ function Connect (props) {
       }
 
       try {
+        const socketHandlersPromise = Promise.all([
+          import('./socket/ConnectOnMessage'),
+          import('./socket/ConnectOnClose')
+        ]);
+
         const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
 
         if (abortSignal?.aborted) {
@@ -254,6 +264,7 @@ function Connect (props) {
           return false;
         }
 
+        const [{ default: ConnectOnMessage }, { default: ConnectOnClose }] = await socketHandlersPromise;
         const socket = new TwoFasWebSocket(sessionId);
         socket.open();
         socket.addEventListener('message', ConnectOnMessage, { uuid: device.uuid, action: PULL_REQUEST_TYPES.FULL_SYNC, path: SOCKET_PATHS.CONNECT.PUSH });
@@ -504,9 +515,8 @@ function Connect (props) {
     eventBus.on(eventBus.EVENTS.CONNECT.DEVICE_NAME, setDeviceName);
     eventBus.on(eventBus.EVENTS.CONNECT.LOGIN, login);
 
-    initEphemeralKeys()
-      .then(() => getReadyDevices())
-      .then(devices => {
+    Promise.all([initEphemeralKeys(), getReadyDevices()])
+      .then(([, devices]) => {
         if (devices.length === 0) {
           setConnectView(CONNECT_VIEWS.QrView);
         } else {
@@ -751,14 +761,14 @@ function Connect (props) {
                 onClick={handleCancelPushSent}
               />
 
-              <PushNotification description={getMessage('connect_push_animation_description')} />
+              <PushNotification />
 
               <div className={`${S.pushDeviceName} ${deviceName ? S.visible : ''}`}>
                 <span>{deviceName}</span>
               </div>
 
               <div className={S.pushAdditional}>
-                <div className={`${S.pushAdditionalTrouble} ${bS.btn} ${bS.btnClear}`}>
+                <div className={`${S.pushAdditionalTrouble} ${bS.btn} ${bS.btnOutline}`}>
                   <span>{getMessage('connect_push_trouble')}</span>
 
                   <div className={S.pushAdditionalTooltip}>

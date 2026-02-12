@@ -655,6 +655,54 @@
     "message": "This form is on CURRENT_DOMAIN which appears to be in a cross-domain iframe. Do you want to continue with autofill?",
     "description": "Warning shown when autofill is attempted on a cross-domain iframe and we cannot access the parent domain"
   },
+  "content_cross_domain_dialog_title": {
+    "message": "Autofill these forms?",
+    "description": "Title for the cross-domain autofill dialog"
+  },
+  "content_cross_domain_dialog_description": {
+    "message": "This page includes login forms from domains different than the current website.",
+    "description": "Description explaining why the cross-domain dialog is shown"
+  },
+  "content_cross_domain_dialog_domain_column": {
+    "message": "Domain",
+    "description": "Column header for domains in the cross-domain dialog table"
+  },
+  "content_cross_domain_dialog_behavior_column": {
+    "message": "Autofill Behavior",
+    "description": "Column header for autofill behavior in the cross-domain dialog table"
+  },
+  "content_cross_domain_dialog_always_ask": {
+    "message": "Always ask",
+    "description": "Dropdown option to always ask before autofilling on this domain"
+  },
+  "content_cross_domain_dialog_always_ask_description": {
+    "message": "Always ask to autofill on this page",
+    "description": "Description for the always ask dropdown option"
+  },
+  "content_cross_domain_dialog_always_autofill": {
+    "message": "Always autofill",
+    "description": "Dropdown option to always autofill on this domain without asking"
+  },
+  "content_cross_domain_dialog_always_autofill_description": {
+    "message": "Allow autofill automatically on this page",
+    "description": "Description for the always autofill dropdown option"
+  },
+  "content_cross_domain_dialog_never_autofill": {
+    "message": "Never autofill",
+    "description": "Dropdown option to never autofill on this domain"
+  },
+  "content_cross_domain_dialog_never_autofill_description": {
+    "message": "Prevent autofill on this page",
+    "description": "Description for the never autofill dropdown option"
+  },
+  "content_cross_domain_dialog_cancel": {
+    "message": "Cancel",
+    "description": "Cancel button text in the cross-domain dialog"
+  },
+  "content_cross_domain_dialog_accept": {
+    "message": "Accept",
+    "description": "Accept button text in the cross-domain dialog"
+  },
   "install_please_pin_extension": {
     "message": "Please pin the extension to the toolbar.",
     "description": "Prompt asking the user to pin the browser extension to the toolbar"
@@ -1168,8 +1216,12 @@
     "description": "Title for the copy error message button on the error fallback screen"
   },
   "fetch_push_header": {
-    "message": "Check the 2FAS Pass push notification on your mobile device.",
+    "message": "Approve the request\nin the 2FAS Pass app",
     "description": "Header prompting the user to check their device for a push notification"
+  },
+  "fetch_push_subheader": {
+    "message": "Check your mobile device",
+    "description": "Subheader explaining that the user should approve the request on their mobile phone"
   },
   "fetch_push_waiting_for_mobile": {
     "message": "Waiting for mobile response...",
@@ -1327,26 +1379,6 @@
     "message": "Something went wrong. Go back and try again.",
     "description": "Error message displayed when there is a problem with the password generator data"
   },
-  "settings_header": {
-    "message": "Settings",
-    "description": "Header for the settings page"
-  },
-  "settings_preferences": {
-    "message": "Preferences",
-    "description": "Label for the preferences section in settings"
-  },
-  "settings_security": {
-    "message": "Security",
-    "description": "Label for the security section in settings"
-  },
-  "settings_devices": {
-    "message": "Connected Devices",
-    "description": "Label for the trusted devices section in settings"
-  },
-  "settings_about": {
-    "message": "About 2FAS Pass",
-    "description": "Label for the about section in settings"
-  },
   "settings_rate_us_chrome": {
     "message": "Rate us in Chrome Web Store",
     "description": "Prompt to rate the extension in the Chrome Web Store"
@@ -1395,6 +1427,206 @@
     "message": "Let's connect",
     "description": "Prompt to connect with the 2FAS Pass team or community"
   },
+  "settings_cross_domain_autofill_domains": {
+    "message": "Autofill domains",
+    "description": "Page title for the cross-domain autofill domains settings page"
+  },
+  "settings_cross_domain_autofill_domains_subtitle": {
+    "message": "Domains with custom autofill settings",
+    "description": "Subtitle for the cross-domain autofill domains settings page"
+  },
+  "settings_cross_domain_tab_always_autofill": {
+    "message": "Always autofill",
+    "description": "Tab label for the always autofill (trusted) domains list"
+  },
+  "settings_cross_domain_tab_never_autofill": {
+    "message": "Never autofill",
+    "description": "Tab label for the never autofill (untrusted) domains list"
+  },
+  "settings_cross_domains_description": {
+    "message": "Cross-domain autofill prompts will be skipped for the following domains and inputs will be autofilled automatically.",
+    "description": "Explains that trusted domains won't show cross-domain confirmation prompts"
+  },
+  "settings_cross_domains_empty": {
+    "message": "There are no trusted domains yet.",
+    "description": "Message displayed when no domains are trusted for cross-domain autofill"
+  },
+  "settings_cross_domains_remove": {
+    "message": "Remove selected domain from the trusted list.",
+    "description": "Button label to remove a domain from the trusted list"
+  },
+  "settings_cross_domains_remove_toast": {
+    "message": "Domain removed from the trusted list",
+    "description": "Message displayed when a domain is successfully removed from the trusted list"
+  },
+  "settings_cross_domains_add_required": {
+    "message": "Domain is required",
+    "description": "Validation message when trying to add an empty domain"
+  },
+  "settings_cross_domains_add_invalid": {
+    "message": "Domain is invalid. Please enter a valid domain.",
+    "description": "Validation message when the provided domain is invalid"
+  },
+  "settings_cross_domains_add_already_trusted": {
+    "message": "This domain is already trusted.",
+    "description": "Validation message when trying to add a domain that is already in the trusted list"
+  },
+  "settings_cross_domains_add_success": {
+    "message": "Successfully added domain to trusted list",
+    "description": "Message displayed when a domain is successfully added to the trusted list"
+  },
+  "settings_cross_domains_add_domain_text": {
+    "message": "Add domain",
+    "description": "Label for the input field to add a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_another_domain_text": {
+    "message": "Add another domain",
+    "description": "Label for the button to add another domain to the trusted list"
+  },
+  "settings_cross_domains_add_input_placeholder": {
+    "message": "Enter trusted domain",
+    "description": "Placeholder text for the input field to add a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_submit_title": {
+    "message": "Trust this domain",
+    "description": "Title for the button to submit a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_cancel_title": {
+    "message": "Cancel trusting this domain",
+    "description": "Title for the button to cancel trusting a new domain"
+  },
+  "settings_cross_domains_remove_dialog_message": {
+    "message": "Are you sure you want to remove DOMAIN from the trusted domains list?",
+    "description": "Confirmation message when removing a domain from the trusted list"
+  },
+  "settings_cross_domains_remove_dialog_message_replace_fallback": {
+    "message": "this domain",
+    "description": "Fallback text for the domain placeholder in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_remove_dialog_cancel_text": {
+    "message": "Cancel",
+    "description": "Cancel button text in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_remove_dialog_confirm_text": {
+    "message": "Remove",
+    "description": "Confirm button text in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_untrusted_description": {
+    "message": "Cross-domain autofill will never happen \nfor the following domains.",
+    "description": "Explains that untrusted domains will always be blocked from cross-domain autofill"
+  },
+  "settings_cross_domains_untrusted_empty": {
+    "message": "There are no blocked domains yet.",
+    "description": "Message displayed when no domains are blocked for cross-domain autofill"
+  },
+  "settings_cross_domains_untrusted_remove": {
+    "message": "Remove selected domain from the blocked list.",
+    "description": "Button label to remove a domain from the untrusted list"
+  },
+  "settings_cross_domains_untrusted_remove_toast": {
+    "message": "Domain removed from the blocked list",
+    "description": "Message displayed when a domain is successfully removed from the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_already_blocked": {
+    "message": "This domain is already blocked.",
+    "description": "Validation message when trying to add a domain that is already in the untrusted list"
+  },
+  "settings_cross_domains_add_already_in_other_list": {
+    "message": "This domain is already in the OTHER_LIST list. Remove it first.",
+    "description": "Validation message when trying to add a domain that exists in the other list"
+  },
+  "settings_cross_domains_untrusted_add_success": {
+    "message": "Successfully added domain to the blocked list",
+    "description": "Message displayed when a domain is successfully added to the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_domain_text": {
+    "message": "Add domain",
+    "description": "Label for the input field to add a new domain to the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_another_domain_text": {
+    "message": "Add another domain",
+    "description": "Label for the button to add another domain to the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_input_placeholder": {
+    "message": "Enter domain to block",
+    "description": "Placeholder text for the input field to add a new domain to the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_submit_title": {
+    "message": "Block this domain",
+    "description": "Title for the button to submit a new domain to the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_cancel_title": {
+    "message": "Stop blocking this domain",
+    "description": "Title for the button to cancel blocking a new domain"
+  },
+  "settings_cross_domains_untrusted_remove_dialog_message": {
+    "message": "Are you sure you want to remove DOMAIN from the blocked domains list?",
+    "description": "Confirmation message when removing a domain from the untrusted list"
+  },
+  "settings_cross_domains_untrusted_remove_dialog_message_replace_fallback": {
+    "message": "this domain",
+    "description": "Fallback text for the domain placeholder in the remove untrusted domain confirmation dialog"
+  },
+  "settings_cross_domains_untrusted_remove_dialog_cancel_text": {
+    "message": "Cancel",
+    "description": "Cancel button text in the remove untrusted domain confirmation dialog"
+  },
+  "settings_cross_domains_untrusted_remove_dialog_confirm_text": {
+    "message": "Remove",
+    "description": "Confirm button text in the remove untrusted domain confirmation dialog"
+  },
+  "settings_devices_header": {
+    "message": "Connected Devices",
+    "description": "Header for the trusted devices section in settings"
+  },
+  "settings_devices_description": {
+    "message": "List of devices connected with this Browser Extension. Disconnect them from here if you no longer use them.",
+    "description": "Description for managing trusted devices"
+  },
+  "settings_devices_unknown_platform": {
+    "message": "Unknown",
+    "description": "Label for devices with an unknown platform"
+  },
+  "settings_devices_no_devices": {
+    "message": "No devices found.",
+    "description": "Message displayed when there are no trusted devices found"
+  },
+  "settings_devices_current_device_title": {
+    "message": "This is your current device. You cannot disconnect it here.",
+    "description": "Warning message when disconnecting the current trusted device"
+  },
+  "settings_devices_name_header": {
+    "message": "Name",
+    "description": "Label for the device name column in the trusted devices list"
+  },
+  "settings_devices_platform_header": {
+    "message": "Platform",
+    "description": "Label for the device platform column in the trusted devices list"
+  },
+  "settings_devices_last_connected_header": {
+    "message": "Last connected",
+    "description": "Label for the last connected column in the trusted devices list"
+  },
+  "settings_devices_disconnect_title": {
+    "message": "Disconnect this device",
+    "description": "Title for the disconnect trusted device button"
+  },
+  "settings_devices_dialog_message": {
+    "message": "Are you sure you want to disconnect this device?",
+    "description": "Confirmation message when disconnecting a trusted device"
+  },
+  "settings_devices_dialog_submessage_current_device": {
+    "message": "This is your current device! Disconnecting it will block any future actions, such as fetching passwords.",
+    "description": "Warning sub-message when disconnecting the current trusted device"
+  },
+  "settings_devices_dialog_cancel_text": {
+    "message": "Cancel",
+    "description": "Cancel button text in the disconnect trusted device confirmation dialog"
+  },
+  "settings_devices_dialog_confirm_text": {
+    "message": "Disconnect",
+    "description": "Confirm button text in the disconnect trusted device confirmation dialog"
+  },
   "settings_save_prompt_header": {
     "message": "\"Save Item\" prompt",
     "description": "Header for the save login prompt settings"
@@ -1418,82 +1650,6 @@
   "settings_save_prompt_none": {
     "message": "None",
     "description": "Option to disable save login prompts"
-  },
-  "settings_safe_browsing": {
-    "message": "Turn on \"Safe browsing\" in Chrome",
-    "description": "Option to enable safe browsing in Chrome"
-  },
-  "settings_safe_browsing_reports": {
-    "message": "Send \"Safe browsing\" reports to Chrome",
-    "description": "Option to send safe browsing reports to Chrome"
-  },
-  "settings_only_on_restart": {
-    "message": "Only on restart",
-    "description": "Option to clear data only on browser restart"
-  },
-  "settings_don_t_clear": {
-    "message": "Don't clear automatically",
-    "description": "Option to disable automatic data clearing"
-  },
-  "settings_after_1_minute": {
-    "message": "After 1 minute",
-    "description": "Option to clear data after 1 minute of inactivity"
-  },
-  "settings_after_5_minutes": {
-    "message": "After 5 minutes",
-    "description": "Option to clear data after 5 minutes of inactivity"
-  },
-  "settings_after_15_minutes": {
-    "message": "After 15 minutes",
-    "description": "Option to clear data after 15 minutes of inactivity"
-  },
-  "settings_after_30_minutes": {
-    "message": "After 30 minutes",
-    "description": "Option to clear data after 30 minutes of inactivity"
-  },
-  "settings_after_60_minutes": {
-    "message": "After 60 minutes",
-    "description": "Option to clear data after 60 minutes of inactivity"
-  },
-  "settings_idle_lock_header": {
-    "message": "Automatic lock when idle",
-    "description": "Header for the idle lock settings"
-  },
-  "settings_idle_lock_description": {
-    "message": "Select the time after which the Browser Extension will automatically lock itself if you don't use it.",
-    "description": "Description for configuring idle lock behavior"
-  },
-  "settings_idle_lock_tooltip_1": {
-    "message": "Autolock browser extensions when idle",
-    "description": "Tooltip explaining that the idle lock setting applies only to the extension"
-  },
-  "settings_idle_lock_tooltip_2": {
-    "message": "This feature automatically locks the extension and clears all Items that have been transferred from your mobile app after the period of inactivity you set above.",
-    "description": "Tooltip clarifying that the idle lock setting does not affect the mobile app"
-  },
-  "settings_idle_lock_tooltip_3": {
-    "message": "You can choose to lock it manually, automatically after a set amount of time, or when you restart the browser. Idle time refers to the inactivity of the whole computer, not only the browser.",
-    "description": "Tooltip explaining that the idle lock function only applies to the extension"
-  },
-  "settings_auto_clear_clipboard_header": {
-    "message": "Auto clear clipboard",
-    "description": "Header for the auto clear clipboard settings"
-  },
-  "settings_auto_clear_clipboard_description": {
-    "message": "Select a time to clear the clipboard of data copied from this Browser Extension.",
-    "description": "Description for configuring clipboard auto-clear behavior"
-  },
-  "settings_auto_clear_clipboard_tooltip_1": {
-    "message": "Auto Clear Clipboard",
-    "description": "Tooltip explaining that the auto-clear setting applies only to data copied from the extension"
-  },
-  "settings_auto_clear_clipboard_tooltip_2": {
-    "message": "The “Auto Clear Clipboard” function automatically clears the clipboard contents after a specified period (can be changed above). This prevents the password from being permanently stored there.",
-    "description": "Tooltip clarifying that the auto-clear setting does not affect data copied from outside the extension"
-  },
-  "settings_auto_clear_clipboard_tooltip_3": {
-    "message": "NOTE: This function has built-in browser limitations. For the clipboard to be cleared, the browser must be open and active; otherwise, it won't work.",
-    "description": "Tooltip explaining that the auto-clear function only applies to data copied from the extension"
   },
   "settings_theme": {
     "message": "Theme",
@@ -1579,6 +1735,30 @@
     "message": "Ignored domains",
     "description": "Label for the excluded domains settings"
   },
+  "settings_danger_zone": {
+    "message": "Danger Zone",
+    "description": "Label for the danger zone section in settings"
+  },
+  "settings_danger_zone_reset": {
+    "message": "Reset Browser Extension",
+    "description": "Button label to reset the browser extension"
+  },
+  "settings_reset_header": {
+    "message": "Reset Browser Extension",
+    "description": "Header for the reset browser extension confirmation dialog"
+  },
+  "settings_reset_description": {
+    "message": "Resetting the 2FAS Pass Browser Extension will delete all settings associated with the extension.",
+    "description": "Confirmation message for resetting the browser extension"
+  },
+  "settings_reset_action_confirm_button": {
+    "message": "Reset",
+    "description": "Button label to confirm the reset action"
+  },
+  "settings_reset_action_cancel_button": {
+    "message": "Cancel",
+    "description": "Button label to cancel the reset action"
+  },
   "settings_excluded_domains_description": {
     "message": "2FAS Pass will not suggest adding \nnew Items for the following domains.",
     "description": "Explains that excluded domains won't prompt for adding new logins"
@@ -1647,161 +1827,113 @@
     "message": "Remove",
     "description": "Confirm button text in the remove domain confirmation dialog"
   },
-  "settings_danger_zone": {
-    "message": "Danger Zone",
-    "description": "Label for the danger zone section in settings"
+  "settings_safe_browsing": {
+    "message": "Turn on \"Safe browsing\" in Chrome",
+    "description": "Option to enable safe browsing in Chrome"
   },
-  "settings_danger_zone_reset": {
-    "message": "Reset Browser Extension",
-    "description": "Button label to reset the browser extension"
+  "settings_safe_browsing_reports": {
+    "message": "Send \"Safe browsing\" reports to Chrome",
+    "description": "Option to send safe browsing reports to Chrome"
   },
-  "settings_reset_header": {
-    "message": "Reset Browser Extension",
-    "description": "Header for the reset browser extension confirmation dialog"
+  "settings_only_on_restart": {
+    "message": "Only on restart",
+    "description": "Option to clear data only on browser restart"
   },
-  "settings_reset_description": {
-    "message": "Resetting the 2FAS Pass Browser Extension will delete all settings associated with the extension.",
-    "description": "Confirmation message for resetting the browser extension"
+  "settings_don_t_clear": {
+    "message": "Don't clear automatically",
+    "description": "Option to disable automatic data clearing"
   },
-  "settings_reset_action_confirm_button": {
-    "message": "Reset",
-    "description": "Button label to confirm the reset action"
+  "settings_after_1_minute": {
+    "message": "After 1 minute",
+    "description": "Option to clear data after 1 minute of inactivity"
   },
-  "settings_reset_action_cancel_button": {
-    "message": "Cancel",
-    "description": "Button label to cancel the reset action"
+  "settings_after_5_minutes": {
+    "message": "After 5 minutes",
+    "description": "Option to clear data after 5 minutes of inactivity"
   },
-  "settings_devices_header": {
-    "message": "Connected Devices",
-    "description": "Header for the trusted devices section in settings"
+  "settings_after_15_minutes": {
+    "message": "After 15 minutes",
+    "description": "Option to clear data after 15 minutes of inactivity"
   },
-  "settings_devices_description": {
-    "message": "List of devices connected with this Browser Extension. Disconnect them from here if you no longer use them.",
-    "description": "Description for managing trusted devices"
+  "settings_after_30_minutes": {
+    "message": "After 30 minutes",
+    "description": "Option to clear data after 30 minutes of inactivity"
   },
-  "settings_devices_unknown_platform": {
-    "message": "Unknown",
-    "description": "Label for devices with an unknown platform"
+  "settings_after_60_minutes": {
+    "message": "After 60 minutes",
+    "description": "Option to clear data after 60 minutes of inactivity"
   },
-  "settings_devices_no_devices": {
-    "message": "No devices found.",
-    "description": "Message displayed when there are no trusted devices found"
+  "settings_idle_lock_header": {
+    "message": "Automatic lock when idle",
+    "description": "Header for the idle lock settings"
   },
-  "settings_devices_current_device_title": {
-    "message": "This is your current device. You cannot disconnect it here.",
-    "description": "Warning message when disconnecting the current trusted device"
+  "settings_idle_lock_description": {
+    "message": "Select the time after which the Browser Extension will automatically lock itself if you don't use it.",
+    "description": "Description for configuring idle lock behavior"
   },
-  "settings_devices_name_header": {
-    "message": "Name",
-    "description": "Label for the device name column in the trusted devices list"
+  "settings_idle_lock_tooltip_1": {
+    "message": "Autolock browser extensions when idle",
+    "description": "Tooltip explaining that the idle lock setting applies only to the extension"
   },
-  "settings_devices_platform_header": {
-    "message": "Platform",
-    "description": "Label for the device platform column in the trusted devices list"
+  "settings_idle_lock_tooltip_2": {
+    "message": "This feature automatically locks the extension and clears all Items that have been transferred from your mobile app after the period of inactivity you set above.",
+    "description": "Tooltip clarifying that the idle lock setting does not affect the mobile app"
   },
-  "settings_devices_last_connected_header": {
-    "message": "Last connected",
-    "description": "Label for the last connected column in the trusted devices list"
+  "settings_idle_lock_tooltip_3": {
+    "message": "You can choose to lock it manually, automatically after a set amount of time, or when you restart the browser. Idle time refers to the inactivity of the whole computer, not only the browser.",
+    "description": "Tooltip explaining that the idle lock function only applies to the extension"
   },
-  "settings_devices_disconnect_title": {
-    "message": "Disconnect this device",
-    "description": "Title for the disconnect trusted device button"
+  "settings_auto_clear_clipboard_header": {
+    "message": "Auto clear clipboard",
+    "description": "Header for the auto clear clipboard settings"
   },
-  "settings_devices_dialog_message": {
-    "message": "Are you sure you want to disconnect this device?",
-    "description": "Confirmation message when disconnecting a trusted device"
+  "settings_auto_clear_clipboard_description": {
+    "message": "Select a time to clear the clipboard of data copied from this Browser Extension.",
+    "description": "Description for configuring clipboard auto-clear behavior"
   },
-  "settings_devices_dialog_submessage_current_device": {
-    "message": "This is your current device! Disconnecting it will block any future actions, such as fetching passwords.",
-    "description": "Warning sub-message when disconnecting the current trusted device"
+  "settings_auto_clear_clipboard_tooltip_1": {
+    "message": "Auto Clear Clipboard",
+    "description": "Tooltip explaining that the auto-clear setting applies only to data copied from the extension"
   },
-  "settings_devices_dialog_cancel_text": {
-    "message": "Cancel",
-    "description": "Cancel button text in the disconnect trusted device confirmation dialog"
+  "settings_auto_clear_clipboard_tooltip_2": {
+    "message": "The \"Auto Clear Clipboard\" function automatically clears the clipboard contents after a specified period (can be changed above). This prevents the password from being permanently stored there.",
+    "description": "Tooltip clarifying that the auto-clear setting does not affect data copied from outside the extension"
   },
-  "settings_devices_dialog_confirm_text": {
-    "message": "Disconnect",
-    "description": "Confirm button text in the disconnect trusted device confirmation dialog"
+  "settings_auto_clear_clipboard_tooltip_3": {
+    "message": "NOTE: This function has built-in browser limitations. For the clipboard to be cleared, the browser must be open and active; otherwise, it won't work.",
+    "description": "Tooltip explaining that the auto-clear function only applies to data copied from the extension"
   },
   "settings_cross_domain_header": {
     "message": "Cross-domain autofill",
     "description": "Header for the cross-domain iframe autofill settings"
   },
   "settings_cross_domain_description": {
-    "message": "When a login form is embedded in an iframe from a different domain, 2FAS Pass will ask for your confirmation before autofilling. You can manage trusted domains that skip this prompt.",
+    "message": "Domains with custom autofill settings.",
     "description": "Description explaining the cross-domain iframe autofill security feature"
   },
-  "settings_cross_domain_trusted_domains": {
-    "message": "Trusted domains",
-    "description": "Link text to navigate to the trusted domains management page for cross-domain autofill"
+  "settings_cross_domain_button": {
+    "message": "Autofill domains",
+    "description": "Link text to navigate to the cross-domain autofill settings page"
   },
-  "settings_cross_domains_description": {
-    "message": "Cross-domain autofill prompts will be \nskipped for the following domains.",
-    "description": "Explains that trusted domains won't show cross-domain confirmation prompts"
+  "settings_header": {
+    "message": "Settings",
+    "description": "Header for the settings page"
   },
-  "settings_cross_domains_empty": {
-    "message": "There are no trusted domains yet.",
-    "description": "Message displayed when no domains are trusted for cross-domain autofill"
+  "settings_preferences": {
+    "message": "Preferences",
+    "description": "Label for the preferences section in settings"
   },
-  "settings_cross_domains_remove": {
-    "message": "Remove selected domain from the trusted list.",
-    "description": "Button label to remove a domain from the trusted list"
+  "settings_security": {
+    "message": "Security",
+    "description": "Label for the security section in settings"
   },
-  "settings_cross_domains_remove_toast": {
-    "message": "Domain removed from the trusted list",
-    "description": "Message displayed when a domain is successfully removed from the trusted list"
+  "settings_devices": {
+    "message": "Connected Devices",
+    "description": "Label for the trusted devices section in settings"
   },
-  "settings_cross_domains_add_required": {
-    "message": "Domain is required",
-    "description": "Validation message when trying to add an empty domain"
-  },
-  "settings_cross_domains_add_invalid": {
-    "message": "Domain is invalid. Please enter a valid domain.",
-    "description": "Validation message when the provided domain is invalid"
-  },
-  "settings_cross_domains_add_already_trusted": {
-    "message": "This domain is already trusted.",
-    "description": "Validation message when trying to add a domain that is already in the trusted list"
-  },
-  "settings_cross_domains_add_success": {
-    "message": "Successfully added domain to trusted list",
-    "description": "Message displayed when a domain is successfully added to the trusted list"
-  },
-  "settings_cross_domains_add_domain_text": {
-    "message": "Add domain",
-    "description": "Label for the input field to add a new domain to the trusted list"
-  },
-  "settings_cross_domains_add_another_domain_text": {
-    "message": "Add another domain",
-    "description": "Label for the button to add another domain to the trusted list"
-  },
-  "settings_cross_domains_add_input_placeholder": {
-    "message": "Enter trusted domain",
-    "description": "Placeholder text for the input field to add a new domain to the trusted list"
-  },
-  "settings_cross_domains_add_submit_title": {
-    "message": "Trust this domain",
-    "description": "Title for the button to submit a new domain to the trusted list"
-  },
-  "settings_cross_domains_add_cancel_title": {
-    "message": "Cancel trusting this domain",
-    "description": "Title for the button to cancel trusting a new domain"
-  },
-  "settings_cross_domains_remove_dialog_message": {
-    "message": "Are you sure you want to remove DOMAIN from the trusted domains list?",
-    "description": "Confirmation message when removing a domain from the trusted list"
-  },
-  "settings_cross_domains_remove_dialog_message_replace_fallback": {
-    "message": "this domain",
-    "description": "Fallback text for the domain placeholder in the remove domain confirmation dialog"
-  },
-  "settings_cross_domains_remove_dialog_cancel_text": {
-    "message": "Cancel",
-    "description": "Cancel button text in the remove domain confirmation dialog"
-  },
-  "settings_cross_domains_remove_dialog_confirm_text": {
-    "message": "Remove",
-    "description": "Confirm button text in the remove domain confirmation dialog"
+  "settings_about": {
+    "message": "About 2FAS Pass",
+    "description": "Label for the about section in settings"
   },
   "this_tab_matching_logins_header": {
     "message": "Matching Items",

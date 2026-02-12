@@ -1,0 +1,50 @@
+{
+  "settings_rate_us_chrome": {
+    "message": "Rate us in Chrome Web Store",
+    "description": "Prompt to rate the extension in the Chrome Web Store"
+  },
+  "settings_rate_us_firefox": {
+    "message": "Rate us in Firefox Browser Add-ons",
+    "description": "Prompt to rate the extension in Firefox Browser Add-ons"
+  },
+  "settings_rate_us_edge": {
+    "message": "Rate us in Microsoft Edge Addons",
+    "description": "Prompt to rate the extension in Microsoft Edge Add-ons"
+  },
+  "settings_rate_us_safari": {
+    "message": "Rate us in App Store",
+    "description": "Prompt to rate the extension in the App Store"
+  },
+  "settings_about_header": {
+    "message": "About 2FAS Pass",
+    "description": "Header for the about section in settings"
+  },
+  "settings_about_thank_you": {
+    "message": "Thank you for using 2FAS Pass, \na Source-available project with cybersecurity at its heart.",
+    "description": "Thank you message for users of the 2FAS Pass extension"
+  },
+  "settings_about_thank_you_subheader": {
+    "message": "We do not keep your data. \nWe have no servers.",
+    "description": "Subheader emphasizing the privacy and security of the extension"
+  },
+  "settings_about_thank_you_description": {
+    "message": "We do not store your Items as we have no servers. You keep all of your Items in your 2FAS Pass mobile app. The ones you choose may also be stored in this Browser Extension. You decide when and how you use them.",
+    "description": "Explains that user data is stored in the mobile app or optionally in the extension"
+  },
+  "settings_visit_our_website": {
+    "message": "Visit our website",
+    "description": "Link to the 2FAS Pass website"
+  },
+  "settings_privacy_policy": {
+    "message": "Privacy Policy",
+    "description": "Link to the privacy policy of 2FAS Pass"
+  },
+  "settings_eula": {
+    "message": "Terms of Service (EULA)",
+    "description": "Link to the End User License Agreement for 2FAS Pass"
+  },
+  "settings_lets_connect": {
+    "message": "Let's connect",
+    "description": "Prompt to connect with the 2FAS Pass team or community"
+  }
+}

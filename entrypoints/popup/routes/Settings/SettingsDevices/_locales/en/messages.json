@@ -1,0 +1,54 @@
+{
+  "settings_devices_header": {
+    "message": "Connected Devices",
+    "description": "Header for the trusted devices section in settings"
+  },
+  "settings_devices_description": {
+    "message": "List of devices connected with this Browser Extension. Disconnect them from here if you no longer use them.",
+    "description": "Description for managing trusted devices"
+  },
+  "settings_devices_unknown_platform": {
+    "message": "Unknown",
+    "description": "Label for devices with an unknown platform"
+  },
+  "settings_devices_no_devices": {
+    "message": "No devices found.",
+    "description": "Message displayed when there are no trusted devices found"
+  },
+  "settings_devices_current_device_title": {
+    "message": "This is your current device. You cannot disconnect it here.",
+    "description": "Warning message when disconnecting the current trusted device"
+  },
+  "settings_devices_name_header": {
+    "message": "Name",
+    "description": "Label for the device name column in the trusted devices list"
+  },
+  "settings_devices_platform_header": {
+    "message": "Platform",
+    "description": "Label for the device platform column in the trusted devices list"
+  },
+  "settings_devices_last_connected_header": {
+    "message": "Last connected",
+    "description": "Label for the last connected column in the trusted devices list"
+  },
+  "settings_devices_disconnect_title": {
+    "message": "Disconnect this device",
+    "description": "Title for the disconnect trusted device button"
+  },
+  "settings_devices_dialog_message": {
+    "message": "Are you sure you want to disconnect this device?",
+    "description": "Confirmation message when disconnecting a trusted device"
+  },
+  "settings_devices_dialog_submessage_current_device": {
+    "message": "This is your current device! Disconnecting it will block any future actions, such as fetching passwords.",
+    "description": "Warning sub-message when disconnecting the current trusted device"
+  },
+  "settings_devices_dialog_cancel_text": {
+    "message": "Cancel",
+    "description": "Cancel button text in the disconnect trusted device confirmation dialog"
+  },
+  "settings_devices_dialog_confirm_text": {
+    "message": "Disconnect",
+    "description": "Confirm button text in the disconnect trusted device confirmation dialog"
+  }
+}

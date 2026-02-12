@@ -9,7 +9,7 @@ import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfig
 import getItemsKeys from './getItemsKeys';
 import matchModel from '@/models/itemModels/matchModel';
 
-/** 
+/**
 * Gets the items from session storage.
 * @async
 * @return {Object[]} The array of items.

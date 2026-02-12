@@ -57,7 +57,9 @@
 
       svg {
         fill: v.$primary-color-light;
-        transition: fill v.$anim, transform v.$anim;
+        height: 8px;
+        transition: fill v.$anim;
+        width: 8px;
 
         @include m.darkMode {
           fill: v.$primary-color-dark;

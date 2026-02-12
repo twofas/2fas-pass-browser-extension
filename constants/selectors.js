@@ -14,6 +14,9 @@ const selectors = Object.freeze({
   },
   savePrompt: {
     el: '.twofas-pass-notification-item.twofas-pass-save-prompt'
+  },
+  crossDomainDialog: {
+    el: '.twofas-pass-cross-domain-dialog'
   }
 });
 

@@ -38,13 +38,16 @@ const PushNotification = ({ fetchState, description }) => {
   return (
     <div className={`${S.fetchCase} ${S.active}`}>
       <h2>{getMessage('fetch_push_header')}</h2>
-      <div className={S.fetchCaseAnimation}>
+      <h3>{getMessage('fetch_push_subheader')}</h3>
+      <div className={`${S.fetchCaseAnimation} ${description ? S.withDescription : ''}`}>
         {loaded ? <PushNotificationComponent.current /> : <div style={{ height: '86px' }} />}
       </div>
-      <div className={S.fetchCaseDescription}>
-        <InfoIcon />
-        <p>{description || getMessage('fetch_continue_updating_description')}</p>
-      </div>
+      {description &&
+        <div className={S.fetchCaseDescription}>
+          <InfoIcon />
+          <p>{description}</p>
+        </div>
+      }
     </div>
   );
 };

@@ -6,6 +6,7 @@
 
 import setIdleInterval from '@/partials/functions/setIdleInterval';
 import initContextMenu from '../contextMenu/initContextMenu';
+import { setBadgeLocked } from '../utils';
 
 /**
 * Function to clean up old devices from local storage on startup and ensure migrations are marked as complete.
@@ -19,6 +20,8 @@ const onStartup = async migrations => {
   if (migrations && !migrations.state) {
     migrations.state = true;
   }
+
+  await setBadgeLocked().catch(() => {});
 
   // Recreate context menus on browser startup
   // Firefox doesn't persist context menus between sessions unlike Chrome

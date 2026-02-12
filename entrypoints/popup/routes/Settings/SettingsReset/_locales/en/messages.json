@@ -1,0 +1,18 @@
+{
+  "settings_reset_header": {
+    "message": "Reset Browser Extension",
+    "description": "Header for the reset browser extension confirmation dialog"
+  },
+  "settings_reset_description": {
+    "message": "Resetting the 2FAS Pass Browser Extension will delete all settings associated with the extension.",
+    "description": "Confirmation message for resetting the browser extension"
+  },
+  "settings_reset_action_confirm_button": {
+    "message": "Reset",
+    "description": "Button label to confirm the reset action"
+  },
+  "settings_reset_action_cancel_button": {
+    "message": "Cancel",
+    "description": "Button label to cancel the reset action"
+  }
+}

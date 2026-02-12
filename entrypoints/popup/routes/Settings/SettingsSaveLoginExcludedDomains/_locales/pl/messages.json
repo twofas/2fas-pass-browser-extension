@@ -1,0 +1,70 @@
+{
+  "settings_excluded_domains_description": {
+    "message": "2FAS Pass nie będzie proponować dodawania \nnowych elementów dla następujących domen.",
+    "description": "Explains that excluded domains won't prompt for adding new logins"
+  },
+  "settings_excluded_domains_empty": {
+    "message": "Brak ignorowanych domen.",
+    "description": "Message displayed when no domains are excluded"
+  },
+  "settings_excluded_domains_remove": {
+    "message": "Usuń wybraną domenę z listy ignorowanych.",
+    "description": "Button label to remove a domain from the excluded list"
+  },
+  "settings_excluded_domains_remove_toast": {
+    "message": "Domena usunięta z listy ignorowanych",
+    "description": "Message displayed when a domain is successfully removed from the ignored list"
+  },
+  "settings_excluded_domains_add_required": {
+    "message": "Domena jest wymagana",
+    "description": "Validation message when trying to add an empty domain"
+  },
+  "settings_excluded_domains_add_invalid": {
+    "message": "Nieprawidłowa domena. Spróbuj ponownie.",
+    "description": "Validation message when the provided domain is invalid"
+  },
+  "settings_excluded_domains_add_already_ignored": {
+    "message": "Ta domena jest już ignorowana.",
+    "description": "Validation message when trying to add a domain that is already in the ignored list"
+  },
+  "settings_excluded_domains_add_success": {
+    "message": "Pomyślnie dodano domenę do listy ignorowanych",
+    "description": "Message displayed when a domain is successfully added to the ignored list"
+  },
+  "settings_excluded_domains_add_domain_text": {
+    "message": "Dodaj domenę",
+    "description": "Label for the input field to add a new domain to the ignored list"
+  },
+  "settings_excluded_domains_add_another_domain_text": {
+    "message": "Dodaj kolejną domenę",
+    "description": "Label for the button to add another domain to the ignored list"
+  },
+  "settings_excluded_domains_add_input_placeholder": {
+    "message": "Wprowadź domenę do ignorowania",
+    "description": "Placeholder text for the input field to add a new domain to the ignored list"
+  },
+  "settings_excluded_domains_add_submit_title": {
+    "message": "Ignoruj tę domenę",
+    "description": "Title for the button to submit a new domain to the ignored list"
+  },
+  "settings_excluded_domains_add_cancel_title": {
+    "message": "Anuluj ignorowanie tej domeny",
+    "description": "Title for the button to cancel ignoring a new domain to the ignored list"
+  },
+  "settings_excluded_domains_remove_dialog_message": {
+    "message": "Czy na pewno chcesz usunąć DOMAIN z listy ignorowanych domen?",
+    "description": "Confirmation message when removing a domain from the ignored list"
+  },
+  "settings_excluded_domains_remove_dialog_message_replace_fallback": {
+    "message": "ta domena",
+    "description": "Fallback text for the domain placeholder in the remove domain confirmation dialog"
+  },
+  "settings_excluded_domains_remove_dialog_cancel_text": {
+    "message": "Anuluj",
+    "description": "Cancel button text in the remove domain confirmation dialog"
+  },
+  "settings_excluded_domains_remove_dialog_confirm_text": {
+    "message": "Usuń",
+    "description": "Confirm button text in the remove domain confirmation dialog"
+  }
+}

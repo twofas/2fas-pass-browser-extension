@@ -294,12 +294,12 @@ class Item {
   * @return {string} The text color (black or white) based on the label color.
   */
   get textColor () {
-    if (!this.labelColor) {
+    if (!this.content?.labelColor) {
       return '#fff';
     }
 
-    if (this.labelColor && HEX_REGEX.test(this.labelColor)) {
-      const yiq = this.#luminanceFromHex(this.labelColor);
+    if (this.content.labelColor && HEX_REGEX.test(this.content.labelColor)) {
+      const yiq = this.#luminanceFromHex(this.content.labelColor);
       return yiq > 0.5 ? '#000' : '#fff';
     } else {
       return '#fff';

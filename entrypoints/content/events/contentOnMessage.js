@@ -15,6 +15,7 @@ import matchingLogins from '../functions/matchingLogins';
 import savePrompt from '../functions/savePrompt';
 import refreshTheme from '../functions/refreshTheme';
 import refreshLang from '../functions/refreshLang';
+import crossDomainDialog from '../functions/crossDomainDialog';
 
 /**
 * Function to handle messages on the content script.
@@ -75,7 +76,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       }
 
       case REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION: {
-        checkIframePermission(request.autofillType)
+        checkIframePermission(request.autofillType, request.dataFields)
           .then(result => { sendResponse(result); })
           .catch(() => { sendResponse({ needsPermission: false, frameInfo: {} }); });
 
@@ -117,10 +118,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       }
 
       case REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM: {
-        const message = request.message || '';
-        const userConfirmed = window.confirm(message);
-
-        sendResponse({ status: 'ok', confirmed: userConfirmed });
+        crossDomainDialog(request, sendResponse, container);
         break;
       }
 

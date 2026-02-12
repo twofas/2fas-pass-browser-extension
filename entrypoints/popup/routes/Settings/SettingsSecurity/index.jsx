@@ -9,6 +9,8 @@ import { lazy, useRef } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
 
 const AutoClearClipboard = lazy(() => import('./components/AutoClearClipboard'));
 const IdleLock = lazy(() => import('./components/IdleLock'));
@@ -39,9 +41,23 @@ function SettingsSecurity (props) {
               </div>
     
               <div className={S.settingsSubmenuBody}>
+                <div className={S.settingsCrossDomain}>
+                  <h4>{getMessage('settings_cross_domain_header')}</h4>
+                  <p className={S.noMargin}>{getMessage('settings_cross_domain_description')}</p>
+
+                  <ClearLink
+                    to='/settings/security/cross-domain'
+                    className={S.settingsCrossDomainLink}
+                    prefetch='intent'
+                  >
+                    <span>{getMessage('settings_cross_domain_button')}</span>
+                    <MenuArrowIcon />
+                  </ClearLink>
+                </div>
+
                 <AutoClearClipboard />
                 <IdleLock />
-    
+
                 {/* <div className={S.settingsAdvanced}>
                   <h4>{getMessage('advanced')}</h4>
                 

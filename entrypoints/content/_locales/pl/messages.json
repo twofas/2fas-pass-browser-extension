@@ -30,5 +30,53 @@
   "autofill_cross_domain_warning_no_access": {
     "message": "Ten formularz znajduje się w domenie CURRENT_DOMAIN i jest osadzony w ramce iframe z innej domeny. Czy na pewno chcesz kontynuować wypełnianie?",
     "description": "Warning shown when autofill is attempted on a cross-domain iframe and we cannot access the parent domain"
+  },
+  "content_cross_domain_dialog_title": {
+    "message": "Wypełnić te formularze?",
+    "description": "Title for the cross-domain autofill dialog"
+  },
+  "content_cross_domain_dialog_description": {
+    "message": "Ta strona zawiera formularze logowania z domen innych niż bieżąca witryna.",
+    "description": "Description explaining why the cross-domain dialog is shown"
+  },
+  "content_cross_domain_dialog_domain_column": {
+    "message": "Domena",
+    "description": "Column header for domains in the cross-domain dialog table"
+  },
+  "content_cross_domain_dialog_behavior_column": {
+    "message": "Zachowanie autouzupełniania",
+    "description": "Column header for autofill behavior in the cross-domain dialog table"
+  },
+  "content_cross_domain_dialog_always_ask": {
+    "message": "Zawsze pytaj",
+    "description": "Dropdown option to always ask before autofilling on this domain"
+  },
+  "content_cross_domain_dialog_always_ask_description": {
+    "message": "Zawsze pytaj przed autouzupełnianiem na tej stronie",
+    "description": "Description for the always ask dropdown option"
+  },
+  "content_cross_domain_dialog_always_autofill": {
+    "message": "Zawsze wypełniaj",
+    "description": "Dropdown option to always autofill on this domain without asking"
+  },
+  "content_cross_domain_dialog_always_autofill_description": {
+    "message": "Automatycznie wypełniaj na tej stronie",
+    "description": "Description for the always autofill dropdown option"
+  },
+  "content_cross_domain_dialog_never_autofill": {
+    "message": "Nigdy nie wypełniaj",
+    "description": "Dropdown option to never autofill on this domain"
+  },
+  "content_cross_domain_dialog_never_autofill_description": {
+    "message": "Zapobiegaj autouzupełnianiu na tej stronie",
+    "description": "Description for the never autofill dropdown option"
+  },
+  "content_cross_domain_dialog_cancel": {
+    "message": "Anuluj",
+    "description": "Cancel button text in the cross-domain dialog"
+  },
+  "content_cross_domain_dialog_accept": {
+    "message": "Zaakceptuj",
+    "description": "Accept button text in the cross-domain dialog"
   }
 }

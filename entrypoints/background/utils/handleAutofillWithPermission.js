@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, saveCrossDomainPreferences, openPopup } from '@/partials/functions';
 import TwofasNotification from '@/partials/TwofasNotification';
 
 /**
@@ -74,38 +74,59 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
     }, tabId, true);
   }
 
-  const confirmMessage = getMessage('autofill_cross_domain_warning_popup')
-    .replace('DOMAINS', domains.join(', '));
+  let trustedList = [];
+  let untrustedList = [];
 
   try {
-    const tab = await browser.tabs.get(tabId);
-
-    await browser.windows.update(tab.windowId, { focused: true });
-    await browser.tabs.update(tabId, { active: true });
-
-    await new Promise(resolve => setTimeout(resolve, 100));
+    trustedList = (await storage.getItem('local:crossDomainTrustedDomains')) || [];
   } catch { }
 
-  let confirmResult;
-
   try {
-    confirmResult = await sendMessageToTab(tabId, {
-      action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
-      target: REQUEST_TARGETS.CONTENT,
-      message: confirmMessage
-    });
-  } catch (e) {
-    await CatchError(e);
-    await storage.removeItem(storageKey);
-    return;
-  }
+    untrustedList = (await storage.getItem('local:crossDomainUntrustedDomains')) || [];
+  } catch { }
 
-  if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-    await storage.removeItem(storageKey);
-    return;
+  const unknownDomains = domains.filter(d => !trustedList.includes(d) && !untrustedList.includes(d));
+  const trustedDomains = domains.filter(d => trustedList.includes(d));
+  const allBlocked = unknownDomains.length === 0 && trustedDomains.length === 0;
+
+  let crossDomainAllowedDomains = allBlocked ? [] : [...trustedDomains];
+
+  if (unknownDomains.length > 0) {
+    try {
+      const tab = await browser.tabs.get(tabId);
+
+      await browser.windows.update(tab.windowId, { focused: true });
+      await browser.tabs.update(tabId, { active: true });
+
+      await new Promise(resolve => setTimeout(resolve, 100));
+    } catch { }
+
+    let confirmResult;
+
+    try {
+      confirmResult = await sendMessageToTab(tabId, {
+        action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+        target: REQUEST_TARGETS.CONTENT,
+        unknownDomains,
+        theme: await storage.getItem('local:theme')
+      });
+    } catch (e) {
+      await CatchError(e);
+      await storage.removeItem(storageKey);
+      return;
+    }
+
+    if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
+      await storage.removeItem(storageKey);
+      return;
+    }
+
+    await saveCrossDomainPreferences(confirmResult.domainPreferences);
+    crossDomainAllowedDomains = [...crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
   }
 
   actionData.iframePermissionGranted = true;
+  actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
 
   let response;
 
@@ -116,10 +137,7 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
     await storage.removeItem(storageKey);
     await storeAutofillFailureData(tabId, closeData);
 
-    return TwofasNotification.show({
-      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: getMessage('notification_autofill_failed_open_popup')
-    }, tabId, true);
+    return openPopup();
   }
 
   await storage.removeItem(storageKey);
@@ -127,10 +145,7 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   if (!response) {
     await storeAutofillFailureData(tabId, closeData);
 
-    return TwofasNotification.show({
-      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-      Message: getMessage('notification_autofill_failed_open_popup')
-    }, tabId, true);
+    return openPopup();
   }
 
   const isOk = response.some(frameResponse => frameResponse.status === 'ok');
@@ -148,19 +163,15 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   if (!isOk) {
     await storeAutofillFailureData(tabId, closeData);
 
-    return TwofasNotification.show({
-      Title: getMessage('notification_shortcut_autofill_no_username_and_password_title'),
-      Message: getMessage('notification_autofill_failed_open_popup')
-    }, tabId, true);
+    return openPopup();
   }
 
   if (!allFieldsFilled && closeData) {
-    await storeAutofillFailureData(tabId, closeData);
+    if (closeData.securityType === SECURITY_TIER.HIGHLY_SECRET) {
+      await storeAutofillFailureData(tabId, closeData);
 
-    return TwofasNotification.show({
-      Title: getMessage('notification_autofill_partial_title'),
-      Message: getMessage('notification_autofill_failed_open_popup')
-    }, tabId, true);
+      return openPopup();
+    }
   }
 
   try {

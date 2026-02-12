@@ -5,9 +5,11 @@
 // See LICENSE file for full terms
 
 import initContextMenu from '../contextMenu/initContextMenu';
-import { openInstallPage, updateBadge } from '../utils';
+import { openInstallPage, updateBadge, setBadgeLocked } from '../utils';
 import runMigrations from '../migrations';
 import setIdleInterval from '@/partials/functions/setIdleInterval';
+import getItems from '@/partials/sessionStorage/getItems';
+import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
 /**
 * Function to handle the installation and update of the extension.
@@ -45,13 +47,26 @@ const onInstalled = async (details, migrations) => {
       browser.runtime.setUninstallURL(`https://2fas.com/pass/byebye/`);
     }
 
+    await setBadgeLocked().catch(() => {});
+
     try {
       await openInstallPage();
     } catch (e) {
       await CatchError(e);
     }
   } else {
-    await updateBadge(false).catch(() => {});
+    try {
+      const configured = await getConfiguredBoolean();
+
+      if (configured) {
+        const items = await getItems(['Login']).catch(() => []);
+        await updateBadge(true, items).catch(() => {});
+      } else {
+        await updateBadge(false).catch(() => {});
+      }
+    } catch {
+      await updateBadge(false).catch(() => {});
+    }
   }
 };
 
