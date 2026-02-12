@@ -3,6 +3,10 @@
     "message": "Sprawdź powiadomienie push 2FAS Pass na swoim urządzeniu mobilnym.",
     "description": "Header prompting the user to check their device for a push notification"
   },
+  "fetch_push_subheader": {
+    "message": "Sprawdź swoje urządzenie mobilne",
+    "description": "Subheader explaining that the user should approve the request on their mobile phone"
+  },
   "fetch_push_waiting_for_mobile": {
     "message": "Oczekiwanie na odpowiedź...",
     "description": "Message displayed while waiting for a response from the mobile app"

@@ -26,6 +26,7 @@ const paymentCardNumberSelectors = () => {
     'input[name*="card_number" i]',
     'input[name*="card-number" i]',
     'input[name*="credit-card-number" i]',
+    'input[name="card" i]',
     'input.card-number-input',
     'input.cardNumber-input',
     'input.cardnumber-input',
@@ -46,7 +47,9 @@ const paymentCardNumberSelectors = () => {
     'input[placeholder*="card number" i]',
     'input[placeholder*="cardnumber" i]',
     'input.wpwl-control-cardNumber',
-    '.wpwl-group-cardNumber input'
+    '.wpwl-group-cardNumber input',
+    '.input-card-number input',
+    '.input-card-number input[type="text"]'
   ];
 
   paymentCardNumberTexts.forEach(text => {

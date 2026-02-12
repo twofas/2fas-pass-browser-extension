@@ -1,0 +1,118 @@
+{
+  "settings_save_prompt_header": {
+    "message": "Zapisywanie elementów",
+    "description": "Header for the save login prompt settings"
+  },
+  "settings_save_prompt_description": {
+    "message": "Wybierz sposób pytania o zapisanie szczegółów elementu.",
+    "description": "Description for configuring the save login prompt behavior"
+  },
+  "settings_save_prompt_pass": {
+    "message": "Domyślny 2FAS Pass",
+    "description": "Option to use the 2FAS Pass-specific save login prompt"
+  },
+  "settings_save_prompt_pass_encrypted": {
+    "message": "Zaawansowany 2FAS Pass (dodatkowe szyfrowanie)",
+    "description": "Option to use the 2FAS Pass encrypted save login prompt"
+  },
+  "settings_save_prompt_browser": {
+    "message": "Domyślny przeglądarki",
+    "description": "Option to use the browser's default save login prompt"
+  },
+  "settings_save_prompt_none": {
+    "message": "Brak",
+    "description": "Option to disable save login prompts"
+  },
+  "settings_theme": {
+    "message": "Motyw",
+    "description": "Label for the theme settings"
+  },
+  "settings_language": {
+    "message": "Język",
+    "description": "Label for the language settings"
+  },
+  "settings_language_default": {
+    "message": "Domyślny przeglądarki",
+    "description": "Option to use the browser's default language"
+  },
+  "settings_unknown": {
+    "message": "Nieznany",
+    "description": "Label for unknown settings or values"
+  },
+  "settings_shortcut": {
+    "message": "Skrót klawiszowy",
+    "description": "Label for the shortcut settings"
+  },
+  "settings_shortcut_description": {
+    "message": "Użyj tego skrótu, aby otworzyć rozszerzenie przeglądarki 2FAS Pass na dowolnej stronie.",
+    "description": "Description for configuring the extension shortcut"
+  },
+  "settings_shortcut_firefox_tooltip": {
+    "message": "Możesz ustawić lub zmienić ten skrót w ustawieniach przeglądarki.",
+    "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
+  },
+  "settings_shortcut_safari_tooltip": {
+    "message": "Aby ustawić lub zmienić ten skrót, przejdź do ustawień rozszerzeń przeglądarki, wybierz 2FAS Pass i zmień skrót w określonym polu.",
+    "description": "Tooltip explaining how to configure shortcuts in Firefox via browser settings"
+  },
+  "settings_push_native": {
+    "message": "Domyślne powiadomienia przeglądarki",
+    "description": "Option to use the browser's native notification system"
+  },
+  "settings_push_custom": {
+    "message": "Powiadomienia 2FAS Pass",
+    "description": "Option to use custom notifications from 2FAS Pass"
+  },
+  "settings_notifications_header": {
+    "message": "Powiadomienia",
+    "description": "Header for the notifications settings"
+  },
+  "settings_notifications_description": {
+    "message": "Wybierz typ powiadomień, który będzie informował o komunikacji między aplikacją mobilną 2FAS Pass a tym rozszerzeniem przeglądarki.",
+    "description": "Explains how to configure notifications for communication between the mobile app and extension"
+  },
+  "settings_notifications_send_test": {
+    "message": "Wyślij testowe powiadomienie",
+    "description": "Button label to send a test notification"
+  },
+  "settings_allow_logs": {
+    "message": "Pozwól na wysyłanie anonimowych raportów o awariach",
+    "description": "Option to enable sending anonymous crash logs"
+  },
+  "settings_ext_name_label": {
+    "message": "Nazwa przeglądarki",
+    "description": "Label for the browser nickname input field"
+  },
+  "settings_ext_name_placeholder": {
+    "message": "Wprowadź nazwę rozszerzenia",
+    "description": "Placeholder text for the browser nickname input field"
+  },
+  "settings_ext_name_validate_required": {
+    "message": "Wprowadź nazwę rozszerzenia",
+    "description": "Validation message when the extension name is not provided"
+  },
+  "settings_ext_name_validate_min_length": {
+    "message": "Wprowadź nazwę rozszerzenia, nie krótszą niż 3 znaki.",
+    "description": "Validation message when the extension name is too short"
+  },
+  "settings_ext_name_validate_max_length": {
+    "message": "Wprowadź nazwę rozszerzenia, nie dłuższą niż 32 znaki.",
+    "description": "Validation message when the extension name is too long"
+  },
+  "settings_context_menu_text": {
+    "message": "Pokaż opcje tego rozszerzenia w menu kontekstowym.",
+    "description": "Option to enable or disable the extension's context menu options"
+  },
+  "settings_excluded_domains": {
+    "message": "Ignorowane domeny",
+    "description": "Label for the excluded domains settings"
+  },
+  "settings_danger_zone": {
+    "message": "Ustawienia zaawansowane",
+    "description": "Label for the danger zone section in settings"
+  },
+  "settings_danger_zone_reset": {
+    "message": "Resetuj rozszerzenie przeglądarki",
+    "description": "Button label to reset the browser extension"
+  }
+}

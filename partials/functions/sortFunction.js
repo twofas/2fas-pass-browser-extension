@@ -23,9 +23,9 @@ const sortFunction = (data, sort = 'az') => {
 
         return new Date(b?.createdAt) - new Date(a?.createdAt);
       case 'newest':
-        return new Date(b?.updatedAt) - new Date(a?.updatedAt);
+        return new Date(b?.createdAt) - new Date(a?.createdAt);
       case 'oldest':
-        return new Date(a?.updatedAt) - new Date(b?.updatedAt);
+        return new Date(a?.createdAt) - new Date(b?.createdAt);
       case 'az':
       default:
         if (nameA !== nameB) {

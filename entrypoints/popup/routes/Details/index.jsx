@@ -144,7 +144,8 @@ function Details(props) {
 
         setBatchData({
           passwordEditable: true,
-          passwordVisible: location.state?.data?.passwordVisible || false
+          passwordVisible: location.state?.data?.passwordVisible || false,
+          editedSif: location.state.generatedPassword
         });
       }
 

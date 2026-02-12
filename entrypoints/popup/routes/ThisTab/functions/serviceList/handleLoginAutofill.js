@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, sendMessageToTab } from '@/partials/functions';
+import { sendMessageToAllFrames, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, sendMessageToTab, resolveCrossDomainPermissions } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import Login from '@/models/itemModels/Login';
@@ -60,7 +60,7 @@ const handleLoginAutofill = async (item, navigate) => {
   const hasPassword = item.sifExists;
   const hasUsername = item?.content.username && item.content.username.length > 0;
   let passwordDecrypt = true;
-  let needsFetchPassword = false;
+  let pageHasPasswordInputs = false;
 
   if (isHighlySecret) {
     let canAutofill = false;
@@ -83,6 +83,8 @@ const handleLoginAutofill = async (item, navigate) => {
       showT2Toast();
       return;
     }
+
+    pageHasPasswordInputs = canAutofillPassword;
 
     if (canAutofillPassword) {
       if (!hasPassword) {
@@ -107,7 +109,6 @@ const handleLoginAutofill = async (item, navigate) => {
       }
     } else {
       passwordDecrypt = false;
-      needsFetchPassword = hasPassword;
     }
   } else if (item.securityType === SECURITY_TIER.SECRET) {
     if (!hasPassword && hasUsername) {
@@ -131,19 +132,23 @@ const handleLoginAutofill = async (item, navigate) => {
       return;
     }
 
-    const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
+    if (decryptedPassword) {
+      const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
 
-    if (!cryptoAvailable) {
-      encryptedValueB64 = decryptedPassword;
-    } else {
-      const passwordResult = await encryptValueForTransmission(decryptedPassword);
+      if (!cryptoAvailable) {
+        encryptedValueB64 = decryptedPassword;
+      } else {
+        const passwordResult = await encryptValueForTransmission(decryptedPassword);
 
-      if (passwordResult.status !== 'ok') {
-        showToast(getMessage('error_autofill_failed'), 'error');
-        return;
+        if (passwordResult.status !== 'ok') {
+          showToast(getMessage('error_autofill_failed'), 'error');
+          return;
+        }
+
+        encryptedValueB64 = passwordResult.data;
       }
-
-      encryptedValueB64 = passwordResult.data;
+    } else {
+      passwordDecrypt = false;
     }
 
     decryptedPassword = '';
@@ -163,22 +168,15 @@ const handleLoginAutofill = async (item, navigate) => {
 
   encryptedValueB64 = null;
 
-  // Check for cross-domain iframes that need permission
   try {
-    const permissionResults = await sendMessageToAllFrames(tab.id, {
-      action: REQUEST_ACTIONS.CHECK_IFRAME_PERMISSION,
-      target: REQUEST_TARGETS.CONTENT,
-      autofillType: 'login'
+    const resolution = await resolveCrossDomainPermissions(tab.id, 'login', {
+      hasUsername,
+      hasPassword: passwordDecrypt
     });
 
-    const crossDomainFrames = permissionResults?.filter(r => r.needsPermission) || [];
-    const needsPermission = crossDomainFrames.length > 0;
-
-    if (needsPermission) {
-      const uniqueDomains = [...new Set(crossDomainFrames.map(f => f.frameInfo?.hostname).filter(Boolean))];
-
-      // Store action data and delegate to background script
-      // This is necessary because focusing the tab will close the popup
+    if (resolution.allBlocked) {
+      actionData.crossDomainAllowedDomains = [];
+    } else if (resolution.needsDialog) {
       const storageKey = `session:autofillData-${tab.id}`;
 
       await storage.setItem(storageKey, JSON.stringify({
@@ -186,7 +184,8 @@ const handleLoginAutofill = async (item, navigate) => {
         closeData: {
           vaultId: item.vaultId,
           deviceId: item.deviceId,
-          itemId: item.id
+          itemId: item.id,
+          securityType: item.securityType
         }
       }));
 
@@ -195,10 +194,12 @@ const handleLoginAutofill = async (item, navigate) => {
         target: REQUEST_TARGETS.BACKGROUND,
         tabId: tab.id,
         storageKey,
-        domains: uniqueDomains
+        domains: [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]
       });
 
       return;
+    } else if (resolution.crossDomainAllowedDomains.length > 0) {
+      actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
     }
   } catch (e) {
     await CatchError(e);
@@ -213,7 +214,7 @@ const handleLoginAutofill = async (item, navigate) => {
   }
 
   if (!res) {
-    if (isHighlySecret) {
+    if (isHighlySecret && !hasPassword) {
       const toastId = showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
 
       navigate('/', {
@@ -247,14 +248,18 @@ const handleLoginAutofill = async (item, navigate) => {
     return couldFillUsername && couldFillPassword;
   });
 
+  if (!isHighlySecret) {
+    pageHasPasswordInputs = res.some(r => r.canAutofillPassword);
+  }
+
   if (isOk) {
     const separateWindow = await popupIsInSeparateWindow();
 
-    if (!passwordDecrypt && needsFetchPassword) {
+    if (!passwordDecrypt && pageHasPasswordInputs && !hasPassword && isHighlySecret) {
       showToast(getMessage('this_tab_autofill_fetch_password'), 'info');
-    } else if (!passwordDecrypt) {
+    } else if (!passwordDecrypt && pageHasPasswordInputs) {
       showToast(getMessage('this_tab_autofill_no_password'), 'info');
-    } else if (!allFieldsFilled && isHighlySecret) {
+    } else if (!allFieldsFilled && isHighlySecret && !hasPassword) {
       const toastId = showToast(getMessage('this_tab_autofill_partial'), 'info', false);
 
       navigate('/', {
@@ -272,7 +277,7 @@ const handleLoginAutofill = async (item, navigate) => {
       showToast(getMessage('this_tab_autofill_success'), 'success');
     }
   } else {
-    if (isHighlySecret) {
+    if (isHighlySecret && !hasPassword) {
       const toastId = showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
 
       navigate('/', {

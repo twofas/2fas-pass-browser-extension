@@ -90,7 +90,7 @@ const generateLabel = (item, itemIcon) => {
   itemIcon.classList.add('icon-label');
   itemIcon.setAttribute('style', `background: ${backgroundColor} !important;`);
   const itemLabelText = createTextElement('span', item?.content?.labelText?.toUpperCase() || (item?.content?.name || '').substring(0, 2).toUpperCase() || '');
-  itemLabelText.style.color = item.content.textColor;
+  itemLabelText.style.color = item.textColor;
   itemIcon.appendChild(itemLabelText);
 };
 

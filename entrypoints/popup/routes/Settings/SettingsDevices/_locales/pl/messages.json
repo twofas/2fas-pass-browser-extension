@@ -1,0 +1,54 @@
+{
+  "settings_devices_header": {
+    "message": "Połączone urządzenia",
+    "description": "Header for the trusted devices section in settings"
+  },
+  "settings_devices_description": {
+    "message": "Lista urządzeń połączonych z tym rozszerzeniem przeglądarki. Rozłącz je tutaj, jeśli już ich nie używasz.",
+    "description": "Description for managing trusted devices"
+  },
+  "settings_devices_unknown_platform": {
+    "message": "Nieznana",
+    "description": "Label for devices with an unknown platform"
+  },
+  "settings_devices_no_devices": {
+    "message": "Nie znaleziono urządzeń.",
+    "description": "Message displayed when there are no trusted devices found"
+  },
+  "settings_devices_current_device_title": {
+    "message": "To twoje obecne urządzenie. Możesz rozłączyć je tutaj.",
+    "description": "Warning message when disconnecting the current trusted device"
+  },
+  "settings_devices_name_header": {
+    "message": "Nazwa",
+    "description": "Label for the device name column in the trusted devices list"
+  },
+  "settings_devices_platform_header": {
+    "message": "Platforma",
+    "description": "Label for the device platform column in the trusted devices list"
+  },
+  "settings_devices_last_connected_header": {
+    "message": "Ostatnie połączenie",
+    "description": "Label for the last connected column in the trusted devices list"
+  },
+  "settings_devices_disconnect_title": {
+    "message": "Rozłącz to urządzenie",
+    "description": "Title for the disconnect trusted device button"
+  },
+  "settings_devices_dialog_message": {
+    "message": "Czy na pewno chcesz rozłączyć to urządzenie?",
+    "description": "Confirmation message when disconnecting a trusted device"
+  },
+  "settings_devices_dialog_submessage_current_device": {
+    "message": "To twoje obecne urządzenie! Odłączenie go uniemożliwi wykonywanie dalszych działań, takich jak pobieranie haseł.",
+    "description": "Warning sub-message when disconnecting the current trusted device"
+  },
+  "settings_devices_dialog_cancel_text": {
+    "message": "Anuluj",
+    "description": "Cancel button text in the disconnect trusted device confirmation dialog"
+  },
+  "settings_devices_dialog_confirm_text": {
+    "message": "Rozłącz",
+    "description": "Confirm button text in the disconnect trusted device confirmation dialog"
+  }
+}

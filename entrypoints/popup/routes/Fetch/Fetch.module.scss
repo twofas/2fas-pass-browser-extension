@@ -35,9 +35,10 @@
       display: flex;
       justify-content: center;
       margin-bottom: 24px;
+      margin-top: 50px;
 
-      &:last-child {
-        margin-bottom: 0;
+      &.withDescription {
+        margin-top: 24px;
       }
     }
 
@@ -96,14 +97,28 @@
       color: v.$primary-text-light;
       font-size: 16px;
       font-weight: 600;
-      line-height: 1.5;
-      margin: 0 auto 24px;
+      line-height: 1.3125;
+      margin: 0 auto 8px;
       max-width: 250px;
       text-align: center;
       white-space: pre-wrap;
 
       @include m.darkMode {
         color: v.$primary-text-dark;
+      }
+    }
+
+    h3 {
+      color: v.$secondary-text-light;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4167;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+
+      @include m.darkMode {
+        color: v.$secondary-text-dark;
       }
     }
   }

@@ -435,6 +435,22 @@
     padding: 0 40px;
   }
 
+  &.btn-outline {
+    background-color: transparent;
+    border: 1px solid v.$primary-color-light;
+    border-radius: 6px;
+    color: v.$primary-color-light;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    padding: 8px 10px;
+
+    @include m.darkMode {
+      border-color: v.$primary-color-dark;
+      color: v.$primary-color-dark;
+    }
+  }
+
   // INSTALL PAGE
   &.btn-install-page {
     border-radius: 32px;

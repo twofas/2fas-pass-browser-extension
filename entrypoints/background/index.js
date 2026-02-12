@@ -8,6 +8,7 @@ import { onTabUpdated, onTabActivated, onTabCreated, onTabRemoved } from './tabs
 import { onInstalled, onMessage, onContextMenuClick, onStorageChange, onAlarm, onCommand, onStartup, onPromptMessage } from './events';
 import nonSafariBackground from './nonSafariBackground';
 import firefoxBackground from './firefoxBackground';
+import { setBadgeLocked } from './utils';
 
 export default defineBackground({
   /**
@@ -57,4 +58,6 @@ export default defineBackground({
     if (import.meta.env.BROWSER === 'firefox') {
       firefoxBackground();
     }
+
+    setBadgeLocked().catch(() => {});
 }});

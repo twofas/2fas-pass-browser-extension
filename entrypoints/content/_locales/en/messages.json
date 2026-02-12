@@ -30,5 +30,53 @@
   "autofill_cross_domain_warning_no_access": {
     "message": "This form is on CURRENT_DOMAIN which appears to be in a cross-domain iframe. Do you want to continue with autofill?",
     "description": "Warning shown when autofill is attempted on a cross-domain iframe and we cannot access the parent domain"
+  },
+  "content_cross_domain_dialog_title": {
+    "message": "Autofill these forms?",
+    "description": "Title for the cross-domain autofill dialog"
+  },
+  "content_cross_domain_dialog_description": {
+    "message": "This page includes login forms from domains different than the current website.",
+    "description": "Description explaining why the cross-domain dialog is shown"
+  },
+  "content_cross_domain_dialog_domain_column": {
+    "message": "Domain",
+    "description": "Column header for domains in the cross-domain dialog table"
+  },
+  "content_cross_domain_dialog_behavior_column": {
+    "message": "Autofill Behavior",
+    "description": "Column header for autofill behavior in the cross-domain dialog table"
+  },
+  "content_cross_domain_dialog_always_ask": {
+    "message": "Always ask",
+    "description": "Dropdown option to always ask before autofilling on this domain"
+  },
+  "content_cross_domain_dialog_always_ask_description": {
+    "message": "Always ask to autofill on this page",
+    "description": "Description for the always ask dropdown option"
+  },
+  "content_cross_domain_dialog_always_autofill": {
+    "message": "Always autofill",
+    "description": "Dropdown option to always autofill on this domain without asking"
+  },
+  "content_cross_domain_dialog_always_autofill_description": {
+    "message": "Allow autofill automatically on this page",
+    "description": "Description for the always autofill dropdown option"
+  },
+  "content_cross_domain_dialog_never_autofill": {
+    "message": "Never autofill",
+    "description": "Dropdown option to never autofill on this domain"
+  },
+  "content_cross_domain_dialog_never_autofill_description": {
+    "message": "Prevent autofill on this page",
+    "description": "Description for the never autofill dropdown option"
+  },
+  "content_cross_domain_dialog_cancel": {
+    "message": "Cancel",
+    "description": "Cancel button text in the cross-domain dialog"
+  },
+  "content_cross_domain_dialog_accept": {
+    "message": "Accept",
+    "description": "Accept button text in the cross-domain dialog"
   }
 }

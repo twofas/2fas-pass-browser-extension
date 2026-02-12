@@ -9,6 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { copyValue, isText, paymentCardExpirationDateValidation } from '@/partials/functions';
+import getItem from '@/partials/sessionStorage/getItem';
 import usePopupState from '../../../store/popupState/usePopupState';
 import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
@@ -154,12 +155,24 @@ function CardExpirationDate (props) {
 
   const handleEditableClick = async () => {
     if (data?.expirationDateEditable) {
+      let originalItemFromStorage = await getItem(itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id);
+
+      const originalExpirationDate = originalItemFromStorage.toJSON().content.s_expirationDate;
+      const currentItemData = typeof data.item?.toJSON === 'function' ? data.item.toJSON() : data.item;
+      const restoredItem = new PaymentCard(currentItemData);
+
+      restoredItem.setSifEncrypted([{ s_expirationDate: originalExpirationDate }]);
+
+      originalItemFromStorage = null;
+
       setLocalEditedExpirationDate(null);
+      setLocalDecryptedExpirationDate(null);
+      setItem(restoredItem);
       setBatchData({
         expirationDateEdited: false,
         expirationDateEditable: false
       });
-      form.change('editedExpirationDate', isText(localDecryptedExpirationDate) ? localDecryptedExpirationDate : '');
+      form.change('editedExpirationDate', '');
     } else {
       await decryptExpirationDateOnDemand();
       setData('expirationDateEditable', true);

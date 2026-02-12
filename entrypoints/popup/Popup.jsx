@@ -23,9 +23,9 @@ import { I18nProvider } from '@/partials/context/I18nContext';
 import PrimeReactLocaleProvider from '@/partials/context/PrimeReactLocaleProvider';
 import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
-import Connect from './routes/Connect';
 import { ErrorBoundary } from 'react-error-boundary';
 
+const Connect = lazy(() => import('./routes/Connect'));
 const AddNew = lazy(() => import('./routes/AddNew'));
 const Settings = lazy(() => import('./routes/Settings'));
 const SettingsAbout = lazy(() => import('./routes/Settings/SettingsAbout'));
@@ -34,6 +34,7 @@ const SettingsSecurity = lazy(() => import('./routes/Settings/SettingsSecurity')
 const SettingsDevices = lazy(() => import('./routes/Settings/SettingsDevices'));
 const SettingsReset = lazy(() => import('./routes/Settings/SettingsReset'));
 const SettingsSaveLoginExcludedDomains = lazy(() => import('./routes/Settings/SettingsSaveLoginExcludedDomains'));
+const SettingsCrossDomainAutofill = lazy(() => import('./routes/Settings/SettingsCrossDomainAutofill'));
 const Fetch = lazy(() => import('./routes/Fetch'));
 const FetchExternal = lazy(() => import('./routes/FetchExternal'));
 const Details = lazy(() => import('./routes/Details'));
@@ -52,6 +53,7 @@ const routeConfig = [
   { path: '/settings/devices', component: SettingsDevices, isProtectedRoute: false },
   { path: '/settings/preferences/reset', component: SettingsReset, isProtectedRoute: false },
   { path: '/settings/preferences/save-login-excluded-domains', component: SettingsSaveLoginExcludedDomains, isProtectedRoute: false },
+  { path: '/settings/security/cross-domain', component: SettingsCrossDomainAutofill, isProtectedRoute: false },
   { path: '/fetch', component: Fetch, isProtectedRoute: true },
   { path: '/fetch/:data', component: FetchExternal, noClassName: true, isProtectedRoute: true },
   { path: '/details/:deviceId/:vaultId/:id', component: Details, isProtectedRoute: true },
@@ -251,20 +253,25 @@ const PopupMain = memo(() => {
   const sectionRef = useRef(null);
   const resizeObserverRef = useRef(null);
   const mutationObserverRef = useRef(null);
+  const rafIdRef = useRef(null);
 
   const checkScrollable = useCallback(() => {
-    if (!sectionRef.current) {
-      return;
-    }
+    cancelAnimationFrame(rafIdRef.current);
 
-    const scrollableChild = sectionRef.current.querySelector(`.${S.passScreen} > div`);
+    rafIdRef.current = requestAnimationFrame(() => {
+      if (!sectionRef.current) {
+        return;
+      }
 
-    if (scrollableChild) {
-      const hasScrollbar = scrollableChild.scrollHeight > scrollableChild.clientHeight;
-      setIsScrollable(hasScrollbar);
-    } else {
-      setIsScrollable(false);
-    }
+      const scrollableChild = sectionRef.current.querySelector(`.${S.passScreen} > div`);
+
+      if (scrollableChild) {
+        const hasScrollbar = scrollableChild.scrollHeight > scrollableChild.clientHeight;
+        setIsScrollable(hasScrollbar);
+      } else {
+        setIsScrollable(false);
+      }
+    });
   }, []);
 
   const classNames = useMemo(() => {
@@ -292,6 +299,8 @@ const PopupMain = memo(() => {
     });
 
     return () => {
+      cancelAnimationFrame(rafIdRef.current);
+
       if (resizeObserverRef.current) {
         resizeObserverRef.current.disconnect();
         resizeObserverRef.current = null;

@@ -164,6 +164,8 @@ function URLComponent (props) {
       return;
     }
 
+    updateUri(uri._tempId, { text: newUriText });
+
     const currentUri = urisWithTempIds[uriIndex];
     const newContentUris = [...data.item.content.uris];
     newContentUris[uriIndex] = { text: newUriText, matcher: currentUri.matcher };
@@ -173,7 +175,6 @@ function URLComponent (props) {
     });
 
     setItem(updatedItem);
-    updateUri(uri._tempId, { text: newUriText });
   }, [data.item, setItem, uri._tempId, urisWithTempIds, updateUri]);
 
   useEffect(() => {

@@ -53,6 +53,7 @@ const paymentCardExpirationDateSelectors = () => {
     'select[name*="expiry" i]',
     'input[name*="expiration" i]',
     'select[name*="expiration" i]',
+    'input[name="period" i]',
     '.expire-date-item input[type="text"]',
     '.expiry-date-item input[type="text"]',
     '.expiration-date-item input[type="text"]',
