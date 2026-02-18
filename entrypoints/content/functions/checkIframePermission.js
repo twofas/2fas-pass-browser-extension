@@ -10,6 +10,7 @@ import getPaymentCardNumberInputs from '@/partials/inputFunctions/getPaymentCard
 import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPaymentCardholderNameInputs';
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
+import isTopFrame from '@/partials/functions/isTopFrame';
 
 /**
 * Checks if this frame has autofillable inputs that match the available data.
@@ -53,7 +54,7 @@ const hasAutofillableInputs = (autofillType, dataFields = {}) => {
 */
 const checkIframePermission = async (autofillType, dataFields) => {
   const frameInfo = {
-    isTopFrame: window.self === window.top,
+    isTopFrame: isTopFrame(),
     hostname: '',
     topHostname: ''
   };
@@ -64,7 +65,7 @@ const checkIframePermission = async (autofillType, dataFields) => {
     return { needsPermission: false, frameInfo };
   }
 
-  if (window.self === window.top) {
+  if (frameInfo.isTopFrame) {
     return { needsPermission: false, frameInfo };
   }
 
