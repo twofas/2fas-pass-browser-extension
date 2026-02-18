@@ -13,6 +13,7 @@ import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import DetailsIcon from '@/assets/popup-window/details.svg?react';
 import MoreUrlIcon from '@/assets/popup-window/more-url.svg?react';
 import TrashIcon from '@/assets/popup-window/trash.svg?react';
+import QrIcon from '@/assets/popup-window/qr.svg?react';
 
 /**
 * Function to render a custom option in the item dropdown.
@@ -47,6 +48,24 @@ const ItemCustomOption = option => {
             onClick={async e => await handleForgetPassword(e, option.data.id, option.selectProps.setMore)}
           >
             <TrashIcon />
+            <span>{option.data.label}</span>
+          </a>
+        </div>
+      );
+    }
+
+    case 'showQr': {
+      return (
+        <div className='react-select-dropdown__option show-qr'>
+          <a
+            href='#'
+            className='react-select-dropdown__option--uri show-qr'
+            onClick={e => {
+              e.preventDefault();
+              option.selectProps.setMore(false);
+            }}
+          >
+            <QrIcon />
             <span>{option.data.label}</span>
           </a>
         </div>

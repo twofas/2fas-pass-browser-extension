@@ -142,5 +142,9 @@
   "this_tab_more_forget_wifi_password": {
     "message": "Zapomnij to hasło Wi-Fi",
     "description": "Button label to forget the saved Wi-Fi password"
+  },
+  "this_tab_more_show_qr": {
+    "message": "Pokaż kod QR sieci",
+    "description": "Button label to show a QR code for the Wi-Fi network"
   }
 }

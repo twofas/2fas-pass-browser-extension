@@ -27,9 +27,6 @@ function WifiItemView (props) {
   const moreBtnRef = useRef(null);
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
 
-  const hasPassword = props.data?.content?.securityType && props.data.content.securityType !== 'none';
-  const hasSsid = props.data?.content?.ssid && props.data.content.ssid.length > 0;
-
   return (
     <>
       <div
@@ -39,12 +36,12 @@ function WifiItemView (props) {
         {generateIcon(props.data, null, null, props.loading)}
         <span>
           {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || getMessage('no_item_name')}</span>}
-          {props.loading ? <Skeleton style={{ width: '60px' }} /> : (hasSsid ? <span>{props.data.content.ssid}</span> : null)}
+          {props.loading ? <Skeleton style={{ width: '60px' }} /> : (props.data?.content?.ssid ? <span>{props.data.content.ssid}</span> : null)}
         </span>
       </div>
       <div className={S.itemAdditionalButtons}>
-        {hasPassword ? <WifiPasswordBtn item={props.data} more={props.more} setMore={props.setMore} /> : null}
-        {hasSsid ? <SsidBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={props.setMore} /> : null}
+        <WifiPasswordBtn item={props.data} more={props.more} setMore={props.setMore} />
+        <SsidBtn deviceId={props.data?.deviceId} vaultId={props.data?.vaultId} itemId={props.data?.id} more={props.more} setMore={props.setMore} />
         <MoreBtn item={props.data} more={props.more} setMore={props.setMore} ref={moreBtnRef} />
       </div>
       <AdvancedSelect

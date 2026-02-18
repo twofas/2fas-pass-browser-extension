@@ -2059,6 +2059,26 @@
     "message": "Some fields could not be autofilled. Copy unfilled details manually.",
     "description": "Message displayed when autofill partially succeeded but some fields could not be filled"
   },
+  "this_tab_copy_wifi_password": {
+    "message": "Copy Wi-Fi password",
+    "description": "Button label to copy the Wi-Fi password to the clipboard"
+  },
+  "this_tab_fetch_wifi_password": {
+    "message": "Fetch Wi-Fi password",
+    "description": "Button label to fetch the Wi-Fi password from the mobile app"
+  },
+  "this_tab_copy_ssid": {
+    "message": "Copy SSID",
+    "description": "Button label to copy the Wi-Fi SSID to the clipboard"
+  },
+  "this_tab_more_forget_wifi_password": {
+    "message": "Forget this Wi-Fi password",
+    "description": "Button label to forget the saved Wi-Fi password"
+  },
+  "this_tab_more_show_qr": {
+    "message": "Show Network QR Code",
+    "description": "Button label to show a QR code for the Wi-Fi network"
+  },
   "all_items_list_no_search_results": {
     "message": "No search results. Please try again.",
     "description": "Message displayed when no search results are found"
@@ -2394,5 +2414,13 @@
   "error_wifi_password_copy_failed": {
     "message": "Failed to copy Wi-Fi password to clipboard.",
     "description": "Error message displayed when copying the wifi password to the clipboard fails"
+  },
+  "notification_wifi_ssid_copied": {
+    "message": "SSID copied to clipboard",
+    "description": "Notification message when the wifi SSID is successfully copied to the clipboard"
+  },
+  "error_wifi_ssid_copy_failed": {
+    "message": "Failed to copy SSID to clipboard.",
+    "description": "Error message displayed when copying the wifi SSID to the clipboard fails"
   }
 }

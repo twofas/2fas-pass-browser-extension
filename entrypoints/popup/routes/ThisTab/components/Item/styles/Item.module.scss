@@ -117,7 +117,7 @@
   }
 
   svg {
-    height: 16px;
+    height: 12px;
     stroke: v.$wifi-item-light;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -540,7 +540,10 @@
         }
 
         &.item-ssid {
-          width: 20px;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 1;
+          width: 17px;
         }
 
         &.item-copy-2,
