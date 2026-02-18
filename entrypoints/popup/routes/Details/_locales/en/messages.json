@@ -55,10 +55,6 @@
     "message": "Username must be less than 256 characters.",
     "description": "Validation message indicating the maximum length for the username field"
   },
-  "details_uri_max_length": {
-    "message": "URL must be less than 2048 characters.",
-    "description": "Validation message indicating the maximum length for the URL field"
-  },
   "details_item_not_found": {
     "message": "Something went wrong. Item not found. Sync with your mobile app and try again.",
     "description": "Error shown when the requested item is not found, suggesting reconnection"

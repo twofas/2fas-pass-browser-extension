@@ -55,10 +55,6 @@
     "message": "Nazwa użytkownika musi mieć mniej niż 256 znaków.",
     "description": "Validation message indicating the maximum length for the username field"
   },
-  "details_uri_max_length": {
-    "message": "Adres URL musi mieć mniej niż 2048 znaków.",
-    "description": "Validation message indicating the maximum length for the URL field"
-  },
   "details_item_not_found": {
     "message": "Wystąpił błąd. Nie znaleziono elementu. Synchronizuj z aplikacją mobilną i spróbuj ponownie.",
     "description": "Error shown when the requested item is not found, suggesting reconnection"
