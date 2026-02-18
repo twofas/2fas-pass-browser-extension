@@ -244,7 +244,7 @@ function BottomBar () {
     const parseError = doc.querySelector('parsererror');
 
     if (svgElement && !parseError) {
-      svgContainerRef.current.innerHTML = '';
+      svgContainerRef.current.replaceChildren();
       svgContainerRef.current.appendChild(svgElement.cloneNode(true));
     }
   }, [themedSvg]);
