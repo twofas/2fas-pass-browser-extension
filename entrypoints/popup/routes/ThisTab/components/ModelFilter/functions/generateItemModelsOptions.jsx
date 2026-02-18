@@ -31,6 +31,10 @@ const generateItemModelsOptions = (deviceSupportedFeatures, getMessage) => {
     itemModelsOptions.push({ value: 'PaymentCard', label: getMessage('payment_card_plural'), icon: <PaymentCardIcon className={S.modelPaymentCardIcon} />, className: 'payment-cards' });
   }
 
+  if (deviceSupportedFeatures.includes(supportedFeatures?.items?.wifi)) {
+    itemModelsOptions.push({ value: 'Wifi', label: getMessage('wifi_plural'), icon: <LoginIcon className={S.modelLoginIcon} />, className: 'wifis' }); // @TODO: add wifi icon
+  }
+
   return itemModelsOptions;
 };
 

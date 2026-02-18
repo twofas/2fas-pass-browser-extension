@@ -24,6 +24,10 @@ const generateAddNewOptions = deviceSupportedFeatures => {
     addNewOptions.push({ value: '/add-new/PaymentCard', label: getMessage('payment_card'), item: 'PaymentCard' });
   }
 
+  if (deviceSupportedFeatures.includes(supportedFeatures?.items?.wifi)) {
+    addNewOptions.push({ value: '/add-new/Wifi', label: getMessage('wifi'), item: 'Wifi' });
+  }
+
   return addNewOptions;
 };
 
