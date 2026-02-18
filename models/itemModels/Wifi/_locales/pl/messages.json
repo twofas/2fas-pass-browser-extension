@@ -78,5 +78,13 @@
   "error_wifi_password_copy_failed": {
     "message": "Nie udało się skopiować hasła Wi-Fi do schowka.",
     "description": "Error message displayed when copying the wifi password to the clipboard fails"
+  },
+  "notification_wifi_ssid_copied": {
+    "message": "SSID skopiowane do schowka",
+    "description": "Notification message when the wifi SSID is successfully copied to the clipboard"
+  },
+  "error_wifi_ssid_copy_failed": {
+    "message": "Nie udało się skopiować SSID do schowka.",
+    "description": "Error message displayed when copying the wifi SSID to the clipboard fails"
   }
 }

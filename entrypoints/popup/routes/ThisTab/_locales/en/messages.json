@@ -126,5 +126,21 @@
   "this_tab_autofill_partial": {
     "message": "Some fields could not be autofilled. Copy unfilled details manually.",
     "description": "Message displayed when autofill partially succeeded but some fields could not be filled"
+  },
+  "this_tab_copy_wifi_password": {
+    "message": "Copy Wi-Fi password",
+    "description": "Button label to copy the Wi-Fi password to the clipboard"
+  },
+  "this_tab_fetch_wifi_password": {
+    "message": "Fetch Wi-Fi password",
+    "description": "Button label to fetch the Wi-Fi password from the mobile app"
+  },
+  "this_tab_copy_ssid": {
+    "message": "Copy SSID",
+    "description": "Button label to copy the Wi-Fi SSID to the clipboard"
+  },
+  "this_tab_more_forget_wifi_password": {
+    "message": "Forget this Wi-Fi password",
+    "description": "Button label to forget the saved Wi-Fi password"
   }
 }
