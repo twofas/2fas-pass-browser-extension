@@ -11,8 +11,8 @@ import { useI18n } from '@/partials/context/I18nContext';
 
 const AddNewCustomOption = option => {
   const { getMessage } = useI18n();
-
   const itemsUiData = useMemo(() => getItemsUiData(getMessage), [getMessage]);
+  const itemUi = itemsUiData[option.data.item];
 
   const handleClick = () => {
     if (option?.selectProps?.setIsMenuOpen) {
@@ -27,8 +27,8 @@ const AddNewCustomOption = option => {
         title={`${getMessage('top_bar_create_new')} ${option.data.label}`}
         onClick={handleClick}
       >
-        <span className={`react-select-add-new__option-icon ${itemsUiData[option.data.item].selectClassName}`}>
-          {itemsUiData[option.data.item].svg}
+        <span className={`react-select-add-new__option-icon ${itemUi?.selectClassName ?? ''}`}>
+          {itemUi?.svg}
         </span>
         <span className='react-select-add-new__option-label'>{option.data.label}</span>
       </ClearLink>

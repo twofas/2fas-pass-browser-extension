@@ -658,6 +658,46 @@
           }
         }
 
+        &.icon-item-wifi {
+          body.theme-light & {
+            background-color: v.$wifi-item-bg-light;
+
+            svg {
+              stroke: v.$wifi-item-light;
+            }
+          }
+
+          body.theme-dark & {
+            background-color: v.$wifi-item-bg-dark;
+
+            svg {
+              stroke: v.$wifi-item-dark;
+            }
+          }
+
+          body.theme-unset & {
+            @media (prefers-color-scheme: light) {
+              background-color: v.$wifi-item-bg-light;
+
+              svg {
+                stroke: v.$wifi-item-light;
+              }
+            }
+
+            @media (prefers-color-scheme: dark) {
+              background-color: v.$wifi-item-bg-dark;
+
+              svg {
+                stroke: v.$wifi-item-dark;
+              }
+            }
+          }
+
+          svg {
+            width: 12px;
+          }
+        }
+
         svg {
           height: 12px;
           stroke-linecap: round;
@@ -713,12 +753,28 @@
       background-color: v.$card-bg-light;
       border: 1px solid v.$card-stroke-light;
       filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
+
+      ::-webkit-scrollbar {
+        background-color: v.$primary-bg-light;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: v.$hover-on-hover-light;
+      }
     }
 
     body.theme-dark & {
       background-color: v.$card-bg-dark;
       border: 1px solid v.$card-stroke-dark;
       filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
+
+      ::-webkit-scrollbar {
+        background-color: v.$primary-bg-dark;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: v.$hover-on-hover-dark;
+      }
     }
 
     body.theme-unset & {
@@ -726,13 +782,41 @@
         background-color: v.$card-bg-light;
         border: 1px solid v.$card-stroke-light;
         filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
+
+        ::-webkit-scrollbar {
+          background-color: v.$primary-bg-light;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background-color: v.$hover-on-hover-light;
+        }
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$card-bg-dark;
         border: 1px solid v.$card-stroke-dark;
         filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
+
+        ::-webkit-scrollbar {
+          background-color: v.$primary-bg-dark;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background-color: v.$hover-on-hover-dark;
+        }
       }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      box-shadow: none;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      border-radius: 4px;
     }
 
     &-list {
@@ -740,6 +824,21 @@
       overflow-x: hidden;
       padding-bottom: 0;
       padding-top: 0;
+      scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+
+      body.theme-dark & {
+        scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+        }
+      }
     }
   }
 
@@ -969,6 +1068,49 @@
 
         svg {
           stroke-width: 1 !important;
+        }
+      }
+
+      &.wifis {
+        body.theme-light & {
+          background-color: v.$wifi-item-bg-light;
+
+          svg {
+            stroke: v.$wifi-item-light;
+          }
+        }
+
+        body.theme-dark & {
+          background-color: v.$wifi-item-bg-dark;
+
+          svg {
+            stroke: v.$wifi-item-dark;
+          }
+        }
+
+        body.theme-unset & {
+          @media (prefers-color-scheme: light) {
+            background-color: v.$wifi-item-bg-light;
+
+            svg {
+              stroke: v.$wifi-item-light;
+            }
+          }
+
+          @media (prefers-color-scheme: dark) {
+            background-color: v.$wifi-item-bg-dark;
+
+            svg {
+              stroke: v.$wifi-item-dark;
+            }
+          }
+        }
+
+        svg {
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 1 !important;
+          width: 12px;
         }
       }
 

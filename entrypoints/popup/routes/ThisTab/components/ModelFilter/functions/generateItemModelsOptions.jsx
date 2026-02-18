@@ -10,6 +10,7 @@ import AllIcon from '@/assets/popup-window/items/all.svg?react';
 import LoginIcon from '@/assets/popup-window/items/login.svg?react';
 import SecureNoteIcon from '@/assets/popup-window/items/secure-note.svg?react';
 import PaymentCardIcon from '@/assets/popup-window/items/payment-card.svg?react';
+import WifiIcon from '@/assets/popup-window/items/wifi.svg?react';
 
 /**
 * Function to generate item models options based on device supported features.
@@ -32,7 +33,7 @@ const generateItemModelsOptions = (deviceSupportedFeatures, getMessage) => {
   }
 
   if (deviceSupportedFeatures.includes(supportedFeatures?.items?.wifi)) {
-    itemModelsOptions.push({ value: 'Wifi', label: getMessage('wifi_plural'), icon: <LoginIcon className={S.modelLoginIcon} />, className: 'wifis' }); // @TODO: add wifi icon
+    itemModelsOptions.push({ value: 'Wifi', label: getMessage('wifi_plural'), icon: <WifiIcon className={S.modelWifiIcon} />, className: 'wifis' });
   }
 
   return itemModelsOptions;
