@@ -22,17 +22,20 @@ import { useI18n } from '@/partials/context/I18nContext';
 import LoginDetailsView from './modelsViews/LoginDetailsView';
 import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
 import PaymentCardDetailsView from './modelsViews/PaymentCardDetailsView';
+import WifiDetailsView from './modelsViews/WifiDetailsView';
 
 const DetailsViews = {
   'Login': LoginDetailsView,
   'SecureNote': SecureNoteDetailsView,
-  'PaymentCard': PaymentCardDetailsView
+  'PaymentCard': PaymentCardDetailsView,
+  'Wifi': WifiDetailsView
 };
 
 const DetailsHeaders = {
   'Login': 'details_header_login',
   'SecureNote': 'details_header_secure_note',
-  'PaymentCard': 'details_header_payment_card'
+  'PaymentCard': 'details_header_payment_card',
+  'Wifi': 'details_header_wifi'
 };
 
 /**

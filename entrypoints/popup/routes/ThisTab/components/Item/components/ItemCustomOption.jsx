@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { useI18n } from '@/partials/context/I18nContext';
-import { useQrDialog } from '../../../context/QrDialogContext';
+import { useQrDialog } from '@/entrypoints/popup/context/QrDialogContext';
 import handleUriCopyClick from '../../../functions/serviceList/handleUriCopyClick';
 import handleUriClick from '../../../functions/serviceList/handleUriClick';
 import handleForgetPassword from '../../../functions/serviceList/handleForgetPassword';

@@ -25,8 +25,8 @@ import useTags from '../../hooks/useTags';
 import DomainIcon from '@/assets/popup-window/domain.svg?react';
 import { AllItemsList, Filters, KeepItem, MatchingItemsList, ModelFilter, NoMatch, Search, Sort, TagsInfo, UpdateComponent } from './components';
 import { ItemListProvider } from './context/ItemListContext';
-import { QrDialogProvider } from './context/QrDialogContext';
-import QrDialog from './components/QrDialog';
+import { QrDialogProvider } from '../../context/QrDialogContext';
+import QrDialog from '../../components/QrDialog';
 
 const thisTabTopVariants = {
   visible: { height: 'auto', transition: { duration: 0.2, ease: 'easeOut' } },

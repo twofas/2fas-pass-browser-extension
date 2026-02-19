@@ -226,5 +226,45 @@
   "details_additional_info_max_length": {
     "message": "Dodatkowe informacje muszą mieć mniej niż 16384 znaków.",
     "description": "Validation message indicating the maximum length for the additional info field"
+  },
+  "details_header_wifi": {
+    "message": "Szczegóły Wi-Fi",
+    "description": "Header for the Wi-Fi details section"
+  },
+  "details_wifi_network": {
+    "message": "Sieć",
+    "description": "Label for the SSID/network name field in Wi-Fi details"
+  },
+  "details_wifi_ssid_max_length": {
+    "message": "SSID musi mieć mniej niż 256 znaków.",
+    "description": "Validation message indicating the maximum length for the SSID field"
+  },
+  "details_wifi_notes_max_length": {
+    "message": "Notatki muszą mieć mniej niż 16385 znaków.",
+    "description": "Validation message indicating the maximum length for the Wi-Fi notes field"
+  },
+  "details_wifi_password_decrypt_error": {
+    "message": "Nie udało się odszyfrować hasła Wi-Fi. Synchronizuj rozszerzenie z aplikacją mobilną.",
+    "description": "Error message displayed when decrypting the Wi-Fi password fails"
+  },
+  "details_wifi_show_qr": {
+    "message": "Pokaż kod QR",
+    "description": "Link to show Wi-Fi QR code for scanning"
+  },
+  "details_wifi_toggle_password_visibility": {
+    "message": "Włącz/wyłącz widoczność hasła Wi-Fi",
+    "description": "Title for the button that toggles Wi-Fi password visibility"
+  },
+  "details_wifi_type": {
+    "message": "Typ",
+    "description": "Label for the Wi-Fi security type field"
+  },
+  "details_wifi_hidden_yes": {
+    "message": "Tak",
+    "description": "Option label for hidden network enabled"
+  },
+  "details_wifi_hidden_no": {
+    "message": "Nie",
+    "description": "Option label for hidden network disabled"
   }
 }
