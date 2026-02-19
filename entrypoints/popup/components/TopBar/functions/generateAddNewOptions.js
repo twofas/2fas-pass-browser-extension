@@ -16,12 +16,12 @@ const generateAddNewOptions = deviceSupportedFeatures => {
     { value: '/add-new/Login', label: getMessage('login'), item: 'Login' }
   ];
 
-  if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
-    addNewOptions.push({ value: '/add-new/SecureNote', label: getMessage('secure_note'), item: 'SecureNote' });
-  }
-
   if (deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard)) {
     addNewOptions.push({ value: '/add-new/PaymentCard', label: getMessage('payment_card'), item: 'PaymentCard' });
+  }
+
+  if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
+    addNewOptions.push({ value: '/add-new/SecureNote', label: getMessage('secure_note'), item: 'SecureNote' });
   }
 
   if (deviceSupportedFeatures.includes(supportedFeatures?.items?.wifi)) {

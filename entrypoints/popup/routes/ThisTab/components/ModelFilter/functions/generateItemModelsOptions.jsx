@@ -24,12 +24,12 @@ const generateItemModelsOptions = (deviceSupportedFeatures, getMessage) => {
     { value: 'Login', label: getMessage('login_plural'), icon: <LoginIcon className={S.modelLoginIcon} />, className: 'logins' }
   ];
 
-  if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
-    itemModelsOptions.push({ value: 'SecureNote', label: getMessage('secure_note_plural'), icon: <SecureNoteIcon className={S.modelSecureNoteIcon} />, className: 'secure-notes' });
-  }
-
   if (deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard)) {
     itemModelsOptions.push({ value: 'PaymentCard', label: getMessage('payment_card_plural'), icon: <PaymentCardIcon className={S.modelPaymentCardIcon} />, className: 'payment-cards' });
+  }
+
+  if (deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote)) {
+    itemModelsOptions.push({ value: 'SecureNote', label: getMessage('secure_note_plural'), icon: <SecureNoteIcon className={S.modelSecureNoteIcon} />, className: 'secure-notes' });
   }
 
   if (deviceSupportedFeatures.includes(supportedFeatures?.items?.wifi)) {
