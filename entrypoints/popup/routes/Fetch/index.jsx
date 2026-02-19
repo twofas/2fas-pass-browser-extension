@@ -133,21 +133,41 @@ function Fetch(props) {
       return false;
     }
 
+    const socket = new TwoFasWebSocket(sessionId);
+    socket.open();
+    socket.addEventListener('message', FetchOnMessage, { state, device });
+    socket.addEventListener('close', FetchOnClose, { state });
+
+    try {
+      await socket.waitForOpen();
+    } catch (e) {
+      await CatchError(e, () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
+      return false;
+    }
+
+    if (abortSignal?.aborted) {
+      await closeConnection();
+      return false;
+    }
+
     try {
       const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
+      state.data.notificationId = json?.notificationId;
 
       if (abortSignal?.aborted) {
+        await closeConnection();
         return false;
       }
 
       if (json?.error === 'UNREGISTERED') {
+        await closeConnection();
         setFetchState(FETCH_STATE.CONNECTION_ERROR);
         setErrorText(getMessage('fetch_token_unregistered_header'));
         return false;
       }
-
-      state.data.notificationId = json.notificationId;
     } catch (e) {
+      await closeConnection();
+
       await CatchError(new TwoFasError(TwoFasError.internalErrors.fetchSendPush, {
         event: e,
         additional: {
@@ -156,15 +176,6 @@ function Fetch(props) {
         }
       }), () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
     }
-
-    if (abortSignal?.aborted) {
-      return false;
-    }
-
-    const socket = new TwoFasWebSocket(sessionId);
-    socket.open();
-    socket.addEventListener('message', FetchOnMessage, { state, device });
-    socket.addEventListener('close', FetchOnClose, { state });
   };
 
   const closeConnection = async () => {

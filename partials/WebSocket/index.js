@@ -178,6 +178,32 @@ class TwoFasWebSocket {
     }
   };
 
+  waitForOpen () {
+    return new Promise((resolve, reject) => {
+      if (this.socket?.readyState === WebSocket.OPEN) {
+        resolve();
+        return;
+      }
+
+      if (this.socket?.readyState === WebSocket.CLOSED || this.socket?.readyState === WebSocket.CLOSING) {
+        reject(new TwoFasError(TwoFasError.internalErrors.websocketError, { additional: { func: 'TwoFasWebSocket - waitForOpen' } }));
+        return;
+      }
+
+      const stateListener = isActive => {
+        TwoFasWebSocket.removeStateListener(stateListener);
+
+        if (isActive) {
+          resolve();
+        } else {
+          reject(new TwoFasError(TwoFasError.internalErrors.websocketError, { additional: { func: 'TwoFasWebSocket - waitForOpen' } }));
+        }
+      };
+
+      TwoFasWebSocket.addStateListener(stateListener);
+    });
+  };
+
   sendMessage = async data => {
     if (this.socket.readyState === WebSocket.OPEN) {
       const { scheme, origin, originVersion } = await getBeInfo();
