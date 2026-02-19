@@ -8,6 +8,21 @@ import Item from '@/models/itemModels/Item';
 
 const WIFI_SECURITY_TYPES = ['none', 'wep', 'wpa', 'wpa2', 'wpa3'];
 
+const WIFI_URI_TYPE_MAP = {
+  none: 'nopass',
+  wep: 'WEP',
+  wpa: 'WPA',
+  wpa2: 'WPA',
+  wpa3: 'WPA'
+};
+
+const escapeWifiString = str => str
+  .replace(/\\/g, '\\\\')
+  .replace(/;/g, '\\;')
+  .replace(/,/g, '\\,')
+  .replace(/"/g, '\\"')
+  .replace(/:/g, '\\:');
+
 /**
 * Class representing a wifi network.
 * @extends Item
@@ -128,6 +143,33 @@ export default class Wifi extends Item {
 
   get sifExists () {
     return this.#s_wifi_password && this.#s_wifi_password !== '';
+  }
+
+  async generateWifiUri () {
+    if (!this.content.ssid) {
+      throw new Error('Cannot generate WiFi URI: SSID is required');
+    }
+
+    const type = WIFI_URI_TYPE_MAP[this.content.securityType];
+    let uri = `WIFI:T:${type};S:${escapeWifiString(this.content.ssid)};`;
+
+    if (this.content.securityType !== 'none' && this.sifExists) {
+      let { wifiPassword } = await this.decryptSif();
+
+      if (wifiPassword) {
+        uri += `P:${escapeWifiString(wifiPassword)};`;
+      }
+
+      wifiPassword = null;
+    }
+
+    if (this.content.hidden) {
+      uri += 'H:true;';
+    }
+
+    uri += ';';
+
+    return uri;
   }
 
   toJSON () {
