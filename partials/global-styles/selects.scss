@@ -2222,7 +2222,8 @@
 
     &.uri,
     &.details,
-    &.forget {
+    &.forget,
+    &.show-qr {
       body.theme-light & {
         color: v.$primary-text-light;
       }

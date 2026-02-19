@@ -146,5 +146,9 @@
   "this_tab_more_show_qr": {
     "message": "Show Network QR Code",
     "description": "Button label to show a QR code for the Wi-Fi network"
+  },
+  "this_tab_qr_dialog_title": {
+    "message": "Scan the QR Code to join",
+    "description": "Title text shown in the WiFi QR code dialog above the network name"
   }
 }

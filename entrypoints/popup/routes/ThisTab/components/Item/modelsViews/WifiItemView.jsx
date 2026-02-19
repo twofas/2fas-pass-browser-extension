@@ -54,6 +54,7 @@ function WifiItemView (props) {
         triggerRef={moreBtnRef}
         setMore={props.setMore}
         components={selectComponents}
+        wifiItem={props.data}
       />
     </>
   );
