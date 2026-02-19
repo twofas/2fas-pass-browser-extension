@@ -1219,10 +1219,6 @@
     "message": "Pokaż kod QR",
     "description": "Link to show Wi-Fi QR code for scanning"
   },
-  "details_wifi_qr_dialog_title": {
-    "message": "Zeskanuj kod QR, aby się połączyć",
-    "description": "Title for the Wi-Fi QR code dialog"
-  },
   "details_wifi_toggle_password_visibility": {
     "message": "Włącz/wyłącz widoczność hasła Wi-Fi",
     "description": "Title for the button that toggles Wi-Fi password visibility"
