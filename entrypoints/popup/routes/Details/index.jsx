@@ -188,7 +188,8 @@ function Details(props) {
     const contentTypeMap = {
       'login': 'Login',
       'secureNote': 'SecureNote',
-      'paymentCard': 'PaymentCard'
+      'paymentCard': 'PaymentCard',
+      'wifi': 'Wifi'
     };
 
     return contentTypeMap[data?.item?.contentType] || null;

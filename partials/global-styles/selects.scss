@@ -227,21 +227,65 @@
     body.theme-light & {
       background-color: v.$primary-box-bg-light;
       box-shadow: 0 6px 15px v.$primary-bg-light;
+
+      ::-webkit-scrollbar {
+        background-color: v.$primary-bg-light;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: v.$hover-on-hover-light;
+      }
     }
 
     body.theme-dark & {
       background-color: v.$primary-box-bg-dark;
       box-shadow: 0 6px 15px v.$primary-bg-dark;
+
+      ::-webkit-scrollbar {
+        background-color: v.$primary-bg-dark;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: v.$hover-on-hover-dark;
+      }
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         background-color: v.$primary-box-bg-light;
+
+        ::-webkit-scrollbar {
+          background-color: v.$primary-bg-light;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background-color: v.$hover-on-hover-light;
+        }
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$primary-box-bg-dark;
+
+        ::-webkit-scrollbar {
+          background-color: v.$primary-bg-dark;
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background-color: v.$hover-on-hover-dark;
+        }
       }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      box-shadow: none;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      border-radius: 4px;
     }
 
     &-list {
@@ -250,6 +294,21 @@
       overflow: auto;
       padding-bottom: 0;
       padding-top: 0;
+      scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+
+      body.theme-dark & {
+        scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+      }
+
+      body.theme-unset & {
+        @media (prefers-color-scheme: light) {
+          scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
+        }
+      }
 
       .react-select__option {
         cursor: pointer;
@@ -417,88 +476,29 @@
     body.theme-light & {
       border: 1px solid v.$card-stroke-light;
       filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
-
-      ::-webkit-scrollbar {
-        background-color: v.$primary-bg-light;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background-color: v.$hover-on-hover-light;
-      }
     }
 
     body.theme-dark & {
       border: 1px solid v.$card-stroke-dark;
       filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
-
-      ::-webkit-scrollbar {
-        background-color: v.$primary-bg-dark;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background-color: v.$hover-on-hover-dark;
-      }
     }
 
     body.theme-unset & {
       @media (prefers-color-scheme: light) {
         border: 1px solid v.$card-stroke-light;
         filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
-
-        ::-webkit-scrollbar {
-          background-color: v.$primary-bg-light;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background-color: v.$hover-on-hover-light;
-        }
       }
 
       @media (prefers-color-scheme: dark) {
         border: 1px solid v.$card-stroke-dark;
         filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
-
-        ::-webkit-scrollbar {
-          background-color: v.$primary-bg-dark;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background-color: v.$hover-on-hover-dark;
-        }
       }
-    }
-
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      box-shadow: none;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      border-radius: 4px;
     }
 
     &-list {
       background: transparent;
       border-radius: 8px;
       padding: 0;
-      scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
-
-      body.theme-dark & {
-        scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: light) {
-          scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
-        }
-      }
     }
   }
 
@@ -812,28 +812,12 @@
       background-color: v.$card-bg-light;
       border: 1px solid v.$card-stroke-light;
       filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
-
-      ::-webkit-scrollbar {
-        background-color: v.$primary-bg-light;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background-color: v.$hover-on-hover-light;
-      }
     }
 
     body.theme-dark & {
       background-color: v.$card-bg-dark;
       border: 1px solid v.$card-stroke-dark;
       filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
-
-      ::-webkit-scrollbar {
-        background-color: v.$primary-bg-dark;
-      }
-
-      ::-webkit-scrollbar-thumb {
-        background-color: v.$hover-on-hover-dark;
-      }
     }
 
     body.theme-unset & {
@@ -841,41 +825,13 @@
         background-color: v.$card-bg-light;
         border: 1px solid v.$card-stroke-light;
         filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
-
-        ::-webkit-scrollbar {
-          background-color: v.$primary-bg-light;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background-color: v.$hover-on-hover-light;
-        }
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$card-bg-dark;
         border: 1px solid v.$card-stroke-dark;
         filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
-
-        ::-webkit-scrollbar {
-          background-color: v.$primary-bg-dark;
-        }
-
-        ::-webkit-scrollbar-thumb {
-          background-color: v.$hover-on-hover-dark;
-        }
       }
-    }
-
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      box-shadow: none;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      border-radius: 4px;
     }
 
     &-list {
@@ -883,21 +839,6 @@
       overflow-x: hidden;
       padding-bottom: 0;
       padding-top: 0;
-      scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
-
-      body.theme-dark & {
-        scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: light) {
-          scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
-        }
-      }
     }
   }
 
@@ -1243,28 +1184,12 @@
       background-color: v.$card-bg-light;
       border: 1px solid v.$card-stroke-light;
       filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
-
-      ::-webkit-scrollbar {
-        background-color: v.$primary-bg-light;
-      }
-      
-      ::-webkit-scrollbar-thumb {
-        background-color: v.$hover-on-hover-light;
-      }
     }
 
     body.theme-dark & {
       background-color: v.$card-bg-dark;
       border: 1px solid v.$card-stroke-dark;
       filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
-
-      ::-webkit-scrollbar {
-        background-color: v.$primary-bg-dark;
-      }
-      
-      ::-webkit-scrollbar-thumb {
-        background-color: v.$hover-on-hover-dark;
-      }
     }
 
     body.theme-unset & {
@@ -1272,59 +1197,13 @@
         background-color: v.$card-bg-light;
         border: 1px solid v.$card-stroke-light;
         filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
-
-        ::-webkit-scrollbar {
-          background-color: v.$primary-bg-light;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-          background-color: v.$hover-on-hover-light;
-        }
       }
 
       @media (prefers-color-scheme: dark) {
         background-color: v.$card-bg-dark;
         border: 1px solid v.$card-stroke-dark;
         filter: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
-
-        ::-webkit-scrollbar {
-          background-color: v.$primary-bg-dark;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-          background-color: v.$hover-on-hover-dark;
-        }
       }
-    }
-
-    html.firefox.theme-light {
-      scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
-    }
-
-    html.firefox.theme-dark {
-      scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
-    }
-
-    html.firefox.theme-unset {
-      @media (prefers-color-scheme: light) {
-        scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
-      }
-    }
-
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    
-    ::-webkit-scrollbar-track {
-      box-shadow: none;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-      border-radius: 3px;
     }
 
     &-list {

@@ -855,6 +855,26 @@
     "message": "Security code is invalid.",
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
+  "add_new_validate_wifi_name_required": {
+    "message": "Wi-Fi name is required",
+    "description": "Validation message displayed when the Wi-Fi Name field is empty"
+  },
+  "add_new_validate_wifi_name_length": {
+    "message": "Wi-Fi name must be less than 256 characters.",
+    "description": "Validation message displayed when the Wi-Fi Name field exceeds 255 characters"
+  },
+  "add_new_validate_wifi_ssid_length": {
+    "message": "SSID must be less than 256 characters.",
+    "description": "Validation message displayed when the SSID field exceeds 255 characters"
+  },
+  "add_new_validate_wifi_notes_length": {
+    "message": "Notes must be less than 16,385 characters.",
+    "description": "Validation message displayed when the Notes field exceeds 16384 characters"
+  },
+  "add_new_wifi_type": {
+    "message": "Type",
+    "description": "Label for the Wi-Fi security type dropdown in the add new Wi-Fi form"
+  },
   "add_new_header_login": {
     "message": "Adding a new Login to \n2FAS Pass",
     "description": "Header for the section to add a new Login item"
@@ -866,6 +886,10 @@
   "add_new_header_secure_note": {
     "message": "Adding a new Secure Note to \n2FAS Pass",
     "description": "Header for the section to add a new Secure Note item"
+  },
+  "add_new_header_wifi": {
+    "message": "Adding a new Wi-Fi to \n2FAS Pass",
+    "description": "Header for the section to add a new Wi-Fi item"
   },
   "add_new_subheader": {
     "message": "Start the process here and continue in the mobile app.",
