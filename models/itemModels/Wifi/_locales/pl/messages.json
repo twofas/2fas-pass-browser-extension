@@ -20,7 +20,7 @@
     "description": "Label for the wifi password field"
   },
   "wifi_security_type": {
-    "message": "Zabezpieczenia",
+    "message": "Typ szyfrowania",
     "description": "Label for the wifi security type field"
   },
   "wifi_hidden": {

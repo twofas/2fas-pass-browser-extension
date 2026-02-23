@@ -148,7 +148,7 @@
     "description": "Button label to show a QR code for the Wi-Fi network"
   },
   "this_tab_qr_dialog_title": {
-    "message": "Zeskanuj kod QR, aby dołączyć",
+    "message": "Zeskanuj kod QR, aby dołączyć do",
     "description": "Title text shown in the WiFi QR code dialog above the network name"
   }
 }
