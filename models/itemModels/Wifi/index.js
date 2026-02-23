@@ -128,7 +128,7 @@ export default class Wifi extends Item {
       dO.push({ value: 'forget', label: getMessage('this_tab_more_forget_wifi_password'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
     }
 
-    if (this.content.ssid) {
+    if (this.content.ssid && this.sifExists) {
       dO.push({ value: 'showQr', label: getMessage('this_tab_more_show_qr'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'showQr' });
     }
 

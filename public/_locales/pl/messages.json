@@ -1371,6 +1371,10 @@
     "message": "Zaakceptowano pobieranie danych",
     "description": "Toast message displayed when a payment card request is accepted"
   },
+  "fetch_wifi_request_accept_toast": {
+    "message": "Zaakceptowano pobieranie danych",
+    "description": "Toast message displayed when a WiFi password request is accepted"
+  },
   "fetch_request_cancel_toast": {
     "message": "Odrzucono pobieranie danych",
     "description": "Toast message displayed when a request is rejected"
@@ -2144,7 +2148,7 @@
     "description": "Button label to show a QR code for the Wi-Fi network"
   },
   "this_tab_qr_dialog_title": {
-    "message": "Zeskanuj kod QR, aby dołączyć",
+    "message": "Zeskanuj kod QR, aby dołączyć do",
     "description": "Title text shown in the WiFi QR code dialog above the network name"
   },
   "all_items_list_no_search_results": {
@@ -2424,7 +2428,7 @@
     "description": "Label for the wifi password field"
   },
   "wifi_security_type": {
-    "message": "Zabezpieczenia",
+    "message": "Typ szyfrowania",
     "description": "Label for the wifi security type field"
   },
   "wifi_hidden": {

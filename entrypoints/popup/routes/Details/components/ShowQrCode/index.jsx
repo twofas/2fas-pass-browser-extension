@@ -38,7 +38,7 @@ function ShowQrCode ({ originalItem }) {
     }
   }, [itemInstance, showQr]);
 
-  if (!originalItem?.content?.ssid) {
+  if (!itemInstance?.content?.ssid || !itemInstance?.sifExists) {
     return null;
   }
 

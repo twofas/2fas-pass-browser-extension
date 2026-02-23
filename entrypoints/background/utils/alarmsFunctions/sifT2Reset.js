@@ -48,6 +48,15 @@ const sifT2Reset = async (deviceId, vaultId, itemId) => {
   // saveItems
   await saveItems(items, deviceId, vaultId);
 
+  // Notify popup to close QR dialog if this item is currently displayed
+  try {
+    await browser.runtime.sendMessage({
+      action: REQUEST_ACTIONS.SIF_T2_RESET,
+      target: REQUEST_TARGETS.POPUP,
+      data: { deviceId, vaultId, itemId }
+    });
+  } catch {}
+
   // Clear popup state data for this item's details path across all tabs
   await clearPopupStateForItem(deviceId, vaultId, itemId);
 };
