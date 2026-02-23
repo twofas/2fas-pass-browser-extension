@@ -1342,7 +1342,6 @@
     padding: 9px 12px;
     position: relative;
     transition: background-color v.$anim, color v.$anim;
-    width: 220px;
 
     body.theme-light & {
       background-color: rgba(v.$hover-color-light, 0);
