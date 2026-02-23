@@ -124,12 +124,12 @@ export default class Wifi extends Item {
       { value: 'details', label: getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
     ];
 
-    if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
-      dO.push({ value: 'forget', label: getMessage('this_tab_more_forget_wifi_password'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
-    }
-
     if (this.content.ssid && this.sifExists) {
       dO.push({ value: 'showQr', label: getMessage('this_tab_more_show_qr'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'showQr' });
+    }
+
+    if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
+      dO.push({ value: 'forget', label: getMessage('this_tab_more_forget_wifi_password'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
     }
 
     return dO;
