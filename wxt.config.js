@@ -155,7 +155,10 @@ export default defineConfig({
       manifestObj.browser_specific_settings = {
         gecko: {
           id: '{2fa5f682-d4c4-40e3-8ad2-c8404283d4f9}',
-          strict_min_version: '131.0'
+          strict_min_version: '131.0',
+          data_collection_permissions: {
+            required: ['none']
+          }
         }
       };
     }

@@ -79,10 +79,11 @@ const useTags = (options = {}) => {
 
   const fetchTags = useCallback(async (force = false) => {
     const now = Date.now();
-    const isCacheValid = cache.lastFetchTime && (now - cache.lastFetchTime) < CACHE_DURATION;
+    const currentCache = tagsCache;
+    const isCacheValid = currentCache.lastFetchTime && (now - currentCache.lastFetchTime) < CACHE_DURATION;
 
-    if (!force && isCacheValid && cache.tags.length > 0) {
-      return cache.tags;
+    if (!force && isCacheValid) {
+      return currentCache.tags;
     }
 
     setTagsCache({ loading: true });
@@ -96,7 +97,7 @@ const useTags = (options = {}) => {
       await CatchError(e);
       return [];
     }
-  }, [cache.lastFetchTime, cache.tags]);
+  }, []);
 
   const refetch = useCallback(() => fetchTags(true), [fetchTags]);
 

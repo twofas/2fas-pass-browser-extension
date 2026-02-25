@@ -50,14 +50,6 @@ function LoginDetailsView(props) {
       errors.username = getMessage('details_username_max_length');
     }
 
-    if (values?.content?.uris && Array.isArray(values.content.uris)) {
-      values?.content?.uris.forEach((uri, index) => {
-        if (uri?.text?.length > 2048) {
-          errors[`uris[${index}]`] = getMessage('details_uri_max_length');
-        }
-      });
-    }
-
     const errorKeys = Object.keys(errors);
 
     if (errorKeys.length > 0) {

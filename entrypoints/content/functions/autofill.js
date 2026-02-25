@@ -7,6 +7,7 @@
 import getPasswordInputs from '@/partials/inputFunctions/getPasswordInputs';
 import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
+import isTopFrame from '@/partials/functions/isTopFrame';
 import inputSetValue from './autofillFunctions/inputSetValue';
 
 /**
@@ -112,9 +113,7 @@ const autofill = async request => {
     };
   }
 
-  const isTopFrame = window.self === window.top;
-
-  if (!isTopFrame) {
+  if (!isTopFrame()) {
     let frameHostname = '';
     let isCrossDomain = false;
 

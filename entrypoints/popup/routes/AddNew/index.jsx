@@ -9,12 +9,13 @@ import { useRef, useMemo } from 'react';
 import { useParams } from 'react-router';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import { Login, SecureNote, PaymentCard } from '@/models/itemModels';
+import { Login, SecureNote, PaymentCard, Wifi } from '@/models/itemModels';
 
 // Model Views
 import LoginView from './modelsViews/LoginAddNewView';
 import SecureNoteView from './modelsViews/SecureNoteAddNewView';
 import PaymentCardAddNewView from './modelsViews/PaymentCardAddNewView';
+import WifiAddNewView from './modelsViews/WifiAddNewView';
 
 /**
 * AddNew component for creating a new item entry.
@@ -35,6 +36,8 @@ function AddNew(props) {
         return <SecureNoteView />;
       case PaymentCard.contentType.toLowerCase():
         return <PaymentCardAddNewView />;
+      case Wifi.contentType.toLowerCase():
+        return <WifiAddNewView />;
       default:
         return null;
     }

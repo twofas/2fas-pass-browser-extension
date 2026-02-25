@@ -39,6 +39,7 @@ export default defineConfig([
 			semi: "error",
 			"prefer-const": "error",
       "no-unused-vars": "warn",
+      "no-useless-assignment": "off",
       "no-empty": [
         "error",
         {
@@ -64,6 +65,7 @@ export default defineConfig([
 			semi: "error",
 			"prefer-const": "error",
       "no-unused-vars": "warn",
+      "no-useless-assignment": "off",
       "no-empty": [
         "error",
         {

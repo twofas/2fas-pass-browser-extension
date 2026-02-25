@@ -11,10 +11,10 @@
 */
 
 const createSVGElement = data => {
-  const svg = document.createElement('svg');
-  svg.innerHTML = data.trim();
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(data.trim(), 'image/svg+xml');
 
-  return svg.firstChild;
+  return doc.documentElement;
 };
 
 export default createSVGElement;

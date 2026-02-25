@@ -12,7 +12,6 @@ const userNameDeniedKeywords = Object.freeze([
   'search',
   'find',
   'subscribe',
-  'order',
   'order-status-email'
 ]);
 

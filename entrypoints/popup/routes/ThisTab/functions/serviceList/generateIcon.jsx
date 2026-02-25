@@ -22,6 +22,7 @@ import unionPayDark from '@/assets/popup-window/payment-cards/unionpay_dark.svg'
 import Skeleton from '../../components/Skeleton';
 import SecureNoteIcon from '@/assets/popup-window/items/secure-note.svg?react';
 import PaymentCardIcon from '@/assets/popup-window/items/payment-card.svg?react';
+import WifiIcon from '@/assets/popup-window/items/wifi.svg?react';
 
 const CARD_ISSUER_ICONS = {
   Visa: { light: visaLight, dark: visaDark },
@@ -142,6 +143,14 @@ const generateIcon = (item, faviconError, setFaviconError, loading) => {
       return (
         <span className={S.iconSecureNote}>
           <SecureNoteIcon />
+        </span>
+      );
+    }
+
+    case 'Wifi': {
+      return (
+        <span className={S.iconWifi}>
+          <WifiIcon />
         </span>
       );
     }

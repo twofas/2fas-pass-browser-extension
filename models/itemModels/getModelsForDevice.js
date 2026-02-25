@@ -7,6 +7,7 @@
 import Login from './Login/index.js';
 import SecureNote from './SecureNote/index.js';
 import PaymentCard from './PaymentCard/index.js';
+import Wifi from './Wifi/index.js';
 import supportedFeatures from '@/constants/supportedFeatures.js';
 import getSupportedFeatures from '@/partials/functions/getSupportedFeatures.js';
 
@@ -28,6 +29,7 @@ const getModelsForDevice = async deviceId => {
 
   const isSecureNoteSupported = deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote);
   const isPaymentCardSupported = deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard);
+  const isWifiSupported = deviceSupportedFeatures.includes(supportedFeatures?.items?.wifi);
 
   if (isSecureNoteSupported) {
     modelClasses.push(SecureNote);
@@ -35,6 +37,10 @@ const getModelsForDevice = async deviceId => {
 
   if (isPaymentCardSupported) {
     modelClasses.push(PaymentCard);
+  }
+
+  if (isWifiSupported) {
+    modelClasses.push(Wifi);
   }
   
   const models = new Map(

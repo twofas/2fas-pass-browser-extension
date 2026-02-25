@@ -855,6 +855,26 @@
     "message": "Security code is invalid.",
     "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
   },
+  "add_new_validate_wifi_name_required": {
+    "message": "Wi-Fi name is required",
+    "description": "Validation message displayed when the Wi-Fi Name field is empty"
+  },
+  "add_new_validate_wifi_name_length": {
+    "message": "Wi-Fi name must be less than 256 characters.",
+    "description": "Validation message displayed when the Wi-Fi Name field exceeds 255 characters"
+  },
+  "add_new_validate_wifi_ssid_length": {
+    "message": "SSID must be less than 256 characters.",
+    "description": "Validation message displayed when the SSID field exceeds 255 characters"
+  },
+  "add_new_validate_wifi_notes_length": {
+    "message": "Notes must be less than 16,385 characters.",
+    "description": "Validation message displayed when the Notes field exceeds 16384 characters"
+  },
+  "add_new_wifi_type": {
+    "message": "Type",
+    "description": "Label for the Wi-Fi security type dropdown in the add new Wi-Fi form"
+  },
   "add_new_header_login": {
     "message": "Adding a new Login to \n2FAS Pass",
     "description": "Header for the section to add a new Login item"
@@ -866,6 +886,10 @@
   "add_new_header_secure_note": {
     "message": "Adding a new Secure Note to \n2FAS Pass",
     "description": "Header for the section to add a new Secure Note item"
+  },
+  "add_new_header_wifi": {
+    "message": "Adding a new Wi-Fi to \n2FAS Pass",
+    "description": "Header for the section to add a new Wi-Fi item"
   },
   "add_new_subheader": {
     "message": "Start the process here and continue in the mobile app.",
@@ -998,10 +1022,6 @@
   "details_username_max_length": {
     "message": "Username must be less than 256 characters.",
     "description": "Validation message indicating the maximum length for the username field"
-  },
-  "details_uri_max_length": {
-    "message": "URL must be less than 2048 characters.",
-    "description": "Validation message indicating the maximum length for the URL field"
   },
   "details_item_not_found": {
     "message": "Something went wrong. Item not found. Sync with your mobile app and try again.",
@@ -1175,6 +1195,46 @@
     "message": "Additional info must be less than 16384 characters.",
     "description": "Validation message indicating the maximum length for the additional info field"
   },
+  "details_header_wifi": {
+    "message": "Wi-Fi details",
+    "description": "Header for the Wi-Fi details section"
+  },
+  "details_wifi_network": {
+    "message": "Network",
+    "description": "Label for the SSID/network name field in Wi-Fi details"
+  },
+  "details_wifi_ssid_max_length": {
+    "message": "SSID must be less than 256 characters.",
+    "description": "Validation message indicating the maximum length for the SSID field"
+  },
+  "details_wifi_notes_max_length": {
+    "message": "Notes must be less than 16,385 characters.",
+    "description": "Validation message indicating the maximum length for the Wi-Fi notes field"
+  },
+  "details_wifi_password_decrypt_error": {
+    "message": "Decrypting Wi-Fi password error. Please resync with your mobile app.",
+    "description": "Error message displayed when decrypting the Wi-Fi password fails"
+  },
+  "details_wifi_show_qr": {
+    "message": "Show QR Code",
+    "description": "Link to show Wi-Fi QR code for scanning"
+  },
+  "details_wifi_toggle_password_visibility": {
+    "message": "Toggle Wi-Fi password visibility",
+    "description": "Title for the button that toggles Wi-Fi password visibility"
+  },
+  "details_wifi_type": {
+    "message": "Type",
+    "description": "Label for the Wi-Fi security type field"
+  },
+  "details_wifi_hidden_yes": {
+    "message": "Yes",
+    "description": "Option label for hidden network enabled"
+  },
+  "details_wifi_hidden_no": {
+    "message": "No",
+    "description": "Option label for hidden network disabled"
+  },
   "details_tags_label": {
     "message": "Tags",
     "description": "Label for the tags field in details view"
@@ -1310,6 +1370,10 @@
   "fetch_paymentCard_request_accept_toast": {
     "message": "Card request accepted",
     "description": "Toast message displayed when a payment card request is accepted"
+  },
+  "fetch_wifi_request_accept_toast": {
+    "message": "Wi-Fi password request accepted",
+    "description": "Toast message displayed when a WiFi password request is accepted"
   },
   "fetch_request_cancel_toast": {
     "message": "Item request rejected",
@@ -2063,6 +2127,30 @@
     "message": "Some fields could not be autofilled. Copy unfilled details manually.",
     "description": "Message displayed when autofill partially succeeded but some fields could not be filled"
   },
+  "this_tab_copy_wifi_password": {
+    "message": "Copy Wi-Fi password",
+    "description": "Button label to copy the Wi-Fi password to the clipboard"
+  },
+  "this_tab_fetch_wifi_password": {
+    "message": "Fetch Wi-Fi password",
+    "description": "Button label to fetch the Wi-Fi password from the mobile app"
+  },
+  "this_tab_copy_ssid": {
+    "message": "Copy SSID",
+    "description": "Button label to copy the Wi-Fi SSID to the clipboard"
+  },
+  "this_tab_more_forget_wifi_password": {
+    "message": "Forget this Wi-Fi password",
+    "description": "Button label to forget the saved Wi-Fi password"
+  },
+  "this_tab_more_show_qr": {
+    "message": "Show Network QR Code",
+    "description": "Button label to show a QR code for the Wi-Fi network"
+  },
+  "this_tab_qr_dialog_title": {
+    "message": "Scan the QR Code to join",
+    "description": "Title text shown in the WiFi QR code dialog above the network name"
+  },
   "all_items_list_no_search_results": {
     "message": "No search results. Please try again.",
     "description": "Message displayed when no search results are found"
@@ -2318,5 +2406,93 @@
   "error_secure_note_name_copy_failed": {
     "message": "Failed to copy name to clipboard.",
     "description": "Error message displayed when copying the secure note name to the clipboard fails"
+  },
+  "wifi": {
+    "message": "Wi-Fi",
+    "description": "Label for the wifi functionality"
+  },
+  "wifi_plural": {
+    "message": "Wi-Fi",
+    "description": "Label for multiple wifi networks"
+  },
+  "wifi_name": {
+    "message": "Name",
+    "description": "Label for the wifi network name field"
+  },
+  "wifi_ssid": {
+    "message": "SSID",
+    "description": "Label for the wifi SSID field"
+  },
+  "wifi_password": {
+    "message": "Password",
+    "description": "Label for the wifi password field"
+  },
+  "wifi_security_type": {
+    "message": "Security",
+    "description": "Label for the wifi security type field"
+  },
+  "wifi_hidden": {
+    "message": "Hidden Network",
+    "description": "Label for the wifi hidden network toggle"
+  },
+  "wifi_notes": {
+    "message": "Notes",
+    "description": "Label for the wifi notes field"
+  },
+  "wifi_security_none": {
+    "message": "None",
+    "description": "Label for no wifi security type"
+  },
+  "wifi_security_wep": {
+    "message": "WEP",
+    "description": "Label for WEP wifi security type"
+  },
+  "wifi_security_wpa": {
+    "message": "WPA",
+    "description": "Label for WPA wifi security type"
+  },
+  "wifi_security_wpa2": {
+    "message": "WPA2",
+    "description": "Label for WPA2 wifi security type"
+  },
+  "wifi_security_wpa3": {
+    "message": "WPA3",
+    "description": "Label for WPA3 wifi security type"
+  },
+  "placeholder_wifi_name": {
+    "message": "Type the Wi-Fi name",
+    "description": "Placeholder text for the wifi name input field"
+  },
+  "placeholder_wifi_ssid": {
+    "message": "Type the SSID",
+    "description": "Placeholder text for the wifi SSID input field"
+  },
+  "placeholder_wifi_password": {
+    "message": "Type the Wi-Fi password",
+    "description": "Placeholder text for the wifi password input field"
+  },
+  "placeholder_wifi_notes": {
+    "message": "Add notes",
+    "description": "Placeholder text for the wifi notes input field"
+  },
+  "notification_wifi_password_copied": {
+    "message": "Wi-Fi password copied to clipboard",
+    "description": "Notification message when the wifi password is successfully copied to the clipboard"
+  },
+  "error_wifi_not_found": {
+    "message": "Something went wrong. Wi-Fi network not found.",
+    "description": "Error message displayed when the requested wifi network is not found"
+  },
+  "error_wifi_password_copy_failed": {
+    "message": "Failed to copy Wi-Fi password to clipboard.",
+    "description": "Error message displayed when copying the wifi password to the clipboard fails"
+  },
+  "notification_wifi_ssid_copied": {
+    "message": "SSID copied to clipboard",
+    "description": "Notification message when the wifi SSID is successfully copied to the clipboard"
+  },
+  "error_wifi_ssid_copy_failed": {
+    "message": "Failed to copy SSID to clipboard.",
+    "description": "Error message displayed when copying the wifi SSID to the clipboard fails"
   }
 }

@@ -83,7 +83,7 @@ class URIMatcher {
   }
 
   static isUrl (url, internalProtocols = false) {
-    if (url.length <= 0 || url.length > 2048) {
+    if (url.length <= 0) {
       return false;
     }
 

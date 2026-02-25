@@ -1,0 +1,90 @@
+{
+  "wifi": {
+    "message": "Wi-Fi",
+    "description": "Label for the wifi functionality"
+  },
+  "wifi_plural": {
+    "message": "Wi-Fi",
+    "description": "Label for multiple wifi networks"
+  },
+  "wifi_name": {
+    "message": "Nazwa",
+    "description": "Label for the wifi network name field"
+  },
+  "wifi_ssid": {
+    "message": "SSID",
+    "description": "Label for the wifi SSID field"
+  },
+  "wifi_password": {
+    "message": "Hasło",
+    "description": "Label for the wifi password field"
+  },
+  "wifi_security_type": {
+    "message": "Typ szyfrowania",
+    "description": "Label for the wifi security type field"
+  },
+  "wifi_hidden": {
+    "message": "Ukryta sieć",
+    "description": "Label for the wifi hidden network toggle"
+  },
+  "wifi_notes": {
+    "message": "Notatki",
+    "description": "Label for the wifi notes field"
+  },
+  "wifi_security_none": {
+    "message": "Brak",
+    "description": "Label for no wifi security type"
+  },
+  "wifi_security_wep": {
+    "message": "WEP",
+    "description": "Label for WEP wifi security type"
+  },
+  "wifi_security_wpa": {
+    "message": "WPA",
+    "description": "Label for WPA wifi security type"
+  },
+  "wifi_security_wpa2": {
+    "message": "WPA2",
+    "description": "Label for WPA2 wifi security type"
+  },
+  "wifi_security_wpa3": {
+    "message": "WPA3",
+    "description": "Label for WPA3 wifi security type"
+  },
+  "placeholder_wifi_name": {
+    "message": "Wpisz nazwę Wi-Fi",
+    "description": "Placeholder text for the wifi name input field"
+  },
+  "placeholder_wifi_ssid": {
+    "message": "Wpisz SSID",
+    "description": "Placeholder text for the wifi SSID input field"
+  },
+  "placeholder_wifi_password": {
+    "message": "Wpisz hasło Wi-Fi",
+    "description": "Placeholder text for the wifi password input field"
+  },
+  "placeholder_wifi_notes": {
+    "message": "Dodaj notatki",
+    "description": "Placeholder text for the wifi notes input field"
+  },
+  "notification_wifi_password_copied": {
+    "message": "Hasło Wi-Fi skopiowane do schowka",
+    "description": "Notification message when the wifi password is successfully copied to the clipboard"
+  },
+  "error_wifi_not_found": {
+    "message": "Wystąpił błąd. Nie znaleziono sieci Wi-Fi.",
+    "description": "Error message displayed when the requested wifi network is not found"
+  },
+  "error_wifi_password_copy_failed": {
+    "message": "Nie udało się skopiować hasła Wi-Fi do schowka.",
+    "description": "Error message displayed when copying the wifi password to the clipboard fails"
+  },
+  "notification_wifi_ssid_copied": {
+    "message": "SSID skopiowane do schowka",
+    "description": "Notification message when the wifi SSID is successfully copied to the clipboard"
+  },
+  "error_wifi_ssid_copy_failed": {
+    "message": "Nie udało się skopiować SSID do schowka.",
+    "description": "Error message displayed when copying the wifi SSID to the clipboard fails"
+  }
+}

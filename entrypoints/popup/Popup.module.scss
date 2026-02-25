@@ -9,6 +9,7 @@
 
 :global(html) {
   background-color: v.$primary-bg-dark;
+  overflow: hidden;
 
   &::-webkit-scrollbar,
   &::-webkit-scrollbar-track,
@@ -46,7 +47,6 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  min-height: 600px;
   min-width: 400px;
   overflow: hidden;
   position: relative;
