@@ -13,6 +13,7 @@ import { useIsItemOpen, useItemMenuActions } from '../../context/ItemListContext
 import LoginItemView from './modelsViews/LoginItemView';
 import SecureNoteItemView from './modelsViews/SecureNoteItemView';
 import PaymentCardItemView from './modelsViews/PaymentCardItemView';
+import WifiItemView from './modelsViews/WifiItemView';
 
 /**
 * Function to render the item.
@@ -114,6 +115,17 @@ function Item (props) {
   } else if (constructorName === 'PaymentCard') {
     modelComponent = (
       <PaymentCardItemView
+        data={props.data}
+        more={more}
+        setMore={setMore}
+        selectRef={selectRef}
+        autofillBtnRef={autofillBtnRef}
+        loading={props.loading}
+      />
+    );
+  } else if (constructorName === 'Wifi') {
+    modelComponent = (
+      <WifiItemView
         data={props.data}
         more={more}
         setMore={setMore}

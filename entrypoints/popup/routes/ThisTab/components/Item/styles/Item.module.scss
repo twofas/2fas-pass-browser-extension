@@ -98,6 +98,38 @@
   }
 }
 
+.icon-wifi {
+  align-items: center;
+  background: v.$wifi-item-bg-light;
+  background: linear-gradient(135deg,v.$wifi-item-bg-light 0%, color.adjust(v.$wifi-item-bg-dark, $blackness: -145%) 100%);
+  border-radius: 4px;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 32px;
+  justify-content: center;
+  margin-right: 8px;
+  overflow: hidden;
+  width: 32px;
+
+  @include m.darkMode {
+    background: v.$wifi-item-bg-dark;
+    background: linear-gradient(135deg,v.$wifi-item-bg-dark 0%, color.adjust(v.$wifi-item-bg-dark, $lightness: 5%) 100%);
+  }
+
+  svg {
+    height: 12px;
+    stroke: v.$wifi-item-light;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1;
+    width: auto;
+
+    @include m.darkMode {
+      stroke: v.$wifi-item-dark;
+    }
+  }
+}
+
 .icon-payment-card {
   align-items: center;
   background: v.$payment-card-item-bg-light;
@@ -240,7 +272,8 @@
           &.item-copy-2,
           &.item-copy-card-number,
           &.item-copy-security-code,
-          &.item-name {
+          &.item-name,
+          &.item-ssid {
             stroke: v.$primary-color-light;
 
             @include m.darkMode {
@@ -367,7 +400,8 @@
           &.item-copy-2,
           &.item-copy-card-number,
           &.item-copy-security-code,
-          &.item-name {
+          &.item-name,
+          &.item-ssid {
             stroke: v.$primary-color-light;
             transition: stroke v.$anim;
 
@@ -458,7 +492,8 @@
         &.item-more,
         &.item-fetch,
         &.item-username,
-        &.item-details {
+        &.item-details,
+        &.item-ssid {
           stroke: v.$object-light;
           stroke-width: 1.5;
           stroke-linecap: round;
@@ -502,6 +537,13 @@
           @include m.darkMode {
             stroke: v.$object-dark;
           }
+        }
+
+        &.item-ssid {
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 1;
+          width: 17px;
         }
 
         &.item-copy-2,

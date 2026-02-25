@@ -252,24 +252,34 @@ function Connect (props) {
           import('./socket/ConnectOnClose')
         ]);
 
-        const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
-
-        if (abortSignal?.aborted) {
-          return false;
-        }
-
-        if (json?.error === 'UNREGISTERED') {
-          setSocketError(true);
-          showConnectToast({ message: getMessage('fetch_token_unregistered_header'), type: 'error' });
-          return false;
-        }
-
         const [{ default: ConnectOnMessage }, { default: ConnectOnClose }] = await socketHandlersPromise;
         const socket = new TwoFasWebSocket(sessionId);
         socket.open();
         socket.addEventListener('message', ConnectOnMessage, { uuid: device.uuid, action: PULL_REQUEST_TYPES.FULL_SYNC, path: SOCKET_PATHS.CONNECT.PUSH });
         socket.addEventListener('close', ConnectOnClose, { path: SOCKET_PATHS.CONNECT.PUSH });
+
+        await socket.waitForOpen();
+
+        if (abortSignal?.aborted) {
+          await closeConnectionRef.current();
+          return false;
+        }
+
+        const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
+
+        if (abortSignal?.aborted) {
+          await closeConnectionRef.current();
+          return false;
+        }
+
+        if (json?.error === 'UNREGISTERED') {
+          await closeConnectionRef.current();
+          setSocketError(true);
+          showConnectToast({ message: getMessage('fetch_token_unregistered_header'), type: 'error' });
+          return false;
+        }
       } catch (e) {
+        await closeConnectionRef.current();
         setConnectView(CONNECT_VIEWS.DeviceSelect);
         const toastMessage = await networkTest('error_general');
         showConnectToast({ message: getMessage(toastMessage), type: 'error' });

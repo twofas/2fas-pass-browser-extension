@@ -104,6 +104,24 @@
         }
       }
 
+      &:global(.wifis) {
+        background-color: v.$wifi-item-bg-light !important;
+
+        @include m.darkMode {
+          background-color: v.$wifi-item-bg-dark !important;
+        }
+
+        svg {
+          height: 12px;
+          stroke: v.$wifi-item-light;
+          stroke-width: 1;
+
+          @include m.darkMode {
+            stroke: v.$wifi-item-dark;
+          }
+        }
+      }
+
       svg {
         height: 16px;
         stroke: v.$primary-box-bg-light;

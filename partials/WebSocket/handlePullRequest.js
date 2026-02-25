@@ -193,6 +193,34 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
           break;
         };
 
+        case 'wifi': {
+          if (!isText(state?.data?.content?.s_wifi_password)) {
+            data = {
+              type: PULL_REQUEST_TYPES.ADD_DATA,
+              data: state.data
+            };
+          } else {
+            const [nonceW, encryptionWifiPassNewKeyAES] = await Promise.all([
+              generateNonce(),
+              generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_NEW.crypto, sessionKeyForHKDF, true)
+            ]);
+            const wifiPasswordEnc = await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonceW.ArrayBuffer }, encryptionWifiPassNewKeyAES, StringToArrayBuffer(state.data.content.s_wifi_password));
+            const wifiPasswordEncBytes = EncryptBytes(nonceW.ArrayBuffer, wifiPasswordEnc);
+            const wifiPasswordEncBytesB64 = ArrayBufferToBase64(wifiPasswordEncBytes);
+
+            state.data.content.s_wifi_password = wifiPasswordEncBytesB64;
+
+            data = {
+              type: PULL_REQUEST_TYPES.ADD_DATA,
+              data: {
+                ...state.data
+              }
+            };
+          }
+
+          break;
+        }
+
         default: {
           throw new TwoFasError(TwoFasError.errors.newLoginWrongContentType);
         }
@@ -391,6 +419,58 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
 
               stateData.content.s_securityCode = ArrayBufferToBase64(securityCodeEncBytes);
             }
+
+            data = {
+              type: PULL_REQUEST_TYPES.UPDATE_DATA,
+              data: { ...stateData }
+            };
+          }
+
+          break;
+        }
+
+        case 'wifi': {
+          if (!isText(state?.data?.content?.s_wifi_password)) {
+            const stateData = structuredClone(state.data);
+            delete stateData?.deviceId;
+
+            data = {
+              type: PULL_REQUEST_TYPES.UPDATE_DATA,
+              data: { ...stateData }
+            };
+          } else {
+            const originalItem = await getItem(state.data.deviceId, state.data.vaultId, state.data.itemId);
+
+            if (!originalItem) {
+              throw new TwoFasError(TwoFasError.errors.pullRequestNoOriginalItem);
+            }
+
+            const keyName = originalItem.securityType === SECURITY_TIER.HIGHLY_SECRET
+              ? ENCRYPTION_KEYS.ITEM_T2.crypto
+              : originalItem.securityType === SECURITY_TIER.SECRET
+                ? ENCRYPTION_KEYS.ITEM_T3.crypto
+                : null;
+
+            if (!keyName) {
+              throw new TwoFasError(TwoFasError.errors.updateLoginWrongSecurityType);
+            }
+
+            const [nonceW, encryptionWifiPassTierKeyAES] = await Promise.all([
+              generateNonce(),
+              generateEncryptionAESKey(hkdfSaltAB, keyName, sessionKeyForHKDF, true)
+            ]);
+
+            const wifiPasswordEnc = await crypto.subtle.encrypt(
+              { name: 'AES-GCM', iv: nonceW.ArrayBuffer },
+              encryptionWifiPassTierKeyAES,
+              StringToArrayBuffer(state.data.content.s_wifi_password)
+            );
+            const wifiPasswordEncBytes = EncryptBytes(nonceW.ArrayBuffer, wifiPasswordEnc);
+            const wifiPasswordEncBytesB64 = ArrayBufferToBase64(wifiPasswordEncBytes);
+
+            const stateData = structuredClone(state.data);
+            delete stateData?.deviceId;
+            stateData.content.s_wifi_password = wifiPasswordEncBytesB64;
 
             data = {
               type: PULL_REQUEST_TYPES.UPDATE_DATA,

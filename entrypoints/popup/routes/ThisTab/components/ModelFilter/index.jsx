@@ -36,7 +36,8 @@ const ModelFilter = props => {
 
   const hasMultipleItemTypes = useMemo(() => {
     return deviceSupportedFeatures.includes(supportedFeatures?.items?.secureNote) ||
-      deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard);
+      deviceSupportedFeatures.includes(supportedFeatures?.items?.paymentCard) ||
+      deviceSupportedFeatures.includes(supportedFeatures?.items?.wifi);
   }, [deviceSupportedFeatures]);
 
   const selectedOption = useMemo(() => {

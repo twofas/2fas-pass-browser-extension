@@ -8,6 +8,7 @@ import LoginIcon from '@/assets/popup-window/items/login.svg?react';
 import PaymentCardIcon from '@/assets/popup-window/items/payment-card.svg?react';
 import SecureNoteIcon from '@/assets/popup-window/items/secure-note.svg?react';
 import SSHKeyIcon from '@/assets/popup-window/items/ssh-key.svg?react';
+import WifiIcon from '@/assets/popup-window/items/wifi.svg?react';
 
 /**
 * Generates items UI data with localized labels.
@@ -34,6 +35,11 @@ const getItemsUiData = getMessage => ({
     label: getMessage('ssh_key'),
     selectClassName: 'icon-item-ssh-key',
     svg: <SSHKeyIcon />
+  },
+  Wifi: {
+    label: getMessage('wifi'),
+    selectClassName: 'icon-item-wifi',
+    svg: <WifiIcon />
   }
 });
 

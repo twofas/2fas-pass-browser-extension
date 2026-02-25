@@ -9,6 +9,7 @@ import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPayment
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
 import getPaymentCardIssuerInputs from '@/partials/inputFunctions/getPaymentCardIssuerInputs';
+import isTopFrame from '@/partials/functions/isTopFrame';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import {
   PaymentCardIssuerVisa,
@@ -423,9 +424,7 @@ const autofillCard = async request => {
     return { status: 'error', message: 'No input fields found', filledFields };
   }
 
-  const isTopFrame = window.self === window.top;
-
-  if (!isTopFrame) {
+  if (!isTopFrame()) {
     let frameHostname = '';
     let isCrossDomain = false;
 

@@ -197,14 +197,14 @@ function PaymentCardAddNewView () {
             {({ input }) => (
               <div className={`${pI.passInput} ${inputError === 'cardHolder' ? pI.error : ''}`}>
                 <div className={pI.passInputTop}>
-                  <label htmlFor='add-new-cardHolder'>{getMessage('payment_card_cardholder')}</label>
+                  <label htmlFor='add-new-card-holder'>{getMessage('payment_card_cardholder')}</label>
                 </div>
                 <div className={pI.passInputBottom}>
                   <input
                     type='text'
                     {...input}
                     placeholder={getMessage('placeholder_payment_card_cardholder')}
-                    id='add-new-cardHolder'
+                    id='add-new-card-holder'
                     dir='ltr'
                     spellCheck='false'
                     autoCorrect='off'
@@ -223,12 +223,12 @@ function PaymentCardAddNewView () {
             {({ input }) => (
               <div className={`${pI.passInput} ${inputError === 'cardNumber' ? pI.error : ''}`}>
                 <div className={pI.passInputTop}>
-                  <label htmlFor='add-new-cardNumber'>{getMessage('payment_card_card_number')}</label>
+                  <label htmlFor='add-new-card-number'>{getMessage('payment_card_card_number')}</label>
                 </div>
                 <div className={pI.passInputBottom}>
                   <PaymentCardNumberInput
                     {...input}
-                    id='add-new-cardNumber'
+                    id='add-new-card-number'
                     onChange={e => {
                       input.onChange(e);
                       setData('cardNumber', e.target.value);
@@ -243,12 +243,12 @@ function PaymentCardAddNewView () {
               {({ input }) => (
                 <div className={`${pI.passInput} ${inputError === 'expirationDate' ? pI.error : ''}`}>
                   <div className={pI.passInputTop}>
-                    <label htmlFor='add-new-expirationDate'>{getMessage('payment_card_expiration_date')}</label>
+                    <label htmlFor='add-new-expiration-date'>{getMessage('payment_card_expiration_date')}</label>
                   </div>
                   <div className={pI.passInputBottom}>
                     <PaymentCardExpirationDate
                       value={input.value}
-                      inputId='add-new-expirationDate'
+                      inputId='add-new-expiration-date'
                       onChange={formattedValue => {
                         input.onChange(formattedValue);
                         setData('expirationDate', formattedValue);
@@ -265,12 +265,12 @@ function PaymentCardAddNewView () {
               {({ input }) => (
                 <div className={`${pI.passInput} ${inputError === 'securityCode' ? pI.error : ''}`}>
                   <div className={pI.passInputTop}>
-                    <label htmlFor='add-new-securityCode'>{getMessage('payment_card_security_code')}</label>
+                    <label htmlFor='add-new-security-code'>{getMessage('payment_card_security_code')}</label>
                   </div>
                   <div className={pI.passInputBottom}>
                     <PaymentCardSecurityCodeInput
                       {...input}
-                      id='add-new-securityCode'
+                      id='add-new-security-code'
                       cardNumber={data?.cardNumber}
                       onChange={e => {
                         input.onChange(e);

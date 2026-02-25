@@ -8,6 +8,7 @@ const supportedFeatures = {
   items: {
     secureNote: 'items.secureNote',
     paymentCard: 'items.paymentCard',
+    wifi: 'items.wifi'
   }
 };
 

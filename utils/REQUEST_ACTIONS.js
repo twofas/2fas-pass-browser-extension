@@ -35,4 +35,5 @@ export const REQUEST_ACTIONS = Object.freeze({
   REFRESH_THEME: 'refreshTheme', // content (top frame only)
   REFRESH_LANG: 'refreshLang', // content (top frame only)
   GET_I18N_DATA: 'getI18nData', // background (returns lang and messages for content scripts)
+  SIF_T2_RESET: 'sifT2Reset', // background → popup (notifies that a T2 item's SIF was reset)
 });

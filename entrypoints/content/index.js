@@ -8,6 +8,7 @@ import '@/partials/TwofasNotification/TwofasNotification.scss';
 import contentOnMessage from './events/contentOnMessage';
 import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
 import ifCtxIsInvalid from '@/partials/contentScript/ifCtxIsInvalid';
+import isTopFrame from '@/partials/functions/isTopFrame';
 import setupStyleObserver from './utils/setupStyleObserver';
 import topLayerManager from './utils/topLayerManager';
 
@@ -37,7 +38,7 @@ export default defineContentScript({
         }
       };
 
-      if (ctx?.isTopFrame && ctx?.isValid) {
+      if (isTopFrame() && ctx?.isValid) {
         const ui = await createShadowRootUi(ctx, {
           position: 'relative',
           mode: 'closed',
@@ -64,7 +65,7 @@ export default defineContentScript({
                 return;
               }
 
-              return contentOnMessage(request, sender, sendResponse, ctx.isTopFrame, container, cryptoAvailable);
+              return contentOnMessage(request, sender, sendResponse, isTopFrame(), container, cryptoAvailable);
             };
 
             browser.runtime.onMessage.addListener(handleMessage);
@@ -78,7 +79,7 @@ export default defineContentScript({
             return;
           }
 
-          return contentOnMessage(request, sender, sendResponse, ctx.isTopFrame, null, cryptoAvailable);
+          return contentOnMessage(request, sender, sendResponse, isTopFrame(), null, cryptoAvailable);
         };
 
         browser.runtime.onMessage.addListener(handleMessage);

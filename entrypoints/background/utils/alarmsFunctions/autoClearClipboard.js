@@ -13,7 +13,7 @@ import addAutoClearAction from './addAutoClearAction';
 * @param {string} deviceId - The ID of the device.
 * @param {string} vaultId - The ID of the vault.
 * @param {string} itemId - The ID of the item to clear.
-* @param {string} itemType - The type of the item to clear ('password', 'username', 'uri', 'name', 'text', 'cardNumber', 'expirationDate', 'securityCode', 'cardHolder').
+* @param {string} itemType - The type of the item to clear ('password', 'username', 'uri', 'name', 'text', 'cardNumber', 'expirationDate', 'securityCode', 'cardHolder', 'wifiPassword', 'ssid').
 * @return {Promise<void>} A promise that resolves when the clipboard is cleared.
 */
 const autoClearClipboard = async (deviceId, vaultId, itemId, itemType) => {

@@ -90,6 +90,11 @@ const popupOnMessage = (request, sender, sendResponse) => {
         break;
       }
 
+      case REQUEST_ACTIONS.SIF_T2_RESET: {
+        sendResponse({ status: 'ok' });
+        break;
+      }
+
       default: {
         sendResponse({ status: 'error', message: 'Wrong action' });
         break;
