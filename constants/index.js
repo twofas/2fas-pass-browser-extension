@@ -28,6 +28,8 @@ export { default as userNameFormTexts } from './userNameFormTexts.js';
 export { default as userNameSelectors } from './userNameSelectors.js';
 export { default as userNameTexts } from './userNameTexts.js';
 export { default as userNameWords } from './userNameWords.js';
+export { default as personalInfoDeniedKeywords } from './personalInfoDeniedKeywords.js';
+export { default as personalInfoDeniedAutocompleteValues } from './personalInfoDeniedAutocompleteValues.js';
 
 // Re-export all named exports from regex.js
 export {

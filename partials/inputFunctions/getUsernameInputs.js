@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { ignoredTypes, userNameSelectors, userNameAttributes, userNameWords, userNameDeniedKeywords } from '@/constants';
+import { ignoredTypes, userNameSelectors, userNameAttributes, userNameWords, userNameDeniedKeywords, personalInfoDeniedKeywords, personalInfoDeniedAutocompleteValues } from '@/constants';
 import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
@@ -18,9 +18,18 @@ import hasParentContextDeniedKeyword from '../functions/hasParentContextDeniedKe
 const filterDeniedKeywords = input => {
   const name = (input.name || '').toLowerCase();
   const id = (input.id || '').toLowerCase();
+  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
   const hasDeniedWord = userNameDeniedKeywords.some(word => name.includes(word) || id.includes(word));
 
   if (hasDeniedWord) {
+    return false;
+  }
+
+  if (autocomplete && personalInfoDeniedAutocompleteValues.some(val => autocomplete.includes(val))) {
+    return false;
+  }
+
+  if (personalInfoDeniedKeywords.some(word => name.includes(word) || id.includes(word))) {
     return false;
   }
 

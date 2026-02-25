@@ -15,7 +15,20 @@ const conflictingAutocompleteValues = [
   'cc-exp-month',
   'cc-exp-year',
   'cc-csc',
-  'cc-type'
+  'cc-type',
+  'bday',
+  'bday-day',
+  'bday-month',
+  'bday-year',
+  'street-address',
+  'address-line1',
+  'address-line2',
+  'address-line3',
+  'postal-code',
+  'tel',
+  'organization',
+  'country',
+  'country-name'
 ];
 
 const givenNameAutocompleteValues = ['cc-given-name', 'given-name'];
