@@ -163,6 +163,12 @@ export default defineConfig({
       };
     }
 
+    if (browser !== 'firefox') {
+      manifestObj.externally_connectable = {
+        ids: []
+      };
+    }
+
     return manifestObj;
   },
   hooks: {
