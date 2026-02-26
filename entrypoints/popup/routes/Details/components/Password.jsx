@@ -138,6 +138,13 @@ function Password (props) {
   useEffect(() => {
     if (data?.passwordEditable && inputRef.current) {
       inputRef.current.focus();
+
+      requestAnimationFrame(() => {
+        if (inputRef.current) {
+          const length = inputRef.current.value.length;
+          inputRef.current.setSelectionRange(length, length);
+        }
+      });
     }
   }, [data?.passwordEditable]);
 
