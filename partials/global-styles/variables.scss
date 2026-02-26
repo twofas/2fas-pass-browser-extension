@@ -6,10 +6,13 @@
 
 @use "color-tokens" as tokens;
 
-:root {
-  // Non-color variables (same for all themes)
+@mixin generate-non-color-vars {
   --anim: .2s ease-out;
   --anim-fast: .1s ease-out;
+}
+
+:root {
+  @include generate-non-color-vars;
 
   // Fallback for browsers without prefers-color-scheme support
   @include tokens.generate-light-vars;

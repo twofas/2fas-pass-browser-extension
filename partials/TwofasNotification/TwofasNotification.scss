@@ -6,9 +6,12 @@
 
 @use "@/partials/global-styles/color-tokens" as tokens;
 @use "@/partials/global-styles/functions" as fn;
+@use "@/partials/global-styles/variables" as v;
 
 // FUTURE - Refactor this
 .twofas-pass-notification {
+  @include v.generate-non-color-vars;
+
   &-container {
     align-items: center !important;
     box-sizing: border-box !important;
@@ -16,8 +19,8 @@
     flex-direction: column !important;
     font-family: Arial, sans-serif !important;
     gap: 12px 0 !important;
-    height: calc(100% - 20px) !important;
     justify-content: flex-start !important;
+    max-height: calc(100% - 20px) !important;
     position: fixed !important;
     right: 10px !important;
     top: 10px !important;
@@ -249,7 +252,6 @@
       align-items: flex-start !important;
       display: flex !important;
       flex-direction: column !important;
-      height: 100% !important;
       max-height: 100% !important;
       text-align: left !important;
 
@@ -450,7 +452,7 @@
     display: flex !important;
     flex: 1 !important;
     flex-direction: column !important;
-    height: 100% !important;
+    max-height: 100% !important;
     min-height: 0 !important;
     text-align: left !important;
     width: 100% !important;
@@ -761,6 +763,7 @@
 }
 
 .twofas-pass-cross-domain-dialog {
+  @include v.generate-non-color-vars;
   --dropdown-col-width: 154px;
   background-color: transparent !important;
   border: 0 !important;
