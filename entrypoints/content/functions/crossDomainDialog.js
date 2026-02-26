@@ -181,10 +181,50 @@ const crossDomainDialog = (request, sendResponse, container) => {
   const tableRows = createElement('div', 'twofas-pass-cross-domain-dialog-table-rows');
 
   unknownDomains.forEach(domain => {
+    domain = `${domain}`.replace(/\/+$/, ''); // Remove trailing slashes for display
+
     const row = createElement('div', 'twofas-pass-cross-domain-dialog-table-row');
     const domainText = createTextElement('span', domain, 'twofas-pass-cross-domain-dialog-domain-text');
-    domainText.title = domain;
     const dropdown = createDropdown(domain, domainSelections);
+
+    let tooltipTimer = null;
+
+    domainText.addEventListener('mouseenter', () => {
+      tooltipTimer = setTimeout(() => {
+        const existingTooltip = dialog.querySelector('.twofas-pass-cross-domain-dialog-tooltip');
+        if (existingTooltip) existingTooltip.remove();
+
+        const tooltip = createTextElement('div', domain, 'twofas-pass-cross-domain-dialog-tooltip');
+        const rect = domainText.getBoundingClientRect();
+        const padding = 17;
+        const textTop = rect.top + padding;
+        const textBottom = rect.bottom - padding;
+        const tooltipHeight = 30;
+        const showAbove = textTop - tooltipHeight - 4 > 0;
+
+        tooltip.style.setProperty('left', `${rect.left}px`, 'important');
+
+        if (showAbove) {
+          tooltip.style.setProperty('bottom', `${window.innerHeight - textTop + 4}px`, 'important');
+        } else {
+          tooltip.style.setProperty('top', `${textBottom + 4}px`, 'important');
+        }
+
+        dialog.appendChild(tooltip);
+      }, 1000);
+    });
+
+    domainText.addEventListener('mouseleave', () => {
+      clearTimeout(tooltipTimer);
+      tooltipTimer = null;
+
+      const tooltip = dialog.querySelector('.twofas-pass-cross-domain-dialog-tooltip');
+
+      if (tooltip) {
+        tooltip.classList.add('fade-out');
+        tooltip.addEventListener('animationend', () => tooltip.remove(), { once: true });
+      }
+    });
 
     row.appendChild(domainText);
     row.appendChild(dropdown);
@@ -274,6 +314,13 @@ const crossDomainDialog = (request, sendResponse, container) => {
   dialogContent.addEventListener('scroll', () => {
     dialogContent.querySelectorAll('.twofas-pass-cross-domain-dialog-dropdown.open')
       .forEach(d => d.classList.remove('open'));
+
+    const tooltip = dialog.querySelector('.twofas-pass-cross-domain-dialog-tooltip');
+
+    if (tooltip) {
+      tooltip.classList.add('fade-out');
+      tooltip.addEventListener('animationend', () => tooltip.remove(), { once: true });
+    }
   });
 
   container.appendChild(dialog);
