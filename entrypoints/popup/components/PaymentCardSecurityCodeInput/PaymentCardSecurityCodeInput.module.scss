@@ -4,24 +4,17 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 .payment-card-security-code-input {
   background-color: transparent;
   border: 0;
-  color: v.$primary-text-light;
+  color: var(--primary-text);
   flex-grow: 1;
   font-size: 14px;
   font-weight: 400;
   line-height: 1;
   padding: 0;
-  transition: color v.$anim;
+  transition: color var(--anim);
   width: 100%;
-
-  @include m.darkMode {
-    color: v.$primary-text-dark;
-  }
 
   &:focus,
   &:active {
@@ -30,19 +23,11 @@
   }
 
   &[disabled] {
-    color: v.$secondary-text-light;
+    color: var(--secondary-text);
     cursor: default;
-
-    @include m.darkMode {
-      color: v.$secondary-text-dark;
-    }
   }
 }
 
 .payment-card-security-code-input-error {
-  color: v.$error-light !important;
-
-  @include m.darkMode {
-    color: v.$error-dark !important;
-  }
+  color: var(--error) !important;
 }

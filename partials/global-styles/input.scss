@@ -4,9 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 input,
 button,
 select {
@@ -22,7 +19,7 @@ button {
   border: 0;
   background: transparent;
   cursor: pointer;
-  transition: color v.$anim, background-color v.$anim;
+  transition: color var(--anim), background-color var(--anim);
 }
 
 input {
@@ -35,15 +32,15 @@ input {
     padding: 0;
 
     &::-webkit-slider-runnable-track {
-      background-color: v.$primary-box-stroke-light;
+      background-color: var(--primary-box-stroke);
       border-radius: 2px;
-      height: 3px;  
+      height: 3px;
     }
 
     &::-moz-range-track {
-      background-color: v.$primary-box-stroke-light;
+      background-color: var(--primary-box-stroke);
       border-radius: 2px;
-      height: 3px;  
+      height: 3px;
     }
 
     &::-webkit-slider-thumb {

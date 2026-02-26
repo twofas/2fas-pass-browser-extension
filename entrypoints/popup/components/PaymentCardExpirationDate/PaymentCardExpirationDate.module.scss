@@ -4,9 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 .payment-card-expiration-date {
   align-items: center;
   display: flex;
@@ -18,18 +15,14 @@
 .payment-card-expiration-date-input {
   background-color: transparent;
   border: 0;
-  color: v.$primary-text-light;
+  color: var(--primary-text);
   flex-grow: 1;
   font-size: 14px;
   font-weight: 400;
   line-height: 1;
   padding: 0;
-  transition: color v.$anim;
+  transition: color var(--anim);
   width: 100%;
-
-  @include m.darkMode {
-    color: v.$primary-text-dark;
-  }
 
   &:focus,
   &:active {
@@ -38,21 +31,13 @@
   }
 
   &[disabled] {
-    color: v.$secondary-text-light;
+    color: var(--secondary-text);
     cursor: default;
-
-    @include m.darkMode {
-      color: v.$secondary-text-dark;
-    }
   }
 }
 
 .payment-card-expiration-date-input-error {
-  color: v.$error-light !important;
-
-  @include m.darkMode {
-    color: v.$error-dark !important;
-  }
+  color: var(--error) !important;
 }
 
 .payment-card-expiration-date-button {
@@ -71,40 +56,28 @@
   outline: none;
   overflow: hidden;
   padding: 0;
-  transition: max-width v.$anim, margin-right v.$anim, opacity v.$anim;
+  transition: max-width var(--anim), margin-right var(--anim), opacity var(--anim);
   width: 16px;
 
   &:hover,
   &:focus {
     svg {
-      stroke: v.$focus-light;
-
-      @include m.darkMode {
-        stroke: v.$focus-dark;
-      }
+      stroke: var(--focus);
     }
   }
 
   &:active {
     svg {
-      stroke: v.$pressed-light;
-
-      @include m.darkMode {
-        stroke: v.$pressed-dark;
-      }
+      stroke: var(--pressed);
     }
   }
 
   svg {
     height: 15px !important;
-    stroke: v.$primary-color-light;
+    stroke: var(--primary-color);
     stroke-width: 2 !important;
-    transition: stroke v.$anim;
+    transition: stroke var(--anim);
     width: auto;
-
-    @include m.darkMode {
-      stroke: v.$primary-color-dark;
-    }
   }
 }
 

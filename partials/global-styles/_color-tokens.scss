@@ -1,0 +1,133 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@use "sass:color";
+
+$colors-light: (
+  'primary-color': #214ce8,
+  'icon-primary-color': #214ce8,
+  'icon-secondary-color': #90a6f4,
+  'icon-tertiary-color': #161616,
+  'hover-color': #e9eefd,
+  'hover-on-hover': #d3dcf8,
+  'success-toast': #69cf83,
+  'warning-toast': #fc955b,
+  'info-toast': #7397fe,
+  'error-toast': #ec4b56,
+  'primary-bg': #f4f4f8,
+  'primary-box-bg': #fff,
+  'primary-box-stroke': #ececec,
+  'object': #606167,
+  'object-stroke': #d9d9d9,
+  'divider': #ececec,
+  'primary-text': #161616,
+  'secondary-text': #606167,
+  'tertiary-text': #fff,
+  'error': #ed1c24,
+  'star': #ffbf00,
+  'additional': #f4f4f8,
+  'card-bg': #fff,
+  'card-stroke': #e7e7eb,
+  'focus': #216de8,
+  'pressed': #4e70ee,
+  'disabled': #606167,
+  'error-bg': #feefef,
+  'pressed-bg': #d9e2fc,
+  'error-pressed-bg': #fedfdf,
+  'login-item': #08f,
+  'login-item-bg': #d4ebff,
+  'secure-note-item': #ffb900,
+  'secure-note-item-bg': #fff0d0,
+  'payment-card-item': #34c759,
+  'payment-card-item-bg': #d6ffe0,
+  'ssh-key-item': #6155f5,
+  'ssh-key-item-bg': #e7e5ff,
+  'wifi-item': #ff8500,
+  'wifi-item-bg': #ffefe2,
+  'tag-gray': #aeaeb2,
+  'tag-red': #ff383c,
+  'tag-orange': #ff8d28,
+  'tag-yellow': #ffcc00,
+  'tag-green': #34c759,
+  'tag-cyan': #00c0e8,
+  'tag-indigo': #6155f5,
+  'tag-purple': #cb30e0,
+  'login-item-bg-gradient': color.adjust(#002b52, $blackness: -143%),
+  'secure-note-item-bg-gradient': color.adjust(#483800, $blackness: -150%),
+  'wifi-item-bg-gradient': color.adjust(#4c2600, $blackness: -145%),
+  'payment-card-item-bg-gradient': color.adjust(#043b12, $blackness: -145%),
+);
+
+$colors-dark: (
+  'primary-color': #869dfe,
+  'icon-primary-color': #214ce8,
+  'icon-secondary-color': #90a6f4,
+  'icon-tertiary-color': #fff,
+  'hover-color': #2d324a,
+  'hover-on-hover': #41486c,
+  'success-toast': #40a75b,
+  'warning-toast': #d16b32,
+  'info-toast': #4a6fd6,
+  'error-toast': #c52531,
+  'primary-bg': #161616,
+  'primary-box-bg': #1c1d24,
+  'primary-box-stroke': #282a33,
+  'object': #a5a8b6,
+  'object-stroke': #44485d,
+  'divider': #282a33,
+  'primary-text': #fff,
+  'secondary-text': #a5a8b6,
+  'tertiary-text': #fff,
+  'error': #d3383d,
+  'star': #ffbf00,
+  'additional': #24262e,
+  'card-bg': #24262e,
+  'card-stroke': #343742,
+  'focus': #5473fe,
+  'pressed': #a0b2fe,
+  'disabled': #a5a8b6,
+  'error-bg': #422222,
+  'pressed-bg': #383f63,
+  'error-pressed-bg': #5c2a2a,
+  'login-item': #08f,
+  'login-item-bg': #002b52,
+  'secure-note-item': #ffb900,
+  'secure-note-item-bg': #483800,
+  'payment-card-item': #34c759,
+  'payment-card-item-bg': #043b12,
+  'ssh-key-item': #6155f5,
+  'ssh-key-item-bg': #100d48,
+  'wifi-item': #ff8500,
+  'wifi-item-bg': #4c2600,
+  'tag-gray': #636366,
+  'tag-red': #ff4245,
+  'tag-orange': #ff9230,
+  'tag-yellow': #ffd600,
+  'tag-green': #30d158,
+  'tag-cyan': #3cd3fe,
+  'tag-indigo': #6d7cff,
+  'tag-purple': #db34f2,
+  'login-item-bg-gradient': color.adjust(#002b52, $lightness: 5%),
+  'secure-note-item-bg-gradient': color.adjust(#483800, $lightness: 5%),
+  'wifi-item-bg-gradient': color.adjust(#4c2600, $lightness: 5%),
+  'payment-card-item-bg-gradient': color.adjust(#043b12, $lightness: 5%),
+);
+
+@mixin generate-light-vars {
+  @each $name, $value in $colors-light {
+    --#{$name}: #{$value};
+  }
+
+  --menu-drop-shadow: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .22));
+}
+
+@mixin generate-dark-vars {
+  @each $name, $value in $colors-dark {
+    --#{$name}: #{$value};
+  }
+
+  --menu-drop-shadow: drop-shadow(-5px 6px 16.7px rgba(0, 0, 0, .32));
+}

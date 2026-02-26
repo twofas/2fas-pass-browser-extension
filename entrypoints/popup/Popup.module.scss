@@ -4,11 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 :global(html) {
-  background-color: v.$primary-bg-dark;
+  background-color: var(--primary-bg);
   overflow: hidden;
 
   &::-webkit-scrollbar,
@@ -16,22 +13,10 @@
   &::-webkit-scrollbar-thumb {
     display: none;
   }
-
-  &:global(.theme-light) {
-    background-color: v.$primary-bg-light;
-  }
-
-  &:global(.theme-dark) {
-    background-color: v.$primary-bg-dark;
-  }
 }
 
 :global(body) {
-  background-color: v.$primary-bg-dark;
-
-  @include m.lightMode {
-    background-color: v.$primary-bg-light;
-  }
+  background-color: var(--primary-bg);
 
   &.loaded {
     opacity: 1;
@@ -43,7 +28,7 @@
 }
 
 .pass {
-  background: v.$primary-bg-light;
+  background: var(--primary-bg);
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -51,44 +36,26 @@
   overflow: hidden;
   position: relative;
   width: 100%;
-  
+
   *::-webkit-scrollbar {
-    background-color: v.$primary-bg-light;
+    background-color: var(--primary-bg);
     width: 8px;
   }
-   
+
   *::-webkit-scrollbar-track {
     box-shadow: none;
   }
-   
-  *::-webkit-scrollbar-thumb {
-    background-color: v.$hover-on-hover-light;
-    border-radius: 4px;
-  }
 
-  @include m.darkMode {
-    background-color: v.$primary-bg-dark;
-    
-    &::-webkit-scrollbar,
-    *::-webkit-scrollbar {
-      background-color: v.$primary-bg-dark;
-    }
-     
-    &::-webkit-scrollbar-thumb,
-    *::-webkit-scrollbar-thumb {
-      background-color: v.$hover-on-hover-dark;
-    }
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--hover-on-hover);
+    border-radius: 4px;
   }
 
   &:global(.firefox) {
     .pass-screen {
       > div {
         padding: 11px 12px 43px;
-        scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
-
-        @include m.darkMode {
-          scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
-        }
+        scrollbar-color: var(--hover-on-hover) var(--primary-bg);
       }
     }
   }
@@ -97,35 +64,7 @@
     .pass-screen {
       > div {
         padding: 11px 12px 43px;
-        scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
-      }
-    }
-  }
-
-  :global(body.firefox.os-windows.theme-dark) & {
-    .pass-screen {
-      > div {
-        scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
-      }
-    }
-  }
-
-  @media (prefers-color-scheme: light) {
-    :global(body.firefox.os-windows.theme-unset) & {
-      .pass-screen {
-        > div {
-          scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
-        }
-      }
-    }
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :global(body.firefox.os-windows.theme-unset) & {
-      .pass-screen {
-        > div {
-          scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
-        }
+        scrollbar-color: var(--hover-on-hover) var(--primary-bg);
       }
     }
   }
@@ -178,17 +117,13 @@
   }
 
   &-screen {
-    background-color: v.$primary-bg-light;
+    background-color: var(--primary-bg);
     flex-grow: 1;
     display: flex;
     overflow: auto;
     padding-bottom: 40px;
     position: relative;
     width: 100%;
-
-    @include m.darkMode {
-      background-color: v.$primary-bg-dark;
-    }
 
     > div {
       overflow: auto;
@@ -197,12 +132,8 @@
       width: 100%;
 
       > section {
-        background-color: v.$primary-box-bg-light;
+        background-color: var(--primary-box-bg);
 
-        @include m.darkMode {
-          background-color: v.$primary-box-bg-dark;
-        }
-  
         &.hidden {
           max-height: 0 !important;
           overflow: hidden !important;

@@ -4,13 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
+@use "@/partials/global-styles/functions" as fn;
 
 .search {
   align-items: center;
-  background-color: v.$additional-light;
-  border: 1.5px solid rgba(v.$primary-color-light, 0);
+  background-color: var(--additional);
+  border: 1.5px solid fn.hex-rgba(var(--primary-color), 0);
   border-radius: 6px;
   display: flex;
   flex-direction: row;
@@ -18,21 +17,12 @@
   height: 38px;
   padding: 0 12px;
   position: relative;
-  transition: border v.$anim;
+  transition: border var(--anim);
   width: 100%;
-
-  @include m.darkMode {
-    background-color: v.$additional-dark;
-    border-color: rgba(v.$primary-color-dark, 0);
-  }
 
   &:hover,
   &.active {
-    border: 1.5px solid rgba(v.$primary-color-light, 1);
-
-    @include m.darkMode {
-      border-color: rgba(v.$primary-color-dark, 1);
-    }
+    border: 1.5px solid fn.hex-rgba(var(--primary-color), 1);
   }
 
   &-clear {
@@ -43,7 +33,7 @@
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
-    transition: opacity v.$anim !important;
+    transition: opacity var(--anim) !important;
 
     &.hidden {
       opacity: 0;
@@ -51,13 +41,9 @@
     }
 
     > svg {
-      fill: v.$primary-color-light;
+      fill: var(--primary-color);
       height: 16px;
       width: auto;
-
-      @include m.darkMode {
-        fill: v.$primary-color-dark;
-      }
     }
   }
 
@@ -65,7 +51,7 @@
     appearance: none;
     background-color: transparent;
     border: 0;
-    color: v.$primary-text-light;
+    color: var(--primary-text);
     font-size: 14px;
     font-weight: 400;
     height: 100%;
@@ -73,55 +59,31 @@
     padding-right: 0;
     width: 100%;
 
-    @include m.darkMode {
-      color: v.$primary-text-dark;
-    }
-
     &:-webkit-autofill,
     &:-webkit-autofill:hover,
     &:-webkit-autofill:focus,
     &:-webkit-autofill:active {
       -webkit-background-clip: text !important;
       -webkit-box-shadow: 0 0 0 0 transparent inset !important;
-      -webkit-text-fill-color: v.$primary-text-light !important;
+      -webkit-text-fill-color: var(--primary-text) !important;
       box-shadow: inset 0 0 0 0 transparent;
       transition: background-color 5000s ease-out 0s !important;
-
-      @include m.darkMode {
-        -webkit-text-fill-color: v.$primary-text-dark !important;
-      }
     }
 
     &::-webkit-input-placeholder {
-      color: v.$secondary-text-light;
-
-      @include m.darkMode {
-        color: v.$secondary-text-dark;
-      }
+      color: var(--secondary-text);
     }
 
     &::-moz-placeholder {
-      color: v.$secondary-text-light;
-
-      @include m.darkMode {
-        color: v.$secondary-text-dark;
-      }
+      color: var(--secondary-text);
     }
 
     &:-ms-input-placeholder {
-      color: v.$secondary-text-light;
-
-      @include m.darkMode {
-        color: v.$secondary-text-dark;
-      }
+      color: var(--secondary-text);
     }
 
     &:-moz-placeholder {
-      color: v.$secondary-text-light;
-
-      @include m.darkMode {
-        color: v.$secondary-text-dark;
-      }
+      color: var(--secondary-text);
     }
 
     &::-webkit-search-cancel-button {

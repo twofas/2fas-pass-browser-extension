@@ -4,9 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 .blocked {
   align-items: center;
   border-radius: 4px;
@@ -20,16 +17,12 @@
   width: 100%;
 
   h1 {
-    color: v.$primary-text-light;
+    color: var(--primary-text);
     font-size: 16px;
     font-weight: 500;
     line-height: 1.5;
     text-align: center;
     text-wrap: balance;
     white-space: pre-wrap;
-
-    @include m.darkMode {
-      color: v.$primary-text-dark;
-    }
   }
 }

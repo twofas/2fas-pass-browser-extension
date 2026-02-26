@@ -1,127 +1,62 @@
 // SPDX-License-Identifier: BUSL-1.1
 //
-// Copyright � 2025 Two Factor Authentication Service, Inc.
+// Copyright © 2025 Two Factor Authentication Service, Inc.
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
-
-@use "variables" as v;
 
 .p-calendar {
   display: flex;
   width: 100%;
 
   .p-inputtext {
+    background-color: var(--primary-box-bg);
+    border: 1px solid var(--object-stroke);
     border-radius: 6px;
+    color: var(--primary-text);
     font-size: 14px;
     font-weight: 400;
     height: 38px;
     line-height: 1;
     padding: 10px 12px;
-    transition: background-color v.$anim, border-color v.$anim, color v.$anim;
+    transition: background-color var(--anim), border-color var(--anim), color var(--anim);
     width: 100%;
 
-    body.theme-light & {
-      background-color: v.$primary-box-bg-light;
-      border: 1px solid v.$object-stroke-light;
-      color: v.$primary-text-light;
-
-      &::placeholder {
-        color: v.$secondary-text-light;
-      }
-    }
-
-    body.theme-dark & {
-      background-color: v.$primary-box-bg-dark;
-      border: 1px solid v.$object-stroke-dark;
-      color: v.$primary-text-dark;
-
-      &::placeholder {
-        color: v.$secondary-text-dark;
-      }
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        background-color: v.$primary-box-bg-light;
-        border: 1px solid v.$object-stroke-light;
-        color: v.$primary-text-light;
-
-        &::placeholder {
-          color: v.$secondary-text-light;
-        }
-      }
-
-      @media (prefers-color-scheme: dark) {
-        background-color: v.$primary-box-bg-dark;
-        border: 1px solid v.$object-stroke-dark;
-        color: v.$primary-text-dark;
-
-        &::placeholder {
-          color: v.$secondary-text-dark;
-        }
-      }
+    &::placeholder {
+      color: var(--secondary-text);
     }
 
     &:hover,
     &:focus {
+      border-color: var(--object);
       outline: none;
-
-      body.theme-light & {
-        border-color: v.$object-light;
-      }
-
-      body.theme-dark & {
-        border-color: v.$object-dark;
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: light) {
-          border-color: v.$object-light;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          border-color: v.$object-dark;
-        }
-      }
     }
   }
 }
 
 .p-datepicker {
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-stroke);
   border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
   overflow: hidden;
-  padding: 6px;
-  z-index: 9999 !important;
-
-  body.theme-light & {
-    background-color: v.$card-bg-light;
-    border: 1px solid v.$card-stroke-light;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
-  }
 
   body.theme-dark & {
-    background-color: v.$card-bg-dark;
-    border: 1px solid v.$card-stroke-dark;
     box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
   }
 
-  body.theme-unset & {
-    @media (prefers-color-scheme: light) {
-      background-color: v.$card-bg-light;
-      border: 1px solid v.$card-stroke-light;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      background-color: v.$card-bg-dark;
-      border: 1px solid v.$card-stroke-dark;
+  @media (prefers-color-scheme: dark) {
+    body:not(.theme-light):not(.theme-dark) & {
       box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
     }
   }
+  padding: 6px;
+  z-index: 9999 !important;
 
   .p-datepicker-header {
     align-items: center;
-    border-bottom: 1px solid;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--divider);
+    color: var(--primary-text);
     display: flex;
     font-size: 13px;
     font-weight: 600;
@@ -129,85 +64,24 @@
     margin: 0;
     padding: 6px;
 
-    body.theme-light & {
-      background-color: v.$card-bg-light;
-      border-bottom-color: v.$divider-light;
-      color: v.$primary-text-light;
-    }
-
-    body.theme-dark & {
-      background-color: v.$card-bg-dark;
-      border-bottom-color: v.$divider-dark;
-      color: v.$primary-text-dark;
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        background-color: v.$card-bg-light;
-        border-bottom-color: v.$divider-light;
-        color: v.$primary-text-light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        background-color: v.$card-bg-dark;
-        border-bottom-color: v.$divider-dark;
-        color: v.$primary-text-dark;
-      }
-    }
-
     .p-datepicker-prev,
     .p-datepicker-next {
       align-items: center;
       background: transparent;
       border: 0 none;
       border-radius: 50%;
+      color: var(--object);
       cursor: pointer;
       display: inline-flex;
       height: 1.5rem;
       justify-content: center;
-      transition: background-color v.$anim, color v.$anim;
+      transition: background-color var(--anim), color var(--anim);
       width: 1.5rem;
 
-      body.theme-light & {
-        color: v.$object-light;
-
-        &:hover,
-        &:focus {
-          background-color: v.$hover-color-light;
-          color: v.$primary-text-light;
-        }
-      }
-
-      body.theme-dark & {
-        color: v.$object-dark;
-
-        &:hover,
-        &:focus {
-          background-color: v.$hover-color-dark;
-          color: v.$primary-text-dark;
-        }
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: light) {
-          color: v.$object-light;
-
-          &:hover,
-          &:focus {
-            background-color: v.$hover-color-light;
-            color: v.$primary-text-light;
-          }
-        }
-
-        @media (prefers-color-scheme: dark) {
-          color: v.$object-dark;
-
-          &:hover,
-          &:focus {
-            background-color: v.$hover-color-dark;
-            color: v.$primary-text-dark;
-          }
-        }
+      &:hover,
+      &:focus {
+        background-color: var(--hover-color);
+        color: var(--primary-text);
       }
 
       .p-icon {
@@ -227,48 +101,16 @@
         background: transparent;
         border: none;
         border-radius: 4px;
+        color: var(--primary-text);
         cursor: pointer;
         font-size: 13px;
         font-weight: 600;
         padding: 4px 6px;
-        transition: background-color v.$anim, color v.$anim;
+        transition: background-color var(--anim), color var(--anim);
 
-        body.theme-light & {
-          color: v.$primary-text-light;
-
-          &:hover,
-          &:focus {
-            color: v.$primary-color-light;
-          }
-        }
-
-        body.theme-dark & {
-          color: v.$primary-text-dark;
-
-          &:hover,
-          &:focus {
-            color: v.$primary-color-dark;
-          }
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            color: v.$primary-text-light;
-
-            &:hover,
-            &:focus {
-              color: v.$primary-color-light;
-            }
-          }
-
-          @media (prefers-color-scheme: dark) {
-            color: v.$primary-text-dark;
-
-            &:hover,
-            &:focus {
-              color: v.$primary-color-dark;
-            }
-          }
+        &:hover,
+        &:focus {
+          color: var(--primary-color);
         }
       }
 
@@ -288,26 +130,9 @@
       padding: 8px;
 
       > span {
+        color: var(--secondary-text);
         height: 2.5rem;
         width: 2.5rem;
-
-        body.theme-light & {
-          color: v.$secondary-text-light;
-        }
-
-        body.theme-dark & {
-          color: v.$secondary-text-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            color: v.$secondary-text-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            color: v.$secondary-text-dark;
-          }
-        }
       }
     }
 
@@ -318,102 +143,28 @@
         align-items: center;
         border: 1px solid transparent;
         border-radius: 50%;
+        color: var(--primary-text);
         cursor: pointer;
         display: flex;
         height: 2.5rem;
         justify-content: center;
-        transition: background-color v.$anim, color v.$anim;
+        transition: background-color var(--anim), color var(--anim);
         width: 2.5rem;
 
-        body.theme-light & {
-          color: v.$primary-text-light;
-        }
-
-        body.theme-dark & {
-          color: v.$primary-text-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            color: v.$primary-text-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            color: v.$primary-text-dark;
-          }
-        }
-
         &.p-highlight {
-          body.theme-light & {
-            background-color: v.$hover-color-light;
-            color: v.$primary-color-light;
-          }
-
-          body.theme-dark & {
-            background-color: v.$hover-color-dark;
-            color: v.$primary-color-dark;
-          }
-
-          body.theme-unset & {
-            @media (prefers-color-scheme: light) {
-              background-color: v.$hover-color-light;
-              color: v.$primary-color-light;
-            }
-
-            @media (prefers-color-scheme: dark) {
-              background-color: v.$hover-color-dark;
-              color: v.$primary-color-dark;
-            }
-          }
+          background-color: var(--hover-color);
+          color: var(--primary-color);
         }
       }
 
       &.p-datepicker-today {
         > span {
-          body.theme-light & {
-            background-color: v.$additional-light;
-            color: v.$primary-text-light;
-          }
-
-          body.theme-dark & {
-            background-color: v.$additional-dark;
-            color: v.$primary-text-dark;
-          }
-
-          body.theme-unset & {
-            @media (prefers-color-scheme: light) {
-              background-color: v.$additional-light;
-              color: v.$primary-text-light;
-            }
-
-            @media (prefers-color-scheme: dark) {
-              background-color: v.$additional-dark;
-              color: v.$primary-text-dark;
-            }
-          }
+          background-color: var(--additional);
+          color: var(--primary-text);
 
           &.p-highlight {
-            body.theme-light & {
-              background-color: v.$hover-color-light;
-              color: v.$primary-color-light;
-            }
-
-            body.theme-dark & {
-              background-color: v.$hover-color-dark;
-              color: v.$primary-color-dark;
-            }
-
-            body.theme-unset & {
-              @media (prefers-color-scheme: light) {
-                background-color: v.$hover-color-light;
-                color: v.$primary-color-light;
-              }
-
-              @media (prefers-color-scheme: dark) {
-                background-color: v.$hover-color-dark;
-                color: v.$primary-color-dark;
-              }
-            }
+            background-color: var(--hover-color);
+            color: var(--primary-color);
           }
         }
       }
@@ -426,23 +177,7 @@
         span:not(.p-highlight):not(.p-disabled) {
           &:hover,
           &:focus {
-            body.theme-light & {
-              background-color: v.$hover-color-light;
-            }
-
-            body.theme-dark & {
-              background-color: v.$hover-color-dark;
-            }
-
-            body.theme-unset & {
-              @media (prefers-color-scheme: light) {
-                background-color: v.$hover-color-light;
-              }
-
-              @media (prefers-color-scheme: dark) {
-                background-color: v.$hover-color-dark;
-              }
-            }
+            background-color: var(--hover-color);
           }
         }
       }
@@ -450,26 +185,8 @@
   }
 
   .p-datepicker-buttonbar {
-    border-top: 1px solid;
+    border-top: 1px solid var(--divider);
     padding: 1rem 0;
-
-    body.theme-light & {
-      border-top-color: v.$divider-light;
-    }
-
-    body.theme-dark & {
-      border-top-color: v.$divider-dark;
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        border-top-color: v.$divider-light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        border-top-color: v.$divider-dark;
-      }
-    }
 
     .p-button {
       width: auto;
@@ -484,74 +201,21 @@
 
     .p-monthpicker-month {
       border-radius: 4px !important;
+      color: var(--primary-text);
       font-size: 12px !important;
       padding: 6px 2px !important;
-      transition: background-color v.$anim, color v.$anim;
+      transition: background-color var(--anim), color var(--anim);
       width: calc(33.3% - 2px);
 
-      body.theme-light & {
-        color: v.$primary-text-light;
-      }
-
-      body.theme-dark & {
-        color: v.$primary-text-dark;
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: light) {
-          color: v.$primary-text-light;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          color: v.$primary-text-dark;
-        }
-      }
-
       &.p-highlight {
-        body.theme-light & {
-          background-color: v.$hover-color-light;
-          color: v.$primary-color-light;
-        }
-
-        body.theme-dark & {
-          background-color: v.$hover-color-dark;
-          color: v.$primary-color-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            background-color: v.$hover-color-light;
-            color: v.$primary-color-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            background-color: v.$hover-color-dark;
-            color: v.$primary-color-dark;
-          }
-        }
+        background-color: var(--hover-color);
+        color: var(--primary-color);
       }
 
       &.p-disabled {
+        color: var(--secondary-text);
         cursor: default;
         opacity: .4;
-
-        body.theme-light & {
-          color: v.$secondary-text-light;
-        }
-
-        body.theme-dark & {
-          color: v.$secondary-text-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            color: v.$secondary-text-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            color: v.$secondary-text-dark;
-          }
-        }
       }
     }
   }
@@ -561,23 +225,7 @@
       .p-monthpicker-month:not(.p-disabled):not(.p-highlight) {
         &:hover,
         &:focus {
-          body.theme-light & {
-            background-color: v.$hover-color-light;
-          }
-
-          body.theme-dark & {
-            background-color: v.$hover-color-dark;
-          }
-
-          body.theme-unset & {
-            @media (prefers-color-scheme: light) {
-              background-color: v.$hover-color-light;
-            }
-
-            @media (prefers-color-scheme: dark) {
-              background-color: v.$hover-color-dark;
-            }
-          }
+          background-color: var(--hover-color);
         }
       }
     }
@@ -591,74 +239,21 @@
 
     .p-yearpicker-year {
       border-radius: 4px !important;
+      color: var(--primary-text);
       font-size: 12px !important;
       padding: 6px 2px !important;
-      transition: background-color v.$anim, color v.$anim;
+      transition: background-color var(--anim), color var(--anim);
       width: calc(50% - 1px);
 
-      body.theme-light & {
-        color: v.$primary-text-light;
-      }
-
-      body.theme-dark & {
-        color: v.$primary-text-dark;
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: light) {
-          color: v.$primary-text-light;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          color: v.$primary-text-dark;
-        }
-      }
-
       &.p-highlight {
-        body.theme-light & {
-          background-color: v.$hover-color-light;
-          color: v.$primary-color-light;
-        }
-
-        body.theme-dark & {
-          background-color: v.$hover-color-dark;
-          color: v.$primary-color-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            background-color: v.$hover-color-light;
-            color: v.$primary-color-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            background-color: v.$hover-color-dark;
-            color: v.$primary-color-dark;
-          }
-        }
+        background-color: var(--hover-color);
+        color: var(--primary-color);
       }
 
       &.p-disabled {
+        color: var(--secondary-text);
         cursor: default;
         opacity: .4;
-
-        body.theme-light & {
-          color: v.$secondary-text-light;
-        }
-
-        body.theme-dark & {
-          color: v.$secondary-text-dark;
-        }
-
-        body.theme-unset & {
-          @media (prefers-color-scheme: light) {
-            color: v.$secondary-text-light;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            color: v.$secondary-text-dark;
-          }
-        }
       }
     }
   }
@@ -668,99 +263,30 @@
       .p-yearpicker-year:not(.p-disabled):not(.p-highlight) {
         &:hover,
         &:focus {
-          body.theme-light & {
-            background-color: v.$hover-color-light;
-          }
-
-          body.theme-dark & {
-            background-color: v.$hover-color-dark;
-          }
-
-          body.theme-unset & {
-            @media (prefers-color-scheme: light) {
-              background-color: v.$hover-color-light;
-            }
-
-            @media (prefers-color-scheme: dark) {
-              background-color: v.$hover-color-dark;
-            }
-          }
+          background-color: var(--hover-color);
         }
       }
     }
   }
 
   .p-timepicker {
-    border-top: 1px solid;
+    border-top: 1px solid var(--divider);
     padding: 8px;
-
-    body.theme-light & {
-      border-top-color: v.$divider-light;
-    }
-
-    body.theme-dark & {
-      border-top-color: v.$divider-dark;
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        border-top-color: v.$divider-light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        border-top-color: v.$divider-dark;
-      }
-    }
 
     button {
       background: transparent;
       border: 0 none;
       border-radius: 50%;
+      color: var(--object);
       cursor: pointer;
       height: 2rem;
-      transition: background-color v.$anim, color v.$anim;
+      transition: background-color var(--anim), color var(--anim);
       width: 2rem;
 
-      body.theme-light & {
-        color: v.$object-light;
-
-        &:enabled:hover,
-        &:focus {
-          background-color: v.$hover-color-light;
-          color: v.$primary-text-light;
-        }
-      }
-
-      body.theme-dark & {
-        color: v.$object-dark;
-
-        &:enabled:hover,
-        &:focus {
-          background-color: v.$hover-color-dark;
-          color: v.$primary-text-dark;
-        }
-      }
-
-      body.theme-unset & {
-        @media (prefers-color-scheme: light) {
-          color: v.$object-light;
-
-          &:enabled:hover,
-          &:focus {
-            background-color: v.$hover-color-light;
-            color: v.$primary-text-light;
-          }
-        }
-
-        @media (prefers-color-scheme: dark) {
-          color: v.$object-dark;
-
-          &:enabled:hover,
-          &:focus {
-            background-color: v.$hover-color-dark;
-            color: v.$primary-text-dark;
-          }
-        }
+      &:enabled:hover,
+      &:focus {
+        background-color: var(--hover-color);
+        color: var(--primary-text);
       }
 
       &:last-child {
@@ -785,77 +311,25 @@
 }
 
 .p-inputmask {
+  background-color: var(--primary-box-bg);
+  border: 1px solid var(--object-stroke);
+  color: var(--primary-text);
   font-size: 14px;
   font-weight: 400;
   height: 38px;
   line-height: 1;
   padding: 10px 12px;
-  transition: background-color v.$anim, border-color v.$anim, color v.$anim;
+  transition: background-color var(--anim), border-color var(--anim), color var(--anim);
   width: 100%;
 
-  body.theme-light & {
-    background-color: v.$primary-box-bg-light;
-    border: 1px solid v.$object-stroke-light;
-    color: v.$primary-text-light;
-
-    &::placeholder {
-      color: v.$secondary-text-light;
-    }
-  }
-
-  body.theme-dark & {
-    background-color: v.$primary-box-bg-dark;
-    border: 1px solid v.$object-stroke-dark;
-    color: v.$primary-text-dark;
-
-    &::placeholder {
-      color: v.$secondary-text-dark;
-    }
-  }
-
-  body.theme-unset & {
-    @media (prefers-color-scheme: light) {
-      background-color: v.$primary-box-bg-light;
-      border: 1px solid v.$object-stroke-light;
-      color: v.$primary-text-light;
-
-      &::placeholder {
-        color: v.$secondary-text-light;
-      }
-    }
-
-    @media (prefers-color-scheme: dark) {
-      background-color: v.$primary-box-bg-dark;
-      border: 1px solid v.$object-stroke-dark;
-      color: v.$primary-text-dark;
-
-      &::placeholder {
-        color: v.$secondary-text-dark;
-      }
-    }
+  &::placeholder {
+    color: var(--secondary-text);
   }
 
   &:hover,
   &:focus {
+    border-color: var(--object);
     outline: none;
-
-    body.theme-light & {
-      border-color: v.$object-light;
-    }
-
-    body.theme-dark & {
-      border-color: v.$object-dark;
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        border-color: v.$object-light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        border-color: v.$object-dark;
-      }
-    }
   }
 }
 

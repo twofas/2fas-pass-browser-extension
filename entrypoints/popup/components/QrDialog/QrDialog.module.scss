@@ -4,9 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 .qr-dialog {
   align-items: center;
   display: flex;
@@ -17,7 +14,7 @@
   pointer-events: none;
   position: fixed;
   top: 0;
-  transition: opacity v.$anim;
+  transition: opacity var(--anim);
   width: 100vw;
   z-index: 9999;
 
@@ -41,8 +38,8 @@
   }
 
   &-box {
-    background-color: v.$primary-box-bg-light;
-    border: 1px solid v.$primary-box-stroke-light;
+    background-color: var(--primary-box-bg);
+    border: 1px solid var(--primary-box-stroke);
     border-radius: 10px;
     padding: 14px 16px 24px;
     position: relative;
@@ -52,11 +49,6 @@
     transition: transform .25s ease-out;
     width: 92%;
     z-index: 2;
-
-    @include m.darkMode {
-      background-color: v.$primary-box-bg-dark;
-      border-color: v.$primary-box-stroke-dark;
-    }
   }
 
   &-close {
@@ -71,29 +63,20 @@
 
     svg {
       height: 32px;
-      fill: v.$additional-light;
-      stroke: v.$primary-color-light;
+      fill: var(--additional);
+      stroke: var(--primary-color);
       stroke-width: 1.5;
       transition: stroke .3s ease-in-out;
       width: 32px;
-
-      @include m.darkMode {
-        fill: v.$additional-dark;
-        stroke: v.$primary-color-dark;
-      }
     }
   }
 
   &-title {
-    color: v.$primary-text-light;
+    color: var(--primary-text);
     font-size: 16px;
     font-weight: 600;
     line-height: 1.5;
     margin: 24px 0 16px;
-
-    @include m.darkMode {
-      color: v.$primary-text-dark;
-    }
 
     span {
       display: block;
@@ -102,7 +85,7 @@
 
   &-qr-container {
     background-color: #fff;
-    border: 1px solid v.$object-stroke-light;
+    border: 1px solid var(--object-stroke);
     border-radius: 5px;
     display: inline-block;
     padding: 8px;

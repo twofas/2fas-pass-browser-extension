@@ -4,106 +4,31 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-$primary-color-light: #214ce8;
-$primary-color-dark: #869dfe;
-$icon-primary-color-light: #214ce8;
-$icon-primary-color-dark: #214ce8;
-$icon-secondary-color-light: #90a6f4;
-$icon-secondary-color-dark: #90a6f4;
-$icon-tertiary-color-light: #161616;
-$icon-tertiary-color-dark: #fff;
-$hover-color-light: #e9eefd;
-$hover-color-dark: #2d324a;
-$hover-on-hover-light: #d3dcf8;
-$hover-on-hover-dark: #41486c;
-$success-toast-light: #69cf83;
-$success-toast-dark: #40a75b;
-$warning-toast-light: #fc955b;
-$warning-toast-dark: #d16b32;
-$info-toast-light: #7397fe;
-$info-toast-dark: #4a6fd6;
-$error-toast-light: #ec4b56;
-$error-toast-dark: #c52531;
-$primary-bg-light: #f4f4f8;
-$primary-bg-dark: #161616;
-$primary-box-bg-light: #fff;
-$primary-box-bg-dark: #1c1d24;
-$primary-box-stroke-light: #ececec;
-$primary-box-stroke-dark: #282a33;
-$object-light: #606167;
-$object-dark: #a5a8b6;
-$object-stroke-light: #d9d9d9;
-$object-stroke-dark: #44485d;
-$divider-light: #ececec;
-$divider-dark: #282a33;
-$primary-text-light: #161616;
-$primary-text-dark: #fff;
-$secondary-text-light: #606167;
-$secondary-text-dark: #a5a8b6;
-$tertiary-text-light: #fff;
-$tertiary-text-dark: #fff;
-$error-light: #ed1c24;
-$error-dark: #d3383d;
-$star-light: #ffbf00;
-$star-dark: #ffbf00;
-$additional-light: #f4f4f8;
-$additional-dark: #24262e;
-$card-bg-light: #fff;
-$card-bg-dark: #24262e;
-$card-stroke-light: #e7e7eb;
-$card-stroke-dark: #343742;
-$focus-light: #216de8;
-$focus-dark: #5473fe;
-$pressed-light: #4e70ee;
-$pressed-dark: #a0b2fe;
-$disabled-light: #606167;
-$disabled-dark: #a5a8b6;
-$error-bg-light: #feefef;
-$error-bg-dark: #422222;
-$pressed-bg-light: #d9e2fc;
-$pressed-bg-dark: #383f63;
-$error-pressed-bg-light: #fedfdf;
-$error-pressed-bg-dark: #5c2a2a;
+@use "color-tokens" as tokens;
 
-// Item type colors
-$login-item-light: #08f;
-$login-item-dark: #08f;
-$login-item-bg-light: #d4ebff;
-$login-item-bg-dark: #002b52;
-$secure-note-item-light: #ffb900;
-$secure-note-item-dark: #ffb900;
-$secure-note-item-bg-light: #fff0d0;
-$secure-note-item-bg-dark: #483800;
-$payment-card-item-light: #34c759;
-$payment-card-item-dark: #34c759;
-$payment-card-item-bg-light: #d6ffe0;
-$payment-card-item-bg-dark: #043b12;
-$ssh-key-item-light: #6155f5;
-$ssh-key-item-dark: #6155f5;
-$ssh-key-item-bg-light: #e7e5ff;
-$ssh-key-item-bg-dark: #100d48;
-$wifi-item-light: #ff8500;
-$wifi-item-dark: #ff8500;
-$wifi-item-bg-light: #ffefe2;
-$wifi-item-bg-dark: #4c2600;
+:root {
+  // Non-color variables (same for all themes)
+  --anim: .2s ease-out;
+  --anim-fast: .1s ease-out;
 
-// Tag colors
-$tag-gray-light: #aeaeb2;
-$tag-gray-dark: #636366;
-$tag-red-light: #ff383c;
-$tag-red-dark: #ff4245;
-$tag-orange-light: #ff8d28;
-$tag-orange-dark: #ff9230;
-$tag-yellow-light: #ffcc00;
-$tag-yellow-dark: #ffd600;
-$tag-green-light: #34c759;
-$tag-green-dark: #30d158;
-$tag-cyan-light: #00c0e8;
-$tag-cyan-dark: #3cd3fe;
-$tag-indigo-light: #6155f5;
-$tag-indigo-dark: #6d7cff;
-$tag-purple-light: #cb30e0;
-$tag-purple-dark: #db34f2;
+  // Fallback for browsers without prefers-color-scheme support
+  @include tokens.generate-light-vars;
 
-$anim: .2s ease-out;
-$anim-fast: .1s ease-out;
+  @media (prefers-color-scheme: light) {
+    @include tokens.generate-light-vars;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @include tokens.generate-dark-vars;
+  }
+}
+
+body.theme-light {
+  @include tokens.generate-light-vars;
+}
+
+body.theme-dark {
+  @include tokens.generate-dark-vars;
+}
+
+// body.theme-unset and body without class inherit from :root → follow system preference
