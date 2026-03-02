@@ -2974,10 +2974,10 @@ global-directory@^4.0.1:
   dependencies:
     ini "4.1.1"
 
-globals@^17.3.0:
-  version "17.3.0"
-  resolved "https://registry.yarnpkg.com/globals/-/globals-17.3.0.tgz#8b96544c2fa91afada02747cc9731c002a96f3b9"
-  integrity sha512-yMqGUQVVCkD4tqjOJf3TnrvaaHDMYp4VlUSObbkIiuCPe/ofdMBFIAcBbCSRFWOnos6qRiTVStDwqPLUclaxIw==
+globals@^17.4.0:
+  version "17.4.0"
+  resolved "https://registry.yarnpkg.com/globals/-/globals-17.4.0.tgz#33d7d297ed1536b388a0e2f4bcd0ff19c8ff91b5"
+  integrity sha512-hjrNztw/VajQwOLsMNT1cbJiH2muO3OROCHnbehc8eY5JyD2gqz4AcMHPqgaOR59DjgUjYAYLeH699g/eWi2jw==
 
 globalthis@^1.0.4:
   version "1.0.4"
@@ -4245,10 +4245,10 @@ parent-module@^1.0.0:
   dependencies:
     callsites "^3.0.0"
 
-parse-domain@^8.2.2:
-  version "8.2.2"
-  resolved "https://registry.yarnpkg.com/parse-domain/-/parse-domain-8.2.2.tgz#1e88ac5b0cf268ceae6d08c34d53b2bf86de66e5"
-  integrity sha512-CoksenD3UDqphCHlXIcNh/TX0dsYLHo6dSAUC/QBcJRWJXcV5rc1mwsS4WbhYGu4LD4Uxc0v3ZzGo+OHCGsLcw==
+parse-domain@^8.3.0:
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/parse-domain/-/parse-domain-8.3.0.tgz#ec24e57e7676d65d9404cb22bfa516682a67e3e5"
+  integrity sha512-oOjqUI93wiFHJlywlOKU9FEw60Q0LMy8S1s/AhnVhCB9LZkwIsCIZfqujeJ16u7rRzLdTEY2OpxlGRhLdnNNYA==
   dependencies:
     is-ip "^5.0.1"
 
