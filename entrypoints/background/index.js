@@ -8,7 +8,9 @@ import { onTabUpdated, onTabActivated, onTabCreated, onTabRemoved } from './tabs
 import { createMessageRouter, onInstalled, onContextMenuClick, onStorageChange, onAlarm, onCommand, onStartup } from './events';
 import nonSafariBackground from './nonSafariBackground';
 import firefoxBackground from './firefoxBackground';
-import { setBadgeLocked } from './utils';
+import { setBadgeLocked, updateBadge } from './utils';
+import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
+import getItems from '@/partials/sessionStorage/getItems';
 
 export default defineBackground({
   /**
@@ -58,5 +60,18 @@ export default defineBackground({
       firefoxBackground();
     }
 
-    setBadgeLocked().catch(() => {});
+    (async () => {
+      try {
+        const configured = await getConfiguredBoolean();
+
+        if (configured) {
+          const items = await getItems(['Login', 'PaymentCard']).catch(() => []);
+          await updateBadge(true, items).catch(() => {});
+        } else {
+          await setBadgeLocked().catch(() => {});
+        }
+      } catch {
+        await setBadgeLocked().catch(() => {});
+      }
+    })();
 }});
