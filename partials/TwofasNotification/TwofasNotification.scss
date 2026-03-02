@@ -801,6 +801,16 @@
     pointer-events: none !important;
   }
 
+  &.no-animation {
+    &::backdrop {
+      animation: none !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-content {
+      animation: none !important;
+    }
+  }
+
   * {
     box-shadow: none !important;
     box-sizing: border-box !important;

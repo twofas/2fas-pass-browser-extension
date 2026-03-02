@@ -10,6 +10,8 @@ import logoSrcDark from '@/assets/logo-dark.svg?raw';
 import closeSrc from '@/assets/popup-window/cancel.svg?raw';
 import chevronSrc from '@/assets/popup-window/chevron.svg?raw';
 
+let activeDialog = null;
+
 const DROPDOWN_OPTIONS = [
   { value: 'always_ask', labelKey: 'content_cross_domain_dialog_always_ask', descKey: 'content_cross_domain_dialog_always_ask_description' },
   { value: 'always_autofill', labelKey: 'content_cross_domain_dialog_always_autofill', descKey: 'content_cross_domain_dialog_always_autofill_description' },
@@ -114,6 +116,12 @@ const createDropdown = (domain, domainSelections) => {
 const crossDomainDialog = (request, sendResponse, container) => {
   const unknownDomains = request.unknownDomains || [];
   const theme = request.theme;
+  const isReplacing = !!activeDialog;
+
+  if (activeDialog) {
+    activeDialog.cancel();
+    activeDialog = null;
+  }
 
   if (unknownDomains.length === 0) {
     sendResponse({ status: 'ok', confirmed: false, domainPreferences: {}, allowedDomains: [] });
@@ -135,6 +143,10 @@ const crossDomainDialog = (request, sendResponse, container) => {
     dialog.classList.add(theme);
   } else {
     dialog.classList.add('unset');
+  }
+
+  if (isReplacing) {
+    dialog.classList.add('no-animation');
   }
 
   const dialogContent = createElement('div', 'twofas-pass-cross-domain-dialog-content');
@@ -257,6 +269,7 @@ const crossDomainDialog = (request, sendResponse, container) => {
   const cleanup = () => {
     dialog.close();
     dialog.remove();
+    activeDialog = null;
   };
 
   const respondCancel = () => {
@@ -325,6 +338,8 @@ const crossDomainDialog = (request, sendResponse, container) => {
 
   container.appendChild(dialog);
   dialog.showModal();
+
+  activeDialog = { cancel: respondCancel };
 };
 
 export default crossDomainDialog;
