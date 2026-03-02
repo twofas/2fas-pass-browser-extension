@@ -5,9 +5,6 @@
 // See LICENSE file for full terms
 
 .all-items-list {
-  -webkit-backface-visibility: hidden;
-  -webkit-overflow-scrolling: touch;
-  backface-visibility: hidden;
   position: relative;
 
   &::-webkit-scrollbar {

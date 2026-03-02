@@ -19,19 +19,15 @@ const useScrollPosition = (scrollableRef, loading = false) => {
   const hasRestoredRef = useRef(false);
   const isRestoringRef = useRef(false);
   const targetScrollPositionRef = useRef(null);
+  const lastScrollTopRef = useRef(0);
 
   const saveScrollPosition = useCallback(() => {
-    if (!scrollableRef?.current) {
+    if (!scrollableRef?.current || isRestoringRef.current) {
       return;
     }
 
-    if (isRestoringRef.current) {
-      return;
-    }
-
-    const scrollTop = scrollableRef.current.scrollTop;
-    setScrollPosition(scrollTop);
-  }, [setScrollPosition]);
+    lastScrollTopRef.current = scrollableRef.current.scrollTop;
+  }, []);
 
   const restoreScrollPosition = useCallback(() => {
     const targetPosition = targetScrollPositionRef.current;
@@ -115,12 +111,10 @@ const useScrollPosition = (scrollableRef, loading = false) => {
 
   useEffect(() => {
     return () => {
-      if (scrollableRef?.current && !isRestoringRef.current) {
-        const scrollTop = scrollableRef.current.scrollTop;
+      const scrollTop = scrollableRef?.current?.scrollTop ?? lastScrollTopRef.current;
 
-        if (scrollTop > 0) {
-          setScrollPosition(scrollTop);
-        }
+      if (scrollTop > 0 && !isRestoringRef.current) {
+        setScrollPosition(scrollTop);
       }
     };
   }, [setScrollPosition]);

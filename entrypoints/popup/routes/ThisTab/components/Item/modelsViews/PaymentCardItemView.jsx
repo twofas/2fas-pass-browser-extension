@@ -57,17 +57,19 @@ function PaymentCardItemView (props) {
         <CopyCardSecurityCodeBtn item={props.data} more={props.more} setMore={props.setMore} />
         <MoreBtn item={props.data} more={props.more} setMore={props.setMore} ref={moreBtnRef} />
       </div>
-      <AdvancedSelect
-        className='react-select-pass-dropdown'
-        classNamePrefix='react-select-dropdown'
-        isSearchable={false}
-        options={dropdownOptions}
-        menuIsOpen={props.more === true}
-        ref={props.selectRef}
-        triggerRef={moreBtnRef}
-        setMore={props.setMore}
-        components={selectComponents}
-      />
+      {props.more && (
+        <AdvancedSelect
+          className='react-select-pass-dropdown'
+          classNamePrefix='react-select-dropdown'
+          isSearchable={false}
+          options={dropdownOptions}
+          menuIsOpen
+          ref={props.selectRef}
+          triggerRef={moreBtnRef}
+          setMore={props.setMore}
+          components={selectComponents}
+        />
+      )}
     </>
   );
 }

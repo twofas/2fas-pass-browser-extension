@@ -130,7 +130,7 @@ function AllItemsList ({ items, sort, search, loading, selectedTag, itemModelFil
 
   return (
     <div className={S.allItemsList}>
-      <SafariViewportList items={itemsData.data} overscan={10}>
+      <SafariViewportList items={itemsData.data}>
         {renderItem}
       </SafariViewportList>
     </div>
