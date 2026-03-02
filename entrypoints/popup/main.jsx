@@ -50,6 +50,8 @@ const checkActiveWsAction = async () => {
       window.__wsInitialState = response.state;
       window.__wsPendingUpdates = response.pendingUpdates;
       return true;
+    } else if (response?.pendingUpdates?.toasts?.length > 0) {
+      window.__wsPendingUpdates = response.pendingUpdates;
     }
   } catch { }
 
