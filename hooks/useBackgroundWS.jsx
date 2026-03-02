@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router';
+import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 
 export const useBackgroundWS = ({ onLogin } = {}) => {
   const [wsState, setWsState] = useState(() => window.__wsInitialState || null);
@@ -78,6 +79,12 @@ export const useBackgroundWS = ({ onLogin } = {}) => {
         }
 
         case 'navigate': {
+          if (message.payload.resetStore) {
+            const store = usePopupStateStore.getState();
+            store.clearAllData();
+            store.clearHref();
+          }
+
           navigateRef.current(message.payload.path, message.payload.options);
           break;
         }

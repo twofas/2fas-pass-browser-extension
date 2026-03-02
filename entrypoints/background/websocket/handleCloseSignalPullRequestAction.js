@@ -454,6 +454,10 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
       navigationPayload.options = { state: closeData.returnState };
     }
 
+    if (closeData?.clearPopupState) {
+      navigationPayload.resetStore = true;
+    }
+
     wsNotify('navigate', navigationPayload);
   }
 

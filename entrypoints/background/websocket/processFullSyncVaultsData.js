@@ -85,6 +85,10 @@ const processFullSyncVaultsData = async (checksum, chunksData, encryptionDataKey
     // Remove any existing context menu items
     await browser.contextMenus.removeAll();
 
+    // Clear popup state — stale item data must not survive sync
+    const popupStateKey = await getKey('popup_state');
+    await storage.removeItem(`session:${popupStateKey}`);
+
     await storage.setItem(`session:${encryptionT3Key}`, encryptionPassKeyAES_B64);
     await saveVaults(vaultDataDecJSON, deviceId);
   } catch (e) {
@@ -103,7 +107,8 @@ const processFullSyncVaultsData = async (checksum, chunksData, encryptionDataKey
     returnToast: {
       text: getMessage('fetch_full_sync_completed_toast'),
       type: 'success'
-    }
+    },
+    clearPopupState: true
   };
 };
 
