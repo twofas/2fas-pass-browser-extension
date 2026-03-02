@@ -13,6 +13,7 @@ export { default as sifT2Reset } from './alarmsFunctions/sifT2Reset.js';
 export { default as setBadgeIcon } from './badge/setBadgeIcon.js';
 export { default as setBadgeLocked } from './badge/setBadgeLocked.js';
 export { default as setBadgeText } from './badge/setBadgeText.js';
+export { default as setBadgeConnecting } from './badge/setBadgeConnecting.js';
 export { default as updateBadge } from './badge/updateBadge.js';
 
 // Save prompt functions
