@@ -6,16 +6,10 @@
 
 import S from './Fetch.module.scss';
 import { useLocation, useNavigate } from 'react-router';
-import { useState, useEffect, useRef, lazy } from 'react';
-import FetchOnMessage from './socket/FetchOnMessage';
-import FetchOnClose from './socket/FetchOnClose';
-import TwoFasWebSocket from '@/partials/WebSocket';
+import { useEffect, useRef, useCallback, lazy } from 'react';
 import { FETCH_STATE } from './constants';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import calculateFetchSignature from './functions/calculateFetchSignature';
-import { getCurrentDevice, sendPush, getNTPTime, deletePush } from '@/partials/functions';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 import { useI18n } from '@/partials/context/I18nContext';
 
 const PushNotification = lazy(() => import('./components/PushNotification'));
@@ -23,21 +17,19 @@ const ConnectionError = lazy(() => import('./components/ConnectionError'));
 const ConnectionTimeout = lazy(() => import('./components/ConnectionTimeout'));
 const ContinueUpdate = lazy(() => import('./components/ContinueUpdate'));
 
-/**
-* Function to handle the Fetch component.
-* @param {Object} props - The component props.
-* @return {JSX.Element} The rendered component.
-*/
-function Fetch(props) {
+function Fetch (props) {
   const { getMessage } = useI18n();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { wsState: bgState, sendCommand } = useBackgroundWS();
+  const { state } = location;
+  const initDoneRef = useRef(false);
 
-  /**
-   * Generates a description message based on the pull request action type.
-   * @param {string} action - The action type from PULL_REQUEST_TYPES.
-   * @returns {string|undefined} The i18n description message or undefined for default action.
-   */
-  const getPushNotificationDescription = action => {
+  const fetchState = bgState?.fetchState ?? FETCH_STATE.DEFAULT;
+  const errorText = bgState?.fetchErrorText || getMessage('fetch_connection_error_header');
+  const currentAction = bgState?.fetchAction || state?.action;
+
+  const getPushNotificationDescription = useCallback(action => {
     switch (action) {
       case PULL_REQUEST_TYPES.SIF_REQUEST: {
         return getMessage('fetch_sif_request_description');
@@ -59,173 +51,28 @@ function Fetch(props) {
         return undefined;
       }
     }
-  };
+  }, [getMessage]);
 
-  const { state } = location;
+  const tryAgainHandle = useCallback(async () => {
+    await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
 
-  const navigate = useNavigate();
+    await sendCommand(REQUEST_ACTIONS.WS_FETCH, {
+      fetchAction: state?.action,
+      fetchData: state?.data,
+      from: state?.from
+    });
+  }, [sendCommand, state?.action, state?.data, state?.from]);
 
-  let device;
-
-  const [fetchState, setFetchState] = useState(FETCH_STATE.DEFAULT);
-  const [errorText, setErrorText] = useState(getMessage('fetch_connection_error_header'));
-  const abortControllerRef = useRef(null);
-
-  const initConnection = async abortSignal => {
-    if (abortSignal?.aborted) {
-      return false;
-    }
-
-    switch (state?.action) {
-      case PULL_REQUEST_TYPES.UPDATE_DATA: {
-        setFetchState(FETCH_STATE.CONTINUE_UPDATE);
-        break;
-      }
-
-      case PULL_REQUEST_TYPES.ADD_DATA:
-      case PULL_REQUEST_TYPES.SIF_REQUEST:
-      case PULL_REQUEST_TYPES.DELETE_DATA:
-      case PULL_REQUEST_TYPES.FULL_SYNC: {
-        setFetchState(FETCH_STATE.PUSH_NOTIFICATION);
-        break;
-      }
-
-      default: {
-        setFetchState(FETCH_STATE.CONNECTION_ERROR);
-
-        throw new TwoFasError(TwoFasError.internalErrors.fetchInvalidAction, {
-          additional: {
-            data: { stateAction: state.action },
-            func: 'Fetch - initConnection'
-          }
-        });
-      }
-    }
-
-    if (abortSignal?.aborted) {
-      return false;
-    }
-
-    let sessionId, timestamp, sigPush;
-
-    try {
-      device = await getCurrentDevice(state?.data?.deviceId || null);
-
-      if (abortSignal?.aborted) {
-        return false;
-      }
-
-      if (!device?.sessionId || !device?.id || !device?.uuid) {
-        setFetchState(FETCH_STATE.CONNECTION_ERROR);
-        setErrorText(getMessage('error_general'));
-        return false;
-      }
-
-      sessionId = Base64ToHex(device?.sessionId).toLowerCase();
-      const timestampValue = await getNTPTime();
-      timestamp = timestampValue.toString();
-      sigPush = await calculateFetchSignature(sessionId, device?.id, device?.uuid, timestamp);
-    } catch (e) {
-      await CatchError(e, () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
-    }
-
-    if (abortSignal?.aborted) {
-      return false;
-    }
-
-    const socket = new TwoFasWebSocket(sessionId);
-    socket.open();
-    socket.addEventListener('message', FetchOnMessage, { state, device });
-    socket.addEventListener('close', FetchOnClose, { state });
-
-    try {
-      await socket.waitForOpen();
-    } catch (e) {
-      await CatchError(e, () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
-      return false;
-    }
-
-    if (abortSignal?.aborted) {
-      await closeConnection();
-      return false;
-    }
-
-    try {
-      const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
-      state.data.notificationId = json?.notificationId;
-
-      if (abortSignal?.aborted) {
-        await closeConnection();
-        return false;
-      }
-
-      if (json?.error === 'UNREGISTERED') {
-        await closeConnection();
-        setFetchState(FETCH_STATE.CONNECTION_ERROR);
-        setErrorText(getMessage('fetch_token_unregistered_header'));
-        return false;
-      }
-    } catch (e) {
-      await closeConnection();
-
-      await CatchError(new TwoFasError(TwoFasError.internalErrors.fetchSendPush, {
-        event: e,
-        additional: {
-          data: { device, timestamp, sigPush },
-          func: 'Fetch - initConnection'
-        }
-      }), () => { setFetchState(FETCH_STATE.CONNECTION_ERROR); });
-    }
-  };
-
-  const closeConnection = async () => {
-    let socket;
-
-    try {
-      await deletePush(device.id, state.data.notificationId);
-    } catch { }
-
-    try {
-      socket = TwoFasWebSocket.getInstance();
-    } catch { }
-
-    if (socket) {
-      try {
-        // await socket.sendError(
-        //   new TwoFasError(TwoFasError.errors.userCancelled, {
-        //     apiLog: false,
-        //     consoleLog: false
-        //   })
-        // );
-        socket.close();
-      } catch { }
-    }
-  };
-
-  const tryAgainHandle = async () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    abortControllerRef.current = new AbortController();
-    await initConnection(abortControllerRef.current.signal);
-  };
-
-  // FUTURE - Refactor (useCallback?)
-  const cancelHandle = async e => {
+  const cancelHandle = useCallback(async e => {
     e.preventDefault();
-    await closeConnection();
+    await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
 
     if (state?.from === 'contextMenu' || state?.from === 'shortcut' || state?.from === 'savePrompt') {
-      const windowCloseTest = await tryWindowClose();
-
-      if (windowCloseTest) {
-        navigate('/');
-      }
+      navigate('/');
     } else if (state?.from === 'add-new' && state?.originalData && state?.model) {
       navigate(`/add-new/${state.model}`, {
         state: {
-          data: state.originalData, // @TODO: verify if this is needed
+          data: state.originalData,
           from: 'fetch'
         }
       });
@@ -234,43 +81,44 @@ function Fetch(props) {
         state: { from: 'fetch' }
       });
     } else {
-      if (fetchState === 1) {
+      if (fetchState === FETCH_STATE.CONNECTION_ERROR) {
         navigate('/');
       } else {
         navigate(-1);
       }
     }
-  };
+  }, [sendCommand, state, fetchState, navigate]);
 
-  // FUTURE - Refactor (useCallback?)
-  const handleNavigate = ({ path, options = {} }) => {
-    return navigate(path, options);
-  };
-
+  // Initialize fetch
   useEffect(() => {
-    abortControllerRef.current = new AbortController();
+    if (initDoneRef.current) {
+      return;
+    }
 
-    // FUTURE - add value validation
-    eventBus.on(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
-    eventBus.on(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
-    eventBus.on(eventBus.EVENTS.FETCH.NAVIGATE, handleNavigate);
-    eventBus.on(eventBus.EVENTS.FETCH.DISCONNECT, closeConnection);
+    initDoneRef.current = true;
 
-    initConnection(abortControllerRef.current.signal);
+    if (bgState?.active && bgState?.type === 'fetch') {
+      return;
+    }
 
+    if (!state?.action) {
+      navigate('/', { replace: true });
+      return;
+    }
+
+    sendCommand(REQUEST_ACTIONS.WS_FETCH, {
+      fetchAction: state.action,
+      fetchData: state.data,
+      from: state.from
+    });
+  }, [bgState?.active, bgState?.type, state, sendCommand, navigate]);
+
+  // Cleanup: cancel WS on unmount
+  useEffect(() => {
     return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-
-      eventBus.off(eventBus.EVENTS.FETCH.SET_FETCH_STATE, setFetchState);
-      eventBus.off(eventBus.EVENTS.FETCH.ERROR_TEXT, setErrorText);
-      eventBus.off(eventBus.EVENTS.FETCH.NAVIGATE, handleNavigate);
-      eventBus.off(eventBus.EVENTS.FETCH.DISCONNECT, closeConnection);
-
-      closeConnection();
+      sendCommand(REQUEST_ACTIONS.WS_CANCEL).catch(() => {});
     };
-  }, []);
+  }, [sendCommand]);
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
@@ -279,7 +127,7 @@ function Fetch(props) {
           <div className={S.fetchContainer}>
             <NavigationButton type='cancel' onClick={cancelHandle} />
 
-            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} description={getPushNotificationDescription(state?.action)} />}
+            {fetchState === FETCH_STATE.PUSH_NOTIFICATION && <PushNotification fetchState={fetchState} description={getPushNotificationDescription(currentAction)} />}
             {fetchState === FETCH_STATE.CONNECTION_ERROR && <ConnectionError fetchState={fetchState} errorText={errorText} />}
             {fetchState === FETCH_STATE.CONNECTION_TIMEOUT && <ConnectionTimeout fetchState={fetchState} tryAgainHandle={tryAgainHandle} />}
             {fetchState === FETCH_STATE.CONTINUE_UPDATE && <ContinueUpdate fetchState={fetchState} />}

@@ -4,39 +4,34 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import handleFetchHelloAction from '@/entrypoints/background/websocket/handleFetchHelloAction';
-import handleChallengeAction from '@/entrypoints/background/websocket/handleChallengeAction';
-import handleCloseSignalPullRequestAction from '@/entrypoints/background/websocket/handleCloseSignalPullRequestAction';
-import handlePullRequest from '@/entrypoints/background/websocket/handlePullRequest';
-import handlePullRequestAction from '@/entrypoints/background/websocket/handlePullRequestAction';
-import handleSendVaultData from '@/entrypoints/background/websocket/handleSendVaultData';
-import processFullSyncVaultsData from '@/entrypoints/background/websocket/processFullSyncVaultsData';
+import handleFetchHelloAction from '../handleFetchHelloAction';
+import handleChallengeAction from '../handleChallengeAction';
+import handleCloseSignalPullRequestAction from '../handleCloseSignalPullRequestAction';
+import handlePullRequest from '../handlePullRequest';
+import handlePullRequestAction from '../handlePullRequestAction';
+import handleSendVaultData from '../handleSendVaultData';
+import processFullSyncVaultsData from '../processFullSyncVaultsData';
 import deletePush from '@/partials/functions/deletePush';
-import TwoFasWebSocket from '@/entrypoints/background/websocket';
-import { FETCH_STATE } from '../constants';
+import TwoFasWebSocket from '..';
+import { wsState } from '../wsState.js';
+import wsNotify from '../wsNotify.js';
 
-/**
-* Function to handle incoming Fetch messages.
-* @param {Object} json - The incoming message data.
-* @param {Object} data - The current state data.
-* @return {Promise<void>} A promise that resolves when the message is handled.
-*/
-const FetchOnMessage = async (json, data) => {
+const bgFetchOnMessage = async (json, data) => {
   try {
     switch (json.action) {
       case SOCKET_ACTIONS.CLOSE_WITH_ERROR: {
         if (data?.state?.deviceId && data?.state?.notificationId) {
           await deletePush(data.state.deviceId, data.state.notificationId);
         }
-        
+
         throw new TwoFasError(TwoFasError.errors.closeWithErrorReceived, { additional: json.payload });
       }
-  
+
       case SOCKET_ACTIONS.HELLO: {
         data.deviceId = await handleFetchHelloAction(json, data.state.deviceId, data.device.id);
         break;
       }
-  
+
       case SOCKET_ACTIONS.CHALLENGE: {
         const res = await handleChallengeAction(json, data.device.uuid);
         data.hkdfSalt = res.hkdfSalt;
@@ -78,20 +73,21 @@ const FetchOnMessage = async (json, data) => {
 
         break;
       }
-  
+
       case SOCKET_ACTIONS.CLOSE_WITH_SUCCESS: {
         await handleCloseSignalPullRequestAction(data.newSessionId, data.device.uuid, data.closeData, data.state);
         break;
       }
-  
+
       default: {
         throw new TwoFasError(TwoFasError.errors.unknownAction, { event: json });
       }
     }
   } catch (e) {
     await CatchError(e, async errObj => {
-      eventBus.emit(eventBus.EVENTS.FETCH.SET_FETCH_STATE, FETCH_STATE.CONNECTION_ERROR);
-      eventBus.emit(eventBus.EVENTS.FETCH.ERROR_TEXT, errObj?.additional?.errorMessage || getMessage('error_general')); // FUTURE - Base on error code
+      wsState.fetchState = 1; // FETCH_STATE.CONNECTION_ERROR
+      wsState.fetchErrorText = errObj?.additional?.errorMessage || getMessage('error_general');
+      wsNotify('stateChange', { fetchState: wsState.fetchState, fetchErrorText: wsState.fetchErrorText });
 
       if (data?.state?.deviceId && data?.state?.notificationId) {
         await deletePush(data.state.deviceId, data.state.notificationId);
@@ -111,4 +107,4 @@ const FetchOnMessage = async (json, data) => {
   }
 };
 
-export default FetchOnMessage;
+export default bgFetchOnMessage;

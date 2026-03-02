@@ -37,4 +37,11 @@ export const REQUEST_ACTIONS = Object.freeze({
   GET_I18N_DATA: 'getI18nData', // background (returns lang and messages for content scripts)
   SIF_T2_RESET: 'sifT2Reset', // background → popup (notifies that a T2 item's SIF was reset)
   PROMPT_INPUT_FLUSH: 'promptInputFlush', // background prompt (bulk flush before page unload)
+  WS_CONNECT_QR: 'wsConnectQr', // popup → background_ws (start QR connection)
+  WS_CONNECT_PUSH: 'wsConnectPush', // popup → background_ws (start push connection)
+  WS_FETCH: 'wsFetch', // popup → background_ws (start fetch action)
+  WS_CANCEL: 'wsCancel', // popup → background_ws (cancel current WS action)
+  WS_GET_STATE: 'wsGetState', // popup → background_ws (get current WS state)
+  WS_STATE_UPDATE: 'wsStateUpdate', // background_ws → popup (state update notification)
+  WS_RELOAD_QR: 'wsReloadQr', // popup → background_ws (reload QR code after error)
 });

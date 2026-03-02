@@ -10,7 +10,7 @@ import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import getItem from '@/partials/sessionStorage/getItem';
 import AutofillErrorItemData from './components/AutofillErrorItemData';
-import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
+import generateEncryptionAESKey from '@/entrypoints/background/websocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
 import { ENCRYPTION_KEYS } from '@/constants';
 

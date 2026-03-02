@@ -275,6 +275,10 @@
     "message": "Otwórz kalendarz",
     "description": "Button title for opening the calendar popup to select expiration date"
   },
+  "ws_action_in_progress": {
+    "message": "Proszę dokończyć bieżącą akcję przed rozpoczęciem kolejnej.",
+    "description": "Toast message shown when user tries to start a new WebSocket action while another is in progress"
+  },
   "notification_send_autofill_to_tab_lack_of_service_title": {
     "message": "Błąd",
     "description": "Title for the notification when the autofill service is not found"

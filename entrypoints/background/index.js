@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { onTabUpdated, onTabActivated, onTabCreated, onTabRemoved } from './tabs';
-import { onInstalled, onMessage, onContextMenuClick, onStorageChange, onAlarm, onCommand, onStartup, onPromptMessage } from './events';
+import { createMessageRouter, onInstalled, onContextMenuClick, onStorageChange, onAlarm, onCommand, onStartup } from './events';
 import nonSafariBackground from './nonSafariBackground';
 import firefoxBackground from './firefoxBackground';
 import { setBadgeLocked } from './utils';
@@ -32,8 +32,7 @@ export default defineBackground({
     }, 1000);
 
     browser.runtime.onInstalled.addListener(async details => await onInstalled(details, migrations));
-    browser.runtime.onMessage.addListener((request, sender, sendResponse) => onMessage(request, sender, sendResponse, migrations));
-    browser.runtime.onMessage.addListener((r, s, sR) => onPromptMessage(r, s, sR, tabsInputData));
+    browser.runtime.onMessage.addListener(createMessageRouter({ migrations, tabsInputData }));
     browser.runtime.onStartup.addListener(() => onStartup(migrations));
 
     if (browser?.commands?.onCommand) {
