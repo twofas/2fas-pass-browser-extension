@@ -74,10 +74,12 @@ export default defineConfig({
     },
     plugins: [svgr()]
   }),
-  manifest: ({ browser }) => {
+  manifest: ({ browser, mode }) => {
+    const isDev = mode === 'development';
+
     const manifestObj = {
-      name: '2FAS Pass Browser Extension',
-      short_name: '2FAS Pass',
+      name: isDev ? '2FAS Pass Browser Extension [DEV]' : '2FAS Pass Browser Extension',
+      short_name: isDev ? '2FAS Pass [DEV]' : '2FAS Pass',
       author: 'Two Factor Authentication Service, Inc.',
       description: '__MSG_appDesc__',
       default_locale: 'en',
@@ -173,6 +175,10 @@ export default defineConfig({
   },
   hooks: {
     'build:manifestGenerated': (wxt, manifest) => {
+      if (wxt?.config?.mode === 'development' && manifest?.action) {
+        manifest.action.default_title = `${manifest.name}`;
+      }
+
       delete manifest.background;
 
       if (wxt?.config?.browser === 'safari') {

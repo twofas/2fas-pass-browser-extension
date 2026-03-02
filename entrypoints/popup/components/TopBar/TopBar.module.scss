@@ -58,6 +58,18 @@
     }
   }
 
+  &-dev {
+    background-color: var(--error-toast);
+    border-radius: 3px;
+    color: #fff;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    line-height: 1;
+    margin-left: 2px;
+    padding: 2px 3px;
+  }
+
   &-add-new,
   &-lock {
     align-items: center;

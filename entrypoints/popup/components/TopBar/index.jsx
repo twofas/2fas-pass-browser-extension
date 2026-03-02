@@ -172,6 +172,7 @@ function TopBar() {
               <LogoDark className="theme-dark" />
             </Link>
           )}
+          {import.meta.env.DEV && <span className={S.topbarDev}>DEV</span>}
         </div>
 
         <div className={S.topbarLock}>
