@@ -206,11 +206,9 @@ const startFetch = async (fetchAction, fetchData, from) => {
 
   if (fetchAction === PULL_REQUEST_TYPES.UPDATE_DATA) {
     wsState.fetchState = 3; // FETCH_STATE.CONTINUE_UPDATE
-    wsNotify('stateChange', { active: true, fetchState: wsState.fetchState });
-    return { status: 'ok', state: getPublicState() };
+  } else {
+    wsState.fetchState = 0; // FETCH_STATE.PUSH_NOTIFICATION
   }
-
-  wsState.fetchState = 0; // FETCH_STATE.PUSH_NOTIFICATION
 
   wsNotify('stateChange', { active: true, fetchState: wsState.fetchState, fetchAction: wsState.fetchAction });
 
