@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './styles/AutofillErrorItem.module.scss';
-import generateIcon from '../../functions/serviceList/generateIcon';
+import ItemIcon from '../../functions/serviceList/generateIcon';
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -21,7 +21,6 @@ import { ENCRYPTION_KEYS } from '@/constants';
 */
 function AutofillErrorItem (props) {
   const { getMessage } = useI18n();
-  const [faviconError, setFaviconError] = useState(false);
   const [item, setItem] = useState(null);
   const ref = useRef(null);
 
@@ -92,7 +91,7 @@ function AutofillErrorItem (props) {
     >
       <div className={S.autofillErrorItemContent}>
         <div className={S.autofillErrorItemContentHeader}>
-          {generateIcon(item, faviconError, setFaviconError)}
+          <ItemIcon item={item} />
           <p>{item?.content?.name || getMessage('no_item_name')}</p>
         </div>
         <AutofillErrorItemData item={item} />

@@ -80,7 +80,7 @@
 
   &-matching-logins,
   &-all-logins {
-    padding: 0 8px 14px 8px;
+    // padding: 0 8px 14px 8px;
     width: 100%;
   }
 
@@ -144,9 +144,7 @@
     border: 1px solid var(--primary-box-stroke);
     border-radius: 8px;
     margin-top: 11px;
-    padding-bottom: 24px;
-    padding-left: 8px;
-    padding-right: 8px;
+    padding-bottom: 4px;
     position: relative;
     z-index: 3;
 
@@ -159,7 +157,7 @@
       display: flex;
       flex-direction: row;
       gap: 0 8px;
-      padding: 0 12px 8px;
+      padding: 0 20px 8px;
       position: sticky;
       width: 100%;
       top: 44px;

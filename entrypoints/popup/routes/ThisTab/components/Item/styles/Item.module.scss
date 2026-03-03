@@ -154,9 +154,9 @@
 }
 
 .item {
+  background-color: #fff;
   contain: layout style;
-  margin: 4px 0 0;
-  padding-bottom: 4px;
+  padding: 4px 8px;
   position: relative;
 
   &:hover,
@@ -179,12 +179,12 @@
 
   &::after {
     background-color: var(--divider);
+    bottom: 0;
     content: '';
     height: 1px;
-    left: 12px;
+    left: 20px;
     position: absolute;
-    right: 12px;
-    top: 100%;
+    right: 20px;
   }
 
   &.loading {
@@ -293,7 +293,7 @@
     gap: 0 2px;
     margin-left: auto;
     position: absolute;
-    right: 4px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 1;

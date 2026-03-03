@@ -5,10 +5,10 @@
 // See LICENSE file for full terms
 
 import S from '../styles/Item.module.scss';
-import { memo, useMemo, useState, useRef, useCallback } from 'react';
+import { memo, useMemo, useRef, useCallback } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import { useNavigate } from 'react-router';
-import generateIcon from '../../../functions/serviceList/generateIcon';
+import ItemIcon from '../../../functions/serviceList/generateIcon';
 import handleAutofill from '../../../functions/serviceList/handleAutofill';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import Skeleton from '../../Skeleton';
@@ -18,17 +18,15 @@ import UsernameBtn from '../../../functions/serviceList/additionalButtons/Userna
 import ItemCustomOption from '../components/ItemCustomOption';
 
 const selectComponents = { Option: ItemCustomOption };
+const SKELETON_NAME_STYLE = { width: '100px' };
+const SKELETON_USERNAME_STYLE = { width: '60px' };
 
-/**
-* Login item view component.
-* @param {Object} props - The component props.
-* @return {JSX.Element} The rendered component.
-*/
 function LoginItemView (props) {
   const { getMessage } = useI18n();
-  const [faviconError, setFaviconError] = useState(false);
   const moreBtnRef = useRef(null);
   const navigate = useNavigate();
+  const moreRef = useRef(props.more);
+  moreRef.current = props.more;
 
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
 
@@ -42,8 +40,8 @@ function LoginItemView (props) {
       return;
     }
 
-    await handleAutofill(props.data.deviceId, props.data.vaultId, props.data.id, navigate, props.more, props.setMore);
-  }, [props?.data?.deviceId, props?.data?.vaultId, props?.data?.id, navigate, props.more]);
+    await handleAutofill(props.data.deviceId, props.data.vaultId, props.data.id, navigate, moreRef.current, props.setMore);
+  }, [props?.data?.deviceId, props?.data?.vaultId, props?.data?.id, navigate]);
 
   return (
     <>
@@ -52,10 +50,10 @@ function LoginItemView (props) {
         onClick={handleAutofillClick}
         ref={props.autofillBtnRef}
       >
-        {generateIcon(props.data, faviconError, setFaviconError, props.loading)}
+        <ItemIcon item={props.data} loading={props.loading} />
         <span>
-          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || getMessage('no_item_name')}</span>}
-          {props.loading ? <Skeleton style={{ width: '60px' }} /> : (props?.data?.content?.username && props?.data?.content?.username?.length > 0 ? <span>{props.data.content.username}</span> : null)}
+          {props.loading ? <Skeleton style={SKELETON_NAME_STYLE} /> : <span>{props?.data?.content?.name || getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={SKELETON_USERNAME_STYLE} /> : (props?.data?.content?.username && props?.data?.content?.username?.length > 0 ? <span>{props.data.content.username}</span> : null)}
         </span>
       </button>
       <div className={S.itemAdditionalButtons}>
@@ -80,12 +78,6 @@ function LoginItemView (props) {
   );
 }
 
-/**
-* Custom comparison function to prevent unnecessary re-renders.
-* @param {Object} prevProps - Previous props.
-* @param {Object} nextProps - Next props.
-* @return {boolean} True if props are equal (should not re-render).
-*/
 function arePropsEqual (prevProps, nextProps) {
   return prevProps.data?.id === nextProps.data?.id &&
          prevProps.data?.sifExists === nextProps.data?.sifExists &&

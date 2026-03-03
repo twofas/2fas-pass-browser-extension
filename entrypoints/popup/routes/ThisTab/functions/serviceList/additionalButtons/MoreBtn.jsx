@@ -5,33 +5,32 @@
 // See LICENSE file for full terms
 
 import S from '../../../components/Item/styles/Item.module.scss';
+import { useRef, useCallback, useMemo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import ItemMoreIcon from '@/assets/popup-window/service-more.svg?react';
 
-/** 
-* Function to render the more actions button.
-* @param {Object} props - The component props.
-* @param {boolean} props.more - Indicates if more actions are available.
-* @param {function} props.setMore - Function to update the more state.
-* @return {JSX.Element} The rendered button element.
-*/
+const stopPropagation = event => { event.stopPropagation(); };
+
 const MoreBtn = ({ more, setMore, ref }) => {
   const { getMessage } = useI18n();
+  const moreRef = useRef(more);
+  moreRef.current = more;
 
-  const handleClick = event => {
+  const handleClick = useCallback(event => {
     event.stopPropagation();
-    setMore(!more);
-  };
+    setMore(!moreRef.current);
+  }, [setMore]);
 
-  const handleMouseDown = event => {
-    event.stopPropagation();
-  };
+  const className = useMemo(() =>
+    `${S.itemMoreBtn} ${more ? S.active : ''}`,
+    [more]
+  );
 
   return (
     <button
-      className={`${S.itemMoreBtn} ${more ? S.active : ''}`}
+      className={className}
       onClick={handleClick}
-      onMouseDown={handleMouseDown}
+      onMouseDown={stopPropagation}
       title={getMessage('this_tab_more_actions')}
       ref={ref}
     >
