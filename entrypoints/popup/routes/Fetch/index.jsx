@@ -25,7 +25,7 @@ function Fetch (props) {
   const { state } = location;
   const initDoneRef = useRef(false);
 
-  const fetchState = bgState?.fetchState ?? FETCH_STATE.DEFAULT;
+  const fetchState = bgState?.fetchState ?? (state?.action === PULL_REQUEST_TYPES.UPDATE_DATA ? FETCH_STATE.CONTINUE_UPDATE : FETCH_STATE.PUSH_NOTIFICATION);
   const errorText = bgState?.fetchErrorText || getMessage('fetch_connection_error_header');
   const currentAction = bgState?.fetchAction || state?.action;
 

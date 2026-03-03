@@ -229,10 +229,11 @@ function SecureNoteText (props) {
       });
       form.change('editedSif', isText(localDecryptedText) ? localDecryptedText : '');
     } else {
-      await decryptTextOnDemand();
+      const decryptedText = await decryptTextOnDemand();
       setBatchData({
         sifEditable: true,
-        revealSecureNote: true
+        revealSecureNote: true,
+        editedSif: decryptedText || ''
       });
     }
   };
