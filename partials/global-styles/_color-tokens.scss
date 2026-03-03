@@ -4,8 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "sass:color";
-
 $colors-light: (
   'primary-color': #214ce8,
   'icon-primary-color': #214ce8,
@@ -55,10 +53,10 @@ $colors-light: (
   'tag-cyan': #00c0e8,
   'tag-indigo': #6155f5,
   'tag-purple': #cb30e0,
-  'login-item-bg-gradient': color.adjust(#002b52, $blackness: -143%),
-  'secure-note-item-bg-gradient': color.adjust(#483800, $blackness: -150%),
-  'wifi-item-bg-gradient': color.adjust(#4c2600, $blackness: -145%),
-  'payment-card-item-bg-gradient': color.adjust(#043b12, $blackness: -145%),
+  'login-item-bg-gradient': #c0e1ff,
+  'secure-note-item-bg-gradient': #fff3c7,
+  'wifi-item-bg-gradient': #ffdfbf,
+  'payment-card-item-bg-gradient': #b2ffc5,
 );
 
 $colors-dark: (
@@ -110,10 +108,10 @@ $colors-dark: (
   'tag-cyan': #3cd3fe,
   'tag-indigo': #6d7cff,
   'tag-purple': #db34f2,
-  'login-item-bg-gradient': color.adjust(#002b52, $lightness: 5%),
-  'secure-note-item-bg-gradient': color.adjust(#483800, $lightness: 5%),
-  'wifi-item-bg-gradient': color.adjust(#4c2600, $lightness: 5%),
-  'payment-card-item-bg-gradient': color.adjust(#043b12, $lightness: 5%),
+  'login-item-bg-gradient': #00386c,
+  'secure-note-item-bg-gradient': #624c00,
+  'wifi-item-bg-gradient': #663300,
+  'payment-card-item-bg-gradient': #065319,
 );
 
 @mixin generate-light-vars {
