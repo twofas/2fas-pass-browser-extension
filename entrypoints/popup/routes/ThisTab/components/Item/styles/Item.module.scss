@@ -154,7 +154,7 @@
 }
 
 .item {
-  background-color: #fff;
+  background-color: var(--primary-box-bg);
   contain: layout style;
   padding: 4px 8px;
   position: relative;
