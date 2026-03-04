@@ -40,6 +40,7 @@ function CardNumber (props) {
   const [isDecrypting, setIsDecrypting] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [shouldFocusInputMask, setShouldFocusInputMask] = useState(false);
+  const hasFocusedRef = useRef(false);
 
   const itemInstance = useMemo(() => {
     if (!data.item) {
@@ -122,9 +123,15 @@ function CardNumber (props) {
   };
 
   const focusInputMask = useCallback(() => {
+    if (hasFocusedRef.current) {
+      setShouldFocusInputMask(false);
+      return;
+    }
+
     const inputElement = inputMaskRef.current?.getInput?.() || inputMaskRef.current;
 
     if (inputElement && !inputElement.disabled) {
+      hasFocusedRef.current = true;
       inputElement.focus();
       setShouldFocusInputMask(false);
     } else {
@@ -202,6 +209,7 @@ function CardNumber (props) {
       setLocalDecryptedCardNumber(null);
       setIsFocused(false);
       setShouldFocusInputMask(false);
+      hasFocusedRef.current = false;
       setItem(restoredItem);
       setData('cardNumberEditable', false);
       form.change('editedCardNumber', '');

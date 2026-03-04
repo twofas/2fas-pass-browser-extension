@@ -51,6 +51,7 @@ function Password (props) {
   const [isFocused, setIsFocused] = useState(false);
   const previousPasswordValueRef = useRef(null);
   const inputRef = useRef(null);
+  const hasFocusedRef = useRef(false);
   const latestItemRef = useRef(data.item);
   const latestPasswordRef = useRef(null);
   const updateTimeoutRef = useRef(null);
@@ -136,7 +137,8 @@ function Password (props) {
   }, [data?.passwordVisible, data?.passwordEditable, localDecryptedPassword, isDecrypting, itemInstance?.sifExists, decryptPasswordOnDemand]);
 
   useEffect(() => {
-    if (data?.passwordEditable && inputRef.current) {
+    if (data?.passwordEditable && inputRef.current && !hasFocusedRef.current) {
+      hasFocusedRef.current = true;
       inputRef.current.focus();
 
       requestAnimationFrame(() => {
@@ -145,6 +147,10 @@ function Password (props) {
           inputRef.current.setSelectionRange(length, length);
         }
       });
+    }
+
+    if (!data?.passwordEditable) {
+      hasFocusedRef.current = false;
     }
   }, [data?.passwordEditable]);
 

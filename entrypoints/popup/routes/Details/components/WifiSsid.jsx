@@ -19,6 +19,7 @@ function WifiSsid (props) {
   const { getMessage } = useI18n();
   const { data, setData, setItem } = usePopupState();
   const inputRef = useRef(null);
+  const hasFocusedRef = useRef(false);
 
   const { formData } = props;
   const { inputError } = formData;
@@ -73,8 +74,13 @@ function WifiSsid (props) {
   }, [data.item, setItem]);
 
   useEffect(() => {
-    if (data.ssidEditable && inputRef.current) {
+    if (data.ssidEditable && inputRef.current && !hasFocusedRef.current) {
+      hasFocusedRef.current = true;
       inputRef.current.focus();
+    }
+
+    if (!data.ssidEditable) {
+      hasFocusedRef.current = false;
     }
   }, [data.ssidEditable]);
 

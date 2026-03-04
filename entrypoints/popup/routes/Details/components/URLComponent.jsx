@@ -55,6 +55,7 @@ function URLComponent (props) {
 
   const { inputError, uri, index } = props;
   const inputRef = useRef(null);
+  const hasFocusedRef = useRef(false);
 
   const isEditable = data?.domainsEditable?.[uri._tempId];
   const buttonText = isEditable === true ? getMessage('cancel') : getMessage('edit');
@@ -168,8 +169,13 @@ function URLComponent (props) {
   }, [data.item, setItem, uri._tempId, urisWithTempIds, updateUri]);
 
   useEffect(() => {
-    if (isEditable && inputRef.current) {
+    if (isEditable && inputRef.current && !hasFocusedRef.current) {
+      hasFocusedRef.current = true;
       inputRef.current.focus();
+    }
+
+    if (!isEditable) {
+      hasFocusedRef.current = false;
     }
   }, [isEditable]);
 
