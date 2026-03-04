@@ -50,6 +50,7 @@
 
     svg {
       height: 11px;
+      pointer-events: none;
       stroke: var(--primary-color);
       stroke-linecap: round;
       stroke-linejoin: round;

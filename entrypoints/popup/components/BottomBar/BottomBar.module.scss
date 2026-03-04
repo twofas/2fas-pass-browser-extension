@@ -186,6 +186,7 @@
 
       svg {
         height: 20px;
+        pointer-events: none;
         stroke: var(--primary-color);
         stroke-width: 1.5;
         stroke-linecap: round;
@@ -225,6 +226,7 @@
 
       svg {
         height: 20px;
+        pointer-events: none;
         stroke: var(--primary-color);
         stroke-width: 1.5;
         stroke-linecap: round;
@@ -286,6 +288,7 @@
 
       svg {
         height: auto;
+        pointer-events: none;
         stroke: var(--primary-color);
         stroke-width: 1.5;
         stroke-linecap: round;

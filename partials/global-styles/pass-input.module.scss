@@ -225,6 +225,7 @@
           svg {
             fill: none;
             height: auto;
+            pointer-events: none;
             stroke: var(--primary-color);
             stroke-linecap: round;
             stroke-linejoin: round;
@@ -280,6 +281,7 @@
 
             svg {
               height: auto;
+              pointer-events: none;
               stroke: var(--error) !important;
               width: 16px;
             }
@@ -312,6 +314,7 @@
             }
 
             svg {
+              pointer-events: none;
               stroke: var(--primary-color);
               transition: stroke var(--anim);
               width: 16px;
@@ -399,6 +402,7 @@
       svg {
         fill: none;
         height: auto;
+        pointer-events: none;
         stroke: var(--primary-color);
         stroke-linecap: round;
         stroke-linejoin: round;
@@ -549,6 +553,7 @@
 
       svg {
         height: auto;
+        pointer-events: none;
         stroke: currentColor;
         stroke-linecap: round;
         stroke-linejoin: round;

@@ -105,6 +105,10 @@
         font-weight: 500;
       }
 
+      svg {
+        pointer-events: none;
+      }
+
       &:hover,
       &:focus {
         svg {
@@ -204,6 +208,7 @@
 
     svg {
       height: 16px;
+      pointer-events: none;
       stroke-width: 1.5;
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -297,6 +302,7 @@
 
     svg {
       height: 16px;
+      pointer-events: none;
       stroke: var(--primary-color);
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -382,6 +388,7 @@
 
     svg {
       height: 10px;
+      pointer-events: none;
       stroke: var(--primary-color);
       stroke-width: 2;
       stroke-linecap: round;

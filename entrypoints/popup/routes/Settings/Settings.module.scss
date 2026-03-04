@@ -68,6 +68,7 @@
           svg {
             fill: var(--object);
             height: 10px;
+            pointer-events: none;
             transition: fill var(--anim);
             width: auto;
           }
@@ -388,6 +389,7 @@
 
         svg {
           height: 12px;
+          pointer-events: none;
           stroke: var(--primary-color);
           stroke-linecap: round;
           stroke-linejoin: round;
@@ -487,6 +489,7 @@
       }
 
       svg {
+        pointer-events: none;
         transition: fill var(--anim);
         width: auto;
 
@@ -561,6 +564,7 @@
     svg {
       fill: var(--object);
       height: 10px;
+      pointer-events: none;
       transition: fill var(--anim);
       width: auto;
     }
@@ -593,6 +597,7 @@
 
         svg {
           height: 16px;
+          pointer-events: none;
           stroke: var(--primary-color);
           stroke-linecap: round;
           stroke-linejoin: round;
@@ -701,6 +706,7 @@
 
         svg {
           height: 20px;
+          pointer-events: none;
           stroke: var(--error);
           stroke-linecap: round;
           stroke-linejoin: round;
@@ -800,6 +806,7 @@
 
             svg {
               height: 20px;
+              pointer-events: none;
               stroke: var(--error);
               stroke-linecap: round;
               stroke-linejoin: round;

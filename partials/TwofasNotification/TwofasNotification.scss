@@ -484,6 +484,7 @@
 
         svg {
           height: 32px !important;
+          pointer-events: none !important;
           stroke-linecap: round !important;
           stroke-linejoin: round !important;
           stroke-width: 1.5 !important;
@@ -693,6 +694,7 @@
 
         svg {
           height: 32px !important;
+          pointer-events: none !important;
           stroke-linecap: round !important;
           stroke-linejoin: round !important;
           stroke-width: 1.5 !important;
@@ -875,6 +877,7 @@
       svg {
         fill: var(--hover-color) !important;
         height: 32px !important;
+        pointer-events: none !important;
         stroke: var(--primary-color) !important;
         width: 32px !important;
       }

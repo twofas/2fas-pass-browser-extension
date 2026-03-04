@@ -47,6 +47,7 @@
       svg {
         fill: var(--primary-color);
         height: 8px;
+        pointer-events: none;
         transition: fill var(--anim);
         width: 8px;
       }
@@ -117,14 +118,15 @@
       padding: 0;
 
       svg {
-        width: 16px;
+        fill: none;
         height: auto;
+        pointer-events: none;
         stroke: var(--primary-color);
-        stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        fill: none;
+        stroke-width: 1.5;
         transition: stroke var(--anim);
+        width: 16px;
       }
     }
   }
@@ -167,6 +169,7 @@
 
       svg {
         height: auto;
+        pointer-events: none;
         stroke: var(--primary-color);
         stroke-linecap: round;
         stroke-linejoin: round;

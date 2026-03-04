@@ -25,11 +25,12 @@
     padding: 0;
 
     svg {
+      height: auto;
+      pointer-events: none;
       stroke: var(--primary-color);
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-width: 1px;
-      height: auto;
       transition: fill var(--anim);
       width: 16px;
     }

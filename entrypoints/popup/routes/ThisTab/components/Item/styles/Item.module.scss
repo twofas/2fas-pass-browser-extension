@@ -357,6 +357,7 @@
 
       svg {
         height: auto;
+        pointer-events: none;
 
         &.item-loader {
           color: var(--primary-color);

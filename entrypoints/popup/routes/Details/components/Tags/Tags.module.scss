@@ -132,16 +132,13 @@
       svg {
         fill: none;
         height: 12px;
+        pointer-events: none;
         stroke: var(--primary-color);
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 1.5;
         transition: stroke var(--anim);
         width: auto;
-
-        &:hover {
-          stroke: var(--error);
-        }
       }
     }
   }
@@ -174,6 +171,7 @@
     svg {
       fill: none;
       height: 14px;
+      pointer-events: none;
       stroke: var(--primary-color);
       stroke-linecap: round;
       stroke-linejoin: round;

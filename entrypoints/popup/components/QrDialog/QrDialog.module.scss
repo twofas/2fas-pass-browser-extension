@@ -62,8 +62,9 @@
     top: 10px;
 
     svg {
-      height: 32px;
       fill: var(--additional);
+      height: 32px;
+      pointer-events: none;
       stroke: var(--primary-color);
       stroke-width: 1.5;
       transition: stroke .3s ease-in-out;
