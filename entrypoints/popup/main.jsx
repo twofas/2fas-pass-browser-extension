@@ -87,6 +87,8 @@ const hydrateAndSetInitialRoute = async () => {
   }
 };
 
+browser.runtime.connect({ name: 'popup-lifecycle' });
+
 const wsActive = await checkActiveWsAction();
 
 await Promise.all([

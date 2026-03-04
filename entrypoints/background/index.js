@@ -9,6 +9,7 @@ import { createMessageRouter, onInstalled, onContextMenuClick, onStorageChange, 
 import nonSafariBackground from './nonSafariBackground';
 import firefoxBackground from './firefoxBackground';
 import initBadgeState from './utils/badge/initBadgeState';
+import onPopupDisconnect from './websocket/onPopupDisconnect.js';
 
 export default defineBackground({
   /**
@@ -49,6 +50,12 @@ export default defineBackground({
     browser.alarms.onAlarm.addListener(onAlarm);
 
     browser.storage.onChanged.addListener((change, areaName) => onStorageChange(change, areaName, migrations));
+
+    browser.runtime.onConnect.addListener(port => {
+      if (port.name === 'popup-lifecycle') {
+        port.onDisconnect.addListener(() => onPopupDisconnect());
+      }
+    });
 
     if (import.meta.env.BROWSER !== 'safari') {
       nonSafariBackground(tabsInputData, savePromptActions, tabUpdateData);
