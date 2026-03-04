@@ -50,7 +50,7 @@ const checkActiveWsAction = async () => {
       window.__wsInitialState = response.state;
       window.__wsPendingUpdates = response.pendingUpdates;
       return true;
-    } else if (response?.pendingUpdates?.toasts?.length > 0) {
+    } else if (response?.pendingUpdates?.toasts?.length > 0 || response?.pendingUpdates?.navigation) {
       window.__wsPendingUpdates = response.pendingUpdates;
     }
   } catch { }
@@ -64,6 +64,11 @@ const checkActiveWsAction = async () => {
  */
 const hydrateAndSetInitialRoute = async () => {
   try {
+    if (window.__wsPendingUpdates?.navigation?.path) {
+      window.location.hash = `#${window.__wsPendingUpdates.navigation.path}`;
+      return;
+    }
+
     await usePopupStateStore.persist.rehydrate();
 
     const state = usePopupStateStore.getState();

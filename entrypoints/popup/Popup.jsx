@@ -378,14 +378,17 @@ const PopupMain = memo(() => {
   useEffect(() => {
     const pending = window.__wsPendingUpdates;
 
-    if (!state.loaded || !pending?.toasts?.length) {
+    if (!state.loaded || (!pending?.toasts?.length && !pending?.navigation)) {
       return;
     }
 
     window.__wsPendingUpdates = null;
-    pending.toasts.forEach(toast => {
-      showToast(toast.message, toast.type, toast.autoClose !== false);
-    });
+
+    if (pending.toasts?.length > 0) {
+      pending.toasts.forEach(toast => {
+        showToast(toast.message, toast.type, toast.autoClose !== false);
+      });
+    }
   }, [state.loaded]);
 
   return (

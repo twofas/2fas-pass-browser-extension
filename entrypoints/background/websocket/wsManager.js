@@ -224,6 +224,8 @@ const startFetch = async (fetchAction, fetchData, from) => {
       return { status: 'ok', state: getPublicState() };
     }
 
+    wsState.fetchLocationState.deviceId = device.id;
+
     sessionId = Base64ToHex(device?.sessionId).toLowerCase();
     const timestampValue = await getNTPTime();
     timestamp = timestampValue.toString();
@@ -264,6 +266,7 @@ const startFetch = async (fetchAction, fetchData, from) => {
     const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
     wsState.fetchLocationState.data = wsState.fetchLocationState.data || {};
     wsState.fetchLocationState.data.notificationId = json?.notificationId;
+    wsState.fetchLocationState.notificationId = json?.notificationId;
     wsState._socketData.state = wsState.fetchLocationState;
 
     if (json?.error === 'UNREGISTERED') {

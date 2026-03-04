@@ -447,6 +447,10 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     }
   }
 
+  if (closeData?.returnToast) {
+    wsNotify('toast', { message: closeData.returnToast.text, type: closeData.returnToast.type || 'info' });
+  }
+
   if (closeData?.returnUrl) {
     const navigationPayload = { path: closeData.returnUrl };
 
@@ -459,12 +463,6 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     }
 
     wsNotify('navigate', navigationPayload);
-  }
-
-  if (closeData?.returnToast) {
-    setTimeout(() => {
-      wsNotify('toast', { message: closeData.returnToast.text, type: closeData.returnToast.type || 'info' });
-    }, 200);
   }
 
   return true;
