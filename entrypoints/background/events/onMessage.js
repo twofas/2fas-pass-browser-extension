@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { isText, checkStorageAutoClearActions } from '@/partials/functions';
-import { openBrowserPage, openPopupWindowInNewWindow, openInstallPage, getLocalKey, sendAutoClearAction, handleAutofillCardWithPermission, handleAutofillWithPermission } from '../utils';
+import { openBrowserPage, openPopupWindowInNewWindow, openInstallPage, getLocalKey, sendAutoClearAction, handleAutofillCardWithPermission, handleAutofillWithPermission, processCrossDomainDialogResult, processMatchingLoginsResult, processSavePromptResult } from '../utils';
 import runMigrations from '../migrations';
 import onTabFocused from '../tabs/onTabFocused';
 
@@ -117,6 +117,38 @@ const onMessage = (request, sender, sendResponse, migrations) => {
             .catch(e => { sendResponse({ status: 'error', message: e.message }); });
         } else {
           sendResponse({ status: 'error', message: 'Missing required parameters' });
+        }
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.CROSS_DOMAIN_DIALOG_RESULT: {
+        if (request?.storageKey) {
+          processCrossDomainDialogResult(request)
+            .then(() => { sendResponse({ status: 'ok' }); })
+            .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+        } else {
+          sendResponse({ status: 'error', message: 'Missing storageKey' });
+        }
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.MATCHING_LOGINS_RESULT: {
+        processMatchingLoginsResult(request)
+          .then(() => { sendResponse({ status: 'ok' }); })
+          .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.SAVE_PROMPT_RESULT: {
+        if (request?.storageKey) {
+          processSavePromptResult(request)
+            .then(() => { sendResponse({ status: 'ok' }); })
+            .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+        } else {
+          sendResponse({ status: 'error', message: 'Missing storageKey' });
         }
 
         break;

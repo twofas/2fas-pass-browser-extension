@@ -116,6 +116,7 @@ const createDropdown = (domain, domainSelections) => {
 const crossDomainDialog = (request, sendResponse, container) => {
   const unknownDomains = request.unknownDomains || [];
   const theme = request.theme;
+  const storageKey = request.storageKey;
   const isReplacing = !!activeDialog;
 
   if (activeDialog) {
@@ -124,9 +125,11 @@ const crossDomainDialog = (request, sendResponse, container) => {
   }
 
   if (unknownDomains.length === 0) {
-    sendResponse({ status: 'ok', confirmed: false, domainPreferences: {}, allowedDomains: [] });
+    sendResponse({ status: 'ok', dialogShown: false });
     return;
   }
+
+  sendResponse({ status: 'ok', dialogShown: true });
 
   const domainSelections = {};
 
@@ -279,7 +282,15 @@ const crossDomainDialog = (request, sendResponse, container) => {
 
     responded = true;
     cleanup();
-    sendResponse({ status: 'ok', confirmed: false, domainPreferences: {}, allowedDomains: [] });
+
+    browser.runtime.sendMessage({
+      action: REQUEST_ACTIONS.CROSS_DOMAIN_DIALOG_RESULT,
+      target: REQUEST_TARGETS.BACKGROUND,
+      storageKey,
+      confirmed: false,
+      domainPreferences: {},
+      allowedDomains: []
+    }).catch(() => {});
   };
 
   const respondAccept = () => {
@@ -298,7 +309,15 @@ const crossDomainDialog = (request, sendResponse, container) => {
     }
 
     cleanup();
-    sendResponse({ status: 'ok', confirmed: true, domainPreferences: domainSelections, allowedDomains });
+
+    browser.runtime.sendMessage({
+      action: REQUEST_ACTIONS.CROSS_DOMAIN_DIALOG_RESULT,
+      target: REQUEST_TARGETS.BACKGROUND,
+      storageKey,
+      confirmed: true,
+      domainPreferences: domainSelections,
+      allowedDomains
+    }).catch(() => {});
   };
 
   closeBtn.addEventListener('click', respondCancel);

@@ -14,6 +14,9 @@ export const REQUEST_ACTIONS = Object.freeze({
   CHECK_AUTOFILL_INPUTS_CARD: 'checkAutofillInputsCard', // content
   CHECK_IFRAME_PERMISSION: 'checkIframePermission', // content
   SHOW_CROSS_DOMAIN_CONFIRM: 'showCrossDomainConfirm', // content
+  CROSS_DOMAIN_DIALOG_RESULT: 'crossDomainDialogResult', // background (from content script)
+  MATCHING_LOGINS_RESULT: 'matchingLoginsResult', // background (from content script)
+  SAVE_PROMPT_RESULT: 'savePromptResult', // background (from content script)
   SEND_URL: 'sendUrl', // popup
   MATCHING_LOGINS: 'matchingLogins', // content
   SAVE_PROMPT: 'savePrompt', // content
