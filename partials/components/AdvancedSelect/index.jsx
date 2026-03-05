@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import Select from 'react-select';
-import { useRef, useCallback, useEffect, useState } from 'react';
+import { useRef, useCallback, useEffect, useLayoutEffect, useState } from 'react';
 
 let activeMenuCloseCallback = null;
 
@@ -37,6 +37,12 @@ function AdvancedSelect (props) {
   const selectRef = useRef(null);
   const closeCallbackRef = useRef(null);
   const [internalMenuIsOpen, setInternalMenuIsOpen] = useState(false);
+  const [, setMounted] = useState(false);
+
+  useLayoutEffect(() => {
+    setMounted(true);
+  }, []);
+
   const onMenuOpenRef = useRef(props?.onMenuOpen);
   const onMenuCloseRef = useRef(props?.onMenuClose);
   onMenuOpenRef.current = props?.onMenuOpen;
