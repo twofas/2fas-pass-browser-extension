@@ -198,5 +198,9 @@
   "button_open_calendar": {
     "message": "Open calendar",
     "description": "Button title for opening the calendar popup to select expiration date"
+  },
+  "ws_action_in_progress": {
+    "message": "Please finish the current action before starting a new one.",
+    "description": "Toast message shown when user tries to start a new WebSocket action while another is in progress"
   }
 }

@@ -14,8 +14,6 @@ import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames'
 * @return {Promise<void>} A promise that resolves when the logins are sent.
 */
 const sendMatchingLoginsToTab = async (tabID, data) => {
-  let res = [];
-
   try {
     const theme = await storage.getItem('local:theme');
     const sendData = data.map(item => ({
@@ -26,20 +24,16 @@ const sendMatchingLoginsToTab = async (tabID, data) => {
       }}
     ));
 
-    res = await sendMessageToAllFrames(tabID, {
+    await sendMessageToAllFrames(tabID, {
       action: REQUEST_ACTIONS.MATCHING_LOGINS,
       data: sendData,
       theme,
+      tabId: tabID,
       target: REQUEST_TARGETS.CONTENT
     });
-
-    res = res.filter(r => r?.status && r?.status === 'action' || r?.status === 'cancel');
-    res = res[0];
   } catch (e) {
     await CatchError(e);
   }
-
-  return res;
 };
 
 export default sendMatchingLoginsToTab;

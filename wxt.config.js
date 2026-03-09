@@ -74,10 +74,12 @@ export default defineConfig({
     },
     plugins: [svgr()]
   }),
-  manifest: ({ browser }) => {
+  manifest: ({ browser, mode }) => {
+    const isDev = mode === 'development';
+
     const manifestObj = {
-      name: '2FAS Pass Browser Extension',
-      short_name: '2FAS Pass',
+      name: isDev ? '2FAS Pass Browser Extension [DEV]' : '2FAS Pass Browser Extension',
+      short_name: isDev ? '2FAS Pass [DEV]' : '2FAS Pass',
       author: 'Two Factor Authentication Service, Inc.',
       description: '__MSG_appDesc__',
       default_locale: 'en',
@@ -155,7 +157,7 @@ export default defineConfig({
       manifestObj.browser_specific_settings = {
         gecko: {
           id: '{2fa5f682-d4c4-40e3-8ad2-c8404283d4f9}',
-          strict_min_version: '131.0',
+          strict_min_version: '142.0',
           data_collection_permissions: {
             required: ['none']
           }
@@ -163,10 +165,20 @@ export default defineConfig({
       };
     }
 
+    if (browser !== 'firefox') {
+      manifestObj.externally_connectable = {
+        ids: []
+      };
+    }
+
     return manifestObj;
   },
   hooks: {
     'build:manifestGenerated': (wxt, manifest) => {
+      if (wxt?.config?.mode === 'development' && manifest?.action) {
+        manifest.action.default_title = `${manifest.name}`;
+      }
+
       delete manifest.background;
 
       if (wxt?.config?.browser === 'safari') {

@@ -7,7 +7,7 @@
 import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
 import getKey from '@/partials/sessionStorage/getKey';
-import saveItems from '@/partials/WebSocket/utils/saveItems';
+import saveItems from '@/entrypoints/background/websocket/utils/saveItems';
 import { ENCRYPTION_KEYS } from '@/constants';
 
 /** 

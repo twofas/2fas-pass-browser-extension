@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "variables" as v;
+@use "variables";
 @use "fonts";
 @use "input";
 
@@ -96,25 +96,8 @@ a {
 }
 
 ::selection {
-  color: v.$primary-text-dark;
-
-  body.theme-light & {
-    background-color: v.$primary-color-light;
-  }
-
-  body.theme-dark & {
-    background-color: v.$primary-color-dark;
-  }
-
-  body.theme-unset & {
-    @media (prefers-color-scheme: light) {
-      background-color: v.$primary-color-light;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      background-color: v.$primary-color-dark;
-    }
-  }
+  background-color: var(--primary-color);
+  color: var(--tertiary-text);
 }
 
 picture {
@@ -169,33 +152,13 @@ picture {
   z-index: 9;
 
   svg {
+    fill: var(--additional);
     height: 32px;
+    stroke: var(--primary-color);
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 1.5;
     width: 32px;
-
-    body.theme-light & {
-      fill: v.$additional-light;
-      stroke: v.$primary-color-light;
-    }
-
-    body.theme-dark & {
-      fill: v.$additional-dark;
-      stroke: v.$primary-color-dark;
-    }
-
-    body.theme-unset & {
-      @media (prefers-color-scheme: light) {
-        fill: v.$additional-light;
-        stroke: v.$primary-color-light;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        fill: v.$additional-dark;
-        stroke: v.$primary-color-dark;
-      }
-    }
   }
 }
 

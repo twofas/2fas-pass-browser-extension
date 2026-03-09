@@ -4,16 +4,14 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use 'sass:color';
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
+@use "@/partials/global-styles/functions" as fn;
 
 .icon-label {
   align-items: center;
-  background: v.$login-item-bg-light;
-  background: linear-gradient(135deg,v.$login-item-bg-light 0%, color.adjust(v.$login-item-bg-dark, $blackness: -143%) 100%);
+  background: var(--login-item-bg);
+  background: linear-gradient(135deg, var(--login-item-bg) 0%, var(--login-item-bg-gradient) 100%);
   border-radius: 4px;
-  color: v.$login-item-light;
+  color: var(--login-item);
   display: inline-flex;
   flex-shrink: 0;
   font-size: 10px;
@@ -25,17 +23,11 @@
   overflow: hidden;
   text-align: center;
   width: 32px;
-
-  @include m.darkMode {
-    background: v.$login-item-bg-dark;
-    background: linear-gradient(135deg,v.$login-item-bg-dark 0%, color.adjust(v.$login-item-bg-dark, $lightness: 5%) 100%);
-    color: v.$login-item-dark;
-  }
 }
 
 .icon-image {
   align-items: center;
-  background-color: v.$primary-box-bg-light;
+  background-color: var(--primary-box-bg);
   border-radius: 4px;
   display: inline-flex;
   flex-shrink: 0;
@@ -46,17 +38,13 @@
   position: relative;
   width: 32px;
 
-  @include m.darkMode {
-    background-color: v.$primary-box-bg-dark;
-  }
-
   img {
     height: 26px;
     object-fit: fill;
     opacity: 0;
     padding: 3px;
     position: relative;
-    transition: opacity v.$anim;
+    transition: opacity var(--anim);
     width: 26px;
     z-index: 2;
   }
@@ -71,8 +59,8 @@
 
 .icon-secure-note {
   align-items: center;
-  background: v.$secure-note-item-bg-light;
-  background: linear-gradient(135deg,v.$secure-note-item-bg-light 0%, color.adjust(v.$secure-note-item-bg-dark, $blackness: -150%) 100%);
+  background: var(--secure-note-item-bg);
+  background: linear-gradient(135deg, var(--secure-note-item-bg) 0%, var(--secure-note-item-bg-gradient) 100%);
   border-radius: 4px;
   display: inline-flex;
   flex-shrink: 0;
@@ -82,26 +70,17 @@
   overflow: hidden;
   width: 32px;
 
-  @include m.darkMode {
-    background: v.$secure-note-item-bg-dark;
-    background: linear-gradient(135deg,v.$secure-note-item-bg-dark 0%, color.adjust(v.$secure-note-item-bg-dark, $lightness: 5%) 100%);
-  }
-
   svg {
-    fill: v.$secure-note-item-light;
+    fill: var(--secure-note-item);
     height: 16px;
     width: auto;
-
-    @include m.darkMode {
-      fill: v.$secure-note-item-dark;
-    }
   }
 }
 
 .icon-wifi {
   align-items: center;
-  background: v.$wifi-item-bg-light;
-  background: linear-gradient(135deg,v.$wifi-item-bg-light 0%, color.adjust(v.$wifi-item-bg-dark, $blackness: -145%) 100%);
+  background: var(--wifi-item-bg);
+  background: linear-gradient(135deg, var(--wifi-item-bg) 0%, var(--wifi-item-bg-gradient) 100%);
   border-radius: 4px;
   display: inline-flex;
   flex-shrink: 0;
@@ -111,29 +90,20 @@
   overflow: hidden;
   width: 32px;
 
-  @include m.darkMode {
-    background: v.$wifi-item-bg-dark;
-    background: linear-gradient(135deg,v.$wifi-item-bg-dark 0%, color.adjust(v.$wifi-item-bg-dark, $lightness: 5%) 100%);
-  }
-
   svg {
     height: 12px;
-    stroke: v.$wifi-item-light;
+    stroke: var(--wifi-item);
     stroke-linecap: round;
     stroke-linejoin: round;
     stroke-width: 1;
     width: auto;
-
-    @include m.darkMode {
-      stroke: v.$wifi-item-dark;
-    }
   }
 }
 
 .icon-payment-card {
   align-items: center;
-  background: v.$payment-card-item-bg-light;
-  background: linear-gradient(135deg,v.$payment-card-item-bg-light 0%, color.adjust(v.$payment-card-item-bg-dark, $blackness: -145%) 100%);
+  background: var(--payment-card-item-bg);
+  background: linear-gradient(135deg, var(--payment-card-item-bg) 0%, var(--payment-card-item-bg-gradient) 100%);
   border-radius: 4px;
   display: inline-flex;
   flex-shrink: 0;
@@ -143,26 +113,17 @@
   overflow: hidden;
   width: 32px;
 
-  @include m.darkMode {
-    background: v.$payment-card-item-bg-dark;
-    background: linear-gradient(135deg,v.$payment-card-item-bg-dark 0%, color.adjust(v.$payment-card-item-bg-dark, $lightness: 5%) 100%);
-  }
-
   svg {
     height: 17px;
-    stroke: v.$payment-card-item-light;
+    stroke: var(--payment-card-item);
     stroke-width: .8;
     width: auto;
-
-    @include m.darkMode {
-      stroke: v.$payment-card-item-dark;
-    }
   }
 }
 
 .icon-payment-card-image {
   align-items: center;
-  background-color: v.$primary-box-bg-light;
+  background-color: var(--primary-box-bg);
   border-radius: 4px;
   display: inline-flex;
   flex-shrink: 0;
@@ -173,17 +134,13 @@
   position: relative;
   width: 32px;
 
-  @include m.darkMode {
-    background-color: v.$primary-box-bg-dark;
-  }
-
   img {
     height: 26px;
     object-fit: fill;
     opacity: 0;
     padding: 3px;
     position: absolute;
-    transition: opacity v.$anim;
+    transition: opacity var(--anim);
     width: 26px;
     z-index: 2;
   }
@@ -197,8 +154,9 @@
 }
 
 .item {
-  margin: 4px 0 0;
-  padding-bottom: 4px;
+  background-color: var(--primary-box-bg);
+  contain: layout style;
+  padding: 4px 8px;
   position: relative;
 
   &:hover,
@@ -220,17 +178,13 @@
   }
 
   &::after {
-    background-color: v.$divider-light;
+    background-color: var(--divider);
+    bottom: 0;
     content: '';
     height: 1px;
-    left: 12px;
+    left: 20px;
     position: absolute;
-    right: 12px;
-    top: 100%;
-
-    @include m.darkMode {
-      background-color: v.$divider-dark;
-    }
+    right: 20px;
   }
 
   &.loading {
@@ -239,7 +193,7 @@
 
   &-autofill {
     align-items: center;
-    background-color: rgba(v.$hover-color-light, 0);
+    background-color: fn.hex-rgba(var(--hover-color), 0);
     border-radius: 6px;
     display: flex;
     flex-direction: row;
@@ -247,20 +201,12 @@
     justify-content: flex-start;
     margin: 0;
     padding: 12px 12px;
-    transition: background-color v.$anim;
+    transition: background-color var(--anim);
     width: 100%;
-
-    @include m.darkMode {
-      background-color: rgba(v.$hover-color-dark, 0);
-    }
 
     &:hover,
     &.hover {
-      background-color: rgba(v.$hover-color-light, 1);
-
-      @include m.darkMode {
-        background-color: rgba(v.$hover-color-dark, 1);
-      }
+      background-color: fn.hex-rgba(var(--hover-color), 1);
 
       + .item-additional-buttons {
         svg {
@@ -274,19 +220,11 @@
           &.item-copy-security-code,
           &.item-name,
           &.item-ssid {
-            stroke: v.$primary-color-light;
-
-            @include m.darkMode {
-              stroke: v.$primary-color-dark;
-            }
+            stroke: var(--primary-color);
           }
 
           &.item-password {
-            fill: v.$primary-color-light;
-
-            @include m.darkMode {
-              fill: v.$primary-color-dark;
-            }
+            fill: var(--primary-color);
           }
         }
       }
@@ -295,9 +233,9 @@
     > span {
       &:first-of-type {
         align-items: center;
-        background-color: v.$primary-box-bg-light;
+        background-color: var(--primary-box-bg);
         border-radius: 4px;
-        color: v.$tertiary-text-light;
+        color: var(--tertiary-text);
         display: inline-flex;
         flex-shrink: 0;
         height: 32px;
@@ -305,11 +243,6 @@
         margin-right: 8px;
         overflow: hidden;
         width: 32px;
-
-        @include m.darkMode {
-          background-color: v.$primary-box-bg-dark;
-          color: v.$tertiary-text-dark;
-        }
       }
 
       &:nth-of-type(2) {
@@ -319,7 +252,7 @@
         gap: 3px 0;
         max-width: 255px;
         overflow: hidden;
-        transition: max-width v.$anim;
+        transition: max-width var(--anim);
 
         > span {
           line-height: 1.2;
@@ -330,13 +263,9 @@
 
           &:first-of-type,
           &:first-of-type:last-of-type {
-            color: v.$primary-text-light;
+            color: var(--primary-text);
             font-size: 14px;
             font-weight: 500;
-
-            @include m.darkMode {
-              color: v.$primary-text-dark;
-            }
 
             &.skeleton {
               width: 255px;
@@ -344,7 +273,7 @@
           }
 
           &:last-of-type {
-            color: v.$secondary-text-light;
+            color: var(--secondary-text);
             font-size: 12px;
             font-weight: 400;
 
@@ -364,14 +293,14 @@
     gap: 0 2px;
     margin-left: auto;
     position: absolute;
-    right: 4px;
+    right: 12px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 1;
 
     a,
     button {
-      background-color: rgba(v.$hover-on-hover-light, 0);
+      background-color: fn.hex-rgba(var(--hover-on-hover), 0);
       align-items: center;
       border-radius: 4px;
       display: inline-flex;
@@ -379,19 +308,11 @@
       justify-content: center;
       opacity: 0;
       padding: 0;
-      transition: background-color v.$anim, opacity v.$anim;
+      transition: background-color var(--anim), opacity var(--anim);
       width: 32px;
 
-      @include m.darkMode {
-        background-color: rgba(v.$hover-on-hover-dark, 0);
-      }
-
       &:hover {
-        background-color: rgba(v.$hover-on-hover-light, 1);
-
-        @include m.darkMode {
-          background-color: rgba(v.$hover-on-hover-dark, 1);
-        }
+        background-color: fn.hex-rgba(var(--hover-on-hover), 1);
 
         svg {
           &.item-more,
@@ -402,21 +323,13 @@
           &.item-copy-security-code,
           &.item-name,
           &.item-ssid {
-            stroke: v.$primary-color-light;
-            transition: stroke v.$anim;
-
-            @include m.darkMode {
-              stroke: v.$primary-color-dark;
-            }
+            stroke: var(--primary-color);
+            transition: stroke var(--anim);
           }
 
           &.item-password {
-            fill: v.$primary-color-light;
-            transition: fill v.$anim;
-
-            @include m.darkMode {
-              fill: v.$primary-color-dark;
-            }
+            fill: var(--primary-color);
+            transition: fill var(--anim);
           }
         }
       }
@@ -425,18 +338,10 @@
         opacity: 1 !important;
 
         &.active {
-          background-color: v.$hover-on-hover-light;
-
-          @include m.darkMode {
-            background-color: v.$hover-on-hover-dark;
-          }
+          background-color: var(--hover-on-hover);
 
           svg {
-            stroke: v.$primary-color-light;
-
-            @include m.darkMode {
-              stroke: v.$primary-color-dark;
-            }
+            stroke: var(--primary-color);
           }
         }
       }
@@ -446,19 +351,16 @@
       }
 
       &.item-password-loader {
-        border: 2px solid v.$hover-color-light;
+        border: 2px solid var(--hover-color);
         border-radius: 50%;
-
-        @include m.darkMode {
-          border-color: v.$hover-color-dark;
-        }
       }
 
       svg {
         height: auto;
+        pointer-events: none;
 
         &.item-loader {
-          color: v.$primary-color-light;
+          color: var(--primary-color);
           fill: none;
           height: 36px;
           position: absolute;
@@ -469,23 +371,15 @@
           stroke-linejoin: miter;
           stroke-width: 3.5;
           transform: rotate(-90deg);
-          transition: stroke-dashoffset v.$anim;
+          transition: stroke-dashoffset var(--anim);
           vertical-align: top;
           width: 36px;
 
-          @include m.darkMode {
-            color: v.$primary-color-dark;
-          }
-
           .item-loader-bg {
-            stroke: v.$hover-on-hover-light;
+            stroke: var(--hover-on-hover);
             stroke-width: 3.5;
             stroke-dasharray: 0;
             stroke-dashoffset: 0;
-
-            @include m.darkMode {
-              stroke: v.$hover-on-hover-dark;
-            }
           }
         }
 
@@ -494,14 +388,10 @@
         &.item-username,
         &.item-details,
         &.item-ssid {
-          stroke: v.$object-light;
+          stroke: var(--object);
           stroke-width: 1.5;
           stroke-linecap: round;
           stroke-linejoin: round;
-
-          @include m.darkMode {
-            stroke: v.$object-dark;
-          }
         }
 
         &.item-more {
@@ -513,12 +403,8 @@
         }
 
         &.item-password {
-          fill: v.$object-light;
+          fill: var(--object);
           width: 24px;
-
-          @include m.darkMode {
-            fill: v.$object-dark;
-          }
         }
 
         &.item-fetch {
@@ -530,13 +416,9 @@
         }
 
         &.item-name {
-          stroke: v.$object-light;
+          stroke: var(--object);
           stroke-width: 1.5;
           width: 20px;
-
-          @include m.darkMode {
-            stroke: v.$object-dark;
-          }
         }
 
         &.item-ssid {
@@ -549,13 +431,9 @@
         &.item-copy-2,
         &.item-copy-security-code,
         &.item-copy-card-number {
-          stroke: v.$object-light;
+          stroke: var(--object);
           stroke-width: 1.5;
           width: 19px;
-
-          @include m.darkMode {
-            stroke: v.$object-dark;
-          }
         }
 
         &.item-copy-security-code {

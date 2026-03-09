@@ -4,9 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 .error-fallback-container {
   height: 100%;
   scrollbar-gutter: auto !important;
@@ -29,30 +26,22 @@
   &-info {
     margin-bottom: auto;
     margin-top: auto;
-    
+
     h1 {
-      color: v.$primary-text-light;
+      color: var(--primary-text);
       font-size: 18px;
       font-weight: 600;
       line-height: 1.5;
       margin-bottom: 4px;
       text-align: center;
-
-      @include m.darkMode {
-        color: v.$primary-text-dark;
-      }
     }
 
     p {
-      color: v.$secondary-text-light;
+      color: var(--secondary-text);
       font-size: 12px;
       line-height: 1.2;
       margin-bottom: 16px;
       text-align: center;
-
-      @include m.darkMode {
-        color: v.$secondary-text-dark;
-      }
     }
   }
 
@@ -77,13 +66,9 @@
 
     svg {
       cursor: pointer;
-      stroke: v.$primary-color-light;
+      stroke: var(--primary-color);
       height: 16px;
       width: auto;
-
-      @include m.darkMode {
-        stroke: v.$primary-color-dark;
-      }
     }
   }
 }

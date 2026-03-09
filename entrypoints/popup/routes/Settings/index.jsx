@@ -83,7 +83,7 @@ function Settings (props) {
           <div className={S.settingsVersion}>
             <p>
               <span>{getMessage('version')}&nbsp;</span>
-              <span>{version}</span>
+              <span>{version}{import.meta.env.DEV && ' DEV'}</span>
             </p>
           </div>
     

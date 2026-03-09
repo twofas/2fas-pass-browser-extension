@@ -18,7 +18,7 @@ const nonSafariBackground = (tabsInputData, savePromptActions, tabUpdateData) =>
 
   browser.webRequest.onBeforeRequest.addListener(
     details => onWebRequest(details, tabsInputData, savePromptActions, tabUpdateData),
-    { urls: ['<all_urls>'], types: ['main_frame', 'xmlhttprequest'] },
+    { urls: ['<all_urls>'], types: ['main_frame', 'xmlhttprequest', 'ping'] },
     ['requestBody']
   );
 

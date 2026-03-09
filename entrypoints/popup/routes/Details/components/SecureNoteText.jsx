@@ -33,6 +33,7 @@ function SecureNoteText (props) {
 
   const previousSifValueRef = useRef(null);
   const textareaRef = useRef(null);
+  const hasFocusedRef = useRef(false);
   const [showTextarea, setShowTextarea] = useState(false);
   const [textareaHeight, setTextareaHeight] = useState(0);
   const [textareaOverflow, setTextareaOverflow] = useState('hidden');
@@ -153,7 +154,8 @@ function SecureNoteText (props) {
             }).then(() => {
               setTextareaOverflow('auto');
 
-              if (data?.sifEditable && textareaRef.current) {
+              if (data?.sifEditable && textareaRef.current && !hasFocusedRef.current) {
+                hasFocusedRef.current = true;
                 const textarea = textareaRef.current;
                 textarea.focus();
 
@@ -221,6 +223,7 @@ function SecureNoteText (props) {
 
   const handleEditableClick = async () => {
     if (data?.sifEditable) {
+      hasFocusedRef.current = false;
       setLocalEditedText(null);
       setBatchData({
         sifEdited: false,
@@ -229,10 +232,11 @@ function SecureNoteText (props) {
       });
       form.change('editedSif', isText(localDecryptedText) ? localDecryptedText : '');
     } else {
-      await decryptTextOnDemand();
+      const decryptedText = await decryptTextOnDemand();
       setBatchData({
         sifEditable: true,
-        revealSecureNote: true
+        revealSecureNote: true,
+        editedSif: decryptedText || ''
       });
     }
   };

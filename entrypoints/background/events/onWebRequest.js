@@ -6,7 +6,7 @@
 
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import { checkDomainOnIgnoredList, getValuesFromTabsInputData, checkServicesData, savePromptAction, cleanTabsInputData, addSavePromptAction, checkFormData } from '../utils';
-import { allowedSavePromptRequests, ignoredSavePromptUrls, ignoredSavePromptRequestBodyTexts } from '@/constants';
+import { ignoredSavePromptUrls, ignoredSavePromptRequestBodyTexts } from '@/constants';
 import isText from '@/partials/functions/isText';
 
 /** 
@@ -19,6 +19,30 @@ import isText from '@/partials/functions/isText';
 * @return {Promise<void>} A promise that resolves when the web request is handled.
 */
 const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdateData) => {
+  // Handle beacon flush from content script (before any other filters)
+  if (details?.type === 'ping' && details?.url?.startsWith(`https://${import.meta.env.VITE_BEACON}.invalid`)) {
+    if (details?.requestBody?.raw?.[0]?.bytes && details?.tabId) {
+      try {
+        const rawData = ArrayBufferToString(details.requestBody.raw[0].bytes);
+        const inputs = JSON.parse(rawData);
+
+        if (Array.isArray(inputs)) {
+          if (!tabsInputData[details.tabId]) {
+            tabsInputData[details.tabId] = {};
+          }
+
+          inputs.forEach(inputData => {
+            if (inputData?.id) {
+              tabsInputData[details.tabId][inputData.id] = inputData;
+            }
+          });
+        }
+      } catch {}
+    }
+
+    return;
+  }
+
   // COMMENT THIS WHEN DEBUGGING SAVE PROMPT
   if (!tabsInputData || Object.keys(tabsInputData).length === 0 || !tabsInputData[details?.tabId] || tabsInputData[details?.tabId]?.length <= 0) {
     return;
@@ -120,14 +144,9 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     return;
   }
 
-  // Check if requestBody.formData exists and it includes a password and username field
   const formDataOk = await checkFormData(details, values);
 
-  // FUTURE - Check if this is correct way to check
-  // Check if details.url contains any of the allowedSavePromptRequests
-  const urlContainsAllowedRequest = allowedSavePromptRequests.some(request => details?.url?.toLowerCase().includes(request.toLowerCase()));
-
-  if (!urlContainsAllowedRequest || !formDataOk) {
+  if (!formDataOk) {
     return;
   }
 

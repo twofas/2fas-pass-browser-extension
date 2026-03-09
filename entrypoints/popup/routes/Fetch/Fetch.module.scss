@@ -4,19 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 .fetch {
-  background-color: v.$primary-box-bg-light;
-  border: 1px solid v.$primary-box-stroke-light;
+  background-color: var(--primary-box-bg);
+  border: 1px solid var(--primary-box-stroke);
   border-radius: 8px;
   width: 100%;
-
-  @include m.darkMode {
-    background-color: v.$primary-box-bg-dark;
-    border-color: v.$primary-box-stroke-dark;
-  }
 
   &-container {
     padding: 24px 50px;
@@ -53,15 +45,11 @@
       }
 
       p {
-        color: v.$primary-text-light;
+        color: var(--primary-text);
         font-size: 12px;
         font-weight: 400;
         line-height: 1;
         text-align: center;
-
-        @include m.darkMode {
-          color: v.$primary-text-dark;
-        }
       }
     }
 
@@ -69,32 +57,24 @@
       svg {
         height: 16px;
         margin-bottom: 8px;
-        stroke: v.$object-light;
+        stroke: var(--object);
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
         width: auto;
-  
-        @include m.darkMode {
-          stroke: v.$object-dark;
-        }
       }
 
       p {
-        color: v.$secondary-text-light;
+        color: var(--secondary-text);
         font-size: 12px;
         font-weight: 400;
         line-height: 1.5;
         white-space: pre-wrap;
-
-        @include m.darkMode {
-          color: v.$secondary-text-dark;
-        }
       }
     }
 
     h2 {
-      color: v.$primary-text-light;
+      color: var(--primary-text);
       font-size: 16px;
       font-weight: 600;
       line-height: 1.3125;
@@ -102,24 +82,16 @@
       max-width: 250px;
       text-align: center;
       white-space: pre-wrap;
-
-      @include m.darkMode {
-        color: v.$primary-text-dark;
-      }
     }
 
     h3 {
-      color: v.$secondary-text-light;
+      color: var(--secondary-text);
       font-size: 12px;
       font-weight: 500;
       line-height: 1.4167;
       margin: 0;
       padding: 0;
       text-align: center;
-
-      @include m.darkMode {
-        color: v.$secondary-text-dark;
-      }
     }
   }
 }

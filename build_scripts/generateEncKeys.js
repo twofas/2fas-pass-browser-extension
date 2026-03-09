@@ -112,6 +112,16 @@ const generateEncKeys = () => {
     return;
   }
 
+  // Regenerate VITE_BEACON for unique beacon URL per build
+  try {
+    if ('VITE_BEACON' in ENV) {
+      ENV['VITE_BEACON'] = crypto.randomBytes(64).toString('hex');
+    }
+  } catch (err) {
+    console.error('Error generating VITE_BEACON:', err);
+    return;
+  }
+
   // Save updated ENV as .env file
   try {
     const envString = Object.entries(ENV)

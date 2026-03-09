@@ -4,16 +4,16 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import handleHelloAction from '@/partials/WebSocket/handleHelloAction';
-import handleChallengeAction from '@/partials/WebSocket/handleChallengeAction';
-import handleCloseSignalAction from '@/partials/WebSocket/handleCloseSignalAction';
-import handleInitTransfer from '@/partials/WebSocket/handleInitTransfer';
-import handleSendVaultData from '@/partials/WebSocket/handleSendVaultData';
-import processVaultsData from '@/partials/WebSocket/processVaultsData';
+import handleHelloAction from '@/entrypoints/background/websocket/handleHelloAction';
+import handleChallengeAction from '@/entrypoints/background/websocket/handleChallengeAction';
+import handleCloseSignalAction from '@/entrypoints/background/websocket/handleCloseSignalAction';
+import handleInitTransfer from '@/entrypoints/background/websocket/handleInitTransfer';
+import handleSendVaultData from '@/entrypoints/background/websocket/handleSendVaultData';
+import processVaultsData from '@/entrypoints/background/websocket/processVaultsData';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
-import handlePullRequest from '@/partials/WebSocket/handlePullRequest';
-import handlePullRequestAction from '@/partials/WebSocket/handlePullRequestAction';
-import TwoFasWebSocket from '@/partials/WebSocket';
+import handlePullRequest from '@/entrypoints/background/websocket/handlePullRequest';
+import handlePullRequestAction from '@/entrypoints/background/websocket/handlePullRequestAction';
+import TwoFasWebSocket from '@/entrypoints/background/websocket';
 import { SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
 
 /** 

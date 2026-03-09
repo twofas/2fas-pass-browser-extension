@@ -4,13 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
+@use "@/partials/global-styles/functions" as fn;
 
 .bottombar {
   align-items: center;
-  background-color: v.$primary-box-bg-light;
-  border-top: 1px solid v.$divider-light;
+  background-color: var(--primary-box-bg);
+  border-top: 1px solid var(--divider);
   bottom: 0;
   display: flex;
   flex-direction: row;
@@ -26,15 +25,10 @@
     opacity: 0;
   }
 
-  @include m.darkMode {
-    background-color: v.$primary-box-bg-dark;
-    border-top-color: v.$divider-dark;
-  }
-
   &-sec-icon {
     align-items: center;
-    background-color: v.$primary-box-bg-light;
-    border: 1px solid v.$object-stroke-light;
+    background-color: var(--primary-box-bg);
+    border: 1px solid var(--object-stroke);
     border-radius: 50%;
     bottom: 8px;
     cursor: pointer;
@@ -45,14 +39,9 @@
     opacity: 1;
     position: absolute;
     transform: translateX(-50%);
-    transition: opacity v.$anim, border-color v.$anim, border-width v.$anim;
+    transition: opacity var(--anim), border-color var(--anim), border-width var(--anim);
     width: 64px;
     z-index: 3;
-
-    @include m.darkMode {
-      background-color: v.$primary-box-bg-dark;
-      border-color: v.$object-stroke-dark;
-    }
 
     &.active {
       .bottombar-sec-icon-content {
@@ -68,12 +57,8 @@
     }
 
     &:hover {
-      border-color: v.$primary-color-light;
+      border-color: var(--primary-color);
       border-width: 2px;
-
-      @include m.darkMode {
-        border-color: v.$primary-color-dark;
-      }
 
       + .bottombar-sec-icon-tooltip {
         transform: translateX(-50%) translateY(0);
@@ -89,35 +74,27 @@
       height: 64px;
       opacity: 0;
       position: absolute;
-      transition: opacity v.$anim;
+      transition: opacity var(--anim);
       width: 64px;
     }
 
     &::before {
       animation: rotation 1s linear infinite;
-      background: linear-gradient(0deg, rgba(v.$primary-color-light, .2) 33%, v.$primary-color-light 100%);
+      background: linear-gradient(0deg, fn.hex-rgba(var(--primary-color), .2) 33%, var(--primary-color) 100%);
       z-index: 2;
-
-      @include m.darkMode {
-        background: linear-gradient(0deg, rgba(v.$primary-color-dark, .2) 33%, v.$primary-color-dark 100%);
-      }
     }
 
     &::after {
-      background: v.$primary-box-bg-light;
+      background: var(--primary-box-bg);
       left: 50%;
       top: 50%;
       transform: translate(-50%, -50%);
       z-index: 1;
-
-      @include m.darkMode {
-        background: v.$primary-box-bg-dark;
-      }
     }
 
     &-tooltip {
-      background-color: v.$card-bg-light;
-      border: 1px solid v.$card-stroke-light;
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-stroke);
       border-radius: 8px;
       bottom: 81px;
       font-size: 12px;
@@ -128,55 +105,38 @@
       pointer-events: none;
       position: absolute;
       transform: translateX(-50%) translateY(20px);
-      transition: opacity v.$anim, transform v.$anim;
+      transition: opacity var(--anim), transform var(--anim);
       white-space: pre-wrap;
       width: 275px;
       z-index: 2;
-
-      @include m.darkMode {
-        background-color: v.$card-bg-dark;
-        border-color: v.$card-stroke-dark;
-      }
 
       span {
         display: block;
 
         &:first-of-type {
-          color: v.$primary-text-light;
+          color: var(--primary-text);
           font-weight: 500;
-
-          @include m.darkMode {
-            color: v.$primary-text-dark;
-          }
         }
 
         &:last-of-type {
-          color: v.$secondary-text-light;
+          color: var(--secondary-text);
           font-weight: 400;
-
-          @include m.darkMode {
-            color: v.$secondary-text-dark;
-          }
         }
       }
     }
 
     &-content {
       align-items: center;
-      background-color: v.$primary-box-bg-light;
+      background-color: var(--primary-box-bg);
       border-radius: 50%;
       display: flex;
       height: 60px;
       justify-content: center;
       opacity: 0;
       position: relative;
-      transition: opacity v.$anim;
+      transition: opacity var(--anim);
       width: 60px;
       z-index: 2;
-
-      @include m.darkMode {
-        background-color: v.$primary-box-bg-dark;
-      }
     }
 
     svg {
@@ -206,26 +166,18 @@
 
     button {
       align-items: center;
-      background-color: rgba(v.$hover-color-light, 0);
+      background-color: fn.hex-rgba(var(--hover-color), 0);
       border-radius: 6px;
       display: flex;
       height: 32px;
       justify-content: center;
       opacity: 1;
       text-align: center;
-      transition: opacity v.$anim, background-color v.$anim;
+      transition: opacity var(--anim), background-color var(--anim);
       width: 32px;
 
-      @include m.darkMode {
-        background-color: rgba(v.$hover-color-dark, 0);
-      }
-
       &:hover {
-        background-color: rgba(v.$hover-color-light, 1);
-
-        @include m.darkMode {
-          background-color: rgba(v.$hover-color-dark, 1);
-        }
+        background-color: var(--hover-color);
       }
 
       &.hidden-permanent {
@@ -234,22 +186,19 @@
 
       svg {
         height: 20px;
-        stroke: v.$primary-color-light;
+        pointer-events: none;
+        stroke: var(--primary-color);
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: stroke v.$anim;
+        transition: stroke var(--anim);
         width: 20px;
-
-        @include m.darkMode {
-          stroke: v.$primary-color-dark;
-        }
       }
     }
 
     a {
       align-items: center;
-      background-color: rgba(v.$hover-color-light, 0);
+      background-color: fn.hex-rgba(var(--hover-color), 0);
       border-radius: 6px;
       display: flex;
       height: 32px;
@@ -257,13 +206,9 @@
       opacity: 0;
       pointer-events: none;
       text-align: center;
-      transition: opacity v.$anim, background-color v.$anim;
+      transition: opacity var(--anim), background-color var(--anim);
       user-select: none;
       width: 32px;
-
-      @include m.darkMode {
-        background-color: rgba(v.$hover-color-dark, 0);
-      }
 
       &.visible {
         opacity: 1;
@@ -272,11 +217,7 @@
       }
 
       &:hover {
-        background-color: rgba(v.$hover-color-light, 1);
-
-        @include m.darkMode {
-          background-color: rgba(v.$hover-color-dark, 1);
-        }
+        background-color: var(--hover-color);
       }
 
       &.disabled {
@@ -285,16 +226,13 @@
 
       svg {
         height: 20px;
-        stroke: v.$primary-color-light;
+        pointer-events: none;
+        stroke: var(--primary-color);
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: stroke v.$anim;
+        transition: stroke var(--anim);
         width: 20px;
-
-        @include m.darkMode {
-          stroke: v.$primary-color-dark;
-        }
       }
     }
   }
@@ -303,7 +241,7 @@
     opacity: 0;
     padding: 4px 0;
     pointer-events: none;
-    transition: opacity v.$anim;
+    transition: opacity var(--anim);
     user-select: none;
 
     &.visible {
@@ -322,25 +260,17 @@
 
     a {
       align-items: center;
-      background-color: rgba(v.$hover-color-light, 0);
+      background-color: fn.hex-rgba(var(--hover-color), 0);
       border-radius: 6px;
       display: inline-flex;
       gap: 0 6px;
       height: 100%;
       justify-content: center;
       padding: 4px 12px 4px 6px;
-      transition: background-color v.$anim;
-
-      @include m.darkMode {
-        background-color: rgba(v.$hover-color-dark, 0);
-      }
+      transition: background-color var(--anim);
 
       &:hover {
-        background-color: rgba(v.$hover-color-light, 1);
-
-        @include m.darkMode {
-          background-color: rgba(v.$hover-color-dark, 1);
-        }
+        background-color: var(--hover-color);
       }
 
       &.disabled {
@@ -348,33 +278,26 @@
       }
 
       span {
-        color: v.$primary-color-light;
+        color: var(--primary-color);
         font-size: 12px;
         font-weight: 500;
         line-height: 1;
         transform: translateY(1px);
-        transition: color v.$anim;
-
-        @include m.darkMode {
-          color: v.$primary-color-dark;
-        }
+        transition: color var(--anim);
       }
 
       svg {
         height: auto;
-        stroke: v.$primary-color-light;
+        pointer-events: none;
+        stroke: var(--primary-color);
         stroke-width: 1.5;
         stroke-linecap: round;
         stroke-linejoin: round;
-        transition: stroke v.$anim;
+        transition: stroke var(--anim);
         width: 24px;
-
-        @include m.darkMode {
-          stroke: v.$primary-color-dark;
-        }
       }
     }
-  } 
+  }
 }
 
 @keyframes rotation {

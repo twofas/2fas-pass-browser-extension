@@ -33,6 +33,26 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
         break;
       }
 
+      case REQUEST_ACTIONS.PROMPT_INPUT_FLUSH: {
+        if (!Array.isArray(request?.data) || !sender?.tab?.id) {
+          sendResponse({ status: 'error', message: 'Invalid flush data' });
+          return true;
+        }
+
+        if (!tabsInputData[sender.tab.id]) {
+          tabsInputData[sender.tab.id] = {};
+        }
+
+        request.data.forEach(inputData => {
+          if (inputData?.id) {
+            tabsInputData[sender.tab.id][inputData.id] = inputData;
+          }
+        });
+
+        sendResponse({ status: 'ok' });
+        break;
+      }
+
       case REQUEST_ACTIONS.IGNORE_SAVE_PROMPT: {
         if (!request?.tabId) {
           sendResponse({ status: 'error', message: 'Tab ID not found' });

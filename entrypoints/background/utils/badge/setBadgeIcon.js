@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { badgeIcons } from '@/constants';
+import badgeState from './badgeState';
 
 /**
 * Function to set the browser action badge icon based on the configured state.
@@ -21,7 +22,13 @@ const setBadgeIcon = async (configured, tabId = null) => {
   }
 
   const icons = badgeIcons();
-  const path = configured ? icons.configured : icons.notConfigured;
+  let path;
+
+  if (badgeState.connecting) {
+    path = icons.connecting;
+  } else {
+    path = configured ? icons.configured : icons.notConfigured;
+  }
 
   await browser.action.setIcon(tabId ? { path, tabId } : { path }).catch(() => {});
 };

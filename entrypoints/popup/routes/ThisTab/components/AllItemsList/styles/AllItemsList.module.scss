@@ -4,13 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 .all-items-list {
-  -webkit-backface-visibility: hidden;
-  -webkit-overflow-scrolling: touch;
-  backface-visibility: hidden;
   position: relative;
 
   &::-webkit-scrollbar {
@@ -30,27 +24,19 @@
 
       svg {
         height: 16px;
-        stroke: v.$object-light;
+        stroke: var(--object);
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 1.5;
         width: auto;
-
-        @include m.darkMode {
-          stroke: v.$object-dark;
-        }
       }
 
       span {
-        color: v.$secondary-text-light;
+        color: var(--secondary-text);
         font-size: 12px;
         font-weight: 400;
         line-height: 1;
         text-align: center;
-
-        @include m.darkMode {
-          color: v.$secondary-text-dark;
-        }
       }
     }
   }

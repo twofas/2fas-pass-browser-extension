@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import setConfigured from '@/partials/sessionStorage/configured/setConfigured';
 import cleanupDevices from '@/partials/functions/cleanupDevices';
+import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 
 const AuthStateContext = createContext();
 const AuthActionsContext = createContext();
@@ -59,6 +60,10 @@ export const AuthProvider = memo(({ children }) => {
     if (clear) {
       await browser.storage.session.clear();
     }
+
+    const store = usePopupStateStore.getState();
+    store.clearAllData();
+    store.clearHref();
 
     setStateConfigured(false);
     navigate('/connect', { replace: true });

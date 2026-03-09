@@ -10,16 +10,11 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, useCallback, useRef, memo, lazy } from 'react';
 import { motion } from 'motion/react';
 import { useAuthActions } from '@/hooks/useAuth';
-import useConnectView from '../../hooks/useConnectView';
-import { generateSessionKeysNonces, generateEphemeralKeys, generateSessionID, calculateConnectSignature, generateQR } from './functions';
-import calculateFetchSignature from '../Fetch/functions/calculateFetchSignature';
-import TwoFasWebSocket from '@/partials/WebSocket';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import DeviceQrIcon from '@/assets/popup-window/device-qr.svg?react';
 import QR from './components/QR';
 import NavigationButton from '../../components/NavigationButton';
-import { getNTPTime, sendPush, networkTest } from '@/partials/functions';
-import { PULL_REQUEST_TYPES, SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
+import { CONNECT_VIEWS } from '@/constants';
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import usePopupState from '../../store/popupState/usePopupState';
 import { useI18n } from '@/partials/context/I18nContext';
@@ -40,30 +35,23 @@ const viewVariants = {
   hidden: { opacity: 0, borderWidth: '0px', pointerEvents: 'none' }
 };
 
-/** 
-* Function component that renders the Connect page.
-* @param {Object} props - The properties passed to the component.
-* @return {JSX.Element} The rendered Connect component.
-*/
 function Connect (props) {
   const { getMessage } = useI18n();
+  const { login } = useAuthActions();
+  const { wsState: bgState, sendCommand } = useBackgroundWS({ onLogin: login });
+  const [localView, setLocalView] = useState(null);
   const [qrCode, setQrCode] = useState(null);
-  const [socketError, setSocketError] = useState(false);
-  const [connectingLoader, setConnectingLoader] = useState(264);
-  const [deviceName, setDeviceName] = useState(null);
   const [readyDevices, setReadyDevices] = useState([]);
   const [sliderMounted, setSliderMounted] = useState(false);
-
-  const { connectView, setConnectView } = useConnectView();
-  const { login } = useAuthActions();
-  const closeConnectionRef = useRef(null);
-  const ephemeralDataRef = useRef(null);
-  const abortControllerRef = useRef(null);
   const sliderRef = useRef(null);
-  const previousViewRef = useRef(null);
-  const selectedDeviceIdRef = useRef(null);
+  const initDoneRef = useRef(false);
 
   const { data, setData } = usePopupState();
+
+  const connectView = bgState?.active ? (bgState.connectView || localView) : localView;
+  const connectingLoader = bgState?.progress ?? 264;
+  const deviceName = bgState?.deviceName || null;
+  const socketError = bgState?.socketError || false;
 
   const getReadyDevices = useCallback(async () => {
     const devices = await storage.getItem('local:devices') || [];
@@ -84,276 +72,106 @@ function Connect (props) {
     return sortedDevices;
   }, []);
 
-  const initEphemeralKeys = useCallback(async () => {
-    await generateSessionKeysNonces();
-    ephemeralDataRef.current = await generateEphemeralKeys();
-  }, []);
-
-  const initQRConnection = useCallback(async () => {
-    let sessionID, signature, qr, socket;
-
-    const socketHandlersPromise = Promise.all([
-      import('./socket/ConnectOnMessage'),
-      import('./socket/ConnectOnClose')
-    ]);
+  const renderQrFromData = useCallback(async qrData => {
+    if (!qrData) {
+      setQrCode(null);
+      return;
+    }
 
     try {
-      sessionID = await generateSessionID();
-      signature = await calculateConnectSignature(ephemeralDataRef.current.publicKey, sessionID);
-      qr = await generateQR(ephemeralDataRef.current.publicKey, sessionID, signature);
-    } catch (e) {
-      await CatchError(e, () => {
-        setSocketError(true);
-        showConnectToast({ message: getMessage('error_general'), type: 'error' });
-        setConnectingLoader(264);
+      const { default: qrcode } = await import('qrcode');
+
+      const dataUrl = await qrcode.toDataURL(qrData, {
+        type: 'image/jpeg',
+        errorCorrectionLevel: 'L',
+        quality: 1,
+        width: 750
       });
 
-      return;
-    }
-
-    let socketCreated = false;
-
-    for (let i = 0; i < 5; i++) {
-      try {
-        socket = new TwoFasWebSocket(sessionID);
-        socketCreated = true;
-        break;
-      } catch (e) {
-        if (e?.name === 'TwoFasError' && e?.code === 9041) {
-          const tempSocket = TwoFasWebSocket.getInstance();
-
-          if (tempSocket) {
-            tempSocket.close(1000, 'Recreating socket');
-          }
-        }
-
-        if (i < 4) {
-          await new Promise(res => setTimeout(res, 250));
-        }
-      }
-    }
-
-    if (!socketCreated) {
-      setSocketError(true);
-      showConnectToast({ message: getMessage('error_general'), type: 'error' });
-      setConnectingLoader(264);
-      return;
-    }
-
-    try {
-      const [{ default: ConnectOnMessage }, { default: ConnectOnClose }] = await socketHandlersPromise;
-      socket.open();
-      socket.addEventListener('message', ConnectOnMessage, { uuid: ephemeralDataRef.current.uuid, path: SOCKET_PATHS.CONNECT.QR });
-      socket.addEventListener('close', ConnectOnClose, { path: SOCKET_PATHS.CONNECT.QR });
-      setQrCode(qr);
+      setQrCode(dataUrl);
     } catch {
-      setSocketError(true);
-      showConnectToast({ message: getMessage('error_general'), type: 'error' });
-      setConnectingLoader(264);
+      setQrCode(null);
     }
   }, []);
+
+  const switchToQrView = useCallback(async () => {
+    setLocalView(CONNECT_VIEWS.QrView);
+
+    if (bgState?.active) {
+      await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
+    }
+
+    const result = await sendCommand(REQUEST_ACTIONS.WS_CONNECT_QR);
+
+    if (result?.state?.qrData) {
+      await renderQrFromData(result.state.qrData);
+    }
+
+    if (result?.status === 'error') {
+      showToast(result.message, 'error');
+    }
+  }, [bgState?.active, sendCommand, renderQrFromData]);
+
+  const switchToDeviceSelect = useCallback(async () => {
+    if (bgState?.active) {
+      await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
+    }
+
+    setLocalView(CONNECT_VIEWS.DeviceSelect);
+    await getReadyDevices();
+  }, [bgState?.active, sendCommand, getReadyDevices]);
+
+  const connectByPush = useCallback(async device => {
+    if (bgState?.active) {
+      await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
+    }
+
+    const result = await sendCommand(REQUEST_ACTIONS.WS_CONNECT_PUSH, { deviceId: device.id });
+
+    if (result?.status === 'busy') {
+      showToast(getMessage('ws_action_in_progress'), 'info');
+      return;
+    }
+
+    if (result?.status === 'error') {
+      showToast(result.message, 'error');
+      setLocalView(CONNECT_VIEWS.DeviceSelect);
+    }
+  }, [bgState?.active, sendCommand, getMessage]);
 
   const handleSocketReload = useCallback(async () => {
-    try {
-      await initEphemeralKeys();
-      await initQRConnection();
-      setSocketError(false);
-    } catch {
-      // Error handling in initQRConnection and initEphemeralKeys
-    }
-  }, [initEphemeralKeys, initQRConnection]);
+    const result = await sendCommand(REQUEST_ACTIONS.WS_RELOAD_QR);
 
-  const cleanupEphemeralUuid = useCallback(async () => {
-    const currentUuid = ephemeralDataRef.current?.uuid;
-    const selectedDeviceId = selectedDeviceIdRef.current;
-
-    if (!currentUuid && !selectedDeviceId) {
-      return;
+    if (result?.state?.qrData) {
+      await renderQrFromData(result.state.qrData);
     }
 
-    const devices = await storage.getItem('local:devices') || [];
-    let modified = false;
-
-    const updatedDevices = devices.map(device => {
-      if (device.uuid === currentUuid) {
-        modified = true;
-
-        if (device.id) {
-          delete device.uuid;
-          return device;
-        }
-
-        return null;
-      }
-
-      if (selectedDeviceId && device.id === selectedDeviceId && device.uuid) {
-        modified = true;
-        delete device.uuid;
-        return device;
-      }
-
-      return device;
-    }).filter(Boolean);
-
-    if (modified) {
-      await storage.setItem('local:devices', updatedDevices);
+    if (result?.status === 'error') {
+      showToast(result.message, 'error');
     }
-
-    selectedDeviceIdRef.current = null;
-  }, []);
+  }, [sendCommand, renderQrFromData]);
 
   const handleCancelPushSent = useCallback(async () => {
-    await cleanupEphemeralUuid();
-    setConnectView(CONNECT_VIEWS.DeviceSelect);
-  }, [cleanupEphemeralUuid]);
+    await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
+    setLocalView(CONNECT_VIEWS.DeviceSelect);
+  }, [sendCommand]);
 
   const handleSwitchToQrFromPushSent = useCallback(async () => {
-    await cleanupEphemeralUuid();
-    setConnectView(CONNECT_VIEWS.QrView);
-  }, [cleanupEphemeralUuid]);
-
-  const showConnectToast = useCallback(({ message, type }) => {
-    showToast(message, type);
-  }, []);
-
-  const connectByPush = useCallback(async (device, abortSignal) => {
-    if (abortSignal?.aborted) {
-      return false;
-    }
-
-    try {
-      setDeviceName(device?.name);
-      setConnectView(CONNECT_VIEWS.PushSent);
-      selectedDeviceIdRef.current = device?.id;
-      device.uuid = ephemeralDataRef.current.uuid;
-
-      if (abortSignal?.aborted) {
-        return false;
-      }
-
-      let sessionId, timestamp, sigPush;
-
-      try {
-        sessionId = Base64ToHex(device?.sessionId).toLowerCase();
-        const timestampValue = await getNTPTime();
-        timestamp = timestampValue.toString();
-        sigPush = await calculateFetchSignature(sessionId, device?.id, device?.uuid, timestamp);
-      } catch (e) {
-        await CatchError(e);
-      }
-
-      if (abortSignal?.aborted) {
-        return false;
-      }
-
-      try {
-        const socketHandlersPromise = Promise.all([
-          import('./socket/ConnectOnMessage'),
-          import('./socket/ConnectOnClose')
-        ]);
-
-        const [{ default: ConnectOnMessage }, { default: ConnectOnClose }] = await socketHandlersPromise;
-        const socket = new TwoFasWebSocket(sessionId);
-        socket.open();
-        socket.addEventListener('message', ConnectOnMessage, { uuid: device.uuid, action: PULL_REQUEST_TYPES.FULL_SYNC, path: SOCKET_PATHS.CONNECT.PUSH });
-        socket.addEventListener('close', ConnectOnClose, { path: SOCKET_PATHS.CONNECT.PUSH });
-
-        await socket.waitForOpen();
-
-        if (abortSignal?.aborted) {
-          await closeConnectionRef.current();
-          return false;
-        }
-
-        const json = await sendPush(device, { timestamp, sigPush, messageType: 'be_request' });
-
-        if (abortSignal?.aborted) {
-          await closeConnectionRef.current();
-          return false;
-        }
-
-        if (json?.error === 'UNREGISTERED') {
-          await closeConnectionRef.current();
-          setSocketError(true);
-          showConnectToast({ message: getMessage('fetch_token_unregistered_header'), type: 'error' });
-          return false;
-        }
-      } catch (e) {
-        await closeConnectionRef.current();
-        setConnectView(CONNECT_VIEWS.DeviceSelect);
-        const toastMessage = await networkTest('error_general');
-        showConnectToast({ message: getMessage(toastMessage), type: 'error' });
-        await CatchError(e);
-      }
-    } catch {
-      // Error handling in nested try-catch blocks
-    }
-  }, [showConnectToast]);
-
-  const handleSocketError = useCallback(value => {
-    setSocketError(value);
-  }, []);
+    await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
+    await switchToQrView();
+  }, [sendCommand, switchToQrView]);
 
   const handleKeyboardEnterClick = useCallback(async e => {
     if (e.key === 'Enter') {
       if (connectView === CONNECT_VIEWS.DeviceSelect) {
         const currentIndex = sliderRef.current?.splide?.index || data?.connectSliderIndex || 0;
-        
+
         if (readyDevices[currentIndex]) {
-          await connectByPush(readyDevices[currentIndex], abortControllerRef.current?.signal);
+          await connectByPush(readyDevices[currentIndex]);
         }
       }
     }
   }, [connectView, data?.connectSliderIndex, readyDevices, connectByPush]);
-
-  const handleViewSwitch = useCallback(async () => {
-    const viewChanged = previousViewRef.current !== connectView;
-
-    if (!viewChanged) {
-      return;
-    }
-
-    previousViewRef.current = connectView;
-
-    try {
-      switch (connectView) {
-        case CONNECT_VIEWS.QrView: {
-          if (closeConnectionRef.current) {
-            await closeConnectionRef.current().catch(() => {
-              // Ignore close errors
-            });
-          }
-
-          if (!socketError) {
-            if (!ephemeralDataRef?.current?.publicKey) {
-              await initEphemeralKeys();
-            }
-
-            await initQRConnection();
-          }
-
-          break;
-        }
-
-        case CONNECT_VIEWS.DeviceSelect: {
-          if (closeConnectionRef.current) {
-            await closeConnectionRef.current().catch(() => {
-              // Ignore close errors
-            });
-          }
-
-          await getReadyDevices();
-          break;
-        }
-
-        default: {
-          break;
-        }
-      }
-    } catch {
-      // Error handling in nested functions
-    }
-  }, [connectView, socketError, initEphemeralKeys, initQRConnection, getReadyDevices]);
 
   const generateDeviceIcon = device => {
     const platform = device?.platform || 'unknown';
@@ -442,120 +260,46 @@ function Connect (props) {
     }
   };
 
+  // Render QR code when background qrData changes
   useEffect(() => {
-    let cleanupTimers = null;
+    if (bgState?.qrData) {
+      renderQrFromData(bgState.qrData);
+    }
+  }, [bgState?.qrData, renderQrFromData]);
 
-    closeConnectionRef.current = async () => {
-      try {
-        const socket = TwoFasWebSocket.getInstance();
-
-        if (socket && socket.socket.readyState !== WebSocket.CLOSED) {
-          try {
-            socket.close(WEBSOCKET_STATES.NORMAL_CLOSURE, 'Component unmounted');
-          } catch {
-            // Ignore close errors
-          }
-
-          await new Promise(resolve => {
-            let intervalId = null;
-            let timeoutId = null;
-            let resolved = false;
-
-            const cleanup = () => {
-              if (resolved) {
-                return;
-              }
-
-              resolved = true;
-
-              if (intervalId !== null) {
-                clearInterval(intervalId);
-                intervalId = null;
-              }
-
-              if (timeoutId !== null) {
-                clearTimeout(timeoutId);
-                timeoutId = null;
-              }
-
-              cleanupTimers = null;
-              resolve();
-            };
-
-            cleanupTimers = cleanup;
-
-            intervalId = setInterval(() => {
-              if (socket.socket.readyState === WebSocket.CLOSED) {
-                cleanup();
-              }
-            }, 10);
-
-            timeoutId = setTimeout(() => {
-              cleanup();
-            }, 1000);
-          });
-        }
-      } catch (e) {
-        if (e?.name !== 'TwoFasError' || e?.code !== 9040) {
-          CatchError(e);
-        }
-      }
-    };
-
-    return () => {
-      if (cleanupTimers) {
-        cleanupTimers();
-      }
-
-      if (closeConnectionRef.current) {
-        closeConnectionRef.current().catch(() => {
-          // Ignore cleanup errors
-        });
-      }
-    };
-  }, []);
-
+  // Initialize
   useEffect(() => {
-    abortControllerRef.current = new AbortController();
+    if (initDoneRef.current) {
+      return;
+    }
 
-    eventBus.on(eventBus.EVENTS.CONNECT.CHANGE_VIEW, setConnectView);
-    eventBus.on(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
-    eventBus.on(eventBus.EVENTS.CONNECT.SOCKET_ERROR, handleSocketError);
-    eventBus.on(eventBus.EVENTS.CONNECT.SHOW_TOAST, showConnectToast);
-    eventBus.on(eventBus.EVENTS.CONNECT.DEVICE_NAME, setDeviceName);
-    eventBus.on(eventBus.EVENTS.CONNECT.LOGIN, login);
+    initDoneRef.current = true;
 
-    Promise.all([initEphemeralKeys(), getReadyDevices()])
-      .then(([, devices]) => {
-        if (devices.length === 0) {
-          setConnectView(CONNECT_VIEWS.QrView);
-        } else {
-          setConnectView(CONNECT_VIEWS.DeviceSelect);
+    const init = async () => {
+      const devices = await getReadyDevices();
+
+      if (bgState?.active && (bgState.type === 'connect_qr' || bgState.type === 'connect_push')) {
+        if (bgState.qrData) {
+          await renderQrFromData(bgState.qrData);
         }
-      })
-      .catch(error => {
-        CatchError(error);
-      });
 
-    return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
+        return;
       }
 
-      eventBus.off(eventBus.EVENTS.CONNECT.CHANGE_VIEW, setConnectView);
-      eventBus.off(eventBus.EVENTS.CONNECT.LOADER, setConnectingLoader);
-      eventBus.off(eventBus.EVENTS.CONNECT.SOCKET_ERROR, handleSocketError);
-      eventBus.off(eventBus.EVENTS.CONNECT.SHOW_TOAST, showConnectToast);
-      eventBus.off(eventBus.EVENTS.CONNECT.DEVICE_NAME, setDeviceName);
-      eventBus.off(eventBus.EVENTS.CONNECT.LOGIN, login);
+      if (devices.length === 0) {
+        setLocalView(CONNECT_VIEWS.QrView);
+        const result = await sendCommand(REQUEST_ACTIONS.WS_CONNECT_QR);
 
-      if (closeConnectionRef.current) {
-        closeConnectionRef.current().catch(() => {
-          // Ignore cleanup errors
-        });
+        if (result?.state?.qrData) {
+          await renderQrFromData(result.state.qrData);
+        }
+      } else {
+        setLocalView(CONNECT_VIEWS.DeviceSelect);
       }
     };
-  }, []);
+
+    init();
+  }, [bgState?.active, bgState?.type, bgState?.qrData, getReadyDevices, sendCommand, renderQrFromData]);
 
   useEffect(() => {
     if (data?.connectSliderIndex === undefined) {
@@ -568,10 +312,6 @@ function Connect (props) {
       document.removeEventListener('keydown', handleKeyboardEnterClick);
     };
   }, [handleKeyboardEnterClick, setData, data?.connectSliderIndex]);
-
-  useEffect(() => {
-    handleViewSwitch();
-  }, [connectView, handleViewSwitch]);
 
   useEffect(() => {
     if (sliderRef?.current && sliderRef.current.splide) {
@@ -606,6 +346,13 @@ function Connect (props) {
     };
   }, [readyDevices, sliderMounted, setData, data.connectSliderIndex]);
 
+  // Cleanup: cancel WS on unmount
+  useEffect(() => {
+    return () => {
+      sendCommand(REQUEST_ACTIONS.WS_CANCEL).catch(() => {});
+    };
+  }, [sendCommand]);
+
   return (
     <div className={`${props.className ? props.className : ''}`}>
       <div>
@@ -623,7 +370,7 @@ function Connect (props) {
               {readyDevices.length > 0 && (
                 <NavigationButton
                   type='cancel'
-                  onClick={() => { setConnectView(CONNECT_VIEWS.DeviceSelect); }}
+                  onClick={switchToDeviceSelect}
                 />
               )}
 
@@ -690,7 +437,7 @@ function Connect (props) {
                             key={index}
                             className={S.deviceSelectContainerListItem}
                             title={device?.name}
-                            onClick={() => connectByPush(device, abortControllerRef.current?.signal)}
+                            onClick={() => connectByPush(device)}
                           >
                             {generateDeviceIcon(device)}
                             <span className={S.deviceSelectContainerListItemName}>{device?.name}</span>
@@ -713,14 +460,14 @@ function Connect (props) {
                     </span>
                   </button>
                 </div>
-                
+
                 {generatePagination()}
               </div>
 
               <div className={S.deviceSelectContainerAdd}>
                 <button
                   className={`${bS.btn} ${bS.btnClear}`}
-                  onClick={() => { setConnectView(CONNECT_VIEWS.QrView); }}
+                  onClick={switchToQrView}
                 >
                   <span>{getMessage('connect_device_select_add_another')}</span>
                   <DeviceQrIcon />

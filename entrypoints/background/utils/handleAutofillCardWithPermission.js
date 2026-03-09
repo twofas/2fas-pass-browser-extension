@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, saveCrossDomainPreferences } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab } from '@/partials/functions';
 import TwofasNotification from '@/partials/TwofasNotification';
 
 /**
@@ -64,9 +64,12 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
   const trustedDomains = domains.filter(d => trustedList.includes(d));
   const allBlocked = unknownDomains.length === 0 && trustedDomains.length === 0;
 
-  let crossDomainAllowedDomains = allBlocked ? [] : [...trustedDomains];
+  const crossDomainAllowedDomains = allBlocked ? [] : [...trustedDomains];
 
   if (unknownDomains.length > 0) {
+    storedData.trustedDomains = crossDomainAllowedDomains;
+    await storage.setItem(storageKey, JSON.stringify(storedData));
+
     try {
       const tab = await browser.tabs.get(tabId);
 
@@ -76,28 +79,20 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
       await new Promise(resolve => setTimeout(resolve, 100));
     } catch { }
 
-    let confirmResult;
-
     try {
-      confirmResult = await sendMessageToTab(tabId, {
+      await sendMessageToTab(tabId, {
         action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
         target: REQUEST_TARGETS.CONTENT,
         unknownDomains,
+        storageKey,
         theme: await storage.getItem('local:theme')
       });
     } catch (e) {
       await CatchError(e);
       await storage.removeItem(storageKey);
-      return;
     }
 
-    if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-      await storage.removeItem(storageKey);
-      return;
-    }
-
-    await saveCrossDomainPreferences(confirmResult.domainPreferences);
-    crossDomainAllowedDomains = [...crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
+    return;
   }
 
   actionData.iframePermissionGranted = true;

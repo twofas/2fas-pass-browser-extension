@@ -275,6 +275,10 @@
     "message": "Open calendar",
     "description": "Button title for opening the calendar popup to select expiration date"
   },
+  "ws_action_in_progress": {
+    "message": "Please finish the current action before starting a new one.",
+    "description": "Toast message shown when user tries to start a new WebSocket action while another is in progress"
+  },
   "notification_send_autofill_to_tab_lack_of_service_title": {
     "message": "Error",
     "description": "Title for the notification when the autofill service is not found"
@@ -928,7 +932,7 @@
     "description": "Message displayed while the connection process is ongoing"
   },
   "connect_connection_opened": {
-    "message": "Connection is opened.\nPlease keep this window open",
+    "message": "Connection is opened",
     "description": "Message displayed when the connection is successfully opened"
   },
   "connect_push_cancelled": {
@@ -1304,23 +1308,23 @@
     "description": "Header prompting the user to continue updating in the mobile app"
   },
   "fetch_continue_updating_description": {
-    "message": "To update this Item, continue on your \nmobile app. Please keep this window open.",
+    "message": "To update this Item, continue on your \nmobile app.",
     "description": "Explains that the user should continue the process on their mobile phone"
   },
   "fetch_full_sync_description": {
-    "message": "To complete the sync process, continue in your mobile app. Please keep this window open.",
+    "message": "To complete the sync process, continue in your mobile app.",
     "description": "Explains that the user should continue the full sync process on their mobile phone"
   },
   "fetch_sif_request_description": {
-    "message": "To fetch Item details, continue in your mobile app. Please keep this window open.",
+    "message": "To fetch Item details, continue in your mobile app.",
     "description": "Explains that the user should continue the SIF request process on their mobile phone"
   },
   "fetch_delete_request_description": {
-    "message": "To delete this Item, continue in your mobile app. Please keep this window open.",
+    "message": "To delete this Item, continue in your mobile app.",
     "description": "Explains that the user should continue the login deletion process on their mobile phone"
   },
   "fetch_add_request_description": {
-    "message": "To add this Item, continue in your mobile app. Please keep this window open.",
+    "message": "To add this Item, continue in your mobile app.",
     "description": "Explains that the user should continue the login addition process on their mobile phone"
   },
   "fetch_delete_login_accept_toast": {

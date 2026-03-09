@@ -14,6 +14,9 @@ export const REQUEST_ACTIONS = Object.freeze({
   CHECK_AUTOFILL_INPUTS_CARD: 'checkAutofillInputsCard', // content
   CHECK_IFRAME_PERMISSION: 'checkIframePermission', // content
   SHOW_CROSS_DOMAIN_CONFIRM: 'showCrossDomainConfirm', // content
+  CROSS_DOMAIN_DIALOG_RESULT: 'crossDomainDialogResult', // background (from content script)
+  MATCHING_LOGINS_RESULT: 'matchingLoginsResult', // background (from content script)
+  SAVE_PROMPT_RESULT: 'savePromptResult', // background (from content script)
   SEND_URL: 'sendUrl', // popup
   MATCHING_LOGINS: 'matchingLogins', // content
   SAVE_PROMPT: 'savePrompt', // content
@@ -36,4 +39,12 @@ export const REQUEST_ACTIONS = Object.freeze({
   REFRESH_LANG: 'refreshLang', // content (top frame only)
   GET_I18N_DATA: 'getI18nData', // background (returns lang and messages for content scripts)
   SIF_T2_RESET: 'sifT2Reset', // background → popup (notifies that a T2 item's SIF was reset)
+  PROMPT_INPUT_FLUSH: 'promptInputFlush', // background prompt (bulk flush before page unload)
+  WS_CONNECT_QR: 'wsConnectQr', // popup → background_ws (start QR connection)
+  WS_CONNECT_PUSH: 'wsConnectPush', // popup → background_ws (start push connection)
+  WS_FETCH: 'wsFetch', // popup → background_ws (start fetch action)
+  WS_CANCEL: 'wsCancel', // popup → background_ws (cancel current WS action)
+  WS_GET_STATE: 'wsGetState', // popup → background_ws (get current WS state)
+  WS_STATE_UPDATE: 'wsStateUpdate', // background_ws → popup (state update notification)
+  WS_RELOAD_QR: 'wsReloadQr', // popup → background_ws (reload QR code after error)
 });

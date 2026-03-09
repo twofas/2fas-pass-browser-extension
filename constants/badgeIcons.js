@@ -20,6 +20,10 @@ const badgeIcons = () => {
     notConfigured: {
       19: browser.runtime.getURL('icons/accounts-badge/icon19.png'),
       38: browser.runtime.getURL('icons/accounts-badge/icon38.png')
+    },
+    connecting: {
+      19: browser.runtime.getURL('icons/connecting/icon19.png'),
+      38: browser.runtime.getURL('icons/connecting/icon38.png')
     }
   };
 };

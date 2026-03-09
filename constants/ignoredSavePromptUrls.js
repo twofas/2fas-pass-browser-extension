@@ -32,7 +32,25 @@ const ignoredSavePromptUrls = Object.freeze([
   'prodregistryv2.org',
   'beyondwickedmapping.org',
   'ajaxsetcookiepreferences',
-  'cookie'
+  'cookie',
+  'recaptcha',
+  'hcaptcha',
+  'turnstile',
+  'doubleclick.net',
+  'googlesyndication.com',
+  'amazon-adsystem.com',
+  'facebook.com/tr',
+  'connect.facebook.net',
+  'bugsnag',
+  'rollbar',
+  'logrocket',
+  'newrelic',
+  'dynatrace',
+  'intercom.io',
+  'crisp.chat',
+  'tawk.to',
+  'onetrust.com',
+  'cookiebot.com'
 ]);
 
 export default ignoredSavePromptUrls;

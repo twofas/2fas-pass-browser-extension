@@ -4,9 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "variables" as v;
-@use "mixins" as m;
-
 .Toastify__2fas_pass {
   &.Toastify__toast-container {
     bottom: 76px !important;
@@ -19,7 +16,7 @@
       left: 50% !important;
       transform: translateX(-50%) !important;
       width: 50vw !important;
-  
+
       .Toastify__toast {
         font-size: 16px !important;
         width: 50vw !important;
@@ -27,12 +24,12 @@
         .Toastify__toast-icon {
           margin-inline-end: 12px !important;
           width: 24px !important;
-    
+
           svg {
             width: 24px !important;
           }
         }
-    
+
         &-close {
           height: 32px !important;
           width: 32px !important;
@@ -42,8 +39,8 @@
   }
 
   .Toastify__toast {
-    color: v.$tertiary-text-light !important;
     border-radius: 6px !important;
+    color: var(--tertiary-text) !important;
     font-family: 'Twofas-Pass-Inter' !important;
     font-size: 12px !important;
     font-weight: 500 !important;
@@ -56,10 +53,6 @@
     pointer-events: auto !important;
     width: calc(100vw - 32px) !important;
 
-    @include m.darkMode {
-      color: v.$tertiary-text-dark !important;
-    }
-
     &::before {
       pointer-events: none !important;
     }
@@ -71,43 +64,23 @@
     }
 
     &--success {
-      background-color: v.$success-toast-light !important;
-      color: v.$tertiary-text-light !important;
-
-      @include m.darkMode {
-        background-color: v.$success-toast-dark !important;
-        color: v.$tertiary-text-dark !important;
-      }
+      background-color: var(--success-toast) !important;
+      color: var(--tertiary-text) !important;
     }
 
     &--warning {
-      background-color: v.$warning-toast-light !important;
-      color: v.$tertiary-text-light !important;
-
-      @include m.darkMode {
-        background-color: v.$warning-toast-dark !important;
-        color: v.$tertiary-text-dark !important;
-      }
+      background-color: var(--warning-toast) !important;
+      color: var(--tertiary-text) !important;
     }
 
     &--info {
-      background-color: v.$info-toast-light !important;
-      color: v.$tertiary-text-light !important;
-
-      @include m.darkMode {
-        background-color: v.$info-toast-dark !important;
-        color: v.$tertiary-text-dark !important;
-      }
+      background-color: var(--info-toast) !important;
+      color: var(--tertiary-text) !important;
     }
 
     &--error {
-      background-color: v.$error-toast-light !important;
-      color: v.$tertiary-text-light !important;
-
-      @include m.darkMode {
-        background-color: v.$error-toast-dark !important;
-        color: v.$tertiary-text-dark !important;
-      }
+      background-color: var(--error-toast) !important;
+      color: var(--tertiary-text) !important;
     }
 
     &-body {
@@ -115,22 +88,18 @@
       padding: 0 !important;
 
       > div:not(.Toastify__toast-icon) {
-        color: v.$tertiary-text-light !important;
+        color: var(--tertiary-text) !important;
         font-family: 'Twofas-Pass-Inter' !important;
         font-size: 12px !important;
         font-weight: 500 !important;
         line-height: 1 !important;
-
-        @include m.darkMode {
-          color: v.$tertiary-text-dark !important;
-        }
       }
     }
 
     &-icon {
       animation: none !important;
       margin-inline-end: 8px !important;
-      transition: opacity v.$anim !important;
+      transition: opacity var(--anim) !important;
       width: 16px !important;
 
       svg {
@@ -146,7 +115,7 @@
       height: 25px !important;
       margin-left: auto !important;
       padding: 0 !important;
-      transition: opacity v.$anim !important;
+      transition: opacity var(--anim) !important;
       width: 25px !important;
 
       &.active {

@@ -4,15 +4,15 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import handleFetchHelloAction from '@/partials/WebSocket/handleFetchHelloAction';
-import handleChallengeAction from '@/partials/WebSocket/handleChallengeAction';
-import handleCloseSignalPullRequestAction from '@/partials/WebSocket/handleCloseSignalPullRequestAction';
-import handlePullRequest from '@/partials/WebSocket/handlePullRequest';
-import handlePullRequestAction from '@/partials/WebSocket/handlePullRequestAction';
-import handleSendVaultData from '@/partials/WebSocket/handleSendVaultData';
-import processFullSyncVaultsData from '@/partials/WebSocket/processFullSyncVaultsData';
+import handleFetchHelloAction from '@/entrypoints/background/websocket/handleFetchHelloAction';
+import handleChallengeAction from '@/entrypoints/background/websocket/handleChallengeAction';
+import handleCloseSignalPullRequestAction from '@/entrypoints/background/websocket/handleCloseSignalPullRequestAction';
+import handlePullRequest from '@/entrypoints/background/websocket/handlePullRequest';
+import handlePullRequestAction from '@/entrypoints/background/websocket/handlePullRequestAction';
+import handleSendVaultData from '@/entrypoints/background/websocket/handleSendVaultData';
+import processFullSyncVaultsData from '@/entrypoints/background/websocket/processFullSyncVaultsData';
 import deletePush from '@/partials/functions/deletePush';
-import TwoFasWebSocket from '@/partials/WebSocket';
+import TwoFasWebSocket from '@/entrypoints/background/websocket';
 import { FETCH_STATE } from '../constants';
 
 /**

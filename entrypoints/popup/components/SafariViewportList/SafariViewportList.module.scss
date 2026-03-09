@@ -5,10 +5,10 @@
 // See LICENSE file for full terms
 
 .safari-viewport-list {
-  contain: layout style;
+  contain: paint;
 
   > div {
-    &:last-child {
+    > div:last-child {
       > div {
         padding-bottom: 0;
 

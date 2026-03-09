@@ -27,7 +27,25 @@ const paymentCardDeniedKeywords = Object.freeze([
   'tel',
   'mobile',
   'fax',
-  'email'
+  'email',
+  'birthday',
+  'birthdate',
+  'dateofbirth',
+  'date_of_birth',
+  'bday',
+  'geburtsdatum', // German
+  'geburtstag', // German
+  'data_urodzenia', // Polish
+  'dataurodzenia', // Polish
+  'date_naissance', // French
+  'fecha_nacimiento', // Spanish
+  'data_nascita', // Italian
+  'data_nascimento', // Portuguese
+  'geboortedatum', // Dutch
+  'datum_narozeni', // Czech
+  'fodelsedatum', // Swedish
+  'dogum_tarihi', // Turkish
+  'gender'
 ]);
 
 export default paymentCardDeniedKeywords;

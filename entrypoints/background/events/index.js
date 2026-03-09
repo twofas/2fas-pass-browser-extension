@@ -4,6 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+export { default as createMessageRouter } from './createMessageRouter';
 export { default as onAlarm } from './onAlarm';
 export { default as onCommand } from './onCommand';
 export { default as onContextMenuClick } from './onContextMenuClick';
@@ -15,3 +16,4 @@ export { default as onStartup } from './onStartup';
 export { default as onStorageChange } from './onStorageChange';
 export { default as onUpdateAvailable } from './onUpdateAvailable';
 export { default as onWebRequest } from './onWebRequest';
+export { default as onWsMessage } from './onWsMessage';

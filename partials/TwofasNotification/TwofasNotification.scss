@@ -4,11 +4,14 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+@use "@/partials/global-styles/color-tokens" as tokens;
+@use "@/partials/global-styles/functions" as fn;
 @use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
 
 // FUTURE - Refactor this
 .twofas-pass-notification {
+  @include v.generate-non-color-vars;
+
   &-container {
     align-items: center !important;
     box-sizing: border-box !important;
@@ -16,8 +19,8 @@
     flex-direction: column !important;
     font-family: Arial, sans-serif !important;
     gap: 12px 0 !important;
-    height: calc(100% - 20px) !important;
     justify-content: flex-start !important;
+    max-height: calc(100% - 20px) !important;
     position: fixed !important;
     right: 10px !important;
     top: 10px !important;
@@ -39,7 +42,7 @@
 
     &.twofas-pass-transitions {
       .twofas-pass-notification-item {
-        transition: opacity v.$anim !important;
+        transition: opacity var(--anim) !important;
 
         &.twofas-pass-matching-logins {
           &.twofas-pass-visible {
@@ -48,18 +51,18 @@
                 &-top {
                   &-close {
                     opacity: 0 !important;
-                    transition: opacity v.$anim !important;
+                    transition: opacity var(--anim) !important;
                   }
                 }
 
                 &-header {
                   opacity: 0 !important;
-                  transition: opacity v.$anim !important;
+                  transition: opacity var(--anim) !important;
                 }
 
                 &-items {
                   opacity: 0 !important;
-                  transition: opacity v.$anim !important;
+                  transition: opacity var(--anim) !important;
                 }
               }
             }
@@ -68,23 +71,23 @@
               &-top {
                 &-close {
                   opacity: 1 !important;
-                  transition: opacity v.$anim !important;
+                  transition: opacity var(--anim) !important;
                 }
               }
 
               &-header {
                 max-height: 60px !important;
                 opacity: 1 !important;
-                transition: opacity v.$anim !important;
+                transition: opacity var(--anim) !important;
 
                 span {
-                  transition: transform v.$anim !important;
+                  transition: transform var(--anim) !important;
                 }
               }
 
               &-items {
                 opacity: 1 !important;
-                transition: opacity v.$anim !important;
+                transition: opacity var(--anim) !important;
               }
             }
           }
@@ -97,18 +100,18 @@
                 &-top {
                   &-close {
                     opacity: 0 !important;
-                    transition: opacity v.$anim !important;
+                    transition: opacity var(--anim) !important;
                   }
                 }
 
                 &-header {
                   opacity: 0 !important;
-                  transition: opacity v.$anim !important;
+                  transition: opacity var(--anim) !important;
                 }
 
                 &-buttons {
                   opacity: 0 !important;
-                  transition: opacity v.$anim !important;
+                  transition: opacity var(--anim) !important;
                 }
               }
             }
@@ -117,24 +120,24 @@
               &-top {
                 &-close {
                   opacity: 1 !important;
-                  transition: opacity v.$anim !important;
+                  transition: opacity var(--anim) !important;
                 }
               }
 
               &-header {
                 max-height: 64px !important;
                 opacity: 1 !important;
-                transition: opacity v.$anim !important;
+                transition: opacity var(--anim) !important;
 
                 p {
-                  transition: transform v.$anim !important;
+                  transition: transform var(--anim) !important;
                 }
               }
 
               &-buttons {
                 max-height: 58px !important;
                 opacity: 1 !important;
-                transition: opacity v.$anim !important;
+                transition: opacity var(--anim) !important;
               }
             }
           }
@@ -157,26 +160,26 @@
               opacity: 1 !important;
             }
           }
-    
+
           &.twofas-pass-hidden {
             opacity: 0 !important;
-    
+
             .twofas-pass-notification-item-content {
               &-buttons,
               &-buttons-with-select {
                 opacity: 0 !important;
-                transition: opacity v.$anim !important;
+                transition: opacity var(--anim) !important;
               }
 
               p {
                 opacity: 0 !important;
-      
+
                 &:first-of-type {
-                  transition: opacity v.$anim !important;
+                  transition: opacity var(--anim) !important;
                 }
-        
+
                 &:nth-of-type(2) {
-                  transition: opacity v.$anim !important;
+                  transition: opacity var(--anim) !important;
                 }
               }
             }
@@ -189,20 +192,20 @@
           padding: 0 !important;
           transition: max-height .4s ease-out, padding .4s ease-out, margin-top .4s ease-out !important;
         }
-  
+
         &-content {
           &-buttons,
           &-buttons-with-select {
-            transition: opacity v.$anim !important;
+            transition: opacity var(--anim) !important;
           }
-          
+
           p {
             &:first-of-type {
-              transition: opacity v.$anim !important;
+              transition: opacity var(--anim) !important;
             }
-  
+
             &:nth-of-type(2) {
-              transition: opacity v.$anim !important;
+              transition: opacity var(--anim) !important;
             }
           }
         }
@@ -212,7 +215,9 @@
 
   &-item {
     align-items: center !important;
+    background-color: var(--primary-bg) !important;
     border-radius: 16px !important;
+    box-shadow: 0 0 10px 2px fn.hex-rgba(var(--primary-box-stroke), .2) !important;
     display: inline-flex !important;
     flex-direction: row !important;
     flex-shrink: 0 !important;
@@ -222,48 +227,24 @@
     width: 100% !important;
 
     &.light {
-      background-color: v.$primary-bg-light !important;
-      box-shadow: 0 0 10px 2px rgba(v.$primary-box-stroke-light, .2) !important;
-
-      .twofas-pass-notification-item-content {
-        p {
-          color: v.$primary-text-light !important;
-        }
-      }
+      @include tokens.generate-light-vars;
     }
 
     &.dark {
-      background-color: v.$primary-bg-dark !important;
-      box-shadow: 0 0 10px 2px rgba(v.$primary-box-stroke-dark, .2) !important;
-
-      .twofas-pass-notification-item-content {
-        p {
-          color: v.$primary-text-dark !important;
-        }
-      }
+      @include tokens.generate-dark-vars;
     }
 
     &.unset {
-      @media all and (prefers-color-scheme: light) {
-        background-color: v.$primary-bg-light !important;
-        box-shadow: 0 0 10px 2px rgba(v.$primary-box-stroke-light, .2) !important;
-
-        .twofas-pass-notification-item-content {
-          p {
-            color: v.$primary-text-light !important;
-          }
-        }
-      }
+      @include tokens.generate-light-vars;
 
       @media all and (prefers-color-scheme: dark) {
-        background-color: v.$primary-bg-dark !important;
-        box-shadow: 0 0 10px 2px rgba(v.$primary-box-stroke-dark, .2) !important;
+        @include tokens.generate-dark-vars;
+      }
+    }
 
-        .twofas-pass-notification-item-content {
-          p {
-            color: v.$primary-text-dark !important;
-          }
-        }
+    .twofas-pass-notification-item-content {
+      p {
+        color: var(--primary-text) !important;
       }
     }
 
@@ -271,293 +252,74 @@
       align-items: flex-start !important;
       display: flex !important;
       flex-direction: column !important;
-      height: 100% !important;
       max-height: 100% !important;
       text-align: left !important;
 
-      &.light {
-        .twofas-pass-notification-matching-logins {
-          &-top {
-            &-close {
-              svg {
-                fill: v.$primary-box-bg-light !important;
-                stroke: v.$primary-color-light !important;
-              }
+      .twofas-pass-notification-matching-logins {
+        &-top {
+          &-close {
+            svg {
+              fill: var(--additional) !important;
+              stroke: var(--primary-color) !important;
             }
           }
+        }
 
-          &-header {
-            color: v.$primary-text-light !important;
+        &-header {
+          color: var(--primary-text) !important;
+        }
+
+        &-items {
+          scrollbar-color: var(--secondary-text) transparent !important;
+
+          &::-webkit-scrollbar-thumb {
+            background-color: var(--secondary-text) !important;
           }
+        }
 
-          &-items {
-            scrollbar-color: v.$secondary-text-light transparent !important;
+        &-item {
+          &-btn {
+            background-color: var(--primary-bg) !important;
+            border-bottom: 1px solid var(--object-stroke) !important;
 
-            &::-webkit-scrollbar-thumb {
-              background-color: v.$secondary-text-light !important;
-            }
-          }
-
-          &-item {
-            &-btn {
-              background-color: v.$primary-bg-light !important;
-              border-bottom: 1px solid v.$object-stroke-light !important;
-
-              &:hover {
-                > span {
-                  &.twofas-pass-notification-matching-logins-item-secondary-btn {
-                    background-color: rgba(v.$hover-on-hover-light, 1) !important;
-                  }
-                }
-              }
-
+            &:hover {
               > span {
-                &.twofas-pass-notification-matching-logins-item-icon {
-                  &.icon-label {
-                    background-color: v.$login-item-bg-light !important;
-                    color: v.$login-item-light !important;
-                  }
-                }
-
                 &.twofas-pass-notification-matching-logins-item-secondary-btn {
-                  background-color: rgba(v.$hover-on-hover-light, 0) !important;
-                }
-
-                &:nth-of-type(2) {
-                  > span {
-                    &:first-of-type {
-                      color: v.$primary-text-light !important;
-                    }
-
-                    &:last-of-type {
-                      color: v.$secondary-text-light !important;
-                    }
-                  }
+                  background-color: var(--hover-on-hover) !important;
                 }
               }
             }
 
-            &:last-of-type {
-              .twofas-pass-notification-matching-logins-item-btn {
-                border-bottom: 0 !important;
+            > span {
+              &.twofas-pass-notification-matching-logins-item-icon {
+                &.icon-label {
+                  background-color: var(--login-item-bg) !important;
+                  color: var(--login-item) !important;
+                }
               }
-            }
-          }
-        }
-      }
 
-      &.dark {
-        .twofas-pass-notification-matching-logins {
-          &-top {
-            &-close {
-              svg {
-                fill: v.$additional-dark !important;
-                stroke: v.$primary-color-dark !important;
+              &.twofas-pass-notification-matching-logins-item-secondary-btn {
+                background-color: fn.hex-rgba(var(--hover-on-hover), 0) !important;
+                color: var(--primary-color) !important;
               }
-            }
-          }
 
-          &-header {
-            color: v.$primary-text-dark !important;
-          }
-
-          &-items {
-            scrollbar-color: v.$secondary-text-dark transparent !important;
-
-            &::-webkit-scrollbar-thumb {
-              background-color: v.$secondary-text-dark !important;
-            }
-          }
-
-          &-item {
-            &-btn {
-              background-color: v.$primary-bg-dark !important;
-              border-bottom: 1px solid v.$object-stroke-dark !important;
-
-              &:hover {
+              &:nth-of-type(2) {
                 > span {
-                  &.twofas-pass-notification-matching-logins-item-secondary-btn {
-                    background-color: rgba(v.$hover-on-hover-dark, 1) !important;
-                  }
-                }
-              }
-
-              > span {
-                &.twofas-pass-notification-matching-logins-item-icon {
-                  &.icon-label {
-                    background-color: v.$login-item-bg-dark !important;
-                    color: v.$login-item-dark !important;
-                  }
-                }
-
-                &.twofas-pass-notification-matching-logins-item-secondary-btn {
-                  background-color: rgba(v.$hover-on-hover-dark, 0) !important;
-                  color: v.$primary-color-dark !important;
-                }
-
-                &:nth-of-type(2) {
-                  > span {
-                    &:first-of-type {
-                      color: v.$primary-text-dark !important;
-                    }
-
-                    &:last-of-type:nth-of-type(2) {
-                      color: v.$secondary-text-dark !important;
-                    }
-                  }
-                }
-              }
-            }
-
-            &:last-of-type {
-              .twofas-pass-notification-matching-logins-item-btn {
-                border-bottom: 0 !important;
-              }
-            }
-          }
-        }
-      }
-
-      &.unset {
-        @media all and (prefers-color-scheme: light) {
-          .twofas-pass-notification-matching-logins {
-            &-top {
-              &-close {
-                svg {
-                  fill: v.$additional-light !important;
-                  stroke: v.$primary-color-light !important;
-                }
-              }
-            }
-
-            &-header {
-              color: v.$primary-text-light !important;
-            }
-
-            &-items {
-              scrollbar-color: v.$secondary-text-light transparent !important;
-
-              &::-webkit-scrollbar-thumb {
-                background-color: v.$secondary-text-light !important;
-              }
-            }
-
-            &-item {
-              &-btn {
-                background-color: v.$primary-bg-light !important;
-                border-bottom: 1px solid v.$object-stroke-light !important;
-
-                &:hover {
-                  > span {
-                    &.twofas-pass-notification-matching-logins-item-secondary-btn {
-                      background-color: rgba(v.$hover-on-hover-light, 1) !important;
-                    }
-                  }
-                }
-
-                > span {
-                  &.twofas-pass-notification-matching-logins-item-icon {
-                    &.icon-label {
-                      background-color: v.$login-item-bg-light !important;
-                      color: v.$login-item-light !important;
-                    }
+                  &:first-of-type {
+                    color: var(--primary-text) !important;
                   }
 
-                  &.twofas-pass-notification-matching-logins-item-secondary-btn {
-                    background-color: rgba(v.$hover-on-hover-light, 0) !important;
+                  &:last-of-type {
+                    color: var(--secondary-text) !important;
                   }
-
-                  &:nth-of-type(2) {
-                    > span {
-                      &:first-of-type {
-                        color: v.$primary-text-light !important;
-                      }
-
-                      &:last-of-type {
-                        color: v.$secondary-text-light !important;
-                      }
-                    }
-                  }
-                }
-              }
-
-              &:last-of-type {
-                .twofas-pass-notification-matching-logins-item-btn {
-                  border-bottom: 0 !important;
                 }
               }
             }
           }
-        }
 
-        @media all and (prefers-color-scheme: dark) {
-          .twofas-pass-notification-matching-logins {
-            &-top {
-              &-close {
-                svg {
-                  fill: v.$additional-dark !important;
-                  stroke: v.$primary-color-dark !important;
-                }
-              }
-            }
-
-            &-header {
-              color: v.$primary-text-dark !important;
-            }
-
-            &-items {
-              scrollbar-color: v.$secondary-text-dark transparent !important;
-
-              &::-webkit-scrollbar-thumb {
-                background-color: v.$secondary-text-dark !important;
-              }
-            }
-
-            &-item {
-              &-btn {
-                background-color: v.$primary-bg-dark !important;
-                border-bottom: 1px solid v.$object-stroke-dark !important;
-
-                &:hover {
-                  > span {
-                    &.twofas-pass-notification-matching-logins-item-secondary-btn {
-                      background-color: rgba(v.$hover-on-hover-dark, 1) !important;
-                    }
-                  }
-                }
-
-                > span {
-                  &.twofas-pass-notification-matching-logins-item-icon {
-                    &.icon-label {
-                      background-color: v.$login-item-bg-dark !important;
-                      color: v.$login-item-dark !important;
-                    }
-                  }
-
-                  &.twofas-pass-notification-matching-logins-item-secondary-btn {
-                    background-color: rgba(v.$hover-on-hover-dark, 0) !important;
-                    color: v.$primary-color-dark !important;
-                  }
-
-                  &:nth-of-type(2) {
-                    > span {
-                      &:first-of-type {
-                        color: v.$primary-text-dark !important;
-                      }
-
-                      &:last-of-type:nth-of-type(2) {
-                        color: v.$secondary-text-dark !important;
-                      }
-                    }
-                  }
-                }
-              }
-
-              &:last-of-type {
-                .twofas-pass-notification-matching-logins-item-btn {
-                  border-bottom: 0 !important;
-                }
-              }
+          &:last-of-type {
+            .twofas-pass-notification-matching-logins-item-btn {
+              border-bottom: 0 !important;
             }
           }
         }
@@ -571,125 +333,31 @@
       max-width: 149px !important;
       text-align: left !important;
 
-      &.light {
-        .twofas-pass-notification-save-prompt-top {
-          border-bottom: 1px solid v.$divider-light !important;
+      .twofas-pass-notification-save-prompt-top {
+        border-bottom: 1px solid var(--divider) !important;
 
-          &-close {
-            svg {
-              fill: v.$additional-light !important;
-              stroke: v.$primary-color-light !important;
-            }
-          }
-        }
-
-        .twofas-pass-notification-save-prompt-header {
-          p {
-            color: v.$primary-text-light !important;
-          }
-        }
-
-        .twofas-pass-notification-save-prompt-buttons {
-          &-do-not-ask {
-            color: v.$primary-color-light !important;
-          }
-
-          &-add-login {
-            background-color: v.$primary-color-light !important;
-            color: v.$tertiary-text-light !important;
+        &-close {
+          svg {
+            fill: var(--additional) !important;
+            stroke: var(--primary-color) !important;
           }
         }
       }
 
-      &.dark {
-        .twofas-pass-notification-save-prompt-top {
-          border-bottom: 1px solid v.$divider-dark !important;
-
-          &-close {
-            svg {
-              fill: v.$additional-dark !important;
-              stroke: v.$primary-color-dark !important;
-            }
-          }
-        }
-
-        .twofas-pass-notification-save-prompt-header {
-          p {
-            color: v.$primary-text-dark !important;
-          }
-        }
-
-        .twofas-pass-notification-save-prompt-buttons {
-          &-do-not-ask {
-            color: v.$primary-color-dark !important;
-          }
-
-          &-add-login {
-            background-color: v.$primary-color-dark !important;
-            color: v.$tertiary-text-dark !important;
-          }
+      .twofas-pass-notification-save-prompt-header {
+        p {
+          color: var(--primary-text) !important;
         }
       }
 
-      &.unset {
-        @media all and (prefers-color-scheme: light) {
-          .twofas-pass-notification-save-prompt-top {
-            border-bottom: 1px solid v.$divider-light !important;
-
-            &-close {
-              svg {
-                fill: v.$additional-light !important;
-                stroke: v.$primary-color-light !important;
-              }
-            }
-          }
-
-          .twofas-pass-notification-save-prompt-header {
-            p {
-              color: v.$primary-text-light !important;
-            }
-          }
-
-          .twofas-pass-notification-save-prompt-buttons {
-            &-do-not-ask {
-              color: v.$primary-color-light !important;
-            }
-
-            &-add-login {
-              background-color: v.$primary-color-light !important;
-              color: v.$tertiary-text-light !important;
-            }
-          }
+      .twofas-pass-notification-save-prompt-buttons {
+        &-do-not-ask {
+          color: var(--primary-color) !important;
         }
 
-        @media all and (prefers-color-scheme: dark) {
-          .twofas-pass-notification-save-prompt-top {
-            border-bottom: 1px solid v.$divider-dark !important;
-
-            &-close {
-              svg {
-                fill: v.$additional-dark !important;
-                stroke: v.$primary-color-dark !important;
-              }
-            }
-          }
-
-          .twofas-pass-notification-save-prompt-header {
-            p {
-              color: v.$primary-text-dark !important;
-            }
-          }
-
-          .twofas-pass-notification-save-prompt-buttons {
-            &-do-not-ask {
-              color: v.$primary-color-dark !important;
-            }
-
-            &-add-login {
-              background-color: v.$primary-color-dark !important;
-              color: v.$tertiary-text-dark !important;
-            }
-          }
+        &-add-login {
+          background-color: var(--primary-color) !important;
+          color: var(--tertiary-text) !important;
         }
       }
     }
@@ -784,7 +452,7 @@
     display: flex !important;
     flex: 1 !important;
     flex-direction: column !important;
-    height: 100% !important;
+    max-height: 100% !important;
     min-height: 0 !important;
     text-align: left !important;
     width: 100% !important;
@@ -812,10 +480,11 @@
         margin: 0 !important;
         opacity: 0 !important;
         padding: 0 !important;
-        transition: opacity v.$anim !important;
+        transition: opacity var(--anim) !important;
 
         svg {
           height: 32px !important;
+          pointer-events: none !important;
           stroke-linecap: round !important;
           stroke-linejoin: round !important;
           stroke-width: 1.5 !important;
@@ -850,9 +519,9 @@
       min-height: 0 !important;
       opacity: 0 !important;
       overflow-y: auto !important;
-      scrollbar-color: v.$secondary-text-dark transparent !important;
+      scrollbar-color: var(--secondary-text) transparent !important;
       scrollbar-width: thin !important;
-      transition: opacity v.$anim !important;
+      transition: opacity var(--anim) !important;
       width: 100% !important;
 
       &::-webkit-scrollbar {
@@ -864,7 +533,7 @@
       }
 
       &::-webkit-scrollbar-thumb {
-        background-color: v.$secondary-text-dark !important;
+        background-color: var(--secondary-text) !important;
         border-radius: 3px !important;
       }
     }
@@ -892,14 +561,14 @@
         padding: 0 !important;
         padding-bottom: 12px !important;
         padding-top: 12px !important;
-        transition: background-color v.$anim !important;
+        transition: background-color var(--anim) !important;
         width: 100% !important;
 
         > span {
           &.twofas-pass-notification-matching-logins-item-icon {
             align-items: center !important;
             border-radius: 4px !important;
-            color: v.$primary-text-light !important;
+            color: var(--primary-text) !important;
             display: inline-flex !important;
             flex-shrink: 0 !important;
             height: 32px !important;
@@ -907,14 +576,14 @@
             margin-right: 8px !important;
             overflow: hidden !important;
             width: 32px !important;
-  
+
             &.icon-label {
               font-size: 10px !important;
               font-weight: 700 !important;
               line-height: 1.2 !important;
               text-align: center !important;
             }
-  
+
             &.icon-image {
               overflow: hidden !important;
               position: relative !important;
@@ -924,7 +593,7 @@
                 max-height: 24px !important;
                 opacity: 0 !important;
                 position: relative !important;
-                transition: opacity v.$anim !important;
+                transition: opacity var(--anim) !important;
                 width: 24px !important;
                 z-index: 2 !important;
 
@@ -940,7 +609,7 @@
 
           &.twofas-pass-notification-matching-logins-item-secondary-btn {
             border-radius: 4px !important;
-            color: v.$primary-color-light !important;
+            color: var(--primary-color) !important;
             font-family: Arial, sans-serif !important;
             font-size: 12px !important;
             font-style: normal !important;
@@ -949,9 +618,9 @@
             margin-left: auto !important;
             padding: 7px 10px !important;
             text-align: center !important;
-            transition: background-color v.$anim !important;
+            transition: background-color var(--anim) !important;
           }
-          
+
           &:nth-of-type(2) { // Account data
             align-items: flex-start !important;
             display: flex !important;
@@ -959,15 +628,15 @@
             gap: 6px 0 !important;
             max-width: 170px !important;
             overflow: hidden !important;
-            transition: max-width v.$anim !important;
-  
+            transition: max-width var(--anim) !important;
+
             > span {
               margin-bottom: -2px !important;
               max-width: 100% !important;
               overflow: hidden !important;
               padding-bottom: 3px !important;
               text-overflow: ellipsis !important;
-  
+
               &:first-of-type,
               &:first-of-type:last-of-type { // Credential Name
                 font-size: 14px !important;
@@ -976,7 +645,7 @@
                 text-align: left;
                 white-space: nowrap;
               }
-  
+
               &:last-of-type:nth-of-type(2) { // Username
                 font-size: 12px !important;
                 font-weight: 400 !important;
@@ -1021,10 +690,11 @@
         margin: 0 !important;
         opacity: 0 !important;
         padding: 0 !important;
-        transition: opacity v.$anim !important;
+        transition: opacity var(--anim) !important;
 
         svg {
           height: 32px !important;
+          pointer-events: none !important;
           stroke-linecap: round !important;
           stroke-linejoin: round !important;
           stroke-width: 1.5 !important;
@@ -1060,7 +730,7 @@
       justify-content: space-between !important;
       margin-top: 16px !important;
       opacity: 0 !important;
-      transition: opacity v.$anim !important;
+      transition: opacity var(--anim) !important;
       width: 100% !important;
 
       &-do-not-ask {
@@ -1074,7 +744,7 @@
 
       &-add-login {
         border-radius: 6px !important;
-        color: v.$tertiary-text-light !important;
+        color: var(--tertiary-text) !important;
         font-size: 14px !important;
         font-style: normal !important;
         font-weight: 500 !important;
@@ -1082,7 +752,7 @@
         text-align: center !important;
         width: 110px !important;
       }
-      
+
       button {
         appearance: none !important;
         border: 0 !important;
@@ -1095,6 +765,7 @@
 }
 
 .twofas-pass-cross-domain-dialog {
+  @include v.generate-non-color-vars;
   --dropdown-col-width: 154px;
   background-color: transparent !important;
   border: 0 !important;
@@ -1102,7 +773,7 @@
   font-family: Arial, sans-serif !important;
   margin: auto !important;
   max-height: 90vh !important;
-  max-width: 500px !important;
+  max-width: 600px !important;
   outline: none !important;
   overflow: visible !important;
   padding: 0 !important;
@@ -1110,10 +781,36 @@
   user-select: none !important;
   width: 90vw !important;
 
+  &.light {
+    @include tokens.generate-light-vars;
+  }
+
+  &.dark {
+    @include tokens.generate-dark-vars;
+  }
+
+  &.unset {
+    @include tokens.generate-light-vars;
+
+    @media all and (prefers-color-scheme: dark) {
+      @include tokens.generate-dark-vars;
+    }
+  }
+
   &::backdrop {
     animation: twofas-pass-dialog-backdrop .2s ease-out !important;
     background-color: rgba(0, 0, 0, .5) !important;
     pointer-events: none !important;
+  }
+
+  &.no-animation {
+    &::backdrop {
+      animation: none !important;
+    }
+
+    .twofas-pass-cross-domain-dialog-content {
+      animation: none !important;
+    }
   }
 
   * {
@@ -1125,15 +822,19 @@
 
   &-content {
     animation: twofas-pass-dialog-open .2s ease-out !important;
+    background-color: var(--primary-bg) !important;
     border-radius: 12px !important;
+    box-shadow: none !important;
     display: flex !important;
     flex-direction: column !important;
     max-height: 80vh !important;
     overflow-y: auto !important;
+    scrollbar-color: var(--hover-on-hover) var(--primary-bg) !important;
     scrollbar-width: thin !important;
     width: 100% !important;
 
     &::-webkit-scrollbar {
+      background-color: var(--primary-bg) !important;
       width: 8px !important;
     }
 
@@ -1143,13 +844,14 @@
     }
 
     &::-webkit-scrollbar-thumb {
+      background-color: var(--hover-on-hover) !important;
       border-radius: 4px !important;
     }
   }
 
   &-top {
     align-items: center !important;
-    border-bottom: 1px solid transparent !important;
+    border-bottom: 1px solid var(--divider) !important;
     display: flex !important;
     flex-direction: row !important;
     justify-content: space-between !important;
@@ -1173,7 +875,10 @@
       padding: 0 !important;
 
       svg {
+        fill: var(--hover-color) !important;
         height: 32px !important;
+        pointer-events: none !important;
+        stroke: var(--primary-color) !important;
         width: 32px !important;
       }
     }
@@ -1186,6 +891,7 @@
     width: 100% !important;
 
     h3 {
+      color: var(--primary-text) !important;
       font-size: 16px !important;
       font-weight: 600 !important;
       line-height: 1.3 !important;
@@ -1193,6 +899,7 @@
     }
 
     p {
+      color: var(--primary-text) !important;
       font-size: 14px !important;
       font-weight: 400 !important;
       line-height: 1.4 !important;
@@ -1207,18 +914,44 @@
     width: 100% !important;
 
     &-content {
+      background-color: var(--primary-box-bg) !important;
       border-radius: 6px !important;
+      max-height: 254px !important;
+      overflow-y: auto !important;
+      scrollbar-color: var(--hover-on-hover) var(--primary-box-bg) !important;
+      scrollbar-width: thin !important;
+
+      &::-webkit-scrollbar {
+        background-color: var(--primary-box-bg) !important;
+        width: 8px !important;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: var(--primary-box-bg) !important;
+        box-shadow: none !important;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--hover-on-hover) !important;
+        border-radius: 4px !important;
+      }
     }
 
     &-header {
-      border-bottom: 1px solid transparent !important;
+      background-color: var(--primary-box-bg) !important;
+      border-bottom: 1px solid var(--divider) !important;
       display: flex !important;
       flex-direction: row !important;
       font-size: 14px !important;
       font-weight: 500 !important;
+      position: sticky !important;
+      top: 0 !important;
       width: 100% !important;
+      z-index: 1 !important;
 
       span {
+        border-color: var(--divider) !important;
+        color: var(--primary-text) !important;
         display: inline-block;
         padding: 17px 12px !important;
         text-align: left !important;
@@ -1228,7 +961,7 @@
         }
 
         &:last-child {
-          border-left: 1px solid transparent !important;
+          border-left: 1px solid var(--divider) !important;
           width: var(--dropdown-col-width) !important;
         }
       }
@@ -1237,28 +970,12 @@
     &-rows {
       display: flex !important;
       flex-direction: column !important;
-      max-height: 184px !important;
-      overflow-y: auto !important;
-      scrollbar-width: thin !important;
       width: 100% !important;
-
-      &::-webkit-scrollbar {
-        width: 8px !important;
-      }
-
-      &::-webkit-scrollbar-track {
-        background-color: transparent !important;
-        box-shadow: none !important;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        border-radius: 4px !important;
-      }
     }
 
     &-row {
       align-items: center !important;
-      border-bottom: 1px solid transparent !important;
+      border-bottom: 1px solid var(--divider) !important;
       display: flex !important;
       flex-direction: row !important;
       justify-content: space-between !important;
@@ -1271,18 +988,43 @@
   }
 
   &-domain-text {
+    color: var(--secondary-text) !important;
     flex: 1 !important;
     font-size: 12px !important;
     font-weight: 400 !important;
-    max-width: 200px !important;
+    min-width: 0 !important;
     overflow: hidden !important;
     padding: 17px 12px !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
   }
 
+  &-tooltip {
+    animation: twofas-pass-tooltip-in .15s ease-out !important;
+    background-color: var(--card-bg) !important;
+    border: 1px solid var(--object-stroke) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .15) !important;
+    color: var(--primary-text) !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    line-height: 1.3 !important;
+    max-width: 300px !important;
+    overflow-wrap: break-word !important;
+    padding: 6px 8px !important;
+    pointer-events: none !important;
+    position: fixed !important;
+    white-space: normal !important;
+    word-break: break-all !important;
+    z-index: 2147483647 !important;
+
+    &.fade-out {
+      animation: twofas-pass-tooltip-out .15s ease-in forwards !important;
+    }
+  }
+
   &-dropdown {
-    border-left: 1px solid transparent !important;
+    border-left: 1px solid var(--divider) !important;
     position: relative !important;
     width: var(--dropdown-col-width) !important;
 
@@ -1291,6 +1033,7 @@
       appearance: none !important;
       background-color: transparent !important;
       border: 0 !important;
+      color: var(--secondary-text) !important;
       cursor: pointer !important;
       display: flex !important;
       flex-direction: row !important;
@@ -1302,24 +1045,33 @@
       padding: 17px 12px !important;
       width: 100% !important;
 
+      &:hover {
+        .twofas-pass-cross-domain-dialog-dropdown-trigger-icon {
+          background-color: var(--hover-color) !important;
+        }
+      }
+
       &-icon {
         align-items: center !important;
+        background-color: fn.hex-rgba(var(--hover-color), 0) !important;
         border-radius: 4px !important;
         display: inline-flex !important;
         height: 23px !important;
         justify-content: center !important;
-        transition: background-color v.$anim !important;
+        transition: background-color var(--anim) !important;
         width: 23px !important;
       }
 
       svg {
+        fill: var(--primary-color) !important;
         height: 6px !important;
         width: 10px !important;
       }
     }
 
     &-menu {
-      border: 1px solid transparent !important;
+      background-color: var(--card-bg) !important;
+      border: 1px solid var(--object-stroke) !important;
       border-radius: 6px !important;
       display: none !important;
       flex-direction: column !important;
@@ -1339,8 +1091,10 @@
     &-item {
       align-items: center !important;
       appearance: none !important;
+      background-color: transparent !important;
       border: 0 !important;
-      border-bottom: 1px solid transparent !important;
+      border-bottom: 1px solid var(--object-stroke) !important;
+      color: var(--primary-text) !important;
       cursor: pointer !important;
       display: flex !important;
       flex-direction: row !important;
@@ -1348,6 +1102,11 @@
       padding: 8px 10px !important;
       text-align: left !important;
       width: 100% !important;
+
+      &:hover,
+      &:focus {
+        background-color: var(--hover-color) !important;
+      }
 
       &-text {
         display: flex !important;
@@ -1363,18 +1122,19 @@
       }
 
       &-desc {
+        color: var(--secondary-text) !important;
         font-size: 10px !important;
         font-weight: 400 !important;
         line-height: 1.3 !important;
       }
 
       &-circle {
-        border: 1.5px solid transparent !important;
+        border: 1.5px solid var(--object-stroke) !important;
         border-radius: 50% !important;
         flex-shrink: 0 !important;
         height: 18px !important;
         position: relative !important;
-        transition: background-color v.$anim, border-color v.$anim !important;
+        transition: background-color var(--anim), border-color var(--anim) !important;
         width: 18px !important;
 
         &::after {
@@ -1388,8 +1148,17 @@
           position: absolute !important;
           top: 4px !important;
           transform: rotate(-45deg) !important;
-          transition: opacity v.$anim !important;
+          transition: opacity var(--anim) !important;
           width: 7px !important;
+        }
+      }
+
+      &.active &-circle {
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+
+        &::after {
+          border-color: var(--card-bg) !important;
         }
       }
 
@@ -1417,7 +1186,7 @@
     font-weight: 600 !important;
     line-height: 1 !important;
     padding: 14px 20px !important;
-    transition: opacity v.$anim !important;
+    transition: opacity var(--anim) !important;
 
     &:hover,
     &:focus {
@@ -1425,578 +1194,17 @@
     }
 
     &-cancel {
-      border-width: 1px !important;
+      background-color: transparent !important;
+      border-color: var(--primary-color) !important;
       border-style: solid !important;
+      border-width: 1px !important;
+      color: var(--primary-color) !important;
     }
 
     &-accept {
+      background-color: var(--primary-color) !important;
       border: 0 !important;
-    }
-  }
-
-  &.light {
-    .twofas-pass-cross-domain-dialog-content {
-      background-color: v.$primary-bg-light !important;
-      box-shadow: none !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-top {
-      border-color: v.$divider-light !important;
-
-      &-close {
-        svg {
-          fill: v.$hover-color-light !important;
-          stroke: v.$primary-color-light !important;
-        }
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-header {
-      h3 {
-        color: v.$primary-text-light !important;
-      }
-
-      p {
-        color: v.$primary-text-light !important;
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-table {
-      &-content {
-        background-color: v.$primary-box-bg-light !important;
-      }
-
-      &-header {
-        border-color: v.$divider-light !important;
-
-        span {
-          border-color: v.$divider-light !important;
-          color: v.$primary-text-light !important;
-        }
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-domain-text {
-      color: v.$secondary-text-light !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-dropdown {
-      border-color: v.$divider-light !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-dropdown-trigger {
-      color: v.$secondary-text-light !important;
-
-      &:hover {
-        .twofas-pass-cross-domain-dialog-dropdown-trigger-icon {
-          background-color: v.$hover-color-light !important;
-        }
-      }
-
-      &-icon {
-        background-color: rgba(v.$hover-color-light, 0) !important;
-      }
-
-      svg {
-        fill: v.$primary-color-light !important;
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-dropdown-menu {
-      background-color: v.$card-bg-light !important;
-      border-color: v.$object-stroke-light !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-dropdown-item {
-      background-color: transparent !important;
-      border-color: v.$object-stroke-light !important;
-      color: v.$primary-text-light !important;
-
-      &:hover,
-      &:focus {
-        background-color: v.$hover-color-light !important;
-      }
-
-      &-circle {
-        border-color: v.$object-stroke-light !important;
-      }
-
-      &.active .twofas-pass-cross-domain-dialog-dropdown-item-circle {
-        background-color: v.$primary-color-light !important;
-        border-color: v.$primary-color-light !important;
-
-        &::after {
-          border-color: v.$card-bg-light !important;
-        }
-      }
-
-      &-desc {
-        color: v.$secondary-text-light !important;
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-content {
-      scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light !important;
-
-      &::-webkit-scrollbar {
-        background-color: v.$primary-bg-light !important;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background-color: v.$hover-on-hover-light !important;
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-table-rows {
-      scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light !important;
-
-      &::-webkit-scrollbar {
-        background-color: v.$primary-box-bg-light !important;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background-color: v.$hover-on-hover-light !important;
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-table-row {
-      border-color: v.$divider-light !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-btn-cancel {
-      background-color: transparent !important;
-      border-color: v.$primary-color-light !important;
-      color: v.$primary-color-light !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-btn-accept {
-      background-color: v.$primary-color-light !important;
-      color: v.$tertiary-text-light !important;
-    }
-  }
-
-  &.dark {
-    .twofas-pass-cross-domain-dialog-content {
-      background-color: v.$primary-bg-dark !important;
-      box-shadow: none !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-top {
-      border-color: v.$divider-dark !important;
-
-      &-close {
-        svg {
-          fill: v.$hover-color-dark !important;
-          stroke: v.$primary-color-dark !important;
-        }
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-header {
-      h3 {
-        color: v.$primary-text-dark !important;
-      }
-
-      p {
-        color: v.$primary-text-dark !important;
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-table {
-      &-content {
-        background-color: v.$primary-box-bg-dark !important;
-      }
-
-      &-header {
-        border-color: v.$divider-dark !important;
-
-        span {
-          border-color: v.$divider-dark !important;
-          color: v.$primary-text-dark !important;
-        }
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-domain-text {
-      color: v.$secondary-text-dark !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-dropdown {
-      border-color: v.$divider-dark !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-dropdown-trigger {
-      color: v.$secondary-text-dark !important;
-
-      &:hover {
-        .twofas-pass-cross-domain-dialog-dropdown-trigger-icon {
-          background-color: v.$hover-color-dark !important;
-        }
-      }
-
-      &-icon {
-        background-color: rgba(v.$hover-color-dark, 0) !important;
-      }
-
-      svg {
-        fill: v.$primary-color-dark !important;
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-dropdown-menu {
-      background-color: v.$card-bg-dark !important;
-      border-color: v.$object-stroke-dark !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-dropdown-item {
-      background-color: transparent !important;
-      border-color: v.$object-stroke-dark !important;
-      color: v.$primary-text-dark !important;
-
-      &:hover,
-      &:focus {
-        background-color: v.$hover-color-dark !important;
-      }
-
-      &-circle {
-        border-color: v.$object-stroke-dark !important;
-      }
-
-      &.active .twofas-pass-cross-domain-dialog-dropdown-item-circle {
-        background-color: v.$primary-color-dark !important;
-        border-color: v.$primary-color-dark !important;
-
-        &::after {
-          border-color: v.$card-bg-dark !important;
-        }
-      }
-
-      &-desc {
-        color: v.$secondary-text-dark !important;
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-content {
-      scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark !important;
-
-      &::-webkit-scrollbar {
-        background-color: v.$primary-bg-dark !important;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background-color: v.$hover-on-hover-dark !important;
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-table-rows {
-      scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark !important;
-
-      &::-webkit-scrollbar {
-        background-color: v.$primary-box-bg-dark !important;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        background-color: v.$hover-on-hover-dark !important;
-      }
-    }
-
-    .twofas-pass-cross-domain-dialog-table-row {
-      border-color: v.$divider-dark !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-btn-cancel {
-      background-color: transparent !important;
-      border-color: v.$primary-color-dark !important;
-      color: v.$primary-color-dark !important;
-    }
-
-    .twofas-pass-cross-domain-dialog-btn-accept {
-      background-color: v.$primary-color-dark !important;
-      color: v.$tertiary-text-dark !important;
-    }
-  }
-
-  &.unset {
-    @media all and (prefers-color-scheme: light) {
-      .twofas-pass-cross-domain-dialog-content {
-        background-color: v.$primary-bg-light !important;
-        box-shadow: none !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-top {
-        border-color: v.$divider-light !important;
-
-        &-close {
-          svg {
-            fill: v.$hover-color-light !important;
-            stroke: v.$primary-color-light !important;
-          }
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-header {
-        h3 {
-          color: v.$primary-text-light !important;
-        }
-
-        p {
-          color: v.$primary-text-light !important;
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-table {
-        &-content {
-          background-color: v.$primary-box-bg-light !important;
-        }
-
-        &-header {
-          border-color: v.$divider-light !important;
-
-          span {
-            border-color: v.$divider-light !important;
-            color: v.$primary-text-light !important;
-          }
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-domain-text {
-        color: v.$secondary-text-light !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-dropdown {
-        border-color: v.$divider-light !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-dropdown-trigger {
-        color: v.$secondary-text-light !important;
-
-        &:hover {
-          .twofas-pass-cross-domain-dialog-dropdown-trigger-icon {
-            background-color: v.$hover-color-light !important;
-          }
-        }
-
-        &-icon {
-          background-color: rgba(v.$hover-color-light, 0) !important;
-        }
-
-        svg {
-          fill: v.$primary-color-light !important;
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-dropdown-menu {
-        background-color: v.$card-bg-light !important;
-        border-color: v.$object-stroke-light !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-dropdown-item {
-        background-color: transparent !important;
-        border-color: v.$object-stroke-light !important;
-        color: v.$primary-text-light !important;
-
-        &:hover,
-        &:focus {
-          background-color: v.$hover-color-light !important;
-        }
-
-        &-circle {
-          border-color: v.$object-stroke-light !important;
-        }
-
-        &.active .twofas-pass-cross-domain-dialog-dropdown-item-circle {
-          background-color: v.$primary-color-light !important;
-          border-color: v.$primary-color-light !important;
-
-          &::after {
-            border-color: v.$card-bg-light !important;
-          }
-        }
-
-        &-desc {
-          color: v.$secondary-text-light !important;
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-content {
-        scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light !important;
-
-        &::-webkit-scrollbar {
-          background-color: v.$primary-bg-light !important;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background-color: v.$hover-on-hover-light !important;
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-table-rows {
-        scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light !important;
-
-        &::-webkit-scrollbar {
-          background-color: v.$primary-box-bg-light !important;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background-color: v.$hover-on-hover-light !important;
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-table-row {
-        border-color: v.$divider-light !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-btn-cancel {
-        background-color: transparent !important;
-        border-color: v.$primary-color-light !important;
-        color: v.$primary-color-light !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-btn-accept {
-        background-color: v.$primary-color-light !important;
-        color: v.$tertiary-text-light !important;
-      }
-    }
-
-    @media all and (prefers-color-scheme: dark) {
-      .twofas-pass-cross-domain-dialog-content {
-        background-color: v.$primary-bg-dark !important;
-        box-shadow: none !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-top {
-        border-color: v.$divider-dark !important;
-
-        &-close {
-          svg {
-            fill: v.$hover-color-dark !important;
-            stroke: v.$primary-color-dark !important;
-          }
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-header {
-        h3 {
-          color: v.$primary-text-dark !important;
-        }
-
-        p {
-          color: v.$primary-text-dark !important;
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-table {
-        &-content {
-          background-color: v.$primary-box-bg-dark !important;
-        }
-
-        &-header {
-          border-color: v.$divider-dark !important;
-
-          span {
-            border-color: v.$divider-dark !important;
-            color: v.$primary-text-dark !important;
-          }
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-domain-text {
-        color: v.$secondary-text-dark !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-dropdown {
-        border-color: v.$divider-dark !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-dropdown-trigger {
-        color: v.$secondary-text-dark !important;
-
-        &:hover {
-          .twofas-pass-cross-domain-dialog-dropdown-trigger-icon {
-            background-color: v.$hover-color-dark !important;
-          }
-        }
-
-        &-icon {
-          background-color: rgba(v.$hover-color-dark, 0) !important;
-        }
-
-        svg {
-          fill: v.$primary-color-dark !important;
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-dropdown-menu {
-        background-color: v.$card-bg-dark !important;
-        border-color: v.$object-stroke-dark !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-dropdown-item {
-        background-color: transparent !important;
-        border-color: v.$object-stroke-dark !important;
-        color: v.$primary-text-dark !important;
-
-        &:hover,
-        &:focus {
-          background-color: v.$hover-color-dark !important;
-        }
-
-        &-circle {
-          border-color: v.$object-stroke-dark !important;
-        }
-
-        &.active .twofas-pass-cross-domain-dialog-dropdown-item-circle {
-          background-color: v.$primary-color-dark !important;
-          border-color: v.$primary-color-dark !important;
-
-          &::after {
-            border-color: v.$card-bg-dark !important;
-          }
-        }
-
-        &-desc {
-          color: v.$secondary-text-dark !important;
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-content {
-        scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark !important;
-
-        &::-webkit-scrollbar {
-          background-color: v.$primary-bg-dark !important;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background-color: v.$hover-on-hover-dark !important;
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-table-rows {
-        scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark !important;
-
-        &::-webkit-scrollbar {
-          background-color: v.$primary-box-bg-dark !important;
-        }
-
-        &::-webkit-scrollbar-thumb {
-          background-color: v.$hover-on-hover-dark !important;
-        }
-      }
-
-      .twofas-pass-cross-domain-dialog-table-row {
-        border-color: v.$divider-dark !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-btn-cancel {
-        background-color: transparent !important;
-        border-color: v.$primary-color-dark !important;
-        color: v.$primary-color-dark !important;
-      }
-
-      .twofas-pass-cross-domain-dialog-btn-accept {
-        background-color: v.$primary-color-dark !important;
-        color: v.$tertiary-text-dark !important;
-      }
+      color: var(--tertiary-text) !important;
     }
   }
 
@@ -2097,6 +1305,26 @@
 
     to {
       opacity: 1;
+    }
+  }
+
+  @keyframes twofas-pass-tooltip-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes twofas-pass-tooltip-out {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
     }
   }
 }

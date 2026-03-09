@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
+@use "@/partials/global-styles/functions" as fn;
 
 .confirm-dialog {
   align-items: center;
@@ -18,7 +17,7 @@
   position: fixed;
   text-align: center;
   top: 0;
-  transition: opacity v.$anim;
+  transition: opacity var(--anim);
   width: 100vw;
   z-index: 9999;
 
@@ -32,7 +31,7 @@
   }
 
   &-backdrop {
-    background-color: rgba(v.$object-light, 0.5);
+    background-color: fn.hex-rgba(var(--object), .5);
     backdrop-filter: blur(1px);
     bottom: 0;
     left: 0;
@@ -40,48 +39,31 @@
     right: 0;
     top: 0;
     z-index: -1;
-
-    @include m.darkMode {
-      background-color: rgba(v.$primary-bg-dark, 0.7);
-    }
   }
 
   &-box {
-    background-color: v.$primary-box-bg-light;
-    border: 1px solid v.$primary-box-stroke-light;
+    background-color: var(--primary-box-bg);
+    border: 1px solid var(--primary-box-stroke);
     border-radius: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, .1);
     padding: 12px 20px;
     transform: translateY(20px);
-    transition: transform v.$anim;
+    transition: transform var(--anim);
     width: 80vw;
 
-    @include m.darkMode {
-      background-color: v.$primary-box-bg-dark;
-      border: 1px solid v.$primary-box-stroke-dark;
-    }
-
     h2 {
-      color: v.$primary-text-light;
+      color: var(--primary-text);
       font-size: 16px;
       font-weight: 600;
       line-height: 1.5;
       margin-bottom: 4px;
-
-      @include m.darkMode {
-        color: v.$primary-text-dark;
-      }
     }
 
     p {
-      color: v.$secondary-text-light;
+      color: var(--secondary-text);
       font-size: 12px;
       font-weight: 400;
       line-height: 1.33;
-
-      @include m.darkMode {
-        color: v.$secondary-text-dark;
-      }
     }
   }
 

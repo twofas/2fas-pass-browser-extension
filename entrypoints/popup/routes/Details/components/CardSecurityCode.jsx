@@ -43,6 +43,7 @@ function CardSecurityCode (props) {
   const [isFocused, setIsFocused] = useState(false);
   const [shouldFocusInputMask, setShouldFocusInputMask] = useState(false);
   const [securityCodeTooLong, setSecurityCodeTooLong] = useState(false);
+  const hasFocusedRef = useRef(false);
 
   const handleSecurityCodeTooLongChange = useCallback(isTooLong => {
     setSecurityCodeTooLong(isTooLong);
@@ -130,9 +131,15 @@ function CardSecurityCode (props) {
   };
 
   const focusInputMask = useCallback(() => {
+    if (hasFocusedRef.current) {
+      setShouldFocusInputMask(false);
+      return;
+    }
+
     const inputElement = inputMaskRef.current?.getInput?.() || inputMaskRef.current;
 
     if (inputElement && !inputElement.disabled) {
+      hasFocusedRef.current = true;
       inputElement.focus();
       setShouldFocusInputMask(false);
     } else {
@@ -221,6 +228,7 @@ function CardSecurityCode (props) {
       setLocalDecryptedSecurityCode(null);
       setIsFocused(false);
       setShouldFocusInputMask(false);
+      hasFocusedRef.current = false;
       setItem(restoredItem);
       setBatchData({
         securityCodeEdited: false,
