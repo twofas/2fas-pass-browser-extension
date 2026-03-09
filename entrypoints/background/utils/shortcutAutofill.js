@@ -15,6 +15,69 @@ import sendMatchingLoginsToTab from './sendMatchingLoginsToTab';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
+/**
+* Processes the matching logins result sent from the content script.
+* @async
+* @param {Object} request - The result from the content script.
+* @param {number} request.tabId - The tab ID.
+* @param {string} request.status - 'action' or 'cancel'.
+* @param {string} [request.vaultId] - The vault ID of the selected item.
+* @param {string} [request.deviceId] - The device ID of the selected item.
+* @param {string} [request.id] - The ID of the selected item.
+* @param {string} [request.contentType] - The content type of the selected item.
+* @return {Promise<void>}
+*/
+export const processMatchingLoginsResult = async request => {
+  if (!request?.tabId || request?.status !== 'action') {
+    return;
+  }
+
+  const { tabId, vaultId, deviceId, id, contentType } = request;
+
+  let items = [];
+
+  try {
+    items = await getItems();
+  } catch {}
+
+  const item = items.find(i => i.deviceId === deviceId && i.vaultId === vaultId && i.id === id);
+
+  if (!item) {
+    return;
+  }
+
+  if (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.isT3orT2WithSif) {
+    let canAutofillPassword = false;
+
+    try {
+      const inputTests = await sendMessageToAllFrames(tabId, {
+        action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
+        target: REQUEST_TARGETS.CONTENT
+      });
+
+      canAutofillPassword = inputTests?.some(r => r.canAutofillPassword) || false;
+    } catch {}
+
+    if (canAutofillPassword) {
+      const data = encodeURIComponent(JSON.stringify({
+        action: PULL_REQUEST_TYPES.SIF_REQUEST,
+        from: 'shortcut',
+        data: {
+          vaultId,
+          deviceId,
+          itemId: id,
+          contentType,
+          tabId
+        }
+      }));
+
+      return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
+    }
+  }
+
+  return sendAutofillToTab(tabId, deviceId, vaultId, id);
+};
+
 /** 
 * Function to handle the autofill shortcut action.
 * @async
@@ -113,48 +176,7 @@ const shortcutAutofill = async () => {
     return item;
   });
 
-  const matchingLoginsAction = await sendMatchingLoginsToTab(tab.id, matchingLogins);
-
-  if (matchingLoginsAction && matchingLoginsAction?.status === 'cancel') {
-    return;
-  } else if (matchingLoginsAction && matchingLoginsAction?.status === 'action') {
-    const item = items.filter(item =>
-      item.deviceId === matchingLoginsAction.deviceId &&
-      item.vaultId === matchingLoginsAction.vaultId &&
-      item.id === matchingLoginsAction.id
-    )[0];
-
-    if (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.isT3orT2WithSif) {
-      let canAutofillPassword = false;
-
-      try {
-        const inputTests = await sendMessageToAllFrames(tab.id, {
-          action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
-          target: REQUEST_TARGETS.CONTENT
-        });
-
-        canAutofillPassword = inputTests?.some(r => r.canAutofillPassword) || false;
-      } catch {}
-
-      if (canAutofillPassword) {
-        const data = encodeURIComponent(JSON.stringify({
-          action: PULL_REQUEST_TYPES.SIF_REQUEST,
-          from: 'shortcut',
-          data: {
-            vaultId: matchingLoginsAction.vaultId,
-            deviceId: matchingLoginsAction.deviceId,
-            itemId: matchingLoginsAction.id,
-            contentType: matchingLoginsAction.contentType,
-            tabId: tab.id
-          }
-        }));
-
-        return openPopupWindowInNewWindow({ pathname: `/fetch/${data}` });
-      }
-    }
-
-    return sendAutofillToTab(tab.id, matchingLoginsAction.deviceId, matchingLoginsAction.vaultId, matchingLoginsAction.id);
-  }
+  await sendMatchingLoginsToTab(tab.id, matchingLogins);
 };
 
 export default shortcutAutofill;

@@ -53,25 +53,41 @@ const closeNotification = (n, timers) => {
 * @param {Function} sendResponse - The function to send the response back.
 * @return {void}
 */
-const cancel = (n, timers, sendResponse) => {
+const cancel = (n, timers, tabId) => {
   closeNotification(n, timers);
-  return sendResponse({ status: 'cancel' });
+
+  browser.runtime.sendMessage({
+    action: REQUEST_ACTIONS.MATCHING_LOGINS_RESULT,
+    target: REQUEST_TARGETS.BACKGROUND,
+    status: 'cancel',
+    tabId
+  }).catch(() => {});
 };
 
 /**
 * Function to perform an action.
 * @param {Object} n - The notification object.
 * @param {Object} timers - The timers object containing all timer IDs.
-* @param {Function} sendResponse - The function to send the response back.
+* @param {number} tabId - The ID of the tab.
 * @param {string} vaultId - The vault ID of the item.
 * @param {string} deviceId - The device ID of the item.
 * @param {string} id - The ID of the item.
 * @param {string} contentType - The content type of the item.
 * @return {void}
 */
-const action = (n, timers, sendResponse, vaultId, deviceId, id, contentType) => {
+const action = (n, timers, tabId, vaultId, deviceId, id, contentType) => {
   closeNotification(n, timers);
-  return sendResponse({ status: 'action', vaultId, deviceId, id, contentType });
+
+  browser.runtime.sendMessage({
+    action: REQUEST_ACTIONS.MATCHING_LOGINS_RESULT,
+    target: REQUEST_TARGETS.BACKGROUND,
+    status: 'action',
+    tabId,
+    vaultId,
+    deviceId,
+    id,
+    contentType
+  }).catch(() => {});
 };
 
 /** 
@@ -129,8 +145,12 @@ const matchingLoginsVisible = container => {
 */
 const matchingLogins = (request, sendResponse, container) => {
   if (matchingLoginsVisible(container)) {
-    return sendResponse({ status: 'omitted' });
+    sendResponse({ status: 'omitted' });
+    return;
   }
+
+  const tabId = request.tabId;
+  sendResponse({ status: 'ok', displayed: true });
 
   const n = {
     container: container.querySelector(S.notification.container),
@@ -178,7 +198,7 @@ const matchingLogins = (request, sendResponse, container) => {
   };
 
   n.close = createElement('button', 'twofas-pass-notification-matching-logins-top-close');
-  n.close.addEventListener('click', () => cancel(n, timers, sendResponse));
+  n.close.addEventListener('click', () => cancel(n, timers, tabId));
   n.closeSvg = createSVGElement(closeSrc);
 
   n.close.appendChild(n.closeSvg);
@@ -202,7 +222,7 @@ const matchingLogins = (request, sendResponse, container) => {
     const itemEl = createElement('div', 'twofas-pass-notification-matching-logins-item');
 
     const itemBtn = createElement('button', 'twofas-pass-notification-matching-logins-item-btn');
-    itemBtn.addEventListener('click', () => action(n, timers, sendResponse, item.vaultId, item.deviceId, item.id, item.contentType));
+    itemBtn.addEventListener('click', () => action(n, timers, tabId, item.vaultId, item.deviceId, item.id, item.contentType));
 
     const itemIcon = createElement('span', 'twofas-pass-notification-matching-logins-item-icon');
 

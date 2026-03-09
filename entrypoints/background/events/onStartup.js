@@ -6,7 +6,9 @@
 
 import setIdleInterval from '@/partials/functions/setIdleInterval';
 import initContextMenu from '../contextMenu/initContextMenu';
-import { setBadgeLocked } from '../utils';
+import { setBadgeLocked, updateBadge } from '../utils';
+import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
+import getItems from '@/partials/sessionStorage/getItems';
 
 /**
 * Function to clean up old devices from local storage on startup and ensure migrations are marked as complete.
@@ -21,7 +23,18 @@ const onStartup = async migrations => {
     migrations.state = true;
   }
 
-  await setBadgeLocked().catch(() => {});
+  try {
+    const configured = await getConfiguredBoolean();
+
+    if (configured) {
+      const items = await getItems(['Login', 'PaymentCard']).catch(() => []);
+      await updateBadge(true, items).catch(() => {});
+    } else {
+      await setBadgeLocked().catch(() => {});
+    }
+  } catch {
+    await setBadgeLocked().catch(() => {});
+  }
 
   // Recreate context menus on browser startup
   // Firefox doesn't persist context menus between sessions unlike Chrome

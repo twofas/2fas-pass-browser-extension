@@ -10,7 +10,6 @@ import { useLocation, useNavigate } from 'react-router';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import { PULL_REQUEST_TYPES, CONNECT_VIEWS } from '@/constants';
 import { useAuthState } from '@/hooks/useAuth';
-import useConnectView from '../../hooks/useConnectView';
 import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 import NewWindowIcon from '@/assets/popup-window/new-window.svg?react';
 import SettingsIcon from '@/assets/popup-window/settings.svg?react';
@@ -62,9 +61,8 @@ function BottomBar () {
   const svgContainerRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const { wsActive } = useWS();
+  const { wsActive, connectView } = useWS();
   const { configured } = useAuthState();
-  const { connectView } = useConnectView();
 
   const themedSvg = useMemo(
     () => applyThemeToSecIcon(secIconData, effectiveTheme),

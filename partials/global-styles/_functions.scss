@@ -1,0 +1,9 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+@function hex-rgba($color, $alpha) {
+  @return #{"rgb(from " + $color + " r g b / " + $alpha + ")"};
+}

@@ -5,7 +5,6 @@
 // See LICENSE file for full terms
 
 // Files with default exports
-export { default as allowedSavePromptRequests } from './allowedSavePromptRequests.js';
 export { default as badgeIcons } from './badgeIcons.js';
 export { default as CONNECT_VIEWS } from './CONNECT_VIEWS.js';
 export { default as correctProtocols } from './correctProtocols.js';
@@ -28,6 +27,8 @@ export { default as userNameFormTexts } from './userNameFormTexts.js';
 export { default as userNameSelectors } from './userNameSelectors.js';
 export { default as userNameTexts } from './userNameTexts.js';
 export { default as userNameWords } from './userNameWords.js';
+export { default as personalInfoDeniedKeywords } from './personalInfoDeniedKeywords.js';
+export { default as personalInfoDeniedAutocompleteValues } from './personalInfoDeniedAutocompleteValues.js';
 
 // Re-export all named exports from regex.js
 export {

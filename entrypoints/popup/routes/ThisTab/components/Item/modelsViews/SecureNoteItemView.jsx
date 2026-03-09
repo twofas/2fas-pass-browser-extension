@@ -7,7 +7,7 @@
 import S from '../styles/Item.module.scss';
 import { memo, useRef, useMemo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
-import generateIcon from '../../../functions/serviceList/generateIcon';
+import ItemIcon from '../../../functions/serviceList/generateIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import Skeleton from '../../Skeleton';
 import CopyNameBtn from '../components/CopyNameBtn';
@@ -16,12 +16,8 @@ import MoreBtn from '../../../functions/serviceList/additionalButtons/MoreBtn';
 import ItemCustomOption from '../components/ItemCustomOption';
 
 const selectComponents = { Option: ItemCustomOption };
+const SKELETON_NAME_STYLE = { width: '100px' };
 
-/**
-* Secure note item view component.
-* @param {Object} props - The component props.
-* @return {JSX.Element} The rendered component.
-*/
 function SecureNoteItemView (props) {
   const { getMessage } = useI18n();
   const moreBtnRef = useRef(null);
@@ -33,9 +29,9 @@ function SecureNoteItemView (props) {
         className={S.itemAutofill}
         ref={props.autofillBtnRef}
       >
-        {generateIcon(props.data, null, null, props.loading)}
+        <ItemIcon item={props.data} loading={props.loading} />
         <span>
-          {props.loading ? <Skeleton style={{ width: '100px' }} /> : <span>{props?.data?.content?.name || getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={SKELETON_NAME_STYLE} /> : <span>{props?.data?.content?.name || getMessage('no_item_name')}</span>}
         </span>
       </div>
       <div className={S.itemAdditionalButtons}>
@@ -43,27 +39,23 @@ function SecureNoteItemView (props) {
         <CopyNameBtn item={props.data} more={props.more} setMore={props.setMore} />
         <MoreBtn item={props.data} more={props.more} setMore={props.setMore} ref={moreBtnRef} />
       </div>
-      <AdvancedSelect
-        className='react-select-pass-dropdown'
-        classNamePrefix='react-select-dropdown'
-        isSearchable={false}
-        options={dropdownOptions}
-        menuIsOpen={props.more === true}
-        ref={props.selectRef}
-        triggerRef={moreBtnRef}
-        setMore={props.setMore}
-        components={selectComponents}
-      />
+      {props.more && (
+        <AdvancedSelect
+          className='react-select-pass-dropdown'
+          classNamePrefix='react-select-dropdown'
+          isSearchable={false}
+          options={dropdownOptions}
+          menuIsOpen
+          ref={props.selectRef}
+          triggerRef={moreBtnRef}
+          setMore={props.setMore}
+          components={selectComponents}
+        />
+      )}
     </>
   );
 }
 
-/**
-* Custom comparison function to prevent unnecessary re-renders.
-* @param {Object} prevProps - Previous props.
-* @param {Object} nextProps - Next props.
-* @return {boolean} True if props are equal (should not re-render).
-*/
 function arePropsEqual (prevProps, nextProps) {
   return prevProps.data?.id === nextProps.data?.id &&
          prevProps.data?.sifExists === nextProps.data?.sifExists &&

@@ -4,9 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 .connect,
 .progress,
 .device-select,
@@ -22,7 +19,7 @@
 .device-select,
 .push {
   h1 {
-    color: v.$primary-text-light;
+    color: var(--primary-text);
     font-size: 16px;
     font-weight: 600;
     line-height: 1.5;
@@ -32,33 +29,21 @@
     padding: 0 20px;
     text-align: center;
     white-space: pre-wrap;
-
-    @include m.darkMode {
-      color: v.$primary-text-dark;
-    }
   }
 }
 
 .connect {
-  border: 1px solid v.$primary-box-stroke-light;
+  border: 1px solid var(--primary-box-stroke);
   border-radius: 8px;
   overflow: hidden;
   z-index: 2;
 
-  @include m.darkMode {
-    border-color: v.$primary-box-stroke-dark;
-  }
-
   &-container {
     align-items: center;
-    background-color: v.$primary-box-bg-light;
+    background-color: var(--primary-box-bg);
     display: flex;
     flex-direction: column;
     width: 100%;
-
-    @include m.darkMode {
-      background-color: v.$primary-box-bg-dark;
-    }
 
     &-qr {
       margin-bottom: 20px;
@@ -90,7 +75,7 @@
         opacity: 0;
         top: 50%;
         transform: translate(-50%, -50%);
-        transition: opacity v.$anim;
+        transition: opacity var(--anim);
         width: 126px;
         z-index: 2;
 
@@ -98,7 +83,7 @@
           pointer-events: none;
         }
       }
-  
+
       > img {
         border: 0;
         border-radius: 8px;
@@ -125,28 +110,20 @@
     text-align: center;
 
     p {
-      color: v.$secondary-text-light;
+      color: var(--secondary-text);
       font-size: 12px;
       font-weight: 400;
       line-height: 1.6;
       max-width: 340px;
-
-      @include m.darkMode {
-        color: v.$secondary-text-dark;
-      }
     }
 
     svg {
       height: 16px;
-      stroke: v.$object-light;
+      stroke: var(--object);
       stroke-width: 1.5;
       stroke-linecap: round;
       stroke-linejoin: round;
       width: auto;
-
-      @include m.darkMode {
-        stroke: v.$object-dark;
-      }
     }
   }
 }
@@ -162,16 +139,12 @@
 
   &-container {
     align-items: center;
-    background-color: v.$primary-box-bg-light;
+    background-color: var(--primary-box-bg);
     border-radius: 8px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 24px;
-
-    @include m.darkMode {
-      background-color: v.$primary-box-bg-dark;
-    }
   }
 
   &-loader {
@@ -181,7 +154,7 @@
     width: 120px;
 
     &-circle {
-      color: v.$primary-color-light;
+      color: var(--primary-color);
       fill: none;
       height: 120px;
       stroke: currentcolor;
@@ -191,28 +164,20 @@
       stroke-linejoin: miter;
       stroke-width: 3;
       transform: rotate(-90deg);
-      transition: stroke-dashoffset v.$anim;
+      transition: stroke-dashoffset var(--anim);
       vertical-align: top;
       width: 120px;
 
-      @include m.darkMode {
-        color: v.$primary-color-dark;
-      }
-
       &-bg {
-        stroke: v.$primary-box-stroke-light;
+        stroke: var(--primary-box-stroke);
         stroke-width: 2.8;
         stroke-dasharray: 0;
         stroke-dashoffset: 0;
-
-        @include m.darkMode {
-          stroke: v.$primary-box-stroke-dark;
-        }
       }
     }
 
     span {
-      color: v.$primary-text-light;
+      color: var(--primary-text);
       font-size: 12px;
       font-weight: 400;
       left: 50%;
@@ -221,28 +186,20 @@
       text-align: center;
       top: 50%;
       transform: translate(-50%, -50%);
-
-      @include m.darkMode {
-        color: v.$primary-text-dark;
-      }
     }
   }
 
   &-description {
     margin-top: 8px;
     max-width: 255px;
-    
+
     p {
-      color: v.$secondary-text-light;
+      color: var(--secondary-text);
       font-size: 12px;
       font-weight: 400;
       line-height: 1.6;
       text-align: center;
       white-space: pre-wrap;
-  
-      @include m.darkMode {
-        color: v.$secondary-text-dark;
-      }
     }
   }
 
@@ -250,7 +207,7 @@
     margin-top: 24px;
     opacity: 0;
     padding: 9px 12px;
-    transition: opacity v.$anim;
+    transition: opacity var(--anim);
     width: auto;
 
     &.visible {
@@ -258,7 +215,7 @@
     }
 
     span {
-      color: v.$primary-text-light;
+      color: var(--primary-text);
       display: inline-block;
       font-size: 12px;
       font-weight: 400;
@@ -270,36 +227,24 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       width: auto;
-
-      @include m.darkMode {
-        color: v.$primary-text-dark;
-      }
     }
   }
 }
 
 .device-select {
-  border: 1px solid v.$primary-box-stroke-light;
+  border: 1px solid var(--primary-box-stroke);
   border-radius: 8px;
   height: calc(100% - 56px - 40px);
   overflow: hidden;
   z-index: 2;
 
-  @include m.darkMode {
-    border-color: v.$primary-box-stroke-dark;
-  }
-
   &-container {
     align-items: center;
-    background-color: v.$primary-box-bg-light;
+    background-color: var(--primary-box-bg);
     display: flex;
     flex-direction: column;
     height: 100%;
     width: 100%;
-
-    @include m.darkMode {
-      background-color: v.$primary-box-bg-dark;
-    }
 
     &-list {
       margin-top: 64px;
@@ -319,7 +264,7 @@
         position: absolute;
         width: calc((100vw - 184px - 26px) / 2);
         top: 50%;
-        transition: opacity v.$anim;
+        transition: opacity var(--anim);
         transform: translateY(-50%);
         z-index: 9999;
 
@@ -330,7 +275,7 @@
 
         span {
           align-items: center;
-          background-color: v.$primary-color-light;
+          background-color: var(--primary-color);
           border-radius: 50%;
           display: inline-flex;
           flex-shrink: 0;
@@ -342,6 +287,7 @@
         svg {
           flex-shrink: 0;
           height: 16px;
+          pointer-events: none;
           stroke: white;
           stroke-width: 1.5;
           stroke-linecap: round;
@@ -376,13 +322,8 @@
             &:global(.is-active) {
               .device-select-container-list-item {
                 opacity: 1;
-                background-color: v.$primary-bg-light;
-                border: 1.5px solid v.$card-stroke-light;
-
-                @include m.darkMode {
-                  background-color: v.$primary-bg-dark;
-                  border-color: v.$card-stroke-dark;
-                }
+                background-color: var(--primary-bg);
+                border: 1.5px solid var(--card-stroke);
               }
             }
           }
@@ -405,23 +346,15 @@
           width: 6px !important;
 
           button {
-            background: v.$hover-on-hover-light;
+            background: var(--hover-on-hover);
             border-radius: 50%;
             display: block;
             height: 6px !important;
             padding: 0 !important;
             width: 6px !important;
 
-            @include m.darkMode {
-              background: v.$hover-on-hover-dark;
-            }
-
             &:global(.is-active) {
-              background: v.$primary-color-light;
-
-              @include m.darkMode {
-                background: v.$primary-color-dark;
-              }
+              background: var(--primary-color);
             }
           }
         }
@@ -439,17 +372,12 @@
         padding: 16px;
         position: relative;
         text-align: center;
-        transition: background-color v.$anim, border v.$anim;
+        transition: background-color var(--anim), border var(--anim);
         width: 184px;
 
         &:hover {
-          background-color: v.$hover-color-light !important;
-          border: 1.5px solid v.$primary-color-light !important;
-
-          @include m.darkMode {
-            background-color: v.$hover-color-dark !important;
-            border: 1.5px solid v.$primary-color-dark !important;
-          }
+          background-color: var(--hover-color) !important;
+          border: 1.5px solid var(--primary-color) !important;
         }
 
         svg {
@@ -457,7 +385,7 @@
         }
 
         &-name {
-          color: v.$primary-color-light;
+          color: var(--primary-color);
           display: inline-block;
           font-size: 14px;
           font-weight: 400;
@@ -468,14 +396,10 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           width: 100%;
-
-          @include m.darkMode {
-            color: v.$primary-color-dark;
-          }
         }
 
         &-platform {
-          color: v.$secondary-text-light;
+          color: var(--secondary-text);
           display: inline-block;
           font-size: 11px;
           font-weight: 300;
@@ -487,10 +411,6 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           width: 100%;
-
-          @include m.darkMode {
-            color: v.$secondary-text-dark;
-          }
         }
       }
     }
@@ -508,21 +428,13 @@
         &:hover,
         &:focus {
           svg {
-            stroke: v.$focus-light;
-  
-            @include m.darkMode {
-              stroke: v.$focus-dark;
-            }
+            stroke: var(--focus);
           }
         }
 
         &:active {
           svg {
-            stroke: v.$pressed-light;
-  
-            @include m.darkMode {
-              stroke: v.$pressed-dark;
-            }
+            stroke: var(--pressed);
           }
         }
 
@@ -533,16 +445,13 @@
 
         svg {
           height: 20px;
-          stroke: v.$primary-color-light;
+          pointer-events: none;
+          stroke: var(--primary-color);
           stroke-linecap: square;
           stroke-linejoin: round;
           stroke-width: 2;
-          transition: stroke v.$anim;
+          transition: stroke var(--anim);
           width: auto;
-
-          @include m.darkMode {
-            stroke: v.$primary-color-dark;
-          }
         }
       }
     }
@@ -552,42 +461,30 @@
     }
 
     h2 {
-      color: v.$secondary-text-light;
+      color: var(--secondary-text);
       font-size: 12px;
       font-weight: 400;
       line-height: 1.5;
       margin: 0;
       text-align: center;
-
-      @include m.darkMode {
-        color: v.$secondary-text-dark;
-      }
     }
   }
 }
 
 .push {
-  border: 1px solid v.$primary-box-stroke-light;
+  border: 1px solid var(--primary-box-stroke);
   border-radius: 8px;
   height: calc(100% - 56px - 40px); // 56px - top, 40px - bottom
   overflow: hidden;
   padding-top: 20px;
 
-  @include m.darkMode {
-    border-color: v.$primary-box-stroke-dark;
-  }
-
   &-container {
     align-items: center;
-    background-color: v.$primary-box-bg-light;
+    background-color: var(--primary-box-bg);
     display: flex;
     flex-direction: column;
     height: 100%;
     width: 100%;
-
-    @include m.darkMode {
-      background-color: v.$primary-box-bg-dark;
-    }
   }
 
   &-additional {
@@ -611,8 +508,8 @@
       }
 
       .push-additional-tooltip {
-        background-color: v.$card-bg-light;
-        border: 1px solid v.$card-stroke-light;
+        background-color: var(--card-bg);
+        border: 1px solid var(--card-stroke);
         border-radius: 8px;
         bottom: calc(100% + 10px);
         cursor: default;
@@ -626,13 +523,8 @@
         position: absolute;
         opacity: 0;
         transform: translateX(-50%) translateY(20px);
-        transition: opacity v.$anim, transform v.$anim;
+        transition: opacity var(--anim), transform var(--anim);
         width: 300px;
-
-        @include m.darkMode {
-          background-color: v.$card-bg-dark;
-          border-color: v.$card-stroke-dark;
-        }
 
         &::after {
           background-color: transparent;
@@ -646,14 +538,10 @@
         }
 
         > span {
-          color: v.$primary-text-light;
+          color: var(--primary-text);
           font-size: 12px;
           font-weight: 400;
           line-height: 1.3;
-
-          @include m.darkMode {
-            color: v.$primary-text-dark;
-          }
         }
 
         button {
@@ -667,21 +555,13 @@
           &:hover,
           &:focus {
             svg {
-              stroke: v.$focus-light;
-
-              @include m.darkMode {
-                stroke: v.$focus-dark;
-              }
+              stroke: var(--focus);
             }
           }
 
           &:active {
             svg {
-              stroke: v.$pressed-light;
-
-              @include m.darkMode {
-                stroke: v.$pressed-dark;
-              }
+              stroke: var(--pressed);
             }
           }
 
@@ -691,16 +571,13 @@
 
           svg {
             height: 22px;
-            stroke: v.$primary-color-light;
+            pointer-events: none;
+            stroke: var(--primary-color);
             stroke-linecap: square;
             stroke-linejoin: round;
             stroke-width: 2;
-            transition: stroke v.$anim;
+            transition: stroke var(--anim);
             width: auto;
-
-            @include m.darkMode {
-              stroke: v.$primary-color-dark;
-            }
           }
         }
       }
@@ -718,7 +595,7 @@
     }
 
     span {
-      color: v.$primary-text-light;
+      color: var(--primary-text);
       display: inline-block;
       font-size: 11px;
       font-weight: 500;
@@ -728,10 +605,6 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       width: auto;
-
-      @include m.darkMode {
-        color: v.$primary-text-dark;
-      }
     }
   }
 }

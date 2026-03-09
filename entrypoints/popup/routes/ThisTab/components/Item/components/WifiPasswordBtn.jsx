@@ -7,7 +7,7 @@
 import S from '../styles/Item.module.scss';
 import { useI18n } from '@/partials/context/I18nContext';
 import handleWifiPassword from '../../../functions/serviceList/handleWifiPassword';
-import { useState, useRef, useLayoutEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import Wifi from '@/models/itemModels/Wifi';
@@ -68,7 +68,7 @@ const WifiPasswordBtn = ({ item, more, setMore }) => {
     }
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     let isMounted = true;
     let localIntervalId = null;
 
@@ -100,7 +100,7 @@ const WifiPasswordBtn = ({ item, more, setMore }) => {
         intervalIdRef.current = null;
       }
     };
-  }, [item, scheduledTime]);
+  }, [item?.id, scheduledTime]);
 
   if (item?.securityType === SECURITY_TIER.SECRET) {
     return (

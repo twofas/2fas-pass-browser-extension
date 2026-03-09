@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { createContext, useContext, useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { createContext, useContext, useRef, useCallback, useEffect, useMemo, useSyncExternalStore } from 'react';
 
 const ItemListContext = createContext(null);
 
@@ -15,20 +15,31 @@ const ItemListContext = createContext(null);
 * @return {JSX.Element} The provider component.
 */
 export function ItemListProvider ({ children }) {
-  const [openItemId, setOpenItemId] = useState(null);
   const openItemIdRef = useRef(null);
+  const listenersRef = useRef(new Set());
   const isClosingRef = useRef(false);
+
+  const notify = useCallback(() => {
+    listenersRef.current.forEach(listener => listener());
+  }, []);
+
+  const subscribe = useCallback(callback => {
+    listenersRef.current.add(callback);
+    return () => listenersRef.current.delete(callback);
+  }, []);
+
+  const getOpenItemId = useCallback(() => openItemIdRef.current, []);
 
   const openMenu = useCallback(itemId => {
     openItemIdRef.current = itemId;
     isClosingRef.current = false;
-    setOpenItemId(itemId);
-  }, []);
+    notify();
+  }, [notify]);
 
   const closeMenu = useCallback(() => {
     openItemIdRef.current = null;
-    setOpenItemId(null);
-  }, []);
+    notify();
+  }, [notify]);
 
   const handleScroll = useCallback(event => {
     if (!openItemIdRef.current || isClosingRef.current) {
@@ -76,10 +87,11 @@ export function ItemListProvider ({ children }) {
   }, [handleScroll, handleClickOutside]);
 
   const value = useMemo(() => ({
-    openItemId,
+    subscribe,
+    getOpenItemId,
     openMenu,
     closeMenu
-  }), [openItemId, openMenu, closeMenu]);
+  }), [subscribe, getOpenItemId, openMenu, closeMenu]);
 
   return (
     <ItemListContext.Provider value={value}>
@@ -90,17 +102,20 @@ export function ItemListProvider ({ children }) {
 
 const noOpOpen = () => {};
 const noOpClose = () => {};
+const noOpSubscribe = () => () => {};
+const noOpGetOpenItemId = () => null;
 const fallbackContext = {
-  openItemId: null,
+  subscribe: noOpSubscribe,
+  getOpenItemId: noOpGetOpenItemId,
   openMenu: noOpOpen,
   closeMenu: noOpClose
 };
 
 /**
 * Hook to access the item list context.
-* @return {Object} The context value with openItemId, openMenu, and closeMenu.
+* @return {Object} The context value.
 */
-export function useItemList () {
+function useItemList () {
   const context = useContext(ItemListContext);
   return context || fallbackContext;
 }
@@ -111,8 +126,9 @@ export function useItemList () {
 * @return {boolean} True if this item's menu is open.
 */
 export function useIsItemOpen (itemId) {
-  const { openItemId } = useItemList();
-  return openItemId === itemId;
+  const { subscribe, getOpenItemId } = useItemList();
+  const getSnapshot = useCallback(() => getOpenItemId() === itemId, [getOpenItemId, itemId]);
+  return useSyncExternalStore(subscribe, getSnapshot);
 }
 
 /**

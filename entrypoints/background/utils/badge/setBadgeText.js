@@ -5,8 +5,9 @@
 // See LICENSE file for full terms
 
 import URIMatcher from '@/partials/URIMatcher';
+import badgeState from './badgeState';
 
-/** 
+/**
 * Function to set the browser action badge text based on the current URL and services.
 * @async
 * @param {boolean} configured - Indicates if the badge should be configured.
@@ -20,7 +21,7 @@ const setBadgeText = async (configured, services, url, tabId) => {
     throw new Error('Configured parameter must be a boolean');
   }
 
-  if (!configured) {
+  if (!configured || badgeState.connecting) {
     try {
       if (tabId) {
         await browser.action.setBadgeText({ text: '', tabId });

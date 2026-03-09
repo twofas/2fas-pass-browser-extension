@@ -6,9 +6,9 @@
 
 import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
-import generateEncryptionAESKey from '@/partials/WebSocket/utils/generateEncryptionAESKey';
+import generateEncryptionAESKey from '@/entrypoints/background/websocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
-import saveItems from '@/partials/WebSocket/utils/saveItems';
+import saveItems from '@/entrypoints/background/websocket/utils/saveItems';
 import { generateNonce } from '@/partials/functions';
 import { ENCRYPTION_KEYS } from '@/constants';
 

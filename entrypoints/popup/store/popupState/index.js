@@ -102,6 +102,7 @@ const usePopupStateStore = create(
     {
       name: 'popupState',
       skipHydration: true,
+      partialize: state => ({ href: state.href, pathData: state.pathData }),
       storage: (() => {
         let writeQueue = Promise.resolve();
 

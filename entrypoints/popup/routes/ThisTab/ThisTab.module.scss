@@ -4,10 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use 'sass:color';
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 .this-tab {
   background-color: transparent !important;
   width: 100%;
@@ -16,24 +12,18 @@
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    height: 100%;
     width: 100%;
   }
 
   &-top {
-    background-color: v.$primary-box-bg-light;
-    border: 1px solid v.$primary-box-stroke-light;
+    background-color: var(--primary-box-bg);
+    border: 1px solid var(--primary-box-stroke);
     border-radius: 8px;
     overflow: visible;
-
-    @include m.darkMode {
-      background-color: v.$primary-box-bg-dark;
-      border-color: v.$primary-box-stroke-dark;
-    }
   }
 
   &-header {
-    background-color: v.$primary-box-bg-light;
+    background-color: var(--primary-box-bg);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     padding-top: 24px;
@@ -42,27 +32,19 @@
     top: -24px;
     z-index: 2;
 
-    @include m.darkMode {
-      background-color: v.$primary-box-bg-dark;
-    }
-
     h1 {
-      color: v.$primary-text-light;
+      color: var(--primary-text);
       font-size: 16px;
       font-weight: 600;
       line-height: 1.5;
       margin-bottom: 10px;
-
-      @include m.darkMode {
-        color: v.$primary-text-dark;
-      }
     }
 
     h2 {
       align-items: center;
-      background-color: v.$hover-color-light;
+      background-color: var(--hover-color);
       border-radius: 4px;
-      color: v.$primary-text-light;
+      color: var(--primary-text);
       display: inline-flex;
       flex-direction: row;
       font-size: 12px;
@@ -71,17 +53,12 @@
       margin-bottom: 8px;
       opacity: 0;
       padding: 5px;
-      transition: opacity v.$anim;
-
-      @include m.darkMode {
-        background-color: v.$hover-color-dark;
-        color: v.$primary-text-dark;
-      }
+      transition: opacity var(--anim);
 
       &.loaded {
         opacity: 1;
       }
-      
+
       span {
         display: inline-block;
         max-width: 300px;
@@ -92,22 +69,18 @@
 
       svg {
         height: 12px;
-        stroke: v.$object-light;
+        stroke: var(--object);
         stroke-linecap: round;
         stroke-linejoin: round;
         stroke-width: 1;
         width: 12px;
-
-        @include m.darkMode {
-          stroke: v.$object-dark;
-        }
       }
     }
   }
 
   &-matching-logins,
   &-all-logins {
-    padding: 0 8px 14px 8px;
+    // padding: 0 8px 14px 8px;
     width: 100%;
   }
 
@@ -167,37 +140,28 @@
   }
 
   &-all-logins {
-    background-color: v.$primary-box-bg-light;
-    border: 1px solid v.$primary-box-stroke-light;
+    background-color: var(--primary-box-bg);
+    border: 1px solid var(--primary-box-stroke);
     border-radius: 8px;
     margin-top: 11px;
-    padding-left: 8px;
-    padding-right: 8px;
-    padding-bottom: 24px;
-
-    @include m.darkMode {
-      background-color: v.$primary-box-bg-dark;
-      border-color: v.$primary-box-stroke-dark;
-    }
+    padding-bottom: 4px;
+    position: relative;
+    z-index: 3;
 
     &.hidden {
       display: none;
     }
 
     &-search-container {
-      background-color: v.$primary-box-bg-light;
+      background-color: var(--primary-box-bg);
       display: flex;
       flex-direction: row;
       gap: 0 8px;
-      padding: 0 12px 8px;
+      padding: 0 20px 8px;
       position: sticky;
       width: 100%;
       top: 44px;
       z-index: 3;
-
-      @include m.darkMode {
-        background-color: v.$primary-box-bg-dark;
-      }
     }
   }
 }

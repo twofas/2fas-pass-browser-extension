@@ -50,33 +50,43 @@ const closeNotification = (n, timers) => {
 * @param {Function} sendResponse - The function to send the response back.
 * @return {void}
 */
-const cancel = (n, timers, sendResponse) => {
+const sendResult = (storageKey, status, itemData) => {
+  browser.runtime.sendMessage({
+    action: REQUEST_ACTIONS.SAVE_PROMPT_RESULT,
+    target: REQUEST_TARGETS.BACKGROUND,
+    storageKey,
+    status,
+    ...itemData
+  }).catch(() => {});
+};
+
+const cancel = (n, timers, storageKey) => {
   closeNotification(n, timers);
-  return sendResponse({ status: SAVE_PROMPT_ACTIONS.CANCEL });
+  sendResult(storageKey, SAVE_PROMPT_ACTIONS.CANCEL);
 };
 
 /**
 * Function to handle the "Do Not Ask" action.
 * @param {Object} n - The notification object.
 * @param {Object} timers - The timers object containing all timer IDs.
-* @param {Function} sendResponse - The function to send the response back.
+* @param {string} storageKey - The session storage key for the save prompt context.
 * @return {void}
 */
-const doNotAsk = (n, timers, sendResponse) => {
+const doNotAsk = (n, timers, storageKey) => {
   closeNotification(n, timers);
-  return sendResponse({ status: SAVE_PROMPT_ACTIONS.DO_NOT_ASK });
+  sendResult(storageKey, SAVE_PROMPT_ACTIONS.DO_NOT_ASK);
 };
 
 /**
 * Function to add a login.
 * @param {Object} n - The notification object.
 * @param {Object} timers - The timers object containing all timer IDs.
-* @param {Function} sendResponse - The function to send the response back.
+* @param {string} storageKey - The session storage key for the save prompt context.
 * @return {void}
 */
-const newLogin = (n, timers, sendResponse) => {
+const newLogin = (n, timers, storageKey) => {
   closeNotification(n, timers);
-  return sendResponse({ status: SAVE_PROMPT_ACTIONS.NEW_LOGIN });
+  sendResult(storageKey, SAVE_PROMPT_ACTIONS.NEW_LOGIN);
 };
 
 /**
@@ -84,12 +94,12 @@ const newLogin = (n, timers, sendResponse) => {
 * @param {Object} n - The notification object.
 * @param {Object} timers - The timers object containing all timer IDs.
 * @param {Object} itemData - The data related to the item to update.
-* @param {Function} sendResponse - The function to send the response back.
+* @param {string} storageKey - The session storage key for the save prompt context.
 * @return {void}
 */
-const updateLogin = (n, timers, itemData, sendResponse) => {
+const updateLogin = (n, timers, itemData, storageKey) => {
   closeNotification(n, timers);
-  return sendResponse({ status: SAVE_PROMPT_ACTIONS.UPDATE_LOGIN, ...itemData });
+  sendResult(storageKey, SAVE_PROMPT_ACTIONS.UPDATE_LOGIN, itemData);
 };
 
 /** 
@@ -128,8 +138,12 @@ const savePromptVisible = container => {
 */
 const savePrompt = (request, sendResponse, container) => {
   if (savePromptVisible(container)) {
-    return sendResponse({ status: 'omitted' });
+    sendResponse({ status: 'omitted' });
+    return;
   }
+
+  const storageKey = request.storageKey;
+  sendResponse({ status: 'ok', displayed: true });
 
   const n = {
     container: container.querySelector(S.notification.container),
@@ -177,7 +191,7 @@ const savePrompt = (request, sendResponse, container) => {
   };
 
   n.close = createElement('button', 'twofas-pass-notification-save-prompt-top-close');
-  n.close.addEventListener('click', () => cancel(n, timers, sendResponse));
+  n.close.addEventListener('click', () => cancel(n, timers, storageKey));
   n.closeSvg = createSVGElement(closeSrc);
 
   n.close.appendChild(n.closeSvg);
@@ -199,7 +213,7 @@ const savePrompt = (request, sendResponse, container) => {
   const doNotAskButton = createTextElement('button', getMessage('content_save_prompt_don_t_ask'));
   doNotAskButton.classList.add('twofas-pass-notification-save-prompt-buttons-do-not-ask');
   doNotAskButton.setAttribute('data-i18n-key', 'content_save_prompt_don_t_ask');
-  doNotAskButton.addEventListener('click', () => doNotAsk(n, timers, sendResponse));
+  doNotAskButton.addEventListener('click', () => doNotAsk(n, timers, storageKey));
   n.buttons.appendChild(doNotAskButton);
 
   const addLoginButtonKey = request?.serviceTypeData?.type === 'newService' ? 'content_save_prompt_add_login' : 'content_save_prompt_update_login';
@@ -208,9 +222,9 @@ const savePrompt = (request, sendResponse, container) => {
   addLoginButton.setAttribute('data-i18n-key', addLoginButtonKey);
   addLoginButton.addEventListener('click', () => {
     if (request?.serviceTypeData?.type === 'newService') {
-      return newLogin(n, timers, sendResponse);
+      return newLogin(n, timers, storageKey);
     } else {
-      return updateLogin(n, timers, request?.serviceTypeData, sendResponse);
+      return updateLogin(n, timers, request?.serviceTypeData, storageKey);
     }
   });
 

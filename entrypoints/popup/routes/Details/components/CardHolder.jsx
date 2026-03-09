@@ -24,6 +24,7 @@ function CardHolder (props) {
   const { getMessage } = useI18n();
   const { data, setData, setItem } = usePopupState();
   const inputRef = useRef(null);
+  const hasFocusedRef = useRef(false);
 
   const { formData } = props;
   const { inputError } = formData;
@@ -67,8 +68,13 @@ function CardHolder (props) {
   }, [data.item, setItem]);
 
   useEffect(() => {
-    if (data.cardHolderEditable && inputRef.current) {
+    if (data.cardHolderEditable && inputRef.current && !hasFocusedRef.current) {
+      hasFocusedRef.current = true;
       inputRef.current.focus();
+    }
+
+    if (!data.cardHolderEditable) {
+      hasFocusedRef.current = false;
     }
   }, [data.cardHolderEditable]);
 

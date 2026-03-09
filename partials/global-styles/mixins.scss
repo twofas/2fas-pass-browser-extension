@@ -4,43 +4,19 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@mixin darkMode {
-  :global(body.theme-dark) & {
-    @content;
-  }
-
-  :global(body.theme-unset) & {
-    @media (prefers-color-scheme: dark) {
-      @content;
-    }
-  }
-}
-
-@mixin lightMode {
-  :global(body.theme-light) & {
-    @content;
-  }
-
-  :global(body.theme-unset) & {
-    @media (prefers-color-scheme: light) {
-      @content;
-    }
-  }
-}
-
 @mixin loaded {
   :global(body.loaded) & {
     @content;
   }
 }
 
-@mixin loadedDarkMode {
-  :global(body.loaded.theme-dark) & {
+@mixin darkMode {
+  :global(body.theme-dark) & {
     @content;
   }
 
-  :global(body.loaded.theme-unset) & {
-    @media (prefers-color-scheme: dark) {
+  @media (prefers-color-scheme: dark) {
+    :global(body:not(.theme-light):not(.theme-dark)) & {
       @content;
     }
   }

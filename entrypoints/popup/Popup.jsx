@@ -375,6 +375,22 @@ const PopupMain = memo(() => {
     };
   }, []);
 
+  useEffect(() => {
+    const pending = window.__wsPendingUpdates;
+
+    if (!state.loaded || (!pending?.toasts?.length && !pending?.navigation)) {
+      return;
+    }
+
+    window.__wsPendingUpdates = null;
+
+    if (pending.toasts?.length > 0) {
+      pending.toasts.forEach(toast => {
+        showToast(toast.message, toast.type, toast.autoClose !== false);
+      });
+    }
+  }, [state.loaded]);
+
   return (
     <PopupContent
       loaded={state.loaded}

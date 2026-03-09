@@ -27,6 +27,7 @@ function Notes () {
   const { getMessage } = useI18n();
   const { data, setData, setItem } = usePopupState();
   const textareaRef = useRef(null);
+  const hasFocusedRef = useRef(false);
 
   const handleNotesEditable = async () => {
     if (data.notesEditable) {
@@ -58,7 +59,8 @@ function Notes () {
   }, [data.item, setItem]);
 
   useEffect(() => {
-    if (data.notesEditable && textareaRef.current) {
+    if (data.notesEditable && textareaRef.current && !hasFocusedRef.current) {
+      hasFocusedRef.current = true;
       const textarea = textareaRef.current;
       textarea.focus();
 
@@ -66,6 +68,10 @@ function Notes () {
         textarea.setSelectionRange(0, 0);
         textarea.scrollTop = 0;
       });
+    }
+
+    if (!data.notesEditable) {
+      hasFocusedRef.current = false;
     }
   }, [data.notesEditable]);
 

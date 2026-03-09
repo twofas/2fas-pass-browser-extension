@@ -4,9 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "@/partials/global-styles/variables" as v;
-@use "@/partials/global-styles/mixins" as m;
-
 .add-new {
   border-radius: 8px;
   position: relative;
@@ -50,21 +47,17 @@
   }
 
   h2 {
-    color: v.$primary-text-light;
+    color: var(--primary-text);
     font-size: 16px;
     font-weight: 600;
     line-height: 1.5;
     margin-bottom: 22px;
     padding: 0 24px;
     white-space: pre-wrap;
-
-    @include m.darkMode {
-      color: v.$primary-text-dark;
-    }
   }
 
   h3 {
-    color: v.$secondary-text-light;
+    color: var(--secondary-text);
     font-size: 12px;
     font-weight: 400;
     line-height: 1;

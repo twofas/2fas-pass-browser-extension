@@ -5,47 +5,38 @@
 // See LICENSE file for full terms
 
 import { useState, useEffect } from 'react';
-import TwoFasWebSocket from '@/partials/WebSocket';
 
-// Global state
-let wsActiveState = false;
-
-/**
-* Hook to manage WebSocket active state globally.
-* Automatically syncs with TwoFasWebSocket instance state.
-* @return {Object} Object containing wsActive state.
-*/
 export const useWS = () => {
-  const [wsActive, setWsActive] = useState(wsActiveState);
+  const [wsActive, setWsActive] = useState(false);
+  const [connectView, setConnectView] = useState(null);
 
   useEffect(() => {
-    const handleStateChange = isActive => {
-      wsActiveState = isActive;
-      setWsActive(isActive);
+    browser.runtime.sendMessage({
+      action: REQUEST_ACTIONS.WS_GET_STATE,
+      target: REQUEST_TARGETS.BACKGROUND_WS
+    }).then(response => {
+      setWsActive(response?.state?.active ?? false);
+      setConnectView(response?.state?.connectView ?? null);
+    }).catch(() => {});
+
+    const handler = message => {
+      if (message.action === REQUEST_ACTIONS.WS_STATE_UPDATE && message.updateType === 'stateChange') {
+        if ('active' in message.payload) {
+          setWsActive(message.payload.active);
+        }
+
+        if ('connectView' in message.payload) {
+          setConnectView(message.payload.connectView);
+        }
+      }
     };
 
-    // Register listener with TwoFasWebSocket
-    TwoFasWebSocket.addStateListener(handleStateChange);
-
-    // Check if WebSocket is already active
-    try {
-      const instance = TwoFasWebSocket.getInstance();
-
-      if (instance && instance.socket && instance.socket.readyState === WebSocket.OPEN) {
-        wsActiveState = true;
-        setWsActive(true);
-      }
-    } catch {
-      // No instance exists, state remains false
-    }
+    browser.runtime.onMessage.addListener(handler);
 
     return () => {
-      TwoFasWebSocket.removeStateListener(handleStateChange);
+      browser.runtime.onMessage.removeListener(handler);
     };
   }, []);
 
-
-  return {
-    wsActive
-  };
+  return { wsActive, connectView };
 };

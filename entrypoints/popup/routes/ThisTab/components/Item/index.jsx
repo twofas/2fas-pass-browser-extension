@@ -15,11 +15,13 @@ import SecureNoteItemView from './modelsViews/SecureNoteItemView';
 import PaymentCardItemView from './modelsViews/PaymentCardItemView';
 import WifiItemView from './modelsViews/WifiItemView';
 
-/**
-* Function to render the item.
-* @param {Object} props - The component props.
-* @return {JSX.Element} The rendered component.
-*/
+const MODEL_COMPONENTS = {
+  login: LoginItemView,
+  secureNote: SecureNoteItemView,
+  paymentCard: PaymentCardItemView,
+  wifi: WifiItemView
+};
+
 function Item (props) {
   const itemId = props.data?.id;
   const more = useIsItemOpen(itemId);
@@ -30,7 +32,9 @@ function Item (props) {
   const autofillBtnRef = useRef(null);
   const isHoveredRef = useRef(false);
   const itemIdRef = useRef(itemId);
+  const moreRef = useRef(more);
   itemIdRef.current = itemId;
+  moreRef.current = more;
 
   const setMore = useCallback(value => {
     if (value) {
@@ -55,7 +59,7 @@ function Item (props) {
   const handleMouseLeave = useCallback(() => {
     isHoveredRef.current = false;
 
-    if (!more) {
+    if (!moreRef.current) {
       if (ref.current) {
         ref.current.classList.remove(S.hover);
       }
@@ -64,7 +68,7 @@ function Item (props) {
         autofillBtnRef.current.classList.remove(S.hover);
       }
     }
-  }, [more]);
+  }, []);
 
   const itemClassName = useMemo(() =>
     `${S.item} ${more ? S.hover : ''} ${props.loading === true ? S.loading : ''}`,
@@ -87,54 +91,9 @@ function Item (props) {
     return null;
   }
 
-  const constructorName = props?.data?.constructor?.name;
-  let modelComponent = null;
+  const ModelComponent = props.loading ? LoginItemView : MODEL_COMPONENTS[props.data.contentType];
 
-  if (constructorName === 'Login' || props.loading) {
-    modelComponent = (
-      <LoginItemView
-        data={props.data}
-        more={more}
-        setMore={setMore}
-        selectRef={selectRef}
-        autofillBtnRef={autofillBtnRef}
-        loading={props.loading}
-      />
-    );
-  } else if (constructorName === 'SecureNote') {
-    modelComponent = (
-      <SecureNoteItemView
-        data={props.data}
-        more={more}
-        setMore={setMore}
-        selectRef={selectRef}
-        autofillBtnRef={autofillBtnRef}
-        loading={props.loading}
-      />
-    );
-  } else if (constructorName === 'PaymentCard') {
-    modelComponent = (
-      <PaymentCardItemView
-        data={props.data}
-        more={more}
-        setMore={setMore}
-        selectRef={selectRef}
-        autofillBtnRef={autofillBtnRef}
-        loading={props.loading}
-      />
-    );
-  } else if (constructorName === 'Wifi') {
-    modelComponent = (
-      <WifiItemView
-        data={props.data}
-        more={more}
-        setMore={setMore}
-        selectRef={selectRef}
-        autofillBtnRef={autofillBtnRef}
-        loading={props.loading}
-      />
-    );
-  } else {
+  if (!ModelComponent) {
     return null;
   }
 
@@ -147,18 +106,18 @@ function Item (props) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {modelComponent}
+      <ModelComponent
+        data={props.data}
+        more={more}
+        setMore={setMore}
+        selectRef={selectRef}
+        autofillBtnRef={autofillBtnRef}
+        loading={props.loading}
+      />
     </div>
   );
 }
 
-/**
-* Custom comparison function to prevent unnecessary re-renders.
-* Only re-render if data id, sifExists, or loading state changes.
-* @param {Object} prevProps - Previous props.
-* @param {Object} nextProps - Next props.
-* @return {boolean} True if props are equal (should not re-render).
-*/
 function arePropsEqual (prevProps, nextProps) {
   return prevProps.data?.id === nextProps.data?.id &&
          prevProps.data?.sifExists === nextProps.data?.sifExists &&

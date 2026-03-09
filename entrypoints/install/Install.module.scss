@@ -4,94 +4,41 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-// FUTURE: Refactor QR classes
+@use "@/partials/global-styles/mixins" as m;
 
-@use '@/partials/global-styles/variables' as v;
-@use '@/partials/global-styles/mixins' as m;
+// FUTURE: Refactor QR classes
 
 *::-webkit-scrollbar {
   width: 8px;
 }
- 
+
 *::-webkit-scrollbar-track {
   box-shadow: none;
 }
- 
+
 *::-webkit-scrollbar-thumb {
   border-radius: 4px;
 }
 
-:global(html.firefox.theme-light) {
-  scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
+:global(html.firefox) {
+  scrollbar-color: var(--hover-on-hover) var(--primary-bg);
 }
 
-:global(html.firefox.theme-dark) {
-  scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
-}
-
-:global(html.firefox.theme-unset) {
-  @media (prefers-color-scheme: light) {
-    scrollbar-color: v.$hover-on-hover-light v.$primary-bg-light;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    scrollbar-color: v.$hover-on-hover-dark v.$primary-bg-dark;
-  }
-}
-
-:global(body.theme-light) {
+:global(body) {
   &::-webkit-scrollbar,
   *::-webkit-scrollbar {
-    background-color: v.$primary-bg-light;
+    background-color: var(--primary-bg);
   }
-  
+
   &::-webkit-scrollbar-thumb,
   *::-webkit-scrollbar-thumb {
-    background-color: v.$hover-on-hover-light;
-  }
-}
-
-:global(body.theme-dark) {
-  &::-webkit-scrollbar,
-  *::-webkit-scrollbar {
-    background-color: v.$primary-bg-dark;
-  }
-   
-  &::-webkit-scrollbar-thumb,
-  *::-webkit-scrollbar-thumb {
-    background-color: v.$hover-on-hover-dark;
-  }
-}
-
-:global(body.theme-unset) {
-  @media (prefers-color-scheme: light) {
-    &::-webkit-scrollbar,
-    *::-webkit-scrollbar {
-      background-color: v.$primary-bg-light;
-    }
-     
-    &::-webkit-scrollbar-thumb,
-    *::-webkit-scrollbar-thumb {
-      background-color: v.$hover-on-hover-light;
-    }
-  }
-
-  @media (prefers-color-scheme: dark) {
-    &::-webkit-scrollbar,
-    *::-webkit-scrollbar {
-      background-color: v.$primary-bg-dark;
-    }
-     
-    &::-webkit-scrollbar-thumb,
-    *::-webkit-scrollbar-thumb {
-      background-color: v.$hover-on-hover-dark;
-    }
+    background-color: var(--hover-on-hover);
   }
 }
 
 .install {
   box-sizing: border-box;
-  color: v.$primary-text-light;
+  color: var(--primary-text);
   display: flex;
   flex-direction: column;
   font-family: 'Montserrat', sans-serif;
@@ -99,40 +46,35 @@
   min-height: 100vh;
   opacity: 0;
   position: relative;
-  transition: opacity v.$anim;
+  transition: opacity var(--anim);
   width: 100%;
-
-  @include m.darkMode {
-    color: v.$primary-text-dark;
-  }
 
   :global(body.theme-dark) &,
   :global(body.theme-light) &,
   :global(body.theme-unset) & {
     opacity: 1;
   }
-  
+
   * {
     font-family: 'Montserrat', sans-serif;
   }
 
   &-container {
     align-items: center;
-    background-color: v.$primary-bg-light;
+    background-color: var(--primary-bg);
     background-image: url("@/assets/install-page/install-page-bg.svg?url");
     background-position: center center;
-    background-size: cover;
     background-repeat: no-repeat;
+    background-size: cover;
+
+    @include m.darkMode {
+      background-image: url("@/assets/install-page/install-page-bg-dark.svg?url");
+    }
     display: flex;
     flex: 1;
     padding: 43px 0;
     position: relative;
     z-index: 2;
-
-    @include m.darkMode {
-      background-color: v.$primary-bg-dark;
-      background-image: url("@/assets/install-page/install-page-bg-dark.svg?url");
-    }
 
     &-content {
       align-items: center;
@@ -200,41 +142,28 @@
 
                   .apps-download-button-content {
                     span {
-                      color: v.$primary-color-light !important;
-
-                      @include m.darkMode {
-                        color: v.$primary-color-dark;
-                      }
+                      color: var(--primary-color) !important;
                     }
 
                     svg {
-                      stroke: v.$primary-color-light !important;
-
-                      @include m.darkMode {
-                        stroke: v.$primary-color-dark;
-                      }
+                      stroke: var(--primary-color) !important;
                     }
                   }
                 }
 
                 &-tooltip {
-                  // NO DARK MODE HERE FOR BG / COLOR!
-                  background-color: v.$primary-box-bg-light;
+                  background-color: var(--primary-box-bg);
                   border-radius: 8px;
                   bottom: 60px;
-                  filter: drop-shadow(0px 40px 80px v.$primary-bg-light);
+                  filter: drop-shadow(0px 40px 80px var(--primary-bg));
                   left: 50%;
                   opacity: 0;
                   padding: 10px 11px;
-                  transition: opacity v.$anim;
+                  transition: opacity var(--anim);
                   transform: translateX(-50%);
                   pointer-events: none;
                   position: absolute;
                   z-index: 3;
-
-                  @include m.darkMode {
-                    filter: drop-shadow(0px 40px 80px v.$primary-bg-dark);
-                  }
 
                   &::after {
                     content: '';
@@ -243,7 +172,7 @@
                     height: 0;
                     border-style: solid;
                     border-width: 12px 11px 0;
-                    border-color: v.$primary-box-bg-light transparent transparent;
+                    border-color: var(--primary-box-bg) transparent transparent;
                     position: absolute;
                     left: 50%;
                     bottom: -8px;
@@ -251,7 +180,7 @@
                   }
 
                   span {
-                    color: v.$primary-text-light;
+                    color: var(--primary-text);
                     font-size: 8px;
                     font-weight: 700;
                     line-height: 1.5;
@@ -276,16 +205,13 @@
 
                   svg {
                     height: 32px;
-                    stroke: v.$primary-text-light;
+                    pointer-events: none;
+                    stroke: var(--primary-text);
                     stroke-width: 2px;
                     stroke-linecap: square;
                     stroke-linejoin: round;
-                    transition: stroke v.$anim;
+                    transition: stroke var(--anim);
                     width: auto;
-
-                    @include m.darkMode {
-                      stroke: v.$primary-text-dark;
-                    }
 
                     @media all and (max-width: 1000px) {
                       height: 28px;
@@ -293,18 +219,14 @@
                   }
 
                   span {
-                    color: v.$primary-text-light;
+                    color: var(--primary-text);
                     font-size: 10px;
                     font-weight: 700;
                     letter-spacing: .5px;
                     line-height: 1.4;
                     text-align: center;
                     text-transform: uppercase;
-                    transition: color v.$anim;
-
-                    @include m.darkMode {
-                      color: v.$primary-text-dark;
-                    }
+                    transition: color var(--anim);
 
                     @media all and (max-width: 1000px) {
                       font-size: 8px;
@@ -354,14 +276,10 @@
         }
 
         &-logs {
-          background-color: v.$primary-box-bg-light;
+          background-color: var(--primary-box-bg);
           border-radius: 12px;
           margin-top: 79px;
           padding: 24px 23px 32px;
-
-          @include m.darkMode {
-            background-color: v.$primary-box-bg-dark;
-          }
 
           @media all and (max-width: 1670px) {
             margin-top: 64px;
@@ -404,11 +322,7 @@
                 + label {
                   .install-container-content-left-logs-form {
                     &-toggle {
-                      background-color: v.$primary-color-light !important;
-
-                      @include m.darkMode {
-                        background-color: v.$primary-color-dark !important;
-                      }
+                      background-color: var(--primary-color) !important;
 
                       &-circle {
                         transform: translateX(17px) !important;
@@ -420,14 +334,10 @@
             }
 
             &-toggle {
-              background-color: v.$secondary-text-light !important;
+              background-color: var(--secondary-text) !important;
               border-radius: 12px !important;
               height: 24px !important;
               width: 41px !important;
-
-              @include m.darkMode {
-                background-color: v.$secondary-text-dark !important;
-              }
 
               &-circle {
                 height: 18px !important;
@@ -439,14 +349,10 @@
 
             &-text {
               span {
-                color: v.$primary-text-light !important;
+                color: var(--primary-text) !important;
                 font-size: 16px !important;
                 font-weight: 600 !important;
                 line-height: 1.75 !important;
-
-                @include m.darkMode {
-                  color: v.$primary-text-dark !important;
-                }
 
                 @media all and (max-width: 640px) {
                   font-size: 12px !important;
@@ -472,13 +378,9 @@
             }
 
             svg {
-              fill: v.$primary-text-light;
+              fill: var(--primary-text);
               height: 32px;
               width: 32px;
-
-              @include m.darkMode {
-                fill: v.$primary-text-dark;
-              }
 
               @media all and (max-width: 460px) {
                 height: 24px;
@@ -487,14 +389,10 @@
             }
 
             span {
-              color: v.$primary-text-light;
+              color: var(--primary-text);
               font-size: 24px;
               font-weight: 600;
               line-height: 1;
-
-              @include m.darkMode {
-                color: v.$primary-text-dark;
-              }
 
               @media all and (max-width: 1000px) {
                 font-size: 22px;
@@ -503,11 +401,11 @@
               @media all and (max-width: 800px) {
                 font-size: 20px;
               }
-    
+
               @media all and (max-width: 460px) {
                 font-size: 18px;
               }
-    
+
               @media all and (max-width: 380px) {
                 font-size: 16px;
               }
@@ -515,15 +413,11 @@
           }
 
           p {
-            color: v.$secondary-text-light;
+            color: var(--secondary-text);
             font-size: 16px;
             font-weight: 600;
             line-height: 1.5;
             max-width: 563px;
-
-            @include m.darkMode {
-              color: v.$secondary-text-dark;
-            }
 
             @media all and (max-width: 1000px) {
               max-width: 90%;
@@ -551,7 +445,7 @@
         }
 
         &-box {
-          background-color: v.$primary-box-bg-light;
+          background-color: var(--primary-box-bg);
           border-radius: 12px;
           padding: 77px 44px;
           overflow: hidden;
@@ -560,10 +454,6 @@
           &.external {
             background-color: transparent;
             padding: 0;
-          }
-
-          @include m.darkMode {
-            background-color: v.$primary-box-bg-dark;
           }
 
           @media all and (max-width: 1500px) {
@@ -605,9 +495,10 @@
             }
 
             svg {
-              fill: v.$primary-color-light;
+              fill: var(--primary-color);
               height: 120px;
               left: 50%;
+              pointer-events: none;
               position: absolute;
               scale: 1;
               top: 50%;
@@ -615,10 +506,6 @@
               transform-origin: top left;
               transition: scale .3s ease-out;
               width: 120px;
-
-              @include m.darkMode {
-                fill: v.$primary-color-dark;
-              }
 
               @media all and (max-width: 1200px) {
                 height: 100px;
@@ -636,15 +523,11 @@
       }
 
       h1 {
-        color: v.$primary-text-light;
+        color: var(--primary-text);
         font-size: 72px;
         font-weight: 800;
         line-height: 1.1111;
         white-space: pre-wrap;
-
-        @include m.darkMode {
-          color: v.$primary-text-dark;
-        }
 
         @media all and (max-width: 1500px) {
           font-size: 60px;
@@ -683,15 +566,11 @@
 
         svg {
           height: 32px;
-          stroke: v.$primary-color-light;
+          stroke: var(--primary-color);
           stroke-linecap: square;
           stroke-linejoin: round;
           stroke-width: 3;
           width: 32px;
-
-          @include m.darkMode {
-            stroke: v.$primary-color-dark;
-          }
 
           @media all and (max-width: 1500px) {
             height: 28px;
@@ -715,14 +594,10 @@
         }
 
         span {
-          color: v.$primary-color-light;
+          color: var(--primary-color);
           font-size: 28px;
           font-weight: 600;
           line-height: 1.4;
-
-          @include m.darkMode {
-            color: v.$primary-color-dark;
-          }
 
           @media all and (max-width: 1500px) {
             font-size: 24px;
@@ -759,15 +634,11 @@
         }
 
         span {
-          color: v.$primary-text-light;
+          color: var(--primary-text);
           font-size: 28px;
           font-style: normal;
           font-weight: 600;
           line-height: 1.2857;
-
-          @include m.darkMode {
-            color: v.$primary-text-dark;
-          }
 
           @media all and (max-width: 1500px) {
             font-size: 24px;
@@ -795,17 +666,13 @@
 
   &-footer,
   &-header {
-    background: v.$primary-box-bg-light;
+    background: var(--primary-box-bg);
     flex-shrink: 0;
     height: 94px;
     line-height: 94px;
     position: relative;
     width: 100%;
     z-index: 2;
-
-    @include m.darkMode {
-      background: v.$primary-box-bg-dark;
-    }
 
     @media all and (max-width: 1500px) {
       height: 80px;
@@ -844,41 +711,29 @@
 
       a {
         align-items: center;
-        background-color: v.$hover-color-light;
+        background-color: var(--hover-color);
         border-radius: 18px;
-        color: v.$primary-color-light;
+        color: var(--primary-color);
         display: inline-flex;
         gap: 0 10px;
         padding: 8px 10px;
-        transition: background-color v.$anim;
-
-        @include m.darkMode {
-          background-color: v.$hover-color-dark;
-          color: v.$primary-color-dark;
-        }
+        transition: background-color var(--anim);
 
         @media all and (max-width: 600px) {
           gap: 0 6px;
         }
 
         &:hover {
-          background-color: v.$hover-on-hover-light;
-
-          @include m.darkMode {
-            background-color: v.$hover-on-hover-dark;
-          }
+          background-color: var(--hover-on-hover);
         }
 
         svg {
           height: 20px;
-          stroke: v.$primary-color-light;
+          pointer-events: none;
+          stroke: var(--primary-color);
           stroke-linecap: round;
           stroke-linejoin: round;
           width: 20px;
-
-          @include m.darkMode {
-            stroke: v.$primary-color-dark;
-          }
 
           @media all and (max-width: 1500px) {
             height: 18px;
@@ -929,7 +784,7 @@
       height: 100%;
       opacity: 0;
       pointer-events: none;
-      transition: opacity v.$anim;
+      transition: opacity var(--anim);
 
       @media all and (max-width: 800px) {
         display: none;
@@ -960,40 +815,27 @@
 
             .apps-download-button-content {
               span {
-                color: v.$primary-color-light !important;
-
-                @include m.darkMode {
-                  color: v.$primary-color-dark;
-                }
+                color: var(--primary-color) !important;
               }
 
               svg {
-                stroke: v.$primary-color-light !important;
-
-                @include m.darkMode {
-                  stroke: v.$primary-color-dark;
-                }
+                stroke: var(--primary-color) !important;
               }
             }
           }
 
           &-tooltip {
-            // NO DARK MODE HERE FOR BG / COLOR!
-            background-color: v.$primary-box-bg-light;
+            background-color: var(--primary-box-bg);
             border-radius: 8px;
             bottom: 60px;
-            filter: drop-shadow(0px 40px 80px v.$primary-bg-light);
+            filter: drop-shadow(0px 40px 80px var(--primary-bg));
             left: 50%;
             opacity: 0;
             padding: 10px 11px;
             pointer-events: none;
-            transition: opacity v.$anim;
+            transition: opacity var(--anim);
             transform: translateX(-50%);
             position: absolute;
-
-            @include m.darkMode {
-              filter: drop-shadow(0px 40px 80px v.$primary-bg-dark);
-            }
 
             &::after {
               content: '';
@@ -1002,7 +844,7 @@
               height: 0;
               border-style: solid;
               border-width: 12px 11px 0;
-              border-color: v.$primary-box-bg-light transparent transparent;
+              border-color: var(--primary-box-bg) transparent transparent;
               position: absolute;
               left: 50%;
               bottom: -8px;
@@ -1010,7 +852,7 @@
             }
 
             span {
-              color: v.$primary-text-light;
+              color: var(--primary-text);
               font-size: 8px;
               font-weight: 700;
               line-height: 1.5;
@@ -1035,16 +877,12 @@
 
             svg {
               height: 32px;
-              stroke: v.$primary-text-light;
+              stroke: var(--primary-text);
               stroke-width: 2px;
               stroke-linecap: square;
               stroke-linejoin: round;
-              transition: stroke v.$anim;
+              transition: stroke var(--anim);
               width: auto;
-
-              @include m.darkMode {
-                stroke: v.$primary-text-dark;
-              }
 
               @media all and (max-width: 1000px) {
                 height: 28px;
@@ -1052,18 +890,14 @@
             }
 
             span {
-              color: v.$primary-text-light;
+              color: var(--primary-text);
               font-size: 10px;
               font-weight: 700;
               letter-spacing: .5px;
               line-height: 1.4;
               text-align: center;
               text-transform: uppercase;
-              transition: color v.$anim;
-
-              @include m.darkMode {
-                color: v.$primary-text-dark;
-              }
+              transition: color var(--anim);
 
               @media all and (max-width: 1000px) {
                 font-size: 8px;
@@ -1112,16 +946,12 @@
     }
 
     h6 {
-      color: v.$primary-text-light;
+      color: var(--primary-text);
       font-size: 24px;
       font-weight: 600;
       line-height: 1;
       margin-left: auto;
       text-align: right;
-
-      @include m.darkMode {
-        color: v.$primary-text-dark;
-      }
 
       @media all and (max-width: 1500px) {
         font-size: 20px;
@@ -1170,16 +1000,12 @@
 
       &-number {
         align-items: center;
-        background-color: v.$card-bg-light;
+        background-color: var(--card-bg);
         border-radius: 32px;
         display: inline-flex;
         flex-shrink: 0;
         height: 64px;
         width: 117px;
-
-        @include m.darkMode {
-          background-color: v.$card-bg-dark;
-        }
 
         @media all and (max-width: 1500px) {
           height: 56px;
@@ -1199,15 +1025,11 @@
         }
 
         &-number {
-          color: v.$primary-color-light;
+          color: var(--primary-color);
           font-size: 32px;
           font-weight: 700;
           line-height: 1;
           padding-left: 5px;
-
-          @include m.darkMode {
-            color: v.$primary-color-dark;
-          }
 
           @media all and (max-width: 1500px) {
             font-size: 28px;
@@ -1220,13 +1042,9 @@
         }
 
         &-separator {
-          background-color: v.$object-light;
+          background-color: var(--object);
           height: 100%;
           width: 1px;
-
-          @include m.darkMode {
-            background-color: v.$object-dark;
-          }
 
           @media all and (max-width: 600px) {
             display: none;
@@ -1240,15 +1058,11 @@
 
           &-puzzle {
             height: auto;
-            stroke: v.$primary-color-light;
+            stroke: var(--primary-color);
             stroke-linecap: round;
             stroke-linejoin: round;
             stroke-width: 3;
             width: 30px;
-
-            @include m.darkMode {
-              stroke: v.$primary-color-dark;
-            }
 
             @media all and (max-width: 1500px) {
               width: 26px;
@@ -1258,18 +1072,14 @@
               width: 26px;
             }
           }
-    
+
           &-pin {
             height: auto;
-            stroke: v.$primary-color-light;
+            stroke: var(--primary-color);
             stroke-width: 3;
             stroke-linejoin: round;
             transform: translate(-3px, 1px);
             width: 19px;
-
-            @include m.darkMode {
-              stroke: v.$primary-color-dark;
-            }
 
             @media all and (max-width: 1500px) {
               width: 16px;
@@ -1279,15 +1089,11 @@
           &-shield,
           &-qr {
             height: 32px;
-            stroke: v.$primary-color-light;
+            stroke: var(--primary-color);
             stroke-width: 3;
             stroke-linecap: round;
             stroke-linejoin: round;
             width: auto;
-
-            @include m.darkMode {
-              stroke: v.$primary-color-dark;
-            }
 
             @media all and (max-width: 1500px) {
               height: 28px;
@@ -1297,14 +1103,10 @@
       }
 
       &-text {
-        color: v.$primary-text-light;
+        color: var(--primary-text);
         font-size: 28px;
         font-weight: 600;
         line-height: 1.2857;
-
-        @include m.darkMode {
-          color: v.$primary-text-dark;
-        }
 
         @media all and (max-width: 1500px) {
           font-size: 24px;

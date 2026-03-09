@@ -49,7 +49,7 @@ function MatchingItemsList ({ items, loading }) {
   }
 
   return (
-    <SafariViewportList items={itemsData.data} overscan={5}>
+    <SafariViewportList items={itemsData.data}>
       {renderItem}
     </SafariViewportList>
   );

@@ -7,6 +7,7 @@
 export const REQUEST_TARGETS = Object.freeze({
   BACKGROUND: 'background',
   BACKGROUND_PROMPT: 'background_prompt',
+  BACKGROUND_WS: 'background_ws',
   CONTENT: 'content',
   POPUP: 'popup',
   POPUP_ADD_NEW: 'popup_add_new',

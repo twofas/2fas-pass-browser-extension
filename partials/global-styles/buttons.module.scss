@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-@use "sass:color";
-@use "variables" as v;
+@use "functions" as fn;
 @use "mixins" as m;
 
 .btn {
@@ -18,7 +17,7 @@
   outline: none !important;
   text-align: center;
   text-decoration: none;
-  transition: background-color v.$anim, color v.$anim, border-color v.$anim;
+  transition: background-color var(--anim), color var(--anim), border-color var(--anim);
 
   &[disabled] {
     cursor: default;
@@ -27,137 +26,77 @@
   }
 
   &.btn-theme {
-    background-color: v.$primary-color-light;
+    background-color: var(--primary-color);
     border-radius: 6px;
-    color: v.$tertiary-text-light;
+    color: var(--tertiary-text);
     font-weight: 500;
-
-    @include m.darkMode {
-      background-color: v.$primary-color-dark;
-      color: v.$tertiary-text-dark;
-    }
 
     &:hover,
     &:focus {
-      background-color: v.$focus-light;
-      color: v.$tertiary-text-light;
-
-      @include m.darkMode {
-        background-color: v.$focus-dark;
-        color: v.$tertiary-text-dark;
-      }
+      background-color: var(--focus);
+      color: var(--tertiary-text);
     }
 
     &:active {
-      background-color: v.$pressed-light;
-      color: v.$tertiary-text-light;
-
-      @include m.darkMode {
-        background-color: v.$pressed-dark;
-        color: v.$tertiary-text-dark;
-      }
+      background-color: var(--pressed);
+      color: var(--tertiary-text);
     }
 
     &[disabled],
     &.disabled {
-      background-color: v.$object-light;
-      color: v.$tertiary-text-light;
-
-      @include m.darkMode {
-        background-color: v.$object-dark;
-        color: v.$tertiary-text-dark;
-      }
+      background-color: var(--object);
+      color: var(--tertiary-text);
     }
   }
 
   &.btn-danger {
-    background-color: v.$error-light;
+    background-color: var(--error);
     border-radius: 6px;
-    color: v.$tertiary-text-light;
+    color: var(--tertiary-text);
     font-weight: 500;
-
-    @include m.darkMode {
-      background-color: v.$error-dark;
-      color: v.$tertiary-text-dark;
-    }
 
     &:hover,
     &:focus {
-      background-color: rgba(v.$error-light, 0.8);
-      color: v.$tertiary-text-light;
-
-      @include m.darkMode {
-        background-color: rgba(v.$error-dark, 0.8);
-        color: v.$tertiary-text-dark;
-      }
+      background-color: fn.hex-rgba(var(--error), .8);
+      color: var(--tertiary-text);
     }
 
     &:active {
-      background-color: rgba(v.$error-light, 0.7);
-      color: v.$tertiary-text-light;
-
-      @include m.darkMode {
-        background-color: rgba(v.$error-dark, 0.7);
-        color: v.$tertiary-text-dark;
-      }
+      background-color: fn.hex-rgba(var(--error), .7);
+      color: var(--tertiary-text);
     }
 
     &[disabled],
     &.disabled {
-      background-color: v.$object-light;
-      color: v.$tertiary-text-light;
-
-      @include m.darkMode {
-        background-color: v.$object-dark;
-        color: v.$tertiary-text-dark;
-      }
+      background-color: var(--object);
+      color: var(--tertiary-text);
     }
   }
 
   &.btn-clear {
-    color: v.$primary-color-light;
+    color: var(--primary-color);
     font-size: 14px;
     font-weight: 600;
     line-height: 1;
 
-    @include m.darkMode {
-      color: v.$primary-color-dark;
-    }
-
     &:hover,
     &:focus {
-      color: v.$focus-light;
-
-      @include m.darkMode {
-        color: v.$focus-dark;
-      }
+      color: var(--focus);
     }
 
     &:active {
-      color: v.$pressed-light;
-
-      @include m.darkMode {
-        color: v.$pressed-dark;
-      }
+      color: var(--pressed);
     }
 
     &[disabled],
     &.disabled {
-      color: v.$object-light;
-
-      @include m.darkMode {
-        color: v.$object-dark;
-      }
+      color: var(--object);
     }
 
     &.normal-text {
-      color: v.$primary-text-light;
+      color: var(--primary-text);
       text-decoration: underline;
       text-underline-offset: 2px;
-
-      @include m.darkMode {
-        color: v.$primary-text-dark;
-      }
     }
 
     &.domain-add {
@@ -166,14 +105,14 @@
         font-weight: 500;
       }
 
+      svg {
+        pointer-events: none;
+      }
+
       &:hover,
       &:focus {
         svg {
-          stroke: v.$focus-light;
-
-          @include m.darkMode {
-            stroke: v.$focus-dark;
-          }
+          stroke: var(--focus);
         }
       }
     }
@@ -188,43 +127,29 @@
     border-radius: 6px;
     display: inline-flex;
     height: 32px;
-    transition: none;
     padding: 0 8px 0 12px;
-    transition: background-color v.$anim;
+    transition: background-color var(--anim);
     user-select: none;
     width: 100%;
 
     @include m.loaded {
-      background-color: rgba(v.$hover-color-light, 0);
+      background-color: fn.hex-rgba(var(--hover-color), 0);
 
       &:hover,
       &:focus {
-        background-color: rgba(v.$hover-color-light, 1);
+        background-color: var(--hover-color);
       }
 
       &:active {
-        background-color: v.$pressed-bg-light;
+        background-color: var(--pressed-bg);
       }
 
       span {
-        transition: color v.$anim;
+        transition: color var(--anim);
       }
 
       svg {
-        transition: stroke v.$anim;
-      }
-    }
-
-    @include m.loadedDarkMode {
-      background-color: rgba(v.$hover-color-dark, 0);
-
-      &:hover,
-      &:focus {
-        background-color: rgba(v.$hover-color-dark, 1);
-      }
-
-      &:active {
-        background-color: v.$pressed-bg-dark;
+        transition: stroke var(--anim);
       }
     }
 
@@ -241,18 +166,10 @@
     }
 
     span {
-      color: transparent;
+      color: var(--primary-text);
       font-size: 12px;
       font-weight: 500;
       line-height: 1;
-
-      @include m.lightMode {
-        color: v.$primary-text-light;
-      }
-
-      @include m.darkMode {
-        color: v.$primary-text-dark;
-      }
 
       &.btn-locked-disabled,
       &.btn-locked-active {
@@ -268,19 +185,11 @@
         display: none;
 
         span {
-          color: v.$error-light;
-
-          @include m.darkMode {
-            color: v.$error-dark;
-          }
+          color: var(--error);
         }
 
         svg {
-          stroke: v.$error-light;
-
-          @include m.darkMode {
-            stroke: v.$error-dark;
-          }
+          stroke: var(--error);
         }
       }
 
@@ -288,25 +197,18 @@
         display: inline-flex;
 
         span {
-          color: v.$primary-color-light;
-
-          @include m.darkMode {
-            color: v.$primary-color-dark;
-          }
+          color: var(--primary-color);
         }
 
         svg {
-          stroke: v.$primary-color-light;
-
-          @include m.darkMode {
-            stroke: v.$primary-color-dark;
-          }
+          stroke: var(--primary-color);
         }
       }
     }
 
     svg {
       height: 16px;
+      pointer-events: none;
       stroke-width: 1.5;
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -341,28 +243,18 @@
   }
 
   &.btn-reset {
-    color: v.$error-light;
-    border: 1px solid v.$error-light;
+    border: 1px solid var(--error);
     border-radius: 6px;
+    color: var(--error);
     font-size: 14px;
     font-weight: 500;
     padding: 14px 0;
+    transition: border-color var(--anim), color var(--anim);
     width: 100%;
-    transition: border-color v.$anim, color v.$anim;
-
-    @include m.darkMode {
-      border: 1px solid v.$error-dark;
-      color: v.$error-dark;
-    }
 
     &:hover {
-      border: 1px solid v.$object-light;
-      color: v.$error-light;
-
-      @include m.darkMode {
-        border: 1px solid v.$object-dark;
-        color: v.$error-dark;
-      }
+      border: 1px solid var(--object);
+      color: var(--error);
     }
   }
 
@@ -390,25 +282,16 @@
   }
 
   &.btn-filter {
-    border: 1px solid v.$object-stroke-light;
+    border: 1px solid var(--object-stroke);
     border-radius: 6px;
     height: 38px;
     width: 38px;
 
-    @include m.darkMode {
-      border-color: v.$object-stroke-dark;
-    }
-
     &:hover,
     &:focus,
     &.btn-filter-active {
-      background-color: v.$hover-color-light;
-      border-color: v.$hover-color-light;
-
-      @include m.darkMode {
-        background-color: v.$hover-color-dark;
-        border-color: v.$hover-color-dark;
-      }
+      background-color: var(--hover-color);
+      border-color: var(--hover-color);
     }
 
     &.sort {
@@ -419,15 +302,12 @@
 
     svg {
       height: 16px;
-      stroke: v.$primary-color-light;
+      pointer-events: none;
+      stroke: var(--primary-color);
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-width: 1.5;
       width: auto;
-
-      @include m.darkMode {
-        stroke: v.$primary-color-dark;
-      }
     }
   }
 
@@ -437,18 +317,13 @@
 
   &.btn-outline {
     background-color: transparent;
-    border: 1px solid v.$primary-color-light;
+    border: 1px solid var(--primary-color);
     border-radius: 6px;
-    color: v.$primary-color-light;
+    color: var(--primary-color);
     font-size: 12px;
     font-weight: 500;
     line-height: 1.3;
     padding: 8px 10px;
-
-    @include m.darkMode {
-      border-color: v.$primary-color-dark;
-      color: v.$primary-color-dark;
-    }
   }
 
   // INSTALL PAGE
@@ -482,32 +357,20 @@
     &:hover,
     &:focus {
       svg {
-        stroke: v.$focus-light;
-
-        @include m.darkMode {
-          stroke: v.$focus-dark;
-        }
+        stroke: var(--focus);
       }
     }
 
     &:active {
       svg {
-        stroke: v.$pressed-light;
-
-        @include m.darkMode {
-          stroke: v.$pressed-dark;
-        }
+        stroke: var(--pressed);
       }
     }
 
     &[disabled],
     &.disabled {
       svg {
-        stroke: v.$object-light;
-  
-        @include m.darkMode {
-          stroke: v.$object-dark;
-        }
+        stroke: var(--object);
       }
     }
 
@@ -525,17 +388,14 @@
 
     svg {
       height: 10px;
-      stroke: v.$primary-color-light;
+      pointer-events: none;
+      stroke: var(--primary-color);
       stroke-width: 2;
       stroke-linecap: round;
       stroke-linejoin: round;
       transform: translateY(-1px);
-      transition: stroke v.$anim;
+      transition: stroke var(--anim);
       width: auto;
-
-      @include m.darkMode {
-        stroke: v.$primary-color-dark;
-      }
     }
   }
 
@@ -558,11 +418,7 @@
       &:checked {
         + label {
           .pass-toggle-box {
-            background-color: v.$focus-light;
-
-            @include m.darkMode {
-              background-color: v.$focus-dark;
-            }
+            background-color: var(--focus);
           }
         }
       }
@@ -574,24 +430,20 @@
       &:checked {
         + label {
           .pass-toggle-box {
-            background-color: v.$pressed-light;
-
-            @include m.darkMode {
-              background-color: v.$pressed-dark;
-            }
+            background-color: var(--pressed);
           }
         }
       }
     }
   }
-  
+
   &.loaded {
     label {
       .pass-toggle-box {
-        transition: background-color v.$anim-fast;
+        transition: background-color var(--anim-fast);
 
         .pass-toggle-box-circle {
-          transition: transform v.$anim-fast;
+          transition: transform var(--anim-fast);
         }
       }
     }
@@ -605,23 +457,15 @@
             cursor: not-allowed !important;
 
             .pass-toggle-box {
+              background-color: var(--primary-color) !important;
               cursor: not-allowed !important;
-              background-color: v.$primary-color-light !important;
-
-              @include m.darkMode {
-                background-color: v.$primary-color-dark !important;
-              }
             }
 
             .pass-toggle-text {
               cursor: not-allowed !important;
-              
-              > span {
-                color: v.$secondary-text-light !important;
 
-                @include m.darkMode {
-                  color: v.$secondary-text-dark !important;
-                }
+              > span {
+                color: var(--secondary-text) !important;
               }
             }
           }
@@ -636,11 +480,7 @@
     &:checked {
       + label {
         .pass-toggle-box {
-          background-color: v.$primary-color-light;
-
-          @include m.darkMode {
-            background-color: v.$primary-color-dark;
-          }
+          background-color: var(--primary-color);
 
           .pass-toggle-box-circle {
             transform: translateX(14px);
@@ -654,23 +494,15 @@
         cursor: not-allowed;
 
         .pass-toggle-box {
-          background-color: v.$secondary-text-light !important;
+          background-color: var(--secondary-text) !important;
           cursor: not-allowed !important;
-
-          @include m.darkMode {
-            background-color: v.$secondary-text-dark !important;
-          }
         }
 
         .pass-toggle-text {
           cursor: not-allowed !important;
-          
-          > span {
-            color: v.$secondary-text-light !important;
 
-            @include m.darkMode {
-              color: v.$secondary-text-dark !important;
-            }
+          > span {
+            color: var(--secondary-text) !important;
           }
         }
       }
@@ -687,49 +519,37 @@
     text-transform: none;
 
     .pass-toggle-box {
+      background: var(--secondary-text);
       border-radius: 9px;
-      background: v.$secondary-text-light;
       display: block;
       flex-shrink: 0;
       height: 18px;
       position: relative;
-      transition: background-color v.$anim;
+      transition: background-color var(--anim);
       width: 32px;
 
-      @include m.darkMode {
-        background: v.$secondary-text-dark;
-      }
-
       .pass-toggle-box-circle {
-        background-color: v.$primary-box-bg-light;
+        background-color: var(--primary-box-bg);
         border-radius: 50%;
         height: 14px;
         left: 2px;
         position: absolute;
         top: 2px;
         transform: translateX(0);
-        transition: transform v.$anim;
+        transition: transform var(--anim);
         width: 14px;
-
-        @include m.darkMode {
-          background-color: v.$primary-box-bg-dark;
-        }
       }
     }
 
     .pass-toggle-text {
       text-align: left;
-      
+
       > span {
-        color: v.$primary-text-light;
+        color: var(--primary-text);
         font-size: 12px;
         font-weight: 400;
         line-height: 1;
-        transition: color v.$anim;
-
-        @include m.darkMode {
-          color: v.$primary-text-dark;
-        }
+        transition: color var(--anim);
       }
     }
   }

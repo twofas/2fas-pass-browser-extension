@@ -7,7 +7,7 @@
 import S from '../styles/Item.module.scss';
 import { useI18n } from '@/partials/context/I18nContext';
 import handleSecureNoteText from '../../../functions/serviceList/handleSecureNoteText';
-import { useState, useRef, useLayoutEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import SecureNote from '@/models/itemModels/SecureNote';
@@ -68,22 +68,39 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
     }
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    let isMounted = true;
+    let localIntervalId = null;
+
     getItemAlarm()
       .then(ok => {
+        if (!isMounted) {
+          return;
+        }
+
         if (ok) {
           updateProgress();
-
-          intervalIdRef.current = setInterval(() => {
+          localIntervalId = setInterval(() => {
             updateProgress();
           }, 1000);
+          intervalIdRef.current = localIntervalId;
         }
       });
 
     return () => {
-      clearInterval(intervalIdRef.current);
+      isMounted = false;
+
+      if (localIntervalId !== null) {
+        clearInterval(localIntervalId);
+        localIntervalId = null;
+      }
+
+      if (intervalIdRef.current !== null) {
+        clearInterval(intervalIdRef.current);
+        intervalIdRef.current = null;
+      }
     };
-  }, [item, scheduledTime]);
+  }, [item?.id, scheduledTime]);
 
   if (item?.securityType === SECURITY_TIER.SECRET) {
     return (

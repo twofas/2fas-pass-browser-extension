@@ -20,15 +20,16 @@ import getShadowRoots from '../../entrypoints/content/functions/autofillFunction
 * @param {Object} timers - An object containing timers to be cleared.
 * @param {Object} ignore - A flag to indicate whether to ignore the prompt.
 * @param {boolean} encrypted - Flag indicating if the input should be encrypted.
-* @return {Promise<void>} 
+* @param {Object} latestValues - Latest known values per input ID for flush fallback.
+* @param {Object} beaconPayloads - Pre-encrypted payloads for beacon flush.
+* @return {Promise<void>}
 */
-const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypted) => {
+const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypted, latestValues, beaconPayloads) => {
   if (ignore?.value || !window?.location?.origin || window?.location?.origin.length <= 0) {
     return; // Ignore the event
   }
 
-  // FUTURE - save crypto key?
-  if (encrypted && (!localKey?.data || localKey?.data.length < 0)) {
+  if (!localKey?.data) {
     let localKeyResponse = null;
 
     try {
@@ -43,9 +44,12 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
         localKey.data = await crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKeyResponse.data), { name: 'AES-GCM' }, false, ['encrypt'] );
       } catch {
         await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventKeyImportError, { additional: { func: 'handleInputEvent', event: e } }));
-        return;
+
+        if (encrypted) {
+          return;
+        }
       }
-    } else {
+    } else if (encrypted) {
       return;
     }
   }
@@ -137,14 +141,51 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
       data.value = input.value;
     }
 
+    if (latestValues) {
+      latestValues[data.id] = { ...data, sent: false };
+    }
+
+    if (beaconPayloads && localKey?.data) {
+      if (encrypted) {
+        beaconPayloads[data.id] = { ...data, sent: false };
+      } else {
+        try {
+          const beaconNonce = await generateNonce('arraybuffer');
+          const beaconEncValue = await crypto.subtle.encrypt(
+            { name: 'AES-GCM', iv: beaconNonce.ArrayBuffer },
+            localKey.data,
+            StringToArrayBuffer(input.value)
+          );
+          const beaconEncBytes = EncryptBytes(beaconNonce.ArrayBuffer, beaconEncValue);
+
+          beaconPayloads[data.id] = {
+            ...data,
+            value: ArrayBufferToBase64(beaconEncBytes),
+            encrypted: true,
+            sent: false
+          };
+        } catch {}
+      }
+    }
+
     // Clean up timer reference after processing
     delete timers[inputIdentifier];
 
-    return browser.runtime.sendMessage({
-      action: REQUEST_ACTIONS.PROMPT_INPUT,
-      data,
-      target: REQUEST_TARGETS.BACKGROUND_PROMPT
-    });
+    try {
+      await browser.runtime.sendMessage({
+        action: REQUEST_ACTIONS.PROMPT_INPUT,
+        data,
+        target: REQUEST_TARGETS.BACKGROUND_PROMPT
+      });
+
+      if (latestValues?.[data.id]) {
+        latestValues[data.id].sent = true;
+      }
+
+      if (beaconPayloads?.[data.id]) {
+        beaconPayloads[data.id].sent = true;
+      }
+    } catch {}
   }, config.handleInputEventDebounce || 100);
 };
 
