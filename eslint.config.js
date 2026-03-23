@@ -8,7 +8,6 @@ import globals from 'globals';
 import { defineConfig, globalIgnores } from 'eslint/config';
 import pluginJs  from '@eslint/js';
 import autoImports from './.wxt/eslint-auto-imports.mjs';
-import react from 'eslint-plugin-react';
 
 export default defineConfig([
   globalIgnores([
@@ -58,9 +57,6 @@ export default defineConfig([
         }
       }
     },
-    plugins: {
-      react
-    },
     rules: {
 			semi: "error",
 			"prefer-const": "error",
@@ -71,9 +67,7 @@ export default defineConfig([
         {
           "allowEmptyCatch": true
         }
-      ],
-      "react/jsx-uses-react": "error",
-      "react/jsx-uses-vars": "error"
+      ]
 		},
   }
 ]);
