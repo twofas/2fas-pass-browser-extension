@@ -1,0 +1,192 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+.share-result {
+  border: 1px solid var(--primary-box-stroke);
+  border-radius: 8px;
+  padding: 23px 19px 24px;
+  position: relative;
+  width: 100%;
+
+  h2 {
+    color: var(--primary-text);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  &-preview {
+    align-items: center;
+    background-color: var(--additional);
+    border: 1px solid var(--primary-box-stroke);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px 0;
+    margin-bottom: 20px;
+    padding: 16px;
+
+    &-icon {
+      height: 48px;
+      width: 48px;
+
+      span {
+        border-radius: 8px;
+        height: 48px;
+        width: 48px;
+
+        span {
+          font-size: 16px;
+        }
+
+        img {
+          height: 48px;
+          width: 48px;
+        }
+
+        svg {
+          height: 20px;
+          width: 20px;
+        }
+      }
+    }
+
+    &-name {
+      color: var(--primary-text);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.3;
+      max-width: 100%;
+      overflow: hidden;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &-subtitle {
+      color: var(--secondary-text);
+      font-size: 11px;
+      font-weight: 400;
+      line-height: 1.3;
+      max-width: 100%;
+      overflow: hidden;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &-link-box {
+    background-color: var(--additional);
+    border: 1px solid var(--primary-box-stroke);
+    border-radius: 6px;
+    margin-bottom: 16px;
+    padding: 12px;
+    width: 100%;
+
+    &-url {
+      color: var(--secondary-text);
+      font-size: 11px;
+      line-height: 1.4;
+      margin-bottom: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      word-break: break-all;
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+
+  &-summary {
+    width: 100%;
+
+    &-title {
+      color: var(--secondary-text);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .3px;
+      line-height: 1;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    &-row {
+      align-items: center;
+      border-bottom: 1px solid var(--divider);
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 8px 0;
+
+      &:last-child {
+        border-bottom: 0;
+      }
+
+      &-label {
+        color: var(--primary-text);
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      &-value {
+        color: var(--secondary-text);
+        font-size: 12px;
+        font-weight: 400;
+      }
+
+      &-check {
+        align-items: center;
+        display: flex;
+        gap: 0 6px;
+
+        svg {
+          height: 12px;
+          stroke: var(--primary-color);
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 2;
+          width: auto;
+        }
+
+        span {
+          color: var(--primary-text);
+          font-size: 12px;
+          font-weight: 500;
+        }
+      }
+
+      &-copy {
+        align-items: center;
+        appearance: none;
+        background: none;
+        border: 0;
+        cursor: pointer;
+        display: flex;
+        padding: 2px;
+
+        svg {
+          height: auto;
+          stroke: var(--primary-color);
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 1.5;
+          transition: stroke var(--anim);
+          width: 16px;
+        }
+
+        &:hover svg,
+        &:focus svg {
+          stroke: var(--focus);
+        }
+      }
+    }
+  }
+}

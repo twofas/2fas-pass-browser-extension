@@ -1,0 +1,90 @@
+{
+  "share_header": {
+    "message": "2FAS Share",
+    "description": "Header title for the share item view"
+  },
+  "share_settings_title": {
+    "message": "Share settings",
+    "description": "Section title for share configuration options"
+  },
+  "share_expiration_title": {
+    "message": "Link expiration time",
+    "description": "Label for the link expiration time setting"
+  },
+  "share_expiration_desc": {
+    "message": "If the link expires before it's used, you'll need to generate a new one.",
+    "description": "Description for the link expiration time setting"
+  },
+  "share_expiry_5min": {
+    "message": "5 min",
+    "description": "Expiration option: 5 minutes"
+  },
+  "share_expiry_30min": {
+    "message": "30 min",
+    "description": "Expiration option: 30 minutes"
+  },
+  "share_expiry_1hour": {
+    "message": "1 hour",
+    "description": "Expiration option: 1 hour"
+  },
+  "share_expiry_1day": {
+    "message": "1 day",
+    "description": "Expiration option: 1 day"
+  },
+  "share_expiry_7days": {
+    "message": "7 days",
+    "description": "Expiration option: 7 days"
+  },
+  "share_expiry_30days": {
+    "message": "30 days",
+    "description": "Expiration option: 30 days"
+  },
+  "share_one_time_access_title": {
+    "message": "One time access",
+    "description": "Label for the one-time access toggle"
+  },
+  "share_one_time_access_desc": {
+    "message": "When enabled, the link will expire after the data is accessed for the first time.",
+    "description": "Description for the one-time access toggle"
+  },
+  "share_password_title": {
+    "message": "Password",
+    "description": "Label for the password protection setting"
+  },
+  "share_password_desc": {
+    "message": "The recipient will need this password to open the link.",
+    "description": "Description for the password protection setting"
+  },
+  "share_password_placeholder": {
+    "message": "Enter password (min. 8 characters)",
+    "description": "Placeholder text for the share password input"
+  },
+  "share_password_error_min_length": {
+    "message": "Password must be at least 8 characters.",
+    "description": "Error message when share password is too short"
+  },
+  "share_button": {
+    "message": "Share",
+    "description": "Label for the share submit button"
+  },
+  "share_submitting": {
+    "message": "Sharing...",
+    "description": "Label for the share button while submitting"
+  },
+  "share_error_encrypt": {
+    "message": "Failed to encrypt item data. Please try again.",
+    "description": "Error message when encryption fails during sharing"
+  },
+  "share_error_api": {
+    "message": "Failed to generate share link. Please try again.",
+    "description": "Error message when API call fails during sharing"
+  },
+  "share_error_no_sif": {
+    "message": "Sensitive data is not available. Fetch it from your device first.",
+    "description": "Error message when trying to share an item without decrypted sensitive data"
+  },
+  "share_feature_not_available": {
+    "message": "Share feature is not available for this item.",
+    "description": "Message when share feature cannot be used for the current item"
+  }
+}

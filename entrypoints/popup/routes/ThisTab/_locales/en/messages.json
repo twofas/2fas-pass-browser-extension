@@ -150,5 +150,9 @@
   "this_tab_qr_dialog_title": {
     "message": "Scan the QR Code to join",
     "description": "Title text shown in the WiFi QR code dialog above the network name"
+  },
+  "this_tab_more_share": {
+    "message": "Share this item",
+    "description": "Button label in dropdown menu to share an item via 2FAS Share"
   }
 }

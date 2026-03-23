@@ -92,6 +92,10 @@ class SecureNote extends Item {
       { value: 'details', label: getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
     ];
 
+    if (this.sifExists) {
+      dO.push({ value: 'share', label: getMessage('this_tab_more_share'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'share' });
+    }
+
     if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
       dO.push({ value: 'forget', label: getMessage('this_tab_more_forget_secure_note'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
     }
@@ -109,6 +113,24 @@ class SecureNote extends Item {
 
   get sifExists () {
     return this.#s_text && this.#s_text.length > 0;
+  }
+
+  /**
+  * Build a share-ready payload by decrypting SIF fields.
+  * Clears decrypted values from memory after building.
+  * @returns {Promise<{contentType: string, contentVersion: number, content: Object}>}
+  */
+  async toShareContent () {
+    const sif = await this.decryptSif();
+
+    const content = {
+      name: this.content.name || '',
+      text: sif.text || ''
+    };
+
+    sif.text = null;
+
+    return { contentType: SecureNote.contentType, contentVersion: SecureNote.contentVersion, content };
   }
 
   toJSON () {

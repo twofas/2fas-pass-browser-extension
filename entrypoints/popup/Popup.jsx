@@ -38,6 +38,8 @@ const SettingsCrossDomainAutofill = lazy(() => import('./routes/Settings/Setting
 const Fetch = lazy(() => import('./routes/Fetch'));
 const FetchExternal = lazy(() => import('./routes/FetchExternal'));
 const Details = lazy(() => import('./routes/Details'));
+const Share = lazy(() => import('./routes/Share'));
+const ShareResult = lazy(() => import('./routes/ShareResult'));
 const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
 const ErrorFallback = lazy(() => import('./routes/ErrorFallback'));
@@ -57,6 +59,8 @@ const routeConfig = [
   { path: '/fetch', component: Fetch, isProtectedRoute: true },
   { path: '/fetch/:data', component: FetchExternal, noClassName: true, isProtectedRoute: true },
   { path: '/details/:deviceId/:vaultId/:id', component: Details, isProtectedRoute: true },
+  { path: '/share/:deviceId/:vaultId/:id', component: Share, isProtectedRoute: true },
+  { path: '/share-result', component: ShareResult, isProtectedRoute: true },
   { path: '/password-generator', component: PasswordGenerator, isProtectedRoute: true },
   { path: '/blocked', component: Blocked },
   { path: '*', component: NotFound }

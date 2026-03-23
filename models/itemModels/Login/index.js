@@ -154,6 +154,10 @@ export default class Login extends Item {
       { value: 'details', label: getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
     ];
 
+    if (this.sifExists) {
+      dO.push({ value: 'share', label: getMessage('this_tab_more_share'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'share' });
+    }
+
     if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
       dO.push({ value: 'forget', label: getMessage('this_tab_more_forget_password'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
     }
@@ -239,6 +243,30 @@ export default class Login extends Item {
 
   get sifExists () {
     return this.#s_password && this.#s_password !== '';
+  }
+
+  /**
+  * Build a share-ready payload by decrypting SIF fields.
+  * Clears decrypted values from memory after building.
+  * @returns {Promise<{contentType: string, contentVersion: number, content: Object}>}
+  */
+  async toShareContent () {
+    const sif = await this.decryptSif();
+
+    const content = {
+      name: this.content.name || '',
+      username: this.content.username || '',
+      password: sif.password || '',
+      uris: (this.internalData?.normalizedUris || []).map(uri => ({
+        uri: uri.text,
+        match: String(uri.matcher)
+      })),
+      notes: this.content.notes || ''
+    };
+
+    sif.password = null;
+
+    return { contentType: Login.contentType, contentVersion: Login.contentVersion, content };
   }
 
   toJSON () {

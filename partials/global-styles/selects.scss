@@ -831,11 +831,17 @@
         svg {
           stroke: var(--primary-color);
         }
+
+        &.share svg {
+          fill: var(--primary-color);
+          stroke: none;
+        }
       }
     }
 
     &.uri,
     &.details,
+    &.share,
     &.forget,
     &.show-qr {
       color: var(--primary-text);
@@ -882,9 +888,22 @@
         font-weight: 400;
       }
 
+      &.share,
       &.forget,
       &.show-qr {
         padding-right: 8px !important;
+      }
+
+      &.share {
+        svg {
+          fill: var(--icon-tertiary-color);
+          stroke: none;
+          transition: fill var(--anim);
+        }
+
+        &:hover svg {
+          fill: var(--primary-color);
+        }
       }
 
       svg {
@@ -956,6 +975,40 @@
 
 .react-select__menu {
   filter: var(--menu-drop-shadow);
+}
+
+.react-select-share-expiry__menu-portal {
+  .react-select__group {
+    padding: 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--divider);
+    }
+  }
+
+  .react-select__group-heading {
+    display: none;
+  }
+
+  .react-select__option {
+    border-radius: 0 !important;
+  }
+
+  .react-select__menu {
+    &-list {
+      max-height: 120px !important;
+
+      > .react-select__group:first-child .react-select__option:first-of-type {
+        border-top-left-radius: 6px !important;
+        border-top-right-radius: 6px !important;
+      }
+
+      > .react-select__group:last-child .react-select__option:last-of-type {
+        border-bottom-left-radius: 6px !important;
+        border-bottom-right-radius: 6px !important;
+      }
+    }
+  }
 }
 
 .react-select-auto-clear-clipboard__menu-portal {
