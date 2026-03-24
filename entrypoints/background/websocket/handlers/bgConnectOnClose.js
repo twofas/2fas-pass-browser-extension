@@ -11,6 +11,10 @@ import { wsState } from '../wsState.js';
 import wsNotify from '../wsNotify.js';
 
 const bgConnectOnClose = async (event, data) => {
+  if (wsState._socketData?.uuid !== data?.uuid) {
+    return;
+  }
+
   switch (event.code) {
     case 1000: {
       let connected = false;
@@ -122,7 +126,7 @@ const bgConnectOnClose = async (event, data) => {
   }
 
   wsState.active = false;
-  wsNotify('stateChange', { active: false });
+  wsNotify('stateChange', { active: false, connectView: null });
 };
 
 export default bgConnectOnClose;
