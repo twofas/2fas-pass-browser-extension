@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import initContextMenu from '../contextMenu/initContextMenu';
-import { updateContextMenu, updateBadge, setBadgeLocked } from '../utils';
+import { updateContextMenu, updateBadge, setBadgeLocked, notifyShareTabs } from '../utils';
 import getItems from '@/partials/sessionStorage/getItems';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
@@ -18,6 +18,7 @@ import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfig
 const onStorageVersionChange = async newValue => {
   if (typeof newValue !== 'number') {
     await setBadgeLocked().catch(() => {});
+    await notifyShareTabs(false).catch(() => {});
     await initContextMenu().catch(() => {});
     return;
   }

@@ -8,6 +8,7 @@ import { isText, checkStorageAutoClearActions } from '@/partials/functions';
 import { openBrowserPage, openPopupWindowInNewWindow, openInstallPage, getLocalKey, sendAutoClearAction, handleAutofillCardWithPermission, handleAutofillWithPermission, processCrossDomainDialogResult, processMatchingLoginsResult, processSavePromptResult } from '../utils';
 import runMigrations from '../migrations';
 import onTabFocused from '../tabs/onTabFocused';
+import handleCheckShareLinkSupport from './handleCheckShareLinkSupport';
 
 /** 
 * Function to handle messages sent to the background script.
@@ -162,6 +163,23 @@ const onMessage = (request, sender, sendResponse, migrations) => {
           messages: i18nState.messages,
           isInitialized: i18nState.isInitialized
         });
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.CHECK_SHARE_LINK_SUPPORT: {
+        handleCheckShareLinkSupport(sendResponse);
+        break;
+      }
+
+      case REQUEST_ACTIONS.SHARE_LINK_IMPORT: {
+        if (request?.id && request?.type && request?.nonce && request?.key) {
+          openPopupWindowInNewWindow({ pathname: '/' })
+            .then(() => { sendResponse({ status: 'ok' }); })
+            .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+        } else {
+          sendResponse({ status: 'error', message: 'Missing share link parameters' });
+        }
 
         break;
       }
