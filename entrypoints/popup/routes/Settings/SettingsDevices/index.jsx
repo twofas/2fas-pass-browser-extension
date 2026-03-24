@@ -7,6 +7,7 @@
 import S from '../Settings.module.scss';
 import { useState, useRef, useEffect } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
+import { useAuthState } from '@/hooks/useAuth';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import DisconnectIcon from '@/assets/popup-window/disconnect-device.svg?react';
@@ -20,6 +21,7 @@ import ConfirmDialog from '@/entrypoints/popup/components/ConfirmDialog';
 */
 function SettingsDevices (props) {
   const { getMessage } = useI18n();
+  const { configured } = useAuthState();
   const [loading, setLoading] = useState(true);
   const [devices, setDevices] = useState([]);
   const [currentDevice, setCurrentDevice] = useState(null);
@@ -54,7 +56,7 @@ function SettingsDevices (props) {
           <h6><strong>{getMessage('settings_devices_platform_header')}: </strong>{generatePlatformName(device.platform)}</h6>
           <p><strong>{getMessage('settings_devices_last_connected_header')}: </strong>{new Date(device.updatedAt).toLocaleString()}</p>
         </div>
-        {currentDevice?.id !== device.id && (
+        {(!configured || !device.uuid) && (
           <div className={S.settingsDevicesListItemActions}>
             <button
               className={S.settingsDevicesListItemActionsRemove}
@@ -109,6 +111,9 @@ function SettingsDevices (props) {
       })
       .then(cD => {
         setCurrentDevice(cD);
+      })
+      .catch(() => {
+        setCurrentDevice(null);
       })
       .finally(() => {
         setLoading(false);
