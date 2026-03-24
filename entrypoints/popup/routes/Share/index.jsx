@@ -147,8 +147,15 @@ function ShareForm ({ item, getMessage, navigate }) {
       const encrypted = await encryptData(shareKey, nonce, shareData);
       shareKey = null;
 
+      const encodedData = toBase64(encrypted);
+
+      if (encodedData.length > 16384) {
+        showToast(getMessage('share_error_size_exceeded'), 'error');
+        return;
+      }
+
       const result = await createSecret({
-        data: toBase64(encrypted),
+        data: encodedData,
         validForSeconds: expiration,
         singleUse: oneTimeAccess
       });
