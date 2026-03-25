@@ -174,7 +174,7 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
 
       case REQUEST_ACTIONS.SHARE_LINK_IMPORT: {
         if (request?.id && request?.type && request?.nonce && request?.key) {
-          openPopupWindowInNewWindow({ pathname: '/' })
+          openPopupWindowInNewWindow({ pathname: `/share-import/${request.id}/${request.type}/${request.nonce}/${request.key}` })
             .then(() => { sendResponse({ status: 'ok' }); })
             .catch(e => { sendResponse({ status: 'error', message: e.message }); });
         } else {

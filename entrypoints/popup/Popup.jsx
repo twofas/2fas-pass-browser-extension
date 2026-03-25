@@ -40,6 +40,7 @@ const FetchExternal = lazy(() => import('./routes/FetchExternal'));
 const Details = lazy(() => import('./routes/Details'));
 const Share = lazy(() => import('./routes/Share'));
 const ShareResult = lazy(() => import('./routes/ShareResult'));
+const ShareImport = lazy(() => import('./routes/ShareImport'));
 const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
 const ErrorFallback = lazy(() => import('./routes/ErrorFallback'));
@@ -61,6 +62,7 @@ const routeConfig = [
   { path: '/details/:deviceId/:vaultId/:id', component: Details, isProtectedRoute: true },
   { path: '/share/:deviceId/:vaultId/:id', component: Share, isProtectedRoute: true },
   { path: '/share-result', component: ShareResult, isProtectedRoute: true },
+  { path: '/share-import/:id/:type/:nonce/:key', component: ShareImport, isProtectedRoute: true },
   { path: '/password-generator', component: PasswordGenerator, isProtectedRoute: true },
   { path: '/blocked', component: Blocked },
   { path: '*', component: NotFound }

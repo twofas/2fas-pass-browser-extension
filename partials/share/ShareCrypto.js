@@ -105,6 +105,44 @@ function toBase64Url (bytes) {
   return toBase64(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
+/**
+ * Decode a Base64URL string to a Uint8Array.
+ * @param {string} str - Base64URL-encoded string.
+ * @returns {Uint8Array} Decoded binary data.
+ */
+function fromBase64Url (str) {
+  const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
+  return Uint8Array.from(atob(padded), c => c.charCodeAt(0));
+}
+
+/**
+ * Decrypt data using AES-256-GCM.
+ * @param {Uint8Array} keyBytes - 256-bit decryption key.
+ * @param {Uint8Array} nonce - 96-bit nonce / initialization vector.
+ * @param {Uint8Array} ciphertext - Ciphertext with appended GCM auth tag.
+ * @returns {Promise<any>} Parsed plaintext (JSON-deserialized).
+ * @throws {Error} If decryption or authentication fails.
+ */
+async function decryptShareData (keyBytes, nonce, ciphertext) {
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    keyBytes,
+    'AES-GCM',
+    false,
+    ['decrypt']
+  );
+
+  const decrypted = await crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: nonce },
+    cryptoKey,
+    ciphertext
+  );
+
+  const decoder = new TextDecoder();
+  return JSON.parse(decoder.decode(decrypted));
+}
+
 export {
   generateNonce,
   generateSalt,
@@ -112,5 +150,7 @@ export {
   deriveKeyFromPassword,
   encryptData,
   toBase64,
-  toBase64Url
+  toBase64Url,
+  fromBase64Url,
+  decryptShareData
 };

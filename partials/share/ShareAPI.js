@@ -29,4 +29,25 @@ async function createSecret ({ data, validForSeconds, singleUse }) {
   return response.json();
 }
 
-export { createSecret };
+/**
+ * Retrieve a shared secret by its ID.
+ * @param {string} id - The secret identifier.
+ * @returns {Promise<{id: string, data: string, singleUse: boolean, validUntil: string}>}
+ * @throws {Error} On non-OK HTTP responses, with a `status` property.
+ */
+async function getSecret (id) {
+  const response = await fetch(`${import.meta.env.VITE_SHARE_API_URL}/secret/${id}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  if (!response.ok) {
+    const error = new Error(`HTTP ${response.status}`);
+    error.status = response.status;
+    throw error;
+  }
+
+  return response.json();
+}
+
+export { createSecret, getSecret };
