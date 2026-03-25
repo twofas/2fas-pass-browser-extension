@@ -2091,6 +2091,10 @@
     "message": "Sensitive data is not available. Fetch it from your device first.",
     "description": "Error message when trying to share an item without decrypted sensitive data"
   },
+  "share_error_size_exceeded": {
+    "message": "Item data is too large to share. Please reduce the content and try again.",
+    "description": "Error message when encrypted share data exceeds the maximum allowed size of 16384 bytes"
+  },
   "share_feature_not_available": {
     "message": "Share feature is not available for this item.",
     "description": "Message when share feature cannot be used for the current item"
