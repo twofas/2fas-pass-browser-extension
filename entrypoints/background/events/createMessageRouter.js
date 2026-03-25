@@ -8,14 +8,14 @@ import onMessage from './onMessage';
 import onPromptMessage from './onPromptMessage';
 import onWsMessage from './onWsMessage';
 
-const createMessageRouter = ({ migrations, tabsInputData }) => (request, sender, sendResponse) => {
+const createMessageRouter = ({ migrations, tabsInputData, savePromptActions, tabUpdateData }) => (request, sender, sendResponse) => {
   if (!request || !request.action || !request.target) {
     return false;
   }
 
   switch (request.target) {
     case REQUEST_TARGETS.BACKGROUND:
-      return onMessage(request, sender, sendResponse, migrations);
+      return onMessage(request, sender, sendResponse, migrations, savePromptActions, tabUpdateData);
 
     case REQUEST_TARGETS.BACKGROUND_PROMPT:
       return onPromptMessage(request, sender, sendResponse, tabsInputData);

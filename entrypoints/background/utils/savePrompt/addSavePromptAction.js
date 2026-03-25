@@ -20,7 +20,7 @@ const addSavePromptAction = async (details, serviceTypeData, values, savePromptA
   }
 
   const { tabId, url } = details;
-  const { username, password } = values;
+  const { username, password, encrypted } = values;
 
   // Check if action for this tabId already exists, if it does, remove it
   const existingActionIndex = savePromptActions.findIndex(action => action.tabId === tabId);
@@ -28,7 +28,7 @@ const addSavePromptAction = async (details, serviceTypeData, values, savePromptA
     savePromptActions.splice(existingActionIndex, 1);
   }
 
-  const action = { tabId, url, username, password, serviceTypeData };
+  const action = { tabId, url, username, password, encrypted: encrypted || false, serviceTypeData };
   savePromptActions.push(action);
 };
 

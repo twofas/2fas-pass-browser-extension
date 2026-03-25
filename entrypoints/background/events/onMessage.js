@@ -18,7 +18,7 @@ import handleCheckShareLinkSupport from './handleCheckShareLinkSupport';
 * @param {Object} migrations - The state object to track migrations.
 * @return {Promise<boolean>} A promise that resolves to true if the message is handled successfully, otherwise false.
 */
-const onMessage = (request, sender, sendResponse, migrations) => {
+const onMessage = (request, sender, sendResponse, migrations, savePromptActions, tabUpdateData) => {
   try {
     if (!request || !request.action || request.target !== REQUEST_TARGETS.BACKGROUND) {
       return false;
@@ -145,7 +145,7 @@ const onMessage = (request, sender, sendResponse, migrations) => {
 
       case REQUEST_ACTIONS.SAVE_PROMPT_RESULT: {
         if (request?.storageKey) {
-          processSavePromptResult(request)
+          processSavePromptResult(request, savePromptActions, tabUpdateData)
             .then(() => { sendResponse({ status: 'ok' }); })
             .catch(e => { sendResponse({ status: 'error', message: e.message }); });
         } else {

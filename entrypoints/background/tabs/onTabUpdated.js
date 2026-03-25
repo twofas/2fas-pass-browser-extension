@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendDomainToPopupWindow, sendSavePromptToTab, removeSavePromptAction, handleSavePromptResponse, setBadgeLocked, setBadgeIcon, setBadgeText } from '../utils';
+import { sendDomainToPopupWindow, sendSavePromptToTab, removeSavePromptAction, setBadgeLocked, setBadgeIcon, setBadgeText } from '../utils';
 import isTabIsPopupWindow from './isTabIsPopupWindow';
 import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
 import checkPromptCS from '@/partials/contentScript/checkPromptCS';
@@ -74,6 +74,7 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
     if (tab.url && (!tabUpdateData[tabID].url || tabUpdateData[tabID].url !== tab.url)) {
       tabUpdateData[tabID].url = tab.url;
       tabUpdateData[tabID].savePromptVisible = false;
+      await storage.removeItem(`session:savePromptSuppressed-${tabID}`);
     }
 
     let items;
@@ -131,15 +132,22 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
         return;
       }
 
-      const res = await sendSavePromptToTab(tabID, action.serviceTypeData);
-      await handleSavePromptResponse(
-        res,
-        tabID,
-        action.url,
-        { username: action.username, password: action.password },
-        savePromptActions,
-        tabUpdateData
-      );
+      const storageKey = `session:savePromptContext-${tabID}`;
+      const existingContext = await storage.getItem(storageKey);
+
+      if (!existingContext) {
+        await storage.setItem(storageKey, JSON.stringify({
+          tabId: tabID,
+          url: action.url,
+          values: {
+            username: action.username,
+            password: action.password,
+            encrypted: action.encrypted || false
+          }
+        }));
+      }
+
+      await sendSavePromptToTab(tabID, action.serviceTypeData, storageKey);
     }          
   } catch (e) {
     await CatchError(e);

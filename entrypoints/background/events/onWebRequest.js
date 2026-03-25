@@ -49,6 +49,12 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   }
   // [END] COMMENT THIS WHEN DEBUGGING
 
+  const suppressed = await storage.getItem(`session:savePromptSuppressed-${details.tabId}`);
+
+  if (suppressed) {
+    return;
+  }
+
   // Base filters
   if (
     !details ||
