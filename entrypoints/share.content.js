@@ -11,7 +11,7 @@ import waitForContainer from '@/entrypoints/share/waitForContainer';
 import { createButton, removeButton, hasButton } from '@/entrypoints/share/shareButton';
 
 export default defineContentScript({
-  matches: [`${import.meta.env.VITE_SHARE_API_URL}/*`],
+  matches: [`${import.meta.env.VITE_SHARE_FRONTEND_URL}/*`],
   allFrames: false,
   registration: 'manifest',
   async main (ctx) {

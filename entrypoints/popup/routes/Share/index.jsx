@@ -160,7 +160,7 @@ function ShareForm ({ item, getMessage, navigate }) {
         singleUse: oneTimeAccess
       });
 
-      const link = `${import.meta.env.VITE_SHARE_API_URL}/#/${result.id}/${type}/${toBase64Url(nonce)}/${urlSecret}`;
+      const link = `${import.meta.env.VITE_SHARE_FRONTEND_URL}/#/${result.id}/${type}/${toBase64Url(nonce)}/${urlSecret}`;
 
       navigate('/share-result', {
         state: {
