@@ -1460,7 +1460,7 @@
     "description": "Prompt to rate the extension in Firefox Browser Add-ons"
   },
   "settings_rate_us_edge": {
-    "message": "Rate us in Microsoft Edge Addons",
+    "message": "Rate us in Microsoft Edge Add-ons",
     "description": "Prompt to rate the extension in Microsoft Edge Add-ons"
   },
   "settings_rate_us_safari": {
