@@ -151,6 +151,10 @@ export default class Wifi extends Item {
     return this.#s_wifi_password && this.#s_wifi_password !== '';
   }
 
+  get hasShareableContent () {
+    return !!(this.content.ssid || this.sifExists || this.content.notes);
+  }
+
   async generateWifiUri () {
     if (!this.content.ssid) {
       throw new Error('Cannot generate WiFi URI: SSID is required');
@@ -184,18 +188,24 @@ export default class Wifi extends Item {
   * @returns {Promise<{contentType: string, contentVersion: number, content: Object}>}
   */
   async toShareContent () {
-    const sif = await this.decryptSif();
+    let wifiPassword = '';
+
+    if (this.sifExists) {
+      const sif = await this.decryptSif();
+      wifiPassword = sif.wifiPassword || '';
+      sif.wifiPassword = null;
+    }
 
     const content = {
       name: this.content.name || '',
       ssid: this.content.ssid || '',
-      password: sif.wifiPassword || '',
+      password: wifiPassword,
       securityType: this.content.securityType || 'none',
       hidden: this.content.hidden || false,
       notes: this.content.notes || ''
     };
 
-    sif.wifiPassword = null;
+    wifiPassword = null;
 
     return { contentType: Wifi.contentType, contentVersion: Wifi.contentVersion, content };
   }

@@ -20,11 +20,11 @@
     "description": "Header for importing a shared custom/text item"
   },
   "share_import_subheader": {
-    "message": "Review the shared data below and save it to your vault.",
+    "message": "Review the shared data below and save it to your Vault.",
     "description": "Subheader explaining the import process"
   },
   "share_import_add_item": {
-    "message": "Add item",
+    "message": "Add Item",
     "description": "Button text for adding the imported item to the vault"
   },
   "share_import_password_header": {
@@ -52,7 +52,7 @@
     "description": "Loading message while decrypting"
   },
   "share_import_fetch_error": {
-    "message": "Failed to retrieve the shared data. The link may have expired or been already used.",
+    "message": "Failed to retrieve the shared data. The link may have expired or already been used.",
     "description": "Error message when the API fetch fails"
   },
   "share_import_decrypt_error": {

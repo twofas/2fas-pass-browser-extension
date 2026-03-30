@@ -87,6 +87,10 @@
     "message": "Dane są zbyt duże, aby je udostępnić. Zmniejsz zawartość i spróbuj ponownie.",
     "description": "Error message when encrypted share data exceeds the maximum allowed size of 16384 bytes"
   },
+  "share_error_nothing_to_share": {
+    "message": "Ten element nie zawiera danych do udostępnienia. Najpierw dodaj jakieś dane.",
+    "description": "Error message when trying to share a Secret item that has no shareable content beyond the name"
+  },
   "share_feature_not_available": {
     "message": "Funkcja udostępniania nie jest dostępna dla tego elementu.",
     "description": "Message when share feature cannot be used for the current item"

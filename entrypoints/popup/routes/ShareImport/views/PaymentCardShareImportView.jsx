@@ -87,6 +87,10 @@ function PaymentCardShareImportView () {
       }
     }
 
+    if (values?.notes && values.notes.length > 16384) {
+      errors.notes = getMessage('share_import_notes_max_length');
+    }
+
     const errorKeys = Object.keys(errors);
 
     if (errorKeys.length > 0) {
@@ -120,7 +124,8 @@ function PaymentCardShareImportView () {
         cardHolder: e.cardHolder ? e.cardHolder : '',
         s_cardNumber: data?.cardNumber ? data.cardNumber.replace(/\s/g, '') : '',
         s_expirationDate: data?.expirationDate ? data.expirationDate : '',
-        s_securityCode: data?.securityCode ? data.securityCode.replace(/\D/g, '') : ''
+        s_securityCode: data?.securityCode ? data.securityCode.replace(/\D/g, '') : '',
+        notes: e.notes || ''
       }
     };
 
@@ -261,6 +266,32 @@ function PaymentCardShareImportView () {
             )}
           </Field>
         </div>
+        <Field name='notes'>
+          {({ input }) => (
+            <div className={`${pI.passInput} ${inputError === 'notes' ? pI.error : ''}`}>
+              <div className={pI.passInputTop}>
+                <label htmlFor='share-import-notes'>{getMessage('notes')}</label>
+              </div>
+              <div className={pI.passInputBottom}>
+                <textarea
+                  {...input}
+                  className={S.shareImportSecureNoteTextarea}
+                  placeholder={getMessage('details_notes_placeholder')}
+                  id='share-import-notes'
+                  dir='ltr'
+                  spellCheck='false'
+                  autoCorrect='off'
+                  autoComplete='off'
+                  autoCapitalize='off'
+                  onChange={e => {
+                    input.onChange(e);
+                    setData('notes', e.target.value);
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </Field>
         <div className={S.shareImportButtons}>
           <button
             type='submit'

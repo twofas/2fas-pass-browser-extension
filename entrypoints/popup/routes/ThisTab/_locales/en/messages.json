@@ -152,7 +152,7 @@
     "description": "Title text shown in the WiFi QR code dialog above the network name"
   },
   "this_tab_more_share": {
-    "message": "Share this item",
+    "message": "Share this Item",
     "description": "Button label in dropdown menu to share an item via 2FAS Share"
   }
 }

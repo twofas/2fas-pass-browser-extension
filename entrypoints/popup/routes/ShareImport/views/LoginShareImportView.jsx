@@ -52,7 +52,7 @@ function LoginShareImportView () {
 
   const handleCopyPassword = useCallback(async form => {
     try {
-      const currentPassword = form.getFieldState('s_password').value;
+      const currentPassword = form.getFieldState('password').value;
       await copyValue(currentPassword, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'password');
       showToast(getMessage('notification_password_copied'), 'success');
     } catch (e) {
@@ -130,8 +130,8 @@ function LoginShareImportView () {
         username: e.username
           ? { value: e.username, action: REQUEST_STRING_ACTIONS.SET }
           : { value: '', action: REQUEST_STRING_ACTIONS.GENERATE },
-        s_password: e.s_password
-          ? { value: e.s_password, action: REQUEST_STRING_ACTIONS.SET }
+        s_password: e.password
+          ? { value: e.password, action: REQUEST_STRING_ACTIONS.SET }
           : { value: '', action: REQUEST_STRING_ACTIONS.GENERATE },
         notes: e.notes || ''
       }
@@ -255,7 +255,7 @@ function LoginShareImportView () {
             </div>
           )}
         </Field>
-        <Field name='s_password'>
+        <Field name='password'>
           {({ input }) => (
             <div className={pI.passInput}>
               <div className={pI.passInputTop}>
@@ -274,7 +274,7 @@ function LoginShareImportView () {
                   autoCapitalize='off'
                   onChange={e => {
                     input.onChange(e);
-                    setData('s_password', e.target.value);
+                    setData('password', e.target.value);
                   }}
                 />
                 <div className={pI.passInputBottomButtons}>
@@ -311,7 +311,7 @@ function LoginShareImportView () {
                 <textarea
                   {...input}
                   className={S.shareImportSecureNoteTextarea}
-                  placeholder={getMessage('placeholder_notes')}
+                  placeholder={getMessage('details_notes_placeholder')}
                   id='share-import-notes'
                   dir='ltr'
                   spellCheck='false'

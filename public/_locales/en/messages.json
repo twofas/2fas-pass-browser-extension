@@ -2080,7 +2080,7 @@
     "description": "Label for the share button while submitting"
   },
   "share_error_encrypt": {
-    "message": "Failed to encrypt item data. Please try again.",
+    "message": "Failed to encrypt Item data. Please try again.",
     "description": "Error message when encryption fails during sharing"
   },
   "share_error_api": {
@@ -2092,11 +2092,15 @@
     "description": "Error message when trying to share an item without decrypted sensitive data"
   },
   "share_error_size_exceeded": {
-    "message": "Item data is too large to share. Please reduce the content and try again.",
+    "message": "This Item is too large to share via link. Please reduce the content and try again.",
     "description": "Error message when encrypted share data exceeds the maximum allowed size of 16384 bytes"
   },
+  "share_error_nothing_to_share": {
+    "message": "This item has no data to share. Add some content first.",
+    "description": "Error message when trying to share a Secret item that has no shareable content beyond the name"
+  },
   "share_feature_not_available": {
-    "message": "Share feature is not available for this item.",
+    "message": "Share feature is not available for this Item.",
     "description": "Message when share feature cannot be used for the current item"
   },
   "share_import_header_login": {
@@ -2120,11 +2124,11 @@
     "description": "Header for importing a shared custom/text item"
   },
   "share_import_subheader": {
-    "message": "Review the shared data below and save it to your vault.",
+    "message": "Review the shared data below and save it to your Vault.",
     "description": "Subheader explaining the import process"
   },
   "share_import_add_item": {
-    "message": "Add item",
+    "message": "Add Item",
     "description": "Button text for adding the imported item to the vault"
   },
   "share_import_password_header": {
@@ -2152,7 +2156,7 @@
     "description": "Loading message while decrypting"
   },
   "share_import_fetch_error": {
-    "message": "Failed to retrieve the shared data. The link may have expired or been already used.",
+    "message": "Failed to retrieve the shared data. The link may have expired or already been used.",
     "description": "Error message when the API fetch fails"
   },
   "share_import_decrypt_error": {
@@ -2372,7 +2376,7 @@
     "description": "Title text shown in the WiFi QR code dialog above the network name"
   },
   "this_tab_more_share": {
-    "message": "Share this item",
+    "message": "Share this Item",
     "description": "Button label in dropdown menu to share an item via 2FAS Share"
   },
   "all_items_list_no_search_results": {

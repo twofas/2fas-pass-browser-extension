@@ -54,6 +54,10 @@ function WifiShareImportView () {
       errors.ssid = getMessage('add_new_validate_wifi_ssid_length');
     }
 
+    if (values?.notes && values.notes.length > 16384) {
+      errors.notes = getMessage('share_import_notes_max_length');
+    }
+
     const errorKeys = Object.keys(errors);
 
     if (errorKeys.length > 0) {
@@ -87,7 +91,8 @@ function WifiShareImportView () {
         ssid: e.ssid ? e.ssid : '',
         securityType: data?.securityType || DEFAULT_SECURITY_TYPE,
         hidden: data?.hidden || false,
-        s_wifi_password: e.password ? e.password : ''
+        s_wifi_password: e.password ? e.password : '',
+        notes: e.notes || ''
       }
     };
 
@@ -226,6 +231,32 @@ function WifiShareImportView () {
             </div>
           </div>
         </div>
+        <Field name='notes'>
+          {({ input }) => (
+            <div className={`${pI.passInput} ${inputError === 'notes' ? pI.error : ''}`}>
+              <div className={pI.passInputTop}>
+                <label htmlFor='share-import-notes'>{getMessage('notes')}</label>
+              </div>
+              <div className={pI.passInputBottom}>
+                <textarea
+                  {...input}
+                  className={S.shareImportSecureNoteTextarea}
+                  placeholder={getMessage('details_notes_placeholder')}
+                  id='share-import-notes'
+                  dir='ltr'
+                  spellCheck='false'
+                  autoCorrect='off'
+                  autoComplete='off'
+                  autoCapitalize='off'
+                  onChange={e => {
+                    input.onChange(e);
+                    setData('notes', e.target.value);
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </Field>
         <div className={S.shareImportButtons}>
           <button
             type='submit'

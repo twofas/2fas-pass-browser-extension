@@ -229,6 +229,10 @@ export default class PaymentCard extends Item {
     return this.cardNumberExists || this.expirationDateExists || this.securityCodeExists;
   }
 
+  get hasShareableContent () {
+    return !!(this.content.cardHolder || this.sifExists || this.content.notes);
+  }
+
   get cardNumberExists () {
     return this.#s_cardNumber && this.#s_cardNumber.length > 0;
   }
@@ -284,20 +288,32 @@ export default class PaymentCard extends Item {
   * @returns {Promise<{contentType: string, contentVersion: number, content: Object}>}
   */
   async toShareContent () {
-    const sif = await this.decryptSif();
+    let cardNumber = '';
+    let expirationDate = '';
+    let securityCode = '';
+
+    if (this.sifExists) {
+      const sif = await this.decryptSif();
+      cardNumber = sif.cardNumber || '';
+      expirationDate = sif.expirationDate || '';
+      securityCode = sif.securityCode || '';
+      sif.cardNumber = null;
+      sif.expirationDate = null;
+      sif.securityCode = null;
+    }
 
     const content = {
       name: this.content.name || '',
       cardHolder: this.content.cardHolder || '',
-      cardNumber: sif.cardNumber || '',
-      expirationDate: sif.expirationDate || '',
-      securityCode: sif.securityCode || '',
+      cardNumber,
+      expirationDate,
+      securityCode,
       notes: this.content.notes || ''
     };
 
-    sif.cardNumber = null;
-    sif.expirationDate = null;
-    sif.securityCode = null;
+    cardNumber = null;
+    expirationDate = null;
+    securityCode = null;
 
     return { contentType: PaymentCard.contentType, contentVersion: PaymentCard.contentVersion, content };
   }

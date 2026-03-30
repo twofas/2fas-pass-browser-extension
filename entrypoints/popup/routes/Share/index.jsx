@@ -121,9 +121,15 @@ function ShareForm ({ item, getMessage, navigate }) {
     setIsSubmitting(true);
 
     try {
-      if (!item.sifExists) {
+      if (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.sifExists) {
         showToast(getMessage('share_error_no_sif'), 'error');
-        setIsSubmitting(false);
+        navigate('/');
+        return;
+      }
+
+      if (item.securityType === SECURITY_TIER.SECRET && !item.hasShareableContent) {
+        showToast(getMessage('share_error_nothing_to_share'), 'error');
+        navigate('/');
         return;
       }
 
@@ -325,9 +331,15 @@ function Share (props) {
         return;
       }
 
-      if (!fetchedItem.sifExists) {
+      if (fetchedItem.securityType === SECURITY_TIER.HIGHLY_SECRET && !fetchedItem.sifExists) {
         showToast(getMessage('share_error_no_sif'), 'error');
-        navigate(`/details/${params.deviceId}/${params.vaultId}/${params.id}`);
+        navigate('/');
+        return;
+      }
+
+      if (fetchedItem.securityType === SECURITY_TIER.SECRET && !fetchedItem.hasShareableContent) {
+        showToast(getMessage('share_error_nothing_to_share'), 'error');
+        navigate('/');
         return;
       }
 

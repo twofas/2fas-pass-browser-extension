@@ -115,20 +115,30 @@ class SecureNote extends Item {
     return this.#s_text && this.#s_text.length > 0;
   }
 
+  get hasShareableContent () {
+    return this.sifExists;
+  }
+
   /**
   * Build a share-ready payload by decrypting SIF fields.
   * Clears decrypted values from memory after building.
   * @returns {Promise<{contentType: string, contentVersion: number, content: Object}>}
   */
   async toShareContent () {
-    const sif = await this.decryptSif();
+    let text = '';
+
+    if (this.sifExists) {
+      const sif = await this.decryptSif();
+      text = sif.text || '';
+      sif.text = null;
+    }
 
     const content = {
       name: this.content.name || '',
-      text: sif.text || ''
+      text
     };
 
-    sif.text = null;
+    text = null;
 
     return { contentType: SecureNote.contentType, contentVersion: SecureNote.contentVersion, content };
   }

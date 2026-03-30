@@ -245,18 +245,28 @@ export default class Login extends Item {
     return this.#s_password && this.#s_password !== '';
   }
 
+  get hasShareableContent () {
+    return !!(this.content.username || this.sifExists || this.content.notes || this.internalData?.normalizedUris?.length > 0);
+  }
+
   /**
   * Build a share-ready payload by decrypting SIF fields.
   * Clears decrypted values from memory after building.
   * @returns {Promise<{contentType: string, contentVersion: number, content: Object}>}
   */
   async toShareContent () {
-    const sif = await this.decryptSif();
+    let password = '';
+
+    if (this.sifExists) {
+      const sif = await this.decryptSif();
+      password = sif.password || '';
+      sif.password = null;
+    }
 
     const content = {
       name: this.content.name || '',
       username: this.content.username || '',
-      password: sif.password || '',
+      password,
       uris: (this.internalData?.normalizedUris || []).map(uri => ({
         uri: uri.text,
         match: String(uri.matcher)
@@ -264,7 +274,7 @@ export default class Login extends Item {
       notes: this.content.notes || ''
     };
 
-    sif.password = null;
+    password = null;
 
     return { contentType: Login.contentType, contentVersion: Login.contentVersion, content };
   }
