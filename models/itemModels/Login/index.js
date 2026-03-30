@@ -154,7 +154,7 @@ export default class Login extends Item {
       { value: 'details', label: getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
     ];
 
-    if (this.sifExists) {
+    if (this.securityType === SECURITY_TIER.SECRET || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists)) {
       dO.push({ value: 'share', label: getMessage('this_tab_more_share'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'share' });
     }
 
