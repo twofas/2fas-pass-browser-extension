@@ -46,7 +46,7 @@ const NotFound = lazy(() => import('./routes/NotFound'));
 const ErrorFallback = lazy(() => import('./routes/ErrorFallback'));
 
 const routeConfig = [
-  { path: '/connect', component: Connect },
+  { path: '/connect', component: Connect, isGuestRoute: true },
   { path: '/', component: ThisTab, isProtectedRoute: true },
   { path: '/add-new/:model', component: AddNew, isProtectedRoute: true },
   { path: '/settings', component: Settings, isProtectedRoute: false },
@@ -99,7 +99,9 @@ const AuthRoutes = memo(({ blocked, configured }) => {
     return routeConfig.map(route => {
       const Component = route.component;
 
-      const element = route.isProtectedRoute ? (
+      const needsGuard = route.isProtectedRoute || route.isGuestRoute;
+
+      const element = needsGuard ? (
         <RouteGuard
           configured={configured}
           blocked={blocked}

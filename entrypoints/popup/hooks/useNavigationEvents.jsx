@@ -8,7 +8,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import usePopupStateStore from '../store/popupState';
 
-const IGNORED_PATHS = ['/password-generator'];
+const IGNORED_PATHS = ['/password-generator', '/connect', '/blocked'];
 
 /**
  * Hook to handle browser back/forward navigation events.
