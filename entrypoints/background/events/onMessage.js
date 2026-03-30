@@ -203,12 +203,20 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
       }
 
       case REQUEST_ACTIONS.SHARE_LINK_IMPORT: {
-        if (request?.id && request?.type && request?.nonce && request?.key) {
+        const VALID_TYPES = new Set(['v1p', 'v1k']);
+        const SAFE_PARAM_RE = /^[A-Za-z0-9_-]+$/;
+
+        if (
+          request?.id && SAFE_PARAM_RE.test(request.id) &&
+          request?.type && VALID_TYPES.has(request.type) &&
+          request?.nonce && SAFE_PARAM_RE.test(request.nonce) &&
+          request?.key && SAFE_PARAM_RE.test(request.key)
+        ) {
           openPopupWindowInNewWindow({ pathname: `/share-import/${request.id}/${request.type}/${request.nonce}/${request.key}` })
             .then(() => { sendResponse({ status: 'ok' }); })
             .catch(e => { sendResponse({ status: 'error', message: e.message }); });
         } else {
-          sendResponse({ status: 'error', message: 'Missing share link parameters' });
+          sendResponse({ status: 'error', message: 'Invalid share link parameters' });
         }
 
         break;
