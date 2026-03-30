@@ -22,13 +22,20 @@ const addSavePromptAction = async (details, serviceTypeData, values, savePromptA
   const { tabId, url } = details;
   const { username, password, encrypted } = values;
 
+  let tabUrl;
+
+  try {
+    const tab = await browser.tabs.get(tabId);
+    tabUrl = tab?.url;
+  } catch {}
+
   // Check if action for this tabId already exists, if it does, remove it
   const existingActionIndex = savePromptActions.findIndex(action => action.tabId === tabId);
   if (existingActionIndex !== -1) {
     savePromptActions.splice(existingActionIndex, 1);
   }
 
-  const action = { tabId, url, username, password, encrypted: encrypted || false, serviceTypeData };
+  const action = { tabId, url, tabUrl, username, password, encrypted: encrypted || false, serviceTypeData };
   savePromptActions.push(action);
 };
 

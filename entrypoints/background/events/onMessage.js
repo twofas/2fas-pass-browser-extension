@@ -18,7 +18,7 @@ import handleCheckShareLinkSupport from './handleCheckShareLinkSupport';
 * @param {Object} migrations - The state object to track migrations.
 * @return {Promise<boolean>} A promise that resolves to true if the message is handled successfully, otherwise false.
 */
-const onMessage = (request, sender, sendResponse, migrations, savePromptActions, tabUpdateData) => {
+const onMessage = (request, sender, sendResponse, migrations, savePromptActions, tabUpdateData, tabsInputData) => {
   try {
     if (!request || !request.action || request.target !== REQUEST_TARGETS.BACKGROUND) {
       return false;
@@ -145,12 +145,42 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
 
       case REQUEST_ACTIONS.SAVE_PROMPT_RESULT: {
         if (request?.storageKey) {
-          processSavePromptResult(request, savePromptActions, tabUpdateData)
+          processSavePromptResult(request, savePromptActions, tabUpdateData, tabsInputData)
             .then(() => { sendResponse({ status: 'ok' }); })
             .catch(e => { sendResponse({ status: 'error', message: e.message }); });
         } else {
           sendResponse({ status: 'error', message: 'Missing storageKey' });
         }
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.CLEAR_SAVE_PROMPT_STATE: {
+        savePromptActions.splice(0, savePromptActions.length);
+
+        Object.keys(tabsInputData).forEach(tabId => {
+          delete tabsInputData[tabId];
+        });
+
+        const tabIds = Object.keys(tabUpdateData);
+
+        Promise.all(tabIds.map(async tabId => {
+          if (tabUpdateData[tabId]?.savePromptVisible) {
+            tabUpdateData[tabId].savePromptVisible = false;
+
+            try {
+              await browser.tabs.sendMessage(Number(tabId), {
+                action: REQUEST_ACTIONS.DISMISS_SAVE_PROMPT,
+                target: REQUEST_TARGETS.CONTENT
+              });
+            } catch {}
+          }
+
+          await storage.removeItem(`session:savePromptContext-${tabId}`).catch(() => {});
+          await storage.removeItem(`session:savePromptSuppressed-${tabId}`).catch(() => {});
+        }))
+          .then(() => { sendResponse({ status: 'ok' }); })
+          .catch(() => { sendResponse({ status: 'ok' }); });
 
         break;
       }

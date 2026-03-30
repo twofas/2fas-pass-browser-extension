@@ -108,6 +108,15 @@ const userNameWords = Object.freeze([
   'itilizatè', // Haitian Creole
   // login
   'login',
+  'log-in',
+  'signin',
+  'sign-in',
+  'signup',
+  'sign-up',
+  // identifier / credential / identity
+  'identifier',
+  'credential',
+  'identity',
   // email
   'email',
   'e-mail'

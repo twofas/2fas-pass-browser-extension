@@ -40,9 +40,10 @@ const cleanupSavePromptState = (tabId, url, savePromptActions, tabUpdateData) =>
 * @param {string} request.status - The user's action (newLogin, updateLogin, doNotAsk, cancel).
 * @param {Array} savePromptActions - The in-memory array of pending save prompt actions.
 * @param {Object} tabUpdateData - The tab update tracking data.
+* @param {Object} tabsInputData - The in-memory input data for all tabs.
 * @return {Promise<void>}
 */
-const processSavePromptResult = async (request, savePromptActions, tabUpdateData) => {
+const processSavePromptResult = async (request, savePromptActions, tabUpdateData, tabsInputData) => {
   const { storageKey, status } = request;
 
   if (!storageKey || !status) {
@@ -64,7 +65,7 @@ const processSavePromptResult = async (request, savePromptActions, tabUpdateData
     return;
   }
 
-  const { tabId, url, values } = context;
+  const { tabId, url, tabUrl, values } = context;
   await storage.removeItem(storageKey);
 
   cleanupSavePromptState(tabId, url, savePromptActions, tabUpdateData);
@@ -147,8 +148,17 @@ const processSavePromptResult = async (request, savePromptActions, tabUpdateData
         storageIgnoreList = [];
       }
 
-      storageIgnoreList.push(new URL(url).hostname);
+      const ignoreUrl = tabUrl || url;
+      storageIgnoreList.push(new URL(ignoreUrl).hostname);
       await storage.setItem('local:savePromptIgnoreDomains', storageIgnoreList);
+
+      await storage.setItem(`session:savePromptSuppressed-${tabId}`, true);
+
+      if (tabsInputData && tabsInputData[tabId]) {
+        delete tabsInputData[tabId];
+        tabsInputData[tabId] = {};
+      }
+
       return;
     }
 

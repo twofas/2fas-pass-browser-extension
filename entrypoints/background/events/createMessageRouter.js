@@ -15,7 +15,7 @@ const createMessageRouter = ({ migrations, tabsInputData, savePromptActions, tab
 
   switch (request.target) {
     case REQUEST_TARGETS.BACKGROUND:
-      return onMessage(request, sender, sendResponse, migrations, savePromptActions, tabUpdateData);
+      return onMessage(request, sender, sendResponse, migrations, savePromptActions, tabUpdateData, tabsInputData);
 
     case REQUEST_TARGETS.BACKGROUND_PROMPT:
       return onPromptMessage(request, sender, sendResponse, tabsInputData);

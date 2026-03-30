@@ -73,6 +73,7 @@ const savePromptAction = async (details, serviceTypeData, tabsInputData, values)
   await storage.setItem(storageKey, JSON.stringify({
     tabId: details.tabId,
     url: details.url,
+    tabUrl: tabData?.url,
     values
   }));
 

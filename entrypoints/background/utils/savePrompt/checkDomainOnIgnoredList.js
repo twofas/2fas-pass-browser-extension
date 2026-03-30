@@ -4,13 +4,34 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
+import { parseDomain } from 'parse-domain';
+
+/**
+* Extracts the root domain (domain + TLD) from a hostname.
+* Falls back to the original hostname if parsing fails.
+* @param {string} hostname - The hostname to extract the root domain from.
+* @return {string} The root domain or the original hostname.
+*/
+const getRootDomain = hostname => {
+  try {
+    const parsed = parseDomain(hostname);
+
+    if (parsed?.domain && parsed?.topLevelDomains?.length > 0) {
+      return `${parsed.domain}.${parsed.topLevelDomains.join('.')}`;
+    }
+  } catch {}
+
+  return hostname;
+};
+
+/**
 * Function to check if a domain is on the ignored list.
+* Compares root domains so that www.example.com matches auth.example.com.
 * @async
-* @param {string} detailsUrl - The URL of the details page.
+* @param {string} tabUrl - The full URL of the active tab.
 * @return {Promise<boolean>} A promise that resolves to true if the domain is ignored, false otherwise.
 */
-const checkDomainOnIgnoredList = async detailsUrl => {
+const checkDomainOnIgnoredList = async tabUrl => {
   let storageIgnoreList = await storage.getItem('local:savePromptIgnoreDomains');
 
   if (!storageIgnoreList || !Array.isArray(storageIgnoreList)) {
@@ -18,28 +39,25 @@ const checkDomainOnIgnoredList = async detailsUrl => {
     await storage.setItem('local:savePromptIgnoreDomains', storageIgnoreList);
   }
 
-  const ignoredDomainsSet = new Set(storageIgnoreList);
-
-  if (detailsUrl) {
-    let url;
-
-    try {
-      url = new URL(detailsUrl);
-    } catch (e) {
-      throw new TwoFasError(TwoFasError.internalErrors.checkDomainOnIgnoredListUrlError, {
-        event: e,
-        additional: { func: 'checkDomainOnIgnoredList' }
-      });
-    }
-
-    if (ignoredDomainsSet.has(url.hostname)) {
-      return true;
-    } else {
-      return false;
-    }
-  } else {
+  if (!tabUrl) {
     return false;
   }
+
+  let tabHostname;
+
+  try {
+    tabHostname = new URL(tabUrl).hostname;
+  } catch (e) {
+    throw new TwoFasError(TwoFasError.internalErrors.checkDomainOnIgnoredListUrlError, {
+      event: e,
+      additional: { func: 'checkDomainOnIgnoredList' }
+    });
+  }
+
+  const tabRootDomain = getRootDomain(tabHostname);
+
+  return storageIgnoreList.some(domain => getRootDomain(domain) === tabRootDomain);
 };
 
 export default checkDomainOnIgnoredList;
+export { getRootDomain };
