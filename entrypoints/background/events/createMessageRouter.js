@@ -9,6 +9,10 @@ import onPromptMessage from './onPromptMessage';
 import onWsMessage from './onWsMessage';
 
 const createMessageRouter = ({ migrations, tabsInputData, savePromptActions, tabUpdateData }) => (request, sender, sendResponse) => {
+  if (sender.id !== browser.runtime.id) {
+    return false;
+  }
+
   if (!request || !request.action || !request.target) {
     return false;
   }
