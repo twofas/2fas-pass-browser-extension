@@ -65,11 +65,29 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
       return;
     }
 
-    const parentRect = scrollElement.getBoundingClientRect();
-    const listRect = listRef.current.getBoundingClientRect();
-    const newMargin = Math.round(listRect.top - parentRect.top + scrollElement.scrollTop);
-    setScrollMargin(prev => prev === newMargin ? prev : newMargin);
-  });
+    const calculateMargin = () => {
+      if (!listRef.current || !scrollElement) {
+        return;
+      }
+
+      const parentRect = scrollElement.getBoundingClientRect();
+      const listRect = listRef.current.getBoundingClientRect();
+      const newMargin = Math.round(listRect.top - parentRect.top + scrollElement.scrollTop);
+      setScrollMargin(prev => prev === newMargin ? prev : newMargin);
+    };
+
+    calculateMargin();
+
+    const resizeObserver = new ResizeObserver(calculateMargin);
+    let element = listRef.current.parentElement;
+
+    while (element && element !== scrollElement) {
+      resizeObserver.observe(element);
+      element = element.parentElement;
+    }
+
+    return () => resizeObserver.disconnect();
+  }, [scrollElement]);
 
   const virtualItems = virtualizer.getVirtualItems();
   const totalSize = virtualizer.getTotalSize();
