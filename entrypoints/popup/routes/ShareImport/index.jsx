@@ -6,7 +6,7 @@
 
 import S from './ShareImport.module.scss';
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, useLocation } from 'react-router';
 import { getSecret } from '@/partials/share/ShareAPI';
 import { fromBase64Url, decryptShareData, deriveKeyFromPassword } from '@/partials/share/ShareCrypto';
 import { filterXSS } from 'xss';
@@ -46,10 +46,15 @@ const CONTENT_TYPE_HEADERS = {
 function ShareImport (props) {
   const { getMessage } = useI18n();
   const navigate = useNavigate();
+  const location = useLocation();
   const params = useParams();
   const scrollableRef = useRef(null);
-  const { data, setBatchData, setData } = usePopupState();
+  const { data, setBatchData, setData, clearData } = usePopupState();
   const [view, setView] = useState(() => {
+    if (location.search.includes('fresh')) {
+      return VIEWS.LOADING;
+    }
+
     if (data.shareDecrypted) {
       return VIEWS.DATA;
     }
@@ -110,8 +115,18 @@ function ShareImport (props) {
     });
   }, [setBatchData]);
 
+  const handleCancel = useCallback(() => {
+    clearData();
+    navigate('/');
+  }, [clearData, navigate]);
+
   useEffect(() => {
-    if (data.shareDecrypted || data.shareEncryptedData) {
+    const isFresh = location.search.includes('fresh');
+
+    if (isFresh) {
+      clearData();
+      navigate(location.pathname, { replace: true });
+    } else if (data.shareDecrypted || data.shareEncryptedData) {
       return;
     }
 
@@ -219,7 +234,7 @@ function ShareImport (props) {
       <div ref={scrollableRef}>
         <section className={S.shareImport}>
           <div className={S.shareImportContainer}>
-            <NavigationButton type='cancel' />
+            <NavigationButton type='cancel' onClick={handleCancel} />
             {renderFormContent()}
           </div>
         </section>

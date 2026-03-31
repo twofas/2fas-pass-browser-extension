@@ -212,7 +212,7 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
           request?.nonce && SAFE_PARAM_RE.test(request.nonce) &&
           request?.key && SAFE_PARAM_RE.test(request.key)
         ) {
-          openPopupWindowInNewWindow({ pathname: `/share-import/${request.id}/${request.type}/${request.nonce}/${request.key}` })
+          openPopupWindowInNewWindow({ pathname: `/share-import/${request.id}/${request.type}/${request.nonce}/${request.key}?fresh` })
             .then(() => { sendResponse({ status: 'ok' }); })
             .catch(e => { sendResponse({ status: 'error', message: e.message }); });
         } else {
