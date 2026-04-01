@@ -246,7 +246,7 @@ export default class Login extends Item {
   }
 
   get hasShareableContent () {
-    return !!(this.content.username || this.sifExists || this.content.notes || this.internalData?.normalizedUris?.length > 0);
+    return !!(this.content.username || this.sifExists || this.content.notes || this.content.uris?.length > 0);
   }
 
   /**
@@ -267,7 +267,7 @@ export default class Login extends Item {
       name: this.content.name || '',
       username: this.content.username || '',
       password,
-      uris: (this.internalData?.normalizedUris || []).map(uri => ({
+      uris: (this.content.uris || []).map(uri => ({
         uri: uri.text,
         match: String(uri.matcher)
       })),
