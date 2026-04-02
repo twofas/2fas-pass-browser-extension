@@ -36,7 +36,7 @@ const bgConnectOnClose = async (event, data) => {
           wsNotify('stateChange', { socketError: true });
         }
 
-        wsNotify('toast', { message: getMessage('error_general'), type: 'error' });
+        wsNotify('toast', { message: getMessage('error_general'), type: 'error', toastId: 'connect-error' });
       }
 
       break;
@@ -72,7 +72,7 @@ const bgConnectOnClose = async (event, data) => {
         wsNotify('stateChange', { socketError: true });
       }
 
-      wsNotify('toast', { message: getMessage(toastMessage), type: 'error' });
+      wsNotify('toast', { message: getMessage(toastMessage), type: 'error', toastId: 'connect-error' });
       break;
     }
 
@@ -82,7 +82,7 @@ const bgConnectOnClose = async (event, data) => {
         wsNotify('stateChange', { socketError: true });
       }
 
-      wsNotify('toast', { message: getMessage('error_scheme_mismatch'), type: 'error' });
+      wsNotify('toast', { message: getMessage('error_scheme_mismatch'), type: 'error', toastId: 'connect-error' });
       break;
     }
 
@@ -95,7 +95,7 @@ const bgConnectOnClose = async (event, data) => {
         wsNotify('stateChange', { connectView: CONNECT_VIEWS.DeviceSelect });
       }
 
-      wsNotify('toast', { message: getMessage('error_timeout'), type: 'error' });
+      wsNotify('toast', { message: getMessage('error_timeout'), type: 'error', toastId: 'connect-error' });
       break;
     }
 
@@ -109,7 +109,7 @@ const bgConnectOnClose = async (event, data) => {
         wsNotify('stateChange', { connectView: CONNECT_VIEWS.DeviceSelect });
       }
 
-      wsNotify('toast', { message: getMessage('error_mobile_disconnected'), type: 'error' });
+      wsNotify('toast', { message: getMessage('error_mobile_disconnected'), type: 'error', toastId: 'connect-error' });
       break;
     }
 

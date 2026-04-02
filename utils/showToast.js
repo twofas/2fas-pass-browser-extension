@@ -7,16 +7,22 @@
 import { toast } from 'react-toastify';
 import isText from '@/partials/functions/isText';
 
-/** 
+/**
 * Displays a toast notification.
 * @param {string} message - The message to display in the toast.
 * @param {string} [type='info'] - The type of toast (e.g., 'success', 'error').
 * @param {number|boolean} [autoClose] - The duration in milliseconds before the toast closes automatically, or false to disable auto-close.
+* @param {Object} [options] - Additional options for the toast.
+* @param {string} [options.toastId] - Unique ID to prevent duplicate toasts.
 * @return {string} The ID of the toast notification.
 */
-const showToast = (message, type = 'info', autoClose) => {
+const showToast = (message, type = 'info', autoClose, options = {}) => {
   if (!isText(message)) {
     throw new TwoFasError(TwoFasError.errors.toastMessageNotString, { additional: { func: 'showToast', message } });
+  }
+
+  if (options.toastId && toast.isActive(options.toastId)) {
+    return options.toastId;
   }
 
   const toastId = toast(
@@ -24,7 +30,8 @@ const showToast = (message, type = 'info', autoClose) => {
     {
       type,
       autoClose,
-      closeButton: autoClose === false ? false : true
+      closeButton: autoClose === false ? false : true,
+      ...(options.toastId ? { toastId: options.toastId } : {})
     }
   );
 

@@ -383,21 +383,37 @@ const PopupMain = memo(() => {
     };
   }, []);
 
-  useEffect(() => {
-    const pending = window.__wsPendingUpdates;
+  const processPendingToasts = useCallback(toasts => {
+    toasts.forEach(toast => {
+      if (toast.toastId) {
+        showToast(toast.message, toast.type, toast.autoClose !== false, { toastId: toast.toastId });
+      } else {
+        showToast(toast.message, toast.type, toast.autoClose !== false);
+      }
+    });
+  }, []);
 
-    if (!state.loaded || (!pending?.toasts?.length && !pending?.navigation)) {
+  useEffect(() => {
+    if (!state.loaded) {
       return;
     }
 
+    const pending = window.__wsPendingUpdates;
     window.__wsPendingUpdates = null;
 
-    if (pending.toasts?.length > 0) {
-      pending.toasts.forEach(toast => {
-        showToast(toast.message, toast.type, toast.autoClose !== false);
-      });
+    if (pending?.toasts?.length > 0) {
+      processPendingToasts(pending.toasts);
     }
-  }, [state.loaded]);
+
+    browser.runtime.sendMessage({
+      action: REQUEST_ACTIONS.WS_GET_STATE,
+      target: REQUEST_TARGETS.BACKGROUND_WS
+    }).then(response => {
+      if (response?.pendingUpdates?.toasts?.length > 0) {
+        processPendingToasts(response.pendingUpdates.toasts);
+      }
+    }).catch(() => {});
+  }, [state.loaded, processPendingToasts]);
 
   return (
     <PopupContent

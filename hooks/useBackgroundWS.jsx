@@ -26,40 +26,10 @@ export const useBackgroundWS = ({ onLogin } = {}) => {
 
   useEffect(() => {
     const initialState = window.__wsInitialState;
-    const pendingUpdates = window.__wsPendingUpdates;
-
     window.__wsInitialState = null;
-    window.__wsPendingUpdates = null;
 
     if (initialState) {
       setWsState(initialState);
-    }
-
-    if (pendingUpdates?.toasts?.length > 0) {
-      pendingUpdates.toasts.forEach(processToast);
-    }
-
-    if (pendingUpdates?.navigation) {
-      navigateRef.current(pendingUpdates.navigation.path, pendingUpdates.navigation.options);
-    }
-
-    if (!initialState) {
-      browser.runtime.sendMessage({
-        action: REQUEST_ACTIONS.WS_GET_STATE,
-        target: REQUEST_TARGETS.BACKGROUND_WS
-      }).then(response => {
-        if (response?.state) {
-          setWsState(response.state);
-        }
-
-        if (response?.pendingUpdates?.toasts?.length > 0) {
-          response.pendingUpdates.toasts.forEach(processToast);
-        }
-
-        if (response?.pendingUpdates?.navigation) {
-          navigateRef.current(response.pendingUpdates.navigation.path, response.pendingUpdates.navigation.options);
-        }
-      }).catch(() => {});
     }
 
     const handler = message => {
