@@ -17,7 +17,7 @@ const notifyShareTabs = async configured => {
     } catch {}
   }
 
-  const shareUrl = import.meta.env.VITE_SHARE_FRONTEND_URL;
+  const shareUrl = import.meta.env.VITE_SHARE_BASE_URL;
 
   if (!shareUrl) {
     return;

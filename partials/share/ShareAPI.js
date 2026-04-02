@@ -14,7 +14,7 @@
  * @throws {Error} On non-OK HTTP responses, with a `status` property containing the HTTP status code.
  */
 async function createSecret ({ data, validForSeconds, singleUse }) {
-  const response = await fetch(`${import.meta.env.VITE_SHARE_API_URL}/secret`, {
+  const response = await fetch(`${import.meta.env.VITE_SHARE_BASE_URL}/api/secret`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ data, validForSeconds, singleUse })
@@ -36,7 +36,7 @@ async function createSecret ({ data, validForSeconds, singleUse }) {
  * @throws {Error} On non-OK HTTP responses, with a `status` property.
  */
 async function getSecret (id) {
-  const response = await fetch(`${import.meta.env.VITE_SHARE_API_URL}/secret/${id}`, {
+  const response = await fetch(`${import.meta.env.VITE_SHARE_BASE_URL}/api/secret/${id}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' }
   });
