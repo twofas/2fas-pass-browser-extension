@@ -12,6 +12,7 @@ import { motion } from 'motion/react';
 import { useAuthActions } from '@/hooks/useAuth';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import DeviceQrIcon from '@/assets/popup-window/device-qr.svg?react';
+import AddNewIcon from '@/assets/popup-window/add-new.svg?react';
 import QR from './components/QR';
 import DeviceIcon from './components/DeviceIcon';
 import DevicesPagination from './components/DevicesPagination';
@@ -176,7 +177,7 @@ function Connect (props) {
     initDoneRef.current = true;
 
     const init = async () => {
-      const devices = await loadReadyDevices();
+      await loadReadyDevices();
 
       if (bgState?.active && (bgState.type === 'connect_qr' || bgState.type === 'connect_push')) {
         if (bgState.qrData) {
@@ -186,20 +187,11 @@ function Connect (props) {
         return;
       }
 
-      if (devices.length === 0) {
-        setLocalView(CONNECT_VIEWS.QrView);
-        const result = await sendCommand(REQUEST_ACTIONS.WS_CONNECT_QR);
-
-        if (result?.state?.qrData) {
-          await updateQrCode(result.state.qrData);
-        }
-      } else {
-        setLocalView(CONNECT_VIEWS.DeviceSelect);
-      }
+      setLocalView(CONNECT_VIEWS.DeviceSelect);
     };
 
     init();
-  }, [bgState?.active, bgState?.type, bgState?.qrData, loadReadyDevices, sendCommand, updateQrCode]);
+  }, [bgState?.active, bgState?.type, bgState?.qrData, loadReadyDevices, updateQrCode]);
 
   useEffect(() => {
     if (data?.connectSliderIndex === undefined) {
@@ -267,12 +259,10 @@ function Connect (props) {
             <div className={S.connectContainer}>
               <h1>{getMessage('connect_header')}</h1>
 
-              {readyDevices.length > 0 && (
-                <NavigationButton
-                  type='cancel'
-                  onClick={switchToDeviceSelect}
-                />
-              )}
+              <NavigationButton
+                type='cancel'
+                onClick={switchToDeviceSelect}
+              />
 
               <div className={`${S.connectContainerQr} ${socketError ? S.error : ''}`}>
                 <div className={S.connectContainerQrErrorContent}>
@@ -303,62 +293,75 @@ function Connect (props) {
 
               <div className={S.deviceSelectContainerList}>
                 <div className={S.deviceSelectContainerListContainer}>
-                  <button
-                    className={`${S.deviceSelectContainerListPrev} ${readyDevices?.length > 1 && (data?.connectSliderIndex ?? 0) !== 0 ? S.visible : ''}`}
-                    onClick={handlePrevButton}
-                  >
-                    <span>
-                      <ChevronIcon />
-                    </span>
-                  </button>
+                  {readyDevices.length === 0 ? (
+                    <button
+                      className={`${S.deviceSelectContainerListItem} ${S.deviceSelectContainerListItemAdd}`}
+                      title={getMessage('connect_add_new_device')}
+                      onClick={switchToQrView}
+                    >
+                      <AddNewIcon />
+                      <span className={S.deviceSelectContainerListItemName}>{getMessage('connect_add_new_device')}</span>
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        className={`${S.deviceSelectContainerListPrev} ${readyDevices?.length > 1 && (data?.connectSliderIndex ?? 0) !== 0 ? S.visible : ''}`}
+                        onClick={handlePrevButton}
+                      >
+                        <span>
+                          <ChevronIcon />
+                        </span>
+                      </button>
 
-                  <Splide
-                    className={S.deviceSelectContainerListSlider}
-                    hasTrack={false}
-                    onMounted={() => { setSliderMounted(true); }}
-                    options={{
-                      type: 'slide',
-                      rewind: false,
-                      width: '184px',
-                      arrows: false,
-                      pagination: false,
-                      keyboard: 'global',
-                      updateOnMove: true
-                    }}
-                    ref={sliderRef}
-                  >
-                    <SplideTrack className={S.deviceSelectContainerListSliderTrack}>
-                      {readyDevices.map((device, index) => (
-                        <SplideSlide
-                          className={S.deviceSelectContainerListSliderSlide}
-                          key={index}
-                        >
-                          <button
-                            key={index}
-                            className={S.deviceSelectContainerListItem}
-                            title={device?.name}
-                            onClick={() => connectByPush(device)}
-                          >
-                            <DeviceIcon device={device} />
-                            <span className={S.deviceSelectContainerListItemName}>{device?.name}</span>
-                            <span className={`${S.deviceSelectContainerListItemPlatform} ${device?.platform === 'ios' ? S.ios : ''} ${device?.platform === 'android' ? S.android : ''}`}>
-                              {device?.platform === 'ios' ? 'iOS' : ''}
-                              {device?.platform === 'android' ? 'Android' : ''}
-                            </span>
-                          </button>
-                        </SplideSlide>
-                      ))}
-                    </SplideTrack>
-                  </Splide>
+                      <Splide
+                        className={S.deviceSelectContainerListSlider}
+                        hasTrack={false}
+                        onMounted={() => { setSliderMounted(true); }}
+                        options={{
+                          type: 'slide',
+                          rewind: false,
+                          width: '184px',
+                          arrows: false,
+                          pagination: false,
+                          keyboard: 'global',
+                          updateOnMove: true
+                        }}
+                        ref={sliderRef}
+                      >
+                        <SplideTrack className={S.deviceSelectContainerListSliderTrack}>
+                          {readyDevices.map((device, index) => (
+                            <SplideSlide
+                              className={S.deviceSelectContainerListSliderSlide}
+                              key={index}
+                            >
+                              <button
+                                key={index}
+                                className={S.deviceSelectContainerListItem}
+                                title={device?.name}
+                                onClick={() => connectByPush(device)}
+                              >
+                                <DeviceIcon device={device} />
+                                <span className={S.deviceSelectContainerListItemName}>{device?.name}</span>
+                                <span className={`${S.deviceSelectContainerListItemPlatform} ${device?.platform === 'ios' ? S.ios : ''} ${device?.platform === 'android' ? S.android : ''}`}>
+                                  {device?.platform === 'ios' ? 'iOS' : ''}
+                                  {device?.platform === 'android' ? 'Android' : ''}
+                                </span>
+                              </button>
+                            </SplideSlide>
+                          ))}
+                        </SplideTrack>
+                      </Splide>
 
-                  <button
-                    className={`${S.deviceSelectContainerListNext} ${readyDevices?.length > 1 && (data?.connectSliderIndex ?? 0) !== readyDevices.length - 1 ? S.visible : ''}`}
-                    onClick={handleNextButton}
-                  >
-                    <span>
-                      <ChevronIcon />
-                    </span>
-                  </button>
+                      <button
+                        className={`${S.deviceSelectContainerListNext} ${readyDevices?.length > 1 && (data?.connectSliderIndex ?? 0) !== readyDevices.length - 1 ? S.visible : ''}`}
+                        onClick={handleNextButton}
+                      >
+                        <span>
+                          <ChevronIcon />
+                        </span>
+                      </button>
+                    </>
+                  )}
                 </div>
 
                 <DevicesPagination
@@ -368,15 +371,17 @@ function Connect (props) {
                 />
               </div>
 
-              <div className={S.deviceSelectContainerAdd}>
-                <button
-                  className={`${bS.btn} ${bS.btnClear}`}
-                  onClick={switchToQrView}
-                >
-                  <span>{getMessage('connect_device_select_add_another')}</span>
-                  <DeviceQrIcon />
-                </button>
-              </div>
+              {readyDevices.length > 0 && (
+                <div className={S.deviceSelectContainerAdd}>
+                  <button
+                    className={`${bS.btn} ${bS.btnClear}`}
+                    onClick={switchToQrView}
+                  >
+                    <span>{getMessage('connect_device_select_add_another')}</span>
+                    <DeviceQrIcon />
+                  </button>
+                </div>
+              )}
             </div>
           </motion.section>
 

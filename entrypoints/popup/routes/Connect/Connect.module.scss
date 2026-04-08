@@ -413,6 +413,24 @@
           width: 100%;
         }
       }
+
+      &-item-add {
+        background-color: var(--primary-bg);
+        border: 1.5px solid var(--card-stroke);
+        cursor: pointer;
+        justify-content: center;
+        opacity: 1;
+
+        svg {
+          height: 56px;
+          margin-bottom: 20px;
+          stroke: var(--primary-color);
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-width: 2;
+          width: 56px;
+        }
+      }
     }
 
     &-add {

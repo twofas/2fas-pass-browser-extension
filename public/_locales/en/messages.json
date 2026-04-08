@@ -924,12 +924,16 @@
     "description": "Button label to open the external popup."
   },
   "connect_header": {
-    "message": "Scan this QR Code with your 2FAS Pass mobile app",
-    "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
+    "message": "Tap \"Connect\" in the 2FAS Pass mobile app to scan the QR Code.",
+    "description": "Header instructing the user to tap Connect in the mobile app to scan the QR code"
   },
   "connect_description": {
     "message": "Do this when you first launch the browser extension to securely connect it with your mobile app.",
     "description": "Explains the need to scan the QR code for secure access during each browser launch"
+  },
+  "connect_add_new_device": {
+    "message": "Add New Device",
+    "description": "Button text shown on the empty device select view that opens the QR code view"
   },
   "connect_connecting": {
     "message": "Connecting...",
