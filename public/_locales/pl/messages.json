@@ -924,7 +924,7 @@
     "description": "Button label to open the external popup."
   },
   "connect_header": {
-    "message": "Dotknij „Połącz” w aplikacji mobilnej 2FAS Pass, aby zeskanować kod QR.",
+    "message": "Kliknij „Połącz” w aplikacji mobilnej 2FAS Pass, aby zeskanować kod QR.",
     "description": "Header instructing the user to tap Connect in the mobile app to scan the QR code"
   },
   "connect_description": {

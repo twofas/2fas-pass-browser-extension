@@ -33,8 +33,8 @@ export const preloadInterFont = async () => {
 };
 
 /**
-* Preload both Inter and Montserrat fonts.
-* @return {Promise} Promise that resolves when fonts are loaded.
+* Preload Inter font only.
+* @return {Promise} Promise that resolves when font is loaded.
 */
 export const preloadAllFonts = async () => {
   if (!document.fonts) {
@@ -53,21 +53,8 @@ export const preloadAllFonts = async () => {
     }
   );
 
-  const montserratFont = new FontFace(
-    'Montserrat',
-    'url("/fonts/montserrat.woff2") format("woff2")',
-    {
-      weight: '100 900',
-      style: 'normal',
-      display: 'swap'
-    }
-  );
-
   document.fonts.add(interFont);
-  document.fonts.add(montserratFont);
-
   fontPromises.push(interFont.load());
-  fontPromises.push(montserratFont.load());
 
   try {
     await Promise.all(fontPromises);

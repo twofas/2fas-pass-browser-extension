@@ -41,7 +41,6 @@
   color: var(--primary-text);
   display: flex;
   flex-direction: column;
-  font-family: 'Montserrat', sans-serif;
   height: 100%;
   min-height: 100vh;
   opacity: 0;
@@ -53,10 +52,6 @@
   :global(body.theme-light) &,
   :global(body.theme-unset) & {
     opacity: 1;
-  }
-
-  * {
-    font-family: 'Montserrat', sans-serif;
   }
 
   &-container {

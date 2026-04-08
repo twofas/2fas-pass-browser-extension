@@ -9,7 +9,7 @@ import Install from './Install.jsx';
 import { preloadAllFontsAsync } from '@/partials/functions/preloadFonts.js';
 import { I18nProvider } from '@/partials/context/I18nContext.jsx';
 
-// Preload both Inter and Montserrat fonts for install page
+// Preload Inter font for install page
 preloadAllFontsAsync();
 
 // Initialize i18n before rendering
