@@ -19,7 +19,6 @@ import Video1Light from '@/assets/videos/install_video_1_light.mp4?url';
 import Video1Dark from '@/assets/videos/install_video_1_dark.mp4?url';
 import Video2Light from '@/assets/videos/install_video_2_light.mp4?url';
 import Video2Dark from '@/assets/videos/install_video_2_dark.mp4?url';
-import VideoPoster from '@/assets/install-page/video-poster.png?url';
 import { openPopup, safariBlankLinks } from '@/partials/functions';
 import detectDefaultTheme from './functions/detectDefaultTheme';
 import Logo from '@/assets/logo.svg?react';
@@ -411,10 +410,7 @@ function Install () {
                     initial="hidden"
                     animate={stepVisible === 3 ? 'visible' : 'hidden'}
                   >
-                    <a href="https://2fas.com/pass/be-video" target='_blank' rel="noopener noreferrer" className={S.installContainerContentRightBoxExternalVideo}>
-                      <PlayIcon />
-                      <img src={VideoPoster} alt={getMessage('install_3_get_started')} loading="lazy" />
-                    </a>
+                    
                   </motion.div>
                 </div>
             </div>
