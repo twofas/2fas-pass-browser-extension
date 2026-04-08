@@ -13,19 +13,14 @@ import { useAuthActions } from '@/hooks/useAuth';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import DeviceQrIcon from '@/assets/popup-window/device-qr.svg?react';
 import QR from './components/QR';
+import DeviceIcon from './components/DeviceIcon';
+import DevicesPagination from './components/DevicesPagination';
+import { getReadyDevices, renderQrFromData } from './functions';
 import NavigationButton from '../../components/NavigationButton';
 import { CONNECT_VIEWS } from '@/constants';
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
 import usePopupState from '../../store/popupState/usePopupState';
 import { useI18n } from '@/partials/context/I18nContext';
-import IphoneIconLight from '@/assets/popup-window/device-select/device-iphone-light.svg?react';
-import IphoneIconDark from '@/assets/popup-window/device-select/device-iphone-dark.svg?react';
-import AndroidIconLight from '@/assets/popup-window/device-select/device-android-light.svg?react';
-import AndroidIconDark from '@/assets/popup-window/device-select/device-android-dark.svg?react';
-import IpadIconLight from '@/assets/popup-window/device-select/device-ipad-light.svg?react';
-import IpadIconDark from '@/assets/popup-window/device-select/device-ipad-dark.svg?react';
-import AndroidTabletIconLight from '@/assets/popup-window/device-select/device-android-tablet-light.svg?react';
-import AndroidTabletIconDark from '@/assets/popup-window/device-select/device-android-tablet-dark.svg?react';
 import ChevronIcon from '@/assets/popup-window/chevron2.svg?react';
 
 const PushNotification = lazy(() => import('../Fetch/components/PushNotification'));
@@ -53,45 +48,15 @@ function Connect (props) {
   const deviceName = bgState?.deviceName || null;
   const socketError = bgState?.socketError || false;
 
-  const getReadyDevices = useCallback(async () => {
-    const devices = await storage.getItem('local:devices') || [];
-    const filteredDevices = devices.filter(device => {
-      return device.scheme && device.scheme >= config.schemeThreshold &&
-             device.platform && device.sessionId;
-    });
-
-    const sortedDevices = filteredDevices.sort((a, b) => {
-      const dateA = a?.updatedAt || 0;
-      const dateB = b?.updatedAt || 0;
-
-      return dateB - dateA;
-    });
-
-    setReadyDevices(sortedDevices);
-
-    return sortedDevices;
+  const loadReadyDevices = useCallback(async () => {
+    const devices = await getReadyDevices();
+    setReadyDevices(devices);
+    return devices;
   }, []);
 
-  const renderQrFromData = useCallback(async qrData => {
-    if (!qrData) {
-      setQrCode(null);
-      return;
-    }
-
-    try {
-      const { default: qrcode } = await import('qrcode');
-
-      const dataUrl = await qrcode.toDataURL(qrData, {
-        type: 'image/jpeg',
-        errorCorrectionLevel: 'L',
-        quality: 1,
-        width: 750
-      });
-
-      setQrCode(dataUrl);
-    } catch {
-      setQrCode(null);
-    }
+  const updateQrCode = useCallback(async qrData => {
+    const dataUrl = await renderQrFromData(qrData);
+    setQrCode(dataUrl);
   }, []);
 
   const switchToQrView = useCallback(async () => {
@@ -104,13 +69,13 @@ function Connect (props) {
     const result = await sendCommand(REQUEST_ACTIONS.WS_CONNECT_QR);
 
     if (result?.state?.qrData) {
-      await renderQrFromData(result.state.qrData);
+      await updateQrCode(result.state.qrData);
     }
 
     if (result?.status === 'error') {
       showToast(result.message, 'error');
     }
-  }, [bgState?.active, sendCommand, renderQrFromData]);
+  }, [bgState?.active, sendCommand, updateQrCode]);
 
   const switchToDeviceSelect = useCallback(async () => {
     if (bgState?.active) {
@@ -118,8 +83,8 @@ function Connect (props) {
     }
 
     setLocalView(CONNECT_VIEWS.DeviceSelect);
-    await getReadyDevices();
-  }, [bgState?.active, sendCommand, getReadyDevices]);
+    await loadReadyDevices();
+  }, [bgState?.active, sendCommand, loadReadyDevices]);
 
   const connectByPush = useCallback(async device => {
     if (bgState?.active) {
@@ -143,13 +108,13 @@ function Connect (props) {
     const result = await sendCommand(REQUEST_ACTIONS.WS_RELOAD_QR);
 
     if (result?.state?.qrData) {
-      await renderQrFromData(result.state.qrData);
+      await updateQrCode(result.state.qrData);
     }
 
     if (result?.status === 'error') {
       showToast(result.message, 'error');
     }
-  }, [sendCommand, renderQrFromData]);
+  }, [sendCommand, updateQrCode]);
 
   const handleCancelPushSent = useCallback(async () => {
     await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
@@ -173,76 +138,11 @@ function Connect (props) {
     }
   }, [connectView, data?.connectSliderIndex, readyDevices, connectByPush]);
 
-  const generateDeviceIcon = device => {
-    const platform = device?.platform || 'unknown';
-    const deviceType = device?.type || 'unknown';
-
-    switch (platform) {
-      case 'ios': {
-        if (deviceType === 'tablet') {
-          return (
-            <>
-              <IpadIconLight className={`${S.deviceIcon} theme-light`} />
-              <IpadIconDark className={`${S.deviceIcon} theme-dark`} />
-            </>
-          );
-        }
-
-        return (
-          <>
-            <IphoneIconLight className={`${S.deviceIcon} theme-light`} />
-            <IphoneIconDark className={`${S.deviceIcon} theme-dark`} />
-          </>
-        );
-      }
-
-      case 'android': {
-        if (deviceType === 'tablet') {
-          return (
-            <>
-              <AndroidTabletIconLight className={`${S.deviceIcon} theme-light`} />
-              <AndroidTabletIconDark className={`${S.deviceIcon} theme-dark`} />
-            </>
-          );
-        }
-
-        return (
-          <>
-            <AndroidIconLight className={`${S.deviceIcon} theme-light`} />
-            <AndroidIconDark className={`${S.deviceIcon} theme-dark`} />
-          </>
-        );
-      }
-
-      default: {
-        return null;
-      }
+  const handlePaginationClick = useCallback(index => {
+    if (sliderRef.current) {
+      sliderRef.current.go(index);
     }
-  };
-
-  const generatePagination = () => {
-    if (readyDevices.length <= 1) {
-      return null;
-    }
-
-    return (
-      <ul
-        className={S.deviceSelectContainerListPagination}
-        role='tablist'
-      >
-        {readyDevices.map((_, index) => (
-          <li key={index} role="presentation">
-            <button
-              className={`splide__pagination__page ${(data.connectSliderIndex ?? 0) === index ? 'is-active' : ''}`}
-              type='button'
-              role='tab'
-              onClick={() => sliderRef.current.go(index)}
-            ></button>
-          </li>
-        ))}
-      </ul>
-    );
-  };
+  }, []);
 
   const handlePrevButton = () => {
     const currentIndex = data?.connectSliderIndex || 0;
@@ -263,9 +163,9 @@ function Connect (props) {
   // Render QR code when background qrData changes
   useEffect(() => {
     if (bgState?.qrData) {
-      renderQrFromData(bgState.qrData);
+      updateQrCode(bgState.qrData);
     }
-  }, [bgState?.qrData, renderQrFromData]);
+  }, [bgState?.qrData, updateQrCode]);
 
   // Initialize
   useEffect(() => {
@@ -276,11 +176,11 @@ function Connect (props) {
     initDoneRef.current = true;
 
     const init = async () => {
-      const devices = await getReadyDevices();
+      const devices = await loadReadyDevices();
 
       if (bgState?.active && (bgState.type === 'connect_qr' || bgState.type === 'connect_push')) {
         if (bgState.qrData) {
-          await renderQrFromData(bgState.qrData);
+          await updateQrCode(bgState.qrData);
         }
 
         return;
@@ -291,7 +191,7 @@ function Connect (props) {
         const result = await sendCommand(REQUEST_ACTIONS.WS_CONNECT_QR);
 
         if (result?.state?.qrData) {
-          await renderQrFromData(result.state.qrData);
+          await updateQrCode(result.state.qrData);
         }
       } else {
         setLocalView(CONNECT_VIEWS.DeviceSelect);
@@ -299,7 +199,7 @@ function Connect (props) {
     };
 
     init();
-  }, [bgState?.active, bgState?.type, bgState?.qrData, getReadyDevices, sendCommand, renderQrFromData]);
+  }, [bgState?.active, bgState?.type, bgState?.qrData, loadReadyDevices, sendCommand, updateQrCode]);
 
   useEffect(() => {
     if (data?.connectSliderIndex === undefined) {
@@ -439,7 +339,7 @@ function Connect (props) {
                             title={device?.name}
                             onClick={() => connectByPush(device)}
                           >
-                            {generateDeviceIcon(device)}
+                            <DeviceIcon device={device} />
                             <span className={S.deviceSelectContainerListItemName}>{device?.name}</span>
                             <span className={`${S.deviceSelectContainerListItemPlatform} ${device?.platform === 'ios' ? S.ios : ''} ${device?.platform === 'android' ? S.android : ''}`}>
                               {device?.platform === 'ios' ? 'iOS' : ''}
@@ -461,7 +361,11 @@ function Connect (props) {
                   </button>
                 </div>
 
-                {generatePagination()}
+                <DevicesPagination
+                  devices={readyDevices}
+                  currentIndex={data?.connectSliderIndex ?? 0}
+                  onPageClick={handlePaginationClick}
+                />
               </div>
 
               <div className={S.deviceSelectContainerAdd}>
