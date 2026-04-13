@@ -32,7 +32,7 @@ function LoginShareImportView () {
   const uris = data.uris || [];
 
   const handleUriChange = useCallback((index, value) => {
-    const newUris = uris.map((u, i) => i === index ? { ...u, uri: value } : u);
+    const newUris = uris.map((u, i) => i === index ? { ...u, text: value } : u);
     setData('uris', newUris);
   }, [uris, setData]);
 
@@ -42,7 +42,7 @@ function LoginShareImportView () {
   }, [uris, setData]);
 
   const handleAddUri = useCallback(() => {
-    const newUris = [...uris, { uri: '', match: String(URIMatcher.M_DOMAIN_TYPE) }];
+    const newUris = [...uris, { text: '', match: String(URIMatcher.M_DOMAIN_TYPE) }];
     setData('uris', newUris);
   }, [uris, setData]);
 
@@ -116,9 +116,9 @@ function LoginShareImportView () {
     const deviceId = device.id;
 
     const processedUris = uris
-      .filter(uri => uri.uri && uri.uri.length > 0)
+      .filter(uri => uri.text && uri.text.length > 0)
       .map(uri => ({
-        text: uri.uri,
+        text: uri.text,
         matcher: parseInt(uri.match, 10) || URIMatcher.M_DOMAIN_TYPE
       }));
 
@@ -185,7 +185,7 @@ function LoginShareImportView () {
             <div className={pI.passInputBottom}>
               <input
                 type='text'
-                value={uri.uri || ''}
+                value={uri.text || ''}
                 placeholder={getMessage('placeholder_domain_uri')}
                 dir='ltr'
                 spellCheck='false'
@@ -209,7 +209,7 @@ function LoginShareImportView () {
               </div>
             </div>
             <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
-              {domainValidation(uri.uri || '')}
+              {domainValidation(uri.text || '')}
             </div>
           </div>
         ))}
