@@ -5,8 +5,8 @@
 // See LICENSE file for full terms
 
 import S from '../../Install.module.scss';
-import AppStore from '@/assets/install-page/appstore.png?react';
-import GooglePlay from '@/assets/install-page/googleplay.png?react';
+import AppStore from '@/assets/app_store.svg';
+import GooglePlay from '@/assets/google_play.svg';
 import ScanIcon from '@/assets/install-page/scan.svg?react';
 import PassIosQR from '@/assets/install-page/pass-ios-qr.svg?react';
 import PassAndroidQR from '@/assets/install-page/pass-android-qr.svg?react';
