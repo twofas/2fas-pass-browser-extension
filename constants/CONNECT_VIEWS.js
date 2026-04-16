@@ -8,6 +8,7 @@ const CONNECT_VIEWS = {
   QrView: 'qrView',
   Progress: 'progress',
   DeviceSelect: 'deviceSelect',
+  DeviceNew: 'deviceNew',
   PushSent: 'pushSent',
 };
 

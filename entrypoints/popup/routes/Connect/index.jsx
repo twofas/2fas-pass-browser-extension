@@ -12,8 +12,8 @@ import { motion } from 'motion/react';
 import { useAuthActions } from '@/hooks/useAuth';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import DeviceQrIcon from '@/assets/popup-window/device-qr.svg?react';
-import AddNewIcon from '@/assets/popup-window/add-new.svg?react';
 import QR from './components/QR';
+import DeviceNew from './components/DeviceNew';
 import DeviceIcon from './components/DeviceIcon';
 import DevicesPagination from './components/DevicesPagination';
 import { getReadyDevices, renderQrFromData } from './functions';
@@ -44,7 +44,10 @@ function Connect (props) {
 
   const { data, setData } = usePopupState();
 
-  const connectView = bgState?.active ? (bgState.connectView || localView) : localView;
+  const rawConnectView = bgState?.active ? (bgState.connectView || localView) : localView;
+  const connectView = rawConnectView === CONNECT_VIEWS.DeviceSelect && readyDevices.length === 0
+    ? CONNECT_VIEWS.DeviceNew
+    : rawConnectView;
   const connectingLoader = bgState?.progress ?? 264;
   const deviceName = bgState?.deviceName || null;
   const socketError = bgState?.socketError || false;
@@ -256,204 +259,200 @@ function Connect (props) {
           transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
           animate={connectView === CONNECT_VIEWS.QrView ? 'visible' : 'hidden'}
         >
-            <div className={S.connectContainer}>
-              <h1>{getMessage('connect_header')}</h1>
+          <div className={S.connectContainer}>
+            <h1>{getMessage('connect_header')}</h1>
 
-              <NavigationButton
-                type='cancel'
-                onClick={switchToDeviceSelect}
-              />
+            <NavigationButton
+              type='cancel'
+              onClick={switchToDeviceSelect}
+            />
 
-              <div className={`${S.connectContainerQr} ${socketError ? S.error : ''}`}>
-                <div className={S.connectContainerQrErrorContent}>
-                  <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnQrReload}`} onClick={handleSocketReload}>{getMessage('reload')}</button>
-                </div>
-
-                <QR qrCode={qrCode} />
+            <div className={`${S.connectContainerQr} ${socketError ? S.error : ''}`}>
+              <div className={S.connectContainerQrErrorContent}>
+                <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnQrReload}`} onClick={handleSocketReload}>{getMessage('reload')}</button>
               </div>
 
-              <div className={S.connectDescription}>
-                <InfoIcon />
-                <p>{getMessage('connect_description')}</p>
-              </div>
+              <QR qrCode={qrCode} />
             </div>
-          </motion.section>
 
-          {/* Device Select */}
-          <motion.section
-            className={S.deviceSelect}
-            variants={viewVariants}
-            initial="hidden"
-            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
-            animate={connectView === CONNECT_VIEWS.DeviceSelect ? 'visible' : 'hidden'}
-          >
-            <div className={S.deviceSelectContainer}>
-              <h1>{getMessage('connect_device_select_header')}</h1>
-              <h2>{getMessage('connect_device_select_list_header')}</h2>
+            <div className={S.connectDescription}>
+              <InfoIcon />
+              <p>{getMessage('connect_description')}</p>
+            </div>
+          </div>
+        </motion.section>
 
-              <div className={S.deviceSelectContainerList}>
-                <div className={S.deviceSelectContainerListContainer}>
-                  {readyDevices.length === 0 ? (
-                    <button
-                      className={`${S.deviceSelectContainerListItem} ${S.deviceSelectContainerListItemAdd}`}
-                      title={getMessage('connect_add_new_device')}
-                      onClick={switchToQrView}
-                    >
-                      <AddNewIcon />
-                      <span className={S.deviceSelectContainerListItemName}>{getMessage('connect_add_new_device')}</span>
-                    </button>
-                  ) : (
-                    <>
-                      <button
-                        className={`${S.deviceSelectContainerListPrev} ${readyDevices?.length > 1 && (data?.connectSliderIndex ?? 0) !== 0 ? S.visible : ''}`}
-                        onClick={handlePrevButton}
+        {/* Device Select */}
+        <motion.section
+          className={S.deviceSelect}
+          variants={viewVariants}
+          initial="hidden"
+          transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
+          animate={connectView === CONNECT_VIEWS.DeviceSelect ? 'visible' : 'hidden'}
+        >
+          <div className={S.deviceSelectContainer}>
+            <h1>{getMessage('connect_device_select_header')}</h1>
+            <h2>{getMessage('connect_device_select_list_header')}</h2>
+
+            <div className={S.deviceSelectContainerList}>
+              <div className={S.deviceSelectContainerListContainer}>
+                <button
+                  className={`${S.deviceSelectContainerListPrev} ${readyDevices?.length > 1 && (data?.connectSliderIndex ?? 0) !== 0 ? S.visible : ''}`}
+                  onClick={handlePrevButton}
+                >
+                  <span>
+                    <ChevronIcon />
+                  </span>
+                </button>
+
+                <Splide
+                  className={S.deviceSelectContainerListSlider}
+                  hasTrack={false}
+                  onMounted={() => { setSliderMounted(true); }}
+                  options={{
+                    type: 'slide',
+                    rewind: false,
+                    width: '184px',
+                    arrows: false,
+                    pagination: false,
+                    keyboard: 'global',
+                    updateOnMove: true
+                  }}
+                  ref={sliderRef}
+                >
+                  <SplideTrack className={S.deviceSelectContainerListSliderTrack}>
+                    {readyDevices.map((device, index) => (
+                      <SplideSlide
+                        className={S.deviceSelectContainerListSliderSlide}
+                        key={index}
                       >
-                        <span>
-                          <ChevronIcon />
-                        </span>
-                      </button>
+                        <button
+                          key={index}
+                          className={S.deviceSelectContainerListItem}
+                          title={device?.name}
+                          onClick={() => connectByPush(device)}
+                        >
+                          <DeviceIcon device={device} />
+                          <span className={S.deviceSelectContainerListItemName}>{device?.name}</span>
+                          <span className={`${S.deviceSelectContainerListItemPlatform} ${device?.platform === 'ios' ? S.ios : ''} ${device?.platform === 'android' ? S.android : ''}`}>
+                            {device?.platform === 'ios' ? 'iOS' : ''}
+                            {device?.platform === 'android' ? 'Android' : ''}
+                          </span>
+                        </button>
+                      </SplideSlide>
+                    ))}
+                  </SplideTrack>
+                </Splide>
 
-                      <Splide
-                        className={S.deviceSelectContainerListSlider}
-                        hasTrack={false}
-                        onMounted={() => { setSliderMounted(true); }}
-                        options={{
-                          type: 'slide',
-                          rewind: false,
-                          width: '184px',
-                          arrows: false,
-                          pagination: false,
-                          keyboard: 'global',
-                          updateOnMove: true
-                        }}
-                        ref={sliderRef}
-                      >
-                        <SplideTrack className={S.deviceSelectContainerListSliderTrack}>
-                          {readyDevices.map((device, index) => (
-                            <SplideSlide
-                              className={S.deviceSelectContainerListSliderSlide}
-                              key={index}
-                            >
-                              <button
-                                key={index}
-                                className={S.deviceSelectContainerListItem}
-                                title={device?.name}
-                                onClick={() => connectByPush(device)}
-                              >
-                                <DeviceIcon device={device} />
-                                <span className={S.deviceSelectContainerListItemName}>{device?.name}</span>
-                                <span className={`${S.deviceSelectContainerListItemPlatform} ${device?.platform === 'ios' ? S.ios : ''} ${device?.platform === 'android' ? S.android : ''}`}>
-                                  {device?.platform === 'ios' ? 'iOS' : ''}
-                                  {device?.platform === 'android' ? 'Android' : ''}
-                                </span>
-                              </button>
-                            </SplideSlide>
-                          ))}
-                        </SplideTrack>
-                      </Splide>
-
-                      <button
-                        className={`${S.deviceSelectContainerListNext} ${readyDevices?.length > 1 && (data?.connectSliderIndex ?? 0) !== readyDevices.length - 1 ? S.visible : ''}`}
-                        onClick={handleNextButton}
-                      >
-                        <span>
-                          <ChevronIcon />
-                        </span>
-                      </button>
-                    </>
-                  )}
-                </div>
-
-                <DevicesPagination
-                  devices={readyDevices}
-                  currentIndex={data?.connectSliderIndex ?? 0}
-                  onPageClick={handlePaginationClick}
-                />
+                <button
+                  className={`${S.deviceSelectContainerListNext} ${readyDevices?.length > 1 && (data?.connectSliderIndex ?? 0) !== readyDevices.length - 1 ? S.visible : ''}`}
+                  onClick={handleNextButton}
+                >
+                  <span>
+                    <ChevronIcon />
+                  </span>
+                </button>
               </div>
 
-              {readyDevices.length > 0 && (
-                <div className={S.deviceSelectContainerAdd}>
+              <DevicesPagination
+                devices={readyDevices}
+                currentIndex={data?.connectSliderIndex ?? 0}
+                onPageClick={handlePaginationClick}
+              />
+            </div>
+
+            <div className={S.deviceSelectContainerAdd}>
+              <button
+                className={`${bS.btn} ${bS.btnClear}`}
+                onClick={switchToQrView}
+              >
+                <span>{getMessage('connect_device_select_add_another')}</span>
+                <DeviceQrIcon />
+              </button>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* Device New */}
+        <motion.section
+          className={S.deviceNew}
+          variants={viewVariants}
+          initial="hidden"
+          transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
+          animate={connectView === CONNECT_VIEWS.DeviceNew ? 'visible' : 'hidden'}
+        >
+          <DeviceNew onConnect={switchToQrView} />
+        </motion.section>
+
+        {/* Progress */}
+        <motion.section
+          className={S.progress}
+          variants={viewVariants}
+          initial="hidden"
+          transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
+          animate={connectView === CONNECT_VIEWS.Progress ? 'visible' : 'hidden'}
+        >
+          <div className={S.progressContainer}>
+            <div className={S.progressLoader}>
+              <svg className={`${S.progressLoaderCircle}`} style={{ strokeDashoffset: connectingLoader }} viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="48" cy="48" r="42" className={S.progressLoaderCircleBg} />
+                <circle cx="48" cy="48" r="42" />
+              </svg>
+
+              <span>{getMessage('connect_connecting')}</span>
+            </div>
+
+            <div className={S.progressDescription}>
+              <p>{getMessage('connect_connection_opened')}</p>
+            </div>
+
+            <div className={`${S.progressDeviceName} ${deviceName ? S.visible : ''}`}>
+              <span>{deviceName}</span>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* Push Sent */}
+        <motion.section
+          className={S.push}
+          variants={viewVariants}
+          initial="hidden"
+          transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
+          animate={connectView === CONNECT_VIEWS.PushSent ? 'visible' : 'hidden'}
+        >
+          <div className={S.pushContainer}>
+            <NavigationButton
+              type='cancel'
+              onClick={handleCancelPushSent}
+            />
+
+            <PushNotification />
+
+            <div className={`${S.pushDeviceName} ${deviceName ? S.visible : ''}`}>
+              <span>{deviceName}</span>
+            </div>
+
+            <div className={S.pushAdditional}>
+              <div className={`${S.pushAdditionalTrouble} ${bS.btn} ${bS.btnOutline}`}>
+                <span>{getMessage('connect_push_trouble')}</span>
+
+                <div className={S.pushAdditionalTooltip}>
+                  <span>{getMessage('connect_push_trouble_tooltip')}</span>
+                  <span>{getMessage('connect_push_trouble_tooltip_or')}</span>
                   <button
                     className={`${bS.btn} ${bS.btnClear}`}
-                    onClick={switchToQrView}
+                    onClick={handleSwitchToQrFromPushSent}
                   >
-                    <span>{getMessage('connect_device_select_add_another')}</span>
+                    <span>{getMessage('connect_push_trouble_tooltip_use_qr')}</span>
                     <DeviceQrIcon />
                   </button>
                 </div>
-              )}
-            </div>
-          </motion.section>
-
-          {/* Progress */}
-          <motion.section
-            className={S.progress}
-            variants={viewVariants}
-            initial="hidden"
-            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
-            animate={connectView === CONNECT_VIEWS.Progress ? 'visible' : 'hidden'}
-          >
-            <div className={S.progressContainer}>
-              <div className={S.progressLoader}>
-                <svg className={`${S.progressLoaderCircle}`} style={{ strokeDashoffset: connectingLoader }} viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="48" cy="48" r="42" className={S.progressLoaderCircleBg} />
-                  <circle cx="48" cy="48" r="42" />
-                </svg>
-
-                <span>{getMessage('connect_connecting')}</span>
-              </div>
-
-              <div className={S.progressDescription}>
-                <p>{getMessage('connect_connection_opened')}</p>
-              </div>
-
-              <div className={`${S.progressDeviceName} ${deviceName ? S.visible : ''}`}>
-                <span>{deviceName}</span>
               </div>
             </div>
-          </motion.section>
-
-          {/* Push Sent */}
-          <motion.section
-            className={S.push}
-            variants={viewVariants}
-            initial="hidden"
-            transition={{ duration: 0.2, type: 'tween', ease: 'easeOut' }}
-            animate={connectView === CONNECT_VIEWS.PushSent ? 'visible' : 'hidden'}
-          >
-            <div className={S.pushContainer}>
-              <NavigationButton
-                type='cancel'
-                onClick={handleCancelPushSent}
-              />
-
-              <PushNotification />
-
-              <div className={`${S.pushDeviceName} ${deviceName ? S.visible : ''}`}>
-                <span>{deviceName}</span>
-              </div>
-
-              <div className={S.pushAdditional}>
-                <div className={`${S.pushAdditionalTrouble} ${bS.btn} ${bS.btnOutline}`}>
-                  <span>{getMessage('connect_push_trouble')}</span>
-
-                  <div className={S.pushAdditionalTooltip}>
-                    <span>{getMessage('connect_push_trouble_tooltip')}</span>
-                    <span>{getMessage('connect_push_trouble_tooltip_or')}</span>
-                    <button
-                      className={`${bS.btn} ${bS.btnClear}`}
-                      onClick={handleSwitchToQrFromPushSent}
-                    >
-                      <span>{getMessage('connect_push_trouble_tooltip_use_qr')}</span>
-                      <DeviceQrIcon />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.section>
-        </div>
+          </div>
+        </motion.section>
       </div>
+    </div>
   );
 }
 

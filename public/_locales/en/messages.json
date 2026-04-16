@@ -979,6 +979,18 @@
     "message": "Use QR code",
     "description": "Instruction to use QR code as an alternative method"
   },
+  "connect_device_new_header": {
+    "message": "Connect with the mobile app",
+    "description": "Header for the device new view when no devices are connected"
+  },
+  "connect_device_new_subtitle": {
+    "message": "Connect the browser extension with the 2FAS Pass mobile app",
+    "description": "Subtitle explaining the purpose of connecting the extension with the mobile app"
+  },
+  "connect_device_new_connect_button": {
+    "message": "Connect your device",
+    "description": "Button text to initiate device connection via QR code"
+  },
   "details_header_login": {
     "message": "Login details",
     "description": "Header for the Login details section"
