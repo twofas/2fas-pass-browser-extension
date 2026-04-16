@@ -76,7 +76,7 @@
     "description": "Error message displayed when copying the error message to the clipboard fails"
   },
   "appDesc": {
-    "message": "2FAS Pass is a next-gen password manager with no compromises in security and full control over your data.",
+    "message": "Keep all your data safe, private and secure with 2FAS Pass.",
     "description": "Description of the 2FAS Pass Browser Extension highlighting its features"
   },
   "autofill": {
@@ -2012,7 +2012,7 @@
     "description": "Section title for share configuration options"
   },
   "share_expiration_title": {
-    "message": "Link expiration time",
+    "message": "Link expiration",
     "description": "Label for the link expiration time setting"
   },
   "share_expiration_desc": {

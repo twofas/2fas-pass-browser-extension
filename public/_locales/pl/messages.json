@@ -76,7 +76,7 @@
     "description": "Error message displayed when copying the error message to the clipboard fails"
   },
   "appDesc": {
-    "message": "2FAS Pass to menedżer haseł nowej generacji, bez kompromisów w zakresie bezpieczeństwa i kontroli nad danymi.",
+    "message": "Zadbaj o bezpieczeństwo i prywatność swoich danych z 2FAS Pass.",
     "description": "Description of the 2FAS Pass Browser Extension highlighting its features"
   },
   "autofill": {
