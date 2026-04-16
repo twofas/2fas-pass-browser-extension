@@ -20,8 +20,8 @@ const DownloadMobileAppDefault = () => {
   const { getMessage } = useI18n();
   
   return (
-    <>
-      <div className={S.appsDownload}>
+    <div className={S.appsDownload}>
+      <div className={S.appsDownloadGroup}>
         <a
           href="https://apps.apple.com/us/app/2fas-pass/id6504464955"
           target="_blank"
@@ -38,7 +38,6 @@ const DownloadMobileAppDefault = () => {
         <button className={S.appsDownloadButton} type='button'>
           <span className={S.appsDownloadButtonContent}>
             <ScanIcon />
-            <span>{getMessage('install_scan')}</span>
           </span>
           <span className={S.appsDownloadButtonTooltip}>
             <span>{getMessage('install_point_camera')}</span>
@@ -46,7 +45,7 @@ const DownloadMobileAppDefault = () => {
           </span>
         </button>
       </div>
-      <div className={S.appsDownload}>
+      <div className={S.appsDownloadGroup}>
         <a
           href="https://play.google.com/store/apps/details?id=com.twofasapp.pass"
           target="_blank"
@@ -63,7 +62,6 @@ const DownloadMobileAppDefault = () => {
         <button className={S.appsDownloadButton} type='button'>
           <span className={S.appsDownloadButtonContent}>
             <ScanIcon />
-            <span>{getMessage('install_scan')}</span>
           </span>
           <span className={S.appsDownloadButtonTooltip}>
             <span>{getMessage('install_point_camera')}</span>
@@ -71,7 +69,7 @@ const DownloadMobileAppDefault = () => {
           </span>
         </button>
       </div>
-    </>
+    </div>
   );
 };
 

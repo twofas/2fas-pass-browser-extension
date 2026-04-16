@@ -328,73 +328,57 @@
 
   // INSTALL PAGE
   &.btn-install-page {
-    border-radius: 32px;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: .813px;
-    line-height: 1;
-    padding: 24px 0;
-    text-transform: uppercase;
-    width: 288px;
-
-    @media all and (max-width: 460px) {
-      padding: 20px 0;
-      width: 200px;
-    }
-  }
-
-  &.btn-install-page-wo-pinning {
     align-items: center;
+    border-radius: 45px;
     display: inline-flex;
-    flex-direction: row;
-    gap: 0 9px;
-
-    @media all and (max-width: 460px) {
-      gap: 0 6px;
-    }
+    font-size: 15px;
+    font-weight: 700;
+    gap: 0 12px;
+    letter-spacing: .813px;
+    line-height: 44px;
+    padding: 3px 4px 3px 22px;
+    text-transform: uppercase;
 
     &:hover,
     &:focus {
       svg {
-        stroke: var(--focus);
+        fill: var(--focus);
       }
     }
 
     &:active {
       svg {
-        stroke: var(--pressed);
+        fill: var(--pressed);
       }
     }
 
-    &[disabled],
-    &.disabled {
-      svg {
-        stroke: var(--object);
+    @media all and (max-width: 460px) {
+      font-size: 13px;
+      gap: 0 8px;
+      padding: 3px 3px 3px 18px;
+    }
+  }
+
+  &.btn-install-page-skip {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .813px;
+    line-height: 1;
+    text-transform: uppercase;
+
+    :global(body.theme-dark) &,
+    :global(body:not(.theme-light):not(.theme-dark)) & {
+      @media (prefers-color-scheme: dark) {
+        color: #fff;
       }
     }
 
-    span {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: .813px;
-      line-height: 1;
-      text-transform: uppercase;
-
-      @media all and (max-width: 460px) {
-        font-size: 14px;
-      }
+    :global(body.theme-dark) & {
+      color: #fff;
     }
 
-    svg {
-      height: 10px;
-      pointer-events: none;
-      stroke: var(--primary-color);
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      transform: translateY(-1px);
-      transition: stroke var(--anim);
-      width: auto;
+    @media all and (max-width: 460px) {
+      font-size: 13px;
     }
   }
 

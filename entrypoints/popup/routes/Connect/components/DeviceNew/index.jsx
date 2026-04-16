@@ -7,7 +7,7 @@
 import S from '../../Connect.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { memo } from 'react';
-import ConnectIcon from '@/assets/popup-window/connect.svg?react';
+import ConnectIcon from '@/assets/connect.svg?react';
 import ConnectDevicePlusIcon from '@/assets/popup-window/connect-device-plus.svg?react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import { useI18n } from '@/partials/context/I18nContext';
