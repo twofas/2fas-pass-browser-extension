@@ -8,7 +8,7 @@
     "description": "Section title for share configuration options"
   },
   "share_expiration_title": {
-    "message": "Link expiration time",
+    "message": "Link expiration",
     "description": "Label for the link expiration time setting"
   },
   "share_expiration_desc": {
