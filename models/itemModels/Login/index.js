@@ -269,7 +269,7 @@ export default class Login extends Item {
       password,
       uris: (this.content.uris || []).map(uri => ({
         text: uri.text,
-        matcher: String(uri.matcher)
+        matcher: uri.matcher
       })),
       notes: this.content.notes || ''
     };

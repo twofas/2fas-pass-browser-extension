@@ -42,7 +42,7 @@ function LoginShareImportView () {
   }, [uris, setData]);
 
   const handleAddUri = useCallback(() => {
-    const newUris = [...uris, { text: '', matcher: String(URIMatcher.M_DOMAIN_TYPE) }];
+    const newUris = [...uris, { text: '', matcher: URIMatcher.M_DOMAIN_TYPE }];
     setData('uris', newUris);
   }, [uris, setData]);
 
@@ -119,7 +119,7 @@ function LoginShareImportView () {
       .filter(uri => uri.text && uri.text.length > 0)
       .map(uri => ({
         text: uri.text,
-        matcher: parseInt(uri.matcher, 10) || URIMatcher.M_DOMAIN_TYPE
+        matcher: uri.matcher
       }));
 
     const formData = {
