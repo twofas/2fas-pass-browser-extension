@@ -80,6 +80,8 @@ function Fetch (props) {
       navigate(`/details/${state.data.deviceId}/${state.data.vaultId}/${state.data.itemId}`, {
         state: { from: 'fetch' }
       });
+    } else if (state?.from === 'share-import') {
+      navigate('/');
     } else {
       if (fetchState === FETCH_STATE.CONNECTION_ERROR) {
         navigate('/');

@@ -11,7 +11,7 @@ import BackIcon from '@/assets/popup-window/back.svg?react';
 import CancelIcon from '@/assets/popup-window/cancel.svg?react';
 import { useI18n } from '@/partials/context/I18nContext';
 
-const IGNORED_PATHS = ['/password-generator'];
+const IGNORED_PATHS = ['/password-generator', '/connect', '/blocked'];
 
 /**
 * Function to render the Settings Back component.

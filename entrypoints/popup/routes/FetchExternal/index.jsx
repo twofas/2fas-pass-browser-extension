@@ -12,27 +12,28 @@ import { useParams, Navigate } from 'react-router';
 * @return {JSX.Element} The rendered component.
 */
 function FetchExternal () {
-  let params, action, from;
+  let action, from, data, originalData, model, deviceId;
 
   try {
-    params = useParams();
+    const routeParams = useParams();
 
-    if (params && params.data) {
+    if (routeParams && routeParams.data) {
       let decodedData;
 
       try {
-        decodedData = decodeURIComponent(params.data);
+        decodedData = decodeURIComponent(routeParams.data);
       } catch {
-        decodedData = params.data;
+        decodedData = routeParams.data;
       }
 
-      params = JSON.parse(decodedData);
+      const parsed = JSON.parse(decodedData);
 
-      action = params.action;
-      from = params.from;
-
-      delete params.action;
-      delete params.from;
+      action = parsed.action;
+      from = parsed.from;
+      data = parsed.data;
+      originalData = parsed.originalData;
+      model = parsed.model;
+      deviceId = parsed.deviceId;
     }
   } catch (e) {
     CatchError(e);
@@ -42,9 +43,12 @@ function FetchExternal () {
     <Navigate
       to='/fetch'
       state={{
-        action: action,
-        from: from,
-        ...params
+        action,
+        from,
+        data,
+        originalData,
+        model,
+        deviceId
       }}
     />
   );

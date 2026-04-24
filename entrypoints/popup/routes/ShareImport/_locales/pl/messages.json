@@ -1,0 +1,90 @@
+{
+  "share_import_header_login": {
+    "message": "Importowanie Loginu do \n2FAS Pass",
+    "description": "Header for importing a shared Login item"
+  },
+  "share_import_header_secure_note": {
+    "message": "Importowanie Bezpiecznej Notatki do \n2FAS Pass",
+    "description": "Header for importing a shared Secure Note item"
+  },
+  "share_import_header_payment_card": {
+    "message": "Importowanie Karty Płatniczej do \n2FAS Pass",
+    "description": "Header for importing a shared Payment Card item"
+  },
+  "share_import_header_wifi": {
+    "message": "Importowanie Wi-Fi do \n2FAS Pass",
+    "description": "Header for importing a shared Wi-Fi item"
+  },
+  "share_import_header_custom": {
+    "message": "Importowanie Notatki do \n2FAS Pass",
+    "description": "Header for importing a shared custom/text item"
+  },
+  "share_import_subheader": {
+    "message": "Przejrzyj udostępnione dane i zapisz je w swoim sejfie.",
+    "description": "Subheader explaining the import process"
+  },
+  "share_import_add_item": {
+    "message": "Dodaj element",
+    "description": "Button text for adding the imported item to the vault"
+  },
+  "share_import_password_header": {
+    "message": "Wprowadź hasło",
+    "description": "Header for the password entry view"
+  },
+  "share_import_password_subheader": {
+    "message": "Te dane są chronione hasłem. Wprowadź hasło, aby je odszyfrować.",
+    "description": "Subheader explaining password requirement"
+  },
+  "share_import_password_placeholder": {
+    "message": "Hasło",
+    "description": "Placeholder for the password input field"
+  },
+  "share_import_password_submit": {
+    "message": "Odszyfruj",
+    "description": "Button text for submitting the password"
+  },
+  "share_import_password_error": {
+    "message": "Nieprawidłowe hasło. Spróbuj ponownie.",
+    "description": "Error message when decryption fails due to wrong password"
+  },
+  "share_import_loading": {
+    "message": "Odszyfrowywanie danych...",
+    "description": "Loading message while decrypting"
+  },
+  "share_import_fetch_error": {
+    "message": "Nie udało się pobrać udostępnionych danych. Link mógł wygasnąć lub został już wykorzystany.",
+    "description": "Error message when the API fetch fails"
+  },
+  "share_import_decrypt_error": {
+    "message": "Nie udało się odszyfrować danych.",
+    "description": "Error message when decryption fails"
+  },
+  "share_import_invalid_params": {
+    "message": "Nieprawidłowe parametry linku udostępniania.",
+    "description": "Error message when share params are missing or invalid"
+  },
+  "share_import_name_required": {
+    "message": "Nazwa jest wymagana",
+    "description": "Validation message when name field is empty"
+  },
+  "share_import_name_max_length": {
+    "message": "Nazwa musi mieć mniej niż 256 znaków.",
+    "description": "Validation message when name exceeds 255 characters"
+  },
+  "share_import_username_max_length": {
+    "message": "Nazwa użytkownika musi mieć mniej niż 256 znaków.",
+    "description": "Validation message when username exceeds 255 characters"
+  },
+  "share_import_text_max_length": {
+    "message": "Tekst musi mieć mniej niż 16 385 znaków.",
+    "description": "Validation message when secure note text exceeds 16384 characters"
+  },
+  "share_import_notes_max_length": {
+    "message": "Notatki muszą mieć mniej niż 16 385 znaków.",
+    "description": "Validation message when notes exceed 16384 characters"
+  },
+  "share_import_unsupported_type": {
+    "message": "Ten typ zawartości nie jest jeszcze obsługiwany do importu.",
+    "description": "Error message for unsupported content types"
+  }
+}

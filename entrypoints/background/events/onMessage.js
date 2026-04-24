@@ -8,6 +8,7 @@ import { isText, checkStorageAutoClearActions } from '@/partials/functions';
 import { openBrowserPage, openPopupWindowInNewWindow, openInstallPage, getLocalKey, sendAutoClearAction, handleAutofillCardWithPermission, handleAutofillWithPermission, processCrossDomainDialogResult, processMatchingLoginsResult, processSavePromptResult } from '../utils';
 import runMigrations from '../migrations';
 import onTabFocused from '../tabs/onTabFocused';
+import handleCheckShareLinkSupport from './handleCheckShareLinkSupport';
 
 /** 
 * Function to handle messages sent to the background script.
@@ -17,7 +18,7 @@ import onTabFocused from '../tabs/onTabFocused';
 * @param {Object} migrations - The state object to track migrations.
 * @return {Promise<boolean>} A promise that resolves to true if the message is handled successfully, otherwise false.
 */
-const onMessage = (request, sender, sendResponse, migrations) => {
+const onMessage = (request, sender, sendResponse, migrations, savePromptActions, tabUpdateData, tabsInputData) => {
   try {
     if (!request || !request.action || request.target !== REQUEST_TARGETS.BACKGROUND) {
       return false;
@@ -144,12 +145,42 @@ const onMessage = (request, sender, sendResponse, migrations) => {
 
       case REQUEST_ACTIONS.SAVE_PROMPT_RESULT: {
         if (request?.storageKey) {
-          processSavePromptResult(request)
+          processSavePromptResult(request, savePromptActions, tabUpdateData, tabsInputData)
             .then(() => { sendResponse({ status: 'ok' }); })
             .catch(e => { sendResponse({ status: 'error', message: e.message }); });
         } else {
           sendResponse({ status: 'error', message: 'Missing storageKey' });
         }
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.CLEAR_SAVE_PROMPT_STATE: {
+        savePromptActions.splice(0, savePromptActions.length);
+
+        Object.keys(tabsInputData).forEach(tabId => {
+          delete tabsInputData[tabId];
+        });
+
+        const tabIds = Object.keys(tabUpdateData);
+
+        Promise.all(tabIds.map(async tabId => {
+          if (tabUpdateData[tabId]?.savePromptVisible) {
+            tabUpdateData[tabId].savePromptVisible = false;
+
+            try {
+              await browser.tabs.sendMessage(Number(tabId), {
+                action: REQUEST_ACTIONS.DISMISS_SAVE_PROMPT,
+                target: REQUEST_TARGETS.CONTENT
+              });
+            } catch {}
+          }
+
+          await storage.removeItem(`session:savePromptContext-${tabId}`).catch(() => {});
+          await storage.removeItem(`session:savePromptSuppressed-${tabId}`).catch(() => {});
+        }))
+          .then(() => { sendResponse({ status: 'ok' }); })
+          .catch(() => { sendResponse({ status: 'ok' }); });
 
         break;
       }
@@ -162,6 +193,31 @@ const onMessage = (request, sender, sendResponse, migrations) => {
           messages: i18nState.messages,
           isInitialized: i18nState.isInitialized
         });
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.CHECK_SHARE_LINK_SUPPORT: {
+        handleCheckShareLinkSupport(sendResponse);
+        break;
+      }
+
+      case REQUEST_ACTIONS.SHARE_LINK_IMPORT: {
+        const VALID_TYPES = new Set(['v1p', 'v1k']);
+        const SAFE_PARAM_RE = /^[A-Za-z0-9_-]+$/;
+
+        if (
+          request?.id && SAFE_PARAM_RE.test(request.id) &&
+          request?.type && VALID_TYPES.has(request.type) &&
+          request?.nonce && SAFE_PARAM_RE.test(request.nonce) &&
+          request?.key && SAFE_PARAM_RE.test(request.key)
+        ) {
+          openPopupWindowInNewWindow({ pathname: `/share-import/${request.id}/${request.type}/${request.nonce}/${request.key}?fresh` })
+            .then(() => { sendResponse({ status: 'ok' }); })
+            .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+        } else {
+          sendResponse({ status: 'error', message: 'Invalid share link parameters' });
+        }
 
         break;
       }

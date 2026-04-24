@@ -15,6 +15,7 @@ import DetailsIcon from '@/assets/popup-window/details.svg?react';
 import MoreUrlIcon from '@/assets/popup-window/more-url.svg?react';
 import TrashIcon from '@/assets/popup-window/trash.svg?react';
 import QrIcon from '@/assets/popup-window/qr.svg?react';
+import ShareIcon from '@/assets/popup-window/share.svg?react';
 
 /**
 * Function to render a custom option in the item dropdown.
@@ -36,6 +37,20 @@ const ItemCustomOption = option => {
           >
             <DetailsIcon />
             <span>{getMessage('this_tab_more_details')}</span>
+          </ClearLink>
+        </div>
+      );
+    }
+
+    case 'share': {
+      return (
+        <div className='react-select-dropdown__option share'>
+          <ClearLink
+            to={`/share/${option.data.deviceId}/${option.data.vaultId}/${option.data.id}`}
+            className='react-select-dropdown__option--uri share'
+          >
+            <ShareIcon />
+            <span>{getMessage('this_tab_more_share')}</span>
           </ClearLink>
         </div>
       );

@@ -124,6 +124,10 @@ export default class Wifi extends Item {
       { value: 'details', label: getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
     ];
 
+    if (this.securityType === SECURITY_TIER.SECRET || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists)) {
+      dO.push({ value: 'share', label: getMessage('this_tab_more_share'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'share' });
+    }
+
     if (this.content.ssid && this.sifExists) {
       dO.push({ value: 'showQr', label: getMessage('this_tab_more_show_qr'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'showQr' });
     }
@@ -145,6 +149,10 @@ export default class Wifi extends Item {
 
   get sifExists () {
     return this.#s_wifi_password && this.#s_wifi_password !== '';
+  }
+
+  get hasShareableContent () {
+    return !!(this.content.ssid || this.sifExists || this.content.notes);
   }
 
   async generateWifiUri () {
@@ -172,6 +180,34 @@ export default class Wifi extends Item {
     uri += ';';
 
     return uri;
+  }
+
+  /**
+  * Build a share-ready payload by decrypting SIF fields.
+  * Clears decrypted values from memory after building.
+  * @returns {Promise<{contentType: string, contentVersion: number, content: Object}>}
+  */
+  async toShareContent () {
+    let wifiPassword = '';
+
+    if (this.sifExists) {
+      const sif = await this.decryptSif();
+      wifiPassword = sif.wifiPassword || '';
+      sif.wifiPassword = null;
+    }
+
+    const content = {
+      name: this.content.name || '',
+      ssid: this.content.ssid || '',
+      password: wifiPassword,
+      securityType: this.content.securityType || 'none',
+      hidden: this.content.hidden || false,
+      notes: this.content.notes || ''
+    };
+
+    wifiPassword = null;
+
+    return { contentType: Wifi.contentType, contentVersion: Wifi.contentVersion, content };
   }
 
   toJSON () {

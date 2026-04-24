@@ -33,7 +33,7 @@ export default defineBackground({
     }, 1000);
 
     browser.runtime.onInstalled.addListener(async details => await onInstalled(details, migrations));
-    browser.runtime.onMessage.addListener(createMessageRouter({ migrations, tabsInputData }));
+    browser.runtime.onMessage.addListener(createMessageRouter({ migrations, tabsInputData, savePromptActions, tabUpdateData }));
     browser.runtime.onStartup.addListener(() => onStartup(migrations));
 
     if (browser?.commands?.onCommand) {

@@ -18,7 +18,7 @@ export { default as updateBadge } from './badge/updateBadge.js';
 
 // Save prompt functions
 export { default as addSavePromptAction } from './savePrompt/addSavePromptAction.js';
-export { default as checkDomainOnIgnoredList } from './savePrompt/checkDomainOnIgnoredList.js';
+export { default as checkDomainOnIgnoredList, getRootDomain } from './savePrompt/checkDomainOnIgnoredList.js';
 export { default as checkFormData } from './savePrompt/checkFormData.js';
 export { default as checkServicesData } from './savePrompt/checkServicesData.js';
 export { default as cleanTabsInputData } from './savePrompt/cleanTabsInputData.js';
@@ -53,4 +53,5 @@ export { default as sendDomainToPopupWindow } from './sendDomainToPopupWindow.js
 export { default as sendMatchingLoginsToTab } from './sendMatchingLoginsToTab.js';
 export { default as sendSavePromptToTab } from './sendSavePromptToTab.js';
 export { default as shortcutAutofill, processMatchingLoginsResult } from './shortcutAutofill.js';
+export { default as notifyShareTabs } from './notifyShareTabs.js';
 export { default as updateContextMenu } from './updateContextMenu.js';

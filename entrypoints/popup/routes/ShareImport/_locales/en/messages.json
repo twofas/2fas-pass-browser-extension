@@ -1,0 +1,90 @@
+{
+  "share_import_header_login": {
+    "message": "Importing a Login to \n2FAS Pass",
+    "description": "Header for importing a shared Login item"
+  },
+  "share_import_header_secure_note": {
+    "message": "Importing a Secure Note to \n2FAS Pass",
+    "description": "Header for importing a shared Secure Note item"
+  },
+  "share_import_header_payment_card": {
+    "message": "Importing a Payment Card to \n2FAS Pass",
+    "description": "Header for importing a shared Payment Card item"
+  },
+  "share_import_header_wifi": {
+    "message": "Importing a Wi-Fi to \n2FAS Pass",
+    "description": "Header for importing a shared Wi-Fi item"
+  },
+  "share_import_header_custom": {
+    "message": "Importing a Note to \n2FAS Pass",
+    "description": "Header for importing a shared custom/text item"
+  },
+  "share_import_subheader": {
+    "message": "Review the shared data below and save it to your Vault.",
+    "description": "Subheader explaining the import process"
+  },
+  "share_import_add_item": {
+    "message": "Add Item",
+    "description": "Button text for adding the imported item to the vault"
+  },
+  "share_import_password_header": {
+    "message": "Enter password",
+    "description": "Header for the password entry view"
+  },
+  "share_import_password_subheader": {
+    "message": "This shared data is password-protected. Enter the password to decrypt it.",
+    "description": "Subheader explaining password requirement"
+  },
+  "share_import_password_placeholder": {
+    "message": "Password",
+    "description": "Placeholder for the password input field"
+  },
+  "share_import_password_submit": {
+    "message": "Decrypt",
+    "description": "Button text for submitting the password"
+  },
+  "share_import_password_error": {
+    "message": "Wrong password. Please try again.",
+    "description": "Error message when decryption fails due to wrong password"
+  },
+  "share_import_loading": {
+    "message": "Decrypting shared data...",
+    "description": "Loading message while decrypting"
+  },
+  "share_import_fetch_error": {
+    "message": "Failed to retrieve the shared data. The link may have expired or already been used.",
+    "description": "Error message when the API fetch fails"
+  },
+  "share_import_decrypt_error": {
+    "message": "Failed to decrypt the shared data.",
+    "description": "Error message when decryption fails"
+  },
+  "share_import_invalid_params": {
+    "message": "Invalid share link parameters.",
+    "description": "Error message when share params are missing or invalid"
+  },
+  "share_import_name_required": {
+    "message": "Name is required",
+    "description": "Validation message when name field is empty"
+  },
+  "share_import_name_max_length": {
+    "message": "Name must be less than 256 characters.",
+    "description": "Validation message when name exceeds 255 characters"
+  },
+  "share_import_username_max_length": {
+    "message": "Username must be less than 256 characters.",
+    "description": "Validation message when username exceeds 255 characters"
+  },
+  "share_import_text_max_length": {
+    "message": "Text must be less than 16,385 characters.",
+    "description": "Validation message when secure note text exceeds 16384 characters"
+  },
+  "share_import_notes_max_length": {
+    "message": "Notes must be less than 16,385 characters.",
+    "description": "Validation message when notes exceed 16384 characters"
+  },
+  "share_import_unsupported_type": {
+    "message": "This content type is not yet supported for import.",
+    "description": "Error message for unsupported content types"
+  }
+}

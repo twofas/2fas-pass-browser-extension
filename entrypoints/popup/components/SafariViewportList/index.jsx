@@ -33,7 +33,7 @@ const findScrollableParent = element => {
 const SafariViewportList = ({ items, children, overscan = 10, className }) => {
   const listRef = useRef(null);
   const [scrollElement, setScrollElement] = useState(null);
-  const scrollMarginRef = useRef(0);
+  const [scrollMargin, setScrollMargin] = useState(0);
 
   const getScrollElement = useCallback(() => scrollElement, [scrollElement]);
   const estimateSize = useCallback(() => ITEM_HEIGHT, []);
@@ -45,7 +45,7 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
     estimateSize,
     getItemKey,
     overscan,
-    scrollMargin: scrollMarginRef.current
+    scrollMargin
   });
 
   useLayoutEffect(() => {
@@ -56,16 +56,41 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
     const parent = findScrollableParent(listRef.current);
 
     if (parent) {
-      const parentRect = parent.getBoundingClientRect();
-      const listRect = listRef.current.getBoundingClientRect();
-      scrollMarginRef.current = listRect.top - parentRect.top + parent.scrollTop;
       setScrollElement(parent);
     }
   }, [scrollElement]);
 
+  useLayoutEffect(() => {
+    if (!listRef.current || !scrollElement) {
+      return;
+    }
+
+    const calculateMargin = () => {
+      if (!listRef.current || !scrollElement) {
+        return;
+      }
+
+      const parentRect = scrollElement.getBoundingClientRect();
+      const listRect = listRef.current.getBoundingClientRect();
+      const newMargin = Math.round(listRect.top - parentRect.top + scrollElement.scrollTop);
+      setScrollMargin(prev => prev === newMargin ? prev : newMargin);
+    };
+
+    calculateMargin();
+
+    const resizeObserver = new ResizeObserver(calculateMargin);
+    let element = listRef.current.parentElement;
+
+    while (element && element !== scrollElement) {
+      resizeObserver.observe(element);
+      element = element.parentElement;
+    }
+
+    return () => resizeObserver.disconnect();
+  }, [scrollElement]);
+
   const virtualItems = virtualizer.getVirtualItems();
   const totalSize = virtualizer.getTotalSize();
-  const margin = scrollMarginRef.current;
 
   return (
     <div
@@ -82,7 +107,7 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
           left: 0,
           position: 'absolute',
           top: 0,
-          transform: `translate3d(0,${(virtualItems[0]?.start ?? 0) - margin}px,0)`,
+          transform: `translate3d(0,${(virtualItems[0]?.start ?? 0) - scrollMargin}px,0)`,
           width: '100%',
           willChange: 'transform'
         }}

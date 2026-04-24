@@ -4,18 +4,29 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
-* Function to get the local key from storage.
-* @return {Promise<string|null>} A promise that resolves to the local key or null if not found.
+import generateLocalKey from './generateLocalKey.js';
+
+/**
+* Function to get the local key from storage, regenerating it if missing.
+* @return {Promise<string|null>} A promise that resolves to the local key or null if generation fails.
 */
 const getLocalKey = async () => {
   const localKey = await storage.getItem('local:lKey');
 
-  if (!localKey) {
-    return null;
+  if (localKey) {
+    return localKey;
   }
 
-  return localKey;
+  try {
+    const newKey = await generateLocalKey();
+    await storage.setItem('local:lKey', newKey);
+
+    return newKey;
+  } catch (e) {
+    await CatchError(e);
+
+    return null;
+  }
 };
 
 export default getLocalKey;

@@ -76,7 +76,7 @@ function LoginIcon ({ item }) {
         return { type: 'label' };
       }
 
-      return { type: 'favicon', url: `https://icon.2fas.com/${iconDomain}/favicon.png` };
+      return { type: 'favicon', url: `${import.meta.env.VITE_ICON_API_URL}/${iconDomain}/favicon.png` };
     }
 
     return { type: 'custom', url: item?.content?.customImageUrl };

@@ -52,7 +52,9 @@ export default defineContentScript({
     const encrypted = cryptoAvailable && savePrompt === 'default_encrypted';
 
     const passwordInputs = getPasswordInputs();
-    const passwordForms = passwordInputs.map(input => input.closest('form'));
+    const passwordForms = passwordInputs
+      .map(input => input.closest('form'))
+      .filter(Boolean);
 
     const usernameInputs = getUsernameInputs(passwordForms);
     setUsernameSkips(passwordInputs, usernameInputs);
@@ -61,7 +63,7 @@ export default defineContentScript({
     setIDsToInputs(allInputs);
     checkInitialInputsValues(allInputs, localKey, encrypted);
 
-    const uniqueForms = [...new Set(passwordForms.filter(Boolean))];
+    const uniqueForms = [...new Set(passwordForms)];
 
     const removeListeners = () => {
       browser.runtime.onMessage.removeListener(handlePromptMessage);

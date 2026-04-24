@@ -50,6 +50,8 @@ const onStartup = async migrations => {
   const devices = await storage.getItem('local:devices');
 
   if (devices && Array.isArray(devices)) {
+    devices.forEach(device => { delete device.uuid; });
+
     const filteredDevices = devices.filter(device =>
       device.id &&
       device.sessionId &&

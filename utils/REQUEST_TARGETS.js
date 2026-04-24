@@ -13,5 +13,6 @@ export const REQUEST_TARGETS = Object.freeze({
   POPUP_ADD_NEW: 'popup_add_new',
   POPUP_THIS_TAB: 'popup_this_tab',
   PROMPT: 'prompt',
-  FOCUS_CONTENT: 'focus_content'
+  FOCUS_CONTENT: 'focus_content',
+  SHARE_CONTENT: 'share_content'
 });

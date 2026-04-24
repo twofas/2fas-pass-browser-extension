@@ -6,7 +6,7 @@
 
 import contextMenuConfigured from '../contextMenu/contextMenuConfigured';
 import contextMenuNotConfigured from '../contextMenu/contextMenuNotConfigured';
-import { updateBadge, updateContextMenu, setBadgeLocked } from '../utils';
+import { updateBadge, updateContextMenu, setBadgeLocked, notifyShareTabs } from '../utils';
 import getItems from '@/partials/sessionStorage/getItems';
 
 /** 
@@ -33,14 +33,16 @@ const onConfiguredChange = async newValue => {
     if (newValue === true) {
       await Promise.all([
         updateBadge(true, items).catch(() => {}),
-        contextMenuConfigured(items).catch(() => {})
+        contextMenuConfigured(items).catch(() => {}),
+        notifyShareTabs(true).catch(() => {})
       ]);
 
       await updateContextMenu(items);
     } else {
       await Promise.all([
         setBadgeLocked().catch(() => {}),
-        contextMenuNotConfigured(() => {})
+        contextMenuNotConfigured(() => {}),
+        notifyShareTabs(false).catch(() => {})
       ]);
     }
 

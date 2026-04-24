@@ -29,7 +29,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     return; // Ignore the event
   }
 
-  if (!localKey?.data) {
+  if (!localKey?.data && crypto?.subtle) {
     let localKeyResponse = null;
 
     try {

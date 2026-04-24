@@ -4,12 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendDomainToPopupWindow, sendSavePromptToTab, removeSavePromptAction, handleSavePromptResponse, setBadgeLocked, setBadgeIcon, setBadgeText } from '../utils';
+import { sendDomainToPopupWindow, sendSavePromptToTab, removeSavePromptAction, checkDomainOnIgnoredList, getRootDomain, setBadgeLocked, setBadgeIcon, setBadgeText } from '../utils';
 import isTabIsPopupWindow from './isTabIsPopupWindow';
 import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
 import checkPromptCS from '@/partials/contentScript/checkPromptCS';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
-import { parseDomain } from 'parse-domain';
 import getItems from '@/partials/sessionStorage/getItems';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 
@@ -74,6 +73,7 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
     if (tab.url && (!tabUpdateData[tabID].url || tabUpdateData[tabID].url !== tab.url)) {
       tabUpdateData[tabID].url = tab.url;
       tabUpdateData[tabID].savePromptVisible = false;
+      await storage.removeItem(`session:savePromptSuppressed-${tabID}`);
     }
 
     let items;
@@ -92,54 +92,58 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
     const action = savePromptActions.filter(a => a.tabId === tabID)[0];
 
     if (action && !tabUpdateData[tabID].savePromptVisible) {
-      tabUpdateData[tabID].savePromptVisible = true;
+      const storageSavePrompt = await storage.getItem('local:savePrompt');
 
-      await injectCSIfNotAlready(tabID, REQUEST_TARGETS.CONTENT).catch(() => {});
-
-      let actionUrlHostname = null;
-      let tabUrlHostname = null;
-      let parsedActionUrl = null;
-      let parsedTabUrl = null;
-      let parsingFailed = false;
-
-      try {
-        actionUrlHostname = new URL(action.url).hostname;
-        tabUrlHostname = new URL(tab.url).hostname;
-        parsedActionUrl = parseDomain(actionUrlHostname);
-        parsedTabUrl = parseDomain(tabUrlHostname);
-
-        if (!parsedActionUrl || !parsedTabUrl ||
-            !parsedActionUrl.domain || !parsedTabUrl.domain ||
-            !parsedActionUrl.topLevelDomains || !parsedTabUrl.topLevelDomains ||
-            parsedActionUrl.topLevelDomains.length === 0 || parsedTabUrl.topLevelDomains.length === 0) {
-          parsingFailed = true;
-        }
-      } catch {
-        parsingFailed = true;
-      }
-
-      if (parsingFailed) {
+      if (storageSavePrompt && storageSavePrompt !== 'default' && storageSavePrompt !== 'default_encrypted') {
         removeSavePromptAction(tabID, action.url, savePromptActions);
         return;
       }
 
-      const actionDomain = `${parsedActionUrl.domain}.${parsedActionUrl.topLevelDomains[0]}`;
-      const tabDomain = `${parsedTabUrl.domain}.${parsedTabUrl.topLevelDomains[0]}`;
+      const tabUrlIgnored = await checkDomainOnIgnoredList(tab.url);
+      const requestUrlIgnored = action?.url ? await checkDomainOnIgnoredList(action.url) : false;
+
+      if (tabUrlIgnored || requestUrlIgnored) {
+        removeSavePromptAction(tabID, action.url, savePromptActions);
+        return;
+      }
+
+      tabUpdateData[tabID].savePromptVisible = true;
+
+      await injectCSIfNotAlready(tabID, REQUEST_TARGETS.CONTENT).catch(() => {});
+
+      let actionDomain = null;
+      let tabDomain = null;
+
+      try {
+        actionDomain = getRootDomain(new URL(action.url).hostname);
+        tabDomain = getRootDomain(new URL(tab.url).hostname);
+      } catch {
+        removeSavePromptAction(tabID, action.url, savePromptActions);
+        return;
+      }
 
       if (actionDomain !== tabDomain) {
         removeSavePromptAction(tabID, action.url, savePromptActions);
         return;
       }
 
-      const res = await sendSavePromptToTab(tabID, action.serviceTypeData);
-      await handleSavePromptResponse(
-        res,
-        tabID,
-        action.url,
-        { username: action.username, password: action.password },
-        savePromptActions,
-        tabUpdateData
-      );
+      const storageKey = `session:savePromptContext-${tabID}`;
+      const existingContext = await storage.getItem(storageKey);
+
+      if (!existingContext) {
+        await storage.setItem(storageKey, JSON.stringify({
+          tabId: tabID,
+          url: action.url,
+          tabUrl: action.tabUrl || tab.url,
+          values: {
+            username: action.username,
+            password: action.password,
+            encrypted: action.encrypted || false
+          }
+        }));
+      }
+
+      await sendSavePromptToTab(tabID, action.serviceTypeData, storageKey);
     }          
   } catch (e) {
     await CatchError(e);

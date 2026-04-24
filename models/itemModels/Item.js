@@ -116,6 +116,7 @@ class Item {
     try {
       const sifAB = Base64ToArrayBuffer(secureItemValue);
       sifDecryptedBytes = DecryptBytes(sifAB);
+      wipeBuffer(sifAB);
     } catch (e) {
       throw new TwoFasError(TwoFasError.internalErrors.decryptSifDecryptBytes, { event: e, additional: { func: 'decryptSif' } });
     }
@@ -133,6 +134,8 @@ class Item {
         itemKey = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: this.deviceId, itemId: this.id });
       }
     } catch (e) {
+      wipeBuffer(sifDecryptedBytes?.iv);
+      wipeBuffer(sifDecryptedBytes?.data);
       sifDecryptedBytes = null;
 
       throw new TwoFasError(TwoFasError.internalErrors.decryptSifGetKey, {
@@ -149,6 +152,8 @@ class Item {
     try {
       encryptionItemKey = await storage.getItem(`session:${itemKey}`);
     } catch (e) {
+      wipeBuffer(sifDecryptedBytes?.iv);
+      wipeBuffer(sifDecryptedBytes?.data);
       sifDecryptedBytes = null;
       throw new TwoFasError(TwoFasError.internalErrors.decryptSifStorageGetKey, { event: e, additional: { func: 'decryptSif' } });
     }
@@ -165,7 +170,10 @@ class Item {
         false,
         ['decrypt']
       );
+      wipeBuffer(encryptionItemKeyAB);
     } catch (e) {
+      wipeBuffer(sifDecryptedBytes?.iv);
+      wipeBuffer(sifDecryptedBytes?.data);
       sifDecryptedBytes = null;
       throw new TwoFasError(TwoFasError.internalErrors.decryptSifImportKey, { event: e, additional: { func: 'decryptSif' } });
     }
@@ -180,6 +188,8 @@ class Item {
         sifDecryptedBytes.data
       );
     } catch (e) {
+      wipeBuffer(sifDecryptedBytes?.iv);
+      wipeBuffer(sifDecryptedBytes?.data);
       sifDecryptedBytes = null;
       encryptionKey = null;
 
@@ -189,10 +199,13 @@ class Item {
       });
     }
 
+    wipeBuffer(sifDecryptedBytes?.iv);
+    wipeBuffer(sifDecryptedBytes?.data);
     sifDecryptedBytes = null;
     encryptionKey = null;
 
     const result = ArrayBufferToString(decryptedSifAB);
+    wipeBuffer(decryptedSifAB);
     decryptedSifAB = null;
 
     return result;
@@ -252,6 +265,7 @@ class Item {
         false,
         ['encrypt']
       );
+      wipeBuffer(encryptionItemKeyAB);
     } catch (e) {
       throw new TwoFasError(TwoFasError.internalErrors.encryptSifImportKey, { event: e, additional: { func: 'encryptSif' } });
     }
@@ -268,6 +282,7 @@ class Item {
         encryptionKey,
         plainTextAB
       );
+      wipeBuffer(plainTextAB);
     } catch (e) {
       encryptionKey = null;
       nonce = null;
@@ -281,7 +296,9 @@ class Item {
     encryptionKey = null;
 
     const encryptedBytes = EncryptBytes(nonce.ArrayBuffer, encryptedSifAB);
+    wipeBuffer(nonce?.ArrayBuffer);
     nonce = null;
+    wipeBuffer(encryptedSifAB);
     encryptedSifAB = null;
 
     const result = ArrayBufferToBase64(encryptedBytes);
