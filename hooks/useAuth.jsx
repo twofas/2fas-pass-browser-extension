@@ -50,6 +50,10 @@ export const AuthProvider = memo(({ children }) => {
 
   const login = useCallback(async () => {
     await setConfigured(Date.now());
+
+    const store = usePopupStateStore.getState();
+    store.clearHref();
+
     setStateConfigured(true);
     navigate('/', { replace: true });
   }, [navigate]);

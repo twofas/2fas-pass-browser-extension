@@ -166,6 +166,10 @@ export default class PaymentCard extends Item {
       { value: 'details', label: getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
     ];
 
+    if (this.securityType === SECURITY_TIER.SECRET || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists)) {
+      dO.push({ value: 'share', label: getMessage('this_tab_more_share'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'share' });
+    }
+
     if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
       dO.push({ value: 'forget', label: getMessage('this_tab_more_forget_payment_card'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
     }
@@ -225,6 +229,10 @@ export default class PaymentCard extends Item {
     return this.cardNumberExists || this.expirationDateExists || this.securityCodeExists;
   }
 
+  get hasShareableContent () {
+    return !!(this.content.cardHolder || this.sifExists || this.content.notes);
+  }
+
   get cardNumberExists () {
     return this.#s_cardNumber && this.#s_cardNumber.length > 0;
   }
@@ -272,6 +280,42 @@ export default class PaymentCard extends Item {
     }
 
     return sum % 10 === 0;
+  }
+
+  /**
+  * Build a share-ready payload by decrypting SIF fields.
+  * Clears decrypted values from memory after building.
+  * @returns {Promise<{contentType: string, contentVersion: number, content: Object}>}
+  */
+  async toShareContent () {
+    let cardNumber = '';
+    let expirationDate = '';
+    let securityCode = '';
+
+    if (this.sifExists) {
+      const sif = await this.decryptSif();
+      cardNumber = sif.cardNumber || '';
+      expirationDate = sif.expirationDate || '';
+      securityCode = sif.securityCode || '';
+      sif.cardNumber = null;
+      sif.expirationDate = null;
+      sif.securityCode = null;
+    }
+
+    const content = {
+      name: this.content.name || '',
+      cardHolder: this.content.cardHolder || '',
+      cardNumber,
+      expirationDate,
+      securityCode,
+      notes: this.content.notes || ''
+    };
+
+    cardNumber = null;
+    expirationDate = null;
+    securityCode = null;
+
+    return { contentType: PaymentCard.contentType, contentVersion: PaymentCard.contentVersion, content };
   }
 
   toJSON () {

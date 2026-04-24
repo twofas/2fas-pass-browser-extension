@@ -49,6 +49,12 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   }
   // [END] COMMENT THIS WHEN DEBUGGING
 
+  const suppressed = await storage.getItem(`session:savePromptSuppressed-${details.tabId}`);
+
+  if (suppressed) {
+    return;
+  }
+
   // Base filters
   if (
     !details ||
@@ -112,7 +118,16 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
 
   try {
     storageSavePrompt = await storage.getItem('local:savePrompt');
-    domainOnIgnoredList = await checkDomainOnIgnoredList(details?.initiator || details?.originUrl); // FUTURE - initiator or originUrl first?
+
+    let tab;
+
+    try {
+      tab = await browser.tabs.get(details.tabId);
+    } catch {}
+
+    const tabUrlIgnored = tab?.url ? await checkDomainOnIgnoredList(tab.url) : false;
+    const requestUrlIgnored = details?.url ? await checkDomainOnIgnoredList(details.url) : false;
+    domainOnIgnoredList = tabUrlIgnored || requestUrlIgnored;
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.onWebRequestDomainIgnoredListError, { event: e });
   }
@@ -137,10 +152,10 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     return;
   }
 
-  // Only when password exists
+  // Only when both username and password exist
   const values = getValuesFromTabsInputData(tabsInputData[details.tabId]);
 
-  if (!values?.password) {
+  if (!values?.password || !values?.username) {
     return;
   }
 

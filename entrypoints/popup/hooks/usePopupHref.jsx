@@ -35,7 +35,7 @@ const usePopupHref = (hydrationComplete = false) => {
     }
 
     const pathname = location.pathname;
-    const excludedPaths = ['/fetch', '/blocked'];
+    const excludedPaths = ['/fetch', '/blocked', '/connect'];
     const isExcluded = excludedPaths.includes(pathname) || pathname.startsWith('/fetch/');
 
     if (isExcluded) {

@@ -7,6 +7,7 @@
 .connect,
 .progress,
 .device-select,
+.device-new,
 .push {
   left: 12px;
   position: absolute;
@@ -17,6 +18,7 @@
 
 .connect,
 .device-select,
+.device-new,
 .push {
   h1 {
     color: var(--primary-text);
@@ -413,6 +415,7 @@
           width: 100%;
         }
       }
+
     }
 
     &-add {
@@ -467,6 +470,124 @@
       line-height: 1.5;
       margin: 0;
       text-align: center;
+    }
+  }
+}
+
+.device-new {
+  border: 1px solid var(--primary-box-stroke);
+  border-radius: 8px;
+  height: calc(100% - 56px - 40px);
+  overflow: hidden;
+  z-index: 2;
+
+  &-container {
+    align-items: center;
+    background-color: var(--primary-box-bg);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+
+    h1 {
+      margin-bottom: 0;
+    }
+  }
+
+  &-subtitle {
+    color: var(--secondary-text);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: normal;
+    margin: 0;
+    text-align: center;
+    width: 246px;
+  }
+
+  &-illustration {
+    margin-top: 56px;
+
+    svg {
+      height: auto;
+      width: 217px;
+
+      > g:first-child {
+        fill: var(--object);
+      }
+
+      > g:nth-child(2) {
+        stroke: var(--object);
+      }
+
+      > g:last-child {
+        fill: var(--primary-color);
+      }
+    }
+  }
+
+  &-button {
+    align-items: center;
+    display: inline-flex;
+    font-size: 12px;
+    gap: 0 10px;
+    height: 34px;
+    margin-top: 48px;
+    padding: 0 10px;
+
+    svg {
+      height: 13px;
+      width: 13px;
+
+      circle {
+        fill: var(--tertiary-text);
+        transition: fill var(--anim);
+      }
+
+      path {
+        stroke: var(--primary-color);
+        transition: stroke var(--anim);
+      }
+    }
+
+    &:hover,
+    &:focus {
+      svg path {
+        stroke: var(--focus);
+      }
+    }
+
+    &:active {
+      svg path {
+        stroke: var(--pressed);
+      }
+    }
+  }
+
+  &-info {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px 0;
+    margin-top: auto;
+    padding-bottom: 24px;
+    text-align: center;
+
+    svg {
+      height: 16px;
+      stroke: var(--object);
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.5;
+      width: auto;
+    }
+
+    p {
+      color: var(--secondary-text);
+      font-size: 12px;
+      font-weight: 400;
+      line-height: normal;
+      margin: 0;
+      max-width: 312px;
     }
   }
 }

@@ -5,10 +5,30 @@
 // See LICENSE file for full terms
 
 import decryptValues from './decryptValues';
+import removeSavePromptAction from './removeSavePromptAction';
 import openPopupWindowInNewWindow from '../openPopupWindowInNewWindow';
 import { SAVE_PROMPT_ACTIONS, REQUEST_STRING_ACTIONS, PULL_REQUEST_TYPES } from '@/constants';
 import { getCurrentDevice } from '@/partials/functions';
 import Login from '@/models/itemModels/Login';
+
+/**
+* Cleans up save prompt state after the user has made a choice.
+* Removes the action from the in-memory array and resets tab visibility.
+* @param {string} tabId - The tab ID from the save prompt context.
+* @param {string} url - The URL from the save prompt context.
+* @param {Array} savePromptActions - The in-memory array of pending save prompt actions.
+* @param {Object} tabUpdateData - The tab update tracking data.
+* @return {void}
+*/
+const cleanupSavePromptState = (tabId, url, savePromptActions, tabUpdateData) => {
+  if (savePromptActions && Array.isArray(savePromptActions)) {
+    removeSavePromptAction(tabId, url, savePromptActions);
+  }
+
+  if (tabUpdateData && tabUpdateData[tabId]) {
+    tabUpdateData[tabId].savePromptVisible = false;
+  }
+};
 
 /**
 * Processes the save prompt result sent from the content script.
@@ -18,9 +38,12 @@ import Login from '@/models/itemModels/Login';
 * @param {Object} request - The result from the content script.
 * @param {string} request.storageKey - The session storage key for context.
 * @param {string} request.status - The user's action (newLogin, updateLogin, doNotAsk, cancel).
+* @param {Array} savePromptActions - The in-memory array of pending save prompt actions.
+* @param {Object} tabUpdateData - The tab update tracking data.
+* @param {Object} tabsInputData - The in-memory input data for all tabs.
 * @return {Promise<void>}
 */
-const processSavePromptResult = async request => {
+const processSavePromptResult = async (request, savePromptActions, tabUpdateData, tabsInputData) => {
   const { storageKey, status } = request;
 
   if (!storageKey || !status) {
@@ -42,11 +65,15 @@ const processSavePromptResult = async request => {
     return;
   }
 
-  const { url, values } = context;
+  const { tabId, url, tabUrl, values } = context;
   await storage.removeItem(storageKey);
+
+  cleanupSavePromptState(tabId, url, savePromptActions, tabUpdateData);
 
   switch (status) {
     case SAVE_PROMPT_ACTIONS.NEW_LOGIN: {
+      await storage.setItem(`session:savePromptSuppressed-${tabId}`, true);
+
       let decryptedValues;
 
       if (values?.encrypted) {
@@ -83,6 +110,8 @@ const processSavePromptResult = async request => {
     }
 
     case SAVE_PROMPT_ACTIONS.UPDATE_LOGIN: {
+      await storage.setItem(`session:savePromptSuppressed-${tabId}`, true);
+
       let decryptedValues;
 
       if (values?.encrypted) {
@@ -119,8 +148,17 @@ const processSavePromptResult = async request => {
         storageIgnoreList = [];
       }
 
-      storageIgnoreList.push(new URL(url).hostname);
+      const ignoreUrl = tabUrl || url;
+      storageIgnoreList.push(new URL(ignoreUrl).hostname);
       await storage.setItem('local:savePromptIgnoreDomains', storageIgnoreList);
+
+      await storage.setItem(`session:savePromptSuppressed-${tabId}`, true);
+
+      if (tabsInputData && tabsInputData[tabId]) {
+        delete tabsInputData[tabId];
+        tabsInputData[tabId] = {};
+      }
+
       return;
     }
 

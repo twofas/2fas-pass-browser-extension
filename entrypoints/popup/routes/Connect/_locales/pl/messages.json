@@ -1,11 +1,15 @@
 {
   "connect_header": {
-    "message": "Zeskanuj ten kod QR za pomocą aplikacji mobilnej 2FAS Pass",
-    "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
+    "message": "Kliknij „Połącz” w aplikacji mobilnej 2FAS Pass, aby zeskanować kod QR.",
+    "description": "Header instructing the user to tap Connect in the mobile app to scan the QR code"
   },
   "connect_description": {
     "message": "Zrób to przy pierwszym uruchomieniu rozszerzenia przeglądarki, aby bezpiecznie połączyć je z aplikacją mobilną.",
     "description": "Explains the need to scan the QR code for secure access during each browser launch"
+  },
+  "connect_add_new_device": {
+    "message": "Dodaj nowe urządzenie",
+    "description": "Button text shown on the empty device select view that opens the QR code view"
   },
   "connect_connecting": {
     "message": "Łączenie…",
@@ -50,5 +54,17 @@
   "connect_push_trouble_tooltip_use_qr": {
     "message": "Użyj kodu QR",
     "description": "Instruction to use QR code as an alternative method"
+  },
+  "connect_device_new_header": {
+    "message": "Połącz z aplikacją mobilną",
+    "description": "Header for the device new view when no devices are connected"
+  },
+  "connect_device_new_subtitle": {
+    "message": "Połącz rozszerzenie przeglądarki z aplikacją mobilną 2FAS Pass",
+    "description": "Subtitle explaining the purpose of connecting the extension with the mobile app"
+  },
+  "connect_device_new_connect_button": {
+    "message": "Połącz urządzenie",
+    "description": "Button text to initiate device connection via QR code"
   }
 }

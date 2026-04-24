@@ -154,6 +154,10 @@ export default class Login extends Item {
       { value: 'details', label: getMessage('this_tab_more_details'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'details' }
     ];
 
+    if (this.securityType === SECURITY_TIER.SECRET || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists)) {
+      dO.push({ value: 'share', label: getMessage('this_tab_more_share'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'share' });
+    }
+
     if (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists) {
       dO.push({ value: 'forget', label: getMessage('this_tab_more_forget_password'), deviceId: this.deviceId, vaultId: this.vaultId, id: this.id, type: 'forget' });
     }
@@ -239,6 +243,40 @@ export default class Login extends Item {
 
   get sifExists () {
     return this.#s_password && this.#s_password !== '';
+  }
+
+  get hasShareableContent () {
+    return !!(this.content.username || this.sifExists || this.content.notes || this.content.uris?.length > 0);
+  }
+
+  /**
+  * Build a share-ready payload by decrypting SIF fields.
+  * Clears decrypted values from memory after building.
+  * @returns {Promise<{contentType: string, contentVersion: number, content: Object}>}
+  */
+  async toShareContent () {
+    let password = '';
+
+    if (this.sifExists) {
+      const sif = await this.decryptSif();
+      password = sif.password || '';
+      sif.password = null;
+    }
+
+    const content = {
+      name: this.content.name || '',
+      username: this.content.username || '',
+      password,
+      uris: (this.content.uris || []).map(uri => ({
+        text: uri.text,
+        matcher: uri.matcher
+      })),
+      notes: this.content.notes || ''
+    };
+
+    password = null;
+
+    return { contentType: Login.contentType, contentVersion: Login.contentVersion, content };
   }
 
   toJSON () {

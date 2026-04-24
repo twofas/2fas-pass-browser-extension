@@ -129,7 +129,26 @@ const savePromptVisible = container => {
   return elements.includes(false);
 };
 
-/** 
+/**
+* Dismisses all visible save prompt notifications in the container.
+* @param {HTMLElement} container - The container element to search within.
+* @return {void}
+*/
+const dismissAllSavePrompts = container => {
+  const savePromptElements = Array.from(container.querySelectorAll(S.savePrompt.el));
+
+  savePromptElements.forEach(el => {
+    el.classList.add('twofas-pass-hidden');
+
+    setTimeout(() => {
+      el.classList.remove('twofas-pass-hidden');
+      el.classList.remove('twofas-pass-visible');
+      el.classList.add('twofas-pass-old');
+    }, 200);
+  });
+};
+
+/**
 * Function to generate and display a save prompt notification.
 * @param {Object} request - The request object.
 * @param {Function} sendResponse - The function to send the response back.
@@ -242,3 +261,4 @@ const savePrompt = (request, sendResponse, container) => {
 };
 
 export default savePrompt;
+export { dismissAllSavePrompts };

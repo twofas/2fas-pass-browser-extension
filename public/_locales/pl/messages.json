@@ -76,7 +76,7 @@
     "description": "Error message displayed when copying the error message to the clipboard fails"
   },
   "appDesc": {
-    "message": "2FAS Pass to menedżer haseł nowej generacji, bez kompromisów w zakresie bezpieczeństwa i kontroli nad danymi.",
+    "message": "Zadbaj o bezpieczeństwo i prywatność swoich danych z 2FAS Pass.",
     "description": "Description of the 2FAS Pass Browser Extension highlighting its features"
   },
   "autofill": {
@@ -583,6 +583,10 @@
     "message": "Następna dekada",
     "description": "PrimeReact Calendar next decade button accessibility label"
   },
+  "share_content_open_in_extension": {
+    "message": "Otwórz w 2FAS Pass",
+    "description": "Button label shown on the share page to open the shared data in the 2FAS Pass browser extension"
+  },
   "background_contextMenuConfigured_no_accounts": {
     "message": "Brak pasujących elementów dla tej domeny",
     "description": "Message displayed when no login items match the current domain in the context menu"
@@ -644,7 +648,7 @@
     "description": "Option to prevent the save prompt from appearing in the future"
   },
   "content_save_prompt_add_login": {
-    "message": "Nowy element",
+    "message": "Dodaj element",
     "description": "Button label to add a new login item to 2FAS Pass"
   },
   "content_save_prompt_update_login": {
@@ -711,77 +715,57 @@
     "message": "Przypnij te rozszerzenie do paska zadań.",
     "description": "Prompt asking the user to pin the browser extension to the toolbar"
   },
-  "install_logging_settings_changed": {
-    "message": "Ustawienia „Raportów awarii” zmienione pomyślnie.",
-    "description": "Message displayed when crash log settings are successfully updated"
+  "install_made_to_work_together": {
+    "message": "STWORZONE DO WSPÓŁPRACY",
+    "description": "Subtitle on the left card indicating extension and mobile app work together"
   },
-  "install_privacy_text": {
-    "message": "Prywatność łączy się z bezpieczeństwem i wygodą.",
-    "description": "Text emphasizing the balance of privacy, security, and convenience"
+  "install_extension_requires_mobile": {
+    "message": "Rozszerzenie wymaga aplikacji mobilnej 2FAS Pass.",
+    "description": "Description explaining the mobile app requirement"
   },
-  "install_1_info": {
-    "message": "Rozszerznie przeglądarki zainstalowane pomyślnie!",
-    "description": "Message displayed when the browser extension is installed successfully"
+  "install_dont_have_app": {
+    "message": "Nie masz aplikacji mobilnej?",
+    "description": "Question asking if user has the mobile app"
   },
-  "install_1_header": {
-    "message": "Przypnij aby mieć \nszybki dostęp do \nelementów",
-    "description": "Header encouraging the user to pin the extension for quick access"
+  "install_download_it_here": {
+    "message": "Pobierz ją tutaj:",
+    "description": "Call to action to download the mobile app"
   },
-  "install_1_open_extension_menu": {
-    "message": "Otwórz menu rozszerzenia.",
-    "description": "Instruction to open the browser's extension menu"
+  "install_step1_heading": {
+    "message": "Przypnij rozszerzenie 2FAS Pass do paska narzędzi przeglądarki",
+    "description": "Main heading for step 1 asking user to pin the extension"
   },
-  "install_1_pin_extension": {
-    "message": "Przypnij 2FAS Pass do paska zadań.",
-    "description": "Instruction to pin the 2FAS Pass extension to the toolbar"
+  "install_step1_instruction_part1": {
+    "message": "Kliknij ikonę puzzla",
+    "description": "First part of the pinning instruction, before the puzzle icon"
   },
-  "install_2_info": {
-    "message": "Rozszerznie przeglądarki przypięte!",
-    "description": "Message displayed when the browser extension is successfully pinned"
+  "install_step1_instruction_part2": {
+    "message": "w prawym górnym rogu przeglądarki. Znajdź 2FAS Pass i kliknij ikonę pinezki",
+    "description": "Second part of the pinning instruction, between puzzle and pin icons"
   },
-  "install_2_header": {
-    "message": "Zacznij korzystać\nz menedżera haseł",
-    "description": "Header encouraging the user to start using the password manager"
+  "install_i_have_pinned_it": {
+    "message": "PRZYPIĄŁEM",
+    "description": "Primary button label confirming user has pinned the extension"
   },
-  "install_2_click_icon": {
-    "message": "Kliknij ikonę, aby otworzyć rozszerzenie przeglądarki 2FAS Pass.",
-    "description": "Instruction to click the extension icon to open it"
+  "install_skip_for_now": {
+    "message": "POMIŃ NA RAZIE",
+    "description": "Secondary button to skip pinning step"
   },
-  "install_2_use_mobile_app": {
-    "message": "Kliknij \"Połącz\" w aplikacji mobilnej 2FAS Pass, aby zeskanować kod QR.",
-    "description": "Instruction to use the mobile app to scan the QR code"
+  "install_step2_heading_before": {
+    "message": "Kontynuuj w",
+    "description": "First part of step 2 heading, before the underlined word"
   },
-  "install_3_info": {
-    "message": "Rozszerzenie jest odblokowane na czas tej sesji przeglądarki",
-    "description": "Message displayed when the extension is unlocked for the current browser session"
+  "install_step2_heading_underlined": {
+    "message": "rozszerzeniu",
+    "description": "The underlined word in step 2 heading, shown with decorative underline"
   },
-  "install_3_header": {
-    "message": "To rozszerzenie\nprzeglądarki jest\ngotowe do użycia",
-    "description": "Header indicating that the browser extension is ready to use"
-  },
-  "install_3_get_started": {
-    "message": "Oto wszystkie informacje potrzebne do rozpoczęcia",
-    "description": "Message introducing the user to the getting started guide"
-  },
-  "install_3_crash_logs_header": {
-    "message": "Zgoda na raporty o awariach",
-    "description": "Header for the section explaining crash log permissions"
-  },
-  "install_3_crash_logs_description": {
-    "message": "Jeśli chcesz wesprzeć rozwój tego projektu, możesz wyrazić zgodę na wysyłanie anonimowych raportów o awariach.",
-    "description": "Explains the purpose of sending anonymous crash logs to support the project"
-  },
-  "install_3_crash_logs_checkbox_description": {
-    "message": "Chcę udostępnić anonimowe raporty o awariach.",
-    "description": "Checkbox label for opting in to share anonymous crash logs"
+  "install_step2_description": {
+    "message": "Zakończ proces łączenia w aplikacji mobilnej 2FAS Pass i zacznij korzystać od razu.",
+    "description": "Description text for step 2 explaining next steps"
   },
   "install_get_mobile_app": {
     "message": "Pobierz aplikację mobilną",
     "description": "Button label for downloading the mobile app"
-  },
-  "install_scan": {
-    "message": "Skanuj",
-    "description": "Button label for scanning the QR code with the mobile app"
   },
   "install_point_camera": {
     "message": "Zeskanuj kod QR",
@@ -920,12 +904,16 @@
     "description": "Button label to open the external popup."
   },
   "connect_header": {
-    "message": "Zeskanuj ten kod QR za pomocą aplikacji mobilnej 2FAS Pass",
-    "description": "Header instructing the user to scan the QR code with the 2FAS Pass mobile app"
+    "message": "Kliknij „Połącz” w aplikacji mobilnej 2FAS Pass, aby zeskanować kod QR.",
+    "description": "Header instructing the user to tap Connect in the mobile app to scan the QR code"
   },
   "connect_description": {
     "message": "Zrób to przy pierwszym uruchomieniu rozszerzenia przeglądarki, aby bezpiecznie połączyć je z aplikacją mobilną.",
     "description": "Explains the need to scan the QR code for secure access during each browser launch"
+  },
+  "connect_add_new_device": {
+    "message": "Dodaj nowe urządzenie",
+    "description": "Button text shown on the empty device select view that opens the QR code view"
   },
   "connect_connecting": {
     "message": "Łączenie…",
@@ -970,6 +958,18 @@
   "connect_push_trouble_tooltip_use_qr": {
     "message": "Użyj kodu QR",
     "description": "Instruction to use QR code as an alternative method"
+  },
+  "connect_device_new_header": {
+    "message": "Połącz z aplikacją mobilną",
+    "description": "Header for the device new view when no devices are connected"
+  },
+  "connect_device_new_subtitle": {
+    "message": "Połącz rozszerzenie przeglądarki z aplikacją mobilną 2FAS Pass",
+    "description": "Subtitle explaining the purpose of connecting the extension with the mobile app"
+  },
+  "connect_device_new_connect_button": {
+    "message": "Połącz urządzenie",
+    "description": "Button text to initiate device connection via QR code"
   },
   "details_header_login": {
     "message": "Szczegóły loginu",
@@ -2003,6 +2003,222 @@
     "message": "Informacje o 2FAS Pass",
     "description": "Label for the about section in settings"
   },
+  "share_header": {
+    "message": "2FAS Share",
+    "description": "Header title for the share item view"
+  },
+  "share_settings_title": {
+    "message": "Ustawienia udostępniania",
+    "description": "Section title for share configuration options"
+  },
+  "share_expiration_title": {
+    "message": "Czas wygaśnięcia linku",
+    "description": "Label for the link expiration time setting"
+  },
+  "share_expiration_desc": {
+    "message": "Jeśli link wygaśnie przed użyciem, będziesz musiał wygenerować nowy.",
+    "description": "Description for the link expiration time setting"
+  },
+  "share_expiry_5min": {
+    "message": "5 min",
+    "description": "Expiration option: 5 minutes"
+  },
+  "share_expiry_30min": {
+    "message": "30 min",
+    "description": "Expiration option: 30 minutes"
+  },
+  "share_expiry_1hour": {
+    "message": "1 godzina",
+    "description": "Expiration option: 1 hour"
+  },
+  "share_expiry_1day": {
+    "message": "1 dzień",
+    "description": "Expiration option: 1 day"
+  },
+  "share_expiry_7days": {
+    "message": "7 dni",
+    "description": "Expiration option: 7 days"
+  },
+  "share_expiry_30days": {
+    "message": "30 dni",
+    "description": "Expiration option: 30 days"
+  },
+  "share_one_time_access_title": {
+    "message": "Jednorazowy dostęp",
+    "description": "Label for the one-time access toggle"
+  },
+  "share_one_time_access_desc": {
+    "message": "Po włączeniu link wygaśnie po pierwszym dostępie do danych.",
+    "description": "Description for the one-time access toggle"
+  },
+  "share_password_title": {
+    "message": "Hasło",
+    "description": "Label for the password protection setting"
+  },
+  "share_password_desc": {
+    "message": "Odbiorca będzie potrzebował tego hasła, aby otworzyć link.",
+    "description": "Description for the password protection setting"
+  },
+  "share_password_placeholder": {
+    "message": "Wprowadź hasło (min. 8 znaków)",
+    "description": "Placeholder text for the share password input"
+  },
+  "share_password_error_min_length": {
+    "message": "Hasło musi mieć co najmniej 8 znaków.",
+    "description": "Error message when share password is too short"
+  },
+  "share_button": {
+    "message": "Udostępnij",
+    "description": "Label for the share submit button"
+  },
+  "share_submitting": {
+    "message": "Udostępnianie...",
+    "description": "Label for the share button while submitting"
+  },
+  "share_error_encrypt": {
+    "message": "Nie udało się zaszyfrować danych. Spróbuj ponownie.",
+    "description": "Error message when encryption fails during sharing"
+  },
+  "share_error_api": {
+    "message": "Nie udało się wygenerować linku. Spróbuj ponownie.",
+    "description": "Error message when API call fails during sharing"
+  },
+  "share_error_no_sif": {
+    "message": "Dane wrażliwe nie są dostępne. Najpierw pobierz je z urządzenia.",
+    "description": "Error message when trying to share an item without decrypted sensitive data"
+  },
+  "share_error_size_exceeded": {
+    "message": "Dane są zbyt duże, aby je udostępnić. Zmniejsz zawartość i spróbuj ponownie.",
+    "description": "Error message when encrypted share data exceeds the maximum allowed size of 16384 bytes"
+  },
+  "share_error_nothing_to_share": {
+    "message": "Ten element nie zawiera danych do udostępnienia. Najpierw dodaj jakieś dane.",
+    "description": "Error message when trying to share a Secret item that has no shareable content beyond the name"
+  },
+  "share_feature_not_available": {
+    "message": "Funkcja udostępniania nie jest dostępna dla tego elementu.",
+    "description": "Message when share feature cannot be used for the current item"
+  },
+  "share_import_header_login": {
+    "message": "Importowanie Loginu do \n2FAS Pass",
+    "description": "Header for importing a shared Login item"
+  },
+  "share_import_header_secure_note": {
+    "message": "Importowanie Bezpiecznej Notatki do \n2FAS Pass",
+    "description": "Header for importing a shared Secure Note item"
+  },
+  "share_import_header_payment_card": {
+    "message": "Importowanie Karty Płatniczej do \n2FAS Pass",
+    "description": "Header for importing a shared Payment Card item"
+  },
+  "share_import_header_wifi": {
+    "message": "Importowanie Wi-Fi do \n2FAS Pass",
+    "description": "Header for importing a shared Wi-Fi item"
+  },
+  "share_import_header_custom": {
+    "message": "Importowanie Notatki do \n2FAS Pass",
+    "description": "Header for importing a shared custom/text item"
+  },
+  "share_import_subheader": {
+    "message": "Przejrzyj udostępnione dane i zapisz je w swoim sejfie.",
+    "description": "Subheader explaining the import process"
+  },
+  "share_import_add_item": {
+    "message": "Dodaj element",
+    "description": "Button text for adding the imported item to the vault"
+  },
+  "share_import_password_header": {
+    "message": "Wprowadź hasło",
+    "description": "Header for the password entry view"
+  },
+  "share_import_password_subheader": {
+    "message": "Te dane są chronione hasłem. Wprowadź hasło, aby je odszyfrować.",
+    "description": "Subheader explaining password requirement"
+  },
+  "share_import_password_placeholder": {
+    "message": "Hasło",
+    "description": "Placeholder for the password input field"
+  },
+  "share_import_password_submit": {
+    "message": "Odszyfruj",
+    "description": "Button text for submitting the password"
+  },
+  "share_import_password_error": {
+    "message": "Nieprawidłowe hasło. Spróbuj ponownie.",
+    "description": "Error message when decryption fails due to wrong password"
+  },
+  "share_import_loading": {
+    "message": "Odszyfrowywanie danych...",
+    "description": "Loading message while decrypting"
+  },
+  "share_import_fetch_error": {
+    "message": "Nie udało się pobrać udostępnionych danych. Link mógł wygasnąć lub został już wykorzystany.",
+    "description": "Error message when the API fetch fails"
+  },
+  "share_import_decrypt_error": {
+    "message": "Nie udało się odszyfrować danych.",
+    "description": "Error message when decryption fails"
+  },
+  "share_import_invalid_params": {
+    "message": "Nieprawidłowe parametry linku udostępniania.",
+    "description": "Error message when share params are missing or invalid"
+  },
+  "share_import_name_required": {
+    "message": "Nazwa jest wymagana",
+    "description": "Validation message when name field is empty"
+  },
+  "share_import_name_max_length": {
+    "message": "Nazwa musi mieć mniej niż 256 znaków.",
+    "description": "Validation message when name exceeds 255 characters"
+  },
+  "share_import_username_max_length": {
+    "message": "Nazwa użytkownika musi mieć mniej niż 256 znaków.",
+    "description": "Validation message when username exceeds 255 characters"
+  },
+  "share_import_text_max_length": {
+    "message": "Tekst musi mieć mniej niż 16 385 znaków.",
+    "description": "Validation message when secure note text exceeds 16384 characters"
+  },
+  "share_import_notes_max_length": {
+    "message": "Notatki muszą mieć mniej niż 16 385 znaków.",
+    "description": "Validation message when notes exceed 16384 characters"
+  },
+  "share_import_unsupported_type": {
+    "message": "Ten typ zawartości nie jest jeszcze obsługiwany do importu.",
+    "description": "Error message for unsupported content types"
+  },
+  "share_result_title": {
+    "message": "Link jest gotowy",
+    "description": "Title shown when share link has been successfully generated"
+  },
+  "share_result_copy_link": {
+    "message": "Kopiuj link",
+    "description": "Button label to copy the share link to clipboard"
+  },
+  "share_result_copy_password": {
+    "message": "Kopiuj hasło",
+    "description": "Tooltip for the copy password button in share result"
+  },
+  "share_result_copied": {
+    "message": "Skopiowano!",
+    "description": "Toast message shown when link or password is copied"
+  },
+  "share_result_settings": {
+    "message": "Ustawienia udostępniania",
+    "description": "Section title for share settings summary on result view"
+  },
+  "share_result_expiration": {
+    "message": "Wygaśnięcie linku",
+    "description": "Label for expiration in share result summary"
+  },
+  "share_result_one_time": {
+    "message": "Jednorazowy dostęp",
+    "description": "Label for one-time access in share result summary"
+  },
+  "share_result_password": {
+    "message": "Chronione hasłem",
+    "description": "Label for password status in share result summary"
+  },
   "this_tab_matching_logins_header": {
     "message": "Pasujące elementy",
     "description": "Header for the section displaying matching login items"
@@ -2154,6 +2370,10 @@
   "this_tab_qr_dialog_title": {
     "message": "Zeskanuj kod QR, aby dołączyć do",
     "description": "Title text shown in the WiFi QR code dialog above the network name"
+  },
+  "this_tab_more_share": {
+    "message": "Udostępnij ten element",
+    "description": "Button label in dropdown menu to share an item via 2FAS Share"
   },
   "all_items_list_no_search_results": {
     "message": "Brak wyników wyszukiwania. Spróbuj ponownie.",

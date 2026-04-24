@@ -107,7 +107,7 @@ const startConnectQR = async () => {
     return { status: 'error', message: getMessage('error_general') };
   }
 
-  wsNotify('stateChange', { active: true });
+  wsNotify('stateChange', { active: true, connectView: CONNECT_VIEWS.QrView });
 
   return { status: 'ok', state: getPublicState() };
 };
@@ -184,6 +184,10 @@ const startConnectPush = async deviceId => {
       return { status: 'error', message: getMessage('fetch_token_unregistered_header') };
     }
   } catch (e) {
+    if (!wsState.active && wsState.type === null) {
+      return { status: 'cancelled' };
+    }
+
     cancelCurrentAction();
     const toastMessage = await networkTest('error_general');
     await CatchError(e);
@@ -304,7 +308,7 @@ const cancelCurrentAction = async () => {
 
   closeExistingSocket();
   resetState();
-  wsNotify('stateChange', { active: false });
+  wsNotify('stateChange', { active: false, connectView: null });
 
   return { status: 'ok' };
 };

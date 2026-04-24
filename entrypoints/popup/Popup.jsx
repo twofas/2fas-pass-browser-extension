@@ -38,12 +38,15 @@ const SettingsCrossDomainAutofill = lazy(() => import('./routes/Settings/Setting
 const Fetch = lazy(() => import('./routes/Fetch'));
 const FetchExternal = lazy(() => import('./routes/FetchExternal'));
 const Details = lazy(() => import('./routes/Details'));
+const Share = lazy(() => import('./routes/Share'));
+const ShareResult = lazy(() => import('./routes/ShareResult'));
+const ShareImport = lazy(() => import('./routes/ShareImport'));
 const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
 const ErrorFallback = lazy(() => import('./routes/ErrorFallback'));
 
 const routeConfig = [
-  { path: '/connect', component: Connect },
+  { path: '/connect', component: Connect, isGuestRoute: true },
   { path: '/', component: ThisTab, isProtectedRoute: true },
   { path: '/add-new/:model', component: AddNew, isProtectedRoute: true },
   { path: '/settings', component: Settings, isProtectedRoute: false },
@@ -57,6 +60,9 @@ const routeConfig = [
   { path: '/fetch', component: Fetch, isProtectedRoute: true },
   { path: '/fetch/:data', component: FetchExternal, noClassName: true, isProtectedRoute: true },
   { path: '/details/:deviceId/:vaultId/:id', component: Details, isProtectedRoute: true },
+  { path: '/share/:deviceId/:vaultId/:id', component: Share, isProtectedRoute: true },
+  { path: '/share-result', component: ShareResult, isProtectedRoute: true },
+  { path: '/share-import/:id/:type/:nonce/:key', component: ShareImport, isProtectedRoute: true },
   { path: '/password-generator', component: PasswordGenerator, isProtectedRoute: true },
   { path: '/blocked', component: Blocked },
   { path: '*', component: NotFound }
@@ -93,7 +99,9 @@ const AuthRoutes = memo(({ blocked, configured }) => {
     return routeConfig.map(route => {
       const Component = route.component;
 
-      const element = route.isProtectedRoute ? (
+      const needsGuard = route.isProtectedRoute || route.isGuestRoute;
+
+      const element = needsGuard ? (
         <RouteGuard
           configured={configured}
           blocked={blocked}
@@ -375,21 +383,37 @@ const PopupMain = memo(() => {
     };
   }, []);
 
-  useEffect(() => {
-    const pending = window.__wsPendingUpdates;
+  const processPendingToasts = useCallback(toasts => {
+    toasts.forEach(toast => {
+      if (toast.toastId) {
+        showToast(toast.message, toast.type, toast.autoClose !== false, { toastId: toast.toastId });
+      } else {
+        showToast(toast.message, toast.type, toast.autoClose !== false);
+      }
+    });
+  }, []);
 
-    if (!state.loaded || (!pending?.toasts?.length && !pending?.navigation)) {
+  useEffect(() => {
+    if (!state.loaded) {
       return;
     }
 
+    const pending = window.__wsPendingUpdates;
     window.__wsPendingUpdates = null;
 
-    if (pending.toasts?.length > 0) {
-      pending.toasts.forEach(toast => {
-        showToast(toast.message, toast.type, toast.autoClose !== false);
-      });
+    if (pending?.toasts?.length > 0) {
+      processPendingToasts(pending.toasts);
     }
-  }, [state.loaded]);
+
+    browser.runtime.sendMessage({
+      action: REQUEST_ACTIONS.WS_GET_STATE,
+      target: REQUEST_TARGETS.BACKGROUND_WS
+    }).then(response => {
+      if (response?.pendingUpdates?.toasts?.length > 0) {
+        processPendingToasts(response.pendingUpdates.toasts);
+      }
+    }).catch(() => {});
+  }, [state.loaded, processPendingToasts]);
 
   return (
     <PopupContent

@@ -27,6 +27,9 @@ const onTabRemoved = async (tabId, tabsInputData, savePromptActions) => {
     }
   }
 
+  await storage.removeItem(`session:savePromptSuppressed-${tabId}`);
+  await storage.removeItem(`session:savePromptContext-${tabId}`);
+
   try {
     const popupStateKey = await getKey('popup_state');
     const storageKey = `session:${popupStateKey}`;

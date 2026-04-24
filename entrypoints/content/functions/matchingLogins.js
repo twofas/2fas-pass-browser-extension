@@ -253,7 +253,7 @@ const matchingLogins = (request, sendResponse, container) => {
           throw new Error('Invalid domain for favicon');
         }
 
-        const imageUrl = `https://icon.2fas.com/${iconDomain}/favicon.png`;
+        const imageUrl = `${import.meta.env.VITE_ICON_API_URL}/${iconDomain}/favicon.png`;
 
         itemIcon.classList.add('icon-image');
 

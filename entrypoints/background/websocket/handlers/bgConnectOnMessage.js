@@ -135,7 +135,7 @@ const bgConnectOnMessage = async (json, data) => {
     }
   } catch (e) {
     await CatchError(e, async errObj => {
-      wsNotify('toast', { message: errObj?.visibleErrorMessage || getMessage('error_general'), type: 'error' });
+      wsNotify('toast', { message: errObj?.visibleErrorMessage || getMessage('error_general'), type: 'error', toastId: 'connect-error' });
       wsState.progress = 264;
       wsNotify('stateChange', { progress: 264 });
 
@@ -148,16 +148,19 @@ const bgConnectOnMessage = async (json, data) => {
         wsNotify('stateChange', { connectView: CONNECT_VIEWS.DeviceSelect });
       }
 
-      if (errObj?.code !== TwoFasError.errors.closeWithErrorReceived.code) {
-        try {
-          const socket = TwoFasWebSocket.getInstance();
+      try {
+        const socket = TwoFasWebSocket.getInstance();
+
+        if (errObj?.code !== TwoFasError.errors.closeWithErrorReceived.code) {
           await socket.sendError({
             errorCode: errObj?.code,
             errorMessage: errObj?.message,
             id: json?.id
           });
-        } catch {}
-      }
+        }
+
+        socket.close(WEBSOCKET_STATES.INTERNAL_ERROR, 'Message processing error');
+      } catch {}
     });
   }
 };

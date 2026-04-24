@@ -1,0 +1,117 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+.share-import {
+  border-radius: 8px;
+  position: relative;
+  width: 100%;
+
+  &-fullscreen {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    left: 12px;
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: calc(100% - 24px);
+  }
+
+  &-container {
+    padding: 22px 19px 24px;
+    text-align: center;
+  }
+
+  &-buttons {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  &-secure-note {
+    &-textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+  }
+
+  &-split-box {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: row;
+    gap: 0 8px;
+
+    > div {
+      flex: 0 0 calc(50% - 4px);
+      width: calc(50% - 4px);
+    }
+  }
+
+  &-add-uri {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 24px;
+    margin-top: -14px;
+
+    button {
+      align-items: center;
+      color: var(--primary-color);
+      display: flex;
+      font-size: 12px;
+      font-weight: 400;
+      gap: 0 6px;
+      line-height: 1;
+      padding: 0;
+
+      svg {
+        fill: none;
+        height: auto;
+        pointer-events: none;
+        stroke: var(--primary-color);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.5;
+        transition: stroke var(--anim);
+        width: 16px;
+      }
+    }
+  }
+
+  &-loading {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 16px 0;
+    justify-content: center;
+    min-height: 120px;
+
+    p {
+      color: var(--secondary-text);
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+  }
+
+  h2 {
+    color: var(--primary-text);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 22px;
+    padding: 0 24px;
+    white-space: pre-wrap;
+  }
+
+  h3 {
+    color: var(--secondary-text);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1;
+    margin-bottom: 32px;
+  }
+}

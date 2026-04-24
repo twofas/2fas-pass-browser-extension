@@ -33,6 +33,7 @@ const encryptValueForTransmission = async (value, localKeyCrypto) => {
         false,
         ['encrypt']
       );
+      wipeBuffer(localKeyAB);
     }
 
     encryptedValue = await crypto.subtle.encrypt(
@@ -48,7 +49,9 @@ const encryptValueForTransmission = async (value, localKeyCrypto) => {
     await CatchError(e);
     return { status: 'error', message: 'Encryption failed' };
   } finally {
+    wipeBuffer(nonce?.ArrayBuffer);
     nonce = null;
+    wipeBuffer(encryptedValue);
     encryptedValue = null;
     importedKey = null;
   }

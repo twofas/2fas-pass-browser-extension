@@ -47,4 +47,9 @@ export const REQUEST_ACTIONS = Object.freeze({
   WS_GET_STATE: 'wsGetState', // popup → background_ws (get current WS state)
   WS_STATE_UPDATE: 'wsStateUpdate', // background_ws → popup (state update notification)
   WS_RELOAD_QR: 'wsReloadQr', // popup → background_ws (reload QR code after error)
+  CHECK_SHARE_LINK_SUPPORT: 'checkShareLinkSupport', // share content → background (check device shareLink feature)
+  SHARE_LINK_IMPORT: 'shareLinkImport', // share content → background (open popup to import share link)
+  SHARE_LINK_STATE_CHANGE: 'shareLinkStateChange', // background → share content (configured/locked state change)
+  CLEAR_SAVE_PROMPT_STATE: 'clearSavePromptState', // popup → background (clear all save prompt in-memory state)
+  DISMISS_SAVE_PROMPT: 'dismissSavePrompt', // background → content (dismiss visible save prompt overlay)
 });

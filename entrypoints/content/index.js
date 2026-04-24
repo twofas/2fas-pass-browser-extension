@@ -38,7 +38,7 @@ export default defineContentScript({
         }
       };
 
-      if (isTopFrame() && ctx?.isValid) {
+      if (isTopFrame() && ctx?.isValid && document.body) {
         const ui = await createShadowRootUi(ctx, {
           position: 'relative',
           mode: 'closed',

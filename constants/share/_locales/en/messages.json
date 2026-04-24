@@ -1,0 +1,6 @@
+{
+  "share_content_open_in_extension": {
+    "message": "Open in 2FAS Pass",
+    "description": "Button label shown on the share page to open the shared data in the 2FAS Pass browser extension"
+  }
+}

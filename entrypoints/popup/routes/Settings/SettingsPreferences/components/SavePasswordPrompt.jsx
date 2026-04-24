@@ -73,6 +73,13 @@ function SavePasswordPrompt () {
         value: value === 'browser'
       }).catch(() => {});
 
+      if (value === 'none' || value === 'browser') {
+        browser.runtime.sendMessage({
+          action: REQUEST_ACTIONS.CLEAR_SAVE_PROMPT_STATE,
+          target: REQUEST_TARGETS.BACKGROUND
+        }).catch(() => {});
+      }
+
       showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:savePrompt') || 'default';

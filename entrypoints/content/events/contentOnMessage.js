@@ -12,7 +12,7 @@ import autofillCard from '../functions/autofillCard';
 import getDomainInfo from '../functions/getDomainInfo';
 import notification from '../functions/notification';
 import matchingLogins from '../functions/matchingLogins';
-import savePrompt from '../functions/savePrompt';
+import savePrompt, { dismissAllSavePrompts } from '../functions/savePrompt';
 import refreshTheme from '../functions/refreshTheme';
 import refreshLang from '../functions/refreshLang';
 import crossDomainDialog from '../functions/crossDomainDialog';
@@ -37,6 +37,7 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       request?.action === REQUEST_ACTIONS.MATCHING_LOGINS ||
       request?.action === REQUEST_ACTIONS.NOTIFICATION ||
       request?.action === REQUEST_ACTIONS.SAVE_PROMPT ||
+      request?.action === REQUEST_ACTIONS.DISMISS_SAVE_PROMPT ||
       request?.action === REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE ||
       request?.action === REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM ||
       request?.action === REQUEST_ACTIONS.REFRESH_THEME ||
@@ -104,6 +105,12 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
 
       case REQUEST_ACTIONS.SAVE_PROMPT: {
         savePrompt(request, sendResponse, container);
+        break;
+      }
+
+      case REQUEST_ACTIONS.DISMISS_SAVE_PROMPT: {
+        dismissAllSavePrompts(container);
+        sendResponse({ status: 'ok' });
         break;
       }
 

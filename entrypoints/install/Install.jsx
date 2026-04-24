@@ -11,30 +11,20 @@ import S from './Install.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, lazy, useCallback, useRef } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
-import getKey from '@/partials/sessionStorage/getKey';
-import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import { motion } from 'motion/react';
 import ToastsContent from '@/entrypoints/popup/components/ToastsContent';
 import Video1Light from '@/assets/videos/install_video_1_light.mp4?url';
 import Video1Dark from '@/assets/videos/install_video_1_dark.mp4?url';
-import Video2Light from '@/assets/videos/install_video_2_light.mp4?url';
-import Video2Dark from '@/assets/videos/install_video_2_dark.mp4?url';
-import VideoPoster from '@/assets/install-page/video-poster.png?url';
 import { openPopup, safariBlankLinks } from '@/partials/functions';
 import detectDefaultTheme from './functions/detectDefaultTheme';
 import Logo from '@/assets/logo.svg?react';
 import LogoDark from '@/assets/logo-dark.svg?react';
-import Domain from '@/assets/popup-window/domain.svg?react';
-import Check from '@/assets/install-page/check.svg?react';
 import Puzzle from '@/assets/install-page/puzzle.svg?react';
 import Pin from '@/assets/install-page/pin.svg?react';
 import Arrow from '@/assets/install-page/arrow.svg?react';
-import Shield from '@/assets/install-page/shield.svg?react';
-import Qr from '@/assets/install-page/qr.svg?react';
-import LogsIcon from '@/assets/install-page/logs.svg?react';
-import ArrowDecorLight from '@/assets/install-page/arrow-decor-light.svg?react';
-import ArrowDecorDark from '@/assets/install-page/arrow-decor-dark.svg?react';
-import PlayIcon from '@/assets/install-page/play.svg?react';
+import Arrow2 from '@/assets/install-page/arrow2.svg?react';
+import ConnectIllustration from '@/assets/connect.svg?react';
+import UnderlineDecor from '@/assets/install-page/underline-decor.svg?react';
 
 const DownloadMobileApp = lazy(() => import('./components/DownloadMobileApp'));
 
@@ -43,24 +33,12 @@ const stepVariants = {
   visible: { opacity: 1, display: 'block', transition: { duration: 0.2, ease: 'easeOut' } }
 };
 
-/** 
-* Function component for the Install page.
-* @return {JSX.Element} The rendered component.
-*/
 function Install () {
   const { getMessage } = useI18n();
   const [stepVisible, setStepVisible] = useState(0);
-  const [appsVisible, setAppsVisible] = useState(false);
-  const [logs, setLogs] = useState(false);
-
   const stepVisibleRef = useRef(stepVisible);
 
-  const handleContinueWoPinning = async () => {
-    goToStep(2);
-    await openPopup();
-  };
-
-  const handleContinue = async () => {
+  const handleContinue = useCallback(async () => {
     let settings;
 
     try {
@@ -75,7 +53,12 @@ function Install () {
     } else {
       showToast(getMessage('install_please_pin_extension'), 'error');
     }
-  };
+  }, []);
+
+  const handleSkip = useCallback(async () => {
+    goToStep(2);
+    await openPopup();
+  }, []);
 
   const goToStep = useCallback(step => {
     if (step === stepVisibleRef.current) {
@@ -88,107 +71,32 @@ function Install () {
 
     setTimeout(() => {
       setStepVisible(step);
-
-      if (step === 2) {
-        setAppsVisible(true);
-      } else {
-        setAppsVisible(false);
-      }
     }, timeout);
-  }, [stepVisible]);
+  }, []);
 
-  const onUserSettingsChanged = async prop => {
-    const configured = await getConfiguredBoolean();
-
-    if (configured) {
-      goToStep(3);
+  const onUserSettingsChanged = useCallback(async prop => {
+    if (prop.isOnToolbar) {
+      goToStep(2);
+      await openPopup();
     } else {
-      if (prop.isOnToolbar) {
-        goToStep(2);
-        await openPopup();
-      } else {
-        goToStep(1);
-      }
+      goToStep(1);
     }
-  };
-
-  const onStorageChange = async (change, areaName) => {
-    if (areaName !== 'session') {
-      return;
-    }
-
-    let configuredKey, configured;
-
-    try {
-      configuredKey = await getKey('configured');
-    } catch {}
-
-    if (!configuredKey) {
-      return false;
-    }
-
-    try {
-      configured = await getConfiguredBoolean();
-    } catch {}
-
-    if (configured) {
-      goToStep(3);
-    } else {
-      let settings = false;
-
-      try {
-        if (browser?.action?.getUserSettings !== null) {
-          settings = await browser?.action?.getUserSettings();
-        }
-      } catch {}
-
-      if (!settings || settings.isOnToolbar) {
-        goToStep(2);
-      } else {
-        goToStep(1);
-      }
-    }
-  };
-
-  const handleLogsChange = async () => {
-    try {
-      await storage.setItem('local:logging', !logs);
-      setLogs(!logs);
-      showToast(getMessage('install_logging_settings_changed'), 'success');
-    } catch {
-      showToast(getMessage('error_general_setting'), 'error');
-    }
-  };
-
-  const getDefaultLogs = useCallback(async () => {
-    let storageLogging = await storage.getItem('local:logging');
-
-    if (storageLogging === null) {
-      storageLogging = false;
-    }
-
-    setLogs(storageLogging);
   }, []);
 
   const getInitialStep = async () => {
-    const configured = await getConfiguredBoolean();
+    let settings;
 
-    if (configured) {
-      goToStep(3);
+    if (browser?.action?.getUserSettings !== null) {
+      try {
+        settings = await browser?.action?.getUserSettings();
+      } catch {}
+    }
+
+    if (!settings || settings.isOnToolbar) {
+      goToStep(2);
+      await openPopup();
     } else {
-      let settings;
-
-      if (browser?.action?.getUserSettings !== null) {
-        try {
-          settings = await browser?.action?.getUserSettings();
-        } catch {}
-      }
-
-      if (!settings || settings.isOnToolbar) {
-        goToStep(2);
-      } else {
-        goToStep(1);
-      }
+      goToStep(1);
     }
   };
 
@@ -218,14 +126,11 @@ function Install () {
     document.documentElement.classList.add(import.meta.env.BROWSER);
 
     detectDefaultTheme();
-    getDefaultLogs();
     getInitialStep();
 
     try {
       browser?.action?.onUserSettingsChanged?.addListener(onUserSettingsChanged);
     } catch {}
-
-    browser.storage.onChanged.addListener(onStorageChange);
 
     return () => {
       unwatchTheme();
@@ -233,8 +138,6 @@ function Install () {
       try {
         browser?.action?.onUserSettingsChanged?.removeListener(onUserSettingsChanged);
       } catch {}
-
-      browser.storage.onChanged.removeListener(onStorageChange);
 
       if (import.meta.env.BROWSER === 'safari') {
         document.removeEventListener('click', safariBlankLinks);
@@ -245,195 +148,93 @@ function Install () {
   return (
     <>
       <section className={S.install}>
-        <div className={S.installHeader}>
-          <div className="container">
-            <div className={S.installHeaderContainer}>
-              <div className={S.installHeaderLogo}>
-                <Logo className="theme-light" />
-                <LogoDark className="theme-dark" />
-              </div>
-        
-              <div className={S.installHeaderWebsite}>
-                <a href="https://2fas.com/pass" target="_blank" rel="noopener noreferrer">
-                  <Domain />
-                  <span>2fas.com/pass</span>
-                </a>
-              </div>
+        <aside className={S.installCard}>
+          <div className={S.installCardLogo}>
+            <Logo className="theme-light" />
+            <LogoDark className="theme-dark" />
+          </div>
+
+          <div className={S.installCardCenter}>
+            <span className={S.installCardSubtitle}>{getMessage('install_made_to_work_together')}</span>
+            <p className={S.installCardDescription}>{getMessage('install_extension_requires_mobile')}</p>
+            <div className={S.installCardIllustration}>
+              <ConnectIllustration />
             </div>
           </div>
-        </div>
 
-        <div className={S.installContainer}>
-          <div className="container">
-            <div className={S.installContainerContent}>
-                <div className={S.installContainerContentLeft}>
-                  <motion.div
-                    className={`${S.installContainerContentLeftBox}`}
-                    variants={stepVariants}
-                    initial="hidden"
-                    animate={stepVisible === 1 ? 'visible' : 'hidden'}
-                  >
-                    <h2>
-                      <Check />
-                      <span>{getMessage('install_1_info')}</span>
-                    </h2>
-                    <h1>{getMessage('install_1_header')}</h1>
-                    <ul className={S.installList}>
-                      <li className={S.installListItem}>
-                        <span className={S.installListItemNumber}>
-                          <span className={S.installListItemNumberNumber}>1</span>
-                          <span className={S.installListItemNumberSeparator} />
-                          <span className={S.installListItemNumberImg}>
-                            <Puzzle className={S.installListItemNumberImgPuzzle} />
-                          </span>
-                        </span>
-                        <span className={S.installListItemText}>{getMessage('install_1_open_extension_menu')}</span>
-                      </li>
-                      <li className={S.installListItem}>
-                        <span className={S.installListItemNumber}>
-                          <span className={S.installListItemNumberNumber}>2</span>
-                          <span className={S.installListItemNumberSeparator} />
-                          <span className={S.installListItemNumberImg}>
-                            <Pin className={S.installListItemNumberImgPin} />
-                          </span>
-                        </span>
-                        <span className={S.installListItemText}>{getMessage('install_1_pin_extension')}</span>
-                      </li>
-                    </ul>
-                    <div className={S.installButtons}>
-                      <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnInstallPage}`} onClick={handleContinue}>{getMessage('continue')}</button>
-                      <button className={`${bS.btn} ${bS.btnClear} ${bS.btnInstallPageWoPinning}`} onClick={handleContinueWoPinning}>
-                        <span>{getMessage('continue_without_pinning')}</span>
-                        <Arrow />
-                      </button>
-                    </div>
-                  </motion.div>
-                  <motion.div
-                    className={`${S.installContainerContentLeftBox}`}
-                    variants={stepVariants}
-                    initial="hidden"
-                    animate={stepVisible === 2 ? 'visible' : 'hidden'}
-                  >
-                    <h2>
-                      <Check />
-                      <span className={S.installPinnedText}>{getMessage('install_2_info')}</span>
-                    </h2>
-                    <h1>{getMessage('install_2_header')}</h1>
-                    <ul className={S.installList}>
-                      <li className={S.installListItem}>
-                        <span className={S.installListItemNumber}>
-                          <span className={S.installListItemNumberNumber}>1</span>
-                          <span className={S.installListItemNumberSeparator} />
-                          <span className={S.installListItemNumberImg}>
-                            <Shield className={S.installListItemNumberImgShield} />
-                          </span>
-                        </span>
-                        <span className={S.installListItemText}>{getMessage('install_2_click_icon')}</span>
-                      </li>
-                      <li className={S.installListItem}>
-                        <span className={S.installListItemNumber}>
-                          <span className={S.installListItemNumberNumber}>2</span>
-                          <span className={S.installListItemNumberSeparator} />
-                          <span className={S.installListItemNumberImg}>
-                            <Qr className={S.installListItemNumberImgQr} />
-                          </span>
-                        </span>
-                        <span className={S.installListItemText}>{getMessage('install_2_use_mobile_app')}</span>
-                      </li>
-                    </ul>
-
-                    <div className={`${S.installContainerContentLeftBoxApps} ${appsVisible ? S.visible : ''}`}>
-                      <DownloadMobileApp />
-                    </div>
-                  </motion.div>
-                  <motion.div
-                    className={`${S.installContainerContentLeftBox}`}
-                    variants={stepVariants}
-                    initial="hidden"
-                    animate={stepVisible === 3 ? 'visible' : 'hidden'}
-                  >
-                    <h2>
-                      <Check />
-                      <span className={S.installPinnedText}>{getMessage('install_3_info')}</span>
-                    </h2>
-                    <h1>{getMessage('install_3_header')}</h1>
-                    <h3>
-                      <span>{getMessage('install_3_get_started')}</span>
-                      <ArrowDecorLight className='theme-light' />
-                      <ArrowDecorDark className='theme-dark' />
-                    </h3>
-
-                    <div className={S.installContainerContentLeftLogs}>
-                      <h4>
-                        <LogsIcon />
-                        <span>{getMessage('install_3_crash_logs_header')}</span>
-                      </h4>
-
-                      <p>{getMessage('install_3_crash_logs_description')}</p>
-
-                      <form action="#" className={`${bS.passToggle} ${S.installContainerContentLeftLogsForm}`}>
-                        <input type="checkbox" name="pass-logs" id="pass-logs" defaultChecked={logs} onChange={handleLogsChange} />
-                        <label htmlFor="pass-logs">
-                          <span className={`${bS.passToggleBox} ${S.installContainerContentLeftLogsFormToggle}`}>
-                            <span className={`${bS.passToggleBoxCircle} ${S.installContainerContentLeftLogsFormToggleCircle}`} />
-                          </span>
-                  
-                          <span className={`${bS.passToggleText} ${S.installContainerContentLeftLogsFormText}`}>
-                            <span>{getMessage('install_3_crash_logs_checkbox_description')}</span>
-                          </span>
-                        </label>
-                      </form>
-                    </div>
-                  </motion.div>
-                </div>
-                <div className={S.installContainerContentRight}>
-                  <motion.div
-                    className={`${S.installContainerContentRightBox}`}
-                    variants={stepVariants}
-                    initial="hidden"
-                    animate={stepVisible === 1 ? 'visible' : 'hidden'}
-                  >
-                    <video src={Video1Light} className="theme-light" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
-                    <video src={Video1Dark} className="theme-dark" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
-                  </motion.div>
-                  <motion.div
-                    className={`${S.installContainerContentRightBox}`}
-                    variants={stepVariants}
-                    initial="hidden"
-                    animate={stepVisible === 2 ? 'visible' : 'hidden'}
-                  >
-                    <video src={Video2Light} className="theme-light" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
-                    <video src={Video2Dark} className="theme-dark" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
-                  </motion.div>
-                  <motion.div
-                    className={`${S.installContainerContentRightBox} ${S.external}`}
-                    variants={stepVariants}
-                    initial="hidden"
-                    animate={stepVisible === 3 ? 'visible' : 'hidden'}
-                  >
-                    <a href="https://2fas.com/pass/be-video" target='_blank' rel="noopener noreferrer" className={S.installContainerContentRightBoxExternalVideo}>
-                      <PlayIcon />
-                      <img src={VideoPoster} alt={getMessage('install_3_get_started')} loading="lazy" />
-                    </a>
-                  </motion.div>
-                </div>
+          <div className={S.installCardDownload}>
+            <p className={S.installCardDownloadText}>
+              <span>{getMessage('install_dont_have_app')}</span>
+              <br />
+              <strong>{getMessage('install_download_it_here')}</strong>
+            </p>
+            <div className={S.installCardDownloadButtons}>
+              <DownloadMobileApp />
             </div>
           </div>
-        </div>
+        </aside>
 
-        <div className={S.installFooter}>
-          <div className="container">
-            <div className={S.installFooterContainer}>
-              <div className={`${S.installFooterApps} ${appsVisible ? S.visible : ''}`}>
-                <DownloadMobileApp />
-              </div>
+        <main className={S.installContent}>
+          <motion.div
+            className={S.installContentStep}
+            variants={stepVariants}
+            initial="hidden"
+            animate={stepVisible === 1 ? 'visible' : 'hidden'}
+          >
+            <h1 className={S.installContentHeading}>{getMessage('install_step1_heading')}</h1>
 
-              <div>
-                <h6>{getMessage('install_privacy_text')}</h6>
-              </div>
+            <div className={S.installContentVideo}>
+              <video src={Video1Light} className="theme-light" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
+              <video src={Video1Dark} className="theme-dark" autoPlay loop muted playsInline disablePictureInPicture disableRemotePlayback />
             </div>
-          </div>
-        </div>
+
+            <p className={S.installContentInstruction}>
+              {getMessage('install_step1_instruction_part1')}
+              {' '}
+              <Puzzle className={S.installContentInstructionPuzzle} />
+              {' '}
+              {getMessage('install_step1_instruction_part2')}
+              {' '}
+              <Pin className={S.installContentInstructionPin} />
+            </p>
+
+            <div className={S.installContentButtons}>
+              <button className={`${bS.btn} ${bS.btnTheme} ${bS.btnInstallPage}`} onClick={handleContinue}>
+                <span>{getMessage('install_i_have_pinned_it')}</span>
+                <span className={S.installContentButtonsArrow}>
+                  <Arrow />
+                </span>
+              </button>
+              <button className={`${bS.btn} ${bS.btnClear} ${bS.btnInstallPageSkip}`} onClick={handleSkip}>
+                {getMessage('install_skip_for_now')}
+              </button>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className={S.installContentStep}
+            variants={stepVariants}
+            initial="hidden"
+            animate={stepVisible === 2 ? 'visible' : 'hidden'}
+          >
+            <button className={S.installContentArrowCircle} onClick={openPopup} type="button">
+              <Arrow2 />
+              <span className={S.installContentPulse} />
+              <span className={S.installContentPulse} style={{ animationDelay: '-1s' }} />
+            </button>
+
+            <h1 className={S.installContentHeading}>
+              {getMessage('install_step2_heading_before')}
+              {' '}
+              <span className={S.installContentUnderlined}>
+                {getMessage('install_step2_heading_underlined')}
+                <UnderlineDecor />
+              </span>
+            </h1>
+
+            <p className={S.installContentDescription}>{getMessage('install_step2_description')}</p>
+          </motion.div>
+        </main>
       </section>
 
       <ToastsContent className='Toastify__install' />
