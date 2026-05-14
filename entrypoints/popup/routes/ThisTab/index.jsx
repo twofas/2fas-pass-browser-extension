@@ -291,6 +291,7 @@ function ThisTab (props) {
                     <ItemListProvider>
                       <MatchingItemsList
                         items={matchingLogins}
+                        url={url}
                         loading={loading}
                       />
                     </ItemListProvider>
