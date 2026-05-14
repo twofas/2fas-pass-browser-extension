@@ -165,14 +165,14 @@ function Connect (props) {
   };
 
   // Render QR code when background qrData changes
-  useEffect(() => {
+  useEffect(function renderQrFromBackgroundState() {
     if (bgState?.qrData) {
       updateQrCode(bgState.qrData);
     }
   }, [bgState?.qrData, updateQrCode]);
 
   // Initialize
-  useEffect(() => {
+  useEffect(function initializeConnectView() {
     if (initDoneRef.current) {
       return;
     }
@@ -196,19 +196,19 @@ function Connect (props) {
     init();
   }, [bgState?.active, bgState?.type, bgState?.qrData, loadReadyDevices, updateQrCode]);
 
-  useEffect(() => {
+  useEffect(function bindEnterKeyForDeviceSelect() {
     if (data?.connectSliderIndex === undefined) {
       setData('connectSliderIndex', 0);
     }
 
     document.addEventListener('keydown', handleKeyboardEnterClick);
 
-    return () => {
+    return function unbindEnterKeyForDeviceSelect() {
       document.removeEventListener('keydown', handleKeyboardEnterClick);
     };
   }, [handleKeyboardEnterClick, setData, data?.connectSliderIndex]);
 
-  useEffect(() => {
+  useEffect(function syncSplideSliderWithStoredIndex() {
     if (sliderRef?.current && sliderRef.current.splide) {
       const splide = sliderRef.current.splide;
 
@@ -234,7 +234,7 @@ function Connect (props) {
       }
     }
 
-    return () => {
+    return function unbindSplideMoveListener() {
       if (sliderRef?.current && sliderRef.current.splide && sliderRef.current.splide.off) {
         sliderRef.current.splide.off('move');
       }
@@ -242,8 +242,8 @@ function Connect (props) {
   }, [readyDevices, sliderMounted, setData, data.connectSliderIndex]);
 
   // Cleanup: cancel WS on unmount
-  useEffect(() => {
-    return () => {
+  useEffect(function cancelConnectWsOnUnmount() {
+    return function cancelConnectWsCommand() {
       sendCommand(REQUEST_ACTIONS.WS_CANCEL).catch(() => {});
     };
   }, [sendCommand]);

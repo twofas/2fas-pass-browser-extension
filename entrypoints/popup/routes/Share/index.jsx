@@ -359,7 +359,7 @@ function Share (props) {
     return getItemSubtitle(item);
   }, [item]);
 
-  useEffect(() => {
+  useEffect(function loadShareItem() {
     fetchItem();
   }, [fetchItem]);
 

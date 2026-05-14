@@ -100,11 +100,11 @@ function Install () {
     }
   };
 
-  useEffect(() => {
+  useEffect(function syncStepVisibleRef() {
     stepVisibleRef.current = stepVisible;
   }, [stepVisible]);
 
-  useEffect(() => {
+  useEffect(function initializeInstallPageLifecycle() {
     const unwatchTheme = storage.watch('local:theme', async (newValue, oldValue) => {
       if (oldValue) {
         document.documentElement.classList.remove(`theme-${oldValue}`);
@@ -132,7 +132,7 @@ function Install () {
       browser?.action?.onUserSettingsChanged?.addListener(onUserSettingsChanged);
     } catch {}
 
-    return () => {
+    return function teardownInstallPageLifecycle() {
       unwatchTheme();
 
       try {

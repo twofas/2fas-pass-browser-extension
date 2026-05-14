@@ -18,7 +18,7 @@ function Logs () {
   const [l, setL] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadLoggingSetting() {
     const getDefaultLogs = async () => {
       try {
         let storageLogging = await storage.getItem('local:logging');

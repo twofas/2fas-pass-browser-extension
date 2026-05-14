@@ -131,19 +131,19 @@ function TopBar() {
   const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
   const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
 
-  useEffect(() => {
+  useEffect(function watchConfiguredKeyForAutoLogout() {
     watchConfigured().then(unwatch => {
       unwatchConfigured.current = unwatch;
     });
 
-    return () => {
+    return function unwatchConfiguredKey() {
       if (unwatchConfigured.current) {
         unwatchConfigured.current();
       }
     };
   }, [watchConfigured]);
 
-  useEffect(() => {
+  useEffect(function loadDeviceSupportedFeatures() {
     getSupportedFeatures()
       .then(features => setDeviceSupportedFeatures(features))
       .catch(() => setDeviceSupportedFeatures([]));

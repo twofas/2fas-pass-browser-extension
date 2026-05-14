@@ -43,7 +43,7 @@ const useScrollPosition = (scrollableRef, loading = false) => {
     });
   }, []);
 
-  useEffect(() => {
+  useEffect(function trackScrollPosition() {
     const scrollElement = scrollableRef?.current;
 
     if (!scrollElement) {
@@ -61,13 +61,13 @@ const useScrollPosition = (scrollableRef, loading = false) => {
 
     scrollElement.addEventListener('scroll', handleScroll, { passive: true });
 
-    return () => {
+    return function untrackScrollPosition() {
       scrollElement.removeEventListener('scroll', handleScroll);
       clearTimeout(scrollTimeout);
     };
   }, [saveScrollPosition, loading]);
 
-  useEffect(() => {
+  useEffect(function restoreScrollPositionOnLoad() {
     const shouldRestore = !loading && !hasRestoredRef.current && scrollableRef?.current && scrollPosition !== undefined;
 
     if (shouldRestore) {
@@ -105,12 +105,12 @@ const useScrollPosition = (scrollableRef, loading = false) => {
     }
   }, [loading, scrollPosition, restoreScrollPosition]);
 
-  useEffect(() => {
+  useEffect(function resetScrollRestoredOnPathChange() {
     hasRestoredRef.current = false;
   }, [pathname]);
 
-  useEffect(() => {
-    return () => {
+  useEffect(function persistScrollPositionOnUnmount() {
+    return function persistScrollPosition() {
       const scrollTop = scrollableRef?.current?.scrollTop ?? lastScrollTopRef.current;
 
       if (scrollTop > 0 && !isRestoringRef.current) {

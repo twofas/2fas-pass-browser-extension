@@ -195,25 +195,25 @@ function BottomBar () {
   const tooltipHeader = useMemo(() => getMessage('bottom_bar_security_icon_tooltip_header'), []);
   const tooltipText = useMemo(() => getMessage('bottom_bar_security_icon_tooltip_text'), []);
 
-  useEffect(() => {
+  useEffect(function loadInitialBottomBarState() {
     popupCheck()
       .then(loadSecurityIconData)
       .catch(CatchError);
   }, [popupCheck, loadSecurityIconData]);
 
-  useEffect(() => {
+  useEffect(function watchStoredThemeForChanges() {
     const handleThemeChange = async newThemeValue => {
       setEffectiveTheme(resolveEffectiveTheme(newThemeValue));
     };
 
     const unwatchTheme = storage.watch('local:theme', handleThemeChange);
 
-    return () => {
+    return function unwatchStoredTheme() {
       unwatchTheme();
     };
   }, []);
 
-  useEffect(() => {
+  useEffect(function watchSystemThemePreference() {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const handleSystemThemeChange = async () => {
@@ -226,12 +226,12 @@ function BottomBar () {
 
     mediaQuery.addEventListener('change', handleSystemThemeChange);
 
-    return () => {
+    return function unwatchSystemThemePreference() {
       mediaQuery.removeEventListener('change', handleSystemThemeChange);
     };
   }, []);
 
-  useEffect(() => {
+  useEffect(function injectThemedSecurityIconSvg() {
     if (!svgContainerRef.current || !themedSvg) {
       return;
     }

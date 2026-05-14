@@ -163,7 +163,7 @@ function SettingsSaveLoginExcludedDomains (props) {
     showToast(getMessage('settings_excluded_domains_add_success'), 'success');
   };
 
-  useEffect(() => {
+  useEffect(function loadExcludedDomains() {
     const getExcludedDomains = async () => {
       {
         let storageExcludedDomains = await storage.getItem('local:savePromptIgnoreDomains');

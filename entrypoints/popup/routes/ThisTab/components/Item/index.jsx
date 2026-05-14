@@ -75,7 +75,7 @@ function Item (props) {
     [more, props.loading]
   );
 
-  useEffect(() => {
+  useEffect(function clearHoverWhenMenuClosesWithoutHover() {
     if (!more && !isHoveredRef.current) {
       if (ref.current) {
         ref.current.classList.remove(S.hover);

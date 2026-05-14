@@ -24,7 +24,7 @@ export const useBackgroundWS = ({ onLogin } = {}) => {
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(function subscribeToBackgroundWsState() {
     const initialState = window.__wsInitialState;
     window.__wsInitialState = null;
 
@@ -73,7 +73,7 @@ export const useBackgroundWS = ({ onLogin } = {}) => {
 
     browser.runtime.onMessage.addListener(handler);
 
-    return () => {
+    return function unsubscribeFromBackgroundWsState() {
       browser.runtime.onMessage.removeListener(handler);
     };
   }, [processToast]);

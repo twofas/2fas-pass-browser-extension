@@ -19,7 +19,7 @@ const NoMatchDefault = ({ onAnimationReady }) => {
   const [lightAnimationData, setLightAnimationData] = useState(null);
   const [darkAnimationData, setDarkAnimationData] = useState(null);
 
-  useEffect(() => {
+  useEffect(function loadNoMatchAnimations() {
     const loadAnimations = async () => {
       const lightUrl = browser.runtime.getURL('/animations/box.json');
       const darkUrl = browser.runtime.getURL('/animations/box-dark.json');

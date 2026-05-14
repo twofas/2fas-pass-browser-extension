@@ -122,7 +122,7 @@ function PasswordGenerator (props) {
     );
   }
 
-  useEffect(() => {
+  useEffect(function hydrateGeneratorFromNavigationState() {
     if (location.state) {
       const stateData = location.state.data || {};
 
@@ -138,7 +138,7 @@ function PasswordGenerator (props) {
     }
   }, [location.state, setData, popupHref]);
 
-  useEffect(() => {
+  useEffect(function persistInitialGeneratedPassword() {
     if (initialPasswordRef.current && !data.password) {
       setData('password', initialPasswordRef.current);
     }

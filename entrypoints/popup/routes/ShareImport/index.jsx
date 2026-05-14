@@ -120,7 +120,7 @@ function ShareImport (props) {
     navigate('/');
   }, [clearData, navigate]);
 
-  useEffect(() => {
+  useEffect(function decryptSharedSecretOnMount() {
     const isFresh = location.search.includes('fresh');
 
     if (isFresh) {

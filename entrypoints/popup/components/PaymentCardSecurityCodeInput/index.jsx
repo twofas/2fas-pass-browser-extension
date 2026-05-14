@@ -52,7 +52,7 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
     [displayValue, cardNumber]
   );
 
-  useEffect(() => {
+  useEffect(function lazyLoadInputMaskLibrary() {
     if (loadedRef.current) {
       return;
     }
@@ -64,13 +64,13 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
     });
   }, []);
 
-  useEffect(() => {
+  useEffect(function notifySecurityCodeTooLong() {
     if (onTooLongChange) {
       onTooLongChange(isTooLong);
     }
   }, [isTooLong, onTooLongChange]);
 
-  useLayoutEffect(() => {
+  useLayoutEffect(function restoreCursorOnMaskChange() {
     if (previousMaskRef.current && previousMaskRef.current !== securityCodeMaskData.mask) {
       if (cursorPositionRef.current !== null) {
         const inputElement = document.getElementById(id);

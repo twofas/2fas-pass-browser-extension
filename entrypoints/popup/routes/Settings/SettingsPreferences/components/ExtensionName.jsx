@@ -37,7 +37,7 @@ function ExtensionName () {
     return false;
   }, [data.extName]);
 
-  useEffect(() => {
+  useEffect(function loadExtensionNameFromStorage() {
     const getExtName = async () => {
       try {
         const browserInfo = await storage.getItem('local:browserInfo');

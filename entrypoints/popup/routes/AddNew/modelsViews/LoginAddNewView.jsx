@@ -42,7 +42,7 @@ function LoginAddNewView() {
 
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useEffect(function initializeLoginAddNewView() {
     const messageListener = async (request, sender, sendResponse) => onMessage(request, sender, sendResponse, value => setData('url', value));
     browser.runtime.onMessage.addListener(messageListener);
 
@@ -116,7 +116,7 @@ function LoginAddNewView() {
 
     initializeData();
 
-    return () => {
+    return function removeLoginAddNewMessageListener() {
       browser.runtime.onMessage.removeListener(messageListener);
     };
   }, [location?.state?.data, location?.state?.generatedPassword]);

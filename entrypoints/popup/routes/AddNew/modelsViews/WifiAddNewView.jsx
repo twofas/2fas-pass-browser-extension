@@ -81,7 +81,7 @@ function WifiAddNewView () {
     return true;
   };
 
-  useEffect(() => {
+  useEffect(function initializeWifiAddNewDefaults() {
     if (!data?.securityType) {
       setData('securityType', DEFAULT_SECURITY_TYPE);
     }
@@ -91,7 +91,7 @@ function WifiAddNewView () {
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(function hydrateWifiFromNavigationState() {
     if (location?.state?.data) {
       const stateData = location.state.data;
       const batchUpdate = {};

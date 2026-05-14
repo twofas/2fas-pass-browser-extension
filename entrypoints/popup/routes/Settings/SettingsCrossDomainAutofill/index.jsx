@@ -203,7 +203,7 @@ function SettingsCrossDomainAutofill (props) {
     form.reset();
   };
 
-  useEffect(() => {
+  useEffect(function loadCrossDomainLists() {
     const loadDomains = async () => {
       let trusted = await storage.getItem('local:crossDomainTrustedDomains');
       let untrusted = await storage.getItem('local:crossDomainUntrustedDomains');

@@ -68,7 +68,7 @@ const PasswordBtn = ({ item, more, setMore }) => {
     }
   };
 
-  useEffect(() => {
+  useEffect(function pollSifResetProgress() {
     let isMounted = true;
     let localIntervalId = null;
 
@@ -87,7 +87,7 @@ const PasswordBtn = ({ item, more, setMore }) => {
         }
       });
 
-    return () => {
+    return function stopSifResetProgressPolling() {
       isMounted = false;
 
       if (localIntervalId !== null) {

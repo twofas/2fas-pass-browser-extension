@@ -101,7 +101,7 @@ function SettingsDevices (props) {
     setChosenDeviceId(null);
   };
 
-  useEffect(() => {
+  useEffect(function loadConnectedDevices() {
     storage.getItem('local:devices')
       .then(devices => devices.filter(device => device?.id && device?.id?.length > 0))
       .then(devices => devices.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)))

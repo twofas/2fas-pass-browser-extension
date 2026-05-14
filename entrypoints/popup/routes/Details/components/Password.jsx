@@ -116,7 +116,7 @@ function Password (props) {
     return '';
   };
 
-  useEffect(() => {
+  useEffect(function syncDecryptedPasswordToForm() {
     const currentPasswordValue = getPasswordValue();
 
     if (currentPasswordValue !== previousPasswordValueRef.current) {
@@ -125,7 +125,7 @@ function Password (props) {
     }
   }, [localDecryptedPassword, form]);
 
-  useEffect(() => {
+  useEffect(function decryptPasswordWhenRevealedOrEditing() {
     const needsDecryption = (data?.passwordVisible || data?.passwordEditable) &&
                            localDecryptedPassword === null &&
                            !isDecrypting &&
@@ -136,7 +136,7 @@ function Password (props) {
     }
   }, [data?.passwordVisible, data?.passwordEditable, localDecryptedPassword, isDecrypting, itemInstance?.sifExists, decryptPasswordOnDemand]);
 
-  useEffect(() => {
+  useEffect(function focusPasswordInputWhenEditable() {
     if (data?.passwordEditable && inputRef.current && !hasFocusedRef.current) {
       hasFocusedRef.current = true;
       inputRef.current.focus();
@@ -154,7 +154,7 @@ function Password (props) {
     }
   }, [data?.passwordEditable]);
 
-  useEffect(() => {
+  useEffect(function syncLatestItemRef() {
     latestItemRef.current = data.item;
   }, [data.item]);
 
@@ -171,7 +171,7 @@ function Password (props) {
     );
   };
 
-  useEffect(() => {
+  useEffect(function checkPasswordChangeUrlSupport() {
     const checkChangePasswordSupport = async () => {
       if (!data.item?.internalData?.normalizedUris || data?.item?.internalData?.normalizedUris?.length === 0) {
         setChangePasswordUrl(null);
@@ -301,7 +301,7 @@ function Password (props) {
     }
   }, [setItem]);
 
-  useEffect(() => {
+  useEffect(function flushPasswordUpdateOnUnloadOrHide() {
     const flushPendingUpdate = () => {
       if (updateTimeoutRef.current) {
         clearTimeout(updateTimeoutRef.current);
@@ -326,7 +326,7 @@ function Password (props) {
     window.addEventListener('beforeunload', handleBeforeUnload);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    return () => {
+    return function teardownPasswordUpdateFlushHandlers() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       flushPendingUpdate();

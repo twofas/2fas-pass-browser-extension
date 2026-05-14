@@ -60,7 +60,7 @@ function ThisTab (props) {
 
   useScrollPosition(scrollableRef, loading);
 
-  useEffect(() => {
+  useEffect(function shareScrollableRefWithContext() {
     if (scrollableRefContext?.setRef && scrollableRef.current) {
       scrollableRefContext.setRef(scrollableRef.current);
     }
@@ -238,21 +238,21 @@ function ThisTab (props) {
 
   const filteredItemsCount = filteredItemsData.filteredCount;
 
-  useEffect(() => {
+  useEffect(function watchStorageVersionForRefresh() {
     unwatchStorageVersion.current = watchStorageVersion();
 
-    return () => {
+    return function unwatchStorageVersionWatcher() {
       if (unwatchStorageVersion.current) {
         unwatchStorageVersion.current();
       }
     };
   }, [watchStorageVersion]);
 
-  useEffect(() => {
+  useEffect(function subscribeToTabMessagesAndRefresh() {
     browser.runtime.onMessage.addListener(messageListener);
     refreshData();
 
-    return () => {
+    return function unsubscribeFromTabMessages() {
       browser.runtime.onMessage.removeListener(messageListener);
     };
   }, [storageVersion, messageListener, refreshData]);

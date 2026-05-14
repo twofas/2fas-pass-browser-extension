@@ -63,7 +63,7 @@ const Sort = ({ selectedSort, onSortChange, forceClose }) => {
 
   const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
 
-  useEffect(() => {
+  useEffect(function closeSortMenuWhenForced() {
     if (forceClose) {
       setIsMenuOpen(false);
     }

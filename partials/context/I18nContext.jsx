@@ -26,7 +26,7 @@ export const I18nProvider = ({ children }) => {
     setIsLoading(false);
   }, []);
 
-  useEffect(() => {
+  useEffect(function initializeI18nOnMount() {
     const initializeI18n = async () => {
       if (!getI18nState().isInitialized) {
         await initI18n();
@@ -38,14 +38,14 @@ export const I18nProvider = ({ children }) => {
     initializeI18n();
   }, []);
 
-  useEffect(() => {
+  useEffect(function watchLangStorageForReload() {
     const unwatch = storage.watch('local:lang', async newValue => {
       if (newValue !== lang) {
         await reloadI18n();
       }
     });
 
-    return () => {
+    return function unwatchLangStorage() {
       if (unwatch) {
         unwatch();
       }

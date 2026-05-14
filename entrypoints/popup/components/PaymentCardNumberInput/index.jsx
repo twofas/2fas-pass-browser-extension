@@ -45,7 +45,7 @@ const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, 
     [displayValue]
   );
 
-  useEffect(() => {
+  useEffect(function lazyLoadInputMaskLibrary() {
     if (loadedRef.current) {
       return;
     }
@@ -57,7 +57,7 @@ const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, 
     });
   }, []);
 
-  useLayoutEffect(() => {
+  useLayoutEffect(function restoreCursorOnMaskChange() {
     if (previousMaskRef.current && previousMaskRef.current !== mask) {
       if (cursorPositionRef.current !== null) {
         const savedCursorPos = cursorPositionRef.current;

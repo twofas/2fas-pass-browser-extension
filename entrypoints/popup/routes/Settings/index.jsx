@@ -30,7 +30,7 @@ function Settings (props) {
 
   useScrollPosition(scrollableRef, false);
 
-  useEffect(() => {
+  useEffect(function loadExtensionVersion() {
     try {
       const manifest = browser.runtime.getManifest();
       setVersion(manifest.version);

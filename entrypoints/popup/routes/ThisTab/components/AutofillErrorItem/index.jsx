@@ -75,7 +75,7 @@ function AutofillErrorItem (props) {
     setItem(fetchedItem);
   }, [props?.deviceId, props?.vaultId, props?.itemId, props?.state]);
 
-  useEffect(() => {
+  useEffect(function loadAutofillErrorItemData() {
     getItemData();
   }, [getItemData]);
 

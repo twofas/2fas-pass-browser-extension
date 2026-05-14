@@ -290,7 +290,7 @@ const PopupMain = memo(() => {
     };
   }, [state.isSeparateWindow, isScrollable]);
 
-  useEffect(() => {
+  useEffect(function observeScrollableState() {
     if (!state.loaded || !sectionRef.current) {
       return;
     }
@@ -306,7 +306,7 @@ const PopupMain = memo(() => {
       subtree: true
     });
 
-    return () => {
+    return function disconnectScrollableObservers() {
       cancelAnimationFrame(rafIdRef.current);
 
       if (resizeObserverRef.current) {
@@ -321,7 +321,7 @@ const PopupMain = memo(() => {
     };
   }, [state.loaded, checkScrollable]);
 
-  useEffect(() => {
+  useEffect(function initializePopupListeners() {
     if (initialized.current) {
       return;
     }
@@ -371,7 +371,7 @@ const PopupMain = memo(() => {
       document.addEventListener('click', safariBlankLinks);
     }
 
-    return () => {
+    return function teardownPopupListeners() {
       browser.runtime.onMessage.removeListener(popupOnMessage);
       document.removeEventListener('keydown', lockShortcuts);
       document.removeEventListener('contextmenu', lockRMB);
@@ -393,7 +393,7 @@ const PopupMain = memo(() => {
     });
   }, []);
 
-  useEffect(() => {
+  useEffect(function flushPendingWsToasts() {
     if (!state.loaded) {
       return;
     }

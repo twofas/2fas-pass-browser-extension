@@ -22,7 +22,7 @@ function Push () {
   const [push, setPush] = useState(defaultPushValue);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadNativePushSetting() {
     const getNativePush = async () => {
       try {
         let storageNativePush = await storage.getItem('local:nativePush');

@@ -101,13 +101,13 @@ const useTags = (options = {}) => {
 
   const refetch = useCallback(() => fetchTags(true), [fetchTags]);
 
-  useEffect(() => {
+  useEffect(function autoFetchTagsOnMount() {
     if (autoFetch) {
       fetchTags();
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(function watchStorageVersionForTagRefresh() {
     const unwatch = storage.watch('session:storageVersion', async newVersion => {
       if (newVersion !== null && newVersion !== tagsCache.storageVersion) {
         setTagsCache({ storageVersion: newVersion, loading: true });
@@ -122,7 +122,7 @@ const useTags = (options = {}) => {
       }
     });
 
-    return () => {
+    return function unwatchStorageVersion() {
       unwatch();
     };
   }, []);

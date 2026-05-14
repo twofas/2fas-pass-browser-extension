@@ -37,7 +37,7 @@ function SettingsAbout (props) {
 
   useScrollPosition(scrollableRef, loading);
 
-  useEffect(() => {
+  useEffect(function loadExtensionVersion() {
     try {
       const manifest = browser.runtime.getManifest();
       setVersion(manifest.version);

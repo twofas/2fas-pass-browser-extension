@@ -15,7 +15,7 @@ const PushNotificationDefault = () => {
   const [lightAnimationData, setLightAnimationData] = useState(null);
   const [darkAnimationData, setDarkAnimationData] = useState(null);
 
-  useEffect(() => {
+  useEffect(function loadPushNotificationAnimations() {
     const loadAnimations = async () => {
       const lightUrl = browser.runtime.getURL('/animations/push.json');
       const darkUrl = browser.runtime.getURL('/animations/push-dark.json');

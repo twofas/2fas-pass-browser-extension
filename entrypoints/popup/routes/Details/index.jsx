@@ -215,11 +215,11 @@ function Details(props) {
     return null;
   }, [loading, constructorName, props, originalItem]);
 
-  useEffect(() => {
+  useEffect(function loadItemDetailsOnMount() {
     getOriginalItem().then(fetchItemData);
   }, [fetchItemData, getOriginalItem]);
 
-  useEffect(() => {
+  useEffect(function redirectIfDetailsViewMissing() {
     if (!loading && constructorName && !DetailsViews[constructorName]) {
       showToast(getMessage('details_item_not_found'), 'error');
       navigate('/');

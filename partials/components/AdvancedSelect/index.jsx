@@ -39,7 +39,7 @@ function AdvancedSelect (props) {
   const [internalMenuIsOpen, setInternalMenuIsOpen] = useState(false);
   const [, setMounted] = useState(false);
 
-  useLayoutEffect(() => {
+  useLayoutEffect(function markMountedAfterFirstLayout() {
     setMounted(true);
   }, []);
 
@@ -272,15 +272,15 @@ function AdvancedSelect (props) {
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(function closeSelectOnOutsideMouseDown() {
     document.addEventListener('mousedown', handleClickOutside);
 
-    return () => {
+    return function removeSelectOutsideMouseDownListener() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [handleClickOutside]);
 
-  useEffect(() => {
+  useEffect(function repositionAndCloseMenuOnResizeOrScroll() {
     const isMenuOpen = props?.menuIsOpen || internalMenuIsOpen;
 
     if (isMenuOpen) {
@@ -333,7 +333,7 @@ function AdvancedSelect (props) {
       window.addEventListener('resize', handleResize);
       window.addEventListener('scroll', handleScroll, true);
 
-      return () => {
+      return function removeSelectResizeAndScrollListeners() {
         window.removeEventListener('resize', handleResize);
         window.removeEventListener('scroll', handleScroll, true);
       };

@@ -18,7 +18,7 @@ function Theme () {
   const [t, setT] = useState('unset');
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadStoredTheme() {
     const getDefaultTheme = async () => {
       try {
         const storageTheme = await storage.getItem('local:theme');

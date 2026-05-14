@@ -72,7 +72,7 @@ function SecureNoteAddNewView() {
     return true;
   };
 
-  useEffect(() => {
+  useEffect(function hydrateSecureNoteFromNavigationState() {
     if (location?.state?.data) {
       const stateData = location.state.data;
       const batchUpdate = {};

@@ -15,7 +15,7 @@ const ContinueUpdateDefault = () => {
   const [lightAnimationData, setLightAnimationData] = useState(null);
   const [darkAnimationData, setDarkAnimationData] = useState(null);
 
-  useEffect(() => {
+  useEffect(function loadContinueUpdateAnimations() {
     const loadAnimations = async () => {
       const lightUrl = browser.runtime.getURL('/animations/push-2.json');
       const darkUrl = browser.runtime.getURL('/animations/push-2-dark.json');

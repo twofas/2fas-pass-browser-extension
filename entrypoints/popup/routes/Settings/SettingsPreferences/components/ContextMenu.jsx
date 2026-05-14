@@ -18,7 +18,7 @@ function ContextMenu () {
   const [cM, setCM] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadContextMenuSetting() {
     const getDefaultContextMenu = async () => {
       try {
         let storageContextMenu = await storage.getItem('local:contextMenu');

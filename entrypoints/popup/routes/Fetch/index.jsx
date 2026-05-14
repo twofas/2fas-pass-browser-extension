@@ -92,7 +92,7 @@ function Fetch (props) {
   }, [sendCommand, state, fetchState, navigate]);
 
   // Initialize fetch
-  useEffect(() => {
+  useEffect(function initiateFetchRequest() {
     if (initDoneRef.current) {
       return;
     }
@@ -116,8 +116,8 @@ function Fetch (props) {
   }, [bgState?.active, bgState?.type, state, sendCommand, navigate]);
 
   // Cleanup: cancel WS on unmount
-  useEffect(() => {
-    return () => {
+  useEffect(function cancelFetchWsOnUnmount() {
+    return function cancelFetchWsCommand() {
       sendCommand(REQUEST_ACTIONS.WS_CANCEL).catch(() => {});
     };
   }, [sendCommand]);

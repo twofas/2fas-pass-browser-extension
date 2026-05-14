@@ -18,7 +18,7 @@ function Language () {
   const [lang, setLang] = useState('default');
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadStoredLanguage() {
     const getDefaultLang = async () => {
       try {
         const storageLang = await storage.getItem('local:lang');

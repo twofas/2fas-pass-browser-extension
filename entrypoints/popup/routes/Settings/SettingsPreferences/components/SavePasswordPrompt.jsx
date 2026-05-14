@@ -25,7 +25,7 @@ function SavePasswordPrompt () {
   const [sP, setSP] = useState('default');
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function initializeSavePromptSetting() {
     const initializeSavePrompt = async () => {
       try {
         let storageSavePasswordPrompt = await storage.getItem('local:savePrompt');

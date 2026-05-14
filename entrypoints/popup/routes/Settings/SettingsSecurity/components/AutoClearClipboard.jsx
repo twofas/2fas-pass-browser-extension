@@ -21,7 +21,7 @@ function AutoClearClipboard () {
   const [cC, setCC] = useState(null);
   const [disabled, setDisabled] = useState(true);
 
-  useEffect(() => {
+  useEffect(function loadAutoClearClipboardSetting() {
     const getDefaultClearClipboard = async () => {
       let storageAutoClearClipboard = await storage.getItem('local:autoClearClipboard');
 

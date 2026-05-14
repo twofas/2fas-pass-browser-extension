@@ -19,7 +19,7 @@ function SafeBrowsing () {
   const [sB, setSB] = useState(null);
   const [disabled, setDisabled] = useState(true);
 
-  useEffect(() => {
+  useEffect(function loadSafeBrowsingSetting() {
     const getDefaultSafeBrowsing = async () => {
       const browserSafeBrowsing = await browser.privacy.services.safeBrowsingEnabled.get({});
       setSB(browserSafeBrowsing);

@@ -172,10 +172,10 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
     calendarRef.current.hide();
   }, []);
 
-  useEffect(() => {
+  useEffect(function closeCalendarOnScroll() {
     window.addEventListener('scroll', handleScroll, true);
 
-    return () => {
+    return function removeCalendarScrollListener() {
       window.removeEventListener('scroll', handleScroll, true);
     };
   }, [handleScroll]);

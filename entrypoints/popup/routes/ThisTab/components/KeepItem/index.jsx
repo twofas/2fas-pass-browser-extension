@@ -27,7 +27,7 @@ function KeepItem () {
     return `${S.keepItem} ${autofillFailed ? S.active : ''}`;
   }, [autofillFailed]);
 
-  useEffect(() => {
+  useEffect(function syncAutofillFailedFromLocation() {
     if (location?.state?.action === 'autofillT2Failed' || location?.state?.action === 'autofillCardT2Failed') {
       setAutofillFailed(true);
     } else {

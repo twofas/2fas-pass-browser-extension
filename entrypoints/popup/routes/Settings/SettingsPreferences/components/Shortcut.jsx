@@ -20,7 +20,7 @@ function Shortcut () {
   const [shortcutLink, setShortcutLink] = useState('#');
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadShortcutAndOptionsLink() {
     const getShortcut = async () => {
       let commands;
 

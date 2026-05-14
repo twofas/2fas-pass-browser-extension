@@ -186,7 +186,7 @@ function AutofillErrorItemData (props) {
   const { item } = props;
   const [itemData, setItemData] = useState([]);
 
-  useEffect(() => {
+  useEffect(function buildDataFromDecryptedItem() {
     if (!item) {
       return;
     }

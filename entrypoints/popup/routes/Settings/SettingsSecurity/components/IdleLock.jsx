@@ -30,7 +30,7 @@ function IdleLock () {
   const [disabled, setDisabled] = useState(true);
   const [premium, setPremium] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadIdleLockAndPremiumStatus() {
     const getPremium = async () => {
       const paidDeviceConnected = await isPaidDeviceConnected();
       setPremium(paidDeviceConnected);

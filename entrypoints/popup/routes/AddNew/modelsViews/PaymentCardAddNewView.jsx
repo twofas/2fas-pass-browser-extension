@@ -104,7 +104,7 @@ function PaymentCardAddNewView () {
     return true;
   };
 
-  useEffect(() => {
+  useEffect(function hydratePaymentCardFromNavigationState() {
     if (location?.state?.data) {
       const stateData = location.state.data;
       const batchUpdate = {};

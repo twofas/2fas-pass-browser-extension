@@ -54,7 +54,7 @@ function ShareResult (props) {
   const result = location.state?.result;
   const item = location.state?.item;
 
-  useEffect(() => {
+  useEffect(function redirectIfShareResultMissing() {
     if (!result || !item) {
       navigate('/');
     }

@@ -97,7 +97,7 @@ function CardExpirationDate (props) {
     return '';
   };
 
-  useEffect(() => {
+  useEffect(function syncExpirationDateValueToForm() {
     const currentExpirationDate = getExpirationDateValue();
 
     if (currentExpirationDate !== previousExpirationDateRef.current) {
@@ -106,13 +106,13 @@ function CardExpirationDate (props) {
     }
   }, [localEditedExpirationDate, localDecryptedExpirationDate, sifDecryptError, form]);
 
-  useEffect(() => {
+  useEffect(function restoreEditedExpirationDateFromStore() {
     if (data?.expirationDateEditable && isText(data?.editedExpirationDate) && localEditedExpirationDate === null) {
       setLocalEditedExpirationDate(data.editedExpirationDate);
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(function decryptExpirationDateWhenNeeded() {
     const needsDecryption = localDecryptedExpirationDate === null &&
                            !isDecrypting &&
                            itemInstance?.expirationDateExists;
@@ -122,7 +122,7 @@ function CardExpirationDate (props) {
     }
   }, [localDecryptedExpirationDate, isDecrypting, itemInstance?.expirationDateExists, decryptExpirationDateOnDemand]);
 
-  useEffect(() => {
+  useEffect(function focusExpirationDateInputWhenEditable() {
     if (data?.expirationDateEditable && inputRef.current) {
       inputRef.current.focus();
     }

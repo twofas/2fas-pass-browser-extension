@@ -75,7 +75,7 @@ export const AuthProvider = memo(({ children }) => {
 
   const actions = useMemo(() => ({ login, logout }), [login, logout]);
 
-  useEffect(() => {
+  useEffect(function loadAuthConfiguredState() {
     const getData = async () => {
       const dateStorage = await getConfiguredBoolean();
       setStateConfigured(dateStorage);

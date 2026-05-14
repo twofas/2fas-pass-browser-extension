@@ -42,7 +42,7 @@ function QrDialog () {
 
   }, [hideQr]);
 
-  useEffect(() => {
+  useEffect(function regenerateQrOnItemChange() {
     if (qrItem && qrItem.id !== itemIdRef.current) {
       itemIdRef.current = qrItem.id;
       generateQrCode(qrItem);
