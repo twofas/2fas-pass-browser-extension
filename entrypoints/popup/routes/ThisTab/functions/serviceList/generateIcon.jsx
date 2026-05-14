@@ -7,7 +7,6 @@
 import S from '../../components/Item/styles/Item.module.scss';
 import { getDomain } from '@/partials/functions';
 import { HEX_REGEX } from '@/constants';
-import URIMatcher from '@/partials/URIMatcher';
 import { parseDomain, ParseResultType } from 'parse-domain';
 import visaLight from '@/assets/popup-window/payment-cards/visa_light.svg';
 import visaDark from '@/assets/popup-window/payment-cards/visa_dark.svg';
@@ -65,14 +64,7 @@ function LoginIcon ({ item }) {
         parsedDomain = parseDomain(iconDomain);
       } catch {}
 
-      if (
-        !iconDomain ||
-        URIMatcher.isIp(iconDomain) ||
-        iconDomain === 'localhost' ||
-        parsedDomain?.type === ParseResultType.Invalid ||
-        parsedDomain?.type === ParseResultType.Reserved ||
-        parsedDomain?.type === ParseResultType.NotListed
-      ) {
+      if (parsedDomain?.type !== ParseResultType.Listed) {
         return { type: 'label' };
       }
 
