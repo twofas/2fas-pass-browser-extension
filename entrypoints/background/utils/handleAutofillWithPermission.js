@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { sendMessageToAllFrames, sendMessageToTab, openPopup } from '@/partials/functions';
+import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
 
 /**
@@ -123,11 +124,22 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   actionData.iframePermissionGranted = true;
   actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
 
+  try {
+    const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
+
+    if (!reinjected) {
+      logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'handleAutofillWithPermission - re-injection did not verify all frames', { tabId });
+    }
+  } catch (e) {
+    await CatchError(e);
+  }
+
   let response;
 
   try {
     response = await sendMessageToAllFrames(tabId, actionData);
   } catch (e) {
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'handleAutofillWithPermission - sendMessageToAllFrames threw', { tabId, errorMessage: e?.message });
     await CatchError(e);
     await storage.removeItem(storageKey);
     await storeAutofillFailureData(tabId, closeData);

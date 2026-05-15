@@ -48,8 +48,10 @@ const handleLoginAutofill = async (item, navigate) => {
     return;
   }
 
+  let injected = false;
+
   try {
-    await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
+    injected = await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
   } catch (e) {
     onTabError();
 
@@ -60,10 +62,22 @@ const handleLoginAutofill = async (item, navigate) => {
     return;
   }
 
+  if (!injected) {
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - autofill aborted, content script injection failed', { tabId: tab.id });
+    showToast(getMessage('error_autofill_failed'), 'error');
+    return;
+  }
+
   const cryptoAvailableRes = await sendMessageToTab(tab.id, {
     action: REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE,
     target: REQUEST_TARGETS.CONTENT
   });
+
+  if (!cryptoAvailableRes) {
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - autofill aborted, no GET_CRYPTO_AVAILABLE response from top frame', { tabId: tab.id });
+    showToast(getMessage('error_autofill_failed'), 'error');
+    return;
+  }
 
   const hasPassword = item.sifExists;
   const hasUsername = item?.content.username && item.content.username.length > 0;
@@ -206,8 +220,8 @@ const handleLoginAutofill = async (item, navigate) => {
       });
 
       return;
-    } else if (resolution.crossDomainAllowedDomains.length > 0) {
-      actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
+    } else {
+      actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains || [];
     }
   } catch (e) {
     await CatchError(e);
@@ -216,12 +230,24 @@ const handleLoginAutofill = async (item, navigate) => {
   let res;
 
   try {
+    const reinjected = await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
+
+    if (!reinjected) {
+      logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - re-injection before AUTOFILL did not verify all frames', { tabId: tab.id });
+    }
+  } catch (e) {
+    await CatchError(e);
+  }
+
+  try {
     res = await sendMessageToAllFrames(tab.id, actionData);
   } catch (e) {
     await CatchError(e);
   }
 
   if (!res) {
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - AUTOFILL no response from any frame', { tabId: tab.id });
+
     if (isHighlySecret && !hasPassword) {
       const toastId = showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
 

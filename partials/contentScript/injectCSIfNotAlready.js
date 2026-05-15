@@ -79,9 +79,10 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
     }
   };
 
-  const expectedFrameCount = await getInjectableFrameCount(tabID);
+  let expectedFrameCount = await getInjectableFrameCount(tabID);
 
   if (expectedFrameCount === 0) {
+    logger.warn(LOGGER_CONSTANTS.CATEGORIES.CONTENT, 'injectCSIfNotAlready - no injectable frames', { tabID, type });
     return false;
   }
 
@@ -114,13 +115,15 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
 
   try {
     await injectScript();
-  } catch {
+  } catch (e) {
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.CONTENT, 'injectCSIfNotAlready - executeScript failed', { tabID, type, errorName: e?.name, errorMessage: e?.message });
     return false;
   }
 
   let attempts = 0;
+  const maxAttempts = 30;
 
-  while (attempts < 15) {
+  while (attempts < maxAttempts) {
     try {
       res = await sendMessageToAllFrames(tabID, { action: REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK, target: type });
     } catch {}
@@ -128,21 +131,35 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
     if (res) {
       const okResponses = res.filter(frameResponse => frameResponse?.status === 'ok');
 
+      const currentFrameCount = await getInjectableFrameCount(tabID);
+
+      if (currentFrameCount > expectedFrameCount) {
+        expectedFrameCount = currentFrameCount;
+
+        try {
+          await injectScript();
+        } catch {}
+      }
+
       if (okResponses && okResponses.length >= expectedFrameCount) {
         injected = true;
         break;
       }
     }
 
-    if (attempts === 7 && type === REQUEST_TARGETS.CONTENT) {
+    if ((attempts === 7 || attempts === 15) && type === REQUEST_TARGETS.CONTENT) {
       try {
         await injectScript();
       } catch {}
     }
 
-    await new Promise(resolve => setTimeout(resolve, 30));
+    await new Promise(resolve => setTimeout(resolve, 50));
 
     attempts++;
+  }
+
+  if (!injected) {
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.CONTENT, 'injectCSIfNotAlready - injection verification timed out', { tabID, type, expectedFrameCount, attempts });
   }
 
   return injected;

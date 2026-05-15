@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { sendMessageToAllFrames, saveCrossDomainPreferences, openPopup } from '@/partials/functions';
+import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
 
 /**
@@ -46,11 +47,22 @@ const processLoginResult = async (tabId, storageKey, actionData, closeData, cros
   actionData.iframePermissionGranted = true;
   actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
 
+  try {
+    const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
+
+    if (!reinjected) {
+      logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'processLoginResult - re-injection after dialog did not verify all frames', { tabId });
+    }
+  } catch (e) {
+    await CatchError(e);
+  }
+
   let response;
 
   try {
     response = await sendMessageToAllFrames(tabId, actionData);
   } catch (e) {
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'processLoginResult - sendMessageToAllFrames threw', { tabId, errorMessage: e?.message });
     await CatchError(e);
     await storage.removeItem(storageKey);
     await storeAutofillFailureData(tabId, closeData);
@@ -121,11 +133,22 @@ const processCardResult = async (tabId, storageKey, actionData, crossDomainAllow
   actionData.iframePermissionGranted = true;
   actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
 
+  try {
+    const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
+
+    if (!reinjected) {
+      logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'processCardResult - re-injection after dialog did not verify all frames', { tabId });
+    }
+  } catch (e) {
+    await CatchError(e);
+  }
+
   let response;
 
   try {
     response = await sendMessageToAllFrames(tabId, actionData);
   } catch (e) {
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'processCardResult - sendMessageToAllFrames threw', { tabId, errorMessage: e?.message });
     await CatchError(e);
     await storage.removeItem(storageKey);
 

@@ -154,7 +154,7 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   }
 
   let iframePermissionGranted = true;
-  let crossDomainAllowedDomains = null;
+  let crossDomainAllowedDomains = [];
 
   try {
     const resolution = await resolveCrossDomainPermissions(tabId, 'card', {
@@ -203,12 +203,9 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     cardIssuer: item.content.cardIssuer,
     target: REQUEST_TARGETS.CONTENT,
     cryptoAvailable,
-    iframePermissionGranted
+    iframePermissionGranted,
+    crossDomainAllowedDomains
   };
-
-  if (crossDomainAllowedDomains) {
-    actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
-  }
 
   if (encryptedCardNumberB64) {
     actionData.cardNumber = encryptedCardNumberB64;
@@ -229,11 +226,22 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   encryptedExpirationDateB64 = null;
   encryptedSecurityCodeB64 = null;
 
+  try {
+    const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
+
+    if (!reinjected) {
+      logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'sendCardAutofillToTab - re-injection before AUTOFILL_CARD did not verify all frames', { tabId });
+    }
+  } catch (e) {
+    await CatchError(e);
+  }
+
   let response;
 
   try {
     response = await sendMessageToAllFrames(tabId, actionData);
   } catch (e) {
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'sendCardAutofillToTab - sendMessageToAllFrames threw', { tabId, errorMessage: e?.message });
     await CatchError(e);
 
     return TwofasNotification.show({
