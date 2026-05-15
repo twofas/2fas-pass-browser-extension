@@ -76,11 +76,13 @@ function SettingsCrossDomainAutofill (props) {
       const updated = trustedDomains.filter(d => d !== domain);
       setTrustedDomains(updated);
       await storage.setItem('local:crossDomainTrustedDomains', updated);
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsCrossDomain - trusted domain removed', { domain, count: updated.length });
       showToast(getMessage('settings_cross_domains_remove_toast'), 'success');
     } else {
       const updated = untrustedDomains.filter(d => d !== domain);
       setUntrustedDomains(updated);
       await storage.setItem('local:crossDomainUntrustedDomains', updated);
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsCrossDomain - untrusted domain removed', { domain, count: updated.length });
       showToast(getMessage('settings_cross_domains_untrusted_remove_toast'), 'success');
     }
   }, [activeTab, trustedDomains, untrustedDomains, getMessage]);
@@ -188,11 +190,13 @@ function SettingsCrossDomainAutofill (props) {
       const updated = [...trustedDomains, domain];
       await storage.setItem('local:crossDomainTrustedDomains', updated);
       setTrustedDomains(updated);
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsCrossDomain - trusted domain added', { domain, count: updated.length });
       showToast(getMessage('settings_cross_domains_add_success'), 'success');
     } else {
       const updated = [...untrustedDomains, domain];
       await storage.setItem('local:crossDomainUntrustedDomains', updated);
       setUntrustedDomains(updated);
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsCrossDomain - untrusted domain added', { domain, count: updated.length });
       showToast(getMessage('settings_cross_domains_untrusted_add_success'), 'success');
     }
 

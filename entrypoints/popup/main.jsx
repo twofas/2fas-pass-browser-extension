@@ -98,4 +98,12 @@ await Promise.all([
 ]);
 
 preloadInterFontAsync();
+
+try {
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'Popup - opened', {
+    isSeparateWindow: window.location.search.includes('separate'),
+    initialHash: window.location.hash || ''
+  });
+} catch {}
+
 createRoot(document.getElementById('root')).render(<Popup />);

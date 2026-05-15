@@ -133,6 +133,8 @@ function Shortcut () {
       return false;
     }
 
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsShortcut - open editor', { browser: import.meta.env.BROWSER });
+
     if (shortcutLink === 'firefox') {
       if (openShortcutSettingsAvailable()) {
         return browser.commands.openShortcutSettings();

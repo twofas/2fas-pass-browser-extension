@@ -55,6 +55,8 @@ function Language () {
       await storage.setItem('local:lang', value);
       await reloadI18n();
 
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsLanguage - language changed', { value });
+
       const tabs = await browser.tabs.query({});
 
       tabs.forEach(tab => {

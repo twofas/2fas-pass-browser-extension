@@ -175,6 +175,15 @@ export default defineConfig({
     return manifestObj;
   },
   hooks: {
+    'entrypoints:resolved': (wxt, entrypoints) => {
+      if (wxt?.config?.mode === 'production' && Array.isArray(entrypoints)) {
+        for (let i = entrypoints.length - 1; i >= 0; i--) {
+          if (entrypoints[i]?.name === 'devpanel') {
+            entrypoints.splice(i, 1);
+          }
+        }
+      }
+    },
     'build:manifestGenerated': (wxt, manifest) => {
       if (wxt?.config?.mode === 'development' && manifest?.action) {
         manifest.action.default_title = `${manifest.name}`;

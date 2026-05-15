@@ -158,6 +158,12 @@ const useNavigationEvents = () => {
 
   useEffect(function trackLastKnownPath() {
     if (!isHandlingNavigation.current && !IGNORED_PATHS.includes(location.pathname)) {
+      const from = lastKnownPathRef.current;
+
+      if (from !== location.pathname) {
+        logger.info(LOGGER_CONSTANTS.CATEGORIES.NAVIGATION, 'Popup-Router - route change', { from, to: location.pathname });
+      }
+
       lastKnownPathRef.current = location.pathname;
     }
   }, [location.pathname]);

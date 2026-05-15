@@ -78,6 +78,12 @@ function SettingsDevices (props) {
     const sortedDevices = filteredDevices.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
     const updatedDevices = sortedDevices.filter(device => device.id !== deviceId);
     await storage.setItem('local:devices', updatedDevices);
+
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsDevices - device removed', {
+      deviceId,
+      remainingCount: updatedDevices.length
+    });
+
     setDevices(updatedDevices);
     setLoading(false);
   };

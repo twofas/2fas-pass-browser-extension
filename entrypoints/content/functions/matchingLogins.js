@@ -150,6 +150,12 @@ const matchingLogins = (request, sendResponse, container) => {
   }
 
   const tabId = request.tabId;
+  const matchCount = Array.isArray(request?.matching) ? request.matching.length : 0;
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'ContentScript-MatchingLogins - showing list', {
+    tabId,
+    matchCount
+  });
+
   sendResponse({ status: 'ok', displayed: true });
 
   const n = {

@@ -28,6 +28,13 @@ const handleCardAutofill = async (item, navigate) => {
   const isHighlySecret = item.securityType === SECURITY_TIER.HIGHLY_SECRET;
   const onTabError = isHighlySecret ? showT2Toast : showGenericToast;
 
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - card autofill triggered', {
+    itemId: item?.id,
+    deviceId: item?.deviceId,
+    vaultId: item?.vaultId,
+    securityType: item?.securityType
+  });
+
   let tab;
 
   try {

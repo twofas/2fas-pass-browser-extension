@@ -19,6 +19,15 @@ export default defineBackground({
   main () {
     initI18n();
 
+    try {
+      const manifest = browser.runtime.getManifest();
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'BackgroundSW - service worker start', {
+        appVersion: manifest?.version,
+        browser: import.meta.env.BROWSER,
+        manifestVersion: import.meta.env.MANIFEST_VERSION
+      });
+    } catch {}
+
     const tabsInputData = {};
     const tabUpdateData = {};
     const savePromptActions = [];
@@ -54,6 +63,10 @@ export default defineBackground({
     browser.runtime.onConnect.addListener(port => {
       if (port.name === 'popup-lifecycle') {
         port.onDisconnect.addListener(() => onPopupDisconnect());
+      } else if (import.meta.env.DEV && port.name === 'devpanel-ws') {
+        import('./websocket/devPanelTap').then(mod => {
+          mod.registerDevPanelPort(port);
+        }).catch(() => {});
       }
     });
 

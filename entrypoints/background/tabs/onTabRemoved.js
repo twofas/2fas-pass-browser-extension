@@ -15,6 +15,8 @@ import getKey from '@/partials/sessionStorage/getKey';
 * @return {void}
 */
 const onTabRemoved = async (tabId, tabsInputData, savePromptActions) => {
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.BACKGROUND, 'TabHandler - tab removed', { tabId });
+
   if (tabsInputData[tabId]) {
     delete tabsInputData[tabId];
   }

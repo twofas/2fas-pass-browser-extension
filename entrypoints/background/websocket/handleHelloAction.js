@@ -16,9 +16,13 @@ import TwoFasWebSocket from '.';
 */
 const handleHelloAction = async (json, uuid) => {
   const { browserName, browserVersion, browserExtName } = await getBeInfo();
-  
+
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'PairingFlow - hello action received', { id: json?.id });
+
   try {
     const deviceId = await deviceUpdate(uuid, json);
+
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'PairingFlow - device updated', { deviceId });
 
     const socket = TwoFasWebSocket.getInstance();
     await socket.sendMessage({

@@ -55,3 +55,4 @@ export { default as sendSavePromptToTab } from './sendSavePromptToTab.js';
 export { default as shortcutAutofill, processMatchingLoginsResult } from './shortcutAutofill.js';
 export { default as notifyShareTabs } from './notifyShareTabs.js';
 export { default as updateContextMenu } from './updateContextMenu.js';
+export { default as handleLogEvent } from './handleLogEvent.js';

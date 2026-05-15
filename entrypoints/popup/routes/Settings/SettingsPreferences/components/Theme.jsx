@@ -60,6 +60,8 @@ function Theme () {
 
       await storage.setItem('local:theme', value);
 
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsTheme - theme changed', { value });
+
       const tabs = await browser.tabs.query({});
 
       tabs.forEach(tab => {

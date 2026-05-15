@@ -711,6 +711,30 @@
     "message": "Zaakceptuj",
     "description": "Accept button text in the cross-domain dialog"
   },
+  "devpanel_title": {
+    "message": "2FAS Pass — Panel deweloperski",
+    "description": "Dev panel page title"
+  },
+  "devpanel_tab_logs": {
+    "message": "Logi",
+    "description": "Dev panel logs tab label"
+  },
+  "devpanel_tab_storage_local": {
+    "message": "Storage Local",
+    "description": "Dev panel storage local tab label"
+  },
+  "devpanel_tab_storage_session": {
+    "message": "Storage Session",
+    "description": "Dev panel storage session tab label"
+  },
+  "devpanel_tab_websocket": {
+    "message": "WebSocket",
+    "description": "Dev panel websocket tab label"
+  },
+  "devpanel_open_in_new_tab": {
+    "message": "Otwórz panel deweloperski",
+    "description": "BottomBar tooltip for opening dev panel in new tab"
+  },
   "install_please_pin_extension": {
     "message": "Przypnij te rozszerzenie do paska zadań.",
     "description": "Prompt asking the user to pin the browser extension to the toolbar"
@@ -1694,6 +1718,58 @@
   "settings_devices_dialog_confirm_text": {
     "message": "Rozłącz",
     "description": "Confirm button text in the disconnect trusted device confirmation dialog"
+  },
+  "settings_logs_menu_link": {
+    "message": "Logi diagnostyczne",
+    "description": "Settings Preferences menu link to diagnostic logs page"
+  },
+  "settings_logs_title": {
+    "message": "Logi diagnostyczne",
+    "description": "Title of the diagnostic logs settings page"
+  },
+  "settings_logs_description": {
+    "message": "Logi diagnostyczne rejestrują zdarzenia aplikacji, aby pomóc supportowi w analizie problemów. Logi nigdy nie zawierają haseł, notatek ani innej zawartości elementów — co najwyżej zawierają identyfikatory elementów.",
+    "description": "Explanation of what diagnostic logs contain and their purpose"
+  },
+  "settings_logs_download_button": {
+    "message": "Pobierz logi",
+    "description": "Button to export current diagnostic logs as a JSON file"
+  },
+  "settings_logs_clear_button": {
+    "message": "Wyczyść logi",
+    "description": "Button to delete all stored diagnostic logs"
+  },
+  "settings_logs_clear_confirm": {
+    "message": "Czy na pewno chcesz usunąć wszystkie logi diagnostyczne? Tej operacji nie można cofnąć.",
+    "description": "Confirmation message for clearing diagnostic logs"
+  },
+  "settings_logs_clear_confirm_cancel": {
+    "message": "Anuluj",
+    "description": "Cancel button label on the clear logs confirmation dialog"
+  },
+  "settings_logs_clear_confirm_ok": {
+    "message": "Wyczyść logi",
+    "description": "Confirm button label on the clear logs confirmation dialog"
+  },
+  "settings_logs_download_success": {
+    "message": "Logi diagnostyczne wyeksportowane",
+    "description": "Toast shown when logs are exported successfully"
+  },
+  "settings_logs_download_error": {
+    "message": "Nie udało się wyeksportować logów diagnostycznych",
+    "description": "Toast shown when log export fails"
+  },
+  "settings_logs_clear_success": {
+    "message": "Logi diagnostyczne wyczyszczone",
+    "description": "Toast shown when logs are cleared successfully"
+  },
+  "settings_logs_clear_error": {
+    "message": "Nie udało się wyczyścić logów diagnostycznych",
+    "description": "Toast shown when clearing logs fails"
+  },
+  "settings_logs_empty_toast": {
+    "message": "Brak logów diagnostycznych do wyeksportowania",
+    "description": "Toast shown when user tries to export but there are no logs"
   },
   "settings_save_prompt_header": {
     "message": "Zapisywanie elementów",

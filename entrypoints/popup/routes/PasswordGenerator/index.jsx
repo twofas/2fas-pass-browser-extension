@@ -104,6 +104,14 @@ function PasswordGenerator (props) {
     const useUppercase = uppercase !== undefined ? uppercase : data.includeUppercase;
     const useNumbers = numbers !== undefined ? numbers : data.includeNumbers;
     const useSpecial = special !== undefined ? special : data.includeSpecialChars;
+
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-PasswordGenerator - regenerate', {
+      length,
+      useUppercase,
+      useNumbers,
+      useSpecial
+    });
+
     let newPassword = generatePassword(length, useUppercase, useNumbers, useSpecial);
 
     initialPasswordRef.current = newPassword;
@@ -224,6 +232,8 @@ function PasswordGenerator (props) {
                               <button
                                 type='button'
                                 onClick={async () => {
+                                  logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-PasswordGenerator - copy generated password');
+
                                   try {
                                     await copyValue(input.value, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'password');
                                     showToast(getMessage('notification_password_copied'), 'success');

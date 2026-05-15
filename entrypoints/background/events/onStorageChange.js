@@ -24,6 +24,14 @@ const onStorageChange = async (change, areaName, migrations) => {
     return;
   }
 
+  try {
+    const keys = change ? Object.keys(change) : [];
+
+    if (keys.length > 0) {
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - storage change', { areaName, keys });
+    }
+  } catch {}
+
   switch (areaName) {
     case 'session': {
       if (change?.storageVersion) {

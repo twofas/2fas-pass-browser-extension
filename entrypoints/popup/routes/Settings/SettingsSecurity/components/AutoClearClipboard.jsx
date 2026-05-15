@@ -65,6 +65,9 @@ function AutoClearClipboard () {
     try {
       const value = change?.value;
       await storage.setItem('local:autoClearClipboard', value);
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsAutoClearClipboard - changed', { value });
+
       setCC(value);
 
       showToast(getMessage('notification_settings_save_success'), 'success');

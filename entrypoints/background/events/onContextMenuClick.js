@@ -19,6 +19,11 @@ const onContextMenuClick = async (info, tab) => {
   const { menuItemId } = info;
   const autofillRegexTest = AUTOFILL_REGEX.exec(menuItemId);
 
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'ContextMenuHandler - clicked', {
+    menuItemId,
+    tabId: tab?.id
+  });
+
   try {
     if (autofillRegexTest) {
       const [, deviceId, vaultId, itemId] = autofillRegexTest;

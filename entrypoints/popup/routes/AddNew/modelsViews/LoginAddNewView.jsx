@@ -194,6 +194,12 @@ function LoginAddNewView() {
         : { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
     }
 
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'LoginAddNewView - submit add login', {
+      deviceId,
+      onMobile: !!data?.onMobile,
+      contentType: Login.contentType
+    });
+
     return navigate('/fetch', {
       state: {
         action: PULL_REQUEST_TYPES.ADD_DATA,

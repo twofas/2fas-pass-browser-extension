@@ -55,10 +55,13 @@ export const AuthProvider = memo(({ children }) => {
     store.clearHref();
 
     setStateConfigured(true);
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTH, 'AuthHook - login success');
     navigate('/', { replace: true });
   }, [navigate]);
 
   const logout = useCallback(async (clear = true) => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTH, 'AuthHook - logout', { clearedSession: clear });
+
     await cleanupDevices();
 
     if (clear) {
@@ -78,6 +81,7 @@ export const AuthProvider = memo(({ children }) => {
   useEffect(function loadAuthConfiguredState() {
     const getData = async () => {
       const dateStorage = await getConfiguredBoolean();
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.AUTH, 'AuthHook - configured state loaded', { configured: !!dateStorage });
       setStateConfigured(dateStorage);
       setIsLoading(false);
     };

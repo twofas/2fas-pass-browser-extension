@@ -22,9 +22,11 @@ const onIdleStateChange = async state => {
     const paidDeviceConnected = await isPaidDeviceConnected();
 
     if ((autoIdleLock === 'default' || autoIdleLock === null) && paidDeviceConnected) {
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.AUTH, 'IdleStateChange - skip auto-lock (paid device connected)');
       return false;
     }
-  
+
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTH, 'IdleStateChange - auto-lock triggered', { autoIdleLock });
     await cleanupDevices();
     await browser.storage.session.clear();
     return true;

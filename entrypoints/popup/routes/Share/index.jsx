@@ -160,6 +160,15 @@ function ShareForm ({ item, getMessage, navigate }) {
         return;
       }
 
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'Popup-Share - createSecret request', {
+        itemId: item?.id,
+        deviceId: item?.deviceId,
+        vaultId: item?.vaultId,
+        expirationSec: expiration,
+        oneTimeAccess: !!oneTimeAccess,
+        usePassword: !!usePassword
+      });
+
       const result = await createSecret({
         data: encodedData,
         validForSeconds: expiration,
@@ -167,6 +176,8 @@ function ShareForm ({ item, getMessage, navigate }) {
       });
 
       const link = `${import.meta.env.VITE_SHARE_BASE_URL}/#/${result.id}/${type}/${toBase64Url(nonce)}/${urlSecret}`;
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'Popup-Share - share link created', { shareId: result?.id });
 
       navigate('/share-result', {
         state: {

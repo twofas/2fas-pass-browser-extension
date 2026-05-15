@@ -39,16 +39,27 @@ export const useBackgroundWS = ({ onLogin } = {}) => {
 
       switch (message.updateType) {
         case 'stateChange': {
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.WS, 'Popup-WS - state change', {
+            type: message.payload?.type,
+            active: message.payload?.active,
+            status: message.payload?.status
+          });
           setWsState(prev => ({ ...prev, ...message.payload }));
           break;
         }
 
         case 'toast': {
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.WS, 'Popup-WS - toast', { type: message.payload?.type });
           processToast(message.payload);
           break;
         }
 
         case 'navigate': {
+          logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'Popup-WS - background navigate', {
+            path: message.payload?.path,
+            resetStore: !!message.payload?.resetStore
+          });
+
           if (message.payload.resetStore) {
             const store = usePopupStateStore.getState();
             store.clearAllData();
@@ -60,6 +71,7 @@ export const useBackgroundWS = ({ onLogin } = {}) => {
         }
 
         case 'login': {
+          logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTH, 'Popup-WS - login signal from background');
           if (onLoginRef.current) {
             onLoginRef.current();
           } else {
@@ -80,6 +92,12 @@ export const useBackgroundWS = ({ onLogin } = {}) => {
 
   const sendCommand = useCallback(async (action, data = {}) => {
     try {
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.WS, 'Popup-WS - sendCommand', {
+        action,
+        fetchAction: data?.fetchAction,
+        from: data?.from
+      });
+
       return await browser.runtime.sendMessage({
         action,
         target: REQUEST_TARGETS.BACKGROUND_WS,

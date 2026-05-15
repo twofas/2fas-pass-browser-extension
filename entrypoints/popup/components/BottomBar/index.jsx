@@ -14,6 +14,7 @@ import tryWindowClose from '@/partials/browserInfo/tryWindowClose';
 import NewWindowIcon from '@/assets/popup-window/new-window.svg?react';
 import SettingsIcon from '@/assets/popup-window/settings.svg?react';
 import FullSyncIcon from '@/assets/popup-window/full-sync.svg?react';
+import DevPanelIcon from '@/assets/popup-window/dev-panel.svg?react';
 import ClearLink from '../ClearLink';
 import { useI18n } from '@/partials/context/I18nContext';
 
@@ -89,6 +90,14 @@ function BottomBar () {
   const popupCheck = useCallback(async () => {
     const isInSeparateWindow = await popupIsInSeparateWindow();
     setSeparateWindow(isInSeparateWindow);
+  }, []);
+
+  const handleOpenDevPanel = useCallback(async () => {
+    try {
+      await browser.tabs.create({ url: browser.runtime.getURL('/devpanel.html') });
+    } catch (e) {
+      CatchError(e);
+    }
   }, []);
 
   const handleNewWindow = useCallback(async () => {
@@ -270,6 +279,17 @@ function BottomBar () {
           >
             <SettingsIcon />
           </ClearLink>
+
+          {import.meta.env.DEV && (
+            <button
+              className={S.bottombarDevPanel}
+              onClick={handleOpenDevPanel}
+              title='Open Dev Panel'
+              type='button'
+            >
+              <DevPanelIcon />
+            </button>
+          )}
         </div>
 
         <div className={secIconClass}>

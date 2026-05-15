@@ -22,6 +22,10 @@ export default defineContentScript({
     try {
       await initI18n();
 
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.CONTENT, 'ContentScript - main initialized', {
+        topFrame: isTopFrame()
+      });
+
       let handleMessage;
       let topLayerCleanup = null;
       const emptyFunc = () => {};

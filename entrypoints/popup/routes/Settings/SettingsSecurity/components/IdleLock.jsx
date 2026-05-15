@@ -75,7 +75,9 @@ function IdleLock () {
     try {
       const value = change?.value;
       await storage.setItem('local:autoIdleLock', value);
-      
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsIdleLock - changed', { value });
+
       setIdleInterval(value);
       setIL(value);
 

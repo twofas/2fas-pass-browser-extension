@@ -20,11 +20,23 @@ const runMigrations = async () => {
       return numA - numB;
     });
 
-  for (const [, migration] of sortedMigrations) {
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'StorageMigrations - run start', { count: sortedMigrations.length });
+
+  for (const [path, migration] of sortedMigrations) {
     if (typeof migration.default === 'function') {
-      await migration.default();
+      const fileName = path.split('/').pop();
+
+      try {
+        await migration.default();
+        logger.info(LOGGER_CONSTANTS.CATEGORIES.STORAGE, `StorageMigrations - ${fileName} completed`);
+      } catch (e) {
+        logger.error(LOGGER_CONSTANTS.CATEGORIES.STORAGE, `StorageMigrations - ${fileName} failed`, { errorName: e?.name });
+        throw e;
+      }
     }
   }
+
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'StorageMigrations - run done');
 };
 
 export default runMigrations;

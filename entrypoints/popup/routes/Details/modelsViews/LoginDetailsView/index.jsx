@@ -139,6 +139,12 @@ function LoginDetailsView(props) {
       stateData.content.notes = e?.content?.notes ? e.content.notes : '';
     }
 
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'LoginDetailsView - submit update', {
+      itemId: data?.item?.id,
+      deviceId: data?.item?.deviceId,
+      vaultId: data?.item?.vaultId
+    });
+
     return navigate('/fetch', {
       state: {
         action: PULL_REQUEST_TYPES.UPDATE_DATA,

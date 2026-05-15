@@ -64,6 +64,7 @@ function Connect (props) {
   }, []);
 
   const switchToQrView = useCallback(async () => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Connect - switch to QR view');
     setLocalView(CONNECT_VIEWS.QrView);
 
     if (bgState?.active) {
@@ -91,6 +92,8 @@ function Connect (props) {
   }, [bgState?.active, sendCommand, loadReadyDevices]);
 
   const connectByPush = useCallback(async device => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Connect - connect by push', { deviceId: device?.id });
+
     if (bgState?.active) {
       await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
     }
@@ -109,6 +112,7 @@ function Connect (props) {
   }, [bgState?.active, sendCommand, getMessage]);
 
   const handleSocketReload = useCallback(async () => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Connect - reload QR');
     const result = await sendCommand(REQUEST_ACTIONS.WS_RELOAD_QR);
 
     if (result?.state?.qrData) {
@@ -121,6 +125,7 @@ function Connect (props) {
   }, [sendCommand, updateQrCode]);
 
   const handleCancelPushSent = useCallback(async () => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Connect - cancel push sent');
     await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
     setLocalView(CONNECT_VIEWS.DeviceSelect);
   }, [sendCommand]);

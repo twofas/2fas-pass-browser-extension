@@ -49,6 +49,9 @@ function ContextMenu () {
       setCM(newValue);
 
       await storage.setItem('local:contextMenu', newValue);
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsContextMenu - toggled', { enabled: newValue });
+
       showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:contextMenu');
