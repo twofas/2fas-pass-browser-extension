@@ -6,7 +6,7 @@
 
 import S from '../styles/Item.module.scss';
 import { useI18n } from '@/partials/context/I18nContext';
-import handleSecureNoteText from '../../../functions/serviceList/handleSecureNoteText';
+import handleSecureNoteText from '../functions/handleSecureNoteText';
 import { useState, useRef, useEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';

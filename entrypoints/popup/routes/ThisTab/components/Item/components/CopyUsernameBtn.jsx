@@ -4,9 +4,9 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../components/Item/styles/Item.module.scss';
+import S from '../styles/Item.module.scss';
 import { useI18n } from '@/partials/context/I18nContext';
-import handleUsername from '../handleUsername';
+import handleUsername from '../functions/handleUsername';
 import ItemUsernameIcon from '@/assets/popup-window/service-username.svg?react';
 
 /** 
@@ -19,7 +19,7 @@ import ItemUsernameIcon from '@/assets/popup-window/service-username.svg?react';
 * @param {function} props.setMore - Function to update the more state.
 * @return {JSX.Element} The rendered button element.
 */
-const UsernameBtn = ({ deviceId, vaultId, itemId, more, setMore }) => {
+const CopyUsernameBtn = ({ deviceId, vaultId, itemId, more, setMore }) => {
   const { getMessage } = useI18n();
 
   return (
@@ -32,4 +32,4 @@ const UsernameBtn = ({ deviceId, vaultId, itemId, more, setMore }) => {
   );
 };
 
-export default UsernameBtn;
+export default CopyUsernameBtn;

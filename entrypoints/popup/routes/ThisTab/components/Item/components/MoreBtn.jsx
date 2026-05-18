@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../../components/Item/styles/Item.module.scss';
+import S from '../styles/Item.module.scss';
 import { useRef, useCallback, useMemo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import ItemMoreIcon from '@/assets/popup-window/service-more.svg?react';

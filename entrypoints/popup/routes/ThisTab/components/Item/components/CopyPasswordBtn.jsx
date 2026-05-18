@@ -6,24 +6,24 @@
 
 import S from '../styles/Item.module.scss';
 import { useI18n } from '@/partials/context/I18nContext';
-import handleWifiPassword from '../../../functions/serviceList/handleWifiPassword';
+import handlePassword from '../functions/handlePassword';
 import { useState, useRef, useEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
-import Wifi from '@/models/itemModels/Wifi';
+import Login from '@/models/itemModels/Login';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
 import ItemFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
 import ItemPasswordIcon from '@/assets/popup-window/service-password.svg?react';
 
 /**
-* Function to render the wifi password button.
+* Function to render the password button.
 * @param {Object} props - The component props.
 * @param {Object} props.item - The item object.
 * @param {boolean} props.more - Indicates if more actions are available.
 * @param {function} props.setMore - Function to update the more state.
 * @return {JSX.Element} The rendered button element.
 */
-const WifiPasswordBtn = ({ item, more, setMore }) => {
+const CopyPasswordBtn = ({ item, more, setMore }) => {
   const { getMessage } = useI18n();
   const [scheduledTime, setScheduledTime] = useState(false);
   const loaderRef = useRef(null);
@@ -105,8 +105,8 @@ const WifiPasswordBtn = ({ item, more, setMore }) => {
   if (item?.securityType === SECURITY_TIER.SECRET) {
     return (
       <button
-        onClick={async () => await handleWifiPassword(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={getMessage('this_tab_copy_wifi_password')}
+        onClick={async () => await handlePassword(item.deviceId, item.vaultId, item.id, more, setMore)}
+        title={getMessage('this_tab_copy_password')}
       >
         <ItemPasswordIcon className={S.itemPassword} />
       </button>
@@ -114,8 +114,8 @@ const WifiPasswordBtn = ({ item, more, setMore }) => {
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
     return (
       <button
-        onClick={async () => await handleWifiPassword(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={getMessage('this_tab_copy_wifi_password')}
+        onClick={async () => await handlePassword(item.deviceId, item.vaultId, item.id, more, setMore)}
+        title={getMessage('this_tab_copy_password')}
         className={S.itemPasswordLoader}
       >
         <svg
@@ -141,11 +141,11 @@ const WifiPasswordBtn = ({ item, more, setMore }) => {
             itemId: item.id,
             deviceId: item.deviceId,
             vaultId: item.vaultId,
-            contentType: Wifi.contentType
+            contentType: Login.contentType
           }
         }}
         onClick={() => { if (more) { setMore(false); } }}
-        title={getMessage('this_tab_fetch_wifi_password')}
+        title={getMessage('this_tab_fetch_password')}
         prefetch='intent'
       >
         <ItemFetchIcon className={S.itemFetch} />
@@ -154,4 +154,4 @@ const WifiPasswordBtn = ({ item, more, setMore }) => {
   }
 };
 
-export default WifiPasswordBtn;
+export default CopyPasswordBtn;

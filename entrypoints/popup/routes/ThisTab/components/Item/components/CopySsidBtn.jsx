@@ -6,7 +6,7 @@
 
 import S from '../styles/Item.module.scss';
 import { useI18n } from '@/partials/context/I18nContext';
-import handleSsid from '../../../functions/serviceList/handleSsid';
+import handleSsid from '../functions/handleSsid';
 import ItemSsidIcon from '@/assets/popup-window/items/wifi.svg?react';
 
 /**
@@ -19,7 +19,7 @@ import ItemSsidIcon from '@/assets/popup-window/items/wifi.svg?react';
 * @param {function} props.setMore - Function to update the more state.
 * @return {JSX.Element} The rendered button element.
 */
-const SsidBtn = ({ deviceId, vaultId, itemId, more, setMore }) => {
+const CopySsidBtn = ({ deviceId, vaultId, itemId, more, setMore }) => {
   const { getMessage } = useI18n();
 
   return (
@@ -32,4 +32,4 @@ const SsidBtn = ({ deviceId, vaultId, itemId, more, setMore }) => {
   );
 };
 
-export default SsidBtn;
+export default CopySsidBtn;

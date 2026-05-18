@@ -7,12 +7,12 @@
 import S from '../styles/Item.module.scss';
 import { memo, useRef, useMemo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
-import ItemIcon from '../../../functions/serviceList/generateIcon';
+import ItemIcon from '@/entrypoints/popup/components/ItemIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import Skeleton from '../../Skeleton';
 import CopyNameBtn from '../components/CopyNameBtn';
 import CopySecureNoteBtn from '../components/CopySecureNoteBtn';
-import MoreBtn from '../../../functions/serviceList/additionalButtons/MoreBtn';
+import MoreBtn from '../components/MoreBtn';
 import ItemCustomOption from '../components/ItemCustomOption';
 
 const selectComponents = { Option: ItemCustomOption };

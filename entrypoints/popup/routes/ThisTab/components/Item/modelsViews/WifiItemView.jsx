@@ -7,12 +7,12 @@
 import S from '../styles/Item.module.scss';
 import { memo, useRef, useMemo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
-import ItemIcon from '../../../functions/serviceList/generateIcon';
+import ItemIcon from '@/entrypoints/popup/components/ItemIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import Skeleton from '../../Skeleton';
-import WifiPasswordBtn from '../components/WifiPasswordBtn';
-import SsidBtn from '../components/SsidBtn';
-import MoreBtn from '../../../functions/serviceList/additionalButtons/MoreBtn';
+import CopyWifiPasswordBtn from '../components/CopyWifiPasswordBtn';
+import CopySsidBtn from '../components/CopySsidBtn';
+import MoreBtn from '../components/MoreBtn';
 import ItemCustomOption from '../components/ItemCustomOption';
 
 const selectComponents = { Option: ItemCustomOption };
@@ -37,8 +37,8 @@ function WifiItemView (props) {
         </span>
       </div>
       <div className={S.itemAdditionalButtons}>
-        <WifiPasswordBtn item={props.data} more={props.more} setMore={props.setMore} />
-        <SsidBtn deviceId={props.data?.deviceId} vaultId={props.data?.vaultId} itemId={props.data?.id} more={props.more} setMore={props.setMore} />
+        <CopyWifiPasswordBtn item={props.data} more={props.more} setMore={props.setMore} />
+        <CopySsidBtn deviceId={props.data?.deviceId} vaultId={props.data?.vaultId} itemId={props.data?.id} more={props.more} setMore={props.setMore} />
         <MoreBtn item={props.data} more={props.more} setMore={props.setMore} ref={moreBtnRef} />
       </div>
       {props.more && (

@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './styles/AutofillErrorItem.module.scss';
-import ItemIcon from '../../functions/serviceList/generateIcon';
+import ItemIcon from '@/entrypoints/popup/components/ItemIcon';
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import getItem from '@/partials/sessionStorage/getItem';

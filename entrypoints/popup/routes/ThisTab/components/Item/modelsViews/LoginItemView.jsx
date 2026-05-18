@@ -8,13 +8,13 @@ import S from '../styles/Item.module.scss';
 import { memo, useMemo, useRef, useCallback } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import { useNavigate } from 'react-router';
-import ItemIcon from '../../../functions/serviceList/generateIcon';
-import handleAutofill from '../../../functions/serviceList/handleAutofill';
+import ItemIcon from '@/entrypoints/popup/components/ItemIcon';
+import handleAutofill from '../functions/handleAutofill';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import Skeleton from '../../Skeleton';
-import PasswordBtn from '../../../functions/serviceList/additionalButtons/PasswordBtn';
-import MoreBtn from '../../../functions/serviceList/additionalButtons/MoreBtn';
-import UsernameBtn from '../../../functions/serviceList/additionalButtons/UsernameBtn';
+import CopyPasswordBtn from '../components/CopyPasswordBtn';
+import MoreBtn from '../components/MoreBtn';
+import CopyUsernameBtn from '../components/CopyUsernameBtn';
 import ItemCustomOption from '../components/ItemCustomOption';
 
 const selectComponents = { Option: ItemCustomOption };
@@ -57,8 +57,8 @@ function LoginItemView (props) {
         </span>
       </button>
       <div className={S.itemAdditionalButtons}>
-        <PasswordBtn item={props.data} more={props.more} setMore={props.setMore} />
-        <UsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={props.setMore} />
+        <CopyPasswordBtn item={props.data} more={props.more} setMore={props.setMore} />
+        <CopyUsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={props.setMore} />
         <MoreBtn more={props.more} setMore={props.setMore} ref={moreBtnRef} />
       </div>
       {props.more && (

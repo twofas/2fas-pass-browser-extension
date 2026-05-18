@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../components/Item/styles/Item.module.scss';
+import S from './styles/ItemIcon.module.scss';
 import { getDomain } from '@/partials/functions';
 import { HEX_REGEX } from '@/constants';
 import { parseDomain, ParseResultType } from 'parse-domain';
@@ -18,7 +18,7 @@ import dinnersDark from '@/assets/popup-window/payment-cards/dinners_dark.svg';
 import jcb from '@/assets/popup-window/payment-cards/jcb.svg';
 import unionPayLight from '@/assets/popup-window/payment-cards/unionpay_light.svg';
 import unionPayDark from '@/assets/popup-window/payment-cards/unionpay_dark.svg';
-import Skeleton from '../../components/Skeleton';
+import Skeleton from '@/entrypoints/popup/routes/ThisTab/components/Skeleton';
 import SecureNoteIcon from '@/assets/popup-window/items/secure-note.svg?react';
 import PaymentCardIcon from '@/assets/popup-window/items/payment-card.svg?react';
 import WifiIcon from '@/assets/popup-window/items/wifi.svg?react';

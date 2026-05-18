@@ -11,7 +11,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion } from 'motion/react';
 import getItem from '@/partials/sessionStorage/getItem';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import ItemIcon from '../ThisTab/functions/serviceList/generateIcon';
+import ItemIcon from '@/entrypoints/popup/components/ItemIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import { useI18n } from '@/partials/context/I18nContext';
 import {

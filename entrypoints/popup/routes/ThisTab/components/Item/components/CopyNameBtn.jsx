@@ -6,7 +6,7 @@
 
 import S from '../styles/Item.module.scss';
 import { useI18n } from '@/partials/context/I18nContext';
-import handleName from '../../../functions/serviceList/handleName';
+import handleName from '../functions/handleName';
 import ItemCopyNameIcon from '@/assets/popup-window/copy-name.svg?react';
 
 const CopyNameBtn = ({ item, more, setMore }) => {
