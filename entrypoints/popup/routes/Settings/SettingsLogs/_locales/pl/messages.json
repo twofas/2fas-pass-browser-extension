@@ -1,7 +1,7 @@
 {
   "settings_logs_menu_link": {
-    "message": "Logi diagnostyczne",
-    "description": "Settings Preferences menu link to diagnostic logs page"
+    "message": "Wyślij logi",
+    "description": "Settings About menu link to diagnostic logs page"
   },
   "settings_logs_title": {
     "message": "Logi diagnostyczne",
@@ -11,25 +11,13 @@
     "message": "Logi diagnostyczne rejestrują zdarzenia aplikacji, aby pomóc supportowi w analizie problemów. Logi nigdy nie zawierają haseł, notatek ani innej zawartości elementów — co najwyżej zawierają identyfikatory elementów.",
     "description": "Explanation of what diagnostic logs contain and their purpose"
   },
+  "settings_logs_send_to_team": {
+    "message": "Jeśli napotykasz jakiekolwiek problemy, pobierz logi i wyślij je do zespołu 2FAS.",
+    "description": "Call to action asking the user to download logs and send them to the 2FAS Team when issues occur"
+  },
   "settings_logs_download_button": {
     "message": "Pobierz logi",
     "description": "Button to export current diagnostic logs as a JSON file"
-  },
-  "settings_logs_clear_button": {
-    "message": "Wyczyść logi",
-    "description": "Button to delete all stored diagnostic logs"
-  },
-  "settings_logs_clear_confirm": {
-    "message": "Czy na pewno chcesz usunąć wszystkie logi diagnostyczne? Tej operacji nie można cofnąć.",
-    "description": "Confirmation message for clearing diagnostic logs"
-  },
-  "settings_logs_clear_confirm_cancel": {
-    "message": "Anuluj",
-    "description": "Cancel button label on the clear logs confirmation dialog"
-  },
-  "settings_logs_clear_confirm_ok": {
-    "message": "Wyczyść logi",
-    "description": "Confirm button label on the clear logs confirmation dialog"
   },
   "settings_logs_download_success": {
     "message": "Logi diagnostyczne wyeksportowane",
@@ -38,14 +26,6 @@
   "settings_logs_download_error": {
     "message": "Nie udało się wyeksportować logów diagnostycznych",
     "description": "Toast shown when log export fails"
-  },
-  "settings_logs_clear_success": {
-    "message": "Logi diagnostyczne wyczyszczone",
-    "description": "Toast shown when logs are cleared successfully"
-  },
-  "settings_logs_clear_error": {
-    "message": "Nie udało się wyczyścić logów diagnostycznych",
-    "description": "Toast shown when clearing logs fails"
   },
   "settings_logs_empty_toast": {
     "message": "Brak logów diagnostycznych do wyeksportowania",

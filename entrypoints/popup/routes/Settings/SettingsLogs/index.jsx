@@ -9,8 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, useCallback } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import ConfirmDialog from '@/entrypoints/popup/components/ConfirmDialog';
-import { readAllLogs, getLogStats, clearLogs } from '@/partials/logger/idb';
+import { readAllLogs, getLogStats } from '@/partials/logger/idb';
 
 const fileSafeTimestamp = () => {
   const d = new Date();
@@ -55,7 +54,6 @@ function SettingsLogs (props) {
   const [stats, setStats] = useState({ entryCount: 0, bytesUsed: 0 });
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const refreshStats = useCallback(async () => {
     try {
@@ -74,13 +72,13 @@ function SettingsLogs (props) {
     setBusy(true);
 
     try {
-      const [entries, manifest, browserInfo] = await Promise.all([
+      const [logsForExport, manifest, browserInfo] = await Promise.all([
         readAllLogs(),
         Promise.resolve(browser.runtime.getManifest()),
         storage.getItem('local:browserInfo').catch(() => null)
       ]);
 
-      if (!entries || entries.length === 0) {
+      if (!logsForExport || logsForExport.length === 0) {
         showToast(getMessage('settings_logs_empty_toast'), 'info');
         setBusy(false);
 
@@ -95,10 +93,10 @@ function SettingsLogs (props) {
           browser: import.meta.env.BROWSER,
           browserName: browserInfo?.browserName || null,
           browserVersion: browserInfo?.browserVersion || null,
-          entryCount: entries.length,
+          entryCount: logsForExport.length,
           bytesUsed: stats.bytesUsed
         },
-        logs: entries
+        logs: logsForExport
       };
 
       const filename = `2fas-pass-logs-${import.meta.env.BROWSER}-${manifest?.version || 'unknown'}-${fileSafeTimestamp()}.json`;
@@ -111,34 +109,6 @@ function SettingsLogs (props) {
       setBusy(false);
     }
   }, [busy, stats.bytesUsed]);
-
-  const handleClearClick = useCallback(() => {
-    if (busy) {
-      return;
-    }
-
-    setConfirmOpen(true);
-  }, [busy]);
-
-  const handleClearCancel = useCallback(() => {
-    setConfirmOpen(false);
-  }, []);
-
-  const handleClearConfirm = useCallback(async () => {
-    setConfirmOpen(false);
-    setBusy(true);
-
-    try {
-      await clearLogs();
-      await refreshStats();
-      showToast(getMessage('settings_logs_clear_success'), 'success');
-    } catch (e) {
-      CatchError(e);
-      showToast(getMessage('settings_logs_clear_error'), 'error');
-    } finally {
-      setBusy(false);
-    }
-  }, [refreshStats]);
 
   useEffect(function loadSettingsLogsStats() {
     let active = true;
@@ -186,59 +156,43 @@ function SettingsLogs (props) {
   }
 
   return (
-    <>
-      <div className={`${props.className ? props.className : ''}`}>
-        <div>
-          <section className={S.settings}>
-            <NavigationButton type='back' />
-            <NavigationButton type='cancel' />
+    <div className={`${props.className ? props.className : ''}`}>
+      <div>
+        <section className={S.settings}>
+          <NavigationButton type='back' />
+          <NavigationButton type='cancel' />
 
-            <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
-              <div className={S.settingsSubmenu}>
-                <div className={S.settingsSubmenuHeader}>
-                  <h3>{getMessage('settings_logs_title')}</h3>
-                </div>
+          <div className={`${S.settingsContainer} ${S.submenuContainer}`}>
+            <div className={S.settingsSubmenu}>
+              <div className={S.settingsSubmenuHeader}>
+                <h3>{getMessage('settings_logs_title')}</h3>
+              </div>
 
-                <div className={`${S.settingsSubmenuBody} ${S.smallMargin}`}>
-                  <p className={S.settingsLogsDescription}>
-                    {getMessage('settings_logs_description')}
-                  </p>
+              <div className={S.settingsSubmenuBody}>
+                <p className={S.settingsLogsDescription}>
+                  {getMessage('settings_logs_description')}
+                </p>
 
-                  <div className={S.settingsLogsActions}>
-                    <button
-                      type='button'
-                      className={`${bS.btn} ${bS.btnTheme}`}
-                      onClick={handleDownload}
-                      disabled={busy || stats.entryCount === 0}
-                    >
-                      {getMessage('settings_logs_download_button')}
-                    </button>
+                <p className={S.settingsLogsDescription}>
+                  {getMessage('settings_logs_send_to_team')}
+                </p>
 
-                    <button
-                      type='button'
-                      className={`${bS.btn} ${bS.btnDanger}`}
-                      onClick={handleClearClick}
-                      disabled={busy || stats.entryCount === 0}
-                    >
-                      {getMessage('settings_logs_clear_button')}
-                    </button>
-                  </div>
+                <div className={S.settingsLogsActions}>
+                  <button
+                    type='button'
+                    className={`${bS.btn} ${bS.btnTheme}`}
+                    onClick={handleDownload}
+                    disabled={busy || stats.entryCount === 0}
+                  >
+                    {getMessage('settings_logs_download_button')}
+                  </button>
                 </div>
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
       </div>
-
-      <ConfirmDialog
-        open={confirmOpen}
-        message={getMessage('settings_logs_clear_confirm')}
-        cancelText={getMessage('settings_logs_clear_confirm_cancel')}
-        confirmText={getMessage('settings_logs_clear_confirm_ok')}
-        onCancel={handleClearCancel}
-        onConfirm={handleClearConfirm}
-      />
-    </>
+    </div>
   );
 }
 

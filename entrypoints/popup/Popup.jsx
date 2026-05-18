@@ -58,7 +58,7 @@ const routeConfig = [
   { path: '/settings/preferences/reset', component: SettingsReset, isProtectedRoute: false },
   { path: '/settings/preferences/save-login-excluded-domains', component: SettingsSaveLoginExcludedDomains, isProtectedRoute: false },
   { path: '/settings/security/cross-domain', component: SettingsCrossDomainAutofill, isProtectedRoute: false },
-  { path: '/settings/preferences/logs', component: SettingsLogs, isProtectedRoute: false },
+  { path: '/settings/about/logs', component: SettingsLogs, isProtectedRoute: false },
   { path: '/fetch', component: Fetch, isProtectedRoute: true },
   { path: '/fetch/:data', component: FetchExternal, noClassName: true, isProtectedRoute: true },
   { path: '/details/:deviceId/:vaultId/:id', component: Details, isProtectedRoute: true },

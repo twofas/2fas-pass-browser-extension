@@ -57,11 +57,6 @@ function SettingsPreferences (props) {
                   <div className={S.settingsAdvancedContainer}>
                     <ContextMenu />
                     <Logs />
-
-                    <ClearLink to='/settings/preferences/logs' className={S.settingsAdvancedLink}>
-                      <span>{getMessage('settings_logs_menu_link')}</span>
-                      <MenuArrowIcon />
-                    </ClearLink>
                   </div>
                 </div>
 

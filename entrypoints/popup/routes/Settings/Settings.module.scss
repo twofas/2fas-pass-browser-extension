@@ -850,13 +850,6 @@
     margin-bottom: 16px;
   }
 
-  .settings-logs-stats {
-    color: var(--primary-text);
-    font-family: monospace;
-    font-size: 12px;
-    margin-bottom: 20px;
-  }
-
   .settings-logs-actions {
     display: flex;
     flex-direction: column;
@@ -866,5 +859,12 @@
       padding: 10px 16px;
       width: 100%;
     }
+  }
+
+  &-about-send-logs {
+    border-top: 1px solid var(--divider);
+    margin-top: 18px;
+    padding-top: 6px;
+    width: 100%;
   }
 }

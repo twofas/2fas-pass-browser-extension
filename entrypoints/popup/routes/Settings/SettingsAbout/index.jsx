@@ -11,10 +11,12 @@ import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
 import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
+import ClearLink from '@/entrypoints/popup/components/ClearLink';
 import StarIcon from '@/assets/popup-window/star.svg?react';
 import AboutIcon from '@/assets/popup-window/about.svg?react';
 import AboutDarkIcon from '@/assets/popup-window/about-dark.svg?react';
 import Domain from '@/assets/popup-window/domain.svg?react';
+import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
 import DiscordIcon from '@/assets/social/discord.svg?react';
 import YoutubeIcon from '@/assets/social/youtube.svg?react';
 import TwitterIcon from '@/assets/social/twitter.svg?react';
@@ -118,6 +120,13 @@ function SettingsAbout (props) {
                       </ul>
                     </div>
                   </div>
+                </div>
+
+                <div className={S.settingsAboutSendLogs}>
+                  <ClearLink to='/settings/about/logs' className={S.settingsAdvancedLink}>
+                    <span>{getMessage('settings_logs_menu_link')}</span>
+                    <MenuArrowIcon />
+                  </ClearLink>
                 </div>
               </div>
             </div>

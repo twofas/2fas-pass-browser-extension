@@ -1,7 +1,7 @@
 {
   "settings_logs_menu_link": {
-    "message": "Diagnostic logs",
-    "description": "Settings Preferences menu link to diagnostic logs page"
+    "message": "Send logs",
+    "description": "Settings About menu link to diagnostic logs page"
   },
   "settings_logs_title": {
     "message": "Diagnostic logs",
@@ -11,25 +11,13 @@
     "message": "Diagnostic logs record application events to help support investigate issues. Logs never contain passwords, notes or other item contents — at most they include item identifiers.",
     "description": "Explanation of what diagnostic logs contain and their purpose"
   },
+  "settings_logs_send_to_team": {
+    "message": "If you're experiencing any issues, please download the logs and send them to the 2FAS Team.",
+    "description": "Call to action asking the user to download logs and send them to the 2FAS Team when issues occur"
+  },
   "settings_logs_download_button": {
     "message": "Download logs",
     "description": "Button to export current diagnostic logs as a JSON file"
-  },
-  "settings_logs_clear_button": {
-    "message": "Clear logs",
-    "description": "Button to delete all stored diagnostic logs"
-  },
-  "settings_logs_clear_confirm": {
-    "message": "Are you sure you want to delete all diagnostic logs? This action cannot be undone.",
-    "description": "Confirmation message for clearing diagnostic logs"
-  },
-  "settings_logs_clear_confirm_cancel": {
-    "message": "Cancel",
-    "description": "Cancel button label on the clear logs confirmation dialog"
-  },
-  "settings_logs_clear_confirm_ok": {
-    "message": "Clear logs",
-    "description": "Confirm button label on the clear logs confirmation dialog"
   },
   "settings_logs_download_success": {
     "message": "Diagnostic logs exported",
@@ -38,14 +26,6 @@
   "settings_logs_download_error": {
     "message": "Failed to export diagnostic logs",
     "description": "Toast shown when log export fails"
-  },
-  "settings_logs_clear_success": {
-    "message": "Diagnostic logs cleared",
-    "description": "Toast shown when logs are cleared successfully"
-  },
-  "settings_logs_clear_error": {
-    "message": "Failed to clear diagnostic logs",
-    "description": "Toast shown when clearing logs fails"
   },
   "settings_logs_empty_toast": {
     "message": "No diagnostic logs to export yet",
