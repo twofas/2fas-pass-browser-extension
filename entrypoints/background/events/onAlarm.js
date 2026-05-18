@@ -5,7 +5,8 @@
 // See LICENSE file for full terms
 
 import { autoClearClipboard, sifT2Reset } from '../utils';
-import { SIF_T2_RESET_REGEX, AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants';
+import { SIF_T2_RESET_REGEX } from '@/constants';
+import { AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants/clipboardFieldTypes';
 
 /** 
 * Function to handle alarm events.

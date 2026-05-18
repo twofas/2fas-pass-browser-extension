@@ -6,6 +6,7 @@
 
 import URIMatcher from '@/partials/URIMatcher';
 import Item from '@/models/itemModels/Item';
+import { LOGIN_CLIPBOARD_FIELD_TYPES } from '@/constants/clipboardFieldTypes';
 
 /**
 * Class representing a login.
@@ -14,6 +15,7 @@ import Item from '@/models/itemModels/Item';
 export default class Login extends Item {
   static contentType = 'login';
   static contentVersion = 1;
+  static clipboardFieldTypes = LOGIN_CLIPBOARD_FIELD_TYPES;
 
   #s_password;
 
@@ -235,6 +237,46 @@ export default class Login extends Item {
     } else {
       return {};
     }
+  }
+
+  async getClipboardValue (fieldType) {
+    if (fieldType === 'password') {
+      const sif = await this.decryptSif();
+      const value = sif.password ?? null;
+      sif.password = null;
+      return value;
+    }
+
+    if (fieldType === 'username') {
+      return this.content?.username ?? null;
+    }
+
+    if (fieldType === 'uri') {
+      const uris = this.content?.uris || [];
+      const texts = uris.map(u => u?.text).filter(Boolean);
+
+      if (texts.length === 0) {
+        return null;
+      }
+
+      const expanded = new Set();
+
+      for (const text of texts) {
+        expanded.add(text);
+
+        try {
+          const normalized = URIMatcher.normalizeUrl(text, true);
+
+          if (normalized !== text) {
+            expanded.add(normalized);
+          }
+        } catch {}
+      }
+
+      return JSON.stringify([...expanded]);
+    }
+
+    return super.getClipboardValue(fieldType);
   }
 
   get sifs () {
