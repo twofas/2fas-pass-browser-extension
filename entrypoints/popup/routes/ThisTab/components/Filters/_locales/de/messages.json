@@ -1,0 +1,14 @@
+{
+  "filters_no_tags": {
+    "message": "Keine Tags verfügbar",
+    "description": "Message shown in the tag filter dropdown when there are no tags created yet"
+  },
+  "filters_button_title": {
+    "message": "Nach Tags filtern",
+    "description": "Tooltip text for the filter button that opens tag selection dropdown"
+  },
+  "filters_clear_choice": {
+    "message": "Filter zurücksetzen",
+    "description": "Option text to clear the selected tag filter"
+  }
+}

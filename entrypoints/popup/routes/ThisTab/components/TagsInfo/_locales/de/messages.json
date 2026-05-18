@@ -1,0 +1,10 @@
+{
+  "tags_info_text": {
+    "message": "Zeigt AMOUNT Einträge mit dem Tag: TAG_NAME",
+    "description": "Information text displaying the number of items with a specific tag"
+  },
+  "tags_info_clear_filter": {
+    "message": "Tag-Filter zurücksetzen",
+    "description": "Button label to clear the selected tag filter"
+  }
+}

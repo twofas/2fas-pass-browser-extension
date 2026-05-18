@@ -1,0 +1,50 @@
+{
+  "login": {
+    "message": "Log-in",
+    "description": "Label for the login functionality"
+  },
+  "login_plural": {
+    "message": "Log-ins",
+    "description": "Label for multiple logins"
+  },
+  "username": {
+    "message": "Benutzername / Email",
+    "description": "Label for the username or email field"
+  },
+  "password": {
+    "message": "Passwort",
+    "description": "Label for the password field"
+  },
+  "placeholder_username": {
+    "message": "Nutzername eingeben",
+    "description": "Placeholder text for the username input field"
+  },
+  "placeholder_password": {
+    "message": "Passwort eingeben",
+    "description": "Placeholder text for the password input field"
+  },
+  "notification_username_copied": {
+    "message": "Benutzername wurde in die Zwischenablage kopiert",
+    "description": "Notification message when the username is successfully copied to the clipboard"
+  },
+  "notification_password_copied": {
+    "message": "Passwort wurde in die Zwischenablage kopiert",
+    "description": "Notification message when the password is successfully copied to the clipboard"
+  },
+  "error_login_not_found": {
+    "message": "Es ist ein Fehler aufgetreten. Log-in nicht gefunden.",
+    "description": "Error message displayed when the requested login item is not found"
+  },
+  "error_username_copy_failed": {
+    "message": "Fehler beim Kopieren des Benutzernamen in die Zwischenablage.",
+    "description": "Error message displayed when copying the username to the clipboard fails"
+  },
+  "error_password_copy_failed": {
+    "message": "Fehler beim Kopieren des Passwortes in die Zwischenablage.",
+    "description": "Error message displayed when copying the password to the clipboard fails"
+  },
+  "placeholder_domain_uri": {
+    "message": "z. B. https://2fas.com",
+    "description": "Placeholder text for the domain or URI input field"
+  }
+}

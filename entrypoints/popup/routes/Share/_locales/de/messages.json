@@ -4,95 +4,95 @@
     "description": "Header title for the share item view"
   },
   "share_settings_title": {
-    "message": "Ustawienia udostępniania",
+    "message": "Einstellung zum Teilen",
     "description": "Section title for share configuration options"
   },
   "share_expiration_title": {
-    "message": "Wygaśnięcie linku",
+    "message": "Link-Ablaufdatum",
     "description": "Label for the link expiration time setting"
   },
   "share_expiration_desc": {
-    "message": "Jeśli link wygaśnie przed użyciem, będziesz musiał wygenerować nowy.",
+    "message": "Falls der Link abläuft, bevor er verwendet wurde, musst du einen neuen generieren.",
     "description": "Description for the link expiration time setting"
   },
   "share_expiry_5min": {
-    "message": "5 min",
+    "message": "5 Min",
     "description": "Expiration option: 5 minutes"
   },
   "share_expiry_30min": {
-    "message": "30 min",
+    "message": "30 Min",
     "description": "Expiration option: 30 minutes"
   },
   "share_expiry_1hour": {
-    "message": "1 godzina",
+    "message": "1 Stunde",
     "description": "Expiration option: 1 hour"
   },
   "share_expiry_1day": {
-    "message": "1 dzień",
+    "message": "1 Tag",
     "description": "Expiration option: 1 day"
   },
   "share_expiry_7days": {
-    "message": "7 dni",
+    "message": "7 Tage",
     "description": "Expiration option: 7 days"
   },
   "share_expiry_30days": {
-    "message": "30 dni",
+    "message": "30 Tage",
     "description": "Expiration option: 30 days"
   },
   "share_one_time_access_title": {
-    "message": "Jednorazowy dostęp",
+    "message": "Einmal-Zugriff",
     "description": "Label for the one-time access toggle"
   },
   "share_one_time_access_desc": {
-    "message": "Po włączeniu link wygaśnie po pierwszym dostępie do danych.",
+    "message": "Wenn diese Funktion aktiviert ist, läuft der Link nach dem ersten Benutzen ab.",
     "description": "Description for the one-time access toggle"
   },
   "share_password_title": {
-    "message": "Hasło",
+    "message": "Passwort",
     "description": "Label for the password protection setting"
   },
   "share_password_desc": {
-    "message": "Odbiorca będzie potrzebował tego hasła, aby otworzyć link.",
+    "message": "Der Empfänger braucht dieses Passwort, um den Link zu öffnen.",
     "description": "Description for the password protection setting"
   },
   "share_password_placeholder": {
-    "message": "Wprowadź hasło (min. 8 znaków)",
+    "message": "Passwort eingeben (mind. 8 Zeichen)",
     "description": "Placeholder text for the share password input"
   },
   "share_password_error_min_length": {
-    "message": "Hasło musi mieć co najmniej 8 znaków.",
+    "message": "Das Passwort muss mindestens 8 Zeichen lang sein.",
     "description": "Error message when share password is too short"
   },
   "share_button": {
-    "message": "Udostępnij",
+    "message": "Teilen",
     "description": "Label for the share submit button"
   },
   "share_submitting": {
-    "message": "Udostępnianie...",
+    "message": "Wird geteilt ...",
     "description": "Label for the share button while submitting"
   },
   "share_error_encrypt": {
-    "message": "Nie udało się zaszyfrować danych. Spróbuj ponownie.",
+    "message": "Fehler beim Entschlüsseln der Eintragsdaten. Bitte versuche es erneut.",
     "description": "Error message when encryption fails during sharing"
   },
   "share_error_api": {
-    "message": "Nie udało się wygenerować linku. Spróbuj ponownie.",
+    "message": "Fehler beim Generieren des Share-Links. Bitte versuche es erneut.",
     "description": "Error message when API call fails during sharing"
   },
   "share_error_no_sif": {
-    "message": "Dane wrażliwe nie są dostępne. Najpierw pobierz je z urządzenia.",
+    "message": "Sensible Daten sind nicht verfügbar. Bitte rufe sie zuerst von deinem Gerät ab.",
     "description": "Error message when trying to share an item without decrypted sensitive data"
   },
   "share_error_size_exceeded": {
-    "message": "Dane są zbyt duże, aby je udostępnić. Zmniejsz zawartość i spróbuj ponownie.",
+    "message": "Die Eintragsdaten sind zu lang zum Teilen. Bitte reduziere den Inhalt und versuche es erneut.",
     "description": "Error message when encrypted share data exceeds the maximum allowed size of 16384 bytes"
   },
   "share_error_nothing_to_share": {
-    "message": "Ten element nie zawiera danych do udostępnienia. Najpierw dodaj jakieś dane.",
+    "message": "Dieser Eintrag hat keine Daten zum Teilen. Füge zuerst Inhalte hinzu.",
     "description": "Error message when trying to share a Secret item that has no shareable content beyond the name"
   },
   "share_feature_not_available": {
-    "message": "Funkcja udostępniania nie jest dostępna dla tego elementu.",
+    "message": "Du kannst diesen Eintrag nicht teilen.",
     "description": "Message when share feature cannot be used for the current item"
   }
 }

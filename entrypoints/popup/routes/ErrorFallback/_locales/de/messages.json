@@ -1,0 +1,18 @@
+{
+  "error_fallback_header": {
+    "message": "Fehler aufgetreten",
+    "description": "Header message displayed on the error fallback screen"
+  },
+  "error_fallback_description": {
+    "message": "Ein unerwarteter Fehler ist aufgetreten. Klicke auf die Button, um es erneut zu versuchen.",
+    "description": "Description message displayed on the error fallback screen"
+  },
+  "error_fallback_retry_button": {
+    "message": "Erneut versuchen",
+    "description": "Label for the retry button on the error fallback screen"
+  },
+  "error_fallback_copy_error_title": {
+    "message": "Fehlermeldung in die Zwischenablage kopieren",
+    "description": "Title for the copy error message button on the error fallback screen"
+  }
+}

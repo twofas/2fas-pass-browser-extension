@@ -1,0 +1,22 @@
+{
+  "settings_header": {
+    "message": "Einstellungen",
+    "description": "Header for the settings page"
+  },
+  "settings_preferences": {
+    "message": "Präferenzen",
+    "description": "Label for the preferences section in settings"
+  },
+  "settings_security": {
+    "message": "Sicherheit",
+    "description": "Label for the security section in settings"
+  },
+  "settings_devices": {
+    "message": "Verbundene Geräte",
+    "description": "Label for the trusted devices section in settings"
+  },
+  "settings_about": {
+    "message": "Über 2FAS Pass",
+    "description": "Label for the about section in settings"
+  }
+}

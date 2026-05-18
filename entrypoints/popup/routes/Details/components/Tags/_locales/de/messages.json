@@ -1,0 +1,26 @@
+{
+  "details_tags_label": {
+    "message": "Tags",
+    "description": "Label for the tags field in details view"
+  },
+  "details_tags_no_tags": {
+    "message": "Keine Tags zugeordnet",
+    "description": "Placeholder text when no tags are selected"
+  },
+  "details_tags_remove": {
+    "message": "Tag entfernen",
+    "description": "Tooltip for remove tag button"
+  },
+  "details_tags_add": {
+    "message": "Tag hinzufügen",
+    "description": "Tooltip for add tag button"
+  },
+  "details_tags_no_available": {
+    "message": "Erstelle Tags in der App",
+    "description": "Message shown when there are no more tags to add"
+  },
+  "details_tags_select_tag": {
+    "message": "Tag auswählen",
+    "description": "Placeholder text for the tag selection dropdown"
+  }
+}

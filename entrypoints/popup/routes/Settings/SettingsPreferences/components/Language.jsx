@@ -40,7 +40,8 @@ function Language () {
   const langOptions = [
     { value: 'default', label: getMessage('settings_language_default') },
     { value: 'en', label: 'English' },
-    { value: 'pl', label: 'Polski' }
+    { value: 'pl', label: 'Polski' },
+    { value: 'de', label: 'Deutsch' }
   ];
 
   const handleLangChange = useCallback(async change => {

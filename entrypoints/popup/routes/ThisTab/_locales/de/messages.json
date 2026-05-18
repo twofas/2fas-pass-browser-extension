@@ -1,0 +1,158 @@
+{
+  "this_tab_matching_logins_header": {
+    "message": "Passende Einträge",
+    "description": "Header for the section displaying matching login items"
+  },
+  "this_tab_matching_logins_header_no_logins": {
+    "message": "Keine deiner Einträge passen",
+    "description": "Message displayed when no login items match the current tab"
+  },
+  "this_tab_all_logins_header": {
+    "message": "Alle Einträge",
+    "description": "Header for the section displaying all login items"
+  },
+  "this_tab_sort": {
+    "message": "Sortieren",
+    "description": "Label for the sort functionality"
+  },
+  "this_tab_more_details": {
+    "message": "Details anzeigen",
+    "description": "Button label to view more details about a login item"
+  },
+  "this_tab_more_forget_password": {
+    "message": "Dieses Passwort vergessen",
+    "description": "Button label to forget the saved password for a login item"
+  },
+  "this_tab_more_forget_secure_note": {
+    "message": "Diese Notiz vergessen",
+    "description": "Button label to forget the saved secure note"
+  },
+  "this_tab_more_forget_payment_card": {
+    "message": "Diese Karte vergessen",
+    "description": "Button label to forget the saved payment card"
+  },
+  "this_tab_more_uris": {
+    "message": "Website URL(s):",
+    "description": "Label for displaying associated website URLs of a login item"
+  },
+  "this_tab_copy_to_clipboard": {
+    "message": "In die Zwischenablage kopieren",
+    "description": "Button label to copy data to the clipboard"
+  },
+  "this_tab_autofill_success": {
+    "message": "Automatisches Ausfüllen erfolgreich",
+    "description": "Message displayed when autofill operation is successful"
+  },
+  "this_tab_autofill_no_password": {
+    "message": "Der Benutzername wurde automatisch ausgefüllt, es wurde jedoch kein Passwort gefunden",
+    "description": "Message displayed when no password is found for autofill"
+  },
+  "this_tab_autofill_fetch_password": {
+    "message": "Der Nutzername wurde automatisch ausgefüllt. Rufe das Passwort vom Gerät ab, um das Passwort automatisch auszufüllen.",
+    "description": "Message displayed when username is autofilled for a Highly Secret item that requires fetching password from device"
+  },
+  "this_tab_autofill_no_username_and_password": {
+    "message": "Kein Nutzername oder Passwort gefunden",
+    "description": "Message displayed when no username and password are found for autofill"
+  },
+  "this_tab_can_t_autofill": {
+    "message": "Die Browser-Erweiterung kann nicht automatisch ausfüllen. Bitte kopiere die Daten manuell und füge sie ein.",
+    "description": "Message shown when autofill isn't possible, suggesting manual copy-paste"
+  },
+  "this_tab_can_t_autofill_t2": {
+    "message": "Die Browser-Erweiterung konnte nicht automatisch ausfüllen. Rufe die Informationen ab und kopiere sie bitte manuell.",
+    "description": "Message shown when autofill isn't possible, suggesting fetching details manually"
+  },
+  "this_tab_can_t_autofill_t2_failed": {
+    "message": "Die Browser-Erweiterung kann dieses Formular nicht vollständig automatisch ausfüllen.",
+    "description": "Message displayed when autofill operation fails or is incomplete"
+  },
+  "this_tab_can_t_find_inputs": {
+    "message": "Es wurde kein Eingabefeld gefunden, daher konnten keine Einträge eingefügt werden.",
+    "description": "Message shown when input fields for autofill can't be found"
+  },
+  "this_tab_copy_password": {
+    "message": "Passwort kopieren",
+    "description": "Button label to copy the password to the clipboard"
+  },
+  "this_tab_fetch_password": {
+    "message": "Passwort abrufen",
+    "description": "Button label to fetch the password from the mobile app"
+  },
+  "this_tab_copy_username": {
+    "message": "Nutzernamen kopieren",
+    "description": "Button label to copy the username to the clipboard"
+  },
+  "this_tab_copy_text": {
+    "message": "Notiz kopieren",
+    "description": "Button label to copy text from a secure note to the clipboard"
+  },
+  "this_tab_copy_name": {
+    "message": "Name kopieren",
+    "description": "Button label to copy the name of an item to the clipboard"
+  },
+  "this_tab_fetch_text": {
+    "message": "Notiz abfragen",
+    "description": "Button label to fetch the text from the mobile app"
+  },
+  "this_tab_copy_card_number": {
+    "message": "Kartennummer kopieren",
+    "description": "Button label to copy the card number to the clipboard"
+  },
+  "this_tab_fetch_card_info": {
+    "message": "Kartendetails abrufen",
+    "description": "Button label to fetch the card info from the mobile app"
+  },
+  "this_tab_copy_card_security_code": {
+    "message": "Sicherheitsnummer kopieren",
+    "description": "Button label to copy the security code to the clipboard"
+  },
+  "this_tab_fetch_card_security_code": {
+    "message": "Sicherheitscode abrufen",
+    "description": "Button label to fetch the security code from the mobile app"
+  },
+  "this_tab_more_actions": {
+    "message": "Weitere Aktionen",
+    "description": "Label for a dropdown or menu containing additional actions"
+  },
+  "this_tab_autofill_fetch_card_data": {
+    "message": "Der Name des Karteninhabers wurde automatisch ausgefüllt. Rufe die Kartendetails vom Gerät ab, um den Autovorgang abzuschließen.",
+    "description": "Message displayed when cardholder name is autofilled for a Highly Secret item that requires fetching card data from device"
+  },
+  "this_tab_autofill_no_card_data_available": {
+    "message": "Nur der Kartenbesitzende konnte automatisch ausgefüllt werden.",
+    "description": "Message displayed when only cardholder name was autofilled because no encrypted card data exists"
+  },
+  "this_tab_autofill_partial": {
+    "message": "Einige Felder konnten nicht automatisch ausgefüllt werden. Bitte kopiere die Daten manuell.",
+    "description": "Message displayed when autofill partially succeeded but some fields could not be filled"
+  },
+  "this_tab_copy_wifi_password": {
+    "message": "WLAN-Passwort kopieren",
+    "description": "Button label to copy the Wi-Fi password to the clipboard"
+  },
+  "this_tab_fetch_wifi_password": {
+    "message": "WLAN-Passwort abfragen",
+    "description": "Button label to fetch the Wi-Fi password from the mobile app"
+  },
+  "this_tab_copy_ssid": {
+    "message": "SSID kopieren",
+    "description": "Button label to copy the Wi-Fi SSID to the clipboard"
+  },
+  "this_tab_more_forget_wifi_password": {
+    "message": "WLAN-Passwort vergessen",
+    "description": "Button label to forget the saved Wi-Fi password"
+  },
+  "this_tab_more_show_qr": {
+    "message": "Netzwerk QR-Code anzeigen",
+    "description": "Button label to show a QR code for the Wi-Fi network"
+  },
+  "this_tab_qr_dialog_title": {
+    "message": "Scanne den QR-Code zum Verbinden",
+    "description": "Title text shown in the WiFi QR code dialog above the network name"
+  },
+  "this_tab_more_share": {
+    "message": "Diesen Eintrag teilen",
+    "description": "Button label in dropdown menu to share an item via 2FAS Share"
+  }
+}

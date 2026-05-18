@@ -13,7 +13,7 @@ const defaultLanguage = async () => {
   const storageData = await browser.storage.local.get(null);
 
   const itemsToSet = [];
-  const langEnum = ['default', 'en', 'pl'];
+  const langEnum = ['default', 'en', 'pl', 'de'];
 
   if (
     storageData?.lang === undefined ||

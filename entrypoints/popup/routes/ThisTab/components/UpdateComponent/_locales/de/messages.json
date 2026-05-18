@@ -1,0 +1,18 @@
+{
+  "update_available": {
+    "message": "Eine neue Version der Browser-Erweiterung ist verfügbar!",
+    "description": "Notification message when a new extension update is available"
+  },
+  "update_button": {
+    "message": "Aktualisieren",
+    "description": "Button label to update the extension"
+  },
+  "update_button_title": {
+    "message": "Aktualisiere die Browser-Erweiterung zu der neusten Version",
+    "description": "Tooltip for the update button"
+  },
+  "update_manual_required": {
+    "message": "Bitte aktualisiere die Erweiterung manuell in den Einstellungen deines Browsers.",
+    "description": "Error message when automatic update is not available"
+  }
+}
