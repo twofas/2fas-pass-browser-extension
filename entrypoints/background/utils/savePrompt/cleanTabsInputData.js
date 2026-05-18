@@ -4,13 +4,16 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
+import { getPageUrl } from '@/partials/functions';
+
+/**
 * Function to clean up tabs input data.
 * @param {Object} details - Details object containing information about the tab.
 * @param {Object} inputData - Input data object containing various inputs from the tab.
+* @param {string} [tabUrl] - Optional tab URL fallback when the request lacks page-origin fields.
 * @return {Object} An object containing the cleaned up input data.
 */
-const cleanTabsInputData = (details, inputData) => {
+const cleanTabsInputData = (details, inputData, tabUrl) => {
   if (!details || !inputData) {
     // FUTURE - throw error?
     return {};
@@ -23,20 +26,16 @@ const cleanTabsInputData = (details, inputData) => {
 
   let inputsObj = {};
   let objKeys = Object.keys(inputData);
-  
+
   if (objKeys.length <= 0) {
     return {};
   }
 
   // Filter tabsInputData by url origin
-  if ((details?.initiator && details?.initiator.length > 0) || (details?.url && details?.url.length > 0)) {
-    let origin, testUrl;
+  const testUrl = getPageUrl(details, tabUrl);
 
-    if (details?.initiator && details?.initiator.length > 0) {
-      testUrl = details.initiator;
-    } else if (details?.url && details?.url.length > 0) {
-      testUrl = details.url;
-    }
+  if (testUrl) {
+    let origin;
 
     try {
       origin = new URL(testUrl)?.origin;

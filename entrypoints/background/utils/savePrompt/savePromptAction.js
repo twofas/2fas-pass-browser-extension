@@ -6,6 +6,7 @@
 
 import sendSavePromptToTab from '../sendSavePromptToTab';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
+import { getPageUrl } from '@/partials/functions';
 
 // FUTURE - Try to check initial inputs list? Probably request to content_script?
 /** 
@@ -72,7 +73,7 @@ const savePromptAction = async (details, serviceTypeData, tabsInputData, values)
 
   await storage.setItem(storageKey, JSON.stringify({
     tabId: details.tabId,
-    url: details.url,
+    url: getPageUrl(details, tabData?.url),
     tabUrl: tabData?.url,
     values
   }));

@@ -6,16 +6,18 @@
 
 import getItems from '@/partials/sessionStorage/getItems';
 import URIMatcher from '@/partials/URIMatcher';
+import { getPageUrl } from '@/partials/functions';
 import decryptValues from './decryptValues';
 
-/** 
+/**
 * Function to check the items data.
 * @async
 * @param {Object} details - The details of the tab.
 * @param {Object} values - The values to check.
+* @param {string} [tabUrl] - Optional tab URL fallback for URI matching.
 * @return {Promise<string|boolean>} A promise that resolves to a string indicating the item status or false if the data is valid.
 */
-const checkServicesData = async (details, values) => {
+const checkServicesData = async (details, values, tabUrl) => {
   if (!details || !values) {
     // FUTURE - throw error?
     return false;
@@ -34,9 +36,10 @@ const checkServicesData = async (details, values) => {
   }
 
   let matchedItems = [];
+  const matchUrl = getPageUrl(details, tabUrl);
 
   try {
-    matchedItems = URIMatcher.getMatchedAccounts(items, details.url);
+    matchedItems = URIMatcher.getMatchedAccounts(items, matchUrl);
   } catch {}
 
   if (!matchedItems || matchedItems.length <= 0) {
