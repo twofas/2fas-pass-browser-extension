@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../Details.module.scss';
+import S from '@/entrypoints/popup/routes/Details/Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useNavigate } from 'react-router';
 import { useState, lazy } from 'react';
@@ -16,16 +16,16 @@ import { PULL_REQUEST_TYPES } from '@/constants';
 import { useI18n } from '@/partials/context/I18nContext';
 import { QrDialogProvider } from '@/entrypoints/popup/context/QrDialogContext';
 
-const Name = lazy(() => import('../../components/Name'));
-const ShowQrCode = lazy(() => import('../../components/ShowQrCode'));
+const Name = lazy(() => import('@/entrypoints/popup/routes/Details/components/Name'));
+const ShowQrCode = lazy(() => import('@/entrypoints/popup/routes/Details/components/ShowQrCode'));
 const QrDialog = lazy(() => import('@/entrypoints/popup/components/QrDialog'));
-const WifiSsid = lazy(() => import('../../components/WifiSsid'));
-const WifiPassword = lazy(() => import('../../components/WifiPassword'));
-const WifiSecurityType = lazy(() => import('../../components/WifiSecurityType'));
-const SecurityType = lazy(() => import('../../components/SecurityType'));
-const Tags = lazy(() => import('../../components/Tags'));
-const Notes = lazy(() => import('../../components/Notes'));
-const DangerZone = lazy(() => import('../../components/DangerZone'));
+const WifiSsid = lazy(() => import('@/entrypoints/popup/routes/Details/components/WifiSsid'));
+const WifiPassword = lazy(() => import('@/entrypoints/popup/routes/Details/components/WifiPassword'));
+const WifiSecurityType = lazy(() => import('@/entrypoints/popup/routes/Details/components/WifiSecurityType'));
+const SecurityType = lazy(() => import('@/entrypoints/popup/routes/Details/components/SecurityType'));
+const Tags = lazy(() => import('@/entrypoints/popup/routes/Details/components/Tags'));
+const Notes = lazy(() => import('@/entrypoints/popup/routes/Details/components/Notes'));
+const DangerZone = lazy(() => import('@/entrypoints/popup/routes/Details/components/DangerZone'));
 
 function WifiDetailsView (props) {
   const { getMessage } = useI18n();

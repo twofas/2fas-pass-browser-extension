@@ -4,21 +4,22 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../styles/Item.module.scss';
+import S from '@/entrypoints/popup/routes/ThisTab/components/Item/styles/Item.module.scss';
 import { memo, useRef, useMemo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import ItemIcon from '@/entrypoints/popup/components/ItemIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
-import Skeleton from '../../Skeleton';
-import CopyNameBtn from '../components/CopyNameBtn';
-import CopySecureNoteBtn from '../components/CopySecureNoteBtn';
-import MoreBtn from '../components/MoreBtn';
-import ItemCustomOption from '../components/ItemCustomOption';
+import Skeleton from '@/entrypoints/popup/routes/ThisTab/components/Skeleton';
+import CopyWifiPasswordBtn from '@/entrypoints/popup/routes/ThisTab/components/Item/components/CopyWifiPasswordBtn';
+import CopySsidBtn from '@/entrypoints/popup/routes/ThisTab/components/Item/components/CopySsidBtn';
+import MoreBtn from '@/entrypoints/popup/routes/ThisTab/components/Item/components/MoreBtn';
+import ItemCustomOption from '@/entrypoints/popup/routes/ThisTab/components/Item/components/ItemCustomOption';
 
 const selectComponents = { Option: ItemCustomOption };
 const SKELETON_NAME_STYLE = { width: '100px' };
+const SKELETON_SSID_STYLE = { width: '60px' };
 
-function SecureNoteItemView (props) {
+function WifiItemView (props) {
   const { getMessage } = useI18n();
   const moreBtnRef = useRef(null);
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
@@ -32,11 +33,12 @@ function SecureNoteItemView (props) {
         <ItemIcon item={props.data} loading={props.loading} />
         <span>
           {props.loading ? <Skeleton style={SKELETON_NAME_STYLE} /> : <span>{props?.data?.content?.name || getMessage('no_item_name')}</span>}
+          {props.loading ? <Skeleton style={SKELETON_SSID_STYLE} /> : (props.data?.content?.ssid ? <span>{props.data.content.ssid}</span> : null)}
         </span>
       </div>
       <div className={S.itemAdditionalButtons}>
-        <CopySecureNoteBtn item={props.data} more={props.more} setMore={props.setMore} />
-        <CopyNameBtn item={props.data} more={props.more} setMore={props.setMore} />
+        <CopyWifiPasswordBtn item={props.data} more={props.more} setMore={props.setMore} />
+        <CopySsidBtn deviceId={props.data?.deviceId} vaultId={props.data?.vaultId} itemId={props.data?.id} more={props.more} setMore={props.setMore} />
         <MoreBtn item={props.data} more={props.more} setMore={props.setMore} ref={moreBtnRef} />
       </div>
       {props.more && (
@@ -50,6 +52,7 @@ function SecureNoteItemView (props) {
           triggerRef={moreBtnRef}
           setMore={props.setMore}
           components={selectComponents}
+          wifiItem={props.data}
         />
       )}
     </>
@@ -63,4 +66,4 @@ function arePropsEqual (prevProps, nextProps) {
          prevProps.loading === nextProps.loading;
 }
 
-export default memo(SecureNoteItemView, arePropsEqual);
+export default memo(WifiItemView, arePropsEqual);

@@ -6,6 +6,7 @@
 
 import Item from '@/models/itemModels/Item';
 import { PAYMENT_CARD_CLIPBOARD_FIELD_TYPES } from '@/constants/clipboardFieldTypes';
+import { ItemView, AddNewView, DetailsView } from './views';
 
 /**
 * Class representing a payment card.
@@ -15,6 +16,18 @@ export default class PaymentCard extends Item {
   static contentType = 'paymentCard';
   static contentVersion = 1;
   static clipboardFieldTypes = PAYMENT_CARD_CLIPBOARD_FIELD_TYPES;
+
+  static get ItemComponent () {
+    return ItemView;
+  }
+
+  static get AddNewComponent () {
+    return AddNewView;
+  }
+
+  static get DetailsComponent () {
+    return DetailsView;
+  }
 
   #s_cardNumber;
   #s_expirationDate;

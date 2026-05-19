@@ -6,6 +6,7 @@
 
 import Item from '@/models/itemModels/Item';
 import { WIFI_CLIPBOARD_FIELD_TYPES } from '@/constants/clipboardFieldTypes';
+import { ItemView, AddNewView, DetailsView } from './views';
 
 const WIFI_SECURITY_TYPES = ['none', 'wep', 'wpa', 'wpa2', 'wpa3'];
 
@@ -33,6 +34,18 @@ export default class Wifi extends Item {
   static contentVersion = 1;
   static SECURITY_TYPES = WIFI_SECURITY_TYPES;
   static clipboardFieldTypes = WIFI_CLIPBOARD_FIELD_TYPES;
+
+  static get ItemComponent () {
+    return ItemView;
+  }
+
+  static get AddNewComponent () {
+    return AddNewView;
+  }
+
+  static get DetailsComponent () {
+    return DetailsView;
+  }
 
   #s_wifi_password;
 

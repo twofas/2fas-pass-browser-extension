@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../Details.module.scss';
+import S from '@/entrypoints/popup/routes/Details/Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useNavigate } from 'react-router';
 import { useState, lazy } from 'react';
@@ -15,12 +15,12 @@ import SecureNote from '@/models/itemModels/SecureNote';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import { useI18n } from '@/partials/context/I18nContext';
 
-const Name = lazy(() => import('../../components/Name'));
-const SecureNoteText = lazy(() => import('../../components/SecureNoteText'));
-const AdditionalInfo = lazy(() => import('../../components/AdditionalInfo'));
-const SecurityType = lazy(() => import('../../components/SecurityType'));
-const Tags = lazy(() => import('../../components/Tags'));
-const DangerZone = lazy(() => import('../../components/DangerZone'));
+const Name = lazy(() => import('@/entrypoints/popup/routes/Details/components/Name'));
+const SecureNoteText = lazy(() => import('@/entrypoints/popup/routes/Details/components/SecureNoteText'));
+const AdditionalInfo = lazy(() => import('@/entrypoints/popup/routes/Details/components/AdditionalInfo'));
+const SecurityType = lazy(() => import('@/entrypoints/popup/routes/Details/components/SecurityType'));
+const Tags = lazy(() => import('@/entrypoints/popup/routes/Details/components/Tags'));
+const DangerZone = lazy(() => import('@/entrypoints/popup/routes/Details/components/DangerZone'));
 
 /** 
 * Function to render the details component for Secure Note.

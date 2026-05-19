@@ -6,6 +6,7 @@
 
 import Item from '@/models/itemModels/Item';
 import { SECURE_NOTE_CLIPBOARD_FIELD_TYPES } from '@/constants/clipboardFieldTypes';
+import { ItemView, AddNewView, DetailsView } from './views';
 
 /**
 * Class representing a secure note.
@@ -15,6 +16,18 @@ class SecureNote extends Item {
   static contentType = 'secureNote';
   static contentVersion = 1;
   static clipboardFieldTypes = SECURE_NOTE_CLIPBOARD_FIELD_TYPES;
+
+  static get ItemComponent () {
+    return ItemView;
+  }
+
+  static get AddNewComponent () {
+    return AddNewView;
+  }
+
+  static get DetailsComponent () {
+    return DetailsView;
+  }
 
   #s_text;
 

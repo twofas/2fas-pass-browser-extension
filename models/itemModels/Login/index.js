@@ -7,6 +7,7 @@
 import URIMatcher from '@/partials/URIMatcher';
 import Item from '@/models/itemModels/Item';
 import { LOGIN_CLIPBOARD_FIELD_TYPES } from '@/constants/clipboardFieldTypes';
+import { ItemView, AddNewView, DetailsView } from './views';
 
 /**
 * Class representing a login.
@@ -16,6 +17,18 @@ export default class Login extends Item {
   static contentType = 'login';
   static contentVersion = 1;
   static clipboardFieldTypes = LOGIN_CLIPBOARD_FIELD_TYPES;
+
+  static get ItemComponent () {
+    return ItemView;
+  }
+
+  static get AddNewComponent () {
+    return AddNewView;
+  }
+
+  static get DetailsComponent () {
+    return DetailsView;
+  }
 
   #s_password;
 

@@ -4,24 +4,24 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../styles/Item.module.scss';
-import { memo, useMemo, useRef, useCallback } from 'react';
+import S from '@/entrypoints/popup/routes/ThisTab/components/Item/styles/Item.module.scss';
+import { memo, useRef, useMemo, useCallback } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import { useNavigate } from 'react-router';
 import ItemIcon from '@/entrypoints/popup/components/ItemIcon';
-import handleAutofill from '../functions/handleAutofill';
+import handleAutofill from '@/entrypoints/popup/routes/ThisTab/components/Item/functions/handleAutofill';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
-import Skeleton from '../../Skeleton';
-import CopyPasswordBtn from '../components/CopyPasswordBtn';
-import MoreBtn from '../components/MoreBtn';
-import CopyUsernameBtn from '../components/CopyUsernameBtn';
-import ItemCustomOption from '../components/ItemCustomOption';
+import Skeleton from '@/entrypoints/popup/routes/ThisTab/components/Skeleton';
+import MoreBtn from '@/entrypoints/popup/routes/ThisTab/components/Item/components/MoreBtn';
+import CopyCardNumberBtn from '@/entrypoints/popup/routes/ThisTab/components/Item/components/CopyCardNumberBtn';
+import CopyCardSecurityCodeBtn from '@/entrypoints/popup/routes/ThisTab/components/Item/components/CopyCardSecurityCodeBtn';
+import ItemCustomOption from '@/entrypoints/popup/routes/ThisTab/components/Item/components/ItemCustomOption';
 
 const selectComponents = { Option: ItemCustomOption };
 const SKELETON_NAME_STYLE = { width: '100px' };
-const SKELETON_USERNAME_STYLE = { width: '60px' };
+const SKELETON_CARD_STYLE = { width: '60px' };
 
-function LoginItemView (props) {
+function PaymentCardItemView (props) {
   const { getMessage } = useI18n();
   const moreBtnRef = useRef(null);
   const navigate = useNavigate();
@@ -29,11 +29,6 @@ function LoginItemView (props) {
   moreRef.current = props.more;
 
   const dropdownOptions = useMemo(() => props.data?.dropdownList || [], [props.data?.dropdownList]);
-
-  const autofillClassName = useMemo(() =>
-    `${S.itemAutofill} ${props.more ? S.hover : ''}`,
-    [props.more]
-  );
 
   const handleAutofillClick = useCallback(async () => {
     if (!props.data?.id) {
@@ -46,20 +41,20 @@ function LoginItemView (props) {
   return (
     <>
       <button
-        className={autofillClassName}
+        className={S.itemAutofill}
         onClick={handleAutofillClick}
         ref={props.autofillBtnRef}
       >
         <ItemIcon item={props.data} loading={props.loading} />
         <span>
           {props.loading ? <Skeleton style={SKELETON_NAME_STYLE} /> : <span>{props?.data?.content?.name || getMessage('no_item_name')}</span>}
-          {props.loading ? <Skeleton style={SKELETON_USERNAME_STYLE} /> : (props?.data?.content?.username && props?.data?.content?.username?.length > 0 ? <span>{props.data.content.username}</span> : null)}
+          {props.loading ? <Skeleton style={SKELETON_CARD_STYLE} /> : <span>{props?.data?.content?.cardNumberMask ? `**** ${props?.data?.content?.cardNumberMask}` : getMessage('no_item_name')}</span>}
         </span>
       </button>
       <div className={S.itemAdditionalButtons}>
-        <CopyPasswordBtn item={props.data} more={props.more} setMore={props.setMore} />
-        <CopyUsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={props.setMore} />
-        <MoreBtn more={props.more} setMore={props.setMore} ref={moreBtnRef} />
+        <CopyCardNumberBtn item={props.data} more={props.more} setMore={props.setMore} />
+        <CopyCardSecurityCodeBtn item={props.data} more={props.more} setMore={props.setMore} />
+        <MoreBtn item={props.data} more={props.more} setMore={props.setMore} ref={moreBtnRef} />
       </div>
       {props.more && (
         <AdvancedSelect
@@ -85,4 +80,4 @@ function arePropsEqual (prevProps, nextProps) {
          prevProps.loading === nextProps.loading;
 }
 
-export default memo(LoginItemView, arePropsEqual);
+export default memo(PaymentCardItemView, arePropsEqual);

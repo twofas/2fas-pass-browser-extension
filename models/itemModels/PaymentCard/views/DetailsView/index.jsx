@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../Details.module.scss';
+import S from '@/entrypoints/popup/routes/Details/Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useNavigate } from 'react-router';
 import { useState, lazy, useMemo } from 'react';
@@ -20,15 +20,15 @@ import isSecurityCodeInvalid from '@/entrypoints/popup/components/PaymentCardSec
 import isSecurityCodeTooLong from '@/entrypoints/popup/components/PaymentCardSecurityCodeInput/isSecurityCodeTooLong';
 import { useI18n } from '@/partials/context/I18nContext';
 
-const Name = lazy(() => import('../../components/Name'));
-const CardHolder = lazy(() => import('../../components/CardHolder'));
-const CardNumber = lazy(() => import('../../components/CardNumber'));
-const CardExpirationDate = lazy(() => import('../../components/CardExpirationDate'));
-const CardSecurityCode = lazy(() => import('../../components/CardSecurityCode'));
-const SecurityType = lazy(() => import('../../components/SecurityType'));
-const Tags = lazy(() => import('../../components/Tags'));
-const Notes = lazy(() => import('../../components/Notes'));
-const DangerZone = lazy(() => import('../../components/DangerZone'));
+const Name = lazy(() => import('@/entrypoints/popup/routes/Details/components/Name'));
+const CardHolder = lazy(() => import('@/entrypoints/popup/routes/Details/components/CardHolder'));
+const CardNumber = lazy(() => import('@/entrypoints/popup/routes/Details/components/CardNumber'));
+const CardExpirationDate = lazy(() => import('@/entrypoints/popup/routes/Details/components/CardExpirationDate'));
+const CardSecurityCode = lazy(() => import('@/entrypoints/popup/routes/Details/components/CardSecurityCode'));
+const SecurityType = lazy(() => import('@/entrypoints/popup/routes/Details/components/SecurityType'));
+const Tags = lazy(() => import('@/entrypoints/popup/routes/Details/components/Tags'));
+const Notes = lazy(() => import('@/entrypoints/popup/routes/Details/components/Notes'));
+const DangerZone = lazy(() => import('@/entrypoints/popup/routes/Details/components/DangerZone'));
 
 /**
 * Function to render the details component for Payment Card.

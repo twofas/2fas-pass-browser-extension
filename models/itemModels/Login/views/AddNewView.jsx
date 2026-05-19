@@ -4,16 +4,16 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../AddNew.module.scss';
+import S from '@/entrypoints/popup/routes/AddNew/AddNew.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { motion } from 'motion/react';
 import { useNavigate, useLocation } from 'react-router';
-import usePopupState from '../../../store/popupState/usePopupState';
-import getDomainInfo from '../functions/getDomainInfo';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
+import getDomainInfo from '@/entrypoints/popup/routes/AddNew/functions/getDomainInfo';
 import { useEffect, useState } from 'react';
 import { Form, Field } from 'react-final-form';
-import onMessage from '../events/onMessage';
+import onMessage from '@/entrypoints/popup/routes/AddNew/events/onMessage';
 import { copyValue, getCurrentDevice } from '@/partials/functions';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';

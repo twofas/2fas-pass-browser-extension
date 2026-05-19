@@ -4,26 +4,26 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import S from '../../Details.module.scss';
+import S from '@/entrypoints/popup/routes/Details/Details.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useNavigate } from 'react-router';
 import { useState, lazy } from 'react';
-import GenerateURLs from '../../functions/generateURLs';
+import GenerateURLs from '@/entrypoints/popup/routes/Details/functions/generateURLs';
 import getEditableAmount from './functions/getEditableAmount';
 import { Form } from 'react-final-form';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import Login from '@/models/itemModels/Login';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
-import { UriTempIdsProvider } from '../../context/UriTempIdsContext';
+import { UriTempIdsProvider } from '@/entrypoints/popup/routes/Details/context/UriTempIdsContext';
 import { useI18n } from '@/partials/context/I18nContext';
 
-const Name = lazy(() => import('../../components/Name'));
-const Username = lazy(() => import('../../components/Username'));
-const Password = lazy(() => import('../../components/Password'));
-const SecurityType = lazy(() => import('../../components/SecurityType'));
-const Tags = lazy(() => import('../../components/Tags'));
-const Notes = lazy(() => import('../../components/Notes'));
-const DangerZone = lazy(() => import('../../components/DangerZone'));
+const Name = lazy(() => import('@/entrypoints/popup/routes/Details/components/Name'));
+const Username = lazy(() => import('@/entrypoints/popup/routes/Details/components/Username'));
+const Password = lazy(() => import('@/entrypoints/popup/routes/Details/components/Password'));
+const SecurityType = lazy(() => import('@/entrypoints/popup/routes/Details/components/SecurityType'));
+const Tags = lazy(() => import('@/entrypoints/popup/routes/Details/components/Tags'));
+const Notes = lazy(() => import('@/entrypoints/popup/routes/Details/components/Notes'));
+const DangerZone = lazy(() => import('@/entrypoints/popup/routes/Details/components/DangerZone'));
 
 /**
 * Function to render the details component for Login.

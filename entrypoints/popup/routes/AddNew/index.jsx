@@ -9,13 +9,14 @@ import { useRef, useMemo } from 'react';
 import { useParams } from 'react-router';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import { Login, SecureNote, PaymentCard, Wifi } from '@/models/itemModels';
+import { getModelClass, Login, SecureNote, PaymentCard, Wifi } from '@/models/itemModels';
 
-// Model Views
-import LoginView from './modelsViews/LoginAddNewView';
-import SecureNoteView from './modelsViews/SecureNoteAddNewView';
-import PaymentCardAddNewView from './modelsViews/PaymentCardAddNewView';
-import WifiAddNewView from './modelsViews/WifiAddNewView';
+const MODEL_BY_PARAM = {
+  [Login.contentType.toLowerCase()]: Login.contentType,
+  [SecureNote.contentType.toLowerCase()]: SecureNote.contentType,
+  [PaymentCard.contentType.toLowerCase()]: PaymentCard.contentType,
+  [Wifi.contentType.toLowerCase()]: Wifi.contentType
+};
 
 /**
 * AddNew component for creating a new item entry.
@@ -29,18 +30,14 @@ function AddNew(props) {
   useScrollPosition(scrollableRef, true);
 
   const modelComponent = useMemo(() => {
-    switch (params.model.toLowerCase()) {
-      case Login.contentType.toLowerCase():
-        return <LoginView />;
-      case SecureNote.contentType.toLowerCase():
-        return <SecureNoteView />;
-      case PaymentCard.contentType.toLowerCase():
-        return <PaymentCardAddNewView />;
-      case Wifi.contentType.toLowerCase():
-        return <WifiAddNewView />;
-      default:
-        return null;
+    const contentType = MODEL_BY_PARAM[params.model?.toLowerCase()];
+    const AddNewView = getModelClass(contentType)?.AddNewComponent;
+
+    if (!AddNewView) {
+      return null;
     }
+
+    return <AddNewView />;
   }, [params.model]);
 
   if (!modelComponent) {
