@@ -76,7 +76,7 @@
     "description": "Error message displayed when copying the error message to the clipboard fails"
   },
   "appDesc": {
-    "message": "2FAS Pass ist ein Passwortmanager der nächsten Generation – ohne Kompromisse bei der Sicherheit und mit voller Kontrolle über deine Daten.",
+    "message": "Passwortmanager der nächsten Generation – sicher, privat und unter deiner Kontrolle.",
     "description": "Description of the 2FAS Pass Browser Extension highlighting its features"
   },
   "autofill": {
