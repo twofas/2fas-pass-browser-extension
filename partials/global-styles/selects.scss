@@ -552,7 +552,7 @@
       font-size: 12px;
       font-style: normal;
       font-weight: 400;
-      line-height: 1;
+      line-height: 1.4;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -663,6 +663,7 @@
     transition: background-color var(--anim), color var(--anim);
 
     span {
+      line-height: 1.4;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
