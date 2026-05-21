@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardNumberInput.module.scss';
-import { forwardRef, memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
+import { memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
 import getCardNumberMask from './getCardNumberMask';
 import isCardNumberInvalid from './validateCardNumber';
 import { useI18n } from '@/partials/context/I18nContext';
@@ -20,11 +20,11 @@ import { useI18n } from '@/partials/context/I18nContext';
 * @param {number} props.securityType - Security tier type (0=Top Secret, 1=Highly Secret, 2=Secret).
 * @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
 * @param {string} props.placeholder - Optional placeholder text override.
+* @param {Object} props.ref - Forwarded ref for the input element.
 * @param {Object} props.inputProps - Additional props to spread on InputMask.
-* @param {Object} ref - Forwarded ref for the input element.
 * @return {JSX.Element} The rendered component.
 */
-const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, sifExists, placeholder, ...inputProps }, ref) => {
+const PaymentCardNumberInput = ({ value, onChange, id, securityType, sifExists, placeholder, ref, ...inputProps }) => {
   const { getMessage } = useI18n();
   const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
@@ -125,6 +125,6 @@ const PaymentCardNumberInput = forwardRef(({ value, onChange, id, securityType, 
       onSelect={handleSelect}
     />
   );
-});
+};
 
 export default memo(PaymentCardNumberInput);

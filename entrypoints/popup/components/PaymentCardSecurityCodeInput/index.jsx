@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardSecurityCodeInput.module.scss';
-import { forwardRef, memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
+import { memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffect } from 'react';
 import getSecurityCodeMask from './getSecurityCodeMask';
 import isSecurityCodeInvalid from './validateSecurityCode';
 import isSecurityCodeTooLong from './isSecurityCodeTooLong';
@@ -22,11 +22,11 @@ import { useI18n } from '@/partials/context/I18nContext';
 * @param {number} props.securityType - Security tier type (0=Top Secret, 1=Highly Secret, 2=Secret).
 * @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
 * @param {Function} props.onTooLongChange - Callback when security code is too long for detected issuer.
+* @param {Object} props.ref - Forwarded ref for the input element.
 * @param {Object} props.inputProps - Additional props to spread on InputMask.
-* @param {Object} ref - Forwarded ref for the input element.
 * @return {JSX.Element} The rendered component.
 */
-const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumber, securityType, sifExists, onTooLongChange, ...inputProps }, ref) => {
+const PaymentCardSecurityCodeInput = ({ value, onChange, id, cardNumber, securityType, sifExists, onTooLongChange, ref, ...inputProps }) => {
   const { getMessage } = useI18n();
   const [InputMask, setInputMask] = useState(null);
   const cursorPositionRef = useRef(null);
@@ -136,6 +136,6 @@ const PaymentCardSecurityCodeInput = forwardRef(({ value, onChange, id, cardNumb
       onSelect={handleSelect}
     />
   );
-});
+};
 
 export default memo(PaymentCardSecurityCodeInput);

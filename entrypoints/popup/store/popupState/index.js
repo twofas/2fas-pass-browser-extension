@@ -118,6 +118,12 @@ const usePopupStateStore = create(
           let result = null;
 
           try {
+            const persistentPublicKey = await storage.getItem('local:persistentPublicKey');
+
+            if (!persistentPublicKey) {
+              return null;
+            }
+
             if (isDev) {
               [activeTab, popupStateKey] = await Promise.all([
                 getLastActiveTab(),
@@ -189,6 +195,12 @@ const usePopupStateStore = create(
           let stateToStore = null;
 
           try {
+            const persistentPublicKey = await storage.getItem('local:persistentPublicKey');
+
+            if (!persistentPublicKey) {
+              return;
+            }
+
             if (isDev) {
               [activeTab, popupStateKey] = await Promise.all([
                 getLastActiveTab(),
@@ -263,6 +275,12 @@ const usePopupStateStore = create(
           let stateToStore = null;
 
           try {
+            const persistentPublicKey = await storage.getItem('local:persistentPublicKey');
+
+            if (!persistentPublicKey) {
+              return;
+            }
+
             if (isDev) {
               [activeTab, popupStateKey] = await Promise.all([
                 getLastActiveTab(),
