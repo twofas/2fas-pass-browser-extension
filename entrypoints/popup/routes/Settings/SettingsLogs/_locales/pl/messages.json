@@ -8,11 +8,11 @@
     "description": "Title of the diagnostic logs settings page"
   },
   "settings_logs_description": {
-    "message": "Logi diagnostyczne rejestrują zdarzenia aplikacji, aby pomóc supportowi w analizie problemów. Logi nigdy nie zawierają haseł, notatek ani innej zawartości elementów — co najwyżej zawierają identyfikatory elementów.",
+    "message": "Logi rejestrują zdarzenia aplikacji, aby pomóc w analizie problemów. Logi nigdy nie zawierają haseł, notatek ani innej zawartości elementów — co najwyżej zawierają identyfikatory elementów.",
     "description": "Explanation of what diagnostic logs contain and their purpose"
   },
   "settings_logs_send_to_team": {
-    "message": "Jeśli napotykasz jakiekolwiek problemy, pobierz logi i wyślij je do zespołu 2FAS.",
+    "message": "Jeśli napotykasz jakiekolwiek problemy, pobierz logi i wyślij je zespołowi 2FAS.",
     "description": "Call to action asking the user to download logs and send them to the 2FAS Team when issues occur"
   },
   "settings_logs_download_button": {
@@ -20,15 +20,15 @@
     "description": "Button to export current diagnostic logs as a JSON file"
   },
   "settings_logs_download_success": {
-    "message": "Logi diagnostyczne wyeksportowane",
+    "message": "Logi wyeksportowane",
     "description": "Toast shown when logs are exported successfully"
   },
   "settings_logs_download_error": {
-    "message": "Nie udało się wyeksportować logów diagnostycznych",
+    "message": "Nie udało się wyeksportować logów",
     "description": "Toast shown when log export fails"
   },
   "settings_logs_empty_toast": {
-    "message": "Brak logów diagnostycznych do wyeksportowania",
+    "message": "Brak logów do wyeksportowania",
     "description": "Toast shown when user tries to export but there are no logs"
   }
 }

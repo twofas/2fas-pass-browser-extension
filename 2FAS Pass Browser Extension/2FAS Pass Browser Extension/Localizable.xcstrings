@@ -4,6 +4,12 @@
         "buttonCTA": {
             "extractionState": "manual",
             "localizations": {
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Öffne die Safarieinstellungen"
+                    }
+                },
                 "en": {
                     "stringUnit": {
                         "state": "translated",
@@ -21,6 +27,12 @@
         "errorContent": {
             "extractionState": "manual",
             "localizations": {
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Etwas ist schiefgelaufen. Bitte starte die App erneut."
+                    }
+                },
                 "en": {
                     "stringUnit": {
                         "state": "translated",
@@ -38,6 +50,12 @@
         "errorTitle": {
             "extractionState": "manual",
             "localizations": {
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Fehler"
+                    }
+                },
                 "en": {
                     "stringUnit": {
                         "state": "translated",
@@ -55,6 +73,12 @@
         "noteOff": {
             "extractionState": "manual",
             "localizations": {
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Du kannst sie in den Safarieinstellungen aktivieren."
+                    }
+                },
                 "en": {
                     "stringUnit": {
                         "state": "translated",
@@ -72,6 +96,12 @@
         "noteOn": {
             "extractionState": "manual",
             "localizations": {
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Du kannst sie in den Safarieinstellungen deaktivieren."
+                    }
+                },
                 "en": {
                     "stringUnit": {
                         "state": "translated",
@@ -89,6 +119,12 @@
         "stateContinuation": {
             "extractionState": "manual",
             "localizations": {
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "ist momentan"
+                    }
+                },
                 "en": {
                     "stringUnit": {
                         "state": "translated",
@@ -106,6 +142,12 @@
         "stateOff": {
             "extractionState": "manual",
             "localizations": {
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Aus"
+                    }
+                },
                 "en": {
                     "stringUnit": {
                         "state": "translated",
@@ -123,6 +165,12 @@
         "stateOn": {
             "extractionState": "manual",
             "localizations": {
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "An"
+                    }
+                },
                 "en": {
                     "stringUnit": {
                         "state": "translated",
@@ -140,6 +188,12 @@
         "stateTitle": {
             "extractionState": "manual",
             "localizations": {
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "2FAS Pass Browser-Erweiterung"
+                    }
+                },
                 "en": {
                     "stringUnit": {
                         "state": "translated",
@@ -157,6 +211,12 @@
         "stateUnknown": {
             "extractionState": "manual",
             "localizations": {
+                "de": {
+                    "stringUnit": {
+                        "state": "translated",
+                        "value": "Du kannst die 2FAS Pass Browser-Erweiterung in den Safarieinstellungen aktivieren."
+                    }
+                },
                 "en": {
                     "stringUnit": {
                         "state": "translated",

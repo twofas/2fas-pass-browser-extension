@@ -36,7 +36,7 @@
     "description": "Title for the disconnect trusted device button"
   },
   "settings_devices_dialog_message": {
-    "message": "Czy na pewno chcesz rozłączyć to urządzenie?",
+    "message": "Czy na pewno chcesz roz��ączyć to urządzenie?",
     "description": "Confirmation message when disconnecting a trusted device"
   },
   "settings_devices_dialog_submessage_current_device": {

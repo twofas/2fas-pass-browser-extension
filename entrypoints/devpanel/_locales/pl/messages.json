@@ -8,11 +8,11 @@
     "description": "Dev panel logs tab label"
   },
   "devpanel_tab_storage_local": {
-    "message": "Storage Local",
+    "message": "Pamięć lokalna",
     "description": "Dev panel storage local tab label"
   },
   "devpanel_tab_storage_session": {
-    "message": "Storage Session",
+    "message": "Sesja przechowywania danych",
     "description": "Dev panel storage session tab label"
   },
   "devpanel_tab_websocket": {
