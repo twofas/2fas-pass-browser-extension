@@ -66,6 +66,112 @@ function ThisTab (props) {
     }
   }, [scrollableRefContext]);
 
+  useEffect(function blurAndRefocusSearchOnScroll() {
+    if (!scrollableRef.current) {
+      return;
+    }
+
+    const scrollableEl = scrollableRef.current;
+    let refocusTimeoutId = null;
+    let needsRefocus = false;
+
+    const userMovedFocusElsewhere = () => {
+      const nowActive = document.activeElement;
+      return nowActive && nowActive !== document.body && nowActive !== document.documentElement && nowActive.id !== 'search';
+    };
+
+    const refocusSearchNow = () => {
+      if (refocusTimeoutId) {
+        clearTimeout(refocusTimeoutId);
+        refocusTimeoutId = null;
+      }
+
+      if (!needsRefocus) {
+        return;
+      }
+
+      if (userMovedFocusElsewhere()) {
+        needsRefocus = false;
+        return;
+      }
+
+      const searchEl = document.getElementById('search');
+
+      if (searchEl) {
+        searchEl.focus({ preventScroll: true });
+      }
+
+      needsRefocus = false;
+    };
+
+    const isSearchInputVisibleAtStickyPosition = () => {
+      const searchEl = document.getElementById('search');
+
+      if (!searchEl) {
+        return false;
+      }
+
+      const rect = searchEl.getBoundingClientRect();
+      const scrollableRect = scrollableEl.getBoundingClientRect();
+      const topRelative = rect.top - scrollableRect.top;
+      return topRelative >= 0 && topRelative <= 60;
+    };
+
+    const handleWheelOrTouch = () => {
+      const active = document.activeElement;
+
+      if (active && active.tagName === 'INPUT' && active.id === 'search') {
+        needsRefocus = true;
+        active.blur();
+      }
+
+      if (needsRefocus) {
+        if (refocusTimeoutId) {
+          clearTimeout(refocusTimeoutId);
+        }
+
+        refocusTimeoutId = setTimeout(() => {
+          refocusTimeoutId = null;
+          refocusSearchNow();
+        }, 80);
+      }
+    };
+
+    const handleScroll = () => {
+      if (needsRefocus && isSearchInputVisibleAtStickyPosition()) {
+        refocusSearchNow();
+      }
+    };
+
+    const handleKeyDown = e => {
+      if (!needsRefocus) {
+        return;
+      }
+
+      const isPrintable = e.key && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey;
+
+      if (isPrintable) {
+        refocusSearchNow();
+      }
+    };
+
+    window.addEventListener('wheel', handleWheelOrTouch, { passive: true, capture: true });
+    window.addEventListener('touchmove', handleWheelOrTouch, { passive: true, capture: true });
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    scrollableEl.addEventListener('scroll', handleScroll, { passive: true });
+
+    return function removeBlurFix () {
+      window.removeEventListener('wheel', handleWheelOrTouch, true);
+      window.removeEventListener('touchmove', handleWheelOrTouch, true);
+      window.removeEventListener('keydown', handleKeyDown, true);
+      scrollableEl.removeEventListener('scroll', handleScroll);
+
+      if (refocusTimeoutId) {
+        clearTimeout(refocusTimeoutId);
+      }
+    };
+  }, []);
+
   const { handleSortChange } = useSortFilter();
   const { handleTagChange } = useTagFilter();
 
