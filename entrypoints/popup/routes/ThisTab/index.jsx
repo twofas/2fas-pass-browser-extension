@@ -75,9 +75,43 @@ function ThisTab (props) {
     let refocusTimeoutId = null;
     let needsRefocus = false;
 
+    const getScrollContainers = () => {
+      const containers = [scrollableEl];
+      let element = scrollableEl.parentElement;
+
+      while (element && element !== document.documentElement) {
+        const { overflowY } = window.getComputedStyle(element);
+
+        if (overflowY === 'auto' || overflowY === 'scroll') {
+          containers.push(element);
+        }
+
+        element = element.parentElement;
+      }
+
+      return containers;
+    };
+
     const userMovedFocusElsewhere = () => {
       const nowActive = document.activeElement;
       return nowActive && nowActive !== document.body && nowActive !== document.documentElement && nowActive.id !== 'search';
+    };
+
+    // Synchronous defense in case Safari ignores preventScroll: true on focus.
+    // No deferred restores - they overlap across the rapid blur/refocus cycles
+    // that fire during continuous scrolling and yank scroll back to stale
+    // positions.
+    const focusSearchPreservingScroll = searchEl => {
+      const containers = getScrollContainers();
+      const snapshot = containers.map(el => el.scrollTop);
+
+      searchEl.focus({ preventScroll: true });
+
+      for (let i = 0; i < containers.length; i++) {
+        if (containers[i].scrollTop !== snapshot[i]) {
+          containers[i].scrollTop = snapshot[i];
+        }
+      }
     };
 
     const refocusSearchNow = () => {
@@ -97,10 +131,26 @@ function ThisTab (props) {
 
       const searchEl = document.getElementById('search');
 
-      if (searchEl) {
-        searchEl.focus({ preventScroll: true });
+      if (!searchEl) {
+        needsRefocus = false;
+        return;
       }
 
+      // Safari fires a "scroll focused element into view" heuristic ~100ms
+      // after focus() when the focused element is outside the viewport. Skip
+      // refocus when search isn't fully visible so Safari has no off-screen
+      // focused element to fight over. Leave needsRefocus=true on skip so the
+      // 80ms timer retries on the next wheel and succeeds once the user
+      // scrolls back to where search is visible again.
+      const searchRect = searchEl.getBoundingClientRect();
+      const scrollableRect = scrollableEl.getBoundingClientRect();
+      const isFullyVisible = searchRect.top >= scrollableRect.top && searchRect.bottom <= scrollableRect.bottom;
+
+      if (!isFullyVisible) {
+        return;
+      }
+
+      focusSearchPreservingScroll(searchEl);
       needsRefocus = false;
     };
 
@@ -150,9 +200,47 @@ function ThisTab (props) {
 
       const isPrintable = e.key && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey;
 
-      if (isPrintable) {
-        refocusSearchNow();
+      if (!isPrintable) {
+        return;
       }
+
+      const searchEl = document.getElementById('search');
+
+      if (!searchEl) {
+        needsRefocus = false;
+        return;
+      }
+
+      const searchRect = searchEl.getBoundingClientRect();
+      const scrollableRect = scrollableEl.getBoundingClientRect();
+      const isFullyVisible = searchRect.top >= scrollableRect.top && searchRect.bottom <= scrollableRect.bottom;
+
+      if (isFullyVisible) {
+        refocusSearchNow();
+        return;
+      }
+
+      // Search is off-screen but the user wants to type. Four synchronous
+      // steps: (1) scroll search to its sticky position so it's in the viewport
+      // at focus time (Safari won't fire scroll-to-focus on a visible element),
+      // (2) focus search, (3) absorb the keystroke with preventDefault (search
+      // wasn't focused when keydown fired, so the browser would drop the
+      // character otherwise), (4) inject the character via the native value
+      // setter + synthetic input event so React's controlled input picks it up.
+      e.preventDefault();
+
+      const STICKY_RELATIVE_TOP = 56;
+      const currentRelTop = searchRect.top - scrollableRect.top;
+      const newScrollTop = scrollableEl.scrollTop + (currentRelTop - STICKY_RELATIVE_TOP);
+      scrollableEl.scrollTop = Math.max(0, newScrollTop);
+
+      focusSearchPreservingScroll(searchEl);
+
+      const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+      nativeSetter.call(searchEl, searchEl.value + e.key);
+      searchEl.dispatchEvent(new Event('input', { bubbles: true }));
+
+      needsRefocus = false;
     };
 
     window.addEventListener('wheel', handleWheelOrTouch, { passive: true, capture: true });
