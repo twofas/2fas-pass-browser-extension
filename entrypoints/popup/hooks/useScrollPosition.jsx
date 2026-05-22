@@ -45,6 +45,8 @@ const collectScrollCandidates = refEl => {
  * Stores scroll position in zustand store scoped by pathname.
  * Probes all candidate scroll containers so it works in Safari, where flex
  * layout quirks can move the actual scroll container off the ref element.
+ * Persists during scrolling (debounced) so the store stays current — closing
+ * the popup is not a reliable trigger for the async storage write.
  * @param {React.RefObject} scrollableRef - Reference to the scrollable element
  * @param {boolean} loading - Loading state to determine when to restore scroll position
  * @return {Object} Object containing saveScrollPosition, restoreScrollPosition and scrollPosition
@@ -83,8 +85,10 @@ const useScrollPosition = (scrollableRef, loading = false) => {
       return;
     }
 
-    lastScrollTopRef.current = readScrollTop();
-  }, [readScrollTop]);
+    const scrollTop = readScrollTop();
+    lastScrollTopRef.current = scrollTop;
+    setScrollPosition(scrollTop);
+  }, [readScrollTop, setScrollPosition]);
 
   const restoreScrollPosition = useCallback(() => {
     const targetPosition = targetScrollPositionRef.current;

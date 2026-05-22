@@ -57,7 +57,7 @@ const usePopupHref = (hydrationComplete = false) => {
         setHref(pathname);
       }
 
-      if (isUserNavigation) {
+      if (isUserNavigation && !isBackNavigation) {
         setScrollPosition(pathname, 0);
       }
     }
