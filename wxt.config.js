@@ -46,7 +46,7 @@ export default defineConfig({
           if_return: true,
           join_vars: true,
           keep_classnames: false,
-          keep_fargs: false,
+          keep_fargs: true,
           keep_fnames: false,
           keep_infinity: false,
           lhs_constants: true,
