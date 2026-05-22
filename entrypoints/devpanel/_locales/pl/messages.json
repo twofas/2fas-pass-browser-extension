@@ -1,6 +1,6 @@
 {
   "devpanel_title": {
-    "message": "2FAS Pass — Panel deweloperski",
+    "message": "Panel deweloperski 2FAS Pass",
     "description": "Dev panel page title"
   },
   "devpanel_tab_logs": {
@@ -12,7 +12,7 @@
     "description": "Dev panel storage local tab label"
   },
   "devpanel_tab_storage_session": {
-    "message": "Sesja przechowywania danych",
+    "message": "Pamięć sesji",
     "description": "Dev panel storage session tab label"
   },
   "devpanel_tab_websocket": {

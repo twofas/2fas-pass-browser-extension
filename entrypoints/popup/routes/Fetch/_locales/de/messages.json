@@ -28,7 +28,7 @@
     "description": "Header prompting the user to continue updating in the mobile app"
   },
   "fetch_continue_updating_description": {
-    "message": "Um diesen Eintrag zu aktualisieren, schließe den Vorgang \nin der App ab",
+    "message": "Um diesen Eintrag zu aktualisieren, schließe \nden Vorgang in der App ab",
     "description": "Explains that the user should continue the process on their mobile phone"
   },
   "fetch_full_sync_description": {

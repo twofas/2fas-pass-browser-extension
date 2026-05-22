@@ -28,7 +28,7 @@
     "description": "Header prompting the user to continue updating in the mobile app"
   },
   "fetch_continue_updating_description": {
-    "message": "To update this Item, continue on your \nmobile app.",
+    "message": "To update this Item, continue on your mobile app.",
     "description": "Explains that the user should continue the process on their mobile phone"
   },
   "fetch_full_sync_description": {

@@ -712,7 +712,7 @@
     "description": "Accept button text in the cross-domain dialog"
   },
   "devpanel_title": {
-    "message": "2FAS Pass — Dev Panel",
+    "message": "2FAS Pass - Dev Panel",
     "description": "Dev panel page title"
   },
   "devpanel_tab_logs": {
@@ -720,11 +720,11 @@
     "description": "Dev panel logs tab label"
   },
   "devpanel_tab_storage_local": {
-    "message": "Storage Local",
+    "message": "Local storage",
     "description": "Dev panel storage local tab label"
   },
   "devpanel_tab_storage_session": {
-    "message": "Storage Session",
+    "message": "Session storage",
     "description": "Dev panel storage session tab label"
   },
   "devpanel_tab_websocket": {
@@ -1332,7 +1332,7 @@
     "description": "Header prompting the user to continue updating in the mobile app"
   },
   "fetch_continue_updating_description": {
-    "message": "To update this Item, continue on your \nmobile app.",
+    "message": "To update this Item, continue on your mobile app.",
     "description": "Explains that the user should continue the process on their mobile phone"
   },
   "fetch_full_sync_description": {
@@ -1728,15 +1728,15 @@
     "description": "Title of the diagnostic logs settings page"
   },
   "settings_logs_description": {
-    "message": "Diagnostic logs record application events to help support investigate issues. Logs never contain passwords, notes or other item contents — at most they include item identifiers.",
+    "message": "Diagnostic logs help identify and fix issues in the extension.\nLogs never include passwords, notes, or other vault contents.\nThey only contain technical information needed for troubleshooting and may include item identifiers.",
     "description": "Explanation of what diagnostic logs contain and their purpose"
   },
   "settings_logs_send_to_team": {
-    "message": "If you're experiencing any issues, please download the logs and send them to the 2FAS Team.",
+    "message": "If you experience an issue, the 2FAS Team may ask you to export and share the logs.",
     "description": "Call to action asking the user to download logs and send them to the 2FAS Team when issues occur"
   },
   "settings_logs_download_button": {
-    "message": "Download logs",
+    "message": "Export logs",
     "description": "Button to export current diagnostic logs as a JSON file"
   },
   "settings_logs_download_success": {

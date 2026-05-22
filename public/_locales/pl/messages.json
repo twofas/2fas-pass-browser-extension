@@ -712,7 +712,7 @@
     "description": "Accept button text in the cross-domain dialog"
   },
   "devpanel_title": {
-    "message": "2FAS Pass — Panel deweloperski",
+    "message": "Panel deweloperski 2FAS Pass",
     "description": "Dev panel page title"
   },
   "devpanel_tab_logs": {
@@ -724,7 +724,7 @@
     "description": "Dev panel storage local tab label"
   },
   "devpanel_tab_storage_session": {
-    "message": "Sesja przechowywania danych",
+    "message": "Pamięć sesji",
     "description": "Dev panel storage session tab label"
   },
   "devpanel_tab_websocket": {
@@ -1704,7 +1704,7 @@
     "description": "Title for the disconnect trusted device button"
   },
   "settings_devices_dialog_message": {
-    "message": "Czy na pewno chcesz roz��ączyć to urządzenie?",
+    "message": "Czy na pewno chcesz rozłączyć to urządzenie?",
     "description": "Confirmation message when disconnecting a trusted device"
   },
   "settings_devices_dialog_submessage_current_device": {
@@ -1728,15 +1728,15 @@
     "description": "Title of the diagnostic logs settings page"
   },
   "settings_logs_description": {
-    "message": "Logi rejestrują zdarzenia aplikacji, aby pomóc w analizie problemów. Logi nigdy nie zawierają haseł, notatek ani innej zawartości elementów — co najwyżej zawierają identyfikatory elementów.",
+    "message": "Logi rejestrują zdarzenia aplikacji, aby pomóc w analizie problemów. Logi nigdy nie zawierają haseł, notatek ani innej zawartości elementów — co najwyżej zawierają identyfikatory elementów.\n\nLogi diagnostyczne pomagają zidentyfikować i rozwiązać problemy związane z rozszerzeniem.\nLogi nigdy nie zawierają haseł, notatek ani innych elementów przechowywanych w sejfie.\nZawierają wyłącznie informacje techniczne niezbędne do rozwiązywania problemów i mogą zawierać identyfikatory elementów.",
     "description": "Explanation of what diagnostic logs contain and their purpose"
   },
   "settings_logs_send_to_team": {
-    "message": "Jeśli napotykasz jakiekolwiek problemy, pobierz logi i wyślij je zespołowi 2FAS.",
+    "message": "W razie jakichkolwiek problemów zespół 2FAS może poprosić Cię o wyeksportowanie i udostępnienie logów.",
     "description": "Call to action asking the user to download logs and send them to the 2FAS Team when issues occur"
   },
   "settings_logs_download_button": {
-    "message": "Pobierz logi",
+    "message": "Eksportuj logi",
     "description": "Button to export current diagnostic logs as a JSON file"
   },
   "settings_logs_download_success": {
