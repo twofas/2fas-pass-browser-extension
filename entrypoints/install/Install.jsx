@@ -217,11 +217,17 @@ function Install () {
             initial="hidden"
             animate={stepVisible === 2 ? 'visible' : 'hidden'}
           >
-            <button className={S.installContentArrowCircle} onClick={openPopup} type="button">
-              <Arrow2 />
-              <span className={S.installContentPulse} />
-              <span className={S.installContentPulse} style={{ animationDelay: '-1s' }} />
-            </button>
+            {import.meta.env.BROWSER === 'safari' ? (
+              <div className={`${S.installContentArrowCircle} ${S.installContentArrowCircleSafari}`} aria-hidden="true">
+                <Arrow2 />
+              </div>
+            ) : (
+              <button className={S.installContentArrowCircle} onClick={openPopup} type="button">
+                <Arrow2 />
+                <span className={S.installContentPulse} />
+                <span className={S.installContentPulse} style={{ animationDelay: '-1s' }} />
+              </button>
+            )}
 
             <h1 className={S.installContentHeading}>
               {getMessage('install_step2_heading_before')}
