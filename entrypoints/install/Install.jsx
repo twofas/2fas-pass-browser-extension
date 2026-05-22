@@ -228,7 +228,7 @@ function Install () {
               {' '}
               <span className={S.installContentUnderlined}>
                 {getMessage('install_step2_heading_underlined')}
-                <UnderlineDecor />
+                <UnderlineDecor preserveAspectRatio="none" />
               </span>
             </h1>
 

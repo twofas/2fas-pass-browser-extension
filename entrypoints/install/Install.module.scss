@@ -703,16 +703,12 @@
       position: relative;
 
       svg {
-        bottom: -17px;
-        height: auto;
+        bottom: -.3em;
+        height: .32em;
         left: -6%;
         position: absolute;
         stroke: var(--primary-color);
         width: 112%;
-
-        @media all and (max-width: 480px) {
-          bottom: -12px;
-        }
       }
     }
 
