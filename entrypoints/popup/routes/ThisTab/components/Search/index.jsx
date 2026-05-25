@@ -22,7 +22,7 @@ import ClearIcon from '@/assets/popup-window/clear.svg?react';
 function Search ({ tagsWithFilteredAmounts, filteredItemsByModelLength }) {
   const { getMessage } = useI18n();
   const { data } = usePopupState();
-  const { handleSearchChange, clearSearch } = useSearchFilter();
+  const { handleSearchChange, clearSearch, handleSearchBlur, handleSearchFocus } = useSearchFilter();
 
   const placeholder = useMemo(() => {
     let amount;
@@ -65,7 +65,10 @@ function Search ({ tagsWithFilteredAmounts, filteredItemsByModelLength }) {
         autoComplete="off"
         autoCapitalize="off"
         maxLength="2048"
+        autoFocus={!!data?.searchActive}
         onChange={handleSearchChange}
+        onBlur={handleSearchBlur}
+        onFocus={handleSearchFocus}
         value={data?.searchValue || ''}
         className={inputClass}
       />

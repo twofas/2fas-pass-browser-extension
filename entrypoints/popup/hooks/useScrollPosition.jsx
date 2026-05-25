@@ -49,14 +49,21 @@ const collectScrollCandidates = refEl => {
  * the popup is not a reliable trigger for the async storage write.
  * @param {React.RefObject} scrollableRef - Reference to the scrollable element
  * @param {boolean} loading - Loading state to determine when to restore scroll position
+ * @param {Function} [onRestoreComplete] - Optional callback invoked after
+ *   restoration has finished (after verify+retry passes). Caller can use it to
+ *   safely perform layout-sensitive actions (e.g. focusing an off-screen input
+ *   with scroll preservation) without racing the restore.
  * @return {Object} Object containing saveScrollPosition, restoreScrollPosition and scrollPosition
  */
-const useScrollPosition = (scrollableRef, loading = false) => {
+const useScrollPosition = (scrollableRef, loading = false, onRestoreComplete = null) => {
   const { pathname, scrollPosition, setScrollPosition } = usePopupState();
   const hasRestoredRef = useRef(false);
   const isRestoringRef = useRef(false);
   const targetScrollPositionRef = useRef(null);
   const lastScrollTopRef = useRef(0);
+  const onRestoreCompleteRef = useRef(onRestoreComplete);
+
+  onRestoreCompleteRef.current = onRestoreComplete;
 
   const readScrollTop = useCallback(() => {
     const candidates = collectScrollCandidates(scrollableRef?.current);
@@ -162,6 +169,10 @@ const useScrollPosition = (scrollableRef, loading = false) => {
             setTimeout(() => {
               isRestoringRef.current = false;
               targetScrollPositionRef.current = null;
+
+              if (typeof onRestoreCompleteRef.current === 'function') {
+                onRestoreCompleteRef.current();
+              }
             }, 200);
           }, 100);
         });

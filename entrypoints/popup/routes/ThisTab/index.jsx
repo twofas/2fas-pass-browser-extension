@@ -33,6 +33,29 @@ const thisTabTopVariants = {
   hidden: { height: '0', marginBottom: '-10px', borderWidth: '0', transition: { duration: 0, ease: 'easeOut' } }
 };
 
+const SAFARI_SCROLL_TO_FOCUSED_GUARD_MS = 200;
+
+const collectScrollableContainers = rootEl => {
+  if (!rootEl) {
+    return [];
+  }
+
+  const containers = [rootEl];
+  let element = rootEl.parentElement;
+
+  while (element && element !== document.documentElement) {
+    const { overflowY } = window.getComputedStyle(element);
+
+    if (overflowY === 'auto' || overflowY === 'scroll') {
+      containers.push(element);
+    }
+
+    element = element.parentElement;
+  }
+
+  return containers;
+};
+
 /**
 * Function to render the main content of the ThisTab component.
 * @param {Object} props - The component props.
@@ -58,7 +81,102 @@ function ThisTab (props) {
   const unwatchStorageVersion = useRef(null);
   const thisTabTopRef = useRef(null);
 
-  useScrollPosition(scrollableRef, loading);
+  const lastAnimateActiveStateRef = useRef({
+    hasSearchValue: !!(data?.searchValue && data.searchValue.length > 0),
+    selectedTag: !!data?.selectedTag
+  });
+
+  const safariScrollGuardTimeoutRef = useRef(null);
+  const fallbackFocusTimeoutRef = useRef(null);
+  const searchActiveRef = useRef(!!data?.searchActive);
+  searchActiveRef.current = !!data?.searchActive;
+  const hasUserInteractedRef = useRef(false);
+
+  const focusSearchPreservingScrollOnMount = useCallback(() => {
+    if (!data?.searchActive) {
+      return;
+    }
+
+    if (!scrollableRef.current) {
+      return;
+    }
+
+    const searchEl = document.getElementById('search');
+
+    if (!searchEl) {
+      return;
+    }
+
+    if (document.activeElement === searchEl) {
+      return;
+    }
+
+    const activeEl = document.activeElement;
+    const otherElHasFocus = activeEl && activeEl !== document.body && activeEl !== document.documentElement;
+
+    if (otherElHasFocus && hasUserInteractedRef.current) {
+      return;
+    }
+
+    const searchRectPre = searchEl.getBoundingClientRect();
+    const scrollableRectPre = scrollableRef.current.getBoundingClientRect();
+    const isInputInViewport = searchRectPre.top >= scrollableRectPre.top && searchRectPre.bottom <= scrollableRectPre.bottom;
+
+    if (!isInputInViewport) {
+      searchEl.scrollIntoView({ block: 'nearest' });
+    }
+
+    const containers = collectScrollableContainers(scrollableRef.current);
+    const snapshot = containers.map(el => el.scrollTop);
+
+    try { window.focus(); } catch {}
+
+    searchEl.focus({ preventScroll: true });
+
+    for (let i = 0; i < containers.length; i++) {
+      if (containers[i].scrollTop !== snapshot[i]) {
+        containers[i].scrollTop = snapshot[i];
+      }
+    }
+
+    if (safariScrollGuardTimeoutRef.current) {
+      clearTimeout(safariScrollGuardTimeoutRef.current);
+    }
+
+    safariScrollGuardTimeoutRef.current = setTimeout(() => {
+      safariScrollGuardTimeoutRef.current = null;
+
+      for (let i = 0; i < containers.length; i++) {
+        if (containers[i].scrollTop !== snapshot[i]) {
+          containers[i].scrollTop = snapshot[i];
+        }
+      }
+
+      if (document.activeElement !== searchEl) {
+        const innerActiveEl = document.activeElement;
+        const otherElHasInnerFocus = innerActiveEl && innerActiveEl !== document.body && innerActiveEl !== document.documentElement;
+        const userTookFocus = otherElHasInnerFocus && hasUserInteractedRef.current;
+
+        if (!userTookFocus) {
+          const searchRectRetry = searchEl.getBoundingClientRect();
+          const scrollableRectRetry = scrollableRef.current.getBoundingClientRect();
+          const isInputInViewportRetry = searchRectRetry.top >= scrollableRectRetry.top && searchRectRetry.bottom <= scrollableRectRetry.bottom;
+
+          if (!isInputInViewportRetry) {
+            searchEl.scrollIntoView({ block: 'nearest' });
+          }
+
+          searchEl.focus({ preventScroll: true });
+        }
+      }
+    }, SAFARI_SCROLL_TO_FOCUSED_GUARD_MS);
+  }, [data?.searchActive]);
+
+  const handleScrollRestoreComplete = useCallback(() => {
+    focusSearchPreservingScrollOnMount();
+  }, [focusSearchPreservingScrollOnMount]);
+
+  useScrollPosition(scrollableRef, loading, handleScrollRestoreComplete);
 
   useEffect(function shareScrollableRefWithContext() {
     if (scrollableRefContext?.setRef && scrollableRef.current) {
@@ -260,6 +378,89 @@ function ThisTab (props) {
     };
   }, []);
 
+  useEffect(function trackUserInteractionForFocusReclaim() {
+    const markInteracted = () => {
+      hasUserInteractedRef.current = true;
+    };
+    document.addEventListener('mousedown', markInteracted, true);
+    document.addEventListener('keydown', markInteracted, true);
+    document.addEventListener('wheel', markInteracted, { passive: true, capture: true });
+    document.addEventListener('touchstart', markInteracted, { passive: true, capture: true });
+    return function untrackUserInteractionInThisTab() {
+      document.removeEventListener('mousedown', markInteracted, true);
+      document.removeEventListener('keydown', markInteracted, true);
+      document.removeEventListener('wheel', markInteracted, true);
+      document.removeEventListener('touchstart', markInteracted, true);
+    };
+  }, []);
+
+  useEffect(function reclaimFocusOnPopoverVisible() {
+    if (!data?.searchActive) return;
+
+    const tryReclaim = () => {
+      if (!searchActiveRef.current) return;
+      if (hasUserInteractedRef.current) return;
+      const searchEl = document.getElementById('search');
+      if (!searchEl) return;
+      if (document.activeElement === searchEl) return;
+      focusSearchPreservingScrollOnMount();
+    };
+
+    const onVisChange = () => {
+      if (document.visibilityState === 'visible') tryReclaim();
+    };
+
+    document.addEventListener('visibilitychange', onVisChange);
+    window.addEventListener('focus', tryReclaim);
+
+    return function removeReclaimListeners() {
+      document.removeEventListener('visibilitychange', onVisChange);
+      window.removeEventListener('focus', tryReclaim);
+    };
+  }, [data?.searchActive, focusSearchPreservingScrollOnMount]);
+
+  useEffect(function injectKeyDownToRestoreSafariFocus() {
+    const handleKeyDown = e => {
+      if (!searchActiveRef.current) return;
+      if (!scrollableRef.current) return;
+
+      const searchEl = document.getElementById('search');
+
+      if (!searchEl) return;
+      if (document.activeElement === searchEl) return;
+
+      const activeEl = document.activeElement;
+
+      if (activeEl && activeEl !== document.body && activeEl !== document.documentElement) return;
+
+      const isPrintable = e.key && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey;
+
+      if (!isPrintable) return;
+
+      e.preventDefault();
+
+      const searchRect = searchEl.getBoundingClientRect();
+      const scrollableRect = scrollableRef.current.getBoundingClientRect();
+      const isInputInViewport = searchRect.top >= scrollableRect.top && searchRect.bottom <= scrollableRect.bottom;
+
+      if (!isInputInViewport) {
+        searchEl.scrollIntoView({ block: 'nearest' });
+      }
+
+      searchEl.focus({ preventScroll: true });
+
+      const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+      nativeSetter.call(searchEl, (searchEl.value || '') + e.key);
+      searchEl.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+
+    window.addEventListener('keydown', handleKeyDown, true);
+
+    return function removeKeyDownInjector() {
+      window.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, []);
+
   const { handleSortChange } = useSortFilter();
   const { handleTagChange } = useTagFilter();
 
@@ -356,10 +557,22 @@ function ThisTab (props) {
   }, []);
 
   const handleAnimationUpdate = useCallback(() => {
-    if (data?.searchActive || data?.selectedTag) {
+    const prev = lastAnimateActiveStateRef.current;
+    const currentHasSearchValue = !!(data?.searchValue && data.searchValue.length > 0);
+    const currentSelectedTag = !!data?.selectedTag;
+
+    const searchValueBecameSet = !prev.hasSearchValue && currentHasSearchValue;
+    const selectedTagBecameSet = !prev.selectedTag && currentSelectedTag;
+
+    lastAnimateActiveStateRef.current = {
+      hasSearchValue: currentHasSearchValue,
+      selectedTag: currentSelectedTag
+    };
+
+    if ((searchValueBecameSet || selectedTagBecameSet) && scrollableRef.current) {
       scrollableRef.current.scrollTo(0, 0);
     }
-  }, [data?.searchActive, data?.selectedTag]);
+  }, [data?.searchValue, data?.selectedTag]);
 
   const hasMatchingLogins = useMemo(() => isItemsCorrect(matchingLogins) && matchingLogins?.length > 0, [matchingLogins]);
   const hasLogins = useMemo(() => isItemsCorrect(items) && items?.length > 0, [items]);
@@ -451,6 +664,33 @@ function ThisTab (props) {
     };
   }, [storageVersion, messageListener, refreshData]);
 
+  useEffect(function clearSafariScrollGuardOnUnmount() {
+    return function cancelPendingSafariScrollGuard() {
+      if (safariScrollGuardTimeoutRef.current) {
+        clearTimeout(safariScrollGuardTimeoutRef.current);
+        safariScrollGuardTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(function fallbackFocusSearchAfterMount() {
+    if (loading || !data?.searchActive) {
+      return;
+    }
+
+    fallbackFocusTimeoutRef.current = setTimeout(() => {
+      fallbackFocusTimeoutRef.current = null;
+      focusSearchPreservingScrollOnMount();
+    }, 800);
+
+    return function cancelFallbackFocusTimeout() {
+      if (fallbackFocusTimeoutRef.current) {
+        clearTimeout(fallbackFocusTimeoutRef.current);
+        fallbackFocusTimeoutRef.current = null;
+      }
+    };
+  }, [loading, data?.searchActive, focusSearchPreservingScrollOnMount]);
+
   return (
     <div className={`${props.className ? props.className : ''}`}>
       <QrDialogProvider>
@@ -464,7 +704,7 @@ function ThisTab (props) {
               className={S.thisTabTop}
               variants={thisTabTopVariants}
               initial="visible"
-              animate={data?.searchActive || data?.selectedTag ? 'hidden' : 'visible'}
+              animate={(data?.searchValue && data.searchValue.length > 0) || data?.selectedTag ? 'hidden' : 'visible'}
               onAnimationComplete={handleAnimationComplete}
               onUpdate={handleAnimationUpdate}
             >
