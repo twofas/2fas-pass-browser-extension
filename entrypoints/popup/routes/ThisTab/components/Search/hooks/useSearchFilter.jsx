@@ -14,9 +14,11 @@ const SEARCH_BLUR_DEBOUNCE_MS = 250;
 * @return {Object} Object with handleSearchChange, clearSearch, handleSearchBlur, handleSearchFocus callbacks.
 */
 export const useSearchFilter = () => {
-  const { setBatchData } = usePopupState();
+  const { setBatchData, data } = usePopupState();
   const blurTimeoutRef = useRef(null);
   const hasUserInteractedRef = useRef(false);
+  const searchValueRef = useRef(data?.searchValue || '');
+  searchValueRef.current = data?.searchValue || '';
 
   const cancelBlurTimeout = useCallback(() => {
     if (blurTimeoutRef.current) {
@@ -61,8 +63,17 @@ export const useSearchFilter = () => {
     }, SEARCH_BLUR_DEBOUNCE_MS);
   }, [setBatchData, cancelBlurTimeout]);
 
-  const handleSearchFocus = useCallback(() => {
+  const handleSearchFocus = useCallback(e => {
     cancelBlurTimeout();
+
+    const hasSearchValue = searchValueRef.current.length > 0;
+    const isSpurious = !hasUserInteractedRef.current && !hasSearchValue;
+
+    if (isSpurious) {
+      try { e?.target?.blur(); } catch {}
+      return;
+    }
+
     setBatchData({ searchActive: true });
   }, [setBatchData, cancelBlurTimeout]);
 

@@ -52,6 +52,7 @@ export const AuthProvider = memo(({ children }) => {
     await setConfigured(Date.now());
 
     const store = usePopupStateStore.getState();
+    store.clearAllData();
     store.clearHref();
 
     setStateConfigured(true);

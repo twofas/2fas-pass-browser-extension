@@ -88,12 +88,14 @@ function ThisTab (props) {
 
   const safariScrollGuardTimeoutRef = useRef(null);
   const fallbackFocusTimeoutRef = useRef(null);
-  const searchActiveRef = useRef(!!data?.searchActive);
-  searchActiveRef.current = !!data?.searchActive;
+  const searchValueRef = useRef(data?.searchValue || '');
+  searchValueRef.current = data?.searchValue || '';
   const hasUserInteractedRef = useRef(false);
 
   const focusSearchPreservingScrollOnMount = useCallback(() => {
-    if (!data?.searchActive) {
+    const hasSearchValue = !!(data?.searchValue && data.searchValue.length > 0);
+
+    if (!hasSearchValue) {
       return;
     }
 
@@ -170,7 +172,7 @@ function ThisTab (props) {
         }
       }
     }, SAFARI_SCROLL_TO_FOCUSED_GUARD_MS);
-  }, [data?.searchActive]);
+  }, [data?.searchValue]);
 
   const handleScrollRestoreComplete = useCallback(() => {
     focusSearchPreservingScrollOnMount();
@@ -395,10 +397,11 @@ function ThisTab (props) {
   }, []);
 
   useEffect(function reclaimFocusOnPopoverVisible() {
-    if (!data?.searchActive) return;
+    const hasSearchValue = !!(data?.searchValue && data.searchValue.length > 0);
+
+    if (!hasSearchValue) return;
 
     const tryReclaim = () => {
-      if (!searchActiveRef.current) return;
       if (hasUserInteractedRef.current) return;
       const searchEl = document.getElementById('search');
       if (!searchEl) return;
@@ -417,11 +420,11 @@ function ThisTab (props) {
       document.removeEventListener('visibilitychange', onVisChange);
       window.removeEventListener('focus', tryReclaim);
     };
-  }, [data?.searchActive, focusSearchPreservingScrollOnMount]);
+  }, [data?.searchValue, focusSearchPreservingScrollOnMount]);
 
   useEffect(function injectKeyDownToRestoreSafariFocus() {
     const handleKeyDown = e => {
-      if (!searchActiveRef.current) return;
+      if (!searchValueRef.current || searchValueRef.current.length === 0) return;
       if (!scrollableRef.current) return;
 
       const searchEl = document.getElementById('search');
@@ -674,7 +677,9 @@ function ThisTab (props) {
   }, []);
 
   useEffect(function fallbackFocusSearchAfterMount() {
-    if (loading || !data?.searchActive) {
+    const hasSearchValue = !!(data?.searchValue && data.searchValue.length > 0);
+
+    if (loading || !hasSearchValue) {
       return;
     }
 
@@ -689,7 +694,7 @@ function ThisTab (props) {
         fallbackFocusTimeoutRef.current = null;
       }
     };
-  }, [loading, data?.searchActive, focusSearchPreservingScrollOnMount]);
+  }, [loading, data?.searchValue, focusSearchPreservingScrollOnMount]);
 
   return (
     <div className={`${props.className ? props.className : ''}`}>
