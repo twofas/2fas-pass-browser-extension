@@ -120,9 +120,11 @@
       border-radius: 6px;
       max-height: 102px;
       overflow: auto;
+      overscroll-behavior: none;
       padding-bottom: 0;
       padding-top: 0;
       scrollbar-color: var(--hover-on-hover) var(--primary-bg);
+      -webkit-overflow-scrolling: auto !important;
 
       .react-select__option {
         background-color: var(--primary-box-bg);
@@ -349,9 +351,11 @@
     &-list {
       max-height: 172px;
       overflow-x: hidden;
+      overscroll-behavior: none;
       padding-bottom: 0;
       padding-top: 0;
       scrollbar-color: var(--hover-on-hover) var(--primary-bg);
+      -webkit-overflow-scrolling: auto !important;
     }
   }
 
@@ -480,9 +484,11 @@
     &-list {
       max-height: 172px;
       overflow-x: hidden;
+      overscroll-behavior: none;
       padding-bottom: 0;
       padding-top: 0;
       scrollbar-color: var(--hover-on-hover) var(--primary-bg);
+      -webkit-overflow-scrolling: auto !important;
     }
   }
 
@@ -643,8 +649,10 @@
   .react-select-tags-details__menu-list {
     max-height: 200px;
     overflow-y: auto;
+    overscroll-behavior: none;
     padding: 4px;
     scrollbar-color: var(--hover-on-hover) var(--primary-bg);
+    -webkit-overflow-scrolling: auto !important;
   }
 
   .react-select-tags-details__option {
