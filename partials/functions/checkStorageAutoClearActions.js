@@ -30,6 +30,7 @@ const checkStorageAutoClearActions = async () => {
 
   if (!action || !action.deviceId || !action.vaultId || !action?.itemId || !action?.itemType) {
     await storage.setItem('session:autoClearActions', []);
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - checkStorageAutoClearActions (clearing)');
     return false;
   }
 
@@ -51,6 +52,7 @@ const checkStorageAutoClearActions = async () => {
 
   if (!item) {
     await storage.setItem('session:autoClearActions', []);
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - checkStorageAutoClearActions (clearing)');
     return false;
   }
 
@@ -60,11 +62,13 @@ const checkStorageAutoClearActions = async () => {
     itemValue = await item.getClipboardValue(action.itemType);
   } catch {
     await storage.setItem('session:autoClearActions', []);
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - checkStorageAutoClearActions (clearing)');
     return false;
   }
 
   if (itemValue === null || itemValue === undefined || itemValue === '') {
     await storage.setItem('session:autoClearActions', []);
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - checkStorageAutoClearActions (clearing)');
     return false;
   }
 

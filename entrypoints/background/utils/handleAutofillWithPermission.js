@@ -31,6 +31,8 @@ const storeAutofillFailureData = async (tabId, closeData) => {
     hkdfSaltAB: closeData.hkdfSaltAB,
     sessionKeyForHKDF: closeData.sessionKeyForHKDF
   }));
+
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleAutofillWithPermission (storeAutofillFailureData)');
 };
 
 /**
@@ -95,6 +97,7 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   if (unknownDomains.length > 0) {
     storedData.trustedDomains = crossDomainAllowedDomains;
     await storage.setItem(storageKey, JSON.stringify(storedData));
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleAutofillWithPermission (trustedDomains update)');
 
     try {
       const tab = await browser.tabs.get(tabId);

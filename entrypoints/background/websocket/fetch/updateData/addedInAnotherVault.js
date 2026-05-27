@@ -41,6 +41,8 @@ const updateDataAddedInAnotherVault = async (state, messageId) => {
     // Send response
     await sendPullRequestCompleted(messageId);
 
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - updateData/addedInAnotherVault');
+
     return {
       returnUrl: '/',
       returnToast: {

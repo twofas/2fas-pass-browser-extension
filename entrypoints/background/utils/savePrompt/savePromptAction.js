@@ -78,6 +78,8 @@ const savePromptAction = async (details, serviceTypeData, tabsInputData, values)
     values
   }));
 
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - savePromptAction');
+
   await sendSavePromptToTab(details.tabId, serviceTypeData, storageKey);
 };
 

@@ -90,6 +90,7 @@ const processFullSyncVaultsData = async (checksum, chunksData, encryptionDataKey
     await storage.removeItem(`session:${popupStateKey}`);
 
     await storage.setItem(`session:${encryptionT3Key}`, encryptionPassKeyAES_B64);
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - processFullSyncVaultsData');
     await saveVaults(vaultDataDecJSON, deviceId);
   } catch (e) {
     throw new TwoFasError(TwoFasError.errors.decryptVaultData, { event: e });

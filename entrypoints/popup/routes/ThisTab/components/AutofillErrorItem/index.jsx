@@ -65,6 +65,8 @@ function AutofillErrorItem (props) {
           const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: props.deviceId, itemId: props.itemId });
           await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - AutofillErrorItem');
+
           fetchedItem.setSifEncrypted(sifData);
         } catch (e) {
           await CatchError(e);

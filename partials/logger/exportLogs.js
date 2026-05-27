@@ -13,8 +13,26 @@ const fileSafeTimestamp = () => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}-${pad(d.getMinutes())}-${pad(d.getSeconds())}`;
 };
 
+const serializeLegend = legend => {
+  const lines = Object.entries(legend).map(([k, v]) => `    ${JSON.stringify(k)}: ${JSON.stringify(v)}`);
+
+  return `{\n${lines.join(',\n')}\n  }`;
+};
+
+const serializeMeta = meta => {
+  const lines = Object.entries(meta).map(([k, v]) => {
+    if (k === 'legend' && v && typeof v === 'object' && !Array.isArray(v)) {
+      return `  ${JSON.stringify(k)}: ${serializeLegend(v)}`;
+    }
+
+    return `  ${JSON.stringify(k)}: ${JSON.stringify(v)}`;
+  });
+
+  return `{\n${lines.join(',\n')}\n}`;
+};
+
 const serializeExport = data => {
-  const metaPretty = JSON.stringify(data.meta, null, 2)
+  const metaPretty = serializeMeta(data.meta)
     .split('\n')
     .map((line, idx) => idx === 0 ? line : `  ${line}`)
     .join('\n');
@@ -44,6 +62,22 @@ const triggerDownload = (filename, jsonString) => {
   setTimeout(() => URL.revokeObjectURL(url), 0);
 };
 
+const buildLegend = () => ({
+  keys: {
+    t: 'timestamp (ms)',
+    l: 'level',
+    c: 'category',
+    x: 'context',
+    m: 'message',
+    e: 'meta',
+    s: 'size (bytes)',
+    i: 'id'
+  },
+  l: [...LOGGER_CONSTANTS.LEVEL_NAMES],
+  c: [...LOGGER_CONSTANTS.CATEGORY_NAMES],
+  x: [...LOGGER_CONSTANTS.CONTEXT_NAMES]
+});
+
 export const exportLogsToFile = async ({ bytesUsed } = {}) => {
   const [logsForExport, manifest, browserInfo, statsResult] = await Promise.all([
     readAllLogs(),
@@ -65,7 +99,8 @@ export const exportLogsToFile = async ({ bytesUsed } = {}) => {
       browserName: browserInfo?.browserName || null,
       browserVersion: browserInfo?.browserVersion || null,
       entryCount: logsForExport.length,
-      bytesUsed: typeof bytesUsed === 'number' ? bytesUsed : (statsResult?.bytesUsed || 0)
+      bytesUsed: typeof bytesUsed === 'number' ? bytesUsed : (statsResult?.bytesUsed || 0),
+      legend: buildLegend()
     },
     logs: logsForExport
   };

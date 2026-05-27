@@ -68,7 +68,10 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
         migrations.state = 'running';
 
         browser.storage.local.clear()
-          .then(async () => { await browser.storage.session.clear(); })
+          .then(async () => {
+            await browser.storage.session.clear();
+            logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onMessage (RESET_EXTENSION clear)');
+          })
           .then(async () => { await runMigrations(); })
           .then(() => { migrations.state = true; })
           .then(async () => { await openInstallPage(); })
@@ -186,6 +189,7 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
 
           await storage.removeItem(`session:savePromptContext-${tabId}`).catch(() => {});
           await storage.removeItem(`session:savePromptSuppressed-${tabId}`).catch(() => {});
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onMessage (CLEAR_SAVE_PROMPT_STATE)');
         }))
           .then(() => { sendResponse({ status: 'ok' }); })
           .catch(() => { sendResponse({ status: 'ok' }); });

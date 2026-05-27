@@ -9,8 +9,13 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { readAllLogs, clearLogs as clearLogsIdb, getLogStats } from '@/partials/logger/idb';
 import { exportLogsToFile } from '@/partials/logger/exportLogs';
 
-const LEVELS = Object.values(LOGGER_CONSTANTS.LEVELS);
+const LEVEL_IDS = Object.values(LOGGER_CONSTANTS.LEVELS);
 const MAX_RENDER = 1000;
+const FILTER_ALL = -1;
+
+const levelLabel = id => LOGGER_CONSTANTS.LEVEL_NAMES[id] ?? String(id);
+const categoryLabel = id => LOGGER_CONSTANTS.CATEGORY_NAMES[id] ?? String(id);
+const contextLabel = id => LOGGER_CONSTANTS.CONTEXT_NAMES[id] ?? String(id);
 
 const padTwo = n => String(n).padStart(2, '0');
 
@@ -35,9 +40,9 @@ const formatBytes = bytes => {
 function LogsTab () {
   const [logs, setLogs] = useState([]);
   const [stats, setStats] = useState({ entryCount: 0, bytesUsed: 0 });
-  const [filterLevel, setFilterLevel] = useState(new Set(LEVELS));
-  const [filterCat, setFilterCat] = useState('all');
-  const [filterCtx, setFilterCtx] = useState('all');
+  const [filterLevel, setFilterLevel] = useState(new Set(LEVEL_IDS));
+  const [filterCat, setFilterCat] = useState(FILTER_ALL);
+  const [filterCtx, setFilterCtx] = useState(FILTER_ALL);
   const [search, setSearch] = useState('');
   const [verbose, setVerbose] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
@@ -106,24 +111,24 @@ function LogsTab () {
     const set = new Set();
 
     for (let i = 0; i < logs.length; i++) {
-      if (logs[i]?.cat) {
-        set.add(logs[i].cat);
+      if (typeof logs[i]?.c === 'number') {
+        set.add(logs[i].c);
       }
     }
 
-    return ['all', ...Array.from(set).sort()];
+    return [FILTER_ALL, ...Array.from(set).sort((a, b) => a - b)];
   }, [logs]);
 
   const contexts = useMemo(() => {
     const set = new Set();
 
     for (let i = 0; i < logs.length; i++) {
-      if (logs[i]?.ctx) {
-        set.add(logs[i].ctx);
+      if (typeof logs[i]?.x === 'number') {
+        set.add(logs[i].x);
       }
     }
 
-    return ['all', ...Array.from(set).sort()];
+    return [FILTER_ALL, ...Array.from(set).sort((a, b) => a - b)];
   }, [logs]);
 
   const filtered = useMemo(() => {
@@ -133,19 +138,19 @@ function LogsTab () {
     for (let i = 0; i < logs.length; i++) {
       const entry = logs[i];
 
-      if (!filterLevel.has(entry.level)) {
+      if (!filterLevel.has(entry.l)) {
         continue;
       }
 
-      if (filterCat !== 'all' && entry.cat !== filterCat) {
+      if (filterCat !== FILTER_ALL && entry.c !== filterCat) {
         continue;
       }
 
-      if (filterCtx !== 'all' && entry.ctx !== filterCtx) {
+      if (filterCtx !== FILTER_ALL && entry.x !== filterCtx) {
         continue;
       }
 
-      if (searchLower && !(entry.msg || '').toLowerCase().includes(searchLower)) {
+      if (searchLower && !(entry.m || '').toLowerCase().includes(searchLower)) {
         continue;
       }
 
@@ -189,7 +194,7 @@ function LogsTab () {
 
             setStats(prev => ({
               entryCount: prev.entryCount + 1,
-              bytesUsed: prev.bytesUsed + (msg.entry.size || 0)
+              bytesUsed: prev.bytesUsed + (msg.entry.s || 0)
             }));
           } else if (msg?.type === 'trim' || msg?.type === 'clear') {
             refresh();
@@ -224,32 +229,34 @@ function LogsTab () {
       <div className={S.logsToolbar}>
         <div className={S.logsToolbarGroup}>
           <span className={S.logsToolbarLabel}>Level:</span>
-          {LEVELS.map(level => (
+          {LEVEL_IDS.map(level => (
             <button
               key={level}
               type='button'
               className={`${S.logsChip} ${filterLevel.has(level) ? S.logsChipActive : ''}`}
               onClick={handleToggleLevel(level)}
             >
-              {LOGGER_CONSTANTS.LEVEL_EMOJI[level]} {level}
+              {LOGGER_CONSTANTS.LEVEL_EMOJI[level]} {levelLabel(level)}
             </button>
           ))}
         </div>
 
         <div className={S.logsToolbarGroup}>
           <span className={S.logsToolbarLabel}>Category:</span>
-          <select value={filterCat} onChange={e => setFilterCat(e.target.value)}>
+          <select value={filterCat} onChange={e => setFilterCat(parseInt(e.target.value, 10))}>
             {categories.map(cat => (
-              <option key={cat} value={cat}>{cat === 'all' ? 'all' : `${LOGGER_CONSTANTS.CATEGORY_EMOJI[cat] || ''} ${cat}`}</option>
+              <option key={cat} value={cat}>
+                {cat === FILTER_ALL ? 'all' : `${LOGGER_CONSTANTS.CATEGORY_EMOJI[cat] || ''} ${categoryLabel(cat)}`}
+              </option>
             ))}
           </select>
         </div>
 
         <div className={S.logsToolbarGroup}>
           <span className={S.logsToolbarLabel}>Context:</span>
-          <select value={filterCtx} onChange={e => setFilterCtx(e.target.value)}>
+          <select value={filterCtx} onChange={e => setFilterCtx(parseInt(e.target.value, 10))}>
             {contexts.map(ctx => (
-              <option key={ctx} value={ctx}>{ctx}</option>
+              <option key={ctx} value={ctx}>{ctx === FILTER_ALL ? 'all' : contextLabel(ctx)}</option>
             ))}
           </select>
         </div>
@@ -301,28 +308,30 @@ function LogsTab () {
         )}
 
         {filtered.map(entry => {
-          const expanded = expandedIds.has(entry.id);
-          const levelEmoji = LOGGER_CONSTANTS.LEVEL_EMOJI[entry.level] || '';
-          const catEmoji = LOGGER_CONSTANTS.CATEGORY_EMOJI[entry.cat] || '';
+          const expanded = expandedIds.has(entry.i);
+          const levelEmoji = LOGGER_CONSTANTS.LEVEL_EMOJI[entry.l] || '';
+          const catEmoji = LOGGER_CONSTANTS.CATEGORY_EMOJI[entry.c] || '';
+          const levelName = levelLabel(entry.l);
+          const hasMeta = entry.e && Object.keys(entry.e).length > 0;
 
           return (
             <div
-              key={entry.id}
-              className={`${S.logsEntry} ${S[`logsEntryLevel_${entry.level}`] || ''}`}
-              onClick={handleToggleExpand(entry.id)}
+              key={entry.i}
+              className={`${S.logsEntry} ${S[`logsEntryLevel_${levelName}`] || ''}`}
+              onClick={handleToggleExpand(entry.i)}
             >
               <div className={S.logsEntryHeader}>
-                <span className={S.logsEntryTs}>{formatTimestamp(entry.ts)}</span>
+                <span className={S.logsEntryTs}>{formatTimestamp(entry.t)}</span>
                 <span className={S.logsEntryMarker}>| {levelEmoji}{catEmoji} |</span>
-                <span className={S.logsEntryCtx}>[{entry.ctx}]</span>
-                <span className={S.logsEntryMsg}>{entry.msg}</span>
-                {entry.meta && Object.keys(entry.meta).length > 0 && (
+                <span className={S.logsEntryCtx}>[{contextLabel(entry.x)}]</span>
+                <span className={S.logsEntryMsg}>{entry.m}</span>
+                {hasMeta && (
                   <span className={S.logsEntryArrow}>{expanded ? '▾' : '▸'}</span>
                 )}
               </div>
 
-              {(verbose || expanded) && entry.meta && Object.keys(entry.meta).length > 0 && (
-                <pre className={S.logsEntryMeta}>{JSON.stringify(entry.meta, null, 2)}</pre>
+              {(verbose || expanded) && hasMeta && (
+                <pre className={S.logsEntryMeta}>{JSON.stringify(entry.e, null, 2)}</pre>
               )}
             </div>
           );

@@ -103,6 +103,8 @@ const updateDataUpdated = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mes
 
     await sendPullRequestCompleted(messageId);
 
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - updateData/updated');
+
     return {
       returnUrl: `/details/${state.data.deviceId}/${info.data.vaultId}/${state.data.itemId}`,
       returnState: { from: 'fetch', resetOldData: true },

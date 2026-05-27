@@ -76,6 +76,7 @@ const sendAutoClearAction = async (value, cryptoAvailable, sender) => {
 
   if (res && res.some(r => r?.status === 'ok')) {
     await storage.setItem('session:autoClearActions', []);
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - sendAutoClearAction (clearing)');
   }
 };
 

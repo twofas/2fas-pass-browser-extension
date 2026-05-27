@@ -29,6 +29,7 @@ const onIdleStateChange = async state => {
     logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTH, 'IdleStateChange - auto-lock triggered', { autoIdleLock });
     await cleanupDevices();
     await browser.storage.session.clear();
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onIdleStateChange (clear all)');
     return true;
   } catch (e) {
     await CatchError(e);

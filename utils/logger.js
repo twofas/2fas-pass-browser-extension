@@ -9,7 +9,7 @@ import { writeLogViaMessage } from '@/partials/logger/contentLogger';
 import { sanitizeMeta } from '@/partials/logger/sanitize';
 import { LOGGER_CONSTANTS } from './LOGGER_CONSTANTS';
 
-const detectContext = () => {
+const detectContextName = () => {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return 'background';
   }
@@ -53,23 +53,24 @@ const detectContext = () => {
   return 'extension-page';
 };
 
-const CTX = detectContext();
-const isContentCtx = CTX === 'content';
+const CTX_NAME = detectContextName();
+const CTX_ID = LOGGER_CONSTANTS.CONTEXT_IDS[CTX_NAME] ?? LOGGER_CONSTANTS.CONTEXT_IDS.background;
+const isContentCtx = CTX_NAME === 'content';
 
 const writer = isContentCtx ? writeLogViaMessage : writeLogDirect;
-const CATEGORIES = LOGGER_CONSTANTS.CATEGORIES;
-const ALLOWED_CATEGORIES = new Set(Object.values(CATEGORIES));
+const ALLOWED_CATEGORIES = new Set(Object.values(LOGGER_CONSTANTS.CATEGORIES));
+const DEFAULT_CATEGORY = LOGGER_CONSTANTS.CATEGORIES.SYSTEM;
 
 const makeLogger = level => (cat, msg, meta) => {
   try {
-    const safeCat = ALLOWED_CATEGORIES.has(cat) ? cat : CATEGORIES.SYSTEM;
+    const safeCat = ALLOWED_CATEGORIES.has(cat) ? cat : DEFAULT_CATEGORY;
     const entry = {
-      ts: Date.now(),
-      level,
-      cat: safeCat,
-      ctx: CTX,
-      msg: typeof msg === 'string' ? msg : String(msg ?? ''),
-      meta: sanitizeMeta(meta)
+      t: Date.now(),
+      l: level,
+      c: safeCat,
+      x: CTX_ID,
+      m: typeof msg === 'string' ? msg : String(msg ?? ''),
+      e: sanitizeMeta(meta)
     };
 
     const result = writer(entry);

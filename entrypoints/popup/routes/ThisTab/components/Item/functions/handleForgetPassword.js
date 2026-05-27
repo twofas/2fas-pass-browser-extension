@@ -46,6 +46,8 @@ const handleForgetPassword = async (e, itemId, setMore) => {
   const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId, itemId });
   await storage.removeItem(`session:${itemT2Key}`);
 
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - handleForgetPassword');
+
   // Remove items from session storage (by itemsKeys)
   await storage.removeItems(itemsKeys);
 

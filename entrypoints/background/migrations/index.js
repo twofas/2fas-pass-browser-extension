@@ -6,37 +6,59 @@
 
 const migrationModules = import.meta.glob('./migrationsDatabase/*.js', { eager: true });
 
-/** 
-* Function to run migrations for the browser.
+const MIGRATION_VERSION_KEY = 'local:migrationVersion';
+
+const getMigrationIndex = path => {
+  const fileName = path.split('/').pop();
+
+  return parseInt(fileName.match(/^(\d+)/)?.[1] ?? '-1', 10);
+};
+
+/**
+* Function to run migrations for the browser. Tracks the highest applied
+* migration index in `local:migrationVersion` so that already-applied
+* migrations are skipped on subsequent invocations (e.g. dev reloads).
 * @async
 * @return {Promise<void>} A promise that resolves when the migrations are complete.
 */
 const runMigrations = async () => {
-  // Sort migration files by number
   const sortedMigrations = Object.entries(migrationModules)
-    .sort(([a], [b]) => {
-      const numA = parseInt(a.match(/(\d+)/)?.[1] || '0', 10);
-      const numB = parseInt(b.match(/(\d+)/)?.[1] || '0', 10);
-      return numA - numB;
-    });
+    .map(([path, migration]) => ({ path, migration, index: getMigrationIndex(path) }))
+    .filter(item => item.index >= 0 && typeof item.migration.default === 'function')
+    .sort((a, b) => a.index - b.index);
 
-  logger.info(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'StorageMigrations - run start', { count: sortedMigrations.length });
+  const storedVersion = await storage.getItem(MIGRATION_VERSION_KEY);
+  const appliedVersion = typeof storedVersion === 'number' ? storedVersion : -1;
+  const pending = sortedMigrations.filter(item => item.index > appliedVersion);
 
-  for (const [path, migration] of sortedMigrations) {
-    if (typeof migration.default === 'function') {
-      const fileName = path.split('/').pop();
+  if (pending.length === 0) {
+    return;
+  }
 
-      try {
-        await migration.default();
-        logger.info(LOGGER_CONSTANTS.CATEGORIES.STORAGE, `StorageMigrations - ${fileName} completed`);
-      } catch (e) {
-        logger.error(LOGGER_CONSTANTS.CATEGORIES.STORAGE, `StorageMigrations - ${fileName} failed`, { errorName: e?.name });
-        throw e;
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'StorageMigrations - run start', { count: pending.length, from: appliedVersion });
+
+  let lastApplied = appliedVersion;
+
+  for (const { path, migration, index } of pending) {
+    const fileName = path.split('/').pop();
+
+    try {
+      await migration.default();
+      lastApplied = index;
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.STORAGE, `StorageMigrations - ${fileName} completed`);
+    } catch (e) {
+      logger.error(LOGGER_CONSTANTS.CATEGORIES.STORAGE, `StorageMigrations - ${fileName} failed`, { errorName: e?.name });
+
+      if (lastApplied > appliedVersion) {
+        await storage.setItem(MIGRATION_VERSION_KEY, lastApplied);
       }
+
+      throw e;
     }
   }
 
-  logger.info(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'StorageMigrations - run done');
+  await storage.setItem(MIGRATION_VERSION_KEY, lastApplied);
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'StorageMigrations - run done', { version: lastApplied });
 };
 
 export default runMigrations;

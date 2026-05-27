@@ -67,6 +67,7 @@ export const AuthProvider = memo(({ children }) => {
 
     if (clear) {
       await browser.storage.session.clear();
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - useAuth logout (clear all)');
     }
 
     const store = usePopupStateStore.getState();

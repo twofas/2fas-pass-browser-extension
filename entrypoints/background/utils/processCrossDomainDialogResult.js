@@ -31,6 +31,8 @@ const storeAutofillFailureData = async (tabId, closeData) => {
     hkdfSaltAB: closeData.hkdfSaltAB,
     sessionKeyForHKDF: closeData.sessionKeyForHKDF
   }));
+
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - processCrossDomainDialogResult (storeAutofillFailureData)');
 };
 
 /**

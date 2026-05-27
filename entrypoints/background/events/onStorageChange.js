@@ -25,10 +25,8 @@ const onStorageChange = async (change, areaName, migrations) => {
   }
 
   try {
-    const keys = change ? Object.keys(change) : [];
-
-    if (keys.length > 0) {
-      logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - storage change', { areaName, keys });
+    if (areaName === 'local' && change && Object.keys(change).length > 0) {
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - storage change', { areaName });
     }
   } catch {}
 

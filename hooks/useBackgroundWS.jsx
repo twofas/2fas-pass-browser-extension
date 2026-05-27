@@ -39,11 +39,6 @@ export const useBackgroundWS = ({ onLogin } = {}) => {
 
       switch (message.updateType) {
         case 'stateChange': {
-          logger.debug(LOGGER_CONSTANTS.CATEGORIES.WS, 'Popup-WS - state change', {
-            type: message.payload?.type,
-            active: message.payload?.active,
-            status: message.payload?.status
-          });
           setWsState(prev => ({ ...prev, ...message.payload }));
           break;
         }

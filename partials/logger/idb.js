@@ -24,11 +24,11 @@ const openDb = () => {
       const db = req.result;
 
       if (!db.objectStoreNames.contains(LOGGER_CONSTANTS.IDB.STORE_LOGS)) {
-        const store = db.createObjectStore(LOGGER_CONSTANTS.IDB.STORE_LOGS, { keyPath: 'id', autoIncrement: true });
-        store.createIndex('by-ts', 'ts', { unique: false });
-        store.createIndex('by-level', 'level', { unique: false });
-        store.createIndex('by-cat', 'cat', { unique: false });
-        store.createIndex('by-ctx', 'ctx', { unique: false });
+        const store = db.createObjectStore(LOGGER_CONSTANTS.IDB.STORE_LOGS, { keyPath: 'i', autoIncrement: true });
+        store.createIndex('by-t', 't', { unique: false });
+        store.createIndex('by-l', 'l', { unique: false });
+        store.createIndex('by-c', 'c', { unique: false });
+        store.createIndex('by-x', 'x', { unique: false });
       }
 
       if (!db.objectStoreNames.contains(LOGGER_CONSTANTS.IDB.STORE_META)) {
@@ -126,7 +126,7 @@ const trimIfNeeded = async (db, currentBytes) => {
   const tx = db.transaction([LOGGER_CONSTANTS.IDB.STORE_LOGS, LOGGER_CONSTANTS.IDB.STORE_META], 'readwrite');
   const logsStore = tx.objectStore(LOGGER_CONSTANTS.IDB.STORE_LOGS);
   const metaStore = tx.objectStore(LOGGER_CONSTANTS.IDB.STORE_META);
-  const tsIndex = logsStore.index('by-ts');
+  const tsIndex = logsStore.index('by-t');
 
   let removedBytes = 0;
   let bytes = currentBytes;
@@ -144,7 +144,7 @@ const trimIfNeeded = async (db, currentBytes) => {
       }
 
       const entry = cursor.value;
-      const entrySize = typeof entry.size === 'number' ? entry.size : estimateSize(entry);
+      const entrySize = typeof entry.s === 'number' ? entry.s : estimateSize(entry);
       removedBytes += entrySize;
       bytes -= entrySize;
       cursor.delete();
@@ -180,14 +180,14 @@ export const writeLogDirect = async entry => {
   }
 
   const size = estimateSize(entry);
-  const record = { ...entry, size };
+  const record = { ...entry, s: size };
 
   const tx = db.transaction([LOGGER_CONSTANTS.IDB.STORE_LOGS, LOGGER_CONSTANTS.IDB.STORE_META], 'readwrite');
   const logsStore = tx.objectStore(LOGGER_CONSTANTS.IDB.STORE_LOGS);
   const metaStore = tx.objectStore(LOGGER_CONSTANTS.IDB.STORE_META);
 
   const id = await requestPromise(logsStore.add(record));
-  const stored = { ...record, id };
+  const stored = { ...record, i: id };
 
   const prev = await readBytesUsed(metaStore);
   writeBytesUsed(metaStore, prev + size);
@@ -220,7 +220,7 @@ export const readAllLogs = async () => {
 
   const tx = db.transaction([LOGGER_CONSTANTS.IDB.STORE_LOGS], 'readonly');
   const store = tx.objectStore(LOGGER_CONSTANTS.IDB.STORE_LOGS);
-  const index = store.index('by-ts');
+  const index = store.index('by-t');
 
   const out = [];
 
