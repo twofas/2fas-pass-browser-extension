@@ -62,7 +62,7 @@ const validateTagsInItems = async (tags, items) => {
   }
 
   if (missingTagIds.size > 0) {
-    await CatchError(new TwoFasError(TwoFasError.internalErrors.tagIndexError, { additional: { tagIds: Array.from(missingTagIds) }, apiLog: false }));
+    console.error('Tag index error - missing tag IDs:', Array.from(missingTagIds));
   }
 };
 
