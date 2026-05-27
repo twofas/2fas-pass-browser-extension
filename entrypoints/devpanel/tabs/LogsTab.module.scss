@@ -114,6 +114,16 @@
   &:focus {
     background-color: var(--focus);
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: .5;
+
+    &:hover,
+    &:focus {
+      background-color: var(--primary-color);
+    }
+  }
 }
 
 .logs-button-danger {

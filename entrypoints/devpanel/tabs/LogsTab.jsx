@@ -7,6 +7,7 @@
 import S from './LogsTab.module.scss';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { readAllLogs, clearLogs as clearLogsIdb, getLogStats } from '@/partials/logger/idb';
+import { exportLogsToFile } from '@/partials/logger/exportLogs';
 
 const LEVELS = Object.values(LOGGER_CONSTANTS.LEVELS);
 const MAX_RENDER = 1000;
@@ -41,6 +42,7 @@ function LogsTab () {
   const [verbose, setVerbose] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
   const [expandedIds, setExpandedIds] = useState(new Set());
+  const [saving, setSaving] = useState(false);
 
   const listRef = useRef(null);
 
@@ -55,6 +57,22 @@ function LogsTab () {
     setLogs([]);
     setStats({ entryCount: 0, bytesUsed: 0 });
   }, []);
+
+  const handleSave = useCallback(async () => {
+    if (saving) {
+      return;
+    }
+
+    setSaving(true);
+
+    try {
+      await exportLogsToFile({ bytesUsed: stats.bytesUsed });
+    } catch (e) {
+      CatchError(e);
+    } finally {
+      setSaving(false);
+    }
+  }, [saving, stats.bytesUsed]);
 
   const handleToggleLevel = useCallback(level => () => {
     setFilterLevel(prev => {
@@ -258,6 +276,14 @@ function LogsTab () {
           </label>
 
           <button type='button' className={S.logsButton} onClick={refresh}>Refresh</button>
+          <button
+            type='button'
+            className={S.logsButton}
+            onClick={handleSave}
+            disabled={saving || stats.entryCount === 0}
+          >
+            Download
+          </button>
           <button type='button' className={`${S.logsButton} ${S.logsButtonDanger}`} onClick={handleClear}>Clear</button>
         </div>
       </div>
