@@ -194,6 +194,20 @@
         transition: stroke var(--anim);
         width: 20px;
       }
+
+      &.bottombar-dev-panel {
+        background-color: fn.hex-rgba(var(--warning-toast), .15);
+
+        &:hover {
+          background-color: fn.hex-rgba(var(--warning-toast), .25);
+        }
+
+        svg {
+          fill: var(--warning-toast);
+          stroke: none;
+          transition: fill var(--anim);
+        }
+      }
     }
 
     a {

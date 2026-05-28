@@ -62,6 +62,7 @@ function SettingsSaveLoginExcludedDomains (props) {
     const updatedDomains = excludedDomains.filter((d) => d !== domain);
     setExcludedDomains(updatedDomains);
     await storage.setItem('local:savePromptIgnoreDomains', updatedDomains);
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsExcludedDomains - removed', { domain, count: updatedDomains.length });
     showToast(getMessage('settings_excluded_domains_remove_toast'), 'success');
   };
 
@@ -152,8 +153,10 @@ function SettingsSaveLoginExcludedDomains (props) {
       return false;
     }
 
-    const updatedDomains = [...excludedDomains, getDomain(e['ignored-domain'])];
+    const newDomain = getDomain(e['ignored-domain']);
+    const updatedDomains = [...excludedDomains, newDomain];
     await storage.setItem('local:savePromptIgnoreDomains', updatedDomains);
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsExcludedDomains - added', { domain: newDomain, count: updatedDomains.length });
     setExcludedDomains(updatedDomains);
     setBatchData({
       newDomainForm: false,
@@ -163,7 +166,7 @@ function SettingsSaveLoginExcludedDomains (props) {
     showToast(getMessage('settings_excluded_domains_add_success'), 'success');
   };
 
-  useEffect(() => {
+  useEffect(function loadExcludedDomains() {
     const getExcludedDomains = async () => {
       {
         let storageExcludedDomains = await storage.getItem('local:savePromptIgnoreDomains');

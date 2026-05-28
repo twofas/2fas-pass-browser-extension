@@ -20,7 +20,8 @@ if (!process.env.LOCO_KEY) {
 
 const urls = {
   en: `https://localise.biz/api/export/locale/en.json?format=chrome&key=${process.env.LOCO_KEY}`,
-  pl: `https://localise.biz/api/export/locale/pl.json?format=chrome&key=${process.env.LOCO_KEY}`
+  pl: `https://localise.biz/api/export/locale/pl.json?format=chrome&key=${process.env.LOCO_KEY}`,
+  de: `https://localise.biz/api/export/locale/de.json?format=chrome&key=${process.env.LOCO_KEY}`
 };
 
 const excludedDirsSet = new Set([

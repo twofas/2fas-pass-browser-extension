@@ -6,18 +6,20 @@
 
 import Item from '../Item';
 import SafariViewportList from '@/entrypoints/popup/components/SafariViewportList';
-import sortByName from '@/partials/functions/sortFunction';
 import isItemsCorrect from '../../functions/isItemsCorrect';
+import getBestMatcherForItem from '../../functions/getBestMatcherForItem';
 import { useMemo, memo, useCallback } from 'react';
 
 /**
 * Component displaying a list of matching items for the current domain.
+* Items are sorted by URIMatcher score (desc); name (asc) is used only as a tiebreaker.
 * @param {Object} props - The component props.
 * @param {Array} props.items - The array of matching items.
+* @param {string} props.url - The current tab URL, used for matcher-aware sorting.
 * @param {boolean} props.loading - Indicates if the items are still loading.
 * @return {JSX.Element|null} The rendered matching items list or null.
 */
-function MatchingItemsList ({ items, loading }) {
+function MatchingItemsList ({ items, url, loading }) {
   const renderItem = useCallback(item => <Item data={item} key={item.id} />, []);
 
   const itemsData = useMemo(() => {
@@ -29,16 +31,43 @@ function MatchingItemsList ({ items, loading }) {
       return null;
     }
 
-    let fetchedItems = items.filter(item => item.securityType === SECURITY_TIER.HIGHLY_SECRET && item.sifExists);
-    let restItems = items.filter(item => item.securityType !== SECURITY_TIER.HIGHLY_SECRET || (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.sifExists));
+    const fetchedItems = items.filter(item => item.securityType === SECURITY_TIER.HIGHLY_SECRET && item.sifExists);
+    const restItems = items.filter(item => item.securityType !== SECURITY_TIER.HIGHLY_SECRET || (item.securityType === SECURITY_TIER.HIGHLY_SECRET && !item.sifExists));
 
-    fetchedItems = sortByName(fetchedItems);
-    restItems = sortByName(restItems);
+    const matcherByItem = new WeakMap();
+
+    for (const item of items) {
+      matcherByItem.set(item, getBestMatcherForItem(item, url));
+    }
+
+    const compareByMatcherThenName = (a, b) => {
+      const matcherDiff = matcherByItem.get(b) - matcherByItem.get(a);
+
+      if (matcherDiff !== 0) {
+        return matcherDiff;
+      }
+
+      const nameA = a?.content?.name?.toLowerCase() || '';
+      const nameB = b?.content?.name?.toLowerCase() || '';
+
+      if (nameA < nameB) {
+        return -1;
+      }
+
+      if (nameA > nameB) {
+        return 1;
+      }
+
+      return 0;
+    };
+
+    fetchedItems.sort(compareByMatcherThenName);
+    restItems.sort(compareByMatcherThenName);
 
     const result = fetchedItems.concat(restItems);
 
     return { type: 'data', data: result };
-  }, [items, loading]);
+  }, [items, loading, url]);
 
   if (itemsData === null) {
     return null;

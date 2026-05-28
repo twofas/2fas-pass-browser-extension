@@ -1,6 +1,6 @@
 {
   "fetch_push_header": {
-    "message": "Sprawdź powiadomienie push 2FAS Pass na swoim urządzeniu mobilnym.",
+    "message": "Sprawdź powiadomienie push 2FAS Pass w aplikacji mobilnej.",
     "description": "Header prompting the user to check their device for a push notification"
   },
   "fetch_push_subheader": {

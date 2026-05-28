@@ -30,7 +30,7 @@ function IdleLock () {
   const [disabled, setDisabled] = useState(true);
   const [premium, setPremium] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadIdleLockAndPremiumStatus() {
     const getPremium = async () => {
       const paidDeviceConnected = await isPaidDeviceConnected();
       setPremium(paidDeviceConnected);
@@ -75,7 +75,9 @@ function IdleLock () {
     try {
       const value = change?.value;
       await storage.setItem('local:autoIdleLock', value);
-      
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsIdleLock - changed', { value });
+
       setIdleInterval(value);
       setIL(value);
 

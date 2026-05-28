@@ -1,0 +1,82 @@
+{
+  "content_matching_logins_title": {
+    "message": "Übereinstimmende Einträge",
+    "description": "Title for the section displaying login items that match the current context"
+  },
+  "content_save_prompt_add_header": {
+    "message": "Möchtest du diesen Eintrag hinzufügen?",
+    "description": "Header asking if the user wants to save a new login item"
+  },
+  "content_save_prompt_update_header": {
+    "message": "Möchtest du die Änderungen speichern?",
+    "description": "Header asking if the user wants to update an existing login item"
+  },
+  "content_save_prompt_don_t_ask": {
+    "message": "Diese Domain ignorieren",
+    "description": "Option to prevent the save prompt from appearing in the future"
+  },
+  "content_save_prompt_add_login": {
+    "message": "Eintrag hinzufügen",
+    "description": "Button label to add a new login item to 2FAS Pass"
+  },
+  "content_save_prompt_update_login": {
+    "message": "Eintrag speichern",
+    "description": "Button label to update an existing login item in 2FAS Pass"
+  },
+  "autofill_cross_domain_warning": {
+    "message": "Dieses Formular befindet sich auf einer anderen Domain (CURRENT_DOMAIN) als die Hauptseite (TOP_DOMAIN). Möchtest du mit dem automatischen Ausfüllen fortfahren?",
+    "description": "Warning shown when autofill is attempted on a cross-domain iframe"
+  },
+  "autofill_cross_domain_warning_no_access": {
+    "message": "Dieses Formular befindet sich auf CURRENT_DOMAIN, was anscheinend ein domänenübergreifender Iframe ist. Möchtest du mit dem automatischen Ausfüllen fortfahren?",
+    "description": "Warning shown when autofill is attempted on a cross-domain iframe and we cannot access the parent domain"
+  },
+  "content_cross_domain_dialog_title": {
+    "message": "Diese Formulare ausfüllen?",
+    "description": "Title for the cross-domain autofill dialog"
+  },
+  "content_cross_domain_dialog_description": {
+    "message": "Diese Seite enthält Log-in-Formulare von anderen Domains als dieser Webseite.",
+    "description": "Description explaining why the cross-domain dialog is shown"
+  },
+  "content_cross_domain_dialog_domain_column": {
+    "message": "Domain",
+    "description": "Column header for domains in the cross-domain dialog table"
+  },
+  "content_cross_domain_dialog_behavior_column": {
+    "message": "Ausfüllverhalten",
+    "description": "Column header for autofill behavior in the cross-domain dialog table"
+  },
+  "content_cross_domain_dialog_always_ask": {
+    "message": "Immer fragen",
+    "description": "Dropdown option to always ask before autofilling on this domain"
+  },
+  "content_cross_domain_dialog_always_ask_description": {
+    "message": "Auf dieser Seite immer zum Ausfüllen fragen",
+    "description": "Description for the always ask dropdown option"
+  },
+  "content_cross_domain_dialog_always_autofill": {
+    "message": "Immer automatisch ausfüllen",
+    "description": "Dropdown option to always autofill on this domain without asking"
+  },
+  "content_cross_domain_dialog_always_autofill_description": {
+    "message": "Auf dieser Seite automatisch ausfüllen erlauben",
+    "description": "Description for the always autofill dropdown option"
+  },
+  "content_cross_domain_dialog_never_autofill": {
+    "message": "Niemals automatisch ausfüllen",
+    "description": "Dropdown option to never autofill on this domain"
+  },
+  "content_cross_domain_dialog_never_autofill_description": {
+    "message": "Automatisches Ausfüllen auf dieser Seite verhindern",
+    "description": "Description for the never autofill dropdown option"
+  },
+  "content_cross_domain_dialog_cancel": {
+    "message": "Abbrechen",
+    "description": "Cancel button text in the cross-domain dialog"
+  },
+  "content_cross_domain_dialog_accept": {
+    "message": "Akzeptieren",
+    "description": "Accept button text in the cross-domain dialog"
+  }
+}

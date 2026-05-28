@@ -22,6 +22,11 @@
     </style>
   </head>
   <body>
+    <!-- Off-screen autofocus warmer: on Safari, the HTML autofocus attribute
+         is honored during HTML parse and claims initial focus before the
+         popover settles. React's autoFocus on the search input then transfers
+         focus from this warmer to the real input. -->
+    <input id="popup-focus-warmer" autofocus tabindex="-1" aria-hidden="true" readonly style="position:fixed;top:0;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;border:0;margin:0;padding:0;visibility:visible">
     <div id="root"></div>
     <div id="select-menu-portal" class="select-portal-hidden" style="position: fixed; z-index: 9999;"></div>
     <script type="module" src="./main.jsx"></script>

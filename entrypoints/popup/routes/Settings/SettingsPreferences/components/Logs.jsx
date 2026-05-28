@@ -18,7 +18,7 @@ function Logs () {
   const [l, setL] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadLoggingSetting() {
     const getDefaultLogs = async () => {
       try {
         let storageLogging = await storage.getItem('local:logging');
@@ -49,6 +49,9 @@ function Logs () {
       setL(newValue);
 
       await storage.setItem('local:logging', newValue);
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsRemoteLogs - toggled', { enabled: newValue });
+
       showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:logging');

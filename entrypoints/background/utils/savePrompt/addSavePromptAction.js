@@ -4,7 +4,9 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
+import { getPageUrl } from '@/partials/functions';
+
+/**
 * Function to add a save prompt action.
 * @async
 * @param {Object} details - The details of the tab.
@@ -19,7 +21,7 @@ const addSavePromptAction = async (details, serviceTypeData, values, savePromptA
     return;
   }
 
-  const { tabId, url } = details;
+  const { tabId } = details;
   const { username, password, encrypted } = values;
 
   let tabUrl;
@@ -28,6 +30,8 @@ const addSavePromptAction = async (details, serviceTypeData, values, savePromptA
     const tab = await browser.tabs.get(tabId);
     tabUrl = tab?.url;
   } catch {}
+
+  const url = getPageUrl(details, tabUrl);
 
   // Check if action for this tabId already exists, if it does, remove it
   const existingActionIndex = savePromptActions.findIndex(action => action.tabId === tabId);

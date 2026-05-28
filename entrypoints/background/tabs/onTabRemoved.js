@@ -15,6 +15,8 @@ import getKey from '@/partials/sessionStorage/getKey';
 * @return {void}
 */
 const onTabRemoved = async (tabId, tabsInputData, savePromptActions) => {
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.BACKGROUND, 'TabHandler - tab removed', { tabId });
+
   if (tabsInputData[tabId]) {
     delete tabsInputData[tabId];
   }
@@ -29,6 +31,8 @@ const onTabRemoved = async (tabId, tabsInputData, savePromptActions) => {
 
   await storage.removeItem(`session:savePromptSuppressed-${tabId}`);
   await storage.removeItem(`session:savePromptContext-${tabId}`);
+
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onTabRemoved');
 
   try {
     const popupStateKey = await getKey('popup_state');

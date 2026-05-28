@@ -645,6 +645,18 @@
       }
       z-index: 1;
 
+      &-safari {
+        cursor: default;
+        transition: none;
+
+        &:hover,
+        &:focus,
+        &:active {
+          background-color: var(--primary-color);
+          transform: none;
+        }
+      }
+
       @media all and (max-width: 800px) {
         height: 50px;
         margin-bottom: 40px;
@@ -703,16 +715,12 @@
       position: relative;
 
       svg {
-        bottom: -17px;
-        height: auto;
+        bottom: -.3em;
+        height: .32em;
         left: -6%;
         position: absolute;
         stroke: var(--primary-color);
         width: 112%;
-
-        @media all and (max-width: 480px) {
-          bottom: -12px;
-        }
       }
     }
 

@@ -11,7 +11,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { motion } from 'motion/react';
 import getItem from '@/partials/sessionStorage/getItem';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import ItemIcon from '../ThisTab/functions/serviceList/generateIcon';
+import ItemIcon from '@/entrypoints/popup/components/ItemIcon';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import { useI18n } from '@/partials/context/I18nContext';
 import {
@@ -160,6 +160,15 @@ function ShareForm ({ item, getMessage, navigate }) {
         return;
       }
 
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'Popup-Share - createSecret request', {
+        itemId: item?.id,
+        deviceId: item?.deviceId,
+        vaultId: item?.vaultId,
+        expirationSec: expiration,
+        oneTimeAccess: !!oneTimeAccess,
+        usePassword: !!usePassword
+      });
+
       const result = await createSecret({
         data: encodedData,
         validForSeconds: expiration,
@@ -167,6 +176,8 @@ function ShareForm ({ item, getMessage, navigate }) {
       });
 
       const link = `${import.meta.env.VITE_SHARE_BASE_URL}/#/${result.id}/${type}/${toBase64Url(nonce)}/${urlSecret}`;
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'Popup-Share - share link created', { shareId: result?.id });
 
       navigate('/share-result', {
         state: {
@@ -359,7 +370,7 @@ function Share (props) {
     return getItemSubtitle(item);
   }, [item]);
 
-  useEffect(() => {
+  useEffect(function loadShareItem() {
     fetchItem();
   }, [fetchItem]);
 

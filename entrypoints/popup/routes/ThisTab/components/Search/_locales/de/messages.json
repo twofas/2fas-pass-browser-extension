@@ -1,0 +1,6 @@
+{
+  "search_placeholder": {
+    "message": "Suche zwischen %AMOUNT% Einträgen",
+    "description": "Placeholder text for the search input showing the number of available items"
+  }
+}

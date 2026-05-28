@@ -5,6 +5,8 @@
 // See LICENSE file for full terms
 
 import Item from '@/models/itemModels/Item';
+import { PAYMENT_CARD_CLIPBOARD_FIELD_TYPES } from '@/constants/clipboardFieldTypes';
+import { ItemView, AddNewView, DetailsView } from './views';
 
 /**
 * Class representing a payment card.
@@ -13,6 +15,19 @@ import Item from '@/models/itemModels/Item';
 export default class PaymentCard extends Item {
   static contentType = 'paymentCard';
   static contentVersion = 1;
+  static clipboardFieldTypes = PAYMENT_CARD_CLIPBOARD_FIELD_TYPES;
+
+  static get ItemComponent () {
+    return ItemView;
+  }
+
+  static get AddNewComponent () {
+    return AddNewView;
+  }
+
+  static get DetailsComponent () {
+    return DetailsView;
+  }
 
   #s_cardNumber;
   #s_expirationDate;
@@ -219,6 +234,23 @@ export default class PaymentCard extends Item {
     }
 
     return {};
+  }
+
+  async getClipboardValue (fieldType) {
+    if (fieldType === 'cardNumber' || fieldType === 'expirationDate' || fieldType === 'securityCode') {
+      const sif = await this.decryptSif();
+      const value = sif[fieldType] ?? null;
+      sif.cardNumber = null;
+      sif.expirationDate = null;
+      sif.securityCode = null;
+      return value;
+    }
+
+    if (fieldType === 'cardHolder') {
+      return this.content?.cardHolder ?? null;
+    }
+
+    return super.getClipboardValue(fieldType);
   }
 
   get sifs () {

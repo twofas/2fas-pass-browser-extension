@@ -105,7 +105,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     await CatchError(e);
   }
 
-  let crossDomainAllowedDomains = null;
+  let crossDomainAllowedDomains = [];
 
   try {
     const resolution = await resolveCrossDomainPermissions(tabId, 'login', {
@@ -137,6 +137,16 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   }
 
   try {
+    const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
+
+    if (!reinjected) {
+      logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'sendAutofillToTab - re-injection before AUTOFILL did not verify all frames', { tabId });
+    }
+  } catch (e) {
+    await CatchError(e);
+  }
+
+  try {
     const autofillMessage = {
       action: REQUEST_ACTIONS.AUTOFILL,
       username: item.content.username,
@@ -146,12 +156,9 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       noUsername,
       cryptoAvailable: cryptoAvailableRes?.cryptoAvailable,
       iframePermissionGranted,
+      crossDomainAllowedDomains,
       hasPasswordInAnyFrame
     };
-
-    if (crossDomainAllowedDomains) {
-      autofillMessage.crossDomainAllowedDomains = crossDomainAllowedDomains;
-    }
 
     const response = await sendMessageToAllFrames(tabId, autofillMessage);
 

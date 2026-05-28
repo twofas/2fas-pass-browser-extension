@@ -21,6 +21,8 @@ import WarningIconDark from '@/assets/popup-window/warning-dark.svg?react';
 * @return {Promise<void>} A promise that resolves when the extension is reset.
 */
 const resetExtension = async () => {
+  logger.warn(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsReset - reset extension confirmed');
+
   const res = await browser.runtime.sendMessage({
     action: REQUEST_ACTIONS.RESET_EXTENSION,
     target: REQUEST_TARGETS.BACKGROUND

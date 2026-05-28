@@ -5,6 +5,8 @@
 // See LICENSE file for full terms
 
 import Item from '@/models/itemModels/Item';
+import { SECURE_NOTE_CLIPBOARD_FIELD_TYPES } from '@/constants/clipboardFieldTypes';
+import { ItemView, AddNewView, DetailsView } from './views';
 
 /**
 * Class representing a secure note.
@@ -13,6 +15,19 @@ import Item from '@/models/itemModels/Item';
 class SecureNote extends Item {
   static contentType = 'secureNote';
   static contentVersion = 1;
+  static clipboardFieldTypes = SECURE_NOTE_CLIPBOARD_FIELD_TYPES;
+
+  static get ItemComponent () {
+    return ItemView;
+  }
+
+  static get AddNewComponent () {
+    return AddNewView;
+  }
+
+  static get DetailsComponent () {
+    return DetailsView;
+  }
 
   #s_text;
 
@@ -105,6 +120,17 @@ class SecureNote extends Item {
 
   get contextMenuItem () {
     return {};
+  }
+
+  async getClipboardValue (fieldType) {
+    if (fieldType === 'text') {
+      const sif = await this.decryptSif();
+      const value = sif.text ?? null;
+      sif.text = null;
+      return value;
+    }
+
+    return super.getClipboardValue(fieldType);
   }
 
   get sifs () {

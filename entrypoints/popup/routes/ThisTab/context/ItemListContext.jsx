@@ -76,11 +76,11 @@ export function ItemListProvider ({ children }) {
     closeMenu();
   }, [closeMenu]);
 
-  useEffect(() => {
+  useEffect(function closeItemMenuOnOutsideInteraction() {
     window.addEventListener('scroll', handleScroll, true);
     document.addEventListener('mousedown', handleClickOutside, true);
 
-    return () => {
+    return function removeItemMenuOutsideListeners() {
       window.removeEventListener('scroll', handleScroll, true);
       document.removeEventListener('mousedown', handleClickOutside, true);
     };

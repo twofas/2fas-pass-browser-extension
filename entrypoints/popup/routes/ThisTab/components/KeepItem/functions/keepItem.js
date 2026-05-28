@@ -67,6 +67,8 @@ const keepItem = async state => {
   const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.deviceId, itemId: state.itemId });
   await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - keepItem');
+
   // Remove items from session storage (by itemsKeys)
   await storage.removeItems(itemsKeys);
 

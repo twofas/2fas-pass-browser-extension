@@ -13,6 +13,8 @@ import { shortcutAutofill } from '../utils';
 * @return {Promise<boolean>} A promise that resolves to true if the command is handled successfully, otherwise false.
 */
 const onCommand = async command => {
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'CommandHandler - keyboard shortcut', { command });
+
   try {
     switch (command) {
       case '2fas_pass_shortcut_autofill': {

@@ -109,7 +109,7 @@ function SecureNoteText (props) {
     return '';
   };
 
-  useEffect(() => {
+  useEffect(function syncDecryptedNoteToForm() {
     const currentTextValue = getTextValue();
 
     if (currentTextValue !== previousSifValueRef.current) {
@@ -118,7 +118,7 @@ function SecureNoteText (props) {
     }
   }, [localEditedText, localDecryptedText, sifDecryptError, form]);
 
-  useEffect(() => {
+  useEffect(function decryptNoteWhenRevealedOrEditing() {
     const needsDecryption = (data?.sifEditable || data?.revealSecureNote) &&
                            localDecryptedText === null &&
                            !isDecrypting &&
@@ -129,7 +129,7 @@ function SecureNoteText (props) {
     }
   }, [data?.sifEditable, data?.revealSecureNote, localDecryptedText, isDecrypting, itemInstance?.sifExists, decryptTextOnDemand]);
 
-  useEffect(() => {
+  useEffect(function animateNoteTextareaRevealCollapse() {
     if (data?.revealSecureNote) {
       const animateExpand = async () => {
         setTextareaHeight(0);

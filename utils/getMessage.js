@@ -25,7 +25,7 @@ const isContentScript = () => {
 /**
  * Loads messages JSON file for the specified language.
  * Only used by background/popup - content scripts use loadMessagesFromBackground.
- * @param {string} lang - Language code ('en' or 'pl').
+ * @param {string} lang - Language code ('en', 'pl' or 'de').
  * @return {Promise<Object|null>} Messages object or null on error.
  */
 const loadMessagesFile = async lang => {

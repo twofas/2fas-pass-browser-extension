@@ -17,6 +17,8 @@ import getItems from '@/partials/sessionStorage/getItems';
 * @return {Promise<void>} A promise that resolves when the cleanup is complete.
 */
 const onStartup = async migrations => {
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'BackgroundSW - onStartup');
+
   // Mark migrations as complete on normal browser startup
   // This is critical because onInstalled only fires on install/update
   if (migrations && !migrations.state) {

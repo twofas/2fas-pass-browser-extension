@@ -9,7 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useLocation, useNavigate } from 'react-router';
 import { useEffect, useCallback, useMemo } from 'react';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import ItemIcon from '../ThisTab/functions/serviceList/generateIcon';
+import ItemIcon from '@/entrypoints/popup/components/ItemIcon';
 import { useI18n } from '@/partials/context/I18nContext';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 
@@ -54,7 +54,7 @@ function ShareResult (props) {
   const result = location.state?.result;
   const item = location.state?.item;
 
-  useEffect(() => {
+  useEffect(function redirectIfShareResultMissing() {
     if (!result || !item) {
       navigate('/');
     }

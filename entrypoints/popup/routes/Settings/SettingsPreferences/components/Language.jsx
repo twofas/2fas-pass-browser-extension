@@ -18,7 +18,7 @@ function Language () {
   const [lang, setLang] = useState('default');
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadStoredLanguage() {
     const getDefaultLang = async () => {
       try {
         const storageLang = await storage.getItem('local:lang');
@@ -40,7 +40,8 @@ function Language () {
   const langOptions = [
     { value: 'default', label: getMessage('settings_language_default') },
     { value: 'en', label: 'English' },
-    { value: 'pl', label: 'Polski' }
+    { value: 'pl', label: 'Polski' },
+    { value: 'de', label: 'Deutsch' }
   ];
 
   const handleLangChange = useCallback(async change => {
@@ -54,6 +55,8 @@ function Language () {
 
       await storage.setItem('local:lang', value);
       await reloadI18n();
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsLanguage - language changed', { value });
 
       const tabs = await browser.tabs.query({});
 

@@ -14,7 +14,7 @@ const DownloadMobileApp = () => {
   const [loaded, setLoaded] = useState(false);
   const DownloadMobileAppComponent = useRef(null);
 
-  useEffect(() => {
+  useEffect(function lazyLoadDownloadMobileAppVariant() {
     if (DownloadMobileAppComponent.current) {
       return false;
     }
@@ -25,7 +25,7 @@ const DownloadMobileApp = () => {
       import('./default.jsx').then(module => { DownloadMobileAppComponent.current = module.default; setLoaded(true); });
     }
 
-    return () => {
+    return function clearDownloadMobileAppComponent() {
       DownloadMobileAppComponent.current = null;
     };
   }, []);

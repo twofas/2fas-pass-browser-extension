@@ -120,7 +120,7 @@ function ShareImport (props) {
     navigate('/');
   }, [clearData, navigate]);
 
-  useEffect(() => {
+  useEffect(function decryptSharedSecretOnMount() {
     const isFresh = location.search.includes('fresh');
 
     if (isFresh) {
@@ -138,6 +138,11 @@ function ShareImport (props) {
           return;
         }
 
+        logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'Popup-ShareImport - fetching secret', {
+          shareId: params.id,
+          type: params.type
+        });
+
         const secretResponse = await getSecret(params.id);
 
         if (params.type === 'v1k') {
@@ -145,9 +150,11 @@ function ShareImport (props) {
           const result = await decrypt(keyBytes, params.nonce, secretResponse.data);
           const sanitized = sanitizeContent(result);
           storeDecryptedContent(sanitized.contentType, sanitized.content);
+          logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'Popup-ShareImport - decrypted (no password)', { contentType: sanitized?.contentType });
           setView(VIEWS.DATA);
         } else {
           setData('shareEncryptedData', secretResponse.data);
+          logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'Popup-ShareImport - password required');
           setView(VIEWS.PASSWORD);
         }
       } catch (e) {

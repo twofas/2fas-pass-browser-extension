@@ -15,7 +15,7 @@ const ConnectionTimeoutDefault = () => {
   const [lightAnimationData, setLightAnimationData] = useState(null);
   const [darkAnimationData, setDarkAnimationData] = useState(null);
 
-  useEffect(() => {
+  useEffect(function loadConnectionTimeoutAnimations() {
     const loadAnimations = async () => {
       const lightUrl = browser.runtime.getURL('/animations/clock.json');
       const darkUrl = browser.runtime.getURL('/animations/clock-dark.json');

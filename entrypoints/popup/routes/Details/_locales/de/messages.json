@@ -1,0 +1,270 @@
+{
+  "details_header_login": {
+    "message": "Log-in-Details",
+    "description": "Header for the Login details section"
+  },
+  "details_header_payment_card": {
+    "message": "Zahlungskarten-Details",
+    "description": "Header for the Payment Card details section"
+  },
+  "details_header_secure_note": {
+    "message": "Sichere Notizen-Details.",
+    "description": "Header for the Secure Note details section"
+  },
+  "details_field_one": {
+    "message": "Feld",
+    "description": "Label for a single field in the item details"
+  },
+  "details_field_many": {
+    "message": "",
+    "description": "Label for multiple fields in the item details"
+  },
+  "details_field_few": {
+    "message": "Felder",
+    "description": "Label for a few fields in the item details"
+  },
+  "details_password_overlay": {
+    "message": "Dieses Passwort ist nur in deinem Tresor verfügbar.",
+    "description": "Message indicating that the password is stored only in the user's Vault"
+  },
+  "details_password_decrypt_error": {
+    "message": "Fehler beim Entschlüsseln des Passworts. Bitte synchronisiere die Browser-Erweiterung erneut mit deiner mobilen App.",
+    "description": "Error message displayed when decrypting the password fails"
+  },
+  "details_secure_note_decrypt_error": {
+    "message": "Fehler beim Entschlüsseln der Notiz. Bitte synchronisiere die Browser-Erweiterung erneut mit der App.",
+    "description": "Error message displayed when decrypting the secure note fails"
+  },
+  "details_delete_header": {
+    "message": "Du brauchst diesen Eintrag nicht mehr?",
+    "description": "Header for the delete login confirmation section"
+  },
+  "details_delete": {
+    "message": "Entferne diesen Eintrag von deinem Tresor",
+    "description": "Button label to delete the item from the Vault"
+  },
+  "details_name_required": {
+    "message": "Der Name ist erforderlich.",
+    "description": "Validation message indicating that the name field is required"
+  },
+  "details_name_max_length": {
+    "message": "Der Name muss kürzer wie 256 Zeichen lang sein.",
+    "description": "Validation message indicating the maximum length for the name field"
+  },
+  "details_username_max_length": {
+    "message": "Der Nutzername muss kürzer wie 256 Zeichen lang sein.",
+    "description": "Validation message indicating the maximum length for the username field"
+  },
+  "details_item_not_found": {
+    "message": "Etwas ist schiefgelaufen. Der Eintrag wurde nicht gefunden. Synchronisiere die App mit deinem Mobilgerät und versuche es erneut.",
+    "description": "Error shown when the requested item is not found, suggesting reconnection"
+  },
+  "details_security_type": {
+    "message": "Sicherheitsstufe",
+    "description": "Label for the security type field in the item details"
+  },
+  "details_add_domain": {
+    "message": "Domain hinzufügen",
+    "description": "Button label to add a new domain to the login item"
+  },
+  "details_add_another_domain": {
+    "message": "Weitere Domain hinzufügen",
+    "description": "Button label to add another domain when at least one exists"
+  },
+  "details_domain": {
+    "message": "Domain",
+    "description": "Label for domain field"
+  },
+  "details_domain_uri": {
+    "message": "Domain (URI URI_NUMBER)",
+    "description": "Header label for domain section with URI number"
+  },
+  "details_no_domain_available": {
+    "message": "Keine Domain verfügbar",
+    "description": "Text shown when no domain is assigned to the item"
+  },
+  "details_name_copied": {
+    "message": "Name in die Zwischenablage kopiert",
+    "description": "Success message shown when the name is copied to clipboard"
+  },
+  "details_change_password_in_service": {
+    "message": "Ändere das Passwort im Service",
+    "description": "Button label to open the service's password change page"
+  },
+  "details_change_password_in_service_title": {
+    "message": "Öffne die Website des Dienstes in einem neuen Tab, um das Passwort zu ändern",
+    "description": "Title for the change password section in the service"
+  },
+  "details_toggle_password_visibility": {
+    "message": "Passwortanzeige umschalten",
+    "description": "Title for the button that toggles password visibility"
+  },
+  "details_generate_password": {
+    "message": "Passwort generieren",
+    "description": "Title for the button that opens password generator"
+  },
+  "details_fetch_text": {
+    "message": "Diese Daten sind nur in der App verfügbar.",
+    "description": "Text indicating that some data can be fetched from the mobile app"
+  },
+  "details_fetch_title": {
+    "message": "Extrem sichere Daten abgefragt",
+    "description": "Title for the fetch highly secret data link"
+  },
+  "details_sif_not_fetched": {
+    "message": "Dieser Eintrag ist nur in der App verfügbar. Klicke auf den \"Abrufen\"-Button oben auf dem Fenster, um ihn abzurufen.",
+    "description": "Message indicating that the highly secret data has not been fetched yet"
+  },
+  "details_notes_placeholder": {
+    "message": "Notizen sind leer",
+    "description": "Placeholder text for the notes input field"
+  },
+  "details_reveal_secure_note": {
+    "message": "Notiz zeigen",
+    "description": "Button label to reveal the secure note content"
+  },
+  "details_additional_info": {
+    "message": "Zusatzinformationen",
+    "description": "Label for the additional info field in the item details"
+  },
+  "details_additional_info_placeholder": {
+    "message": "Die Zusatzinformationen sind leer.",
+    "description": "Placeholder text for the additional info input field"
+  },
+  "details_card_number": {
+    "message": "Kartennummer",
+    "description": "Label for the card number field in payment card details"
+  },
+  "details_card_number_decrypt_error": {
+    "message": "Fehler beim Entschlüsseln von Kartennummer. Bitte verbinde dich erneut mit der Browser-Erweiterung.",
+    "description": "Error message displayed when decrypting the card number fails"
+  },
+  "details_toggle_card_number_visibility": {
+    "message": "Kartennummer sichtbar machen",
+    "description": "Title for the button that toggles card number visibility"
+  },
+  "details_expiration_date": {
+    "message": "Ablaufdatum",
+    "description": "Label for the expiration date field in payment card details"
+  },
+  "details_expiration_date_decrypt_error": {
+    "message": "Fehler beim Entschlüsseln vom Ablaufdatum",
+    "description": "Error message displayed when decrypting the expiration date fails"
+  },
+  "details_toggle_expiration_date_visibility": {
+    "message": "Ablaufdatum sichtbar machen",
+    "description": "Title for the button that toggles expiration date visibility"
+  },
+  "details_copy_expiration_date": {
+    "message": "Ablaufdatum kopieren",
+    "description": "Title for the button that copies expiration date to clipboard"
+  },
+  "details_security_code": {
+    "message": "CVC",
+    "description": "Label for the security code field in payment card details"
+  },
+  "details_security_code_decrypt_error": {
+    "message": "Fehler beim Entschlüsseln des Sicherheitscodes",
+    "description": "Error message displayed when decrypting the security code fails"
+  },
+  "details_toggle_security_code_visibility": {
+    "message": "Sicherheitscode sichtbar machen",
+    "description": "Title for the button that toggles security code visibility"
+  },
+  "details_cardholder_required": {
+    "message": "Der Kartenbesitzer ist erforderlich.",
+    "description": "Validation message indicating that the cardholder field is required"
+  },
+  "details_cardholder_max_length": {
+    "message": "Der Kartenbesitzer muss kürzer wie 256 Zeichen lang sein.",
+    "description": "Validation message indicating the maximum length for the cardholder field"
+  },
+  "details_cardholder_copied": {
+    "message": "Kartenbesitzer wurde in die Zwischenablage kopiert",
+    "description": "Success message shown when the cardholder is copied to clipboard"
+  },
+  "details_card_number_required": {
+    "message": "Die Kartennummer ist erforderlich.",
+    "description": "Validation message indicating that the card number field is required"
+  },
+  "details_card_number_invalid": {
+    "message": "Die Kartennummer ist ungültig.",
+    "description": "Validation message indicating that the card number is not valid"
+  },
+  "details_expiration_date_required": {
+    "message": "Das Ablaufdatum ist erforderlich.",
+    "description": "Validation message indicating that the expiration date field is required"
+  },
+  "details_expiration_date_invalid": {
+    "message": "Das Ablaufdatum ist ungültig.",
+    "description": "Validation message indicating that the expiration date format is not valid"
+  },
+  "details_expiration_date_past": {
+    "message": "Das Ablaufdatum kann nicht in der Vergangenheit liegen.",
+    "description": "Validation message indicating that the expiration date must not be in the past"
+  },
+  "details_card_expired": {
+    "message": "Diese Karte ist abgelaufen.",
+    "description": "Informational message indicating that the payment card expiration date is in the past"
+  },
+  "details_security_code_required": {
+    "message": "Der Sicherheitscode ist erforderlich.",
+    "description": "Validation message indicating that the security code field is required"
+  },
+  "details_security_code_invalid": {
+    "message": "Der Sicherheitscode muss 3 oder 4 Nummern lang sein.",
+    "description": "Validation message indicating that the security code must be 3 or 4 digits"
+  },
+  "details_security_code_too_long": {
+    "message": "Sicherheitsnummer ist ungültig.",
+    "description": "Warning message displayed when the security code has 4 digits but the detected card issuer requires 3 digits"
+  },
+  "details_secure_note_text_max_length": {
+    "message": "Die sichere Notiz muss kürzer wie 16384 Zeichen sein.",
+    "description": "Validation message indicating the maximum length for the secure note text field"
+  },
+  "details_additional_info_max_length": {
+    "message": "Die Zusatzinformationen müssen kürzer wie 16384 Zeichen sein.",
+    "description": "Validation message indicating the maximum length for the additional info field"
+  },
+  "details_header_wifi": {
+    "message": "WLAN-Details",
+    "description": "Header for the Wi-Fi details section"
+  },
+  "details_wifi_network": {
+    "message": "Netzwerk",
+    "description": "Label for the SSID/network name field in Wi-Fi details"
+  },
+  "details_wifi_ssid_max_length": {
+    "message": "SSID muss kürzer wie 256 Zeichen lang sein.",
+    "description": "Validation message indicating the maximum length for the SSID field"
+  },
+  "details_wifi_notes_max_length": {
+    "message": "Notizen müssen kürzer wie 16,385 Zeichen lang sein.",
+    "description": "Validation message indicating the maximum length for the Wi-Fi notes field"
+  },
+  "details_wifi_password_decrypt_error": {
+    "message": "Fehler beim Entschlüsseln des WLAN-Passworts. Bitte synchronisiere die Daten erneut mit deiner mobilen App.",
+    "description": "Error message displayed when decrypting the Wi-Fi password fails"
+  },
+  "details_wifi_show_qr": {
+    "message": "QR-Code anzeigen",
+    "description": "Link to show Wi-Fi QR code for scanning"
+  },
+  "details_wifi_toggle_password_visibility": {
+    "message": "Passwort aufdecken",
+    "description": "Title for the button that toggles Wi-Fi password visibility"
+  },
+  "details_wifi_type": {
+    "message": "Eingeben",
+    "description": "Label for the Wi-Fi security type field"
+  },
+  "details_wifi_hidden_yes": {
+    "message": "Ja",
+    "description": "Option label for hidden network enabled"
+  },
+  "details_wifi_hidden_no": {
+    "message": "Nein",
+    "description": "Option label for hidden network disabled"
+  }
+}

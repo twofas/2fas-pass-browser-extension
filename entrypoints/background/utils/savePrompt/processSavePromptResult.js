@@ -68,6 +68,8 @@ const processSavePromptResult = async (request, savePromptActions, tabUpdateData
   const { tabId, url, tabUrl, values } = context;
   await storage.removeItem(storageKey);
 
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - processSavePromptResult');
+
   cleanupSavePromptState(tabId, url, savePromptActions, tabUpdateData);
 
   switch (status) {

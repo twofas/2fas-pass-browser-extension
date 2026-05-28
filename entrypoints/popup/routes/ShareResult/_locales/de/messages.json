@@ -1,0 +1,34 @@
+{
+  "share_result_title": {
+    "message": "Link ist bereit",
+    "description": "Title shown when share link has been successfully generated"
+  },
+  "share_result_copy_link": {
+    "message": "Link kopieren",
+    "description": "Button label to copy the share link to clipboard"
+  },
+  "share_result_copy_password": {
+    "message": "Passwort kopieren",
+    "description": "Tooltip for the copy password button in share result"
+  },
+  "share_result_copied": {
+    "message": "Kopiert!",
+    "description": "Toast message shown when link or password is copied"
+  },
+  "share_result_settings": {
+    "message": "Einstellungen teilen",
+    "description": "Section title for share settings summary on result view"
+  },
+  "share_result_expiration": {
+    "message": "Ablauf des Links",
+    "description": "Label for expiration in share result summary"
+  },
+  "share_result_one_time": {
+    "message": "Einmal-Zugriff",
+    "description": "Label for one-time access in share result summary"
+  },
+  "share_result_password": {
+    "message": "Passwort geschützt",
+    "description": "Label for password status in share result summary"
+  }
+}

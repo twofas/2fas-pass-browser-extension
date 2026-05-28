@@ -64,6 +64,8 @@ const saveItems = async (itemsData, deviceId, vaultId) => {
 
   await storage.setItem('session:storageVersion', storageVersion);
 
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - saveItems');
+
   return true;
 };
 

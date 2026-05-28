@@ -18,7 +18,7 @@ const NoMatch = ({ matchingLoginsLength, loading, onAnimationReady }) => {
   const [loaded, setLoaded] = useState(false);
   const NoMatchComponent = useRef(null);
 
-  useEffect(() => {
+  useEffect(function lazyLoadBrowserSpecificNoMatch() {
     if (import.meta.env.BROWSER === 'safari') {
       import('./safari.jsx').then(module => { NoMatchComponent.current = module.default; setLoaded(true); });
     } else {

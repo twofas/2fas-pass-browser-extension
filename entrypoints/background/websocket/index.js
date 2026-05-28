@@ -70,12 +70,15 @@ class TwoFasWebSocket {
   #onOpen () {
     this.timeoutID = setTimeout(() => this.close(true), 1000 * 60 * config.webSocketInternalTimeout);
     TwoFasWebSocket.#notifyStateChange(true);
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'TwoFasWebSocket - connected');
   };
 
   #onError (event) {
     this.#clearTimeout();
     TwoFasWebSocket.#notifyStateChange(false);
     this.#clearInstance();
+
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.WS, 'TwoFasWebSocket - connection error', { eventType: event?.type });
 
     throw new TwoFasError(TwoFasError.internalErrors.websocketError, { event, additional: { func: 'TwoFasWebSocket - onError' } });
   };
@@ -91,6 +94,8 @@ class TwoFasWebSocket {
   open () {
     this.#openListener = () => this.#onOpen();
     this.#errorListener = event => this.#onError(event);
+
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'TwoFasWebSocket - opening connection');
 
     this.socket = new WebSocket(this.socketURL, '2FAS-Pass');
     this.socket.addEventListener('open', this.#openListener);
@@ -131,6 +136,20 @@ class TwoFasWebSocket {
             });
           }
 
+          logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'TwoFasWebSocket - frame received', {
+            action: json?.action,
+            id: json?.id,
+            scheme: json?.scheme,
+            origin: json?.origin
+          });
+
+          if (import.meta.env.DEV) {
+            try {
+              const { recordWsFrame } = await import('./devPanelTap');
+              recordWsFrame({ direction: 'in', frame: json });
+            } catch {}
+          }
+
           return callback(json, data);
         } catch (error) {
           // If error wasn't already handled with specific close code, close with generic error
@@ -147,6 +166,7 @@ class TwoFasWebSocket {
         this.#clearTimeout();
         TwoFasWebSocket.#notifyStateChange(false);
         this.#clearInstance();
+        logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'TwoFasWebSocket - connection closed', { code: e?.code, reason: e?.reason });
         return callback(e, data);
       });
     } else {
@@ -208,12 +228,27 @@ class TwoFasWebSocket {
     if (this.socket.readyState === WebSocket.OPEN) {
       const { scheme, origin, originVersion } = await getBeInfo();
 
-      this.socket.send(JSON.stringify({
+      const frame = {
         scheme,
         origin,
         originVersion,
         ...data
-      }));
+      };
+
+      this.socket.send(JSON.stringify(frame));
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'TwoFasWebSocket - frame sent', {
+        action: frame?.action,
+        id: frame?.id,
+        scheme: frame?.scheme
+      });
+
+      if (import.meta.env.DEV) {
+        try {
+          const { recordWsFrame } = await import('./devPanelTap');
+          recordWsFrame({ direction: 'out', frame });
+        } catch {}
+      }
     } else {
       throw new TwoFasError(TwoFasError.internalErrors.websocketNotOpened, { additional: { func: 'TwoFasWebSocket - sendMessage' } });
     }

@@ -5,7 +5,8 @@
 // See LICENSE file for full terms
 
 import { autoClearClipboard, sifT2Reset } from '../utils';
-import { SIF_T2_RESET_REGEX, AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants';
+import { SIF_T2_RESET_REGEX } from '@/constants';
+import { AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants/clipboardFieldTypes';
 
 /** 
 * Function to handle alarm events.
@@ -22,12 +23,15 @@ const onAlarm = async alarm => {
   try {
     if (sifT2ResetRegexTest) {
       const [, deviceId, vaultId, itemId] = sifT2ResetRegexTest;
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'AlarmHandler - sifT2Reset alarm', { deviceId, vaultId, itemId });
       await sifT2Reset(deviceId, vaultId, itemId);
       return true;
     } else if (autoClearClipboardRegexTest) {
       const [, deviceId, vaultId, itemId, itemType] = autoClearClipboardRegexTest;
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'AlarmHandler - autoClearClipboard alarm', { deviceId, vaultId, itemId, itemType });
       await autoClearClipboard(deviceId, vaultId, itemId, itemType);
     } else {
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'AlarmHandler - unknown alarm', { name });
       return false;
     }
   } catch (e) {

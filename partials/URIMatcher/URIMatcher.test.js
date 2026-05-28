@@ -601,6 +601,40 @@ describe('URIMatcher', () => {
         []
       );
     });
+
+    it('should match an item with multiple URIs when any URI matches the page origin', () => {
+      const items = [
+        {
+          id: 'streaming',
+          content: {
+            uris: [
+              { text: 'http://Hulu.com', matcher: URIMatcher.M_DOMAIN_TYPE },
+              { text: 'http://DisneyPlus.com', matcher: URIMatcher.M_DOMAIN_TYPE }
+            ]
+          }
+        }
+      ];
+
+      assert.equal(URIMatcher.getMatchedAccounts(items, 'https://www.disneyplus.com/login').length, 1);
+      assert.equal(URIMatcher.getMatchedAccounts(items, 'https://www.hulu.com/welcome').length, 1);
+      assert.equal(URIMatcher.getMatchedAccounts(items, 'https://www.disneyplus.com').length, 1);
+    });
+
+    it('should not match cross-domain auth provider URL against page-domain URI', () => {
+      const items = [
+        {
+          id: 'streaming',
+          content: {
+            uris: [
+              { text: 'http://Hulu.com', matcher: URIMatcher.M_DOMAIN_TYPE },
+              { text: 'http://DisneyPlus.com', matcher: URIMatcher.M_DOMAIN_TYPE }
+            ]
+          }
+        }
+      ];
+
+      assert.equal(URIMatcher.getMatchedAccounts(items, 'https://global.edge.bamgrid.com/v3/api/internal/account/login').length, 0);
+    });
   });
 
   describe('recognizeURIs', () => {

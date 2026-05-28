@@ -15,7 +15,7 @@ const ConnectionErrorDefault = () => {
   const [lightAnimationData, setLightAnimationData] = useState(null);
   const [darkAnimationData, setDarkAnimationData] = useState(null);
 
-  useEffect(() => {
+  useEffect(function loadConnectionErrorAnimations() {
     const loadAnimations = async () => {
       const lightUrl = browser.runtime.getURL('/animations/error.json');
       const darkUrl = browser.runtime.getURL('/animations/error-dark.json');

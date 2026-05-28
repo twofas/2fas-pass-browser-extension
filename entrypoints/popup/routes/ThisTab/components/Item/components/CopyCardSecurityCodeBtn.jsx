@@ -6,7 +6,7 @@
 
 import S from '../styles/Item.module.scss';
 import { useI18n } from '@/partials/context/I18nContext';
-import handleCardSecurityCode from '../../../functions/serviceList/handleCardSecurityCode';
+import handleCardSecurityCode from '../functions/handleCardSecurityCode';
 import ItemCopyIcon from '@/assets/popup-window/card-security-code.svg?react';
 
 /**

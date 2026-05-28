@@ -19,7 +19,7 @@ const ContinueUpdate = ({ fetchState }) => {
   const [loaded, setLoaded] = useState(false);
   const ContinueUpdateComponent = useRef(null);
 
-  useEffect(() => {
+  useEffect(function lazyLoadContinueUpdateVariant() {
     if (ContinueUpdateComponent.current) {
       return false;
     }
@@ -30,7 +30,7 @@ const ContinueUpdate = ({ fetchState }) => {
       import('./default.jsx').then(module => { ContinueUpdateComponent.current = module.default; setLoaded(true); });
     }
 
-    return () => {
+    return function clearContinueUpdateComponent() {
       ContinueUpdateComponent.current = null;
     };
   }, [fetchState]);

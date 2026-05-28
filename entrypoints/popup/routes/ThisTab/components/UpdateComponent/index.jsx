@@ -67,7 +67,7 @@ function UpdateComponent () {
     return false;
   }, []);
 
-  useEffect(() => {
+  useEffect(function checkAndSubscribeToUpdateNotifications() {
     browser.runtime.onMessage.addListener(messageListener);
 
     if (browser?.runtime?.requestUpdateCheck && typeof browser?.runtime?.requestUpdateCheck === 'function') {
@@ -80,7 +80,7 @@ function UpdateComponent () {
         .catch(() => {});
     }
 
-    return () => {
+    return function unsubscribeFromUpdateNotifications() {
       browser.runtime.onMessage.removeListener(messageListener);
     };
   }, [messageListener]);

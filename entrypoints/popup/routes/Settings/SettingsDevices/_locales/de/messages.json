@@ -1,0 +1,54 @@
+{
+  "settings_devices_header": {
+    "message": "Verbundene Geräte",
+    "description": "Header for the trusted devices section in settings"
+  },
+  "settings_devices_description": {
+    "message": "Dies ist eine Liste aller verbundenen Browser-Erweiterungen. Nicht mehr benötigte Erweiterungen kannst du hier entfernen.",
+    "description": "Description for managing trusted devices"
+  },
+  "settings_devices_unknown_platform": {
+    "message": "Unbekannt",
+    "description": "Label for devices with an unknown platform"
+  },
+  "settings_devices_no_devices": {
+    "message": "Keine Geräte gefunden.",
+    "description": "Message displayed when there are no trusted devices found"
+  },
+  "settings_devices_current_device_title": {
+    "message": "Dies ist dein momentanes Gerät. Du kannst die Verbindung hier nicht trennen.",
+    "description": "Warning message when disconnecting the current trusted device"
+  },
+  "settings_devices_name_header": {
+    "message": "Name",
+    "description": "Label for the device name column in the trusted devices list"
+  },
+  "settings_devices_platform_header": {
+    "message": "Plattform",
+    "description": "Label for the device platform column in the trusted devices list"
+  },
+  "settings_devices_last_connected_header": {
+    "message": "Zuletzt verbunden",
+    "description": "Label for the last connected column in the trusted devices list"
+  },
+  "settings_devices_disconnect_title": {
+    "message": "Dieses Gerät entfernen",
+    "description": "Title for the disconnect trusted device button"
+  },
+  "settings_devices_dialog_message": {
+    "message": "Bist du sicher, dass die dieses Gerät entfernen möchtest?",
+    "description": "Confirmation message when disconnecting a trusted device"
+  },
+  "settings_devices_dialog_submessage_current_device": {
+    "message": "Dies ist dein aktuelles Gerät! Wenn du die Verbindung trennst, werden alle zukünftigen Aktionen, wie das Abrufen von Passworten, blockiert.",
+    "description": "Warning sub-message when disconnecting the current trusted device"
+  },
+  "settings_devices_dialog_cancel_text": {
+    "message": "Abbrechen",
+    "description": "Cancel button text in the disconnect trusted device confirmation dialog"
+  },
+  "settings_devices_dialog_confirm_text": {
+    "message": "Verbindung trennen",
+    "description": "Confirm button text in the disconnect trusted device confirmation dialog"
+  }
+}

@@ -52,7 +52,7 @@ function Blocked (props) {
     tryWindowClose();
   };
 
-  useEffect(() => {
+  useEffect(function focusSeparateWindowOnBlocked() {
     if (import.meta.env.BROWSER !== 'safari') {
       focusPopupInSeparateWindow();
     }

@@ -67,7 +67,7 @@ function CardHolder (props) {
     setItem(updatedItem);
   }, [data.item, setItem]);
 
-  useEffect(() => {
+  useEffect(function focusCardHolderInputWhenEditable() {
     if (data.cardHolderEditable && inputRef.current && !hasFocusedRef.current) {
       hasFocusedRef.current = true;
       inputRef.current.focus();

@@ -6,9 +6,9 @@
 
 import { useI18n } from '@/partials/context/I18nContext';
 import { useQrDialog } from '@/entrypoints/popup/context/QrDialogContext';
-import handleUriCopyClick from '../../../functions/serviceList/handleUriCopyClick';
-import handleUriClick from '../../../functions/serviceList/handleUriClick';
-import handleForgetPassword from '../../../functions/serviceList/handleForgetPassword';
+import handleUriCopyClick from '../functions/handleUriCopyClick';
+import handleUriClick from '../functions/handleUriClick';
+import handleForgetPassword from '../functions/handleForgetPassword';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import DetailsIcon from '@/assets/popup-window/details.svg?react';

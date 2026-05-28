@@ -248,6 +248,7 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
     // save encryptionItemT2Key in session storage (must be done before setSif)
     const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: state.data.deviceId, itemId: state.data.itemId });
     await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - sifRequest/accept');
 
     for (const sifKey of sifs) {
       if (info.data[sifKey] === undefined) {

@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { isText, checkStorageAutoClearActions } from '@/partials/functions';
-import { openBrowserPage, openPopupWindowInNewWindow, openInstallPage, getLocalKey, sendAutoClearAction, handleAutofillCardWithPermission, handleAutofillWithPermission, processCrossDomainDialogResult, processMatchingLoginsResult, processSavePromptResult } from '../utils';
+import { openBrowserPage, openPopupWindowInNewWindow, openInstallPage, getLocalKey, sendAutoClearAction, handleAutofillCardWithPermission, handleAutofillWithPermission, processCrossDomainDialogResult, processMatchingLoginsResult, processSavePromptResult, handleLogEvent } from '../utils';
 import runMigrations from '../migrations';
 import onTabFocused from '../tabs/onTabFocused';
 import handleCheckShareLinkSupport from './handleCheckShareLinkSupport';
@@ -23,7 +23,15 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
     if (!request || !request.action || request.target !== REQUEST_TARGETS.BACKGROUND) {
       return false;
     }
-  
+
+    if (request.action !== REQUEST_ACTIONS.LOG_EVENT) {
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'BackgroundSW - incoming message', {
+        action: request.action,
+        target: request.target,
+        senderTabId: sender?.tab?.id
+      });
+    }
+
     switch (request.action) {
       case REQUEST_ACTIONS.OPEN_BROWSER_PAGE: {
         if (
@@ -60,7 +68,10 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
         migrations.state = 'running';
 
         browser.storage.local.clear()
-          .then(async () => { await browser.storage.session.clear(); })
+          .then(async () => {
+            await browser.storage.session.clear();
+            logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onMessage (RESET_EXTENSION clear)');
+          })
           .then(async () => { await runMigrations(); })
           .then(() => { migrations.state = true; })
           .then(async () => { await openInstallPage(); })
@@ -178,6 +189,7 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
 
           await storage.removeItem(`session:savePromptContext-${tabId}`).catch(() => {});
           await storage.removeItem(`session:savePromptSuppressed-${tabId}`).catch(() => {});
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onMessage (CLEAR_SAVE_PROMPT_STATE)');
         }))
           .then(() => { sendResponse({ status: 'ok' }); })
           .catch(() => { sendResponse({ status: 'ok' }); });
@@ -218,6 +230,14 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
         } else {
           sendResponse({ status: 'error', message: 'Invalid share link parameters' });
         }
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.LOG_EVENT: {
+        handleLogEvent(request?.payload)
+          .then(() => { sendResponse({ status: 'ok' }); })
+          .catch(() => { sendResponse({ status: 'ok' }); });
 
         break;
       }

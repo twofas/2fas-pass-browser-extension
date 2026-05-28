@@ -105,6 +105,16 @@ const getLastActiveTab = async (onCatch, filter = null) => {
   if (import.meta.env.BROWSER !== 'firefox') {
     try {
       lastFocusedWindow = await browser.windows.getLastFocused({ windowTypes: ['normal'] });
+
+      // Defensive: windowTypes filter in windows.getLastFocused is deprecated
+      // in Chrome and may return a window of a different type (e.g. the popup
+      // window when toolbar popup just opened). If we accept it without checking,
+      // tabs.query({windowId}) below returns the popup's own tab, which gives
+      // a fresh tabId on every toolbar-popup open and breaks per-browsing-tab
+      // popupState persistence (search, scroll, etc.).
+      if (lastFocusedWindow && lastFocusedWindow.type !== 'normal') {
+        lastFocusedWindow = null;
+      }
     } catch {}
   }
 

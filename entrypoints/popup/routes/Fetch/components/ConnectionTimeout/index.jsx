@@ -19,7 +19,7 @@ const ConnectionTimeout = ({ fetchState, tryAgainHandle }) => {
   const [loaded, setLoaded] = useState(false);
   const ConnectionTimeoutComponent = useRef(null);
 
-  useEffect(() => {
+  useEffect(function lazyLoadConnectionTimeoutVariant() {
     if (ConnectionTimeoutComponent.current) {
       return false;
     }
@@ -30,7 +30,7 @@ const ConnectionTimeout = ({ fetchState, tryAgainHandle }) => {
       import('./default.jsx').then(module => { ConnectionTimeoutComponent.current = module.default; setLoaded(true); });
     }
 
-    return () => {
+    return function clearConnectionTimeoutComponent() {
       ConnectionTimeoutComponent.current = null;
     };
   }, [fetchState]);

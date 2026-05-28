@@ -101,7 +101,7 @@ function Username (props) {
     setItem(updatedItem);
   }, [data.item, setItem]);
 
-  useEffect(() => {
+  useEffect(function focusUsernameInputWhenEditable() {
     if (data.usernameEditable && inputRef.current && !hasFocusedRef.current) {
       hasFocusedRef.current = true;
       inputRef.current.focus();

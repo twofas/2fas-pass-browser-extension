@@ -19,6 +19,11 @@ import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfig
 * @return {Promise<void>} A promise that resolves when the installation or update is complete.
 */
 const onInstalled = async (details, migrations) => {
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'BackgroundSW - onInstalled', {
+    reason: details?.reason,
+    previousVersion: details?.previousVersion
+  });
+
   await initContextMenu();
 
   if (!details) {

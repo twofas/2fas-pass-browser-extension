@@ -22,6 +22,8 @@ const generateSessionKeysNonces = async () => {
 
       await storage.setItem(`session:${keyEncrypted}`, nonce.Base64);
     }
+
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - generateSessionKeysNonces');
   } catch (e) {
     throw new TwoFasError(TwoFasError.errors.generateSessionKeysNonces, { event: e });
   }

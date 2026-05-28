@@ -41,6 +41,8 @@ const updateDataAddedInT1 = async (state, messageId) => {
     // Send response
     await sendPullRequestCompleted(messageId);
 
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - updateData/addedInT1');
+
     return {
       returnUrl: '/',
       returnToast: {

@@ -525,6 +525,7 @@
     }
   }
 
+  &-advanced-link,
   &-cross-domain-link,
   &-save-password-prompt-excluded-domains-link,
   &-danger-zone-link {
@@ -840,5 +841,30 @@
     font-weight: 600;
     line-height: 1;
     text-align: center;
+  }
+
+  .settings-logs-description {
+    color: var(--secondary-text);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .settings-logs-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+      padding: 10px 16px;
+      width: 100%;
+    }
+  }
+
+  &-about-send-logs {
+    border-top: 1px solid var(--divider);
+    margin-top: 18px;
+    padding-top: 6px;
+    width: 100%;
   }
 }

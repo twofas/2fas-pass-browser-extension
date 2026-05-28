@@ -51,6 +51,8 @@ const saveTags = async (tagsData, deviceId, vaultId) => {
 
   await storage.setItem('session:storageVersion', storageVersion);
 
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - saveTags');
+
   return true;
 };
 

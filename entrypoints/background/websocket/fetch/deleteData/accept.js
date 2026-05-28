@@ -41,6 +41,8 @@ const deleteDataAccept = async (state, messageId) => {
     // Send response
     await sendPullRequestCompleted(messageId);
 
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - deleteData/accept');
+
     return {
       returnUrl: '/',
       returnToast: {

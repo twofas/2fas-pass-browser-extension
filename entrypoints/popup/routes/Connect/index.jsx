@@ -64,6 +64,7 @@ function Connect (props) {
   }, []);
 
   const switchToQrView = useCallback(async () => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Connect - switch to QR view');
     setLocalView(CONNECT_VIEWS.QrView);
 
     if (bgState?.active) {
@@ -91,6 +92,8 @@ function Connect (props) {
   }, [bgState?.active, sendCommand, loadReadyDevices]);
 
   const connectByPush = useCallback(async device => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Connect - connect by push', { deviceId: device?.id });
+
     if (bgState?.active) {
       await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
     }
@@ -109,6 +112,7 @@ function Connect (props) {
   }, [bgState?.active, sendCommand, getMessage]);
 
   const handleSocketReload = useCallback(async () => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Connect - reload QR');
     const result = await sendCommand(REQUEST_ACTIONS.WS_RELOAD_QR);
 
     if (result?.state?.qrData) {
@@ -121,6 +125,7 @@ function Connect (props) {
   }, [sendCommand, updateQrCode]);
 
   const handleCancelPushSent = useCallback(async () => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Connect - cancel push sent');
     await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
     setLocalView(CONNECT_VIEWS.DeviceSelect);
   }, [sendCommand]);
@@ -165,14 +170,14 @@ function Connect (props) {
   };
 
   // Render QR code when background qrData changes
-  useEffect(() => {
+  useEffect(function renderQrFromBackgroundState() {
     if (bgState?.qrData) {
       updateQrCode(bgState.qrData);
     }
   }, [bgState?.qrData, updateQrCode]);
 
   // Initialize
-  useEffect(() => {
+  useEffect(function initializeConnectView() {
     if (initDoneRef.current) {
       return;
     }
@@ -196,19 +201,19 @@ function Connect (props) {
     init();
   }, [bgState?.active, bgState?.type, bgState?.qrData, loadReadyDevices, updateQrCode]);
 
-  useEffect(() => {
+  useEffect(function bindEnterKeyForDeviceSelect() {
     if (data?.connectSliderIndex === undefined) {
       setData('connectSliderIndex', 0);
     }
 
     document.addEventListener('keydown', handleKeyboardEnterClick);
 
-    return () => {
+    return function unbindEnterKeyForDeviceSelect() {
       document.removeEventListener('keydown', handleKeyboardEnterClick);
     };
   }, [handleKeyboardEnterClick, setData, data?.connectSliderIndex]);
 
-  useEffect(() => {
+  useEffect(function syncSplideSliderWithStoredIndex() {
     if (sliderRef?.current && sliderRef.current.splide) {
       const splide = sliderRef.current.splide;
 
@@ -234,7 +239,7 @@ function Connect (props) {
       }
     }
 
-    return () => {
+    return function unbindSplideMoveListener() {
       if (sliderRef?.current && sliderRef.current.splide && sliderRef.current.splide.off) {
         sliderRef.current.splide.off('move');
       }
@@ -242,8 +247,8 @@ function Connect (props) {
   }, [readyDevices, sliderMounted, setData, data.connectSliderIndex]);
 
   // Cleanup: cancel WS on unmount
-  useEffect(() => {
-    return () => {
+  useEffect(function cancelConnectWsOnUnmount() {
+    return function cancelConnectWsCommand() {
       sendCommand(REQUEST_ACTIONS.WS_CANCEL).catch(() => {});
     };
   }, [sendCommand]);

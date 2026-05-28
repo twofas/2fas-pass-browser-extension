@@ -1,0 +1,70 @@
+{
+  "install_please_pin_extension": {
+    "message": "Bitte pinne die Erweiterung an die Symbolleiste.",
+    "description": "Prompt asking the user to pin the browser extension to the toolbar"
+  },
+  "install_made_to_work_together": {
+    "message": "DAFÜR GEMACHT, ZUSAMMENZUARBEITEN.",
+    "description": "Subtitle on the left card indicating extension and mobile app work together"
+  },
+  "install_extension_requires_mobile": {
+    "message": "Die Erweiterung benötigt die \n2FAS Pass-Mobil-App.",
+    "description": "Description explaining the mobile app requirement"
+  },
+  "install_dont_have_app": {
+    "message": "Du hast die App noch nicht?",
+    "description": "Question asking if user has the mobile app"
+  },
+  "install_download_it_here": {
+    "message": "Dann lade sie hier herunter:",
+    "description": "Call to action to download the mobile app"
+  },
+  "install_step1_heading": {
+    "message": "Verankere die 2FAS Pass-Browsererweiterung in deiner Browser-Symbolleiste\n\n",
+    "description": "Main heading for step 1 asking user to pin the extension"
+  },
+  "install_step1_instruction_part1": {
+    "message": "Klicke auf das Puzzel-Symbol",
+    "description": "First part of the pinning instruction, before the puzzle icon"
+  },
+  "install_step1_instruction_part2": {
+    "message": "in der oberen rechten Ecke deines Browsers. Suche nach 2FAS Pass und klicke auf das Pin-Symbol.",
+    "description": "Second part of the pinning instruction, between puzzle and pin icons"
+  },
+  "install_i_have_pinned_it": {
+    "message": "ICH HABE SIE ANGEPINNT",
+    "description": "Primary button label confirming user has pinned the extension"
+  },
+  "install_skip_for_now": {
+    "message": "FÜR JETZT ÜBERSPRINGEN",
+    "description": "Secondary button to skip pinning step"
+  },
+  "install_step2_heading_before": {
+    "message": "Fahre in der",
+    "description": "First part of step 2 heading, before the underlined word"
+  },
+  "install_step2_heading_underlined": {
+    "message": "Browser-Erweiterung fort",
+    "description": "The underlined word in step 2 heading, shown with decorative underline"
+  },
+  "install_step2_description": {
+    "message": "Schließe den Verbindungsprozess in der \n2FAS Pass Mobile App ab und nutze sie sofort.",
+    "description": "Description text for step 2 explaining next steps"
+  },
+  "install_get_mobile_app": {
+    "message": "Lade die App herunter",
+    "description": "Button label for downloading the mobile app"
+  },
+  "install_point_camera": {
+    "message": "Kamera auf den QR-Code richten",
+    "description": "Tooltip text instructing the user to point their camera at the QR code"
+  },
+  "install_download_ios_app": {
+    "message": "App für iOS herunterladen",
+    "description": "Button label for downloading the iOS app"
+  },
+  "install_download_android_app": {
+    "message": "App für Android herunterladen",
+    "description": "Button label for downloading the Android app"
+  }
+}

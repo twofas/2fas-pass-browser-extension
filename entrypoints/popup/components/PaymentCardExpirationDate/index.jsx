@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './PaymentCardExpirationDate.module.scss';
-import { forwardRef, memo, useCallback, useRef, useEffect, useState, useMemo } from 'react';
+import { memo, useCallback, useRef, useEffect, useState, useMemo } from 'react';
 import CalendarIcon from '@/assets/popup-window/calendar.svg?react';
 import isExpirationDateInvalid from './validateExpirationDate';
 import { useI18n } from '@/partials/context/I18nContext';
@@ -28,10 +28,10 @@ const VIEWPORT_PADDING = 8;
 * @param {boolean} props.disabled - Whether the component is disabled.
 * @param {number} props.securityType - Security tier type (0=Top Secret, 1=Highly Secret, 2=Secret).
 * @param {boolean} props.sifExists - Whether the secure input field data has been fetched.
-* @param {Object} ref - Forwarded ref for the input element.
+* @param {Object} props.ref - Forwarded ref for the input element.
 * @return {JSX.Element} The rendered component.
 */
-const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabled, securityType, sifExists }, ref) => {
+const PaymentCardExpirationDate = ({ value, onChange, inputId, disabled, securityType, sifExists, ref }) => {
   const { getMessage } = useI18n();
   const [containerElement, setContainerElement] = useState(null);
   const [positionClasses, setPositionClasses] = useState('');
@@ -172,10 +172,10 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
     calendarRef.current.hide();
   }, []);
 
-  useEffect(() => {
+  useEffect(function closeCalendarOnScroll() {
     window.addEventListener('scroll', handleScroll, true);
 
-    return () => {
+    return function removeCalendarScrollListener() {
       window.removeEventListener('scroll', handleScroll, true);
     };
   }, [handleScroll]);
@@ -255,6 +255,6 @@ const PaymentCardExpirationDate = forwardRef(({ value, onChange, inputId, disabl
       />
     </div>
   );
-});
+};
 
 export default memo(PaymentCardExpirationDate);

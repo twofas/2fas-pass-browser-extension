@@ -73,7 +73,7 @@ function WifiSsid (props) {
     setItem(updatedItem);
   }, [data.item, setItem]);
 
-  useEffect(() => {
+  useEffect(function focusSsidInputWhenEditable() {
     if (data.ssidEditable && inputRef.current && !hasFocusedRef.current) {
       hasFocusedRef.current = true;
       inputRef.current.focus();

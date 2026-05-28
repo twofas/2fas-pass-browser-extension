@@ -1,0 +1,150 @@
+{
+  "settings_cross_domain_autofill_domains": {
+    "message": "Automatisch Ausfüllen Domains",
+    "description": "Page title for the cross-domain autofill domains settings page"
+  },
+  "settings_cross_domain_autofill_domains_subtitle": {
+    "message": "Domains mit benutzerdefinierten \"automatisch Ausfüllen\"-Einstellungen.",
+    "description": "Subtitle for the cross-domain autofill domains settings page"
+  },
+  "settings_cross_domain_tab_always_autofill": {
+    "message": "Immer automatisch ausfüllen",
+    "description": "Tab label for the always autofill (trusted) domains list"
+  },
+  "settings_cross_domain_tab_never_autofill": {
+    "message": "Niemals automatisch ausfüllen",
+    "description": "Tab label for the never autofill (untrusted) domains list"
+  },
+  "settings_cross_domains_description": {
+    "message": "Vorschläge für das automatische Ausfüllen über verschiedene Domains hinweg werden für die folgenden Domains übersprungen, und die Eingabefelder werden automatisch ausgefüllt.",
+    "description": "Explains that trusted domains won't show cross-domain confirmation prompts"
+  },
+  "settings_cross_domains_empty": {
+    "message": "Es gibt keinen Domains, denen du momentan vertraust.",
+    "description": "Message displayed when no domains are trusted for cross-domain autofill"
+  },
+  "settings_cross_domains_remove": {
+    "message": "Entferne ausgewählte Domains von der Vertrauenliste.",
+    "description": "Button label to remove a domain from the trusted list"
+  },
+  "settings_cross_domains_remove_toast": {
+    "message": "Die Domain wurde von der Vertrauenliste entfernt",
+    "description": "Message displayed when a domain is successfully removed from the trusted list"
+  },
+  "settings_cross_domains_add_required": {
+    "message": "Domain ist erforderlich",
+    "description": "Validation message when trying to add an empty domain"
+  },
+  "settings_cross_domains_add_invalid": {
+    "message": "Die Domain ist ungültig. Bitte gib eine gültige Domain ein.",
+    "description": "Validation message when the provided domain is invalid"
+  },
+  "settings_cross_domains_add_already_trusted": {
+    "message": "Dieser Domain wird bereits vertraut.",
+    "description": "Validation message when trying to add a domain that is already in the trusted list"
+  },
+  "settings_cross_domains_add_success": {
+    "message": "Die Domain wurde erfolgreich zu deiner Vertrautenlisten hinzugefügt",
+    "description": "Message displayed when a domain is successfully added to the trusted list"
+  },
+  "settings_cross_domains_add_domain_text": {
+    "message": "Domain hinzufügen",
+    "description": "Label for the input field to add a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_another_domain_text": {
+    "message": "Weitere Domain hinzufügen",
+    "description": "Label for the button to add another domain to the trusted list"
+  },
+  "settings_cross_domains_add_input_placeholder": {
+    "message": "Zu vertrauender Domain eingeben",
+    "description": "Placeholder text for the input field to add a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_submit_title": {
+    "message": "Dieser Domain vertrauen",
+    "description": "Title for the button to submit a new domain to the trusted list"
+  },
+  "settings_cross_domains_add_cancel_title": {
+    "message": "Vorgang abgebrochen",
+    "description": "Title for the button to cancel trusting a new domain"
+  },
+  "settings_cross_domains_remove_dialog_message": {
+    "message": "Bist du dir sicher, dass du die Domain DOMAIN von der Vertrautenliste entfernen möchtest?",
+    "description": "Confirmation message when removing a domain from the trusted list"
+  },
+  "settings_cross_domains_remove_dialog_message_replace_fallback": {
+    "message": "diese Domain",
+    "description": "Fallback text for the domain placeholder in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_remove_dialog_cancel_text": {
+    "message": "Abbrechen",
+    "description": "Cancel button text in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_remove_dialog_confirm_text": {
+    "message": "Entfernen",
+    "description": "Confirm button text in the remove domain confirmation dialog"
+  },
+  "settings_cross_domains_untrusted_description": {
+    "message": "Für die folgenden Domains wird niemals ein domänenübergreifendes \nautomatisches Ausfüllen stattfinden.",
+    "description": "Explains that untrusted domains will always be blocked from cross-domain autofill"
+  },
+  "settings_cross_domains_untrusted_empty": {
+    "message": "Es gibt noch keine blockierten Domains.",
+    "description": "Message displayed when no domains are blocked for cross-domain autofill"
+  },
+  "settings_cross_domains_untrusted_remove": {
+    "message": "Ausgewählte Domain von der Liste entfernen.",
+    "description": "Button label to remove a domain from the untrusted list"
+  },
+  "settings_cross_domains_untrusted_remove_toast": {
+    "message": "Domain wurde von der Blockierliste entfernt",
+    "description": "Message displayed when a domain is successfully removed from the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_already_blocked": {
+    "message": "Diese Domain ist bereits blockiert.",
+    "description": "Validation message when trying to add a domain that is already in the untrusted list"
+  },
+  "settings_cross_domains_add_already_in_other_list": {
+    "message": "Diese Domain ist bereits in der OTHER_LIST Liste. Bitte entferne sie zuerst.",
+    "description": "Validation message when trying to add a domain that exists in the other list"
+  },
+  "settings_cross_domains_untrusted_add_success": {
+    "message": "Domain erfolgreich zur Blockierliste hinzugefügt",
+    "description": "Message displayed when a domain is successfully added to the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_domain_text": {
+    "message": "Domain hinzufügen",
+    "description": "Label for the input field to add a new domain to the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_another_domain_text": {
+    "message": "Weitere Domain hinzufügen",
+    "description": "Label for the button to add another domain to the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_input_placeholder": {
+    "message": "Zu blockierende Domain eingeben",
+    "description": "Placeholder text for the input field to add a new domain to the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_submit_title": {
+    "message": "Diese Domain blockieren",
+    "description": "Title for the button to submit a new domain to the untrusted list"
+  },
+  "settings_cross_domains_untrusted_add_cancel_title": {
+    "message": "Aufhören diese Domain zu blockieren",
+    "description": "Title for the button to cancel blocking a new domain"
+  },
+  "settings_cross_domains_untrusted_remove_dialog_message": {
+    "message": "Bist du dir sicher, dass du die Domain DOMAIN von der Blockierenliste entfernen möchtest?",
+    "description": "Confirmation message when removing a domain from the untrusted list"
+  },
+  "settings_cross_domains_untrusted_remove_dialog_message_replace_fallback": {
+    "message": "diese Domain",
+    "description": "Fallback text for the domain placeholder in the remove untrusted domain confirmation dialog"
+  },
+  "settings_cross_domains_untrusted_remove_dialog_cancel_text": {
+    "message": "Abbrechen",
+    "description": "Cancel button text in the remove untrusted domain confirmation dialog"
+  },
+  "settings_cross_domains_untrusted_remove_dialog_confirm_text": {
+    "message": "Entfernen",
+    "description": "Confirm button text in the remove untrusted domain confirmation dialog"
+  }
+}

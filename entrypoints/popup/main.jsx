@@ -59,17 +59,26 @@ const checkActiveWsAction = async () => {
 };
 
 /**
- * Pre-hydrates Zustand store and sets initial hash route before React renders.
- * This prevents the flash of ThisTab route before navigating to stored route.
+ * Pre-hydrates Zustand store before React renders so popupState (search,
+ * scroll, navigation history, etc.) is available on first render. Optionally
+ * sets the initial hash route based on the last visited href to prevent a
+ * flash of ThisTab before navigating to the stored route.
+ * @param {boolean} skipHashRouting - When true (WS action active or pending
+ *   navigation already set the hash), only hydrate the store. Never skip
+ *   hydration itself — that would orphan all popupState across opens.
  */
-const hydrateAndSetInitialRoute = async () => {
+const hydrateAndSetInitialRoute = async (skipHashRouting = false) => {
   try {
+    await usePopupStateStore.persist.rehydrate();
+
+    if (skipHashRouting) {
+      return;
+    }
+
     if (window.__wsPendingUpdates?.navigation?.path) {
       window.location.hash = `#${window.__wsPendingUpdates.navigation.path}`;
       return;
     }
-
-    await usePopupStateStore.persist.rehydrate();
 
     const state = usePopupStateStore.getState();
     const hrefArray = state.href;
@@ -93,9 +102,17 @@ const wsActive = await checkActiveWsAction();
 
 await Promise.all([
   setTheme(),
-  wsActive ? Promise.resolve() : hydrateAndSetInitialRoute(),
+  hydrateAndSetInitialRoute(wsActive),
   initI18n()
 ]);
 
 preloadInterFontAsync();
+
+try {
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'Popup - opened', {
+    isSeparateWindow: window.location.search.includes('separate'),
+    initialHash: window.location.hash || ''
+  });
+} catch {}
+
 createRoot(document.getElementById('root')).render(<Popup />);

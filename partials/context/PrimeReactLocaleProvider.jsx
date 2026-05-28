@@ -21,7 +21,7 @@ const PrimeReactLocaleProvider = memo(({ children }) => {
   const { getMessage, lang, isLoading } = useI18n();
   const initializedRef = useRef(false);
 
-  useEffect(() => {
+  useEffect(function applyPrimeReactLocale() {
     if (isLoading) {
       return;
     }

@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './styles/AutofillErrorItem.module.scss';
-import ItemIcon from '../../functions/serviceList/generateIcon';
+import ItemIcon from '@/entrypoints/popup/components/ItemIcon';
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -65,6 +65,8 @@ function AutofillErrorItem (props) {
           const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: props.deviceId, itemId: props.itemId });
           await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
 
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - AutofillErrorItem');
+
           fetchedItem.setSifEncrypted(sifData);
         } catch (e) {
           await CatchError(e);
@@ -75,7 +77,7 @@ function AutofillErrorItem (props) {
     setItem(fetchedItem);
   }, [props?.deviceId, props?.vaultId, props?.itemId, props?.state]);
 
-  useEffect(() => {
+  useEffect(function loadAutofillErrorItemData() {
     getItemData();
   }, [getItemData]);
 

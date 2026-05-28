@@ -15,7 +15,7 @@ import { Navigate, useLocation } from 'react-router';
 function NotFound () {
   const location = useLocation();
 
-  useEffect(() => {
+  useEffect(function logNotFoundRouteError() {
     try {
       throw new TwoFasError(TwoFasError.internalErrors.notFoundRoute, {
         additional: { pathname: location.pathname }
