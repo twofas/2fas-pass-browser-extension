@@ -21,6 +21,8 @@ const onTabCreated = async tab => {
     return false;
   }
 
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.BACKGROUND, 'TabHandler - tab created', { tabId: tab.id });
+
   let configured;
 
   try {

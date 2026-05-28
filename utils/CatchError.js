@@ -101,6 +101,15 @@ const CatchError = async (errObj, callback = () => {}) => {
     console.trace(errObj);
   }
 
+  try {
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.ERROR, `CatchError - ${valueObj.name || 'UnknownError'}`, {
+      message: valueObj.message,
+      code: valueObj.code,
+      cause: valueObj.cause,
+      type: valueObj.type
+    });
+  } catch {}
+
   logObj.streams[0].values.push([(Date.now() * 1000000).toString(), JSON.stringify(valueObj)]);
 
   if ((errObj instanceof TwoFasError && errObj.apiLog && storageLogging) || storageLogging || import.meta.env.DEV) {

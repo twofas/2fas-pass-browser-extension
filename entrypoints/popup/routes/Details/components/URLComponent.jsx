@@ -168,7 +168,7 @@ function URLComponent (props) {
     setItem(updatedItem);
   }, [data.item, setItem, uri._tempId, urisWithTempIds, updateUri]);
 
-  useEffect(() => {
+  useEffect(function focusUrlInputWhenEditable() {
     if (isEditable && inputRef.current && !hasFocusedRef.current) {
       hasFocusedRef.current = true;
       inputRef.current.focus();

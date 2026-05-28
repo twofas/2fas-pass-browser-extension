@@ -51,6 +51,12 @@ function TopBar() {
   const addNewBtnRef = useRef(null);
 
   const watchConfigured = useCallback(async () => {
+    const persistentPublicKey = await storage.getItem('local:persistentPublicKey');
+
+    if (!persistentPublicKey) {
+      return null;
+    }
+
     const configuredKey = await getKey('configured');
     const oldValue = await getConfiguredBoolean();
     const uC = storage.watch(`session:${configuredKey}`, async () => {
@@ -131,19 +137,34 @@ function TopBar() {
   const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
   const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
 
-  useEffect(() => {
-    watchConfigured().then(unwatch => {
-      unwatchConfigured.current = unwatch;
-    });
+  useEffect(function watchConfiguredKeyForAutoLogout() {
+    let cancelled = false;
 
-    return () => {
-      if (unwatchConfigured.current) {
+    watchConfigured()
+      .then(unwatch => {
+        if (cancelled) {
+          if (typeof unwatch === 'function') {
+            unwatch();
+          }
+
+          return;
+        }
+
+        unwatchConfigured.current = unwatch;
+      })
+      .catch(() => {});
+
+    return function unwatchConfiguredKey() {
+      cancelled = true;
+
+      if (typeof unwatchConfigured.current === 'function') {
         unwatchConfigured.current();
+        unwatchConfigured.current = null;
       }
     };
   }, [watchConfigured]);
 
-  useEffect(() => {
+  useEffect(function loadDeviceSupportedFeatures() {
     getSupportedFeatures()
       .then(features => setDeviceSupportedFeatures(features))
       .catch(() => setDeviceSupportedFeatures([]));

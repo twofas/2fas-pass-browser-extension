@@ -20,7 +20,7 @@ function Shortcut () {
   const [shortcutLink, setShortcutLink] = useState('#');
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadShortcutAndOptionsLink() {
     const getShortcut = async () => {
       let commands;
 
@@ -132,6 +132,8 @@ function Shortcut () {
     if (import.meta.env.BROWSER === 'safari') {
       return false;
     }
+
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsShortcut - open editor', { browser: import.meta.env.BROWSER });
 
     if (shortcutLink === 'firefox') {
       if (openShortcutSettingsAvailable()) {

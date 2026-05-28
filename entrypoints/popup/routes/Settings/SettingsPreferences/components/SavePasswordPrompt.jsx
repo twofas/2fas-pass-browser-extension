@@ -25,7 +25,7 @@ function SavePasswordPrompt () {
   const [sP, setSP] = useState('default');
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function initializeSavePromptSetting() {
     const initializeSavePrompt = async () => {
       try {
         let storageSavePasswordPrompt = await storage.getItem('local:savePrompt');
@@ -68,6 +68,8 @@ function SavePasswordPrompt () {
     try {
       setSP(value);
       await storage.setItem('local:savePrompt', value);
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsSavePasswordPrompt - changed', { value });
 
       browser.privacy.services.passwordSavingEnabled.set({
         value: value === 'browser'

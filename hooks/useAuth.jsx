@@ -52,17 +52,22 @@ export const AuthProvider = memo(({ children }) => {
     await setConfigured(Date.now());
 
     const store = usePopupStateStore.getState();
+    store.clearAllData();
     store.clearHref();
 
     setStateConfigured(true);
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTH, 'AuthHook - login success');
     navigate('/', { replace: true });
   }, [navigate]);
 
   const logout = useCallback(async (clear = true) => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTH, 'AuthHook - logout', { clearedSession: clear });
+
     await cleanupDevices();
 
     if (clear) {
       await browser.storage.session.clear();
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - useAuth logout (clear all)');
     }
 
     const store = usePopupStateStore.getState();
@@ -75,9 +80,10 @@ export const AuthProvider = memo(({ children }) => {
 
   const actions = useMemo(() => ({ login, logout }), [login, logout]);
 
-  useEffect(() => {
+  useEffect(function loadAuthConfiguredState() {
     const getData = async () => {
       const dateStorage = await getConfiguredBoolean();
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.AUTH, 'AuthHook - configured state loaded', { configured: !!dateStorage });
       setStateConfigured(dateStorage);
       setIsLoading(false);
     };

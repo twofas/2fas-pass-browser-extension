@@ -52,6 +52,7 @@ const processVaultsData = async (json, checksum, chunksData, encryptionDataKeyAE
 
   const encryptionT3Key = await getKey(ENCRYPTION_KEYS.ITEM_T3.sK, { deviceId });
   await storage.setItem(`session:${encryptionT3Key}`, encryptionPassKeyAES_B64);
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - processVaultsData');
 
   try {
     const vaultDataDecGZIP_AB = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: encGzipVaultDataBytes.iv }, encryptionDataKeyAES, encGzipVaultDataBytes.data);

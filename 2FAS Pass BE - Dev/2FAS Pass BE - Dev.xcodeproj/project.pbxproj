@@ -29,6 +29,7 @@
 		3780B0D72EE2FD7B00D68A1E /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0CB2EE2FD7B00D68A1E /* fonts */; };
 		3780B0D82EE2FD7B00D68A1E /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0CC2EE2FD7B00D68A1E /* assets */; };
 		3780B0D92EE2FD7B00D68A1E /* animations in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0CD2EE2FD7B00D68A1E /* animations */; };
+		3780B0DB2EE2FD7B00D68A1E /* devpanel.html in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0DA2EE2FD7B00D68A1E /* devpanel.html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +88,7 @@
 		3780B0CB2EE2FD7B00D68A1E /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = "../../.output/safari-mv3-dev/fonts"; sourceTree = "<group>"; };
 		3780B0CC2EE2FD7B00D68A1E /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = "../../.output/safari-mv3-dev/assets"; sourceTree = "<group>"; };
 		3780B0CD2EE2FD7B00D68A1E /* animations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = animations; path = "../../.output/safari-mv3-dev/animations"; sourceTree = "<group>"; };
+		3780B0DA2EE2FD7B00D68A1E /* devpanel.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = devpanel.html; path = "../../.output/safari-mv3-dev/devpanel.html"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,6 +214,7 @@
 				3780B0CB2EE2FD7B00D68A1E /* fonts */,
 				3780B0CC2EE2FD7B00D68A1E /* assets */,
 				3780B0CD2EE2FD7B00D68A1E /* animations */,
+				3780B0DA2EE2FD7B00D68A1E /* devpanel.html */,
 			);
 			name = Resources;
 			path = "Shared (Extension)";
@@ -328,6 +331,7 @@
 				3780B0D92EE2FD7B00D68A1E /* animations in Resources */,
 				3780B0CE2EE2FD7B00D68A1E /* install.html in Resources */,
 				3780B0D82EE2FD7B00D68A1E /* assets in Resources */,
+				3780B0DB2EE2FD7B00D68A1E /* devpanel.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -522,7 +526,7 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 96;
+				CURRENT_PROJECT_VERSION = 102;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -537,7 +541,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
-				MARKETING_VERSION = 1.8.1;
+				MARKETING_VERSION = 1.8.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -559,7 +563,7 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 96;
+				CURRENT_PROJECT_VERSION = 102;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -574,7 +578,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
-				MARKETING_VERSION = 1.8.1;
+				MARKETING_VERSION = 1.8.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -597,7 +601,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 96;
+				CURRENT_PROJECT_VERSION = 102;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -614,7 +618,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.8.1;
+				MARKETING_VERSION = 1.8.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -640,7 +644,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 96;
+				CURRENT_PROJECT_VERSION = 102;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -657,7 +661,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.8.1;
+				MARKETING_VERSION = 1.8.2;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,

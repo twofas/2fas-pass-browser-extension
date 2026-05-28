@@ -138,6 +138,8 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
             }
           }));
 
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillData)');
+
           browser.runtime.sendMessage({
             action: REQUEST_ACTIONS.AUTOFILL_WITH_PERMISSION,
             target: REQUEST_TARGETS.BACKGROUND,
@@ -325,6 +327,8 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
               sessionKeyForHKDF: closeData.sessionKeyForHKDF
             }
           }));
+
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillCardData)');
 
           browser.runtime.sendMessage({
             action: REQUEST_ACTIONS.AUTOFILL_CARD_WITH_PERMISSION,

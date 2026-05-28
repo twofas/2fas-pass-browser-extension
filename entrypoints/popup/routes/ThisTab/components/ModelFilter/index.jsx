@@ -86,13 +86,13 @@ const ModelFilter = props => {
   const handleMenuClose = useCallback(() => setIsMenuOpen(false), []);
   const handleMenuOpen = useCallback(() => setIsMenuOpen(true), []);
 
-  useEffect(() => {
+  useEffect(function loadDeviceSupportedFeatures() {
     getSupportedFeatures()
       .then(features => setDeviceSupportedFeatures(features))
       .catch(() => setDeviceSupportedFeatures([]));
   }, []);
 
-  useEffect(() => {
+  useEffect(function buildItemModelOptionsFromFeatures() {
     if (deviceSupportedFeatures.length > 0) {
       setItemModelsOptions(generateItemModelsOptions(deviceSupportedFeatures, getMessage));
     }

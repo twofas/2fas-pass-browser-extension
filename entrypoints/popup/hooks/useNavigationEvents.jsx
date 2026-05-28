@@ -31,19 +31,19 @@ const useNavigationEvents = () => {
   const popHrefRef = useRef(popHref);
   const setHrefRef = useRef(setHref);
 
-  useEffect(() => {
+  useEffect(function syncNavigateRef() {
     navigateRef.current = navigate;
   }, [navigate]);
 
-  useEffect(() => {
+  useEffect(function syncHrefArrayRef() {
     hrefArrayRef.current = hrefArray;
   }, [hrefArray]);
 
-  useEffect(() => {
+  useEffect(function syncPopHrefRef() {
     popHrefRef.current = popHref;
   }, [popHref]);
 
-  useEffect(() => {
+  useEffect(function syncSetHrefRef() {
     setHrefRef.current = setHref;
   }, [setHref]);
 
@@ -89,7 +89,7 @@ const useNavigationEvents = () => {
     return { previousPath: prevPath, popCount };
   }, []);
 
-  useEffect(() => {
+  useEffect(function subscribeToBrowserBackForward() {
     const handlePopState = () => {
       if (isHandlingNavigation.current) {
         return;
@@ -151,18 +151,24 @@ const useNavigationEvents = () => {
 
     window.addEventListener('popstate', handlePopState);
 
-    return () => {
+    return function unsubscribeFromBrowserBackForward() {
       window.removeEventListener('popstate', handlePopState);
     };
   }, [findPreviousValidPath]);
 
-  useEffect(() => {
+  useEffect(function trackLastKnownPath() {
     if (!isHandlingNavigation.current && !IGNORED_PATHS.includes(location.pathname)) {
+      const from = lastKnownPathRef.current;
+
+      if (from !== location.pathname) {
+        logger.info(LOGGER_CONSTANTS.CATEGORIES.NAVIGATION, 'Popup-Router - route change', { from, to: location.pathname });
+      }
+
       lastKnownPathRef.current = location.pathname;
     }
   }, [location.pathname]);
 
-  useEffect(() => {
+  useEffect(function preventSafariEdgeSwipeNavigation() {
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
     if (!isSafari) {
@@ -195,7 +201,7 @@ const useNavigationEvents = () => {
     document.addEventListener('wheel', handleWheel, { passive: false });
     document.addEventListener('touchstart', handleTouchStart, { passive: false });
 
-    return () => {
+    return function removeSafariEdgeSwipeListeners() {
       document.removeEventListener('wheel', handleWheel);
       document.removeEventListener('touchstart', handleTouchStart);
     };

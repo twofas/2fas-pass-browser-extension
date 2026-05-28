@@ -69,7 +69,7 @@ describe('getMessage', () => {
     });
   });
 
-  describe('when lang is en or pl', () => {
+  describe('when lang is en, pl or de', () => {
     it('should return message from cached JSON', async () => {
       storageGetItemSpy.mockResolvedValue('en');
       fetchSpy.mockResolvedValue({
@@ -82,6 +82,20 @@ describe('getMessage', () => {
 
       expect(result).toBe('Test Message');
       expect(fetchSpy).toHaveBeenCalledWith('chrome-extension://test-id/_locales/en/messages.json');
+    });
+
+    it('should load messages from de locale file', async () => {
+      storageGetItemSpy.mockResolvedValue('de');
+      fetchSpy.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(mockMessages)
+      });
+
+      await initI18n();
+      const result = getMessage('test_key');
+
+      expect(result).toBe('Test Message');
+      expect(fetchSpy).toHaveBeenCalledWith('chrome-extension://test-id/_locales/de/messages.json');
     });
 
     it('should fallback to browser.i18n if key not found in cache', async () => {

@@ -12,6 +12,8 @@ import { generateNonce } from '@/partials/functions';
 * Class representing an item.
 */
 class Item {
+  static clipboardFieldTypes = ['name'];
+
   constructor (data, deviceId = null, vaultId = null) {
     validate(data && typeof data === 'object', 'Invalid item data');
     validate(isValidUUID(data.id), 'Invalid or missing id: must be a valid UUID');
@@ -326,6 +328,29 @@ class Item {
   get isT3orT2WithSif () {
     return this.securityType === SECURITY_TIER.SECRET
       || (this.securityType === SECURITY_TIER.HIGHLY_SECRET && this.sifExists);
+  }
+
+  /**
+  * Resolves the value to compare against the clipboard for the autoClearClipboard mechanism.
+  * Subclasses override for type-specific fields; the base handles the universal 'name' field
+  * and validates the requested type against the subclass's `clipboardFieldTypes`.
+  * @async
+  * @param {string} fieldType - The clipboard field type identifier.
+  * @return {Promise<string|null>} The value to compare with clipboard, or null if missing.
+  * @throws Will throw if the field type is unsupported or not implemented by the subclass.
+  */
+  async getClipboardValue (fieldType) {
+    const supported = this.constructor.clipboardFieldTypes || [];
+
+    if (!supported.includes(fieldType)) {
+      throw new Error(`Unsupported clipboard field type '${fieldType}' for ${this.constructor.name}`);
+    }
+
+    if (fieldType === 'name') {
+      return this.content?.name ?? null;
+    }
+
+    throw new Error(`Model ${this.constructor.name} declares '${fieldType}' but does not implement it`);
   }
 
   toJSON () {

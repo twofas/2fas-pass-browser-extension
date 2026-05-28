@@ -20,6 +20,8 @@ const storageAutoClearActions = async () => {
     return;
   }
 
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - storageAutoClearActions (clearing)');
+
   // Get action with latest timestamp
   const action = storageClearActions.reduce((latest, action) => {
     return action.timestamp > latest.timestamp ? action : latest;

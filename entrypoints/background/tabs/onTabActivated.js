@@ -21,6 +21,8 @@ const onTabActivated = async ({ tabId }) => {
     return false;
   }
 
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.BACKGROUND, 'TabHandler - tab activated', { tabId });
+
   let configured;
 
   try {

@@ -59,6 +59,8 @@ const generateEphemeralKeys = async () => {
       { key: `session:${privateKeyKey}`, value: privateKey }
     ]);
 
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - generateEphemeralKeys');
+
     return {
       publicKey: compressedPublicKeyB64,
       uuid

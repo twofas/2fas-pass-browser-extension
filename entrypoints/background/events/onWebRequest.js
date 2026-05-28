@@ -113,17 +113,17 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     return;
   }
 
+  let tab;
+
+  try {
+    tab = await browser.tabs.get(details.tabId);
+  } catch {}
+
   let storageSavePrompt = null;
   let domainOnIgnoredList;
 
   try {
     storageSavePrompt = await storage.getItem('local:savePrompt');
-
-    let tab;
-
-    try {
-      tab = await browser.tabs.get(details.tabId);
-    } catch {}
 
     const tabUrlIgnored = tab?.url ? await checkDomainOnIgnoredList(tab.url) : false;
     const requestUrlIgnored = details?.url ? await checkDomainOnIgnoredList(details.url) : false;
@@ -145,7 +145,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   }
 
   // Cleanup tabsInputData for this tab ID
-  tabsInputData[details.tabId] = cleanTabsInputData(details, tabInputs);
+  tabsInputData[details.tabId] = cleanTabsInputData(details, tabInputs, tab?.url);
 
   // Only when tabsInputData exists for this tab ID
   if (!tabsInputData || !tabsInputData[details.tabId] || tabsInputData[details.tabId]?.length <= 0) {
@@ -169,7 +169,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   let serviceTypeData;
 
   try {
-    serviceTypeData = await checkServicesData(details, values);
+    serviceTypeData = await checkServicesData(details, values, tab?.url);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.onWebRequestCheckServicesDataError, { event: e });
   }

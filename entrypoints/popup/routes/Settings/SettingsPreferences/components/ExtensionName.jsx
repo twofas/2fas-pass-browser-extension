@@ -37,7 +37,7 @@ function ExtensionName () {
     return false;
   }, [data.extName]);
 
-  useEffect(() => {
+  useEffect(function loadExtensionNameFromStorage() {
     const getExtName = async () => {
       try {
         const browserInfo = await storage.getItem('local:browserInfo');
@@ -89,6 +89,8 @@ function ExtensionName () {
       const browserInfo = await storage.getItem('local:browserInfo');
       browserInfo.name = e['ext-name'];
       await storage.setItem('local:browserInfo', browserInfo);
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsExtensionName - changed', { length: (e['ext-name'] || '').length });
 
       // Update local state to reflect the change
       setData('extName', browserInfo.name);

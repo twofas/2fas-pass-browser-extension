@@ -21,12 +21,16 @@ const checkAutofillInputs = () => {
 
   setUsernameSkips(passwordInputs, usernameInputs);
 
-  return {
+  const result = {
     canAutofillPassword: passwordInputs.length > 0,
     canAutofillUsername: usernameInputs.length > 0,
     passwordInputsCount: passwordInputs.length,
     usernameInputsCount: usernameInputs.length
   };
+
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'ContentScript-FormDetect - inputs scanned', result);
+
+  return result;
 };
 
 export default checkAutofillInputs;

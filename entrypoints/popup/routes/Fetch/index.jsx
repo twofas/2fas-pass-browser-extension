@@ -54,6 +54,7 @@ function Fetch (props) {
   }, [getMessage]);
 
   const tryAgainHandle = useCallback(async () => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Fetch - try again', { action: state?.action });
     await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
 
     await sendCommand(REQUEST_ACTIONS.WS_FETCH, {
@@ -65,6 +66,11 @@ function Fetch (props) {
 
   const cancelHandle = useCallback(async e => {
     e.preventDefault();
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Fetch - cancel', {
+      action: state?.action,
+      from: state?.from,
+      fetchState
+    });
     await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
 
     if (state?.from === 'contextMenu' || state?.from === 'shortcut' || state?.from === 'savePrompt') {
@@ -92,7 +98,7 @@ function Fetch (props) {
   }, [sendCommand, state, fetchState, navigate]);
 
   // Initialize fetch
-  useEffect(() => {
+  useEffect(function initiateFetchRequest() {
     if (initDoneRef.current) {
       return;
     }
@@ -108,6 +114,14 @@ function Fetch (props) {
       return;
     }
 
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'FetchRoute - dispatch action', {
+      action: state.action,
+      from: state.from,
+      itemId: state?.data?.itemId,
+      deviceId: state?.data?.deviceId,
+      contentType: state?.data?.contentType
+    });
+
     sendCommand(REQUEST_ACTIONS.WS_FETCH, {
       fetchAction: state.action,
       fetchData: state.data,
@@ -116,11 +130,20 @@ function Fetch (props) {
   }, [bgState?.active, bgState?.type, state, sendCommand, navigate]);
 
   // Cleanup: cancel WS on unmount
-  useEffect(() => {
-    return () => {
+  useEffect(function cancelFetchWsOnUnmount() {
+    return function cancelFetchWsCommand() {
       sendCommand(REQUEST_ACTIONS.WS_CANCEL).catch(() => {});
     };
   }, [sendCommand]);
+
+  useEffect(function logFetchStateTransitions() {
+    if (bgState?.fetchState) {
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'Popup-Fetch - state transition', {
+        fetchState: bgState.fetchState,
+        fetchAction: bgState.fetchAction
+      });
+    }
+  }, [bgState?.fetchState, bgState?.fetchAction]);
 
   return (
     <div className={`${props.className ? props.className : ''}`}>

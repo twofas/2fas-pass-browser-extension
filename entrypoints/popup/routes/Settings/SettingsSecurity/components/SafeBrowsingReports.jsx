@@ -19,7 +19,7 @@ function SafeBrowsingReports () {
   const [sbr, setSbr] = useState(null);
   const [disabled, setDisabled] = useState(true);
 
-  useEffect(() => {
+  useEffect(function loadSafeBrowsingReportsSetting() {
     const getDefaultSafeBrowsingReports = async () => {
       const browserSafeBrowsingReports = await browser.privacy.services.safeBrowsingExtendedReportingEnabled.get({});
       setSbr(browserSafeBrowsingReports);

@@ -57,6 +57,7 @@ const setConfigured = async value => {
   const encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
 
   await storage.setItem(`session:${configuredKey}`, encryptedValueB64);
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - setConfigured');
   return true;
 };
 

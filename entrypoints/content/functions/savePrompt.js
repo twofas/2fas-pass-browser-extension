@@ -162,6 +162,11 @@ const savePrompt = (request, sendResponse, container) => {
   }
 
   const storageKey = request.storageKey;
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'ContentScript-SavePrompt - shown', {
+    hasExistingLogin: !!request?.existingLogin,
+    formType: request?.formType
+  });
+
   sendResponse({ status: 'ok', displayed: true });
 
   const n = {

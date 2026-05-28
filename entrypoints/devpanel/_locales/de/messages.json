@@ -1,0 +1,26 @@
+{
+  "devpanel_title": {
+    "message": "2FAS Pass — Dev Panel",
+    "description": "Dev panel page title"
+  },
+  "devpanel_tab_logs": {
+    "message": "Logs",
+    "description": "Dev panel logs tab label"
+  },
+  "devpanel_tab_storage_local": {
+    "message": "Storage Local",
+    "description": "Dev panel storage local tab label"
+  },
+  "devpanel_tab_storage_session": {
+    "message": "Storage Session",
+    "description": "Dev panel storage session tab label"
+  },
+  "devpanel_tab_websocket": {
+    "message": "WebSocket",
+    "description": "Dev panel websocket tab label"
+  },
+  "devpanel_open_in_new_tab": {
+    "message": "Open Dev Panel",
+    "description": "BottomBar tooltip for opening dev panel in new tab"
+  }
+}

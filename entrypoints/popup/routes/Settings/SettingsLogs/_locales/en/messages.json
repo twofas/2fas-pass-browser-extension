@@ -1,0 +1,34 @@
+{
+  "settings_logs_menu_link": {
+    "message": "Send logs",
+    "description": "Settings About menu link to diagnostic logs page"
+  },
+  "settings_logs_title": {
+    "message": "Diagnostic logs",
+    "description": "Title of the diagnostic logs settings page"
+  },
+  "settings_logs_description": {
+    "message": "Diagnostic logs help identify and fix issues in the extension.\nLogs never include passwords, notes, or other vault contents.\nThey only contain technical information needed for troubleshooting and may include item identifiers.",
+    "description": "Explanation of what diagnostic logs contain and their purpose"
+  },
+  "settings_logs_send_to_team": {
+    "message": "If you experience an issue, the 2FAS Team may ask you to export and share the logs.",
+    "description": "Call to action asking the user to download logs and send them to the 2FAS Team when issues occur"
+  },
+  "settings_logs_download_button": {
+    "message": "Export logs",
+    "description": "Button to export current diagnostic logs as a JSON file"
+  },
+  "settings_logs_download_success": {
+    "message": "Diagnostic logs exported",
+    "description": "Toast shown when logs are exported successfully"
+  },
+  "settings_logs_download_error": {
+    "message": "Failed to export diagnostic logs",
+    "description": "Toast shown when log export fails"
+  },
+  "settings_logs_empty_toast": {
+    "message": "No diagnostic logs to export yet",
+    "description": "Toast shown when user tries to export but there are no logs"
+  }
+}

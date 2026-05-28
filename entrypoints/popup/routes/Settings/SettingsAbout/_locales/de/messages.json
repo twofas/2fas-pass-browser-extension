@@ -1,0 +1,50 @@
+{
+  "settings_rate_us_chrome": {
+    "message": "Bewerte uns im Chrome Web Store",
+    "description": "Prompt to rate the extension in the Chrome Web Store"
+  },
+  "settings_rate_us_firefox": {
+    "message": "Bewerte uns Firefox Browser Add-ons Store",
+    "description": "Prompt to rate the extension in Firefox Browser Add-ons"
+  },
+  "settings_rate_us_edge": {
+    "message": "Bewerte uns im Microsoft Edge Add-ons Store",
+    "description": "Prompt to rate the extension in Microsoft Edge Add-ons"
+  },
+  "settings_rate_us_safari": {
+    "message": "Bewerte uns im App Store",
+    "description": "Prompt to rate the extension in the App Store"
+  },
+  "settings_about_header": {
+    "message": "Über 2FAS Pass",
+    "description": "Header for the about section in settings"
+  },
+  "settings_about_thank_you": {
+    "message": "Danke für das Nutzen von 2FAS Pass,\nEin quelloffenes Projekt mit Cyber-Security im Herzen.",
+    "description": "Thank you message for users of the 2FAS Pass extension"
+  },
+  "settings_about_thank_you_subheader": {
+    "message": "Wir speichern deine Daten nicht.\nWir haben keine Server.",
+    "description": "Subheader emphasizing the privacy and security of the extension"
+  },
+  "settings_about_thank_you_description": {
+    "message": "Wir speichern deine Einträge nicht, da wir keine Server haben. Du bewahrst alle deine Einträge in deiner mobilen 2FAS Pass App auf. Diejenigen, die du auswählst, können zusätzlich in dieser Browser-Erweiterung gespeichert werden. Du entscheidest, wann und wie du sie verwendest.",
+    "description": "Explains that user data is stored in the mobile app or optionally in the extension"
+  },
+  "settings_visit_our_website": {
+    "message": "Besuche unsere Website",
+    "description": "Link to the 2FAS Pass website"
+  },
+  "settings_privacy_policy": {
+    "message": "Datenschutzerklärung",
+    "description": "Link to the privacy policy of 2FAS Pass"
+  },
+  "settings_eula": {
+    "message": "Nutzungsbedingungen (EULA)",
+    "description": "Link to the End User License Agreement for 2FAS Pass"
+  },
+  "settings_lets_connect": {
+    "message": "Treten wir in Kontakt",
+    "description": "Prompt to connect with the 2FAS Pass team or community"
+  }
+}

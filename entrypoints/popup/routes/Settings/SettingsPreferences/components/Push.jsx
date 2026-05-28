@@ -22,7 +22,7 @@ function Push () {
   const [push, setPush] = useState(defaultPushValue);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadNativePushSetting() {
     const getNativePush = async () => {
       try {
         let storageNativePush = await storage.getItem('local:nativePush');
@@ -58,6 +58,9 @@ function Push () {
       setPush(value);
 
       await storage.setItem('local:nativePush', value);
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsPush - changed', { value });
+
       showToast(getMessage('notification_settings_save_success'), 'success');
     } catch (e) {
       const previousValue = await storage.getItem('local:nativePush') || defaultPushValue;

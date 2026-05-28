@@ -1,0 +1,70 @@
+{
+  "connect_header": {
+    "message": "Scanne diesen QR-Code mit deiner 2FAS Pass Mobile App.",
+    "description": "Header instructing the user to tap Connect in the mobile app to scan the QR code"
+  },
+  "connect_description": {
+    "message": "Führe diesen Schritt durch, wenn du die Browser-Erweiterung zum ersten Mal startest, um eine Verbindung zur App herzustellen.",
+    "description": "Explains the need to scan the QR code for secure access during each browser launch"
+  },
+  "connect_add_new_device": {
+    "message": "Neues Gerät hinzufügen",
+    "description": "Button text shown on the empty device select view that opens the QR code view"
+  },
+  "connect_connecting": {
+    "message": "Verbindet ...",
+    "description": "Message displayed while the connection process is ongoing"
+  },
+  "connect_connection_opened": {
+    "message": "Verbindung ist offen",
+    "description": "Message displayed when the connection is successfully opened"
+  },
+  "connect_push_cancelled": {
+    "message": "Die Verbindung wurde über die App abgebrochen.",
+    "description": "Message displayed when the connection is cancelled by the user from the mobile app"
+  },
+  "connect_device_select_header": {
+    "message": "Deine Geräte",
+    "description": "Header prompting the user to select their device"
+  },
+  "connect_device_select_list_header": {
+    "message": "Wähle das Gerät aus, mit dem du dich verbinden möchtest:",
+    "description": "Header for the device selection list"
+  },
+  "connect_device_select_add_another": {
+    "message": "Ein weiteres Gerät hinzufügen",
+    "description": "Button text for adding another device"
+  },
+  "connect_push_animation_description": {
+    "message": "Um die Verbindung abzuschließen,\nmusst du die Anfrage in der App akzeptieren.",
+    "description": "Description for the push notification animation"
+  },
+  "connect_push_trouble": {
+    "message": "Probleme beim Verbinden?",
+    "description": "Text for link to QR code view if having trouble with push notification"
+  },
+  "connect_push_trouble_tooltip": {
+    "message": "Überprüfe bitte die App, sollte die Benachrichtigung nicht nach ein paar Sekunden ankommen.",
+    "description": "Tooltip text explaining what to do if the push notification does not arrive"
+  },
+  "connect_push_trouble_tooltip_or": {
+    "message": "oder",
+    "description": "The word 'or' used between two options"
+  },
+  "connect_push_trouble_tooltip_use_qr": {
+    "message": "Nutze den QR-Code",
+    "description": "Instruction to use QR code as an alternative method"
+  },
+  "connect_device_new_header": {
+    "message": "Mit der 2FAS Pass App verbinden",
+    "description": "Header for the device new view when no devices are connected"
+  },
+  "connect_device_new_subtitle": {
+    "message": "Verbinde die Browser-Erweiterung mit der 2FAS Pass App",
+    "description": "Subtitle explaining the purpose of connecting the extension with the mobile app"
+  },
+  "connect_device_new_connect_button": {
+    "message": "Verbinde dein Gerät",
+    "description": "Button text to initiate device connection via QR code"
+  }
+}

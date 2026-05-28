@@ -21,6 +21,8 @@ import TwoFasWebSocket from '.';
 * @return {Promise<Object>} The response object containing the challenge result.
 */
 const handleChallengeAction = async (json, uuid) => {
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'PairingFlow - challenge action received', { id: json?.id });
+
   const { pkEpheMa, hkdfSalt } = json.payload;
   const [SK_EPHE_ECDH, PK_EPHE_MA_ECDH, hkdfSaltAB] = await Promise.all([
     importExtensionEphemeralKey(uuid),

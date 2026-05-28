@@ -18,7 +18,7 @@ function Theme () {
   const [t, setT] = useState('unset');
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
+  useEffect(function loadStoredTheme() {
     const getDefaultTheme = async () => {
       try {
         const storageTheme = await storage.getItem('local:theme');
@@ -59,6 +59,8 @@ function Theme () {
       document.documentElement.classList.add(`theme-${value}`);
 
       await storage.setItem('local:theme', value);
+
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsTheme - theme changed', { value });
 
       const tabs = await browser.tabs.query({});
 

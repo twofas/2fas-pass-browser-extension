@@ -74,6 +74,7 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
       tabUpdateData[tabID].url = tab.url;
       tabUpdateData[tabID].savePromptVisible = false;
       await storage.removeItem(`session:savePromptSuppressed-${tabID}`);
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onTabUpdated (clear suppressed)');
     }
 
     let items;
@@ -141,6 +142,7 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
             encrypted: action.encrypted || false
           }
         }));
+        logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onTabUpdated (savePromptContext)');
       }
 
       await sendSavePromptToTab(tabID, action.serviceTypeData, storageKey);

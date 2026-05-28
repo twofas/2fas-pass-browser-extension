@@ -1,0 +1,152 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+.icon-label {
+  align-items: center;
+  background: var(--login-item-bg);
+  background: linear-gradient(135deg, var(--login-item-bg) 0%, var(--login-item-bg-gradient) 100%);
+  border-radius: 4px;
+  color: var(--login-item);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  height: 32px;
+  justify-content: center;
+  line-height: 1.2;
+  margin-right: 8px;
+  overflow: hidden;
+  text-align: center;
+  width: 32px;
+}
+
+.icon-image {
+  align-items: center;
+  background-color: var(--primary-box-bg);
+  border-radius: 4px;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 32px;
+  justify-content: center;
+  margin-right: 8px;
+  overflow: hidden;
+  position: relative;
+  width: 32px;
+
+  img {
+    height: 26px;
+    object-fit: fill;
+    opacity: 0;
+    padding: 3px;
+    position: relative;
+    transition: opacity var(--anim);
+    width: 26px;
+    z-index: 2;
+  }
+}
+
+.icon-image-blur {
+  filter: blur(12px) saturate(2);
+  position: absolute !important;
+  transform: scale(1.4);
+  z-index: 1 !important;
+}
+
+.icon-secure-note {
+  align-items: center;
+  background: var(--secure-note-item-bg);
+  background: linear-gradient(135deg, var(--secure-note-item-bg) 0%, var(--secure-note-item-bg-gradient) 100%);
+  border-radius: 4px;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 32px;
+  justify-content: center;
+  margin-right: 8px;
+  overflow: hidden;
+  width: 32px;
+
+  svg {
+    fill: var(--secure-note-item);
+    height: 16px;
+    width: auto;
+  }
+}
+
+.icon-wifi {
+  align-items: center;
+  background: var(--wifi-item-bg);
+  background: linear-gradient(135deg, var(--wifi-item-bg) 0%, var(--wifi-item-bg-gradient) 100%);
+  border-radius: 4px;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 32px;
+  justify-content: center;
+  margin-right: 8px;
+  overflow: hidden;
+  width: 32px;
+
+  svg {
+    height: 12px;
+    stroke: var(--wifi-item);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1;
+    width: auto;
+  }
+}
+
+.icon-payment-card {
+  align-items: center;
+  background: var(--payment-card-item-bg);
+  background: linear-gradient(135deg, var(--payment-card-item-bg) 0%, var(--payment-card-item-bg-gradient) 100%);
+  border-radius: 4px;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 32px;
+  justify-content: center;
+  margin-right: 8px;
+  overflow: hidden;
+  width: 32px;
+
+  svg {
+    height: 17px;
+    stroke: var(--payment-card-item);
+    stroke-width: .8;
+    width: auto;
+  }
+}
+
+.icon-payment-card-image {
+  align-items: center;
+  background-color: var(--primary-box-bg);
+  border-radius: 4px;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 32px;
+  justify-content: center;
+  margin-right: 8px;
+  overflow: hidden;
+  position: relative;
+  width: 32px;
+
+  img {
+    height: 26px;
+    object-fit: fill;
+    opacity: 0;
+    padding: 3px;
+    position: absolute;
+    transition: opacity var(--anim);
+    width: 26px;
+    z-index: 2;
+  }
+}
+
+.icon-payment-card-image-blur {
+  filter: blur(12px) saturate(2);
+  position: absolute;
+  transform: scale(1.4);
+  z-index: 1;
+}

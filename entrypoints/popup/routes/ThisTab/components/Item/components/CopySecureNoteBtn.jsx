@@ -6,7 +6,7 @@
 
 import S from '../styles/Item.module.scss';
 import { useI18n } from '@/partials/context/I18nContext';
-import handleSecureNoteText from '../../../functions/serviceList/handleSecureNoteText';
+import handleSecureNoteText from '../functions/handleSecureNoteText';
 import { useState, useRef, useEffect } from 'react';
 import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
@@ -68,7 +68,7 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
     }
   };
 
-  useEffect(() => {
+  useEffect(function pollSifResetProgress() {
     let isMounted = true;
     let localIntervalId = null;
 
@@ -87,7 +87,7 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
         }
       });
 
-    return () => {
+    return function stopSifResetProgressPolling() {
       isMounted = false;
 
       if (localIntervalId !== null) {

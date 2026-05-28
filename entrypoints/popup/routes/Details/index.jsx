@@ -12,30 +12,17 @@ import usePopupState from '../../store/popupState/usePopupState';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import { matchModel, Login } from '@/models/itemModels';
+import { matchModel, Login, getModelClass } from '@/models/itemModels';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import ClearLink from '../../components/ClearLink';
 import ServiceFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
 import { useI18n } from '@/partials/context/I18nContext';
 
-// Model Views
-import LoginDetailsView from './modelsViews/LoginDetailsView';
-import SecureNoteDetailsView from './modelsViews/SecureNoteDetailsView';
-import PaymentCardDetailsView from './modelsViews/PaymentCardDetailsView';
-import WifiDetailsView from './modelsViews/WifiDetailsView';
-
-const DetailsViews = {
-  'Login': LoginDetailsView,
-  'SecureNote': SecureNoteDetailsView,
-  'PaymentCard': PaymentCardDetailsView,
-  'Wifi': WifiDetailsView
-};
-
 const DetailsHeaders = {
-  'Login': 'details_header_login',
-  'SecureNote': 'details_header_secure_note',
-  'PaymentCard': 'details_header_payment_card',
-  'Wifi': 'details_header_wifi'
+  login: 'details_header_login',
+  secureNote: 'details_header_secure_note',
+  paymentCard: 'details_header_payment_card',
+  wifi: 'details_header_wifi'
 };
 
 /**
@@ -177,54 +164,33 @@ function Details(props) {
     }
   }, [params.deviceId, params.vaultId, params.id]);
 
-  const constructorName = useMemo(() => {
+  const ModelClass = useMemo(() => {
     if (loading) {
       return null;
     }
 
-    const name = data?.item?.constructor?.name;
-
-    if (name && name !== 'Object') {
-      return name;
-    }
-
-    const contentTypeMap = {
-      'login': 'Login',
-      'secureNote': 'SecureNote',
-      'paymentCard': 'PaymentCard',
-      'wifi': 'Wifi'
-    };
-
-    return contentTypeMap[data?.item?.contentType] || null;
-  }, [loading, data?.item]);
+    return getModelClass(data?.item?.contentType);
+  }, [loading, data?.item?.contentType]);
 
   const modelComponent = useMemo(() => {
-    if (loading) {
+    if (loading || !ModelClass?.DetailsComponent) {
       return null;
     }
 
-    const modelData = {
-      originalItem
-    };
+    const DetailsComponent = ModelClass.DetailsComponent;
+    return <DetailsComponent {...props} originalItem={originalItem} />;
+  }, [loading, ModelClass, props, originalItem]);
 
-    if (DetailsViews[constructorName]) {
-      const ModelViewComponent = DetailsViews[constructorName];
-      return <ModelViewComponent {...props} {...modelData} />;
-    }
-
-    return null;
-  }, [loading, constructorName, props, originalItem]);
-
-  useEffect(() => {
+  useEffect(function loadItemDetailsOnMount() {
     getOriginalItem().then(fetchItemData);
   }, [fetchItemData, getOriginalItem]);
 
-  useEffect(() => {
-    if (!loading && constructorName && !DetailsViews[constructorName]) {
+  useEffect(function redirectIfDetailsViewMissing() {
+    if (!loading && data?.item && !ModelClass?.DetailsComponent) {
       showToast(getMessage('details_item_not_found'), 'error');
       navigate('/');
     }
-  }, [loading, constructorName, navigate]);
+  }, [loading, ModelClass, data?.item, navigate]);
 
   useScrollPosition(scrollableRef, loading);
 
@@ -238,7 +204,7 @@ function Details(props) {
         <section className={S.details}>
           <div className={S.detailsContainer}>
             <NavigationButton type='back' />
-            <h2>{getMessage(DetailsHeaders[constructorName])}</h2>
+            <h2>{getMessage(DetailsHeaders[data?.item?.contentType])}</h2>
 
             <div className={`${S.detailsFetch} ${originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists ? '' : S.hidden}`}>
               <p>{getMessage('details_fetch_text')}</p>

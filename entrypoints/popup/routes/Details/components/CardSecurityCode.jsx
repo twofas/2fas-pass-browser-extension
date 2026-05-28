@@ -155,7 +155,7 @@ function CardSecurityCode (props) {
     return '***';
   };
 
-  useEffect(() => {
+  useEffect(function syncSecurityCodeValueToForm() {
     const currentSecurityCode = getSecurityCodeValue();
 
     if (currentSecurityCode !== previousSecurityCodeRef.current) {
@@ -164,13 +164,13 @@ function CardSecurityCode (props) {
     }
   }, [localEditedSecurityCode, localDecryptedSecurityCode, sifDecryptError, form]);
 
-  useEffect(() => {
+  useEffect(function restoreEditedSecurityCodeFromStore() {
     if (data?.securityCodeEditable && isText(data?.editedSecurityCode) && localEditedSecurityCode === null) {
       setLocalEditedSecurityCode(data.editedSecurityCode);
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(function decryptSecurityCodeWhenRevealedOrEditing() {
     const needsDecryption = (data?.securityCodeEditable || data?.securityCodeVisible) &&
                            localDecryptedSecurityCode === null &&
                            !isDecrypting &&
@@ -181,7 +181,7 @@ function CardSecurityCode (props) {
     }
   }, [data?.securityCodeEditable, data?.securityCodeVisible, localDecryptedSecurityCode, isDecrypting, itemInstance?.securityCodeExists, decryptSecurityCodeOnDemand]);
 
-  useEffect(() => {
+  useEffect(function focusSecurityCodeMaskWhenRequested() {
     if (shouldFocusInputMask && data?.securityCodeEditable && isFocused) {
       setTimeout(focusInputMask, 0);
     }

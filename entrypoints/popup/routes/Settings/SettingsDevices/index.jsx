@@ -78,6 +78,12 @@ function SettingsDevices (props) {
     const sortedDevices = filteredDevices.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
     const updatedDevices = sortedDevices.filter(device => device.id !== deviceId);
     await storage.setItem('local:devices', updatedDevices);
+
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsDevices - device removed', {
+      deviceId,
+      remainingCount: updatedDevices.length
+    });
+
     setDevices(updatedDevices);
     setLoading(false);
   };
@@ -101,7 +107,7 @@ function SettingsDevices (props) {
     setChosenDeviceId(null);
   };
 
-  useEffect(() => {
+  useEffect(function loadConnectedDevices() {
     storage.getItem('local:devices')
       .then(devices => devices.filter(device => device?.id && device?.id?.length > 0))
       .then(devices => devices.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)))

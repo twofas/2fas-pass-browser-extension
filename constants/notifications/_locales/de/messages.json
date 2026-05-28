@@ -1,0 +1,82 @@
+{
+  "notification_send_autofill_to_tab_lack_of_service_title": {
+    "message": "Fehler",
+    "description": "Title for the notification when the autofill service is not found"
+  },
+  "notification_send_autofill_to_tab_lack_of_service_message": {
+    "message": "Service nicht gefunden",
+    "description": "Message for the notification when the autofill service is not found"
+  },
+  "notification_send_autofill_to_tab_autofill_error_title": {
+    "message": "Fehler",
+    "description": "Title for the notification when an autofill error occurs"
+  },
+  "notification_send_autofill_to_tab_autofill_error_message": {
+    "message": "Es konnte nicht automatisch ausgefüllt werden. Bitte versuche es erneut.",
+    "description": "Message for the notification when an autofill error occurs"
+  },
+  "notification_shortcut_autofill_no_active_tab_title": {
+    "message": "Kein aktiver Tab",
+    "description": "Title for the notification when there is no active tab for autofill"
+  },
+  "notification_shortcut_autofill_no_active_tab_message": {
+    "message": "Es gibt keinen aktiven Tab zum automatischen Ausfüllen",
+    "description": "Message for the notification when there is no active tab for autofill"
+  },
+  "notification_shortcut_autofill_internal_page_title": {
+    "message": "Browserinterne Seite",
+    "description": "Title for the notification when autofill is attempted on a browser internal page"
+  },
+  "notification_shortcut_autofill_internal_page_message": {
+    "message": "Die automatische Ausfüllfunktion ist hier leider nicht verfügbar",
+    "description": "Message shown when autofill isn't supported on browser internal pages"
+  },
+  "notification_settings_save_success": {
+    "message": "Änderungen wurde erfolgreich gespeichert",
+    "description": "Notification shown when settings are saved successfully"
+  },
+  "notification_idle_lock_premium_only": {
+    "message": "\"Nur bei Neustart“ ist eine Premium-Funktion. Hol dir den Unlimited Plan in der App.",
+    "description": "Notification message when the idle lock feature is unlimited plan only"
+  },
+  "notification_test_title": {
+    "message": "2FAS Pass",
+    "description": "Title for a test notification"
+  },
+  "notification_test_message": {
+    "message": "Dies ist eine Test-Benachrichtigung",
+    "description": "Message for a test notification"
+  },
+  "notification_shortcut_autofill_no_username_and_password_title": {
+    "message": "Automatisches Ausfüllen nicht möglich",
+    "description": "Title for the notification when no username and password are found"
+  },
+  "notification_shortcut_autofill_no_username_and_password_message": {
+    "message": "Kein Benutzername oder Passwort gefunden",
+    "description": "Message for the notification when no username and password are found"
+  },
+  "notification_extension_name_update_success": {
+    "message": "Der Erweiterungsname wurde aktualisiert",
+    "description": "Notification message when the extension name is successfully updated"
+  },
+  "notification_uri_copied": {
+    "message": "URI wurde in die Zwischenablage kopiert",
+    "description": "Notification message when the URI is successfully copied to the clipboard"
+  },
+  "notification_error_message_copied": {
+    "message": "Fehlermeldung in die Zwischenablage kopiert",
+    "description": "Notification message when the error message is successfully copied to the clipboard"
+  },
+  "autofill_cross_domain_warning_popup": {
+    "message": "Diese Seite enthält Formulare von externen Domains:\nDOMAINS\n\nMöchtest du Daten in diesen Frames automatisch ausfüllen?",
+    "description": "Warning shown in confirm dialog when autofill is attempted on a page with cross-domain iframes containing inputs"
+  },
+  "notification_autofill_partial_title": {
+    "message": "Teilweise automatisches Ausfüllen",
+    "description": "Title for the notification when autofill only partially succeeded"
+  },
+  "notification_autofill_failed_open_popup": {
+    "message": "Öffne das Pop-up, um unausgefüllte Details manuell einzugeben.",
+    "description": "Message for the notification when autofill failed, suggesting to open popup for manual copy"
+  }
+}

@@ -17,12 +17,12 @@ const BtnIcon = lazy(() => import('@/assets/popup-window/toast-btn.svg?react'));
 function ToastCloseButton ({ closeToast }) {
   const btnRef = useRef(null);
 
-  useEffect(() => {
+  useEffect(function activateToastCloseButton() {
     const timeoutID = setTimeout(() => {
       btnRef.current.classList.add('active');
     }, 100);
 
-    return () => {
+    return function cancelToastCloseActivation() {
       clearTimeout(timeoutID);
     };
   }, []);

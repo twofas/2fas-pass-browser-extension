@@ -60,11 +60,15 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
       }
 
       case REQUEST_ACTIONS.AUTOFILL: {
+        logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'ContentScript - autofill triggered', { topFrame: isTopFrame });
+
         autofill(request)
           .then(autofillStatus => {
+            logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'ContentScript - autofill result', { status: autofillStatus?.status });
             sendResponse(autofillStatus);
           })
           .catch(error => {
+            logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'ContentScript - autofill failed', { errorName: error?.name });
             sendResponse({ status: 'error', message: 'Autofill failed', error });
           });
 

@@ -8,19 +8,8 @@ import S from './styles/Item.module.scss';
 
 import { useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import { useIsItemOpen, useItemMenuActions } from '../../context/ItemListContext';
-
-// Models
-import LoginItemView from './modelsViews/LoginItemView';
-import SecureNoteItemView from './modelsViews/SecureNoteItemView';
-import PaymentCardItemView from './modelsViews/PaymentCardItemView';
-import WifiItemView from './modelsViews/WifiItemView';
-
-const MODEL_COMPONENTS = {
-  login: LoginItemView,
-  secureNote: SecureNoteItemView,
-  paymentCard: PaymentCardItemView,
-  wifi: WifiItemView
-};
+import { getModelClass } from '@/models/itemModels';
+import LoadingItemView from './components/LoadingItemView';
 
 function Item (props) {
   const itemId = props.data?.id;
@@ -75,7 +64,7 @@ function Item (props) {
     [more, props.loading]
   );
 
-  useEffect(() => {
+  useEffect(function clearHoverWhenMenuClosesWithoutHover() {
     if (!more && !isHoveredRef.current) {
       if (ref.current) {
         ref.current.classList.remove(S.hover);
@@ -91,11 +80,7 @@ function Item (props) {
     return null;
   }
 
-  const ModelComponent = props.loading ? LoginItemView : MODEL_COMPONENTS[props.data.contentType];
-
-  if (!ModelComponent) {
-    return null;
-  }
+  const ModelComponent = getModelClass(props.data?.contentType)?.ItemComponent || LoadingItemView;
 
   return (
     <div

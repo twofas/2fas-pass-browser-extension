@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { sendMessageToAllFrames, sendMessageToTab, openPopup } from '@/partials/functions';
+import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
 
 /**
@@ -30,6 +31,8 @@ const storeAutofillFailureData = async (tabId, closeData) => {
     hkdfSaltAB: closeData.hkdfSaltAB,
     sessionKeyForHKDF: closeData.sessionKeyForHKDF
   }));
+
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleAutofillWithPermission (storeAutofillFailureData)');
 };
 
 /**
@@ -94,6 +97,7 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   if (unknownDomains.length > 0) {
     storedData.trustedDomains = crossDomainAllowedDomains;
     await storage.setItem(storageKey, JSON.stringify(storedData));
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleAutofillWithPermission (trustedDomains update)');
 
     try {
       const tab = await browser.tabs.get(tabId);
@@ -123,11 +127,22 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   actionData.iframePermissionGranted = true;
   actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
 
+  try {
+    const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
+
+    if (!reinjected) {
+      logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'handleAutofillWithPermission - re-injection did not verify all frames', { tabId });
+    }
+  } catch (e) {
+    await CatchError(e);
+  }
+
   let response;
 
   try {
     response = await sendMessageToAllFrames(tabId, actionData);
   } catch (e) {
+    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'handleAutofillWithPermission - sendMessageToAllFrames threw', { tabId, errorMessage: e?.message });
     await CatchError(e);
     await storage.removeItem(storageKey);
     await storeAutofillFailureData(tabId, closeData);

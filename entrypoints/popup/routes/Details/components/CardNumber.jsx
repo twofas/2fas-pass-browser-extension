@@ -139,7 +139,7 @@ function CardNumber (props) {
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(function syncCardNumberValueToForm() {
     const currentCardNumber = getCardNumberValue();
 
     if (currentCardNumber !== previousCardNumberRef.current) {
@@ -149,13 +149,13 @@ function CardNumber (props) {
     }
   }, [localDecryptedCardNumber, form, setData]);
 
-  useEffect(() => {
+  useEffect(function restoreEditedCardNumberFromStore() {
     if (data?.cardNumberEditable && isText(data?.editedCardNumber) && localDecryptedCardNumber === null) {
       setLocalDecryptedCardNumber(data.editedCardNumber);
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(function decryptCardNumberWhenRevealedOrEditing() {
     const needsDecryption = (data?.cardNumberEditable || data?.cardNumberVisible) &&
                            localDecryptedCardNumber === null &&
                            !isDecrypting &&
@@ -166,7 +166,7 @@ function CardNumber (props) {
     }
   }, [data?.cardNumberEditable, data?.cardNumberVisible, localDecryptedCardNumber, isDecrypting, itemInstance?.cardNumberExists, decryptCardNumberOnDemand]);
 
-  useEffect(() => {
+  useEffect(function focusCardNumberMaskWhenRequested() {
     if (shouldFocusInputMask && data?.cardNumberEditable && isFocused) {
       setTimeout(focusInputMask, 0);
     }

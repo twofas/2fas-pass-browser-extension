@@ -52,4 +52,5 @@ export const REQUEST_ACTIONS = Object.freeze({
   SHARE_LINK_STATE_CHANGE: 'shareLinkStateChange', // background → share content (configured/locked state change)
   CLEAR_SAVE_PROMPT_STATE: 'clearSavePromptState', // popup → background (clear all save prompt in-memory state)
   DISMISS_SAVE_PROMPT: 'dismissSavePrompt', // background → content (dismiss visible save prompt overlay)
+  LOG_EVENT: 'logEvent', // content → background (write log entry to IDB via background)
 });

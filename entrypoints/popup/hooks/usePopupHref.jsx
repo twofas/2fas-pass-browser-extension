@@ -25,7 +25,7 @@ const usePopupHref = (hydrationComplete = false) => {
   const changeCountRef = useRef(0);
   const initialHrefLengthRef = useRef(null);
 
-  useEffect(() => {
+  useEffect(function syncPopupHrefWithLocation() {
     if (!hydrationComplete) {
       return;
     }
@@ -57,7 +57,7 @@ const usePopupHref = (hydrationComplete = false) => {
         setHref(pathname);
       }
 
-      if (isUserNavigation) {
+      if (isUserNavigation && !isBackNavigation) {
         setScrollPosition(pathname, 0);
       }
     }

@@ -1,0 +1,141 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+.storage-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+.storage-toolbar {
+  align-items: center;
+  background-color: var(--primary-box-bg);
+  border: 1px solid var(--primary-box-stroke);
+  border-radius: 6px;
+  display: flex;
+  gap: 12px;
+  padding: 10px 12px;
+}
+
+.storage-search {
+  background-color: var(--primary-bg);
+  border: 1px solid var(--object-stroke);
+  border-radius: 4px;
+  color: var(--primary-text);
+  flex: 1;
+  font-size: 12px;
+  padding: 5px 10px;
+}
+
+.storage-stats {
+  color: var(--secondary-text);
+  font-family: monospace;
+  font-size: 11px;
+}
+
+.storage-button {
+  appearance: none;
+  background-color: var(--primary-color);
+  border: 0;
+  border-radius: 4px;
+  color: var(--tertiary-text);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 10px;
+
+  &:hover,
+  &:focus {
+    background-color: var(--focus);
+  }
+}
+
+.storage-note {
+  color: var(--secondary-text);
+  font-size: 11px;
+  font-style: italic;
+  padding: 0 4px;
+}
+
+.storage-list {
+  background-color: var(--primary-box-bg);
+  border: 1px solid var(--primary-box-stroke);
+  border-radius: 6px;
+  flex: 1;
+  font-family: monospace;
+  font-size: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.storage-empty {
+  color: var(--secondary-text);
+  padding: 24px;
+  text-align: center;
+}
+
+.storage-entry {
+  border-bottom: 1px solid var(--divider);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.storage-entry-header {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  padding: 8px;
+  transition: background-color .15s ease;
+
+  &:hover {
+    background-color: var(--hover-color);
+  }
+}
+
+.storage-entry-key {
+  color: var(--primary-color);
+  flex: 1;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.storage-entry-arrow {
+  color: var(--secondary-text);
+}
+
+.storage-entry-delete {
+  appearance: none;
+  background-color: transparent;
+  border: 1px solid var(--error);
+  border-radius: 4px;
+  color: var(--error);
+  cursor: pointer;
+  font-size: 10px;
+  padding: 3px 8px;
+
+  &:hover,
+  &:focus {
+    background-color: var(--error);
+    color: var(--tertiary-text);
+  }
+}
+
+.storage-entry-value {
+  background-color: var(--primary-bg);
+  color: var(--primary-text);
+  font-size: 11px;
+  margin: 0;
+  max-height: 400px;
+  overflow: auto;
+  padding: 8px 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}

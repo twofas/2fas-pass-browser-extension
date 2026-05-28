@@ -10,7 +10,7 @@ export const useWS = () => {
   const [wsActive, setWsActive] = useState(false);
   const [connectView, setConnectView] = useState(null);
 
-  useEffect(() => {
+  useEffect(function subscribeToWsState() {
     browser.runtime.sendMessage({
       action: REQUEST_ACTIONS.WS_GET_STATE,
       target: REQUEST_TARGETS.BACKGROUND_WS
@@ -33,7 +33,7 @@ export const useWS = () => {
 
     browser.runtime.onMessage.addListener(handler);
 
-    return () => {
+    return function unsubscribeFromWsState() {
       browser.runtime.onMessage.removeListener(handler);
     };
   }, []);

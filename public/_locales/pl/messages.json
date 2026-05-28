@@ -711,6 +711,30 @@
     "message": "Zaakceptuj",
     "description": "Accept button text in the cross-domain dialog"
   },
+  "devpanel_title": {
+    "message": "Panel deweloperski 2FAS Pass",
+    "description": "Dev panel page title"
+  },
+  "devpanel_tab_logs": {
+    "message": "Logi",
+    "description": "Dev panel logs tab label"
+  },
+  "devpanel_tab_storage_local": {
+    "message": "Pamięć lokalna",
+    "description": "Dev panel storage local tab label"
+  },
+  "devpanel_tab_storage_session": {
+    "message": "Pamięć sesji",
+    "description": "Dev panel storage session tab label"
+  },
+  "devpanel_tab_websocket": {
+    "message": "WebSocket",
+    "description": "Dev panel websocket tab label"
+  },
+  "devpanel_open_in_new_tab": {
+    "message": "Otwórz panel deweloperski",
+    "description": "BottomBar tooltip for opening dev panel in new tab"
+  },
   "install_please_pin_extension": {
     "message": "Przypnij te rozszerzenie do paska zadań.",
     "description": "Prompt asking the user to pin the browser extension to the toolbar"
@@ -1280,7 +1304,7 @@
     "description": "Title for the copy error message button on the error fallback screen"
   },
   "fetch_push_header": {
-    "message": "Sprawdź powiadomienie push 2FAS Pass na swoim urządzeniu mobilnym.",
+    "message": "Sprawdź powiadomienie push 2FAS Pass w aplikacji mobilnej.",
     "description": "Header prompting the user to check their device for a push notification"
   },
   "fetch_push_subheader": {
@@ -1695,6 +1719,38 @@
     "message": "Rozłącz",
     "description": "Confirm button text in the disconnect trusted device confirmation dialog"
   },
+  "settings_logs_menu_link": {
+    "message": "Wyślij logi",
+    "description": "Settings About menu link to diagnostic logs page"
+  },
+  "settings_logs_title": {
+    "message": "Logi diagnostyczne",
+    "description": "Title of the diagnostic logs settings page"
+  },
+  "settings_logs_description": {
+    "message": "Logi rejestrują zdarzenia aplikacji, aby pomóc w analizie problemów. Logi nigdy nie zawierają haseł, notatek ani innej zawartości elementów — co najwyżej zawierają identyfikatory elementów.\n\nLogi diagnostyczne pomagają zidentyfikować i rozwiązać problemy związane z rozszerzeniem.\nLogi nigdy nie zawierają haseł, notatek ani innych elementów przechowywanych w sejfie.\nZawierają wyłącznie informacje techniczne niezbędne do rozwiązywania problemów i mogą zawierać identyfikatory elementów.",
+    "description": "Explanation of what diagnostic logs contain and their purpose"
+  },
+  "settings_logs_send_to_team": {
+    "message": "W razie jakichkolwiek problemów zespół 2FAS może poprosić Cię o wyeksportowanie i udostępnienie logów.",
+    "description": "Call to action asking the user to download logs and send them to the 2FAS Team when issues occur"
+  },
+  "settings_logs_download_button": {
+    "message": "Eksportuj logi",
+    "description": "Button to export current diagnostic logs as a JSON file"
+  },
+  "settings_logs_download_success": {
+    "message": "Logi wyeksportowane",
+    "description": "Toast shown when logs are exported successfully"
+  },
+  "settings_logs_download_error": {
+    "message": "Nie udało się wyeksportować logów",
+    "description": "Toast shown when log export fails"
+  },
+  "settings_logs_empty_toast": {
+    "message": "Brak logów do wyeksportowania",
+    "description": "Toast shown when user tries to export but there are no logs"
+  },
   "settings_save_prompt_header": {
     "message": "Zapisywanie elementów",
     "description": "Header for the save login prompt settings"
@@ -2012,7 +2068,7 @@
     "description": "Section title for share configuration options"
   },
   "share_expiration_title": {
-    "message": "Czas wygaśnięcia linku",
+    "message": "Wygaśnięcie linku",
     "description": "Label for the link expiration time setting"
   },
   "share_expiration_desc": {

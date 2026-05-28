@@ -94,7 +94,7 @@ function WifiPassword (props) {
     return '';
   };
 
-  useEffect(() => {
+  useEffect(function syncDecryptedWifiPasswordToForm() {
     const currentPasswordValue = getPasswordValue();
 
     if (currentPasswordValue !== previousPasswordValueRef.current) {
@@ -103,7 +103,7 @@ function WifiPassword (props) {
     }
   }, [localDecryptedPassword, form]);
 
-  useEffect(() => {
+  useEffect(function decryptWifiPasswordWhenRevealedOrEditing() {
     const needsDecryption = (data?.wifiPasswordVisible || data?.wifiPasswordEditable) &&
                            localDecryptedPassword === null &&
                            !isDecrypting &&
@@ -114,7 +114,7 @@ function WifiPassword (props) {
     }
   }, [data?.wifiPasswordVisible, data?.wifiPasswordEditable, localDecryptedPassword, isDecrypting, itemInstance?.sifExists, decryptPasswordOnDemand]);
 
-  useEffect(() => {
+  useEffect(function focusWifiPasswordInputWhenEditable() {
     if (data?.wifiPasswordEditable && inputRef.current && !hasFocusedRef.current) {
       hasFocusedRef.current = true;
       inputRef.current.focus();
@@ -132,7 +132,7 @@ function WifiPassword (props) {
     }
   }, [data?.wifiPasswordEditable]);
 
-  useEffect(() => {
+  useEffect(function syncLatestWifiItemRef() {
     latestItemRef.current = data.item;
   }, [data.item]);
 
@@ -239,7 +239,7 @@ function WifiPassword (props) {
     }
   }, [setItem]);
 
-  useEffect(() => {
+  useEffect(function flushWifiPasswordUpdateOnUnloadOrHide() {
     const flushPendingUpdate = () => {
       if (updateTimeoutRef.current) {
         clearTimeout(updateTimeoutRef.current);
@@ -264,7 +264,7 @@ function WifiPassword (props) {
     window.addEventListener('beforeunload', handleBeforeUnload);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    return () => {
+    return function teardownWifiPasswordUpdateFlushHandlers() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       flushPendingUpdate();

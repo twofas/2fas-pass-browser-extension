@@ -1,0 +1,202 @@
+// SPDX-License-Identifier: BUSL-1.1
+//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
+
+import S from '@/entrypoints/popup/routes/Details/Details.module.scss';
+import bS from '@/partials/global-styles/buttons.module.scss';
+import { useNavigate } from 'react-router';
+import { useState, lazy } from 'react';
+import GenerateURLs from '@/entrypoints/popup/routes/Details/functions/generateURLs';
+import getEditableAmount from './functions/getEditableAmount';
+import { Form } from 'react-final-form';
+import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
+import Login from '@/models/itemModels/Login';
+import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
+import { UriTempIdsProvider } from '@/entrypoints/popup/routes/Details/context/UriTempIdsContext';
+import { useI18n } from '@/partials/context/I18nContext';
+
+const Name = lazy(() => import('@/entrypoints/popup/routes/Details/components/Name'));
+const Username = lazy(() => import('@/entrypoints/popup/routes/Details/components/Username'));
+const Password = lazy(() => import('@/entrypoints/popup/routes/Details/components/Password'));
+const SecurityType = lazy(() => import('@/entrypoints/popup/routes/Details/components/SecurityType'));
+const Tags = lazy(() => import('@/entrypoints/popup/routes/Details/components/Tags'));
+const Notes = lazy(() => import('@/entrypoints/popup/routes/Details/components/Notes'));
+const DangerZone = lazy(() => import('@/entrypoints/popup/routes/Details/components/DangerZone'));
+
+/**
+* Function to render the details component for Login.
+* @param {Object} props - The component props.
+* @return {JSX.Element} The rendered component.
+*/
+function LoginDetailsView(props) {
+  const { getMessage } = useI18n();
+  const { data } = usePopupState();
+  const [inputError, setInputError] = useState(undefined);
+
+  const navigate = useNavigate();
+
+  const validate = values => {
+    const errors = {};
+
+    if (!values?.content?.name || values?.content?.name?.length <= 0) {
+      errors.name = getMessage('details_name_required');
+    } else if (values?.content?.name?.length > 255) {
+      errors.name = getMessage('details_name_max_length');
+    } 
+    
+    if (values?.content?.username && values?.content?.username?.length > 255) {
+      errors.username = getMessage('details_username_max_length');
+    }
+
+    const errorKeys = Object.keys(errors);
+
+    if (errorKeys.length > 0) {
+      showToast(errors[errorKeys[0]], 'error');
+      setInputError(errorKeys[0]);
+      return false;
+    }
+
+    return true;
+  };
+
+  const onSubmit = async e => {
+    setInputError(undefined);
+
+    if (!validate(e)) {
+      return false;
+    }
+
+    const stateData = {
+      contentType: Login.contentType,
+      deviceId: e.deviceId,
+      itemId: e.id,
+      vaultId: e.vaultId,
+      content: {}
+    };
+
+    if (props.originalItem?.isT3orT2WithSif) {
+      stateData.sifFetched = true;
+    }
+
+    if (data.nameEditable) {
+      stateData.content.name = e?.content?.name ? e.content.name : '';
+    }
+
+    if (data.usernameEditable) {
+      if (data.usernameMobile) {
+        stateData.content.username = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
+      } else {
+        stateData.content.username = { value: e?.content?.username ? e.content.username : '', action: REQUEST_STRING_ACTIONS.SET };
+      }
+    }
+
+    if (data.passwordEditable) {
+      if (data.passwordMobile) {
+        stateData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
+      } else {
+        stateData.content.s_password = {
+          value: data.editedSif || '',
+          action: REQUEST_STRING_ACTIONS.SET
+        };
+      }
+    }
+
+    const hasEditedUris = data?.domainsEditable ? Object.values(data.domainsEditable).some(v => v === true) : false;
+    const hasNewUris = e?.content?.uris?.some(uri => uri?.new);
+    const hasRemovedUris = (data?.urisRemoved || 0) > 0;
+
+    const originalUrisCount = props.originalItem?.content?.uris?.length || 0;
+    const currentUrisCount = e?.content?.uris?.length || 0;
+    const urisCountChanged = originalUrisCount !== currentUrisCount;
+
+    const hasUriChanges = hasEditedUris || hasNewUris || hasRemovedUris || urisCountChanged;
+
+    if (hasUriChanges) {
+      const processedUris = (e.content.uris || []).map(uri => {
+        return {
+          text: uri?.text ? uri.text : '',
+          matcher: uri?.matcher
+        };
+      });
+
+      e.content.uris = processedUris;
+      stateData.content.uris = processedUris;
+    }
+
+    if (data.tierEditable) {
+      if (props.originalItem?.securityType !== e.securityType) {
+        stateData.securityType = e.securityType;
+      }
+    }
+
+    if (data.tagsEditable) {
+      stateData.tags = e.tags || [];
+    }
+
+    if (data.notesEditable) {
+      stateData.content.notes = e?.content?.notes ? e.content.notes : '';
+    }
+
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'LoginDetailsView - submit update', {
+      itemId: data?.item?.id,
+      deviceId: data?.item?.deviceId,
+      vaultId: data?.item?.vaultId
+    });
+
+    return navigate('/fetch', {
+      state: {
+        action: PULL_REQUEST_TYPES.UPDATE_DATA,
+        from: 'details',
+        data: stateData
+      }
+    });
+  };
+
+  return (
+    <UriTempIdsProvider initialUris={data.item.content?.uris}>
+      <Form
+        onSubmit={onSubmit}
+        initialValues={data.item}
+        render={({ handleSubmit, form, submitting }) => (
+          <form onSubmit={handleSubmit}>
+            <Name
+              key={`name-${data.item.id}`}
+              formData={{ inputError }}
+            />
+            <Username
+              key={`username-${data.item.id}`}
+              formData={{ inputError }}
+            />
+            <Password
+              key={`password-${data.item.id}`}
+              formData={{ form, originalItem: props.originalItem }}
+              sifDecryptError={data.sifDecryptError}
+            />
+            <GenerateURLs formData={{ inputError }} />
+            <SecurityType key={`security-type-${data.item.id}`} />
+            <Tags key={`tags-${data.item.id}`} />
+            <Notes key={`notes-${data.item.id}`} />
+            <div className={S.detailsButton}>
+              <button
+                type="submit"
+                className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
+                disabled={(getEditableAmount().amount <= 0 || submitting) ? 'disabled' : ''}
+              >
+                {getMessage('update')}{getEditableAmount().text}
+              </button>
+            </div>
+
+            <DangerZone
+              key={`danger-zone-${data.item.id}`}
+              formData={{ submitting }}
+            />
+          </form>
+        )}
+      />
+    </UriTempIdsProvider>
+  );
+}
+
+export default LoginDetailsView;

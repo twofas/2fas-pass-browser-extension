@@ -19,7 +19,7 @@ const PushNotification = ({ fetchState, description }) => {
   const [loaded, setLoaded] = useState(false);
   const PushNotificationComponent = useRef(null);
 
-  useEffect(() => {
+  useEffect(function lazyLoadPushNotificationVariant() {
     if (PushNotificationComponent.current) {
       return false;
     }
@@ -30,7 +30,7 @@ const PushNotification = ({ fetchState, description }) => {
       import('./default.jsx').then(module => { PushNotificationComponent.current = module.default; setLoaded(true); });
     }
 
-    return () => {
+    return function clearPushNotificationComponent() {
       PushNotificationComponent.current = null;
     };
   }, [fetchState]);

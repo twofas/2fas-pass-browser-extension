@@ -13,8 +13,14 @@ const onWsMessage = (request, sender, sendResponse) => {
       return false;
     }
 
+    if (request.action !== REQUEST_ACTIONS.WS_GET_STATE) {
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'WsRouter - request', { action: request.action });
+    }
+
     switch (request.action) {
       case REQUEST_ACTIONS.WS_CONNECT_QR: {
+        logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'WsRouter - startConnectQR');
+
         startConnectQR()
           .then(result => { sendResponse(result); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
@@ -23,6 +29,8 @@ const onWsMessage = (request, sender, sendResponse) => {
       }
 
       case REQUEST_ACTIONS.WS_CONNECT_PUSH: {
+        logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'WsRouter - startConnectPush', { deviceId: request.deviceId });
+
         startConnectPush(request.deviceId)
           .then(result => { sendResponse(result); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
@@ -31,6 +39,8 @@ const onWsMessage = (request, sender, sendResponse) => {
       }
 
       case REQUEST_ACTIONS.WS_FETCH: {
+        logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'WsRouter - startFetch', { fetchAction: request.fetchAction, from: request.from });
+
         startFetch(request.fetchAction, request.fetchData, request.from)
           .then(result => { sendResponse(result); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
@@ -39,6 +49,8 @@ const onWsMessage = (request, sender, sendResponse) => {
       }
 
       case REQUEST_ACTIONS.WS_CANCEL: {
+        logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'WsRouter - cancelCurrentAction');
+        
         cancelCurrentAction()
           .then(result => { sendResponse(result); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });

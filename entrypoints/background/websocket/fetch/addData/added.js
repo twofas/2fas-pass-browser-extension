@@ -95,6 +95,8 @@ const newDataAdded = async (info, state, hkdfSaltAB, sessionKeyForHKDF, messageI
     // Send response
     await sendPullRequestCompleted(messageId);
 
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - addData/added');
+
     return {
       returnUrl: '/',
       returnToast: {

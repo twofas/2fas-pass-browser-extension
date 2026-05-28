@@ -96,7 +96,7 @@ export function UriTempIdsProvider ({ initialUris, children }) {
     return urisWithTempIds[index];
   }, [urisWithTempIds]);
 
-  useEffect(() => {
+  useEffect(function syncUriTempIdsToPopupState() {
     setData('urisWithTempIds', urisWithTempIds);
   }, [urisWithTempIds, setData]);
 

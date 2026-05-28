@@ -89,7 +89,7 @@ const useAutofillFailedCheck = () => {
     });
   }, [navigate, location.pathname, location?.state?.action]);
 
-  useEffect(() => {
+  useEffect(function checkAutofillFailureOnMount() {
     checkPendingFailure();
   }, [checkPendingFailure]);
 };

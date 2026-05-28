@@ -58,7 +58,7 @@ function Notes () {
     setItem(updatedItem);
   }, [data.item, setItem]);
 
-  useEffect(() => {
+  useEffect(function focusNotesTextareaWhenEditable() {
     if (data.notesEditable && textareaRef.current && !hasFocusedRef.current) {
       hasFocusedRef.current = true;
       const textarea = textareaRef.current;

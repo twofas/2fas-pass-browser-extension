@@ -48,7 +48,7 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
     scrollMargin
   });
 
-  useLayoutEffect(() => {
+  useLayoutEffect(function findScrollableAncestor() {
     if (!listRef.current || scrollElement) {
       return;
     }
@@ -60,7 +60,7 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
     }
   }, [scrollElement]);
 
-  useLayoutEffect(() => {
+  useLayoutEffect(function recalculateScrollMarginOnResize() {
     if (!listRef.current || !scrollElement) {
       return;
     }
@@ -86,7 +86,9 @@ const SafariViewportList = ({ items, children, overscan = 10, className }) => {
       element = element.parentElement;
     }
 
-    return () => resizeObserver.disconnect();
+    return function disconnectScrollMarginObserver() {
+      resizeObserver.disconnect();
+    };
   }, [scrollElement]);
 
   const virtualItems = virtualizer.getVirtualItems();

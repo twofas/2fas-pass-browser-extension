@@ -16,7 +16,7 @@ const ConnectionError = ({ fetchState, errorText }) => {
   const [loaded, setLoaded] = useState(false);
   const ConnectionErrorComponent = useRef(null);
 
-  useEffect(() => {
+  useEffect(function lazyLoadConnectionErrorVariant() {
     if (ConnectionErrorComponent.current) {
       return false;
     }
@@ -27,7 +27,7 @@ const ConnectionError = ({ fetchState, errorText }) => {
       import('./default.jsx').then(module => { ConnectionErrorComponent.current = module.default; setLoaded(true); });
     }
 
-    return () => {
+    return function clearConnectionErrorComponent() {
       ConnectionErrorComponent.current = null;
     };
   }, [fetchState]);

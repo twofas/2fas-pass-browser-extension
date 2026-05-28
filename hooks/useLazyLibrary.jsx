@@ -19,7 +19,7 @@ const useLazyLibrary = (importFn, exportName = 'default') => {
   const [error, setError] = useState(null);
   const loadedRef = useRef(false);
 
-  useEffect(() => {
+  useEffect(function loadLazyLibrary() {
     if (loadedRef.current) {
       return;
     }

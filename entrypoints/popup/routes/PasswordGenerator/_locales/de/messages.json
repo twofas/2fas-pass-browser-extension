@@ -1,0 +1,42 @@
+{
+  "password_generator_title": {
+    "message": "Passwortgenerator",
+    "description": "Title for the password generator page"
+  },
+  "password_generator_characters": {
+    "message": "Zeichen: COUNT",
+    "description": "Label showing the number of characters in password"
+  },
+  "password_generator_include": {
+    "message": "Einschließen",
+    "description": "Label for the include options section"
+  },
+  "password_generator_regenerate": {
+    "message": "Passwort generieren",
+    "description": "Title for the regenerate password button"
+  },
+  "password_generator_uppercase": {
+    "message": "Großgeschriebene Buchstaben",
+    "description": "Checkbox label for including uppercase letters"
+  },
+  "password_generator_numbers": {
+    "message": "Ziffern",
+    "description": "Checkbox label for including numbers"
+  },
+  "password_generator_special_chars": {
+    "message": "Spezielle Zeichen",
+    "description": "Checkbox label for including special characters"
+  },
+  "password_generator_use_password": {
+    "message": "Dieses Passwort nutzen",
+    "description": "Button text to use the generated password"
+  },
+  "password_generator_password_too_short": {
+    "message": "Das Passwort muss mindestens 6 Zeichen lang sein",
+    "description": "Error message when password is too short"
+  },
+  "password_generator_data_error": {
+    "message": "Ein Fehler ist aufgetreten. Gehe zurück und versuche es erneut.",
+    "description": "Error message displayed when there is a problem with the password generator data"
+  }
+}

@@ -21,6 +21,7 @@ const addAutoClearAction = async (deviceId, vaultId, itemId, itemType) => {
   storageClearActions.push({ deviceId, vaultId, itemId, itemType, timestamp: Date.now() });
 
   await storage.setItem('session:autoClearActions', storageClearActions);
+  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - addAutoClearAction');
 };
 
 export default addAutoClearAction;

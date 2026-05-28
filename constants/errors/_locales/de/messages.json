@@ -1,0 +1,78 @@
+{
+  "error_general": {
+    "message": "Es ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+    "description": "Generic error message displayed when an unspecified error occurs"
+  },
+  "error_ext_platform_undefined": {
+    "message": "EXT_PLATFORM ist undefiniert",
+    "description": "Error message displayed when the EXT_PLATFORM variable is not defined"
+  },
+  "error_general_setting": {
+    "message": "Fehler, die Änderungen konnten nicht gespeichert werden",
+    "description": "Generic error message displayed when saving settings fails"
+  },
+  "error_getting_theme_value": {
+    "message": "Fehler beim Abrufen des Design-Werts",
+    "description": "Error message displayed when retrieving the theme value fails"
+  },
+  "error_getting_services_key": {
+    "message": "Fehler beim Abfragen des Serviceschlüssels ",
+    "description": "Error message displayed when retrieving the service key fails"
+  },
+  "error_auto_clear_clipboard_permission_denied": {
+    "message": "Es fehlt die Berechtigung, die Zwischenablage zu lesen. Automatisches Leeren der Zwischenablage wurde deaktiviert.",
+    "description": "Error message displayed when clipboard read permission is denied"
+  },
+  "error_saving_extension_name": {
+    "message": "Fehler! Das Umbenennen der Browser-Erweiterung ist fehlgeschlagen.",
+    "description": "Error message displayed when updating the extension name fails"
+  },
+  "error_uri_copy_failed": {
+    "message": "Fehler beim Kopieren von der URL in die Zwischenablage.",
+    "description": "Error message displayed when copying the URI to the clipboard fails"
+  },
+  "error_autofill_failed": {
+    "message": "Fehler beim automatischen Ausfüllen. Bitte versuche es erneut.",
+    "description": "Error message displayed when the autofill operation fails"
+  },
+  "error_no_response_from_tab": {
+    "message": "Keine Antwort vom Tab",
+    "description": "Error message displayed when there is no response from the browser tab"
+  },
+  "error_unknown_response_from_tab": {
+    "message": "Unbekannte Antwort vom Tab",
+    "description": "Error message displayed when the browser tab returns an unknown response"
+  },
+  "error_storage_capacity_exceeded": {
+    "message": "Datenmenge überschritten. Verwende weniger Daten oder versuche es mit einem anderen Browser.",
+    "description": "Error shown when storage capacity exceeds the limit"
+  },
+  "error_scheme_mismatch": {
+    "message": "Bitte aktualisiere die 2FAS Pass App.",
+    "description": "Error shown when there is a scheme mismatch between the extension and mobile app"
+  },
+  "error_mobile_disconnected": {
+    "message": "Verbindung mit Mobilgerät unterbrochen. Bitte versuche es erneut.",
+    "description": "Error shown when the mobile device disconnects"
+  },
+  "error_timeout": {
+    "message": "Zeitüberschreitung aufgrund von Inaktivität",
+    "description": "Error message displayed when an operation times out due to inactivity"
+  },
+  "error_feature_wrong_data": {
+    "message": "Etwas ist schiefgelaufen. Unser Entwicklerteam arbeitet bereits daran.",
+    "description": "Error message displayed when there is an issue with the shortcut settings"
+  },
+  "error_no_network_connection": {
+    "message": "Keine Internetverbindung. Bitte überprüfe deine Verbindung und versuche es erneut.",
+    "description": "Error message displayed when there is no network connection"
+  },
+  "error_connection_error": {
+    "message": "Verbindungsfehler. Bitte überprüfe deine Internetverbindung und versuche es erneut.",
+    "description": "Error message displayed when a connection error occurs"
+  },
+  "error_error_message_copy_failed": {
+    "message": "Fehler beim Kopieren der Fehlermeldung in die Zwischenablage.",
+    "description": "Error message displayed when copying the error message to the clipboard fails"
+  }
+}
