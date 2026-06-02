@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import sendMessageToAllFrames from '../functions/sendMessageToAllFrames';
+import isInjectionVerified from './isInjectionVerified';
 
 /**
 * Gets the count of injectable frames in a tab.
@@ -122,6 +123,9 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
 
   let attempts = 0;
   const maxAttempts = 30;
+  const stableThreshold = 4;
+  let lastOkCount = -1;
+  let stableIterations = 0;
 
   while (attempts < maxAttempts) {
     try {
@@ -130,18 +134,39 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
 
     if (res) {
       const okResponses = res.filter(frameResponse => frameResponse?.status === 'ok');
-
+      const okCount = okResponses ? okResponses.length : 0;
       const currentFrameCount = await getInjectableFrameCount(tabID);
 
       if (currentFrameCount > expectedFrameCount) {
-        expectedFrameCount = currentFrameCount;
-
         try {
           await injectScript();
         } catch {}
       }
 
-      if (okResponses && okResponses.length >= expectedFrameCount) {
+      expectedFrameCount = currentFrameCount;
+
+      if (okCount === lastOkCount) {
+        stableIterations++;
+      } else {
+        stableIterations = 0;
+        lastOkCount = okCount;
+      }
+
+      let topFrameReady = false;
+
+      if (stableIterations >= stableThreshold && okCount < expectedFrameCount) {
+        try {
+          const topRes = await browser.tabs.sendMessage(
+            tabID,
+            { action: REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK, target: type },
+            { frameId: 0 }
+          );
+
+          topFrameReady = topRes?.status === 'ok';
+        } catch {}
+      }
+
+      if (isInjectionVerified({ okCount, frameCount: expectedFrameCount, topFrameReady, stableIterations, stableThreshold })) {
         injected = true;
         break;
       }
