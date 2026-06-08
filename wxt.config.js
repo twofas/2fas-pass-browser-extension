@@ -176,11 +176,20 @@ export default defineConfig({
   },
   hooks: {
     'entrypoints:resolved': (wxt, entrypoints) => {
-      if (wxt?.config?.mode === 'production' && Array.isArray(entrypoints)) {
-        for (let i = entrypoints.length - 1; i >= 0; i--) {
-          if (entrypoints[i]?.name === 'devpanel') {
-            entrypoints.splice(i, 1);
-          }
+      if (!Array.isArray(entrypoints)) {
+        return;
+      }
+
+      const isProduction = wxt?.config?.mode === 'production';
+      const targetBrowser = wxt?.config?.browser;
+
+      for (let i = entrypoints.length - 1; i >= 0; i--) {
+        const name = entrypoints[i]?.name;
+
+        if (isProduction && name === 'devpanel') {
+          entrypoints.splice(i, 1);
+        } else if (name === 'safari-download' && targetBrowser && targetBrowser !== 'safari') {
+          entrypoints.splice(i, 1);
         }
       }
     },

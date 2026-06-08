@@ -30,5 +30,9 @@
   "settings_logs_empty_toast": {
     "message": "Brak logów do wyeksportowania",
     "description": "Toast shown when user tries to export but there are no logs"
+  },
+  "settings_logs_safari_hint": {
+    "message": "Kliknij przycisk poniżej, aby zapisać logi diagnostyczne. Tę kartę możesz potem zamknąć.",
+    "description": "Instruction shown on the Safari download helper tab"
   }
 }

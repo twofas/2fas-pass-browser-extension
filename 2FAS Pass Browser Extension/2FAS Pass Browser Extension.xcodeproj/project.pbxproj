@@ -16,6 +16,7 @@
 		37C447082DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 37C447072DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		37C4470D2DCCE0FF0078764D /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C4470C2DCCE0FF0078764D /* SafariWebExtensionHandler.swift */; };
 		37C4472B2DCCE0FF0078764D /* install.html in Resources */ = {isa = PBXBuildFile; fileRef = 37C447202DCCE0FF0078764D /* install.html */; };
+		5AFAD0E72000000000000002 /* safari-download.html in Resources */ = {isa = PBXBuildFile; fileRef = 5AFAD0E72000000000000001 /* safari-download.html */; };
 		37C4472C2DCCE0FF0078764D /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 37C447212DCCE0FF0078764D /* background.js */; };
 		37C4472D2DCCE0FF0078764D /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 37C447222DCCE0FF0078764D /* popup.html */; };
 		37C4472E2DCCE0FF0078764D /* chunks in Resources */ = {isa = PBXBuildFile; fileRef = 37C447232DCCE0FF0078764D /* chunks */; };
@@ -73,6 +74,7 @@
 		37C4470E2DCCE0FF0078764D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		37C4470F2DCCE0FF0078764D /* _FAS_Pass_Browser_Extension_Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = _FAS_Pass_Browser_Extension_Extension.entitlements; sourceTree = "<group>"; };
 		37C447202DCCE0FF0078764D /* install.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = install.html; path = "../../.output/safari-mv3/install.html"; sourceTree = "<group>"; };
+		5AFAD0E72000000000000001 /* safari-download.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "safari-download.html"; path = "../../.output/safari-mv3/safari-download.html"; sourceTree = "<group>"; };
 		37C447212DCCE0FF0078764D /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = "../../.output/safari-mv3/background.js"; sourceTree = "<group>"; };
 		37C447222DCCE0FF0078764D /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = "../../.output/safari-mv3/popup.html"; sourceTree = "<group>"; };
 		37C447232DCCE0FF0078764D /* chunks */ = {isa = PBXFileReference; lastKnownFileType = folder; name = chunks; path = "../../.output/safari-mv3/chunks"; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				37C447202DCCE0FF0078764D /* install.html */,
+				5AFAD0E72000000000000001 /* safari-download.html */,
 				37C447212DCCE0FF0078764D /* background.js */,
 				37C447222DCCE0FF0078764D /* popup.html */,
 				37C447232DCCE0FF0078764D /* chunks */,
@@ -305,6 +308,7 @@
 				37C447302DCCE0FF0078764D /* icons in Resources */,
 				37C447332DCCE0FF0078764D /* fonts in Resources */,
 				37C4472B2DCCE0FF0078764D /* install.html in Resources */,
+				5AFAD0E72000000000000002 /* safari-download.html in Resources */,
 				37C4472F2DCCE0FF0078764D /* content-scripts in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

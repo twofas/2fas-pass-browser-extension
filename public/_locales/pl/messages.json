@@ -1751,6 +1751,10 @@
     "message": "Brak logów do wyeksportowania",
     "description": "Toast shown when user tries to export but there are no logs"
   },
+  "settings_logs_safari_hint": {
+    "message": "Kliknij przycisk poniżej, aby zapisać logi diagnostyczne. Tę kartę możesz potem zamknąć.",
+    "description": "Instruction shown on the Safari download helper tab"
+  },
   "settings_save_prompt_header": {
     "message": "Zapisywanie elementów",
     "description": "Header for the save login prompt settings"

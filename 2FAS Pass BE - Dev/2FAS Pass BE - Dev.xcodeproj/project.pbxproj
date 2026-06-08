@@ -18,6 +18,7 @@
 		3780B0AE2EE2FD7A00D68A1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3780B06E2EE2FD7A00D68A1E /* Assets.xcassets */; };
 		3780B0B02EE2FD7A00D68A1E /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3780B0702EE2FD7A00D68A1E /* SafariWebExtensionHandler.swift */; };
 		3780B0CE2EE2FD7B00D68A1E /* install.html in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C22EE2FD7B00D68A1E /* install.html */; };
+		5AFAD0E71000000000000002 /* safari-download.html in Resources */ = {isa = PBXBuildFile; fileRef = 5AFAD0E71000000000000001 /* safari-download.html */; };
 		3780B0CF2EE2FD7B00D68A1E /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C32EE2FD7B00D68A1E /* background.js */; };
 		3780B0D02EE2FD7B00D68A1E /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C42EE2FD7B00D68A1E /* popup.html */; };
 		3780B0D12EE2FD7B00D68A1E /* styles in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C52EE2FD7B00D68A1E /* styles */; };
@@ -77,6 +78,7 @@
 		3780B09D2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "2FAS Pass BE - Dev Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3780B0A22EE2FD7A00D68A1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3780B0C22EE2FD7B00D68A1E /* install.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = install.html; path = "../../.output/safari-mv3-dev/install.html"; sourceTree = "<group>"; };
+		5AFAD0E71000000000000001 /* safari-download.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "safari-download.html"; path = "../../.output/safari-mv3-dev/safari-download.html"; sourceTree = "<group>"; };
 		3780B0C32EE2FD7B00D68A1E /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = "../../.output/safari-mv3-dev/background.js"; sourceTree = "<group>"; };
 		3780B0C42EE2FD7B00D68A1E /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = "../../.output/safari-mv3-dev/popup.html"; sourceTree = "<group>"; };
 		3780B0C52EE2FD7B00D68A1E /* styles */ = {isa = PBXFileReference; lastKnownFileType = folder; name = styles; path = "../../.output/safari-mv3-dev/styles"; sourceTree = "<group>"; };
@@ -203,6 +205,7 @@
 			isa = PBXGroup;
 			children = (
 				3780B0C22EE2FD7B00D68A1E /* install.html */,
+				5AFAD0E71000000000000001 /* safari-download.html */,
 				3780B0C32EE2FD7B00D68A1E /* background.js */,
 				3780B0C42EE2FD7B00D68A1E /* popup.html */,
 				3780B0C52EE2FD7B00D68A1E /* styles */,
@@ -330,6 +333,7 @@
 				3780B0D42EE2FD7B00D68A1E /* icons in Resources */,
 				3780B0D92EE2FD7B00D68A1E /* animations in Resources */,
 				3780B0CE2EE2FD7B00D68A1E /* install.html in Resources */,
+				5AFAD0E71000000000000002 /* safari-download.html in Resources */,
 				3780B0D82EE2FD7B00D68A1E /* assets in Resources */,
 				3780B0DB2EE2FD7B00D68A1E /* devpanel.html in Resources */,
 			);
