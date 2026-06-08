@@ -16,7 +16,6 @@
 		37C447082DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 37C447072DCCE0FF0078764D /* 2FAS Pass Browser Extension Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		37C4470D2DCCE0FF0078764D /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C4470C2DCCE0FF0078764D /* SafariWebExtensionHandler.swift */; };
 		37C4472B2DCCE0FF0078764D /* install.html in Resources */ = {isa = PBXBuildFile; fileRef = 37C447202DCCE0FF0078764D /* install.html */; };
-		5AFAD0E72000000000000002 /* safari-download.html in Resources */ = {isa = PBXBuildFile; fileRef = 5AFAD0E72000000000000001 /* safari-download.html */; };
 		37C4472C2DCCE0FF0078764D /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 37C447212DCCE0FF0078764D /* background.js */; };
 		37C4472D2DCCE0FF0078764D /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 37C447222DCCE0FF0078764D /* popup.html */; };
 		37C4472E2DCCE0FF0078764D /* chunks in Resources */ = {isa = PBXBuildFile; fileRef = 37C447232DCCE0FF0078764D /* chunks */; };
@@ -27,6 +26,7 @@
 		37C447332DCCE0FF0078764D /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 37C447282DCCE0FF0078764D /* fonts */; };
 		37C447342DCCE0FF0078764D /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 37C447292DCCE0FF0078764D /* assets */; };
 		37C447352DCCE0FF0078764D /* animations in Resources */ = {isa = PBXBuildFile; fileRef = 37C4472A2DCCE0FF0078764D /* animations */; };
+		5AFAD0E72000000000000002 /* safari-download.html in Resources */ = {isa = PBXBuildFile; fileRef = 5AFAD0E72000000000000001 /* safari-download.html */; };
 		C22FFCD02DDFB01000E84435 /* Montserrat-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C22FFCCD2DDFB01000E84435 /* Montserrat-Bold.ttf */; };
 		C22FFCD12DDFB01000E84435 /* Montserrat-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C22FFCCE2DDFB01000E84435 /* Montserrat-Regular.ttf */; };
 		C22FFCD62DDFB03600E84435 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C22FFCD42DDFB03600E84435 /* Localizable.xcstrings */; };
@@ -74,7 +74,6 @@
 		37C4470E2DCCE0FF0078764D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		37C4470F2DCCE0FF0078764D /* _FAS_Pass_Browser_Extension_Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = _FAS_Pass_Browser_Extension_Extension.entitlements; sourceTree = "<group>"; };
 		37C447202DCCE0FF0078764D /* install.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = install.html; path = "../../.output/safari-mv3/install.html"; sourceTree = "<group>"; };
-		5AFAD0E72000000000000001 /* safari-download.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "safari-download.html"; path = "../../.output/safari-mv3/safari-download.html"; sourceTree = "<group>"; };
 		37C447212DCCE0FF0078764D /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = "../../.output/safari-mv3/background.js"; sourceTree = "<group>"; };
 		37C447222DCCE0FF0078764D /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = "../../.output/safari-mv3/popup.html"; sourceTree = "<group>"; };
 		37C447232DCCE0FF0078764D /* chunks */ = {isa = PBXFileReference; lastKnownFileType = folder; name = chunks; path = "../../.output/safari-mv3/chunks"; sourceTree = "<group>"; };
@@ -85,6 +84,7 @@
 		37C447282DCCE0FF0078764D /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = "../../.output/safari-mv3/fonts"; sourceTree = "<group>"; };
 		37C447292DCCE0FF0078764D /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = "../../.output/safari-mv3/assets"; sourceTree = "<group>"; };
 		37C4472A2DCCE0FF0078764D /* animations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = animations; path = "../../.output/safari-mv3/animations"; sourceTree = "<group>"; };
+		5AFAD0E72000000000000001 /* safari-download.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "safari-download.html"; path = "../../.output/safari-mv3/safari-download.html"; sourceTree = "<group>"; };
 		C22FFCCD2DDFB01000E84435 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Bold.ttf"; sourceTree = "<group>"; };
 		C22FFCCE2DDFB01000E84435 /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Regular.ttf"; sourceTree = "<group>"; };
 		C22FFCD22DDFB03600E84435 /* BrowserExtensionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserExtensionApp.swift; sourceTree = "<group>"; };
@@ -504,7 +504,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
-				MARKETING_VERSION = 1.8.2;
+				MARKETING_VERSION = 1.8.3;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -538,7 +538,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
-				MARKETING_VERSION = 1.8.2;
+				MARKETING_VERSION = 1.8.3;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -577,7 +577,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
-				MARKETING_VERSION = 1.8.2;
+				MARKETING_VERSION = 1.8.3;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -618,7 +618,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.4;
-				MARKETING_VERSION = 1.8.2;
+				MARKETING_VERSION = 1.8.3;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
