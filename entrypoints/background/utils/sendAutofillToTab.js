@@ -4,10 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission, resolveCrossDomainPermissions, saveCrossDomainPreferences } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission, resolveCrossDomainPermissions } from '@/partials/functions';
 import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
+import handleAutofillWithPermission from './handleAutofillWithPermission';
 
 /**
 * Function to send autofill data to a specific tab.
@@ -91,7 +92,6 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     }
   }
 
-  let iframePermissionGranted = true;
   let hasPasswordInAnyFrame = false;
 
   try {
@@ -105,36 +105,59 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     await CatchError(e);
   }
 
-  let crossDomainAllowedDomains = [];
+  const actionData = {
+    action: REQUEST_ACTIONS.AUTOFILL,
+    username: item.content.username,
+    password: encryptedValueB64,
+    target: REQUEST_TARGETS.CONTENT,
+    noPassword,
+    noUsername,
+    cryptoAvailable: cryptoAvailableRes?.cryptoAvailable,
+    iframePermissionGranted: true,
+    crossDomainAllowedDomains: [],
+    hasPasswordInAnyFrame
+  };
+
+  let resolution;
 
   try {
-    const resolution = await resolveCrossDomainPermissions(tabId, 'login', {
+    resolution = await resolveCrossDomainPermissions(tabId, 'login', {
       hasUsername: !noUsername,
       hasPassword: !noPassword
     });
-
-    if (resolution.needsDialog) {
-      const confirmResult = await sendMessageToTab(tabId, {
-        action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
-        target: REQUEST_TARGETS.CONTENT,
-        unknownDomains: resolution.unknownDomains,
-        theme: await storage.getItem('local:theme')
-      });
-
-      if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-        iframePermissionGranted = false;
-      } else {
-        await saveCrossDomainPreferences(confirmResult.domainPreferences);
-        crossDomainAllowedDomains = [...resolution.crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
-      }
-    } else if (resolution.allBlocked) {
-      crossDomainAllowedDomains = [];
-    } else {
-      crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
-    }
   } catch (e) {
     await CatchError(e);
   }
+
+  if (resolution?.needsDialog) {
+    const storageKey = `session:autofillData-${tabId}`;
+
+    try {
+      await storage.setItem(storageKey, JSON.stringify({
+        actionData,
+        closeData: {
+          vaultId,
+          deviceId,
+          itemId,
+          securityType: item.securityType
+        }
+      }));
+
+      const domains = [
+        ...(resolution.trustedDomains || []),
+        ...(resolution.untrustedDomains || []),
+        ...(resolution.unknownDomains || [])
+      ];
+
+      return await handleAutofillWithPermission(tabId, storageKey, domains);
+    } catch (e) {
+      await CatchError(e);
+      await storage.removeItem(storageKey).catch(() => {});
+    }
+  }
+
+  // No dialog needed: fill directly (allBlocked → no cross-domain frames allowed).
+  actionData.crossDomainAllowedDomains = resolution?.allBlocked ? [] : (resolution?.crossDomainAllowedDomains || []);
 
   try {
     const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
@@ -147,20 +170,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   }
 
   try {
-    const autofillMessage = {
-      action: REQUEST_ACTIONS.AUTOFILL,
-      username: item.content.username,
-      password: encryptedValueB64,
-      target: REQUEST_TARGETS.CONTENT,
-      noPassword,
-      noUsername,
-      cryptoAvailable: cryptoAvailableRes?.cryptoAvailable,
-      iframePermissionGranted,
-      crossDomainAllowedDomains,
-      hasPasswordInAnyFrame
-    };
-
-    const response = await sendMessageToAllFrames(tabId, autofillMessage);
+    const response = await sendMessageToAllFrames(tabId, actionData);
 
     const errorResponses = response.filter(frameResponse => frameResponse.status === 'error');
 

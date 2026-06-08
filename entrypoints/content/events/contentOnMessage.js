@@ -16,6 +16,7 @@ import savePrompt, { dismissAllSavePrompts } from '../functions/savePrompt';
 import refreshTheme from '../functions/refreshTheme';
 import refreshLang from '../functions/refreshLang';
 import crossDomainDialog from '../functions/crossDomainDialog';
+import e2eReadAutofillValues from '../functions/e2eReadAutofillValues';
 
 /**
 * Function to handle messages on the content script.
@@ -31,6 +32,14 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
   try {
     if (!request || !request?.action || request?.target !== REQUEST_TARGETS.CONTENT) {
       return false;
+    }
+
+    // DEV-only autofill E2E read seam: runs in EVERY frame (the login form may be in an
+    // iframe), so it is handled before the top-frame-only gate below. Stripped from
+    // production — import.meta.env.DEV is false → the whole branch tree-shakes away.
+    if (import.meta.env.DEV && request.action === REQUEST_ACTIONS.E2E_READ_AUTOFILL_VALUES) {
+      sendResponse(e2eReadAutofillValues());
+      return true;
     }
 
     if (
