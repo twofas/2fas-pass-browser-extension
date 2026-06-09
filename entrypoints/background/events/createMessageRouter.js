@@ -7,6 +7,7 @@
 import onMessage from './onMessage';
 import onPromptMessage from './onPromptMessage';
 import onWsMessage from './onWsMessage';
+import handleE2EMessage from '../devE2E';
 
 const createMessageRouter = ({ migrations, tabsInputData, savePromptActions, tabUpdateData }) => (request, sender, sendResponse) => {
   if (sender.id !== browser.runtime.id) {
@@ -28,6 +29,11 @@ const createMessageRouter = ({ migrations, tabsInputData, savePromptActions, tab
       return onWsMessage(request, sender, sendResponse);
 
     default:
+      // DEV-only autofill E2E harness seam (tests/e2e/autofill). Stripped from prod.
+      if (import.meta.env.DEV && request.target === 'e2e') {
+        return handleE2EMessage(request, sendResponse);
+      }
+
       return false;
   }
 };

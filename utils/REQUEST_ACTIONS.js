@@ -53,4 +53,5 @@ export const REQUEST_ACTIONS = Object.freeze({
   CLEAR_SAVE_PROMPT_STATE: 'clearSavePromptState', // popup → background (clear all save prompt in-memory state)
   DISMISS_SAVE_PROMPT: 'dismissSavePrompt', // background → content (dismiss visible save prompt overlay)
   LOG_EVENT: 'logEvent', // content → background (write log entry to IDB via background)
+  E2E_READ_AUTOFILL_VALUES: 'e2eReadAutofillValues', // content (DEV autofill E2E harness only — handler is import.meta.env.DEV-gated)
 });

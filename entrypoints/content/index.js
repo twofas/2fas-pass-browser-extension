@@ -45,7 +45,7 @@ export default defineContentScript({
       if (isTopFrame() && ctx?.isValid && document.body) {
         const ui = await createShadowRootUi(ctx, {
           position: 'relative',
-          mode: 'closed',
+          mode: import.meta.env.DEV ? 'open' : 'closed', // Closed in production (encapsulation). Open ONLY in DEV builds so the autofill E2E harness (Playwright) can pierce the shadow root to drive UI it must interact with — e.g. accepting the cross-domain trust dialog. Production builds are byte-identical to before (import.meta.env.DEV is false → 'closed').
           name: 'twofas-pass-content',
           onMount: (container, shadow, shadowHost) => {
             const standardStyles = 'position: fixed !important; z-index: 2147483647 !important;';

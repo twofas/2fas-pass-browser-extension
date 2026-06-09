@@ -126,14 +126,17 @@ const trimIfNeeded = async (db, currentBytes) => {
   const tx = db.transaction([LOGGER_CONSTANTS.IDB.STORE_LOGS, LOGGER_CONSTANTS.IDB.STORE_META], 'readwrite');
   const logsStore = tx.objectStore(LOGGER_CONSTANTS.IDB.STORE_LOGS);
   const metaStore = tx.objectStore(LOGGER_CONSTANTS.IDB.STORE_META);
-  const tsIndex = logsStore.index('by-t');
+  // Fall back to the store itself when the `by-t` index is missing (legacy
+  // schema drift). The store's autoIncrement key (`i`) is insertion order,
+  // which is chronological, so the oldest entries are still trimmed first.
+  const trimSource = logsStore.indexNames.contains('by-t') ? logsStore.index('by-t') : logsStore;
 
   let removedBytes = 0;
   let bytes = currentBytes;
   const targetBytes = LOGGER_CONSTANTS.MAX_BYTES - LOGGER_CONSTANTS.TRIM_BATCH_BYTES;
 
   await new Promise((resolve, reject) => {
-    const cursorReq = tsIndex.openCursor();
+    const cursorReq = trimSource.openCursor();
 
     cursorReq.onsuccess = e => {
       const cursor = e.target.result;
@@ -220,12 +223,16 @@ export const readAllLogs = async () => {
 
   const tx = db.transaction([LOGGER_CONSTANTS.IDB.STORE_LOGS], 'readonly');
   const store = tx.objectStore(LOGGER_CONSTANTS.IDB.STORE_LOGS);
-  const index = store.index('by-t');
+  // Fall back to the store itself when the `by-t` index is missing (legacy
+  // schema drift) and sort by timestamp afterwards, so export order matches
+  // the index-ordered path.
+  const hasTimeIndex = store.indexNames.contains('by-t');
+  const source = hasTimeIndex ? store.index('by-t') : store;
 
   const out = [];
 
   await new Promise((resolve, reject) => {
-    const cursorReq = index.openCursor();
+    const cursorReq = source.openCursor();
 
     cursorReq.onsuccess = e => {
       const cursor = e.target.result;
@@ -241,6 +248,10 @@ export const readAllLogs = async () => {
 
     cursorReq.onerror = () => reject(cursorReq.error);
   });
+
+  if (!hasTimeIndex) {
+    out.sort((a, b) => (a.t || 0) - (b.t || 0));
+  }
 
   return out;
 };

@@ -1751,6 +1751,10 @@
     "message": "No diagnostic logs to export yet",
     "description": "Toast shown when user tries to export but there are no logs"
   },
+  "settings_logs_safari_hint": {
+    "message": "Click the button below to save your diagnostic logs. You can close this tab afterwards.",
+    "description": "Instruction shown on the Safari download helper tab"
+  },
   "settings_save_prompt_header": {
     "message": "\"Save Item\" prompt",
     "description": "Header for the save login prompt settings"

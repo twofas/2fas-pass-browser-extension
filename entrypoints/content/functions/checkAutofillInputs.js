@@ -4,20 +4,15 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getPasswordInputs from '@/partials/inputFunctions/getPasswordInputs';
-import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
+import getLoginInputs from './autofillFunctions/getLoginInputs';
 
 /**
 * Function to check and set autofill inputs.
 * @return {{canAutofillPassword: boolean, canAutofillUsername: boolean, passwordInputsCount: number, usernameInputsCount: number}} Autofill capability status.
 */
 const checkAutofillInputs = () => {
-  const passwordInputs = getPasswordInputs();
-  const passwordForms = passwordInputs
-    .map(input => input.closest('form'))
-    .filter(Boolean);
-  const usernameInputs = getUsernameInputs(passwordForms);
+  const { passwordInputs, usernameInputs } = getLoginInputs();
 
   setUsernameSkips(passwordInputs, usernameInputs);
 

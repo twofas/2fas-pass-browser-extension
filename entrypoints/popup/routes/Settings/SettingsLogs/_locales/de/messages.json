@@ -30,5 +30,9 @@
   "settings_logs_empty_toast": {
     "message": "No diagnostic logs to export yet",
     "description": "Toast shown when user tries to export but there are no logs"
+  },
+  "settings_logs_safari_hint": {
+    "message": "Klicke auf die Schaltfläche unten, um deine Diagnoseprotokolle zu speichern. Du kannst diesen Tab danach schließen.",
+    "description": "Instruction shown on the Safari download helper tab"
   }
 }
