@@ -1,0 +1,78 @@
+<!--
+ SPDX-License-Identifier: BUSL-1.1
+
+ Copyright © 2025 Two Factor Authentication Service, Inc.
+ Licensed under the Business Source License 1.1
+ See LICENSE file for full terms
+
+ Safari-only log-download helper page. Safari has no `browser.downloads` API and
+ the toolbar popup downloads with a wrong ("Unknown") filename, so the popup
+ opens this page in a tab. It reads the logs straight from IndexedDB and builds
+ the file when the button is clicked (a real gesture in a normal tab is what
+ makes Safari honor the `download` filename). See /partials/logger/exportLogs.js.
+-->
+
+<!doctype html>
+<html lang="en" translate="no" class="notranslate">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FAS Pass</title>
+    <meta name="color-scheme" content="dark light">
+    <meta name="google" content="notranslate">
+    <style>
+      body {
+        align-items: center;
+        color-scheme: light dark;
+        display: flex;
+        font-family: -apple-system, system-ui, sans-serif;
+        justify-content: center;
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      main {
+        max-width: 420px;
+        padding: 32px 24px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 18px;
+        margin: 0 0 12px;
+      }
+
+      p {
+        font-size: 14px;
+        line-height: 1.5;
+        margin: 0 0 20px;
+        opacity: .85;
+      }
+
+      a.download {
+        border: 1px solid currentColor;
+        border-radius: 8px;
+        color: inherit;
+        cursor: pointer;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 10px 20px;
+        text-decoration: none;
+      }
+
+      a.download[aria-disabled="true"] {
+        opacity: .5;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>2FAS Pass</h1>
+      <p id="hint"></p>
+      <a id="download" class="download" aria-disabled="true">…</a>
+    </main>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

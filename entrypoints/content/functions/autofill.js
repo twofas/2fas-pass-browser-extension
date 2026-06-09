@@ -4,11 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import getPasswordInputs from '@/partials/inputFunctions/getPasswordInputs';
-import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import isTopFrame from '@/partials/functions/isTopFrame';
 import inputSetValue from './autofillFunctions/inputSetValue';
+import getLoginInputs from './autofillFunctions/getLoginInputs';
 
 /**
 * Decrypts an encrypted password using the local key.
@@ -89,11 +88,7 @@ const autofill = async request => {
     return { status: 'error', message: 'No username and password provided' };
   }
 
-  const passwordInputs = getPasswordInputs();
-  const passwordForms = passwordInputs
-    .map(input => input.closest('form'))
-    .filter(Boolean);
-  const usernameInputs = getUsernameInputs(passwordForms);
+  const { passwordInputs, usernameInputs } = getLoginInputs();
   const canAutofillPassword = passwordInputs.length > 0;
   const canAutofillUsername = usernameInputs.length > 0;
 

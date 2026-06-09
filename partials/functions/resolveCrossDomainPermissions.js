@@ -6,6 +6,7 @@
 
 import sendMessageToAllFrames from './sendMessageToAllFrames.js';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready.js';
+import classifyCrossDomainPermissions from './classifyCrossDomainPermissions.js';
 
 /**
 * Discovers cross-domain frame hostnames in a tab via webNavigation, independent
@@ -161,23 +162,16 @@ const resolveCrossDomainPermissions = async (tabId, autofillType, dataFields) =>
     ({ respondedNeedsPermission, respondedNoPermission } = collectResponded(permissionResults));
   }
 
-  // Build the final list of hostnames that need permission processing.
-  // A cross-domain hostname needs processing if:
-  //   - Any frame for it returned needsPermission: true (has autofillable inputs), OR
-  //   - No frame for it responded at all (content script still not ready — treat as
-  //     potentially needing permission to avoid silent skip + later silent allow).
-  const uniqueDomains = new Set();
-
-  for (const hostname of crossDomainHostnames) {
-    if (respondedNeedsPermission.has(hostname)) {
-      uniqueDomains.add(hostname);
-    } else if (!respondedNoPermission.has(hostname)) {
-      uniqueDomains.add(hostname);
-      logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'resolveCrossDomainPermissions - cross-domain frame did not respond to CHECK_IFRAME_PERMISSION (treated as needs permission)', { tabId, hostname, autofillType });
-    }
-  }
-
-  if (uniqueDomains.size === 0) {
+  // Only cross-domain hostnames whose frame actually reported an autofillable
+  // login/card form (needsPermission: true) require a permission decision. A frame
+  // that never responded to CHECK_IFRAME_PERMISSION is intentionally NOT flagged:
+  // it is denied by default (never added to crossDomainAllowedDomains, so it cannot
+  // be silently autofilled), while the user is not prompted to trust unrelated
+  // third-party tracking/ad iframes (doubleclick/adsrvr/etc.) that are embedded on
+  // the page but hold no login form. The webNavigation-based discovery above and
+  // the single retry only exist to give a slow legitimate login iframe a second
+  // chance to report itself before we proceed.
+  if (respondedNeedsPermission.size === 0) {
     return result;
   }
 
@@ -194,28 +188,7 @@ const resolveCrossDomainPermissions = async (tabId, autofillType, dataFields) =>
     untrustedList = stored || [];
   } catch { }
 
-  for (const domain of uniqueDomains) {
-    if (trustedList.includes(domain)) {
-      result.trustedDomains.push(domain);
-      result.crossDomainAllowedDomains.push(domain);
-    } else if (untrustedList.includes(domain)) {
-      result.untrustedDomains.push(domain);
-    } else {
-      result.unknownDomains.push(domain);
-    }
-  }
-
-  if (result.unknownDomains.length > 0) {
-    result.needsDialog = true;
-    result.allAllowed = false;
-  } else if (result.untrustedDomains.length > 0 && result.trustedDomains.length === 0) {
-    result.allAllowed = false;
-    result.allBlocked = true;
-  } else if (result.untrustedDomains.length > 0) {
-    result.allAllowed = false;
-  }
-
-  return result;
+  return classifyCrossDomainPermissions(respondedNeedsPermission, trustedList, untrustedList);
 };
 
 export default resolveCrossDomainPermissions;
