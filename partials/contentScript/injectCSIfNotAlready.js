@@ -6,6 +6,18 @@
 
 import sendMessageToAllFrames from '../functions/sendMessageToAllFrames';
 import isInjectionVerified from './isInjectionVerified';
+import isRecentlyVerifiedInjection from './isRecentlyVerifiedInjection';
+
+/**
+* Caches the timestamp (ms) of the last verified content-script injection per
+* tab + script type, so the repeated calls within a single autofill pass (entry,
+* resolveCrossDomainPermissions + its retry, pre-AUTOFILL re-check) can skip the
+* full getAllFrames + polling loop and take a quick top-frame liveness check
+* instead. Module-scoped: lives for the background service worker / popup
+* lifetime and is rebuilt from scratch after a service-worker restart.
+* @type {Map<string, number>}
+*/
+const verifiedInjectionCache = new Map();
 
 /**
 * Gets the count of injectable frames in a tab.
@@ -80,10 +92,37 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
     }
   };
 
+  const cacheKey = `${tabID}:${type}`;
+
+  if (isRecentlyVerifiedInjection({ verifiedAt: verifiedInjectionCache.get(cacheKey), now: Date.now() })) {
+    // A full verification succeeded moments ago in the same autofill pass. Confirm
+    // the top frame's content script is still alive with a single quick check (no
+    // getAllFrames, no polling, no re-injection) instead of repeating the expensive
+    // up-to-30×50ms loop. The check self-validates against a navigation: if the page
+    // changed and the script is gone, the top frame stops answering and we fall
+    // through to the full path. Uncooperative sub-frames (ads/trackers) are ignored
+    // here exactly as the full path's stabilised-top-frame policy already ignores them.
+    try {
+      const topRes = await browser.tabs.sendMessage(
+        tabID,
+        { action: REQUEST_ACTIONS.CONTENT_SCRIPT_CHECK, target: type },
+        { frameId: 0 }
+      );
+
+      if (topRes?.status === 'ok') {
+        verifiedInjectionCache.set(cacheKey, Date.now());
+        return true;
+      }
+    } catch {}
+
+    verifiedInjectionCache.delete(cacheKey);
+  }
+
   let expectedFrameCount = await getInjectableFrameCount(tabID);
 
   if (expectedFrameCount === 0) {
     logger.warn(LOGGER_CONSTANTS.CATEGORIES.CONTENT, 'injectCSIfNotAlready - no injectable frames', { tabID, type });
+    verifiedInjectionCache.delete(cacheKey);
     return false;
   }
 
@@ -111,6 +150,7 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
   }
 
   if (injected === true) {
+    verifiedInjectionCache.set(cacheKey, Date.now());
     return true;
   }
 
@@ -118,6 +158,7 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
     await injectScript();
   } catch (e) {
     logger.error(LOGGER_CONSTANTS.CATEGORIES.CONTENT, 'injectCSIfNotAlready - executeScript failed', { tabID, type, errorName: e?.name, errorMessage: e?.message });
+    verifiedInjectionCache.delete(cacheKey);
     return false;
   }
 
@@ -185,6 +226,9 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
 
   if (!injected) {
     logger.error(LOGGER_CONSTANTS.CATEGORIES.CONTENT, 'injectCSIfNotAlready - injection verification timed out', { tabID, type, expectedFrameCount, attempts });
+    verifiedInjectionCache.delete(cacheKey);
+  } else {
+    verifiedInjectionCache.set(cacheKey, Date.now());
   }
 
   return injected;
