@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission, resolveCrossDomainPermissions, saveCrossDomainPreferences } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission, resolveCrossDomainPermissions, saveCrossDomainPreferences, aggregateCardAutofillResponses } from '@/partials/functions';
 import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
@@ -257,41 +257,23 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     }, tabId, true);
   }
 
-  const relevantResponses = response.filter(r => r && r.status && r.message !== 'No input fields found') || [];
+  const { outcome } = aggregateCardAutofillResponses(response);
 
-  if (relevantResponses.length === 0) {
+  if (outcome === 'noInputs') {
     return TwofasNotification.show({
       Title: getMessage('notification_card_autofill_no_inputs_title'),
       Message: getMessage('notification_card_autofill_no_inputs_message')
     }, tabId, true);
   }
 
-  const isOk = relevantResponses.some(frameResponse => frameResponse.status === 'ok');
-  const isPartial = relevantResponses.some(frameResponse => frameResponse.status === 'partial');
-
-  const allFilledFields = relevantResponses.reduce((acc, r) => {
-    if (r.filledFields) {
-      Object.keys(r.filledFields).forEach(field => {
-        if (r.filledFields[field]) {
-          acc[field] = true;
-        }
-      });
-    }
-
-    return acc;
-  }, {});
-
-  const allMissingInputFields = relevantResponses
-    .flatMap(r => r.missingInputFields || [])
-    .filter((field, index, self) => self.indexOf(field) === index)
-    .filter(field => !allFilledFields[field]);
-  const hasMissingInputs = allMissingInputFields.length > 0;
-
-  if (isOk && !isPartial && !hasMissingInputs) {
-    return;
+  if (outcome === 'error') {
+    return TwofasNotification.show({
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+    }, tabId, true);
   }
 
-  if (isPartial || hasMissingInputs) {
+  if (outcome === 'partial') {
     return TwofasNotification.show({
       Title: getMessage('notification_card_autofill_partial_title'),
       Message: getMessage('notification_card_autofill_partial_message')

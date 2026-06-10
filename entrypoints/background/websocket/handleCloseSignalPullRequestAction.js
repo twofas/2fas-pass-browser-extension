@@ -11,6 +11,7 @@ import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames'
 import sendMessageToTab from '@/partials/functions/sendMessageToTab';
 import resolveCrossDomainPermissions from '@/partials/functions/resolveCrossDomainPermissions';
 import saveCrossDomainPreferences from '@/partials/functions/saveCrossDomainPreferences';
+import aggregateCardAutofillResponses from '@/partials/functions/aggregateCardAutofillResponses';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import wsNotify from './wsNotify.js';
 
@@ -352,28 +353,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
     const autofillRes = await sendMessageToAllFrames(tabId, actionData);
 
-    const relevantResponses = autofillRes?.filter(r => r && r.status && r.message !== 'No input fields found') || [];
-
-    const isOk = relevantResponses.some(frameResponse => frameResponse.status === 'ok');
-    const isPartial = relevantResponses.some(frameResponse => frameResponse.status === 'partial');
-
-    const allFilledFields = relevantResponses.reduce((acc, r) => {
-      if (r.filledFields) {
-        Object.keys(r.filledFields).forEach(field => {
-          if (r.filledFields[field]) {
-            acc[field] = true;
-          }
-        });
-      }
-
-      return acc;
-    }, {});
-
-    const allMissingInputFields = relevantResponses
-      .flatMap(r => r.missingInputFields || [])
-      .filter((field, index, self) => self.indexOf(field) === index)
-      .filter(field => !allFilledFields[field]);
-    const hasMissingInputs = allMissingInputFields.length > 0;
+    const { isOk, isPartial, hasMissingInputs } = aggregateCardAutofillResponses(autofillRes);
 
     if (isOk && !isPartial && !hasMissingInputs) {
       // For shortcut-initiated autofill, close the window after success
