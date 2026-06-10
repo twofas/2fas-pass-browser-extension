@@ -164,18 +164,37 @@ const getUsernameInputs = (passwordForms = null, shadowRoots = null) => {
   const userNameInputs = [...regularInputs, ...shadowInputs];
 
   if (passwordForms && Array.isArray(passwordForms) && userNameInputs.length === 0) {
-    const tryInputSelector = 'input' + getIgnoredTypes();
+    const tryInputSelector = 'input' + getIgnoredTypes() + ':not([type="password"])';
 
     passwordForms.forEach(form => {
       if (!(form instanceof HTMLFormElement)) {
         return;
       }
 
-      const inputs = form.querySelectorAll(tryInputSelector);
+      const candidates = Array.from(form.querySelectorAll(tryInputSelector)).filter(isVisible);
 
-      if (inputs.length > 0) {
-        userNameInputs.push(...inputs);
+      if (candidates.length === 0) {
+        return;
       }
+
+      const firstPasswordInput = form.querySelector('input[type="password"]');
+      let chosen = null;
+
+      if (firstPasswordInput) {
+        candidates.forEach(candidate => {
+          const passwordFollowsCandidate = (candidate.compareDocumentPosition(firstPasswordInput) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+
+          if (passwordFollowsCandidate) {
+            chosen = candidate;
+          }
+        });
+      }
+
+      if (!chosen) {
+        chosen = candidates[0];
+      }
+
+      userNameInputs.push(chosen);
     });
   }
 
