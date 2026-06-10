@@ -4,6 +4,24 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+export const STYLE_OBSERVER_REPORT_INTERVAL = 60000;
+
+/**
+ * Decides whether a detected style mutation should be reported, rate-limiting reports to avoid CatchError storms on pages that cyclically mutate the host's style/class.
+ * @param {Object} params - The decision inputs.
+ * @param {number} params.lastReportTime - Timestamp (ms) of the last report, or 0 if never reported.
+ * @param {number} params.now - Current timestamp (ms).
+ * @param {number} [params.interval] - Minimum interval (ms) between reports.
+ * @return {boolean} True if the mutation should be reported.
+ */
+export const shouldReportStyleMutation = ({ lastReportTime, now, interval = STYLE_OBSERVER_REPORT_INTERVAL }) => {
+  if (lastReportTime === 0) {
+    return true;
+  }
+
+  return now - lastReportTime >= interval;
+};
+
 /**
  * Prevents external style modifications by monitoring and resetting element styles.
  * @param {HTMLElement} element - The DOM element to protect from style changes
@@ -13,20 +31,10 @@
 const setupStyleObserver = (element, styles) => {
   let isDisconnected = false;
   let isPaused = false;
+  let lastReportTime = 0;
+  let suppressedMutations = 0;
 
-  const observer = new MutationObserver(() => {
-    if (isPaused) {
-      return;
-    }
-
-    CatchError(new TwoFasError(TwoFasError.internalErrors.setupStyleObserverMutationDetected,
-      { additional: {
-        url: window.location.href,
-        hostname: window.location.hostname,
-        pathname: window.location.pathname
-      } }
-    ));
-
+  const restoreStyles = () => {
     observer.disconnect();
 
     element.className = '';
@@ -36,6 +44,36 @@ const setupStyleObserver = (element, styles) => {
       attributes: true,
       attributeFilter: ['style', 'class']
     });
+  };
+
+  const reportMutation = () => {
+    const now = Date.now();
+
+    if (!shouldReportStyleMutation({ lastReportTime, now })) {
+      suppressedMutations += 1;
+      return;
+    }
+
+    CatchError(new TwoFasError(TwoFasError.internalErrors.setupStyleObserverMutationDetected,
+      { additional: {
+        url: window.location.href,
+        hostname: window.location.hostname,
+        pathname: window.location.pathname,
+        suppressedMutations
+      } }
+    ));
+
+    lastReportTime = now;
+    suppressedMutations = 0;
+  };
+
+  const observer = new MutationObserver(() => {
+    if (isPaused) {
+      return;
+    }
+
+    reportMutation();
+    restoreStyles();
   });
 
   observer.observe(element, {
