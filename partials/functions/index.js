@@ -32,6 +32,7 @@ export { default as isCardExpired } from './paymentCardExpirationDateValidation.
 export { default as isText } from './isText.js';
 export { default as isURL } from './isURL.js';
 export { default as isVisible } from './isVisible.js';
+export { default as loadAndClassifyCrossDomainPermissions } from './loadAndClassifyCrossDomainPermissions.js';
 export { default as networkTest } from './networkTest.js';
 export { default as openPopup } from './openPopup.js';
 export { default as paymentCardExpirationDateValidation } from './paymentCardExpirationDateValidation.js';

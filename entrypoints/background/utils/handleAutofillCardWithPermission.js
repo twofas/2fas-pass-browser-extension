@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, aggregateCardAutofillResponses } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, aggregateCardAutofillResponses, loadAndClassifyCrossDomainPermissions } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
 
@@ -50,22 +50,7 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
     }, tabId, true);
   }
 
-  let trustedList = [];
-  let untrustedList = [];
-
-  try {
-    trustedList = (await storage.getItem('local:crossDomainTrustedDomains')) || [];
-  } catch { }
-
-  try {
-    untrustedList = (await storage.getItem('local:crossDomainUntrustedDomains')) || [];
-  } catch { }
-
-  const unknownDomains = domains.filter(d => !trustedList.includes(d) && !untrustedList.includes(d));
-  const trustedDomains = domains.filter(d => trustedList.includes(d));
-  const allBlocked = unknownDomains.length === 0 && trustedDomains.length === 0;
-
-  const crossDomainAllowedDomains = allBlocked ? [] : [...trustedDomains];
+  const { unknownDomains, crossDomainAllowedDomains } = await loadAndClassifyCrossDomainPermissions(domains);
 
   if (unknownDomains.length > 0) {
     storedData.trustedDomains = crossDomainAllowedDomains;

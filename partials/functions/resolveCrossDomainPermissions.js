@@ -6,7 +6,7 @@
 
 import sendMessageToAllFrames from './sendMessageToAllFrames.js';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready.js';
-import classifyCrossDomainPermissions from './classifyCrossDomainPermissions.js';
+import loadAndClassifyCrossDomainPermissions from './loadAndClassifyCrossDomainPermissions.js';
 
 /**
 * Discovers cross-domain frame hostnames in a tab via webNavigation, independent
@@ -175,20 +175,7 @@ const resolveCrossDomainPermissions = async (tabId, autofillType, dataFields) =>
     return result;
   }
 
-  let trustedList = [];
-  let untrustedList = [];
-
-  try {
-    const stored = await storage.getItem('local:crossDomainTrustedDomains');
-    trustedList = stored || [];
-  } catch { }
-
-  try {
-    const stored = await storage.getItem('local:crossDomainUntrustedDomains');
-    untrustedList = stored || [];
-  } catch { }
-
-  return classifyCrossDomainPermissions(respondedNeedsPermission, trustedList, untrustedList);
+  return loadAndClassifyCrossDomainPermissions(respondedNeedsPermission);
 };
 
 export default resolveCrossDomainPermissions;
