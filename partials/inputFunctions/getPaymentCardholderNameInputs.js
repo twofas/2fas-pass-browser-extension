@@ -141,7 +141,7 @@ const getNameFieldType = input => {
 */
 const getAssociatedLabelText = input => {
   if (input.id) {
-    const labelByFor = document.querySelector(`label[for="${input.id}"]`);
+    const labelByFor = document.querySelector(`label[for="${CSS.escape(input.id)}"]`);
 
     if (labelByFor) {
       return labelByFor.textContent.toLowerCase().trim();
