@@ -150,7 +150,7 @@ const matchingLogins = (request, sendResponse, container) => {
   }
 
   const tabId = request.tabId;
-  const matchCount = Array.isArray(request?.matching) ? request.matching.length : 0;
+  const matchCount = Array.isArray(request?.data) ? request.data.length : 0;
   logger.info(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'ContentScript-MatchingLogins - showing list', {
     tabId,
     matchCount
@@ -222,7 +222,7 @@ const matchingLogins = (request, sendResponse, container) => {
 
   n.items = createElement('div', 'twofas-pass-notification-matching-logins-items');
 
-  const loginsData = request.data.sort((a, b) => a?.name?.toLowerCase() > b?.name?.toLowerCase() ? 1 : -1);
+  const loginsData = request.data.sort((a, b) => (a?.content?.name || '').localeCompare(b?.content?.name || ''));
 
   loginsData.forEach(item => {
     const itemEl = createElement('div', 'twofas-pass-notification-matching-logins-item');
