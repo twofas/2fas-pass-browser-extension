@@ -52,35 +52,39 @@ const isVisible = domElement => {
   // We only want to filter out elements that are truly hidden (display:none,
   // visibility:hidden, zero dimensions, clipped, etc.).
 
-  let parent = domElement.parentElement;
+  // When the native visibility API is available, checkVisibility() above already
+  // accounts for ancestor display:none, visibility:hidden and opacity:0 (inherited,
+  // or caught by visibilityProperty/opacityProperty walking inclusive ancestors), so
+  // the manual ancestor walk below would only repeat that work with O(depth)
+  // getComputedStyle calls per candidate. Keep it solely as a fallback for browsers
+  // without checkVisibility().
+  if (!browserVisibilityAPIAvailable) {
+    let parent = domElement.parentElement;
 
-  while (parent && parent !== document.body && parent !== document.documentElement) {
-    const parentStyle = window.getComputedStyle(parent);
+    while (parent && parent !== document.body && parent !== document.documentElement) {
+      const parentStyle = window.getComputedStyle(parent);
 
-    if (parentStyle.display === 'none' || parentStyle.visibility === 'hidden') {
-      return false;
-    }
+      if (parentStyle.display === 'none' || parentStyle.visibility === 'hidden') {
+        return false;
+      }
 
-    // Only check parent dimensions if browser visibility API is not available.
-    // Modern browsers' checkVisibility() handles positioned elements correctly
-    // (e.g., modals with position:fixed that escape parent overflow).
-    // Our manual overflow check can produce false negatives in these cases.
-    if (!browserVisibilityAPIAvailable && parentStyle.display !== 'contents') {
-      const parentRect = parent.getBoundingClientRect();
-      const parentOverflow = parentStyle.overflow;
+      if (parentStyle.display !== 'contents') {
+        const parentRect = parent.getBoundingClientRect();
+        const parentOverflow = parentStyle.overflow;
 
-      if (parentRect.height === 0 || parentRect.width === 0) {
-        if (parentOverflow !== 'visible') {
-          return false;
+        if (parentRect.height === 0 || parentRect.width === 0) {
+          if (parentOverflow !== 'visible') {
+            return false;
+          }
         }
       }
-    }
 
-    if (parseFloat(parentStyle.opacity) === 0) {
-      return false;
-    }
+      if (parseFloat(parentStyle.opacity) === 0) {
+        return false;
+      }
 
-    parent = parent.parentElement;
+      parent = parent.parentElement;
+    }
   }
 
   return true;
