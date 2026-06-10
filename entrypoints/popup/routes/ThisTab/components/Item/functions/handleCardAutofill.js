@@ -214,7 +214,8 @@ const handleCardAutofill = async (item, navigate) => {
     cardIssuer: item.content.cardIssuer,
     target: REQUEST_TARGETS.CONTENT,
     cryptoAvailable: cryptoAvailableRes.cryptoAvailable,
-    iframePermissionGranted: true
+    iframePermissionGranted: true,
+    crossDomainAllowedDomains: []
   };
 
   if (sifDecrypt) {

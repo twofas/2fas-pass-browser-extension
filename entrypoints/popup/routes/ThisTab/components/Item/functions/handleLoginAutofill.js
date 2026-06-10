@@ -181,7 +181,8 @@ const handleLoginAutofill = async (item, navigate) => {
     username: item.content.username,
     target: REQUEST_TARGETS.CONTENT,
     cryptoAvailable: cryptoAvailableRes.cryptoAvailable,
-    iframePermissionGranted: true
+    iframePermissionGranted: true,
+    crossDomainAllowedDomains: []
   };
 
   if (passwordDecrypt) {
