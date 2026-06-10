@@ -4,10 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { paymentCardholderNameSelectors, paymentCardDeniedKeywords } from '@/constants';
+import { paymentCardholderNameSelectors } from '@/constants';
 import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
+import { filterDeniedKeywords, makeConflictingAutocompleteFilter } from './shared';
 
 const conflictingAutocompleteValues = [
   'cc-number',
@@ -65,33 +66,7 @@ const cardholderLabelKeywords = [
   'titular do cartão'
 ];
 
-/**
-* Filters out inputs that have autocomplete attributes indicating non-cardholder-name fields.
-* @param {HTMLInputElement} input - The input element to check.
-* @return {boolean} True if the input should be kept, false otherwise.
-*/
-const filterConflictingAutocomplete = input => {
-  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
-
-  if (!autocomplete) {
-    return true;
-  }
-
-  return !conflictingAutocompleteValues.includes(autocomplete);
-};
-
-/**
-* Filters out inputs that contain denied keywords in their name or id.
-* @param {HTMLInputElement} input - The input element to check.
-* @return {boolean} True if the input should be kept, false otherwise.
-*/
-const filterDeniedKeywords = input => {
-  const name = (input.name || '').toLowerCase();
-  const id = (input.id || '').toLowerCase();
-  const hasDeniedWord = paymentCardDeniedKeywords.some(word => name.includes(word) || id.includes(word));
-
-  return !hasDeniedWord;
-};
+const filterConflictingAutocomplete = makeConflictingAutocompleteFilter(conflictingAutocompleteValues);
 
 /**
 * Determines the type of name field based on input attributes.

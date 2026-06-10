@@ -4,10 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { paymentCardNumberSelectors, paymentCardDeniedKeywords } from '@/constants';
-import isVisible from '../functions/isVisible';
-import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
-import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
+import { paymentCardNumberSelectors } from '@/constants';
+import { filterDeniedKeywords, getParentDataField, collectInputs } from './shared';
 
 const conflictingAutocompleteValues = [
   'cc-name',
@@ -129,34 +127,6 @@ const filterConflictingAttributes = input => {
 };
 
 /**
-* Filters out inputs that contain denied keywords in their name or id.
-* @param {HTMLInputElement} input - The input element to check.
-* @return {boolean} True if the input should be kept, false otherwise.
-*/
-const filterDeniedKeywords = input => {
-  const name = (input.name || '').toLowerCase();
-  const id = (input.id || '').toLowerCase();
-  const hasDeniedWord = paymentCardDeniedKeywords.some(word => name.includes(word) || id.includes(word));
-
-  return !hasDeniedWord;
-};
-
-/**
-* Gets the data-field value from closest parent element that has it.
-* @param {HTMLElement} element - The element to check.
-* @return {string} The data-field value or empty string.
-*/
-const getParentDataField = element => {
-  const parent = element.closest('[data-field]');
-
-  if (parent) {
-    return (parent.getAttribute('data-field') || '').toLowerCase();
-  }
-
-  return '';
-};
-
-/**
 * Gets relevant class names from an element.
 * @param {HTMLElement} element - The element to check.
 * @return {string} Space-separated lowercase class names.
@@ -209,17 +179,8 @@ const filterOtherCardFields = input => {
 */
 const getPaymentCardNumberInputs = () => {
   const cardNumberSelector = paymentCardNumberSelectors().join(', ');
-  const regularInputs = Array.from(document.querySelectorAll(cardNumberSelector));
-  const shadowRoots = getShadowRoots();
-
-  const shadowInputs = shadowRoots.flatMap(
-    root => Array.from(root.querySelectorAll(cardNumberSelector))
-  );
-
-  const allInputs = [...regularInputs, ...shadowInputs];
-  const afterVisible = allInputs.filter(input => isVisible(input));
-  const afterUnique = afterVisible.filter(uniqueElementOnly);
-  const afterConflicting = afterUnique.filter(filterConflictingAttributes);
+  const visibleUniqueInputs = collectInputs(cardNumberSelector);
+  const afterConflicting = visibleUniqueInputs.filter(filterConflictingAttributes);
   const afterDenied = afterConflicting.filter(filterDeniedKeywords);
   const result = afterDenied.filter(filterOtherCardFields);
 

@@ -6,13 +6,10 @@
 
 import {
   paymentCardExpirationDateSelectors,
-  paymentCardDeniedKeywords,
   paymentCardExpirationMonthPlaceholders,
   paymentCardExpirationYearPlaceholders
 } from '@/constants';
-import isVisible from '../functions/isVisible';
-import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
-import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
+import { filterDeniedKeywords, makeConflictingAutocompleteFilter, getParentDataField, collectInputs } from './shared';
 
 const conflictingAutocompleteValues = [
   'cc-number',
@@ -24,48 +21,7 @@ const conflictingAutocompleteValues = [
   'cc-type'
 ];
 
-/**
-* Filters out inputs that have autocomplete attributes indicating non-expiration-date fields.
-* @param {HTMLElement} input - The input or select element to check.
-* @return {boolean} True if the element should be kept, false otherwise.
-*/
-const filterConflictingAutocomplete = input => {
-  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
-
-  if (!autocomplete) {
-    return true;
-  }
-
-  return !conflictingAutocompleteValues.includes(autocomplete);
-};
-
-/**
-* Filters out inputs that contain denied keywords in their name or id.
-* @param {HTMLElement} input - The input or select element to check.
-* @return {boolean} True if the element should be kept, false otherwise.
-*/
-const filterDeniedKeywords = input => {
-  const name = (input.name || '').toLowerCase();
-  const id = (input.id || '').toLowerCase();
-  const hasDeniedWord = paymentCardDeniedKeywords.some(word => name.includes(word) || id.includes(word));
-
-  return !hasDeniedWord;
-};
-
-/**
-* Gets the data-field value from closest parent element that has it.
-* @param {HTMLElement} element - The element to check.
-* @return {string} The data-field value or empty string.
-*/
-const getParentDataField = element => {
-  const parent = element.closest('[data-field]');
-
-  if (parent) {
-    return (parent.getAttribute('data-field') || '').toLowerCase();
-  }
-
-  return '';
-};
+const filterConflictingAutocomplete = makeConflictingAutocompleteFilter(conflictingAutocompleteValues);
 
 /**
 * Determines the type of expiration date input based on autocomplete attribute.
@@ -119,17 +75,8 @@ const getExpirationDateType = element => {
 */
 const getPaymentCardExpirationDateInputs = () => {
   const expirationDateSelector = paymentCardExpirationDateSelectors().join(', ');
-  const regularElements = Array.from(document.querySelectorAll(expirationDateSelector));
-  const shadowRoots = getShadowRoots();
-
-  const shadowElements = shadowRoots.flatMap(
-    root => Array.from(root.querySelectorAll(expirationDateSelector))
-  );
-
-  const allElements = [...regularElements, ...shadowElements];
-  const afterVisible = allElements.filter(element => isVisible(element));
-  const afterUnique = afterVisible.filter(uniqueElementOnly);
-  const afterConflicting = afterUnique.filter(filterConflictingAutocomplete);
+  const visibleUniqueElements = collectInputs(expirationDateSelector);
+  const afterConflicting = visibleUniqueElements.filter(filterConflictingAutocomplete);
   const filteredElements = afterConflicting.filter(filterDeniedKeywords);
 
   const result = filteredElements.map(element => {
