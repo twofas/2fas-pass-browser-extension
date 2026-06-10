@@ -20,7 +20,7 @@ let cachedUserNameSelector = null;
 */
 const getIgnoredTypes = () => {
   if (cachedIgnoredTypes === null) {
-    cachedIgnoredTypes = ignoredTypes();
+    cachedIgnoredTypes = ignoredTypes({ allowUsernameTypes: true });
   }
 
   return cachedIgnoredTypes;
