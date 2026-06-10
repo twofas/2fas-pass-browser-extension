@@ -42,30 +42,42 @@ const decryptPassword = async encryptedPassword => {
       ['decrypt']
     );
   } catch (e) {
+    wipeBuffer(localKeyAB);
     localKeyAB = null;
     await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillImportKeyError, { event: e }));
     return { status: 'error', message: 'ImportKey error' };
   }
 
+  wipeBuffer(localKeyAB);
   localKeyAB = null;
 
   let valueAB = Base64ToArrayBuffer(encryptedPassword);
-  const decryptedBytes = DecryptBytes(valueAB);
+  let decryptedBytes = DecryptBytes(valueAB);
+  wipeBuffer(valueAB);
   valueAB = null;
 
   try {
-    const decryptedValueAB = await crypto.subtle.decrypt(
+    let decryptedValueAB = await crypto.subtle.decrypt(
       { name: 'AES-GCM', iv: decryptedBytes.iv },
       localKeyCrypto,
       decryptedBytes.data
     );
 
     localKeyCrypto = null;
+    wipeBuffer(decryptedBytes?.iv);
+    wipeBuffer(decryptedBytes?.data);
+    decryptedBytes = null;
+
     const decryptedValueString = ArrayBufferToString(decryptedValueAB);
+    wipeBuffer(decryptedValueAB);
+    decryptedValueAB = null;
 
     return { status: 'ok', data: decryptedValueString };
   } catch (e) {
     localKeyCrypto = null;
+    wipeBuffer(decryptedBytes?.iv);
+    wipeBuffer(decryptedBytes?.data);
+    decryptedBytes = null;
     await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillDecryptError, { event: e }));
     return { status: 'error', message: 'Decrypt error' };
   }
