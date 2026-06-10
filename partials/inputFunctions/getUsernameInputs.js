@@ -10,6 +10,34 @@ import getShadowRoots from '../../entrypoints/content/functions/autofillFunction
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import hasParentContextDeniedKeyword from '../functions/hasParentContextDeniedKeyword';
 
+const userNameWordsLower = userNameWords.map(word => word.toLowerCase());
+let cachedIgnoredTypes = null;
+let cachedUserNameSelector = null;
+
+/**
+* Returns the ignored input types selector string, computed once and cached for the content script lifetime.
+* @return {string} The ignored types selector suffix.
+*/
+const getIgnoredTypes = () => {
+  if (cachedIgnoredTypes === null) {
+    cachedIgnoredTypes = ignoredTypes();
+  }
+
+  return cachedIgnoredTypes;
+};
+
+/**
+* Returns the combined username selector string, computed once and cached for the content script lifetime.
+* @return {string} The full username CSS selector.
+*/
+const getUserNameSelector = () => {
+  if (cachedUserNameSelector === null) {
+    cachedUserNameSelector = userNameSelectors().map(selector => selector + getIgnoredTypes()).join(', ');
+  }
+
+  return cachedUserNameSelector;
+};
+
 /**
 * Filters out inputs that contain denied keywords in their name, id, or parent elements.
 * @param {HTMLInputElement} input - The input element to check.
@@ -43,10 +71,10 @@ const filterDeniedKeywords = input => {
 /**
 * Checks if an input matches username-related attributes or has a matching label.
 * @param {HTMLInputElement} input - The input element to check.
-* @param {Document|ShadowRoot} rootNode - The root node to search for labels.
+* @param {Map<string, HTMLLabelElement>} labelMap - Map of label `for` values to label elements within the root node.
 * @return {boolean} True if input matches username criteria.
 */
-const matchesUsernameInput = (input, rootNode) => {
+const matchesUsernameInput = (input, labelMap) => {
   const matchesAttribute = userNameAttributes.some(attribute => {
     const attrValue = input.getAttribute(attribute);
 
@@ -56,7 +84,7 @@ const matchesUsernameInput = (input, rootNode) => {
 
     const lowerAttrValue = attrValue.toLowerCase();
 
-    return userNameWords.some(word => lowerAttrValue.includes(word.toLowerCase()));
+    return userNameWordsLower.some(word => lowerAttrValue.includes(word));
   });
 
   if (matchesAttribute) {
@@ -64,10 +92,10 @@ const matchesUsernameInput = (input, rootNode) => {
   }
 
   if (input.id) {
-    const label = rootNode.querySelector(`label[for="${input.id}"]`);
-    const labelText = label?.innerText?.toLowerCase();
+    const label = labelMap.get(input.id);
+    const labelText = label?.textContent?.toLowerCase();
 
-    if (labelText && userNameWords.some(word => labelText.includes(word.toLowerCase()))) {
+    if (labelText && userNameWordsLower.some(word => labelText.includes(word))) {
       return true;
     }
   }
@@ -83,10 +111,19 @@ const matchesUsernameInput = (input, rootNode) => {
 */
 const getUsernameInputsFromRoot = (rootNode, userNameSelector) => {
   const userNameInputs = Array.from(rootNode.querySelectorAll(userNameSelector));
-  const allInputs = rootNode.querySelectorAll(`input${ignoredTypes()}`);
+  const allInputs = rootNode.querySelectorAll(`input${getIgnoredTypes()}`);
+  const labelMap = new Map();
+
+  rootNode.querySelectorAll('label[for]').forEach(label => {
+    const forValue = label.getAttribute('for');
+
+    if (forValue && !labelMap.has(forValue)) {
+      labelMap.set(forValue, label);
+    }
+  });
 
   allInputs.forEach(input => {
-    if (matchesUsernameInput(input, rootNode)) {
+    if (matchesUsernameInput(input, labelMap)) {
       userNameInputs.push(input);
     }
   });
@@ -117,7 +154,7 @@ const isInputInForms = (input, forms) => {
 * @return {HTMLInputElement[]} The array of username input elements.
 */
 const getUsernameInputs = (passwordForms = null) => {
-  const userNameSelector = userNameSelectors().map(selector => selector + ignoredTypes()).join(', ');
+  const userNameSelector = getUserNameSelector();
   const regularInputs = getUsernameInputsFromRoot(document, userNameSelector);
   const shadowRoots = getShadowRoots();
   const shadowInputs = shadowRoots.flatMap(
@@ -126,7 +163,7 @@ const getUsernameInputs = (passwordForms = null) => {
   const userNameInputs = [...regularInputs, ...shadowInputs];
 
   if (passwordForms && Array.isArray(passwordForms) && userNameInputs.length === 0) {
-    const tryInputSelector = 'input' + ignoredTypes();
+    const tryInputSelector = 'input' + getIgnoredTypes();
 
     passwordForms.forEach(form => {
       if (!(form instanceof HTMLFormElement)) {
