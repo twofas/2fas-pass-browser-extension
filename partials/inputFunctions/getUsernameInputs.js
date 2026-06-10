@@ -151,13 +151,14 @@ const isInputInForms = (input, forms) => {
 * Gets the username input elements from the document, including those inside shadow DOMs.
 * Prioritizes inputs that share a form with password inputs.
 * @param {HTMLFormElement[]|null} passwordForms - The password form elements to search within.
+* @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
 * @return {HTMLInputElement[]} The array of username input elements.
 */
-const getUsernameInputs = (passwordForms = null) => {
+const getUsernameInputs = (passwordForms = null, shadowRoots = null) => {
   const userNameSelector = getUserNameSelector();
   const regularInputs = getUsernameInputsFromRoot(document, userNameSelector);
-  const shadowRoots = getShadowRoots();
-  const shadowInputs = shadowRoots.flatMap(
+  const resolvedShadowRoots = Array.isArray(shadowRoots) ? shadowRoots : getShadowRoots();
+  const shadowInputs = resolvedShadowRoots.flatMap(
     root => getUsernameInputsFromRoot(root, userNameSelector)
   );
   const userNameInputs = [...regularInputs, ...shadowInputs];

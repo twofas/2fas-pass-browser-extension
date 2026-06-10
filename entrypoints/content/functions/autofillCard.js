@@ -11,6 +11,7 @@ import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPayme
 import getPaymentCardIssuerInputs from '@/partials/inputFunctions/getPaymentCardIssuerInputs';
 import isTopFrame from '@/partials/functions/isTopFrame';
 import inputSetValue from './autofillFunctions/inputSetValue';
+import getShadowRoots from './autofillFunctions/getShadowRoots';
 import {
   PaymentCardIssuerVisa,
   PaymentCardIssuerMasterCard,
@@ -400,11 +401,12 @@ const isExpirationDateFilled = expirationResults => {
 * @return {Promise<{status: string, message?: string, filledFields?: Object}>} The status of the autofill operation.
 */
 const autofillCard = async request => {
-  const cardNumberInputs = getPaymentCardNumberInputs();
-  const cardholderNameInputs = getPaymentCardholderNameInputs();
-  const expirationDateInputs = getPaymentCardExpirationDateInputs();
-  const securityCodeInputs = getPaymentCardSecurityCodeInputs();
-  const cardIssuerInputs = getPaymentCardIssuerInputs();
+  const shadowRoots = getShadowRoots();
+  const cardNumberInputs = getPaymentCardNumberInputs(shadowRoots);
+  const cardholderNameInputs = getPaymentCardholderNameInputs(shadowRoots);
+  const expirationDateInputs = getPaymentCardExpirationDateInputs(shadowRoots);
+  const securityCodeInputs = getPaymentCardSecurityCodeInputs(shadowRoots);
+  const cardIssuerInputs = getPaymentCardIssuerInputs(shadowRoots);
 
   const hasCardNumberData = request.cardNumber?.length > 0;
   const hasCardholderNameData = request.cardholderName?.length > 0;

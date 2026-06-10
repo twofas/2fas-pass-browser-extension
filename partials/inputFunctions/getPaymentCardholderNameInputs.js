@@ -297,9 +297,10 @@ const isInPaymentContext = input => {
 /**
 * Gets the payment cardholder name input elements from the document, including those inside shadow DOMs.
 * Returns structured objects with element and type information.
+* @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
 * @return {Array<{element: HTMLInputElement, type: string}>} The array of cardholder name inputs with type.
 */
-const getPaymentCardholderNameInputs = () => {
+const getPaymentCardholderNameInputs = (shadowRoots = null) => {
   const cardholderNameSelector = paymentCardholderNameSelectors().join(', ');
   const regularCardholderInputs = Array.from(document.querySelectorAll(cardholderNameSelector));
 
@@ -309,17 +310,17 @@ const getPaymentCardholderNameInputs = () => {
   const regularLabelInputs = getInputsByLabelFromRoot(document)
     .filter(input => isInPaymentContext(input));
 
-  const shadowRoots = getShadowRoots();
+  const resolvedShadowRoots = Array.isArray(shadowRoots) ? shadowRoots : getShadowRoots();
 
-  const shadowCardholderInputs = shadowRoots.flatMap(
+  const shadowCardholderInputs = resolvedShadowRoots.flatMap(
     root => Array.from(root.querySelectorAll(cardholderNameSelector))
   );
 
-  const shadowBillingInputs = shadowRoots.flatMap(
+  const shadowBillingInputs = resolvedShadowRoots.flatMap(
     root => getBillingNameInputsFromRoot(root).filter(input => isInPaymentContext(input))
   );
 
-  const shadowLabelInputs = shadowRoots.flatMap(
+  const shadowLabelInputs = resolvedShadowRoots.flatMap(
     root => getInputsByLabelFromRoot(root).filter(input => isInPaymentContext(input))
   );
 

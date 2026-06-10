@@ -71,11 +71,12 @@ const getExpirationDateType = element => {
 
 /**
 * Gets the payment card expiration date input/select elements from the document, including those inside shadow DOMs.
+* @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
 * @return {Array<{element: HTMLElement, type: string}>} The array of expiration date elements with their type.
 */
-const getPaymentCardExpirationDateInputs = () => {
+const getPaymentCardExpirationDateInputs = (shadowRoots = null) => {
   const expirationDateSelector = paymentCardExpirationDateSelectors().join(', ');
-  const visibleUniqueElements = collectInputs(expirationDateSelector);
+  const visibleUniqueElements = collectInputs(expirationDateSelector, shadowRoots);
   const afterConflicting = visibleUniqueElements.filter(filterConflictingAutocomplete);
   const filteredElements = afterConflicting.filter(filterDeniedKeywords);
 

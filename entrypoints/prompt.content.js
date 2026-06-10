@@ -8,6 +8,7 @@ import handleInputEvent from './prompt/handleInputEvent';
 import promptOnMessage from './prompt/events/promptOnMessage';
 import getPasswordInputs from '@/partials/inputFunctions/getPasswordInputs';
 import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
+import getShadowRoots from './content/functions/autofillFunctions/getShadowRoots';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import setIDsToInputs from './prompt/setIDsToInputs';
 import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
@@ -51,12 +52,13 @@ export default defineContentScript({
     const cryptoAvailable = isCryptoAvailable();
     const encrypted = cryptoAvailable && savePrompt === 'default_encrypted';
 
-    const passwordInputs = getPasswordInputs();
+    const documentShadowRoots = getShadowRoots();
+    const passwordInputs = getPasswordInputs(documentShadowRoots);
     const passwordForms = passwordInputs
       .map(input => input.closest('form'))
       .filter(Boolean);
 
-    const usernameInputs = getUsernameInputs(passwordForms);
+    const usernameInputs = getUsernameInputs(passwordForms, documentShadowRoots);
     setUsernameSkips(passwordInputs, usernameInputs);
 
     const allInputs = passwordInputs.concat(usernameInputs);

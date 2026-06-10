@@ -55,13 +55,14 @@ const getParentDataField = element => {
 /**
 * Collects visible, unique elements matching a selector from the document and all shadow roots.
 * @param {string} selector - The CSS selector to query.
+* @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
 * @return {HTMLElement[]} The array of matched, visible, unique elements.
 */
-const collectInputs = selector => {
+const collectInputs = (selector, shadowRoots = null) => {
   const regularElements = Array.from(document.querySelectorAll(selector));
-  const shadowRoots = getShadowRoots();
+  const resolvedShadowRoots = Array.isArray(shadowRoots) ? shadowRoots : getShadowRoots();
 
-  const shadowElements = shadowRoots.flatMap(
+  const shadowElements = resolvedShadowRoots.flatMap(
     root => Array.from(root.querySelectorAll(selector))
   );
 

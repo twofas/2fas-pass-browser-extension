@@ -23,11 +23,12 @@ const filterConflictingAutocomplete = makeConflictingAutocompleteFilter(conflict
 
 /**
  * Gets the payment card issuer input/select elements from the document, including those inside shadow DOMs.
+ * @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
  * @return {Array<{element: HTMLElement, isSelect: boolean}>} The array of issuer elements.
  */
-const getPaymentCardIssuerInputs = () => {
+const getPaymentCardIssuerInputs = (shadowRoots = null) => {
   const issuerSelector = paymentCardIssuerSelectors().join(', ');
-  const visibleUniqueElements = collectInputs(issuerSelector);
+  const visibleUniqueElements = collectInputs(issuerSelector, shadowRoots);
   const afterConflicting = visibleUniqueElements.filter(filterConflictingAutocomplete);
   const filteredElements = afterConflicting.filter(filterDeniedKeywords);
 

@@ -175,11 +175,12 @@ const filterOtherCardFields = input => {
 
 /**
 * Gets the payment card number input elements from the document, including those inside shadow DOMs.
+* @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
 * @return {HTMLInputElement[]} The array of payment card number input elements.
 */
-const getPaymentCardNumberInputs = () => {
+const getPaymentCardNumberInputs = (shadowRoots = null) => {
   const cardNumberSelector = paymentCardNumberSelectors().join(', ');
-  const visibleUniqueInputs = collectInputs(cardNumberSelector);
+  const visibleUniqueInputs = collectInputs(cardNumberSelector, shadowRoots);
   const afterConflicting = visibleUniqueInputs.filter(filterConflictingAttributes);
   const afterDenied = afterConflicting.filter(filterDeniedKeywords);
   const result = afterDenied.filter(filterOtherCardFields);

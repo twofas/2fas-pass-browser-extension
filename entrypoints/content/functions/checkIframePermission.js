@@ -11,6 +11,7 @@ import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPayment
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
 import isTopFrame from '@/partials/functions/isTopFrame';
+import getShadowRoots from './autofillFunctions/getShadowRoots';
 
 /**
 * Checks if this frame has autofillable inputs that match the available data.
@@ -19,22 +20,24 @@ import isTopFrame from '@/partials/functions/isTopFrame';
 * @return {boolean} True if this frame has relevant inputs for available data.
 */
 const hasAutofillableInputs = (autofillType, dataFields = {}) => {
+  const shadowRoots = getShadowRoots();
+
   if (autofillType === 'card') {
     const { hasCardholderName = true, hasCardNumber = true, hasExpirationDate = true, hasSecurityCode = true } = dataFields;
 
-    return (hasCardNumber && getPaymentCardNumberInputs().length > 0) ||
-      (hasCardholderName && getPaymentCardholderNameInputs().length > 0) ||
-      (hasExpirationDate && getPaymentCardExpirationDateInputs().length > 0) ||
-      (hasSecurityCode && getPaymentCardSecurityCodeInputs().length > 0);
+    return (hasCardNumber && getPaymentCardNumberInputs(shadowRoots).length > 0) ||
+      (hasCardholderName && getPaymentCardholderNameInputs(shadowRoots).length > 0) ||
+      (hasExpirationDate && getPaymentCardExpirationDateInputs(shadowRoots).length > 0) ||
+      (hasSecurityCode && getPaymentCardSecurityCodeInputs(shadowRoots).length > 0);
   }
 
   if (autofillType === 'login') {
     const { hasUsername = true, hasPassword = true } = dataFields;
-    const passwordInputs = getPasswordInputs();
+    const passwordInputs = getPasswordInputs(shadowRoots);
     const passwordForms = passwordInputs
       .map(input => input.closest('form'))
       .filter(Boolean);
-    const usernameInputs = getUsernameInputs(passwordForms);
+    const usernameInputs = getUsernameInputs(passwordForms, shadowRoots);
 
     return (hasPassword && passwordInputs.length > 0) ||
       (hasUsername && usernameInputs.length > 0);

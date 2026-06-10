@@ -84,11 +84,12 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     const inputId = input?.getAttribute?.('twofas-pass-id');
 
     if (!inputId && !isElementInArray(input, allInputs)) {
-      const passwordInputs = getPasswordInputs();
+      const documentShadowRoots = getShadowRoots();
+      const passwordInputs = getPasswordInputs(documentShadowRoots);
       const passwordForms = passwordInputs
         .map(input => input.closest('form'))
         .filter(Boolean);
-      const usernameInputs = getUsernameInputs(passwordForms);
+      const usernameInputs = getUsernameInputs(passwordForms, documentShadowRoots);
       setUsernameSkips(passwordInputs, usernameInputs);
 
       const allInputsNew = passwordInputs.concat(usernameInputs);
