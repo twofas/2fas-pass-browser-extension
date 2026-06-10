@@ -4,7 +4,9 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
+import filterInjectableFrames from './filterInjectableFrames';
+
+/**
 * Sends a message to all frames of a tab.
 * @async
 * @param {Number} tabId The ID of the tab to send the message to.
@@ -24,7 +26,10 @@ const sendMessageToAllFrames = async (tabId, message) => {
     return false;
   }
 
-  frames = frames.filter(frame => frame.url && frame.url !== 'about:blank'); // FUTURE - ignore recaptcha frames etc. (list from savePrompt?)
+  // Keep frames that can host the content script: http(s) plus about:blank /
+  // about:srcdoc frames with an http(s) ancestor (same-origin JS-created iframes,
+  // reachable via match_about_blank). FUTURE - ignore recaptcha frames etc.
+  frames = filterInjectableFrames(frames);
 
   if (!frames || frames.length <= 0) {
     return false;

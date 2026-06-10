@@ -11,6 +11,7 @@ import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPayment
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
 import isTopFrame from '@/partials/functions/isTopFrame';
+import getFrameHostname from '@/partials/functions/getFrameHostname';
 import getShadowRoots from './autofillFunctions/getShadowRoots';
 
 /**
@@ -62,11 +63,7 @@ const checkIframePermission = async (autofillType, dataFields) => {
     topHostname: ''
   };
 
-  try {
-    frameInfo.hostname = new URL(window.location.href).hostname;
-  } catch {
-    return { needsPermission: false, frameInfo };
-  }
+  frameInfo.hostname = getFrameHostname();
 
   if (frameInfo.isTopFrame) {
     return { needsPermission: false, frameInfo };

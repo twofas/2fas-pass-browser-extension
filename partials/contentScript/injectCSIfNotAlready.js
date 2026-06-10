@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import sendMessageToAllFrames from '../functions/sendMessageToAllFrames';
+import filterInjectableFrames from '../functions/filterInjectableFrames';
 import isInjectionVerified from './isInjectionVerified';
 import isRecentlyVerifiedInjection from './isRecentlyVerifiedInjection';
 
@@ -38,24 +39,11 @@ const getInjectableFrameCount = async tabID => {
     return 0;
   }
 
-  const injectableFrames = frames.filter(frame => {
-    // FUTURE - improve that logic + add other browser specifics
-    if (!frame.url || frame.url === 'about:blank') {
-      return false;
-    }
-
-    if (frame.url.startsWith('chrome://') || frame.url.startsWith('chrome-extension://')) {
-      return false;
-    }
-
-    if (frame.url.startsWith('moz-extension://') || frame.url.startsWith('about:')) {
-      return false;
-    }
-
-    return frame.url.startsWith('http://') || frame.url.startsWith('https://');
-  });
-
-  return injectableFrames.length;
+  // Count http(s) frames plus about:blank / about:srcdoc frames with an http(s)
+  // ancestor (same-origin JS-created iframes the content script reaches via
+  // match_about_blank). Kept consistent with sendMessageToAllFrames so the
+  // injection-verification loop's expected count matches the frames messaged.
+  return filterInjectableFrames(frames).length;
 };
 
 /**

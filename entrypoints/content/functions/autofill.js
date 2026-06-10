@@ -6,6 +6,7 @@
 
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import isTopFrame from '@/partials/functions/isTopFrame';
+import getFrameHostname from '@/partials/functions/getFrameHostname';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import getLoginInputs from './autofillFunctions/getLoginInputs';
 
@@ -121,12 +122,8 @@ const autofill = async request => {
   }
 
   if (!isTopFrame()) {
-    let frameHostname = '';
     let isCrossDomain = false;
-
-    try {
-      frameHostname = new URL(window.location.href).hostname;
-    } catch { }
+    const frameHostname = getFrameHostname();
 
     try {
       const topHostname = new URL(window.top.location.href).hostname;

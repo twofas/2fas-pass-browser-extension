@@ -10,6 +10,7 @@ import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPay
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
 import getPaymentCardIssuerInputs from '@/partials/inputFunctions/getPaymentCardIssuerInputs';
 import isTopFrame from '@/partials/functions/isTopFrame';
+import getFrameHostname from '@/partials/functions/getFrameHostname';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import getShadowRoots from './autofillFunctions/getShadowRoots';
 import {
@@ -439,12 +440,8 @@ const autofillCard = async request => {
   }
 
   if (!isTopFrame()) {
-    let frameHostname = '';
     let isCrossDomain = false;
-
-    try {
-      frameHostname = new URL(window.location.href).hostname;
-    } catch { }
+    const frameHostname = getFrameHostname();
 
     try {
       const topHostname = new URL(window.top.location.href).hostname;
