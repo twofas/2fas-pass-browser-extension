@@ -69,10 +69,15 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       const decryptedData = await item.decryptSif();
       decryptedPassword = decryptedData.password;
     } catch (e) {
-      throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabDecryptSif, {
+      await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabDecryptSif, {
         event: e,
         additional: { func: 'sendAutofillToTab - decryptSif' }
-      });
+      }));
+
+      return TwofasNotification.show({
+        Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+        Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      }, tabId, true);
     }
 
     const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
@@ -83,9 +88,14 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       const passwordResult = await encryptValueForTransmission(decryptedPassword);
 
       if (passwordResult.status !== 'ok') {
-        throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
+        await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
           additional: { func: 'sendAutofillToTab - encryptValueForTransmission' }
-        });
+        }));
+
+        return TwofasNotification.show({
+          Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+          Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+        }, tabId, true);
       }
 
       encryptedValueB64 = passwordResult.data;

@@ -75,7 +75,12 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       decryptedCardNumber = decryptedValues.cardNumber || '';
       decryptedExpirationDate = decryptedValues.expirationDate || '';
       decryptedSecurityCode = decryptedValues.securityCode || '';
-    } catch {
+    } catch (e) {
+      await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabDecryptSif, {
+        event: e,
+        additional: { func: 'sendCardAutofillToTab - decryptSif' }
+      }));
+
       return TwofasNotification.show({
         Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
         Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
@@ -110,6 +115,10 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
         const cardNumberResult = await encryptValueForTransmission(decryptedCardNumber, localKeyCrypto);
 
         if (cardNumberResult.status !== 'ok') {
+          await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
+            additional: { func: 'sendCardAutofillToTab - encryptValueForTransmission (cardNumber)' }
+          }));
+
           return TwofasNotification.show({
             Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
             Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
@@ -123,6 +132,10 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
         const expirationDateResult = await encryptValueForTransmission(decryptedExpirationDate, localKeyCrypto);
 
         if (expirationDateResult.status !== 'ok') {
+          await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
+            additional: { func: 'sendCardAutofillToTab - encryptValueForTransmission (expirationDate)' }
+          }));
+
           return TwofasNotification.show({
             Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
             Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
@@ -136,6 +149,10 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
         const securityCodeResult = await encryptValueForTransmission(decryptedSecurityCode, localKeyCrypto);
 
         if (securityCodeResult.status !== 'ok') {
+          await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
+            additional: { func: 'sendCardAutofillToTab - encryptValueForTransmission (securityCode)' }
+          }));
+
           return TwofasNotification.show({
             Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
             Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
@@ -153,7 +170,7 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     decryptedSecurityCode = '';
   }
 
-  let iframePermissionGranted = true;
+  const iframePermissionGranted = true;
   let crossDomainAllowedDomains = [];
 
   try {
@@ -172,7 +189,9 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
         await browser.tabs.update(tabId, { active: true });
 
         await new Promise(resolve => setTimeout(resolve, 100));
-      } catch { }
+      } catch (e) {
+        await CatchError(e);
+      }
 
       const confirmResult = await sendMessageToTab(tabId, {
         action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
@@ -182,7 +201,6 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       });
 
       if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-        iframePermissionGranted = false;
         return;
       }
 
