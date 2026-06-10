@@ -65,21 +65,39 @@ export default defineContentScript({
     setIDsToInputs(allInputs);
     checkInitialInputsValues(allInputs, localKey, encrypted);
 
-    const uniqueForms = [...new Set(passwordForms)];
-
     const removeListeners = () => {
       browser.runtime.onMessage.removeListener(handlePromptMessage);
       document.removeEventListener('input', handleInput);
-
-      uniqueForms.forEach(form => {
-        form.removeEventListener('submit', handleFormSubmit);
-      });
-
+      document.removeEventListener('submit', handleFormSubmit, { capture: true });
+      document.removeEventListener('keydown', handleKeydown, { capture: true });
       window.removeEventListener('error', emptyFunc);
       window.removeEventListener('unhandledrejection', emptyFunc);
     };
 
-    const handleFormSubmit = () => {
+    const trackNewInputs = () => {
+      try {
+        const shadowRoots = getShadowRoots();
+        const newPasswordInputs = getPasswordInputs(shadowRoots);
+        const newPasswordForms = newPasswordInputs
+          .map(input => input.closest('form'))
+          .filter(Boolean);
+        const newUsernameInputs = getUsernameInputs(newPasswordForms, shadowRoots);
+        const scannedInputs = newPasswordInputs.concat(newUsernameInputs);
+        const newInputs = scannedInputs.filter(input => input && !allInputs.includes(input));
+
+        if (newInputs.length <= 0) {
+          return;
+        }
+
+        setUsernameSkips(newPasswordInputs, newUsernameInputs);
+        setIDsToInputs(newInputs);
+        allInputs.push(...newInputs);
+      } catch {}
+    };
+
+    const flushAndSendPending = () => {
+      trackNewInputs();
+
       const pendingData = flushPendingInputs(allInputs, timers, latestValues);
 
       for (const inputData of pendingData) {
@@ -91,6 +109,37 @@ export default defineContentScript({
           });
         } catch {}
       }
+    };
+
+    const handleFormSubmit = () => {
+      flushAndSendPending();
+    };
+
+    const handleKeydown = e => {
+      if (ifCtxIsInvalid(ctx, removeListeners)) {
+        return;
+      }
+
+      if (e?.key !== 'Enter' || e?.isComposing) {
+        return;
+      }
+
+      const path = typeof e?.composedPath === 'function' ? e.composedPath() : null;
+      const target = (path && path[0]) || e?.target;
+
+      if (!target || target.tagName !== 'INPUT') {
+        return;
+      }
+
+      const isTracked = target.getAttribute?.('twofas-pass-id') || allInputs.includes(target);
+      const form = target.closest?.('form');
+      const formHasPassword = form ? form.querySelector('input[type="password"]') : null;
+
+      if (!isTracked && !formHasPassword && target.type !== 'password') {
+        return;
+      }
+
+      flushAndSendPending();
     };
 
     const handleBeforeUnload = () => {
@@ -136,11 +185,8 @@ export default defineContentScript({
 
     browser.runtime.onMessage.addListener(handlePromptMessage);
     document.addEventListener('input', handleInput);
-
-    uniqueForms.forEach(form => {
-      form.addEventListener('submit', handleFormSubmit);
-    });
-
+    document.addEventListener('submit', handleFormSubmit, { capture: true });
+    document.addEventListener('keydown', handleKeydown, { capture: true });
     window.addEventListener('error', emptyFunc);
     window.addEventListener('unhandledrejection', emptyFunc);
     window.addEventListener('beforeunload', handleBeforeUnload, { once: true });
