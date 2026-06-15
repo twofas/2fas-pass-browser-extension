@@ -74,12 +74,15 @@ const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key,
   let encryptedValueB64 = null;
   const noPassword = !password || password.length === 0;
   const noUsername = !item?.content?.username || item?.content?.username?.length === 0;
+  let decryptedPassword = '';
 
   if (!noPassword) {
-    const decryptedPassword = await decryptSifValue(password, encryptionItemT2Key);
+    decryptedPassword = await decryptSifValue(password, encryptionItemT2Key);
 
     encryptedValueB64 = await prepareValueForTransmission(decryptedPassword, state?.data?.cryptoAvailable);
   }
+
+  decryptedPassword = '';
 
   const actionData = {
     action: REQUEST_ACTIONS.AUTOFILL,
