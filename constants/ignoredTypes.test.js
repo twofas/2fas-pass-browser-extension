@@ -40,4 +40,29 @@ describe('ignoredTypes', () => {
       expect(usernameTypes).toContain(part);
     });
   });
+
+  it('drops dead non-attribute pseudo selectors that never excluded anything on both variants', () => {
+    const defaultTypes = ignoredTypes();
+    const usernameTypes = ignoredTypes({ allowUsernameTypes: true });
+
+    [':not(read-only)', ':not(readonly)', ':not(list)', ':not(-moz-read-only)', ':not(disabled)'].forEach(part => {
+      expect(defaultTypes).not.toContain(part);
+      expect(usernameTypes).not.toContain(part);
+    });
+  });
+
+  it('never emits a vendor-prefixed selector on either variant', () => {
+    expect(ignoredTypes()).not.toContain('-moz-');
+    expect(ignoredTypes({ allowUsernameTypes: true })).not.toContain('-moz-');
+  });
+
+  it('keeps the attribute-based readonly and disabled exclusions on both variants', () => {
+    const defaultTypes = ignoredTypes();
+    const usernameTypes = ignoredTypes({ allowUsernameTypes: true });
+
+    [':not([read-only])', ':not([readonly])', ':not([disabled])'].forEach(part => {
+      expect(defaultTypes).toContain(part);
+      expect(usernameTypes).toContain(part);
+    });
+  });
 });

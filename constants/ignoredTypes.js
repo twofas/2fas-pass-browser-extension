@@ -31,13 +31,8 @@ const ignoredTypes = (options = {}) => {
     ':not([type="week"])',
     ':not([type="url"])',
     ':not([type="search"])',
-    ':not(read-only)',
-    ':not(readonly)',
     ':not([read-only])',
     ':not([readonly])',
-    ':not(list)',
-    ':not(-moz-read-only)',
-    ':not(disabled)',
     ':not([disabled])'
   ];
 
