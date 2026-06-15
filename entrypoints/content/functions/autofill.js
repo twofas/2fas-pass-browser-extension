@@ -6,84 +6,10 @@
 
 import { AUTOFILL_RESULT_CODES } from '@/constants';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
-import isTopFrame from '@/partials/functions/isTopFrame';
-import getFrameHostname from '@/partials/functions/getFrameHostname';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import getLoginInputs from './autofillFunctions/getLoginInputs';
-
-/**
-* Decrypts an encrypted password using the local key.
-* @param {string} encryptedPassword - The base64 encoded encrypted password.
-* @return {Promise<{status: string, data?: string, message?: string}>} Decryption result.
-*/
-const decryptPassword = async encryptedPassword => {
-  let localKeyResponse;
-
-  try {
-    localKeyResponse = await browser.runtime.sendMessage({
-      action: REQUEST_ACTIONS.GET_LOCAL_KEY,
-      target: REQUEST_TARGETS.BACKGROUND
-    });
-  } catch {
-    return { status: 'error', message: 'Failed to get local key' };
-  }
-
-  if (localKeyResponse?.status !== 'ok') {
-    return { status: 'error', message: 'Failed to get local key' };
-  }
-
-  let localKeyAB = Base64ToArrayBuffer(localKeyResponse.data);
-  let localKeyCrypto;
-
-  try {
-    localKeyCrypto = await crypto.subtle.importKey(
-      'raw',
-      localKeyAB,
-      { name: 'AES-GCM' },
-      false,
-      ['decrypt']
-    );
-  } catch (e) {
-    wipeBuffer(localKeyAB);
-    localKeyAB = null;
-    await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillImportKeyError, { event: e }));
-    return { status: 'error', message: 'ImportKey error' };
-  }
-
-  wipeBuffer(localKeyAB);
-  localKeyAB = null;
-
-  let valueAB = Base64ToArrayBuffer(encryptedPassword);
-  let decryptedBytes = DecryptBytes(valueAB);
-  wipeBuffer(valueAB);
-  valueAB = null;
-
-  try {
-    let decryptedValueAB = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: decryptedBytes.iv },
-      localKeyCrypto,
-      decryptedBytes.data
-    );
-
-    localKeyCrypto = null;
-    wipeBuffer(decryptedBytes?.iv);
-    wipeBuffer(decryptedBytes?.data);
-    decryptedBytes = null;
-
-    const decryptedValueString = ArrayBufferToString(decryptedValueAB);
-    wipeBuffer(decryptedValueAB);
-    decryptedValueAB = null;
-
-    return { status: 'ok', data: decryptedValueString };
-  } catch (e) {
-    localKeyCrypto = null;
-    wipeBuffer(decryptedBytes?.iv);
-    wipeBuffer(decryptedBytes?.data);
-    decryptedBytes = null;
-    await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillDecryptError, { event: e }));
-    return { status: 'error', message: 'Decrypt error' };
-  }
-};
+import decryptTransmittedValue from './autofillFunctions/decryptTransmittedValue';
+import checkCrossDomainFramePermission from './autofillFunctions/checkCrossDomainFramePermission';
 
 /**
 * Function to autofill input fields.
@@ -123,38 +49,16 @@ const autofill = async request => {
     };
   }
 
-  if (!isTopFrame()) {
-    let isCrossDomain = false;
-    const frameHostname = getFrameHostname();
+  const { allowed } = checkCrossDomainFramePermission(request);
 
-    try {
-      const topHostname = new URL(window.top.location.href).hostname;
-      isCrossDomain = frameHostname !== topHostname;
-    } catch {
-      isCrossDomain = true;
-    }
-
-    if (isCrossDomain) {
-      if (request.crossDomainAllowedDomains) {
-        if (!request.crossDomainAllowedDomains.includes(frameHostname)) {
-          return {
-            status: 'cancelled',
-            code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED,
-            message: 'Cross-domain autofill not permitted',
-            canAutofillPassword,
-            canAutofillUsername
-          };
-        }
-      } else if (!request.iframePermissionGranted) {
-        return {
-          status: 'cancelled',
-          code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED,
-          message: 'Cross-domain autofill not permitted',
-          canAutofillPassword,
-          canAutofillUsername
-        };
-      }
-    }
+  if (!allowed) {
+    return {
+      status: 'cancelled',
+      code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED,
+      message: 'Cross-domain autofill not permitted',
+      canAutofillPassword,
+      canAutofillUsername
+    };
   }
 
   if (canFillUsername) {
@@ -165,7 +69,7 @@ const autofill = async request => {
     let passwordValue;
 
     if (request.cryptoAvailable) {
-      const decryptResult = await decryptPassword(request.password);
+      const decryptResult = await decryptTransmittedValue(request.password);
 
       if (decryptResult.status !== 'ok') {
         return { ...decryptResult, canAutofillPassword, canAutofillUsername };

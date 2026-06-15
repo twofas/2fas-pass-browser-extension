@@ -9,10 +9,10 @@ import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPayment
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
 import getPaymentCardIssuerInputs from '@/partials/inputFunctions/getPaymentCardIssuerInputs';
-import isTopFrame from '@/partials/functions/isTopFrame';
-import getFrameHostname from '@/partials/functions/getFrameHostname';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import getShadowRoots from './autofillFunctions/getShadowRoots';
+import decryptTransmittedValue from './autofillFunctions/decryptTransmittedValue';
+import checkCrossDomainFramePermission from './autofillFunctions/checkCrossDomainFramePermission';
 import {
   AUTOFILL_RESULT_CODES,
   PaymentCardIssuerVisa,
@@ -34,80 +34,6 @@ const issuerVariations = {
   dinersClub: PaymentCardIssuerDinersClub,
   maestro: PaymentCardIssuerMaestro,
   unionPay: PaymentCardIssuerUnionPay
-};
-
-/**
-* Decrypts an encrypted value using the local key.
-* @param {string} encryptedValue - The base64 encoded encrypted value.
-* @return {Promise<{status: string, data?: string, message?: string}>} Decryption result.
-*/
-const decryptValue = async encryptedValue => {
-  let localKeyResponse;
-
-  try {
-    localKeyResponse = await browser.runtime.sendMessage({
-      action: REQUEST_ACTIONS.GET_LOCAL_KEY,
-      target: REQUEST_TARGETS.BACKGROUND
-    });
-  } catch {
-    return { status: 'error', message: 'Failed to get local key' };
-  }
-
-  if (localKeyResponse?.status !== 'ok') {
-    return { status: 'error', message: 'Failed to get local key' };
-  }
-
-  let localKeyAB = Base64ToArrayBuffer(localKeyResponse.data);
-  let localKeyCrypto;
-
-  try {
-    localKeyCrypto = await crypto.subtle.importKey(
-      'raw',
-      localKeyAB,
-      { name: 'AES-GCM' },
-      false,
-      ['decrypt']
-    );
-  } catch (e) {
-    wipeBuffer(localKeyAB);
-    localKeyAB = null;
-    await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillImportKeyError, { event: e }));
-    return { status: 'error', message: 'ImportKey error' };
-  }
-
-  wipeBuffer(localKeyAB);
-  localKeyAB = null;
-
-  let valueAB = Base64ToArrayBuffer(encryptedValue);
-  let decryptedBytes = DecryptBytes(valueAB);
-  wipeBuffer(valueAB);
-  valueAB = null;
-
-  try {
-    let decryptedValueAB = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: decryptedBytes.iv },
-      localKeyCrypto,
-      decryptedBytes.data
-    );
-
-    localKeyCrypto = null;
-    wipeBuffer(decryptedBytes?.iv);
-    wipeBuffer(decryptedBytes?.data);
-    decryptedBytes = null;
-
-    const decryptedValueString = ArrayBufferToString(decryptedValueAB);
-    wipeBuffer(decryptedValueAB);
-    decryptedValueAB = null;
-
-    return { status: 'ok', data: decryptedValueString };
-  } catch (e) {
-    localKeyCrypto = null;
-    wipeBuffer(decryptedBytes?.iv);
-    wipeBuffer(decryptedBytes?.data);
-    decryptedBytes = null;
-    await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillDecryptError, { event: e }));
-    return { status: 'error', message: 'Decrypt error' };
-  }
 };
 
 /**
@@ -440,26 +366,10 @@ const autofillCard = async request => {
     return { status: 'error', code: AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS, message: 'No input fields found', filledFields };
   }
 
-  if (!isTopFrame()) {
-    let isCrossDomain = false;
-    const frameHostname = getFrameHostname();
+  const { allowed } = checkCrossDomainFramePermission(request);
 
-    try {
-      const topHostname = new URL(window.top.location.href).hostname;
-      isCrossDomain = frameHostname !== topHostname;
-    } catch {
-      isCrossDomain = true;
-    }
-
-    if (isCrossDomain) {
-      if (request.crossDomainAllowedDomains) {
-        if (!request.crossDomainAllowedDomains.includes(frameHostname)) {
-          return { status: 'cancelled', code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED, message: 'Cross-domain autofill not permitted', filledFields };
-        }
-      } else if (!request.iframePermissionGranted) {
-        return { status: 'cancelled', code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED, message: 'Cross-domain autofill not permitted', filledFields };
-      }
-    }
+  if (!allowed) {
+    return { status: 'cancelled', code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED, message: 'Cross-domain autofill not permitted', filledFields };
   }
 
   if (canFillCardholderName) {
@@ -473,7 +383,7 @@ const autofillCard = async request => {
 
     try {
       if (request.cryptoAvailable && request.cardNumberEncrypted) {
-        const decryptResult = await decryptValue(request.cardNumber);
+        const decryptResult = await decryptTransmittedValue(request.cardNumber);
 
         if (decryptResult.status === 'ok') {
           cardNumberValue = decryptResult.data;
@@ -502,7 +412,7 @@ const autofillCard = async request => {
 
     try {
       if (request.cryptoAvailable && request.expirationDateEncrypted) {
-        const decryptResult = await decryptValue(request.expirationDate);
+        const decryptResult = await decryptTransmittedValue(request.expirationDate);
 
         if (decryptResult.status === 'ok') {
           expirationDateValue = decryptResult.data;
@@ -530,7 +440,7 @@ const autofillCard = async request => {
 
     try {
       if (request.cryptoAvailable && request.securityCodeEncrypted) {
-        const decryptResult = await decryptValue(request.securityCode);
+        const decryptResult = await decryptTransmittedValue(request.securityCode);
 
         if (decryptResult.status === 'ok') {
           securityCodeValue = decryptResult.data;
