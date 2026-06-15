@@ -103,3 +103,33 @@ describe('getUsernameInputs fallback (password forms with no heuristic username 
     expect(result[0]).toBe(username);
   });
 });
+
+describe('getUsernameInputs prioritizes inputs sharing a form with password inputs', () => {
+  beforeEach(() => {
+    vi.stubGlobal('HTMLFormElement', FakeHTMLFormElement);
+    vi.stubGlobal('Node', FakeNode);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('returns only the username inputs inside the provided password forms', () => {
+    const passwordForm = Object.create(FakeHTMLFormElement.prototype);
+    const otherForm = Object.create(FakeHTMLFormElement.prototype);
+    const insideUsername = makeInput({ name: 'login', order: 0 });
+    const outsideUsername = makeInput({ name: 'login', order: 1 });
+
+    insideUsername.closest = selector => (selector === 'form' ? passwordForm : null);
+    outsideUsername.closest = selector => (selector === 'form' ? otherForm : null);
+
+    vi.stubGlobal('document', {
+      querySelectorAll: selector =>
+        (selector.includes('autocomplete="username"') ? [insideUsername, outsideUsername] : [])
+    });
+
+    const result = getUsernameInputs([passwordForm]);
+
+    expect(result).toEqual([insideUsername]);
+  });
+});

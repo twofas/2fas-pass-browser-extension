@@ -28,11 +28,11 @@ const autofill = async request => {
     return { status: 'error', code: AUTOFILL_RESULT_CODES.NO_CREDENTIALS, message: 'No username and password provided' };
   }
 
-  const { passwordInputs, usernameInputs } = getLoginInputs();
+  const { passwordInputs, passwordForms, usernameInputs } = getLoginInputs();
   const canAutofillPassword = passwordInputs.length > 0;
   const canAutofillUsername = usernameInputs.length > 0;
 
-  setUsernameSkips(passwordInputs, usernameInputs, request.hasPasswordInAnyFrame);
+  setUsernameSkips(passwordInputs, usernameInputs, request.hasPasswordInAnyFrame, passwordForms);
 
   const hasUsernameData = request.username?.length > 0;
   const hasPasswordData = request.password?.length > 0;

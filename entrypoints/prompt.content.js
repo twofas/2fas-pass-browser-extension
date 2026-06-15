@@ -59,7 +59,7 @@ export default defineContentScript({
       .filter(Boolean);
 
     const usernameInputs = getUsernameInputs(passwordForms, documentShadowRoots);
-    setUsernameSkips(passwordInputs, usernameInputs);
+    setUsernameSkips(passwordInputs, usernameInputs, false, passwordForms);
 
     const allInputs = passwordInputs.concat(usernameInputs);
     setIDsToInputs(allInputs);
@@ -89,7 +89,7 @@ export default defineContentScript({
           return;
         }
 
-        setUsernameSkips(newPasswordInputs, newUsernameInputs);
+        setUsernameSkips(newPasswordInputs, newUsernameInputs, false, newPasswordForms);
         setIDsToInputs(newInputs);
         allInputs.push(...newInputs);
       } catch {}

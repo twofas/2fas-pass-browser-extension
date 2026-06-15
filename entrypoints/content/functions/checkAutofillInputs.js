@@ -12,9 +12,9 @@ import getLoginInputs from './autofillFunctions/getLoginInputs';
 * @return {{canAutofillPassword: boolean, canAutofillUsername: boolean, passwordInputsCount: number, usernameInputsCount: number}} Autofill capability status.
 */
 const checkAutofillInputs = () => {
-  const { passwordInputs, usernameInputs } = getLoginInputs();
+  const { passwordInputs, passwordForms, usernameInputs } = getLoginInputs();
 
-  setUsernameSkips(passwordInputs, usernameInputs);
+  setUsernameSkips(passwordInputs, usernameInputs, false, passwordForms);
 
   const result = {
     canAutofillPassword: passwordInputs.length > 0,

@@ -134,17 +134,15 @@ const getUsernameInputsFromRoot = (rootNode, userNameSelector) => {
 /**
 * Checks if an input is inside one of the given forms.
 * @param {HTMLInputElement} input - The input element to check.
-* @param {HTMLFormElement[]} forms - The forms to check against.
+* @param {Set<HTMLFormElement>} formsSet - The set of forms to check against.
 * @return {boolean} True if input is inside one of the forms.
 */
-const isInputInForms = (input, forms) => {
-  if (!forms || forms.length === 0) {
+const isInputInForms = (input, formsSet) => {
+  if (!formsSet || formsSet.size === 0) {
     return false;
   }
 
-  const inputForm = input.closest('form');
-
-  return forms.some(form => form === inputForm);
+  return formsSet.has(input.closest('form'));
 };
 
 /**
@@ -203,7 +201,8 @@ const getUsernameInputs = (passwordForms = null, shadowRoots = null) => {
   const filteredInputs = uniqueInputs.filter(filterDeniedKeywords);
 
   if (passwordForms && passwordForms.length > 0 && filteredInputs.length > 0) {
-    const inputsInPasswordForms = filteredInputs.filter(input => isInputInForms(input, passwordForms));
+    const passwordFormsSet = new Set(passwordForms);
+    const inputsInPasswordForms = filteredInputs.filter(input => isInputInForms(input, passwordFormsSet));
 
     if (inputsInPasswordForms.length > 0) {
       return inputsInPasswordForms;

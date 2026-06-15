@@ -90,7 +90,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
         .map(input => input.closest('form'))
         .filter(Boolean);
       const usernameInputs = getUsernameInputs(passwordForms, documentShadowRoots);
-      setUsernameSkips(passwordInputs, usernameInputs);
+      setUsernameSkips(passwordInputs, usernameInputs, false, passwordForms);
 
       const allInputsNew = passwordInputs.concat(usernameInputs);
 
