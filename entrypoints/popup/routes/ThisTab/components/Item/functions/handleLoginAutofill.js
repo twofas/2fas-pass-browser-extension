@@ -4,18 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, sendMessageToTab, resolveCrossDomainPermissions } from '@/partials/functions';
+import { sendMessageToAllFrames, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, resolveCrossDomainPermissions } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
+import { acquireAutofillTab, showT2Toast, showGenericToast } from './autofillPopupShared';
 import { PULL_REQUEST_TYPES, AUTOFILL_RESULT_CODES } from '@/constants';
 import Login from '@/models/itemModels/Login';
-
-const showT2Toast = () => {
-  showToast(getMessage('this_tab_can_t_autofill_t2'), 'info');
-};
-
-const showGenericToast = () => {
-  showToast(getMessage('this_tab_can_t_autofill'), 'info');
-};
 
 /**
 * Handles the autofill action for Login items.
@@ -35,50 +28,13 @@ const handleLoginAutofill = async (item, navigate) => {
     securityType: item?.securityType
   });
 
-  let tab;
+  const prolog = await acquireAutofillTab(onTabError, 'login');
 
-  try {
-    tab = await getLastActiveTab(onTabError, t => !tabIsInternal(t));
-  } catch (e) {
-    await CatchError(e);
-  }
-
-  if (!tab) {
-    logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - autofill aborted, no target tab');
+  if (!prolog) {
     return;
   }
 
-  let injected = false;
-
-  try {
-    injected = await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
-  } catch (e) {
-    onTabError();
-
-    if (!e.message.includes('showing error page')) {
-      await CatchError(e);
-    }
-
-    return;
-  }
-
-  if (!injected) {
-    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - autofill aborted, content script injection failed', { tabId: tab.id });
-    showToast(getMessage('error_autofill_failed'), 'error');
-    return;
-  }
-
-  const cryptoAvailableRes = await sendMessageToTab(tab.id, {
-    action: REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE,
-    target: REQUEST_TARGETS.CONTENT
-  });
-
-  if (!cryptoAvailableRes) {
-    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - autofill aborted, no GET_CRYPTO_AVAILABLE response from top frame', { tabId: tab.id });
-    showToast(getMessage('error_autofill_failed'), 'error');
-    return;
-  }
-
+  const { tab, cryptoAvailableRes } = prolog;
   const hasPassword = item.sifExists;
   const hasUsername = item?.content.username && item.content.username.length > 0;
   let passwordDecrypt = true;

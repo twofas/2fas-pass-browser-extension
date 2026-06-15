@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission, resolveCrossDomainPermissions, saveCrossDomainPreferences, aggregateCardAutofillResponses } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, encryptCardSifForTransmission, resolveCrossDomainPermissions, saveCrossDomainPreferences, aggregateCardAutofillResponses } from '@/partials/functions';
 import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
@@ -62,22 +62,16 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     }, tabId, true);
   }
 
-  let decryptedCardNumber = '';
-  let decryptedExpirationDate = '';
-  let decryptedSecurityCode = '';
   let encryptedCardNumberB64 = null;
   let encryptedExpirationDateB64 = null;
   let encryptedSecurityCodeB64 = null;
 
   if (hasCardData) {
-    try {
-      const decryptedValues = await item.decryptSif();
-      decryptedCardNumber = decryptedValues.cardNumber || '';
-      decryptedExpirationDate = decryptedValues.expirationDate || '';
-      decryptedSecurityCode = decryptedValues.securityCode || '';
-    } catch (e) {
+    const encryptResult = await encryptCardSifForTransmission(item, cryptoAvailable);
+
+    if (encryptResult.status === 'decryptError') {
       await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabDecryptSif, {
-        event: e,
+        event: encryptResult.event,
         additional: { func: 'sendCardAutofillToTab - decryptSif' }
       }));
 
@@ -87,87 +81,27 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       }, tabId, true);
     }
 
-    if (!cryptoAvailable) {
-      encryptedCardNumberB64 = decryptedCardNumber;
-      encryptedExpirationDateB64 = decryptedExpirationDate;
-      encryptedSecurityCodeB64 = decryptedSecurityCode;
-    } else {
-      let localKeyCrypto = null;
-
-      try {
-        const localKey = await storage.getItem('local:lKey');
-
-        localKeyCrypto = await crypto.subtle.importKey(
-          'raw',
-          Base64ToArrayBuffer(localKey),
-          { name: 'AES-GCM' },
-          false,
-          ['encrypt']
-        );
-      } catch (e) {
-        throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabImportKeyError, {
-          event: e,
-          additional: { func: 'sendCardAutofillToTab - importKey' }
-        });
-      }
-
-      if (decryptedCardNumber) {
-        const cardNumberResult = await encryptValueForTransmission(decryptedCardNumber, localKeyCrypto);
-
-        if (cardNumberResult.status !== 'ok') {
-          await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
-            additional: { func: 'sendCardAutofillToTab - encryptValueForTransmission (cardNumber)' }
-          }));
-
-          return TwofasNotification.show({
-            Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-            Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
-          }, tabId, true);
-        }
-
-        encryptedCardNumberB64 = cardNumberResult.data;
-      }
-
-      if (decryptedExpirationDate) {
-        const expirationDateResult = await encryptValueForTransmission(decryptedExpirationDate, localKeyCrypto);
-
-        if (expirationDateResult.status !== 'ok') {
-          await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
-            additional: { func: 'sendCardAutofillToTab - encryptValueForTransmission (expirationDate)' }
-          }));
-
-          return TwofasNotification.show({
-            Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-            Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
-          }, tabId, true);
-        }
-
-        encryptedExpirationDateB64 = expirationDateResult.data;
-      }
-
-      if (decryptedSecurityCode) {
-        const securityCodeResult = await encryptValueForTransmission(decryptedSecurityCode, localKeyCrypto);
-
-        if (securityCodeResult.status !== 'ok') {
-          await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
-            additional: { func: 'sendCardAutofillToTab - encryptValueForTransmission (securityCode)' }
-          }));
-
-          return TwofasNotification.show({
-            Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
-            Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
-          }, tabId, true);
-        }
-
-        encryptedSecurityCodeB64 = securityCodeResult.data;
-      }
-
-      localKeyCrypto = null;
+    if (encryptResult.status === 'importKeyError') {
+      throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabImportKeyError, {
+        event: encryptResult.event,
+        additional: { func: 'sendCardAutofillToTab - importKey' }
+      });
     }
 
-    decryptedCardNumber = '';
-    decryptedExpirationDate = '';
-    decryptedSecurityCode = '';
+    if (encryptResult.status === 'encryptError') {
+      await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
+        additional: { func: `sendCardAutofillToTab - encryptValueForTransmission (${encryptResult.field})` }
+      }));
+
+      return TwofasNotification.show({
+        Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+        Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      }, tabId, true);
+    }
+
+    encryptedCardNumberB64 = encryptResult.cardNumber;
+    encryptedExpirationDateB64 = encryptResult.expirationDate;
+    encryptedSecurityCodeB64 = encryptResult.securityCode;
   }
 
   const iframePermissionGranted = true;

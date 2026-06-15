@@ -13,6 +13,7 @@ export { default as compressPublicKey } from './compressPublicKey.js';
 export { default as copyValue } from './copyValue.js';
 export { default as delay } from './delay.js';
 export { default as deletePush } from './deletePush.js';
+export { default as encryptCardSifForTransmission } from './encryptCardSifForTransmission.js';
 export { default as encryptValueForTransmission } from './encryptValueForTransmission.js';
 export { default as focusPopupWindow } from './focusPopupWindow.js';
 export { default as generateNonce } from './generateNonce.js';
