@@ -4,6 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { AUTOFILL_RESULT_CODES } from '@/constants';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import isTopFrame from '@/partials/functions/isTopFrame';
 import getFrameHostname from '@/partials/functions/getFrameHostname';
@@ -94,11 +95,11 @@ const decryptPassword = async encryptedPassword => {
 * @param {boolean} [request.cryptoAvailable] - Flag indicating password is encrypted.
 * @param {boolean} [request.iframePermissionGranted] - Flag indicating cross-domain permission was granted.
 * @param {boolean} [request.hasPasswordInAnyFrame] - Flag indicating if any frame has password inputs.
-* @return {Promise<{status: string, message?: string, canAutofillPassword?: boolean, canAutofillUsername?: boolean}>} The status of the autofill operation.
+* @return {Promise<{status: string, code?: string, message?: string, canAutofillPassword?: boolean, canAutofillUsername?: boolean}>} The status of the autofill operation.
 */
 const autofill = async request => {
   if (request.noPassword && request.noUsername) {
-    return { status: 'error', message: 'No username and password provided' };
+    return { status: 'error', code: AUTOFILL_RESULT_CODES.NO_CREDENTIALS, message: 'No username and password provided' };
   }
 
   const { passwordInputs, usernameInputs } = getLoginInputs();
@@ -115,6 +116,7 @@ const autofill = async request => {
   if (!canFillUsername && !canFillPassword) {
     return {
       status: 'error',
+      code: AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS,
       message: 'No input fields found',
       canAutofillPassword,
       canAutofillUsername
@@ -137,6 +139,7 @@ const autofill = async request => {
         if (!request.crossDomainAllowedDomains.includes(frameHostname)) {
           return {
             status: 'cancelled',
+            code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED,
             message: 'Cross-domain autofill not permitted',
             canAutofillPassword,
             canAutofillUsername
@@ -145,6 +148,7 @@ const autofill = async request => {
       } else if (!request.iframePermissionGranted) {
         return {
           status: 'cancelled',
+          code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED,
           message: 'Cross-domain autofill not permitted',
           canAutofillPassword,
           canAutofillUsername

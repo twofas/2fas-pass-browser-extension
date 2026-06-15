@@ -6,7 +6,7 @@
 
 import { sendMessageToAllFrames, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, sendMessageToTab, resolveCrossDomainPermissions } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
-import { PULL_REQUEST_TYPES } from '@/constants';
+import { PULL_REQUEST_TYPES, AUTOFILL_RESULT_CODES } from '@/constants';
 import Login from '@/models/itemModels/Login';
 
 const showT2Toast = () => {
@@ -274,7 +274,7 @@ const handleLoginAutofill = async (item, navigate) => {
   const isOk = res.some(frameResponse => frameResponse.status === 'ok');
   const allFieldsFilled = res.every(frameResponse => {
     if (frameResponse.status !== 'ok') {
-      return frameResponse.message === 'No input fields found';
+      return frameResponse.code === AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS;
     }
 
     const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;

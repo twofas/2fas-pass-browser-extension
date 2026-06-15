@@ -4,6 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { AUTOFILL_RESULT_CODES } from '@/constants';
 import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission, resolveCrossDomainPermissions } from '@/partials/functions';
 import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
@@ -186,7 +187,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
     if (errorResponses.length > 0) {
       if (errorResponses[0]?.status === 'error') {
-        if (errorResponses[0]?.message === 'No username and password provided') {
+        if (errorResponses[0]?.code === AUTOFILL_RESULT_CODES.NO_CREDENTIALS) {
           return TwofasNotification.show({
             Title: getMessage('notification_shortcut_autofill_no_username_and_password_title'),
             Message: getMessage('notification_shortcut_autofill_no_username_and_password_message')

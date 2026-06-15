@@ -4,6 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { AUTOFILL_RESULT_CODES } from '@/constants';
 import addNewSessionIdToDevice from './utils/addNewSessionIdToDevice';
 import TwoFasWebSocket from '.';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
@@ -165,7 +166,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     const isOk = autofillRes?.some(frameResponse => frameResponse.status === 'ok');
     const allFieldsFilled = autofillRes?.every(frameResponse => {
       if (frameResponse.status !== 'ok') {
-        return frameResponse.message === 'No input fields found';
+        return frameResponse.code === AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS;
       }
 
       const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;

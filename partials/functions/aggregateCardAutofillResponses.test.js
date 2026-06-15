@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { describe, it, expect } from 'vitest';
+import { AUTOFILL_RESULT_CODES } from '@/constants';
 import aggregateCardAutofillResponses from './aggregateCardAutofillResponses.js';
 
 describe('aggregateCardAutofillResponses', () => {
@@ -33,12 +34,24 @@ describe('aggregateCardAutofillResponses', () => {
   });
 
   describe('irrelevant frames are filtered out', () => {
-    it('treats every frame replying "No input fields found" as noInputs', () => {
+    it('treats every frame replying with the NO_INPUT_FIELDS code as noInputs', () => {
       const result = aggregateCardAutofillResponses([
-        { status: 'error', message: 'No input fields found', filledFields: {} },
-        { status: 'error', message: 'No input fields found', filledFields: {} }
+        { status: 'error', code: AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS, message: 'No input fields found', filledFields: {} },
+        { status: 'error', code: AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS, message: 'No input fields found', filledFields: {} }
       ]);
       expect(result.outcome).toBe('noInputs');
+    });
+
+    it('keys noise detection off the code, not the human-readable message (regression: finding #25)', () => {
+      // A frame carrying the NO_INPUT_FIELDS code is filtered as noise even if its
+      // message wording drifts; a frame whose message merely reads like the legacy
+      // string but lacks the code is treated as a real error, not noise.
+      const result = aggregateCardAutofillResponses([
+        { status: 'error', code: AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS, message: 'reworded: nothing to fill here', filledFields: {} },
+        { status: 'error', message: 'No input fields found', filledFields: {} }
+      ]);
+      expect(result.outcome).toBe('error');
+      expect(result.isOk).toBe(false);
     });
 
     it('ignores null/undefined and status-less entries in the array', () => {
@@ -82,7 +95,7 @@ describe('aggregateCardAutofillResponses', () => {
     // must classify this as 'error' so all four callers can surface it.
     it('is error when the only relevant frame was cancelled (cross-domain denied)', () => {
       const result = aggregateCardAutofillResponses([
-        { status: 'cancelled', message: 'Cross-domain autofill not permitted', filledFields: {} }
+        { status: 'cancelled', code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED, message: 'Cross-domain autofill not permitted', filledFields: {} }
       ]);
       expect(result.outcome).toBe('error');
       expect(result.isOk).toBe(false);
@@ -96,9 +109,9 @@ describe('aggregateCardAutofillResponses', () => {
       expect(result.outcome).toBe('error');
     });
 
-    it('is error when mixing cancelled and non-"No input fields found" errors', () => {
+    it('is error when mixing cancelled and non-NO_INPUT_FIELDS errors', () => {
       const result = aggregateCardAutofillResponses([
-        { status: 'cancelled', message: 'Cross-domain autofill not permitted', filledFields: {} },
+        { status: 'cancelled', code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED, message: 'Cross-domain autofill not permitted', filledFields: {} },
         { status: 'error', message: 'Decrypt error' }
       ]);
       expect(result.outcome).toBe('error');
@@ -163,9 +176,9 @@ describe('aggregateCardAutofillResponses', () => {
       expect(result.outcome).toBe('partial');
     });
 
-    it('classifies as ok when a real fill coexists with "No input fields found" noise frames', () => {
+    it('classifies as ok when a real fill coexists with NO_INPUT_FIELDS noise frames', () => {
       const result = aggregateCardAutofillResponses([
-        { status: 'error', message: 'No input fields found', filledFields: {} },
+        { status: 'error', code: AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS, message: 'No input fields found', filledFields: {} },
         { status: 'ok', filledFields: { cardNumber: true, expirationDate: true }, missingInputFields: [] }
       ]);
       expect(result.outcome).toBe('ok');

@@ -14,6 +14,7 @@ import getFrameHostname from '@/partials/functions/getFrameHostname';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import getShadowRoots from './autofillFunctions/getShadowRoots';
 import {
+  AUTOFILL_RESULT_CODES,
   PaymentCardIssuerVisa,
   PaymentCardIssuerMasterCard,
   PaymentCardIssuerAmericanExpress,
@@ -399,7 +400,7 @@ const isExpirationDateFilled = expirationResults => {
 * @param {string} [request.cardIssuer] - The card issuer/type to fill.
 * @param {boolean} [request.cryptoAvailable] - Flag indicating encrypted fields need decryption.
 * @param {boolean} [request.iframePermissionGranted] - Flag indicating cross-domain permission was granted.
-* @return {Promise<{status: string, message?: string, filledFields?: Object}>} The status of the autofill operation.
+* @return {Promise<{status: string, code?: string, message?: string, filledFields?: Object}>} The status of the autofill operation.
 */
 const autofillCard = async request => {
   const shadowRoots = getShadowRoots();
@@ -436,7 +437,7 @@ const autofillCard = async request => {
   };
 
   if (!canFillCardNumber && !canFillCardholderName && !canFillExpirationDate && !canFillSecurityCode && !canFillCardIssuer) {
-    return { status: 'error', message: 'No input fields found', filledFields };
+    return { status: 'error', code: AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS, message: 'No input fields found', filledFields };
   }
 
   if (!isTopFrame()) {
@@ -453,10 +454,10 @@ const autofillCard = async request => {
     if (isCrossDomain) {
       if (request.crossDomainAllowedDomains) {
         if (!request.crossDomainAllowedDomains.includes(frameHostname)) {
-          return { status: 'cancelled', message: 'Cross-domain autofill not permitted', filledFields };
+          return { status: 'cancelled', code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED, message: 'Cross-domain autofill not permitted', filledFields };
         }
       } else if (!request.iframePermissionGranted) {
-        return { status: 'cancelled', message: 'Cross-domain autofill not permitted', filledFields };
+        return { status: 'cancelled', code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED, message: 'Cross-domain autofill not permitted', filledFields };
       }
     }
   }

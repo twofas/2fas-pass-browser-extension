@@ -4,13 +4,15 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { AUTOFILL_RESULT_CODES } from '@/constants';
+
 /**
 * Pure aggregation of per-frame AUTOFILL_CARD responses into a single outcome.
 *
 * Every frame in a tab answers the AUTOFILL_CARD message independently
 * (see entrypoints/content/functions/autofillCard.js). A frame with no card
-* inputs replies `{ status: 'error', message: 'No input fields found' }` and is
-* treated as irrelevant noise. The remaining ("relevant") frame responses are
+* inputs replies `{ status: 'error', code: AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS }`
+* and is treated as irrelevant noise. The remaining ("relevant") frame responses are
 * collapsed here so that every caller derives the same outcome and missing-field
 * list instead of re-implementing the reduction (the logic previously lived,
 * verbatim and already drifting, in four separate background handlers).
@@ -35,7 +37,7 @@
 */
 const aggregateCardAutofillResponses = responses => {
   const relevantResponses = (Array.isArray(responses) ? responses : [])
-    .filter(r => r && r.status && r.message !== 'No input fields found');
+    .filter(r => r && r.status && r.code !== AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS);
 
   const isOk = relevantResponses.some(frameResponse => frameResponse.status === 'ok');
   const isPartial = relevantResponses.some(frameResponse => frameResponse.status === 'partial');

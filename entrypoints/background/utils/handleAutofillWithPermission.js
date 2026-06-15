@@ -4,6 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { AUTOFILL_RESULT_CODES } from '@/constants';
 import { sendMessageToAllFrames, sendMessageToTab, openPopup, loadAndClassifyCrossDomainPermissions } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
@@ -146,7 +147,7 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   const isOk = response.some(frameResponse => frameResponse.status === 'ok');
   const allFieldsFilled = response.every(frameResponse => {
     if (frameResponse.status !== 'ok') {
-      return frameResponse.message === 'No input fields found';
+      return frameResponse.code === AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS;
     }
 
     const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
