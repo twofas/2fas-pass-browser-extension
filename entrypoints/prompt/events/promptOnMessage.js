@@ -15,6 +15,10 @@
 */
 const promptOnMessage = (request, sender, sendResponse, timers, ignore) => {
   try {
+    if (sender?.id && sender.id !== browser.runtime.id) {
+      return false;
+    }
+
     if (!request || !request?.action || request?.target !== REQUEST_TARGETS.PROMPT) {
       return false;
     }

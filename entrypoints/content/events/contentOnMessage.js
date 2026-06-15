@@ -30,6 +30,10 @@ import e2eReadAutofillValues from '../functions/e2eReadAutofillValues';
 */
 const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, cryptoAvailable) => {
   try {
+    if (sender?.id && sender.id !== browser.runtime.id) {
+      return false;
+    }
+
     if (!request || !request?.action || request?.target !== REQUEST_TARGETS.CONTENT) {
       return false;
     }

@@ -15,6 +15,10 @@ import autoClearAction from '@/partials/functions/autoClearAction';
 */
 const focusOnMessage = (request, sender, sendResponse, focusFuncAction) => {
   try {
+    if (sender?.id && sender.id !== browser.runtime.id) {
+      return false;
+    }
+
     if (!request || !request?.action || request?.target !== REQUEST_TARGETS.FOCUS_CONTENT) {
       return false;
     }
