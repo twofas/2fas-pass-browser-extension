@@ -32,6 +32,8 @@ const decryptValues = async values => {
     throw new TwoFasError(TwoFasError.internalErrors.decryptValuesImportKeyError, {
       additional: { event: e, func: 'decryptValues' }
     });
+  } finally {
+    wipeBuffer(localKeyAB);
   }
 
   // Process both username and password in parallel
