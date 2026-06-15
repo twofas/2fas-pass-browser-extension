@@ -101,6 +101,8 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
 
       encryptedValueB64 = passwordResult.data;
     }
+
+    decryptedPassword = null;
   }
 
   let hasPasswordInAnyFrame = false;
