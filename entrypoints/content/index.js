@@ -28,6 +28,7 @@ export default defineContentScript({
 
       let handleMessage;
       let topLayerCleanup = null;
+      let styleObserverCleanup = null;
       const emptyFunc = () => {};
       const cryptoAvailable = isCryptoAvailable();
 
@@ -39,6 +40,11 @@ export default defineContentScript({
         if (topLayerCleanup) {
           topLayerCleanup();
           topLayerCleanup = null;
+        }
+
+        if (styleObserverCleanup) {
+          styleObserverCleanup();
+          styleObserverCleanup = null;
         }
       };
 
@@ -55,6 +61,8 @@ export default defineContentScript({
             shadow.children[0].getElementsByTagName('body')[0].style = 'margin: 0 !important; padding: 0 !important; overflow: hidden !important;';
 
             const styleObserver = setupStyleObserver(shadowHost, standardStyles);
+
+            styleObserverCleanup = styleObserver.disconnect;
 
             const topLayer = topLayerManager(
               shadowHost,
