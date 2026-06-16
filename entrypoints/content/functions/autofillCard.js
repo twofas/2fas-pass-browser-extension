@@ -290,11 +290,12 @@ const setCardIssuerValue = (inputData, issuerValue) => {
 
 /**
 * Checks if expiration date was successfully filled.
-* Returns true if combined field was filled OR both month and year were filled.
+* Returns true if the combined field was filled, or if every separate month/year
+* field present on the page was filled (tolerating the absence of one of them).
 * @param {Array<{success: boolean, type: string}>} expirationResults - Results from expiration date autofill.
 * @return {boolean} True if expiration date is considered filled.
 */
-const isExpirationDateFilled = expirationResults => {
+export const isExpirationDateFilled = expirationResults => {
   if (!expirationResults || expirationResults.length === 0) {
     return false;
   }
@@ -307,16 +308,9 @@ const isExpirationDateFilled = expirationResults => {
 
   const monthResult = expirationResults.find(r => r.type === 'month');
   const yearResult = expirationResults.find(r => r.type === 'year');
+  const presentResults = [monthResult, yearResult].filter(Boolean);
 
-  if (monthResult?.success && yearResult?.success) {
-    return true;
-  }
-
-  if (monthResult?.success || yearResult?.success) {
-    return true;
-  }
-
-  return false;
+  return presentResults.length > 0 && presentResults.every(r => r.success);
 };
 
 /**
