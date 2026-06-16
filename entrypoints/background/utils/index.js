@@ -47,6 +47,7 @@ export { default as openInstallPage } from './openInstallPage.js';
 export { default as openPopupWindowInNewWindow } from './openPopupWindowInNewWindow.js';
 export { default as openPopupWithFallback } from './openPopupWithFallback.js';
 export { default as promptInput } from './promptInput.js';
+export { default as regenerateLocalKey } from './regenerateLocalKey.js';
 export { default as sendAutoClearAction } from './sendAutoClearAction.js';
 export { default as sendAutofillToTab } from './sendAutofillToTab.js';
 export { default as sendCardAutofillToTab } from './sendCardAutofillToTab.js';

@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import encryptValueForTransmission from './encryptValueForTransmission.js';
+import getLocalKey from '@/entrypoints/background/utils/getLocalKey';
 
 /**
 * Decrypts a PaymentCard SIF and encrypts the three card fields for transmission.
@@ -41,7 +42,7 @@ const encryptCardSifForTransmission = async (item, cryptoAvailable) => {
     let localKeyAB = null;
 
     try {
-      const localKey = await storage.getItem('local:lKey');
+      const localKey = await getLocalKey();
       localKeyAB = Base64ToArrayBuffer(localKey);
 
       localKeyCrypto = await crypto.subtle.importKey(

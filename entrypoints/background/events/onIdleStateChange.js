@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { cleanupDevices, isPaidDeviceConnected } from '@/partials/functions';
+import { regenerateLocalKey } from '../utils';
 
 /** 
 * Function to handle idle state changes.
@@ -30,6 +31,7 @@ const onIdleStateChange = async state => {
     await cleanupDevices();
     await browser.storage.session.clear();
     logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onIdleStateChange (clear all)');
+    await regenerateLocalKey();
     return true;
   } catch (e) {
     await CatchError(e);

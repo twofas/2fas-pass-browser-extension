@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import setConfigured from '@/partials/sessionStorage/configured/setConfigured';
 import cleanupDevices from '@/partials/functions/cleanupDevices';
+import regenerateLocalKey from '@/entrypoints/background/utils/regenerateLocalKey';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
 
 const AuthStateContext = createContext();
@@ -68,6 +69,7 @@ export const AuthProvider = memo(({ children }) => {
     if (clear) {
       await browser.storage.session.clear();
       logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - useAuth logout (clear all)');
+      await regenerateLocalKey();
     }
 
     const store = usePopupStateStore.getState();
