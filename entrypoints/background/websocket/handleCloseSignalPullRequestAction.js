@@ -164,8 +164,37 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     actionData.iframePermissionGranted = true;
 
     const autofillRes = await sendMessageToAllFrames(tabId, actionData);
-    const isOk = autofillRes?.some(frameResponse => frameResponse.status === 'ok');
-    const allFieldsFilled = autofillRes?.every(frameResponse => {
+
+    if (!Array.isArray(autofillRes)) {
+      if (closeData.windowClose) {
+        await focusPopupWindow();
+      }
+
+      const toastId = crypto.randomUUID();
+
+      wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
+
+      wsNotify('navigate', {
+        path: '/',
+        options: {
+          state: {
+            action: 'autofillT2Failed',
+            vaultId: closeData.vaultId,
+            deviceId: closeData.deviceId,
+            itemId: closeData.itemId,
+            s_password: closeData.s_password,
+            hkdfSaltAB: closeData.hkdfSaltAB,
+            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+            toastId
+          }
+        }
+      });
+
+      return true;
+    }
+
+    const isOk = autofillRes.some(frameResponse => frameResponse.status === 'ok');
+    const allFieldsFilled = autofillRes.every(frameResponse => {
       if (frameResponse.status !== 'ok') {
         return frameResponse.code === AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS;
       }
@@ -355,6 +384,36 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
     actionData.iframePermissionGranted = true;
 
     const autofillRes = await sendMessageToAllFrames(tabId, actionData);
+
+    if (!Array.isArray(autofillRes)) {
+      if (closeData.windowClose) {
+        await focusPopupWindow();
+      }
+
+      const toastId = crypto.randomUUID();
+
+      wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
+
+      wsNotify('navigate', {
+        path: '/',
+        options: {
+          state: {
+            action: 'autofillCardT2Failed',
+            vaultId: closeData.vaultId,
+            deviceId: closeData.deviceId,
+            itemId: closeData.itemId,
+            s_cardNumber: closeData.s_cardNumber,
+            s_expirationDate: closeData.s_expirationDate,
+            s_securityCode: closeData.s_securityCode,
+            hkdfSaltAB: closeData.hkdfSaltAB,
+            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+            toastId
+          }
+        }
+      });
+
+      return true;
+    }
 
     const { isOk, isPartial, hasMissingInputs } = aggregateCardAutofillResponses(autofillRes);
 
