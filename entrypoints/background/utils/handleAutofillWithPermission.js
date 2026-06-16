@@ -5,9 +5,10 @@
 // See LICENSE file for full terms
 
 import { AUTOFILL_RESULT_CODES } from '@/constants';
-import { sendMessageToAllFrames, sendMessageToTab, openPopup, loadAndClassifyCrossDomainPermissions } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, loadAndClassifyCrossDomainPermissions } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
+import openPopupWithFallback from './openPopupWithFallback';
 
 /**
 * Stores autofill failure data for KeepItem display when popup reopens.
@@ -133,7 +134,7 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
     await storage.removeItem(storageKey);
     await storeAutofillFailureData(tabId, closeData);
 
-    return openPopup();
+    return openPopupWithFallback();
   }
 
   await storage.removeItem(storageKey);
@@ -141,7 +142,7 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   if (!response) {
     await storeAutofillFailureData(tabId, closeData);
 
-    return openPopup();
+    return openPopupWithFallback();
   }
 
   const isOk = response.some(frameResponse => frameResponse.status === 'ok');
@@ -159,14 +160,14 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   if (!isOk) {
     await storeAutofillFailureData(tabId, closeData);
 
-    return openPopup();
+    return openPopupWithFallback();
   }
 
   if (!allFieldsFilled && closeData) {
     if (closeData.securityType === SECURITY_TIER.HIGHLY_SECRET) {
       await storeAutofillFailureData(tabId, closeData);
 
-      return openPopup();
+      return openPopupWithFallback();
     }
   }
 
