@@ -124,6 +124,53 @@ const getParentDataField = element => {
 };
 
 /**
+* Resolves the visible text of the label associated with an input, searching within the
+* input's own root node so open shadow DOM is handled. Tries, in order: an explicit
+* label[for=id], a wrapping label, a previous label sibling, and a label/form-label sitting
+* before the input's wrapper or grandparent wrapper.
+* @param {HTMLElement} input - The input element to resolve a label for.
+* @return {string} The associated label text, lowercased and trimmed, or empty string.
+*/
+const getAssociatedLabelText = input => {
+  if (input.id) {
+    const rootNode = input.getRootNode();
+    const labelByFor = typeof rootNode.querySelector === 'function'
+      ? rootNode.querySelector(`label[for="${CSS.escape(input.id)}"]`)
+      : null;
+
+    if (labelByFor) {
+      return (labelByFor.textContent || '').toLowerCase().trim();
+    }
+  }
+
+  const parentLabel = input.closest('label');
+
+  if (parentLabel) {
+    return (parentLabel.textContent || '').toLowerCase().trim();
+  }
+
+  const previousSibling = input.previousElementSibling;
+
+  if (previousSibling && previousSibling.tagName === 'LABEL') {
+    return (previousSibling.textContent || '').toLowerCase().trim();
+  }
+
+  const wrapperSibling = input.parentElement?.previousElementSibling;
+
+  if (wrapperSibling && (wrapperSibling.tagName === 'LABEL' || wrapperSibling.classList.contains('form-label'))) {
+    return (wrapperSibling.textContent || '').toLowerCase().trim();
+  }
+
+  const grandparentSibling = input.parentElement?.parentElement?.previousElementSibling;
+
+  if (grandparentSibling && (grandparentSibling.tagName === 'LABEL' || grandparentSibling.classList.contains('form-label'))) {
+    return (grandparentSibling.textContent || '').toLowerCase().trim();
+  }
+
+  return '';
+};
+
+/**
 * Collects visible, unique elements matching a selector from the document and all shadow roots.
 * @param {string} selector - The CSS selector to query.
 * @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
@@ -143,4 +190,4 @@ const collectInputs = (selector, shadowRoots = null) => {
   return afterVisible.filter(uniqueElementOnly);
 };
 
-export { containsDeniedWord, filterDeniedKeywords, makeConflictingAutocompleteFilter, getParentDataField, collectInputs };
+export { containsDeniedWord, filterDeniedKeywords, makeConflictingAutocompleteFilter, getParentDataField, getAssociatedLabelText, collectInputs };

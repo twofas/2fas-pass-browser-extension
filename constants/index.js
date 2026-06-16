@@ -44,6 +44,9 @@ export {
 // Re-export named export from savePromptActions.js
 export { SAVE_PROMPT_ACTIONS } from './savePromptActions.js';
 
+// Re-export password classification keywords
+export { currentPasswordKeywords, newPasswordKeywords } from './passwordClassification.js';
+
 // Re-export named export from autofillResultCodes.js
 export { AUTOFILL_RESULT_CODES } from './autofillResultCodes.js';
 

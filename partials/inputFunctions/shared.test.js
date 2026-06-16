@@ -11,13 +11,21 @@
 // autocomplete-conflict rejection, ancestor data-field lookup, and a
 // document + shadow DOM collector), independent of the implementation.
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vitest';
 
 vi.mock('../functions/isVisible', () => ({
   default: element => element?.getAttribute?.('data-invisible') !== 'true'
 }));
 
-import { filterDeniedKeywords, makeConflictingAutocompleteFilter, getParentDataField, collectInputs } from './shared';
+// jsdom does not implement the CSS object; getAssociatedLabelText needs CSS.escape.
+beforeAll(() => {
+  if (typeof globalThis.CSS === 'undefined' || typeof globalThis.CSS.escape !== 'function') {
+    globalThis.CSS = globalThis.CSS || {};
+    globalThis.CSS.escape = value => String(value).replace(/[^a-zA-Z0-9_-]/g, char => `\\${char}`);
+  }
+});
+
+import { filterDeniedKeywords, makeConflictingAutocompleteFilter, getParentDataField, collectInputs, getAssociatedLabelText } from './shared';
 
 const makeInput = ({ name = '', id = '', autocomplete = null } = {}) => {
   const input = document.createElement('input');
@@ -128,6 +136,53 @@ describe('shared payment-field helpers', () => {
       document.body.innerHTML = '<div><input id="t" /></div>';
 
       expect(getParentDataField(document.getElementById('t'))).toBe('');
+    });
+  });
+
+  describe('getAssociatedLabelText', () => {
+    it('reads a label associated via for/id', () => {
+      document.body.innerHTML = '<label for="pw">Current password</label><input id="pw" type="password" />';
+
+      expect(getAssociatedLabelText(document.getElementById('pw'))).toBe('current password');
+    });
+
+    it('reads a wrapping label', () => {
+      document.body.innerHTML = '<label>New password <input id="pw" type="password" /></label>';
+
+      expect(getAssociatedLabelText(document.getElementById('pw'))).toBe('new password');
+    });
+
+    it('reads a label that is the previous element sibling', () => {
+      document.body.innerHTML = '<div><label>Old password</label><input id="pw" type="password" /></div>';
+
+      expect(getAssociatedLabelText(document.getElementById('pw'))).toBe('old password');
+    });
+
+    it('reads a form-label sitting before the input wrapper', () => {
+      document.body.innerHTML = '<span class="form-label">Confirm password</span><div><input id="pw" type="password" /></div>';
+
+      expect(getAssociatedLabelText(document.getElementById('pw'))).toBe('confirm password');
+    });
+
+    it('escapes ids that contain special selector characters', () => {
+      document.body.innerHTML = '<label for="user.pw[0]">Current password</label><input id="user.pw[0]" type="password" />';
+
+      expect(getAssociatedLabelText(document.querySelector('input'))).toBe('current password');
+    });
+
+    it('resolves labels inside an open shadow root', () => {
+      document.body.innerHTML = '<div id="host"></div>';
+      const root = document.getElementById('host').attachShadow({ mode: 'open' });
+
+      root.innerHTML = '<label for="pw">New password</label><input id="pw" type="password" />';
+
+      expect(getAssociatedLabelText(root.getElementById('pw'))).toBe('new password');
+    });
+
+    it('returns an empty string when the input has no associated label', () => {
+      document.body.innerHTML = '<input id="pw" type="password" />';
+
+      expect(getAssociatedLabelText(document.getElementById('pw'))).toBe('');
     });
   });
 

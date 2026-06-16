@@ -6,6 +6,7 @@
 
 import { AUTOFILL_RESULT_CODES } from '@/constants';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
+import getAutofillPasswordInputs from '@/partials/inputFunctions/getAutofillPasswordInputs';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import getLoginInputs from './autofillFunctions/getLoginInputs';
 import decryptTransmittedValue from './autofillFunctions/decryptTransmittedValue';
@@ -34,10 +35,14 @@ const autofill = async request => {
 
   setUsernameSkips(passwordInputs, usernameInputs, request.hasPasswordInAnyFrame, passwordForms);
 
+  // Only the current/old password fields are fillable; new and confirm password fields on
+  // registration and change-password forms must never receive the stored password.
+  const fillablePasswordInputs = getAutofillPasswordInputs(passwordInputs, usernameInputs);
+
   const hasUsernameData = request.username?.length > 0;
   const hasPasswordData = request.password?.length > 0;
   const canFillUsername = hasUsernameData && usernameInputs.length > 0;
-  const canFillPassword = hasPasswordData && passwordInputs.length > 0;
+  const canFillPassword = hasPasswordData && fillablePasswordInputs.length > 0;
 
   if (!canFillUsername && !canFillPassword) {
     return {
@@ -80,7 +85,7 @@ const autofill = async request => {
       passwordValue = request.password;
     }
 
-    passwordInputs.forEach(input => inputSetValue(input, passwordValue, { respectSkipAttribute: false }));
+    fillablePasswordInputs.forEach(input => inputSetValue(input, passwordValue, { respectSkipAttribute: false }));
     passwordValue = null;
   }
 
