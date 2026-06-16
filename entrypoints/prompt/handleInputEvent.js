@@ -11,7 +11,36 @@ import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import generateInputId from './generateInputId';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 
-/** 
+let untaggedInputCounter = 0;
+const untaggedInputKeys = new WeakMap();
+
+/**
+* Returns a stable debounce key for an input element. Tagged inputs key by their
+* twofas-pass-id; untagged inputs (e.g. dynamically added before they receive an id)
+* key by a per-element token kept in a WeakMap, so repeated events on the same element
+* reuse the same key and the debounce timer can be cleared correctly.
+* @param {HTMLInputElement} input - The input element.
+* @return {string} The stable identifier used as the timers key.
+*/
+const getInputIdentifier = input => {
+  const taggedId = input?.getAttribute?.('twofas-pass-id');
+
+  if (taggedId) {
+    return taggedId;
+  }
+
+  let stableKey = untaggedInputKeys.get(input);
+
+  if (!stableKey) {
+    untaggedInputCounter += 1;
+    stableKey = `twofas-pass-untagged-${untaggedInputCounter}`;
+    untaggedInputKeys.set(input, stableKey);
+  }
+
+  return stableKey;
+};
+
+/**
 * Function to handle input events.
 * @async
 * @param {Event} e - The input event.
@@ -71,8 +100,8 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     return;
   }
 
-  // Create unique identifier for this input element
-  const inputIdentifier = input?.getAttribute('twofas-pass-id') || `${input?.name || 'unnamed'}_${input?.type || 'text'}_${Date.now()}`;
+  // Create stable identifier for this input element (works before twofas-pass-id is assigned)
+  const inputIdentifier = getInputIdentifier(input);
 
   // Clear existing timer for this specific input
   if (timers[inputIdentifier]) {
