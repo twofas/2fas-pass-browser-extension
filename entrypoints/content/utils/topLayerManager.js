@@ -18,7 +18,6 @@
 const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObserver) => {
   let currentTopLayerElement = null;
   let originalParent = null;
-  let dialogObserver = null;
   let bodyObserver = null;
   const trackedDialogs = new WeakSet();
   const dialogCloseHandlers = new WeakMap();
@@ -159,44 +158,21 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
     }
   };
 
-  const setupDialogObserver = dialog => {
-    const observer = new MutationObserver(mutations => {
-      for (const mutation of mutations) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'open') {
-          trackDialog(dialog);
+  const handleDialogOpenChange = dialog => {
+    trackDialog(dialog);
 
-          setTimeout(() => {
-            try {
-              if (dialog.matches(':modal')) {
-                handleTopLayerChange();
-              }
-            } catch {
-              handleTopLayerChange();
-            }
-          }, 0);
+    setTimeout(() => {
+      try {
+        if (dialog.matches(':modal')) {
+          handleTopLayerChange();
         }
+      } catch {
+        handleTopLayerChange();
       }
-    });
-
-    observer.observe(dialog, {
-      attributes: true,
-      attributeFilter: ['open']
-    });
-
-    return observer;
+    }, 0);
   };
 
   const setupBodyObserver = () => {
-    const observers = [];
-
-    const processExistingDialogs = () => {
-      const dialogs = document.querySelectorAll('dialog');
-      dialogs.forEach(dialog => {
-        trackDialog(dialog);
-        observers.push(setupDialogObserver(dialog));
-      });
-    };
-
     const checkRemovedNode = node => {
       if (!currentTopLayerElement) {
         return false;
@@ -215,6 +191,16 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
 
     const observer = new MutationObserver(mutations => {
       for (const mutation of mutations) {
+        if (mutation.type === 'attributes') {
+          const target = mutation.target;
+
+          if (target && target.tagName === 'DIALOG') {
+            handleDialogOpenChange(target);
+          }
+
+          continue;
+        }
+
         if (mutation.type === 'childList') {
           mutation.removedNodes.forEach(node => {
             if (node.nodeType === Node.ELEMENT_NODE) {
@@ -223,36 +209,24 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
               }
             }
           });
-
-          mutation.addedNodes.forEach(node => {
-            if (node.nodeType === Node.ELEMENT_NODE) {
-              if (node.tagName === 'DIALOG') {
-                trackDialog(node);
-                observers.push(setupDialogObserver(node));
-              }
-
-              const nestedDialogs = node.querySelectorAll ? node.querySelectorAll('dialog') : [];
-              nestedDialogs.forEach(dialog => {
-                trackDialog(dialog);
-                observers.push(setupDialogObserver(dialog));
-              });
-            }
-          });
         }
       }
     });
 
     observer.observe(document.documentElement, {
+      attributeFilter: ['open'],
+      attributes: true,
       childList: true,
       subtree: true
     });
 
-    processExistingDialogs();
+    document.querySelectorAll('dialog').forEach(dialog => {
+      trackDialog(dialog);
+    });
 
     return {
       disconnect: () => {
         observer.disconnect();
-        observers.forEach(obs => obs.disconnect());
       }
     };
   };
@@ -271,11 +245,6 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
     if (bodyObserver) {
       bodyObserver.disconnect();
       bodyObserver = null;
-    }
-
-    if (dialogObserver) {
-      dialogObserver.disconnect();
-      dialogObserver = null;
     }
 
     if (currentTopLayerElement) {
