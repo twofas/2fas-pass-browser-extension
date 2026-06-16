@@ -208,12 +208,15 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
         target: REQUEST_TARGETS.BACKGROUND_PROMPT
       });
 
-      if (latestValues?.[data.id]) {
-        latestValues[data.id].sent = true;
+      // Value delivered to the background — drop the cached copy so the
+      // flush/beacon fallbacks (which only read sent === false entries) stay
+      // bounded and no plaintext value lingers in memory for the page lifetime.
+      if (latestValues) {
+        delete latestValues[data.id];
       }
 
-      if (beaconPayloads?.[data.id]) {
-        beaconPayloads[data.id].sent = true;
+      if (beaconPayloads) {
+        delete beaconPayloads[data.id];
       }
     } catch {}
   }, config.handleInputEventDebounce || 100);
