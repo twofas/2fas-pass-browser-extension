@@ -51,7 +51,7 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     target: REQUEST_TARGETS.CONTENT
   });
 
-  const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
+  const cryptoAvailable = cryptoAvailableRes?.status === 'ok' && cryptoAvailableRes?.cryptoAvailable;
   const hasCardData = item.sifExists;
   const hasCardholderName = item?.content?.cardHolder && item.content.cardHolder.length > 0;
 

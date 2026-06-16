@@ -64,6 +64,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     action: REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE,
     target: REQUEST_TARGETS.CONTENT
   });
+  const cryptoAvailable = cryptoAvailableRes?.status === 'ok' && cryptoAvailableRes?.cryptoAvailable;
 
   if (!noPassword) {
     try {
@@ -80,8 +81,6 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
         Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
       }, tabId, true);
     }
-
-    const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
 
     if (!cryptoAvailable) {
       encryptedValueB64 = decryptedPassword;
@@ -125,7 +124,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     target: REQUEST_TARGETS.CONTENT,
     noPassword,
     noUsername,
-    cryptoAvailable: cryptoAvailableRes?.cryptoAvailable,
+    cryptoAvailable,
     iframePermissionGranted: true,
     crossDomainAllowedDomains: [],
     hasPasswordInAnyFrame
