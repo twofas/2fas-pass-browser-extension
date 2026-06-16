@@ -19,8 +19,7 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
   let currentTopLayerElement = null;
   let originalParent = null;
   let bodyObserver = null;
-  const trackedDialogs = new WeakSet();
-  const dialogCloseHandlers = new WeakMap();
+  const dialogCloseHandlers = new Map();
 
   const moveShadowHostToTopLayer = topLayerElement => {
     if (currentTopLayerElement === topLayerElement) {
@@ -137,15 +136,34 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
   };
 
   const trackDialog = dialog => {
-    if (trackedDialogs.has(dialog)) {
+    if (dialogCloseHandlers.has(dialog)) {
       return;
     }
-
-    trackedDialogs.add(dialog);
 
     const closeHandler = () => handleDialogClose();
     dialogCloseHandlers.set(dialog, closeHandler);
     dialog.addEventListener('close', closeHandler);
+  };
+
+  const untrackDialog = dialog => {
+    const closeHandler = dialogCloseHandlers.get(dialog);
+
+    if (closeHandler) {
+      dialog.removeEventListener('close', closeHandler);
+      dialogCloseHandlers.delete(dialog);
+    }
+  };
+
+  const pruneDetachedDialogs = () => {
+    if (dialogCloseHandlers.size === 0) {
+      return;
+    }
+
+    for (const dialog of dialogCloseHandlers.keys()) {
+      if (!dialog.isConnected) {
+        untrackDialog(dialog);
+      }
+    }
   };
 
   const handleToggleEvent = event => {
@@ -190,6 +208,8 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
     };
 
     const observer = new MutationObserver(mutations => {
+      let hasRemovedNodes = false;
+
       for (const mutation of mutations) {
         if (mutation.type === 'attributes') {
           const target = mutation.target;
@@ -201,7 +221,9 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
           continue;
         }
 
-        if (mutation.type === 'childList') {
+        if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
+          hasRemovedNodes = true;
+
           mutation.removedNodes.forEach(node => {
             if (node.nodeType === Node.ELEMENT_NODE) {
               if (checkRemovedNode(node)) {
@@ -210,6 +232,10 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
             }
           });
         }
+      }
+
+      if (hasRemovedNodes) {
+        pruneDetachedDialogs();
       }
     });
 
@@ -246,6 +272,11 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
       bodyObserver.disconnect();
       bodyObserver = null;
     }
+
+    dialogCloseHandlers.forEach((closeHandler, dialog) => {
+      dialog.removeEventListener('close', closeHandler);
+    });
+    dialogCloseHandlers.clear();
 
     if (currentTopLayerElement) {
       moveShadowHostToBody();
