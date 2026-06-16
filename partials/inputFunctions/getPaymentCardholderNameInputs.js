@@ -34,7 +34,17 @@ const conflictingAutocompleteValues = [
 
 const givenNameAutocompleteValues = ['cc-given-name', 'given-name'];
 const familyNameAutocompleteValues = ['cc-family-name', 'family-name'];
+const additionalNameAutocompleteValues = ['cc-additional-name', 'additional-name'];
 const fullNameAutocompleteValues = ['cc-name'];
+
+// Label/placeholder qualifiers that mark a SPLIT name part. These must win over the
+// generic "name on card" cardholder phrase (which is a substring of "first name on card").
+const givenNameLabelKeywords = ['first name', 'given name', 'first-name', 'given-name', 'firstname', 'givenname', 'imię', 'imie', 'vorname', 'prénom', 'prenom', 'voornaam'];
+const familyNameLabelKeywords = ['last name', 'family name', 'surname', 'last-name', 'family-name', 'lastname', 'familyname', 'nazwisko', 'nachname', 'apellido', 'achternaam', 'cognome'];
+const additionalNameLabelKeywords = ['middle name', 'additional name', 'middle-name', 'middlename', 'second name'];
+// Labels that ask for the COMBINED name; these must win over the split-name keywords
+// (e.g. "first and last name" contains the substring "last name" but is a full-name field).
+const combinedNameLabelKeywords = ['full name', 'first and last', 'first & last', 'first/last', 'first / last'];
 
 const cardholderLabelKeywords = [
   'name on card',
@@ -67,47 +77,6 @@ const cardholderLabelKeywords = [
 ];
 
 const filterConflictingAutocomplete = makeConflictingAutocompleteFilter(conflictingAutocompleteValues);
-
-/**
-* Determines the type of name field based on input attributes.
-* @param {HTMLInputElement} input - The input element to check.
-* @return {string} The type: 'full', 'given', or 'family'.
-*/
-const getNameFieldType = input => {
-  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
-  const name = (input.name || '').toLowerCase();
-  const id = (input.id || '').toLowerCase();
-
-  if (givenNameAutocompleteValues.includes(autocomplete)) {
-    return 'given';
-  }
-
-  if (familyNameAutocompleteValues.includes(autocomplete)) {
-    return 'family';
-  }
-
-  if (fullNameAutocompleteValues.includes(autocomplete)) {
-    return 'full';
-  }
-
-  if (name.includes('firstname') || name.includes('first_name') || name.includes('first-name') ||
-      name.includes('givenname') || name.includes('given_name') || name.includes('given-name') ||
-      id.includes('firstname') || id.includes('first_name') || id.includes('first-name') ||
-      id.includes('givenname') || id.includes('given_name') || id.includes('given-name')) {
-    return 'given';
-  }
-
-  if (name.includes('lastname') || name.includes('last_name') || name.includes('last-name') ||
-      name.includes('familyname') || name.includes('family_name') || name.includes('family-name') ||
-      name.includes('surname') ||
-      id.includes('lastname') || id.includes('last_name') || id.includes('last-name') ||
-      id.includes('familyname') || id.includes('family_name') || id.includes('family-name') ||
-      id.includes('surname')) {
-    return 'family';
-  }
-
-  return 'full';
-};
 
 /**
 * Gets the text content of the label associated with an input element.
@@ -184,6 +153,85 @@ const matchesCardholderKeyword = text => {
 };
 
 /**
+* Determines the type of name field based on input attributes and labelling.
+* @param {HTMLInputElement} input - The input element to check.
+* @return {string} The type: 'full', 'given', 'family', or 'additional'.
+*/
+const getNameFieldType = input => {
+  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
+  const name = (input.name || '').toLowerCase();
+  const id = (input.id || '').toLowerCase();
+
+  if (givenNameAutocompleteValues.includes(autocomplete)) {
+    return 'given';
+  }
+
+  if (familyNameAutocompleteValues.includes(autocomplete)) {
+    return 'family';
+  }
+
+  if (additionalNameAutocompleteValues.includes(autocomplete)) {
+    return 'additional';
+  }
+
+  if (fullNameAutocompleteValues.includes(autocomplete)) {
+    return 'full';
+  }
+
+  const ariaLabel = (input.getAttribute('aria-label') || '').toLowerCase();
+  const placeholder = (input.getAttribute('placeholder') || '').toLowerCase();
+  const labelText = getAssociatedLabelText(input);
+  const labelHints = `${labelText} ${ariaLabel} ${placeholder}`;
+
+  const hasGivenHint = givenNameLabelKeywords.some(keyword => labelHints.includes(keyword));
+  const hasFamilyHint = familyNameLabelKeywords.some(keyword => labelHints.includes(keyword));
+
+  // A combined-name label (e.g. "first and last name") is a full-name field even though it
+  // contains the "last name" substring; the same holds when both parts are named together.
+  if (combinedNameLabelKeywords.some(keyword => labelHints.includes(keyword)) || (hasGivenHint && hasFamilyHint)) {
+    return 'full';
+  }
+
+  // A label that qualifies a single name part ("First name on card", "Nazwisko na karcie")
+  // wins over the generic cardholder phrase and over any incidental id/name token.
+  if (hasGivenHint) {
+    return 'given';
+  }
+
+  if (hasFamilyHint) {
+    return 'family';
+  }
+
+  if (additionalNameLabelKeywords.some(keyword => labelHints.includes(keyword))) {
+    return 'additional';
+  }
+
+  // A label naming the WHOLE cardholder (e.g. "Name on card") denotes a full-name field;
+  // an incidental id/name token must not reclassify it to given/family.
+  if (matchesCardholderKeyword(labelText) || matchesCardholderKeyword(ariaLabel) || matchesCardholderKeyword(placeholder)) {
+    return 'full';
+  }
+
+  if (name.includes('firstname') || name.includes('first_name') || name.includes('first-name') ||
+      name.includes('givenname') || name.includes('given_name') || name.includes('given-name') ||
+      id.includes('firstname') || id.includes('first_name') || id.includes('first-name') ||
+      id.includes('givenname') || id.includes('given_name') || id.includes('given-name')) {
+    return 'given';
+  }
+
+  if (name.includes('lastname') || name.includes('last_name') || name.includes('last-name') ||
+      name.includes('familyname') || name.includes('family_name') || name.includes('family-name') ||
+      name.includes('surname') ||
+      id.includes('lastname') || id.includes('last_name') || id.includes('last-name') ||
+      id.includes('familyname') || id.includes('family_name') || id.includes('family-name') ||
+      id.includes('surname')) {
+    return 'family';
+  }
+
+  return 'full';
+};
+
+/**
 * Gets inputs that have associated labels matching cardholder name keywords.
 * @param {Document|ShadowRoot} rootNode - The root node to search in.
 * @return {HTMLInputElement[]} The array of cardholder name input elements found by label.
@@ -251,43 +299,33 @@ const getBillingNameInputsFromRoot = rootNode => {
   return [...billingInputs, ...firstNameInputs, ...lastNameInputs];
 };
 
+const paymentContainerSelector = '[data-testid*="payment" i], [data-testid*="credit" i], [data-testid*="card" i], ' +
+  '[class*="payment" i], [class*="credit" i], [class*="checkout" i], [class*="billing" i]';
+
+const cardFieldSelector = 'input[autocomplete="cc-number"], input[autocomplete="cc-exp"], ' +
+  'input[autocomplete="cc-exp-month"], input[autocomplete="cc-exp-year"], input[autocomplete="cc-csc"]';
+
 /**
-* Checks if a billing name input is within a payment form context.
+* Checks if a billing name input is within a payment form context using structural signals
+* (real card fields nearby, or a payment/credit/checkout/billing container) rather than a
+* raw text scan, so unrelated copy mentioning "card"/"billing" cannot create a false context.
 * @param {HTMLInputElement} input - The input element to check.
 * @return {boolean} True if the input is in a payment context.
 */
 const isInPaymentContext = input => {
+  const rootNode = input.getRootNode();
+
+  if (rootNode.querySelector(cardFieldSelector) !== null) {
+    return true;
+  }
+
+  if (input.closest(paymentContainerSelector)) {
+    return true;
+  }
+
   const form = input.closest('form');
 
-  if (form) {
-    const formHtml = form.outerHTML.toLowerCase();
-    const paymentKeywords = ['payment', 'credit', 'card', 'checkout', 'billing', 'cc-number', 'cc-exp', 'cc-csc'];
-
-    return paymentKeywords.some(keyword => formHtml.includes(keyword));
-  }
-
-  const parent = input.closest('[data-testid*="payment"], [data-testid*="credit"], [data-testid*="card"], [class*="payment"], [class*="credit"], [class*="checkout"], [class*="billing"]');
-
-  if (parent) {
-    return true;
-  }
-
-  const rootNode = input.getRootNode();
-  const hasCardNumberInput = rootNode.querySelector('input[autocomplete="cc-number"]') !== null;
-
-  if (hasCardNumberInput) {
-    return true;
-  }
-
-  const hasExpirationInput = rootNode.querySelector('input[autocomplete="cc-exp"], input[autocomplete="cc-exp-month"], input[autocomplete="cc-exp-year"]') !== null;
-
-  if (hasExpirationInput) {
-    return true;
-  }
-
-  const hasCvvInput = rootNode.querySelector('input[autocomplete="cc-csc"]') !== null;
-
-  if (hasCvvInput) {
+  if (form && form.querySelector(paymentContainerSelector)) {
     return true;
   }
 

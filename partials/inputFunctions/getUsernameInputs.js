@@ -9,6 +9,7 @@ import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import hasParentContextDeniedKeyword from '../functions/hasParentContextDeniedKeyword';
+import { containsDeniedWord } from './shared';
 
 const userNameWordsLower = userNameWords.map(word => word.toLowerCase());
 let cachedIgnoredTypes = null;
@@ -44,10 +45,10 @@ const getUserNameSelector = () => {
 * @return {boolean} True if the input should be kept, false otherwise.
 */
 const filterDeniedKeywords = input => {
-  const name = (input.name || '').toLowerCase();
-  const id = (input.id || '').toLowerCase();
+  const name = input.name || '';
+  const id = input.id || '';
   const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
-  const hasDeniedWord = userNameDeniedKeywords.some(word => name.includes(word) || id.includes(word));
+  const hasDeniedWord = containsDeniedWord(name, userNameDeniedKeywords) || containsDeniedWord(id, userNameDeniedKeywords);
 
   if (hasDeniedWord) {
     return false;
@@ -57,7 +58,7 @@ const filterDeniedKeywords = input => {
     return false;
   }
 
-  if (personalInfoDeniedKeywords.some(word => name.includes(word) || id.includes(word))) {
+  if (containsDeniedWord(name, personalInfoDeniedKeywords) || containsDeniedWord(id, personalInfoDeniedKeywords)) {
     return false;
   }
 
@@ -69,6 +70,32 @@ const filterDeniedKeywords = input => {
 };
 
 /**
+* Resolves an aria-labelledby IDREF list to the combined text of the referenced elements.
+* @param {HTMLInputElement} input - The input owning the aria-labelledby attribute.
+* @param {string} idRefs - The whitespace-separated IDREF list.
+* @return {string} The combined accessible name text, or empty string if unresolved.
+*/
+const resolveLabelledByText = (input, idRefs) => {
+  const rootNode = input.getRootNode();
+
+  return idRefs
+    .split(/\s+/)
+    .map(id => {
+      if (!id) {
+        return '';
+      }
+
+      const referenced = typeof rootNode.getElementById === 'function'
+        ? rootNode.getElementById(id)
+        : rootNode.querySelector(`[id="${id}"]`);
+
+      return referenced ? (referenced.textContent || '') : '';
+    })
+    .join(' ')
+    .trim();
+};
+
+/**
 * Checks if an input matches username-related attributes or has a matching label.
 * @param {HTMLInputElement} input - The input element to check.
 * @param {Map<string, HTMLLabelElement>} labelMap - Map of label `for` values to label elements within the root node.
@@ -76,10 +103,19 @@ const filterDeniedKeywords = input => {
 */
 const matchesUsernameInput = (input, labelMap) => {
   const matchesAttribute = userNameAttributes.some(attribute => {
-    const attrValue = input.getAttribute(attribute);
+    let attrValue = input.getAttribute(attribute);
 
     if (!attrValue) {
       return false;
+    }
+
+    // aria-labelledby holds IDREFs, not literal text — resolve to the referenced elements' text.
+    if (attribute === 'aria-labelledby') {
+      attrValue = resolveLabelledByText(input, attrValue);
+
+      if (!attrValue) {
+        return false;
+      }
     }
 
     const lowerAttrValue = attrValue.toLowerCase();

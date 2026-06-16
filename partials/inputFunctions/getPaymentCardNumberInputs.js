@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { paymentCardNumberSelectors } from '@/constants';
-import { filterDeniedKeywords, getParentDataField, collectInputs } from './shared';
+import { containsDeniedWord, filterDeniedKeywords, collectInputs } from './shared';
 
 const conflictingAutocompleteValues = [
   'cc-name',
@@ -111,8 +111,15 @@ const filterConflictingAttributes = input => {
     return true;
   }
 
-  if (autocomplete && conflictingAutocompleteValues.some(val => autocomplete.includes(val))) {
-    return false;
+  // Match the trailing field token exactly (the autofill grammar allows optional
+  // leading section/billing tokens) instead of substring-matching, so values like
+  // 'language-preference' are not rejected merely for containing 'language'.
+  if (autocomplete) {
+    const fieldToken = autocomplete.split(/\s+/).pop();
+
+    if (conflictingAutocompleteValues.includes(fieldToken)) {
+      return false;
+    }
   }
 
   if (inputType && conflictingInputTypes.includes(inputType)) {
@@ -127,46 +134,35 @@ const filterConflictingAttributes = input => {
 };
 
 /**
-* Gets relevant class names from an element.
-* @param {HTMLElement} element - The element to check.
-* @return {string} Space-separated lowercase class names.
-*/
-const getRelevantClasses = element => {
-  return (element.className || '').toLowerCase();
-};
-
-/**
 * Filters out inputs that appear to be cardholder name, CVV, or expiration date fields.
+* Decisions are made from the field's OWN identity (name/id/data-encrypted-name/placeholder)
+* using whole-word matching, so framework validation classes (ng-valid/is-invalid) and
+* ancestor wrappers cannot trigger a false rejection or a false acceptance.
 * @param {HTMLInputElement} input - The input element to check.
 * @return {boolean} True if the input should be kept as card number, false otherwise.
 */
 const filterOtherCardFields = input => {
-  const name = (input.name || '').toLowerCase();
-  const id = (input.id || '').toLowerCase();
-  const dataEncryptedName = (input.getAttribute('data-encrypted-name') || '').toLowerCase();
-  const parentDataField = getParentDataField(input);
-  const classes = getRelevantClasses(input);
-  const combined = name + id + dataEncryptedName + parentDataField + classes;
+  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase();
 
-  if (combined.includes('number') || combined.includes('cardnumber') || combined.includes('ccnumber')) {
+  if (autocomplete.includes('cc-number')) {
     return true;
   }
 
-  const isCardholderName = cardholderNameKeywords.some(keyword => combined.includes(keyword));
+  const name = input.name || '';
+  const id = input.id || '';
+  const dataEncryptedName = input.getAttribute('data-encrypted-name') || '';
+  const placeholder = input.getAttribute('placeholder') || '';
+  const ownIdentity = `${name} ${id} ${dataEncryptedName} ${placeholder}`;
 
-  if (isCardholderName) {
+  if (containsDeniedWord(ownIdentity, cardholderNameKeywords)) {
     return false;
   }
 
-  const isSecurityCode = securityCodeKeywords.some(keyword => combined.includes(keyword));
-
-  if (isSecurityCode) {
+  if (containsDeniedWord(ownIdentity, securityCodeKeywords)) {
     return false;
   }
 
-  const isExpiration = expirationKeywords.some(keyword => combined.includes(keyword));
-
-  if (isExpiration) {
+  if (containsDeniedWord(ownIdentity, expirationKeywords)) {
     return false;
   }
 

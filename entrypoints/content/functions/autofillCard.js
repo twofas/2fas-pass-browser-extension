@@ -176,6 +176,9 @@ const setCardholderNameValue = (inputData, fullName, splitName) => {
     inputSetValue(element, splitName.givenName, cardAutofillOptions);
   } else if (type === 'family') {
     inputSetValue(element, splitName.familyName, cardAutofillOptions);
+  } else if (type === 'additional') {
+    // Middle name is not derivable from a full cardholder name; leave the field untouched
+    // rather than writing the entire name into it.
   } else {
     inputSetValue(element, fullName, cardAutofillOptions);
   }
