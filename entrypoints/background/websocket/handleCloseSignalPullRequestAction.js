@@ -153,11 +153,12 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
           wsNotify('navigate', { path: '/' });
           return true;
         }
-      } else if (resolution.crossDomainAllowedDomains.length > 0) {
-        actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
+      } else {
+        actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains || [];
       }
     } catch (e) {
       await CatchError(e);
+      actionData.crossDomainAllowedDomains = [];
     }
 
     actionData.iframePermissionGranted = true;
@@ -343,11 +344,12 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
           wsNotify('navigate', { path: '/' });
           return true;
         }
-      } else if (resolution.crossDomainAllowedDomains.length > 0) {
-        actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
+      } else {
+        actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains || [];
       }
     } catch (e) {
       await CatchError(e);
+      actionData.crossDomainAllowedDomains = [];
     }
 
     actionData.iframePermissionGranted = true;
