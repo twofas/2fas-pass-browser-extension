@@ -8,21 +8,33 @@
 
 // Real-DOM coverage for getShadowRoots. The sibling getShadowRoots.test.js exercises
 // the traversal algorithm with hand-built fakes; this file verifies the behaviour
-// against an actual jsdom tree built with attachShadow — including the contract that
-// closed shadow roots are invisible to detection.
+// against an actual jsdom tree built with attachShadow. Closed shadow roots are read
+// via a privileged open-or-closed API (browser.dom.openOrClosedShadowRoot on Chromium,
+// element.openOrClosedShadowRoot on Firefox) that jsdom does not implement, so it is
+// stubbed here to mirror those engines; with no stub, jsdom matches Safari (open-only).
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import getShadowRoots from './getShadowRoots.js';
 
 const attachOpenShadow = host => host.attachShadow({ mode: 'open' });
 
+// Mirrors Chromium's browser.dom.openOrClosedShadowRoot: jsdom keeps the closed root
+// reachable from the host, so resolve it the same way Chromium's privileged API would.
+const stubChromiumOpenOrClosedApi = closedRootsByHost => {
+  browser.dom = {
+    openOrClosedShadowRoot: vi.fn(host => closedRootsByHost.get(host) ?? null)
+  };
+};
+
 describe('getShadowRoots (real shadow DOM)', () => {
   beforeEach(() => {
     document.body.innerHTML = '';
+    delete browser.dom;
   });
 
   afterEach(() => {
     document.body.innerHTML = '';
+    delete browser.dom;
   });
 
   it('returns an empty array for a tree with no shadow roots', () => {
@@ -73,19 +85,59 @@ describe('getShadowRoots (real shadow DOM)', () => {
     expect(result).toEqual(expect.arrayContaining([outerRoot, innerRoot]));
   });
 
-  it('does not expose a closed shadow root', () => {
+  it('does not expose a closed shadow root when no open-or-closed API is available (Safari)', () => {
     document.body.innerHTML = '<div id="host"></div>';
     document.getElementById('host').attachShadow({ mode: 'closed' });
 
     expect(getShadowRoots(document.body)).toEqual([]);
   });
 
-  it('finds open shadow roots while skipping a closed sibling', () => {
+  it('finds open shadow roots while skipping a closed sibling with no open-or-closed API (Safari)', () => {
     document.body.innerHTML = '<div id="open"></div><div id="closed"></div>';
     const openRoot = attachOpenShadow(document.getElementById('open'));
     document.getElementById('closed').attachShadow({ mode: 'closed' });
 
     expect(getShadowRoots(document.body)).toEqual([openRoot]);
+  });
+
+  it('exposes a closed shadow root through the open-or-closed API (Chromium/Firefox)', () => {
+    document.body.innerHTML = '<div id="host"></div>';
+    const host = document.getElementById('host');
+    const closedRoot = host.attachShadow({ mode: 'closed' });
+
+    stubChromiumOpenOrClosedApi(new Map([[host, closedRoot]]));
+
+    expect(getShadowRoots(document.body)).toEqual([closedRoot]);
+  });
+
+  it('finds both open and closed sibling shadow roots through the open-or-closed API', () => {
+    document.body.innerHTML = '<div id="open"></div><div id="closed"></div>';
+    const openRoot = attachOpenShadow(document.getElementById('open'));
+    const closedHost = document.getElementById('closed');
+    const closedRoot = closedHost.attachShadow({ mode: 'closed' });
+
+    stubChromiumOpenOrClosedApi(new Map([[closedHost, closedRoot]]));
+
+    const result = getShadowRoots(document.body);
+
+    expect(result).toHaveLength(2);
+    expect(result).toEqual(expect.arrayContaining([openRoot, closedRoot]));
+  });
+
+  it('descends into the light children of a closed shadow root to find nested hosts', () => {
+    document.body.innerHTML = '<div id="outer"></div>';
+    const outerHost = document.getElementById('outer');
+    const closedOuter = outerHost.attachShadow({ mode: 'closed' });
+
+    closedOuter.innerHTML = '<div id="inner"></div>';
+    const innerRoot = attachOpenShadow(closedOuter.getElementById('inner'));
+
+    stubChromiumOpenOrClosedApi(new Map([[outerHost, closedOuter]]));
+
+    const result = getShadowRoots(document.body);
+
+    expect(result).toHaveLength(2);
+    expect(result).toEqual(expect.arrayContaining([closedOuter, innerRoot]));
   });
 
   it('scans from an explicitly provided root element', () => {

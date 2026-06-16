@@ -4,12 +4,15 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import getOpenOrClosedShadowRoot from './getOpenOrClosedShadowRoot';
+
 /**
-* Traverses the DOM tree and returns all shadow roots found.
-* Uses an iterative stack-based pre-order traversal: every element is visited
-* exactly once and a shadow host's shadow content is processed before its light
-* children, mirroring the original recursive ordering without per-node array
-* allocations or a visited set.
+* Traverses the DOM tree and returns all shadow roots found, including closed ones
+* (mode: 'closed') on browsers that expose a privileged open-or-closed lookup —
+* see getOpenOrClosedShadowRoot. Uses an iterative stack-based pre-order traversal:
+* every element is visited exactly once and a shadow host's shadow content is
+* processed before its light children, mirroring the original recursive ordering
+* without per-node array allocations or a visited set.
 * @param {HTMLElement|null} rootElement - The element to start traversing from, or null for entire document.
 * @return {ShadowRoot[]} An array of shadow roots found in the DOM tree.
 */
@@ -25,7 +28,7 @@ const getShadowRoots = rootElement => {
 
   while (stack.length > 0) {
     const element = stack.pop();
-    const shadowRoot = element.shadowRoot;
+    const shadowRoot = getOpenOrClosedShadowRoot(element);
 
     if (shadowRoot) {
       shadowRoots.push(shadowRoot);
