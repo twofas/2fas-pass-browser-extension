@@ -4,10 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, encryptCardSifForTransmission, resolveCrossDomainPermissions, saveCrossDomainPreferences, aggregateCardAutofillResponses } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, encryptCardSifForTransmission, resolveCrossDomainPermissions, aggregateCardAutofillResponses } from '@/partials/functions';
 import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
+import handleAutofillCardWithPermission from './handleAutofillCardWithPermission';
 
 /**
 * Sends PaymentCard autofill data to a specific tab.
@@ -104,59 +105,14 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     encryptedSecurityCodeB64 = encryptResult.securityCode;
   }
 
-  const iframePermissionGranted = true;
-  let crossDomainAllowedDomains = [];
-
-  try {
-    const resolution = await resolveCrossDomainPermissions(tabId, 'card', {
-      hasCardholderName,
-      hasCardNumber: hasCardData,
-      hasExpirationDate: hasCardData,
-      hasSecurityCode: hasCardData
-    });
-
-    if (resolution.needsDialog) {
-      try {
-        const tab = await browser.tabs.get(tabId);
-
-        await browser.windows.update(tab.windowId, { focused: true });
-        await browser.tabs.update(tabId, { active: true });
-
-        await new Promise(resolve => setTimeout(resolve, 100));
-      } catch (e) {
-        await CatchError(e);
-      }
-
-      const confirmResult = await sendMessageToTab(tabId, {
-        action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
-        target: REQUEST_TARGETS.CONTENT,
-        unknownDomains: resolution.unknownDomains,
-        theme: await storage.getItem('local:theme')
-      });
-
-      if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-        return;
-      }
-
-      await saveCrossDomainPreferences(confirmResult.domainPreferences);
-      crossDomainAllowedDomains = [...resolution.crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
-    } else if (resolution.allBlocked) {
-      crossDomainAllowedDomains = [];
-    } else {
-      crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
-    }
-  } catch (e) {
-    await CatchError(e);
-  }
-
   const actionData = {
     action: REQUEST_ACTIONS.AUTOFILL_CARD,
     cardholderName: item.content.cardHolder,
     cardIssuer: item.content.cardIssuer,
     target: REQUEST_TARGETS.CONTENT,
     cryptoAvailable,
-    iframePermissionGranted,
-    crossDomainAllowedDomains
+    iframePermissionGranted: true,
+    crossDomainAllowedDomains: []
   };
 
   if (encryptedCardNumberB64) {
@@ -177,6 +133,42 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   encryptedCardNumberB64 = null;
   encryptedExpirationDateB64 = null;
   encryptedSecurityCodeB64 = null;
+
+  let resolution;
+
+  try {
+    resolution = await resolveCrossDomainPermissions(tabId, 'card', {
+      hasCardholderName,
+      hasCardNumber: hasCardData,
+      hasExpirationDate: hasCardData,
+      hasSecurityCode: hasCardData
+    });
+  } catch (e) {
+    await CatchError(e);
+  }
+
+  if (resolution?.needsDialog) {
+    const storageKey = `session:autofillCardData-${tabId}`;
+
+    try {
+      await storage.setItem(storageKey, JSON.stringify({ actionData }));
+      logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - sendCardAutofillToTab (autofillCardData)');
+
+      const domains = [
+        ...(resolution.trustedDomains || []),
+        ...(resolution.untrustedDomains || []),
+        ...(resolution.unknownDomains || [])
+      ];
+
+      return await handleAutofillCardWithPermission(tabId, storageKey, domains);
+    } catch (e) {
+      await CatchError(e);
+      await storage.removeItem(storageKey).catch(() => {});
+    }
+  }
+
+  // No dialog needed: fill directly (allBlocked → no cross-domain frames allowed).
+  actionData.crossDomainAllowedDomains = resolution?.allBlocked ? [] : (resolution?.crossDomainAllowedDomains || []);
 
   try {
     const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);

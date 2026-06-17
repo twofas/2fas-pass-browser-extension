@@ -4,39 +4,14 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { AUTOFILL_RESULT_CODES } from '@/constants';
 import addNewSessionIdToDevice from './utils/addNewSessionIdToDevice';
 import TwoFasWebSocket from '.';
-import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
 import sendMessageToTab from '@/partials/functions/sendMessageToTab';
 import resolveCrossDomainPermissions from '@/partials/functions/resolveCrossDomainPermissions';
-import saveCrossDomainPreferences from '@/partials/functions/saveCrossDomainPreferences';
-import aggregateCardAutofillResponses from '@/partials/functions/aggregateCardAutofillResponses';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import wsNotify from './wsNotify.js';
-
-const closePopupWindow = async () => {
-  try {
-    const extURL = browser.runtime.getURL('/popup.html');
-    const popupTabs = await browser.tabs.query({ url: extURL });
-
-    if (popupTabs?.length > 0) {
-      await browser.windows.remove(popupTabs[0].windowId);
-    }
-  } catch { }
-};
-
-const focusPopupWindow = async () => {
-  try {
-    const extURL = browser.runtime.getURL('/popup.html');
-    const popupTabs = await browser.tabs.query({ url: extURL });
-
-    if (popupTabs?.length > 0) {
-      await browser.windows.update(popupTabs[0].windowId, { focused: true });
-    }
-  } catch { }
-};
+import { closePopupWindow, finishLoginAutofill, finishCardAutofill } from './utils/finishPullRequestAutofill.js';
 
 /**
 * Handles the close signal for the pull request action.
@@ -92,6 +67,24 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
         actionData.crossDomainAllowedDomains = [];
       } else if (resolution.needsDialog) {
         if (closeData.windowClose) {
+          const storageKey = `session:autofillData-${tabId}`;
+
+          await storage.setItem(storageKey, JSON.stringify({
+            actionData,
+            closeData: {
+              vaultId: closeData.vaultId,
+              deviceId: closeData.deviceId,
+              itemId: closeData.itemId,
+              s_password: closeData.s_password,
+              hkdfSaltAB: closeData.hkdfSaltAB,
+              sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+              windowClose: true
+            },
+            trustedDomains: resolution.crossDomainAllowedDomains
+          }));
+
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillData windowClose dialog)');
+
           try {
             const tab = await browser.tabs.get(tabId);
 
@@ -100,31 +93,23 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
             await new Promise(resolve => setTimeout(resolve, 100));
           } catch { }
 
-          let confirmResult;
-
           try {
-            confirmResult = await sendMessageToTab(tabId, {
+            await sendMessageToTab(tabId, {
               action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
               target: REQUEST_TARGETS.CONTENT,
               unknownDomains: resolution.unknownDomains,
+              storageKey,
               theme: await storage.getItem('local:theme')
             });
           } catch (e) {
             await CatchError(e);
+            await storage.removeItem(storageKey);
 
             wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info' });
             await closePopupWindow();
-
-            return true;
           }
 
-          if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-            await closePopupWindow();
-            return true;
-          }
-
-          await saveCrossDomainPreferences(confirmResult.domainPreferences);
-          actionData.crossDomainAllowedDomains = [...resolution.crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
+          return true;
         } else {
           const storageKey = `session:autofillData-${tabId}`;
 
@@ -165,132 +150,9 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
     const autofillRes = await sendMessageToAllFrames(tabId, actionData);
 
-    if (!Array.isArray(autofillRes)) {
-      if (closeData.windowClose) {
-        await focusPopupWindow();
-      }
+    await finishLoginAutofill(tabId, actionData, closeData, autofillRes);
 
-      const toastId = crypto.randomUUID();
-
-      wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
-
-      wsNotify('navigate', {
-        path: '/',
-        options: {
-          state: {
-            action: 'autofillT2Failed',
-            vaultId: closeData.vaultId,
-            deviceId: closeData.deviceId,
-            itemId: closeData.itemId,
-            s_password: closeData.s_password,
-            hkdfSaltAB: closeData.hkdfSaltAB,
-            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-            toastId
-          }
-        }
-      });
-
-      return true;
-    }
-
-    const isOk = autofillRes.some(frameResponse => frameResponse.status === 'ok');
-    const allFieldsFilled = autofillRes.every(frameResponse => {
-      if (frameResponse.status !== 'ok') {
-        return frameResponse.code === AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS;
-      }
-
-      const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
-      const couldFillPassword = !actionData.password || frameResponse.canAutofillPassword !== false;
-
-      return couldFillUsername && couldFillPassword;
-    });
-
-    if (isOk) {
-      try {
-        await sendMessageToAllFrames(tabId, {
-          action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,
-          target: REQUEST_TARGETS.PROMPT
-        });
-      } catch { }
-
-      try {
-        await browser.runtime.sendMessage({
-          action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,
-          target: REQUEST_TARGETS.BACKGROUND_PROMPT,
-          tabId
-        });
-      } catch { }
-
-      if (!allFieldsFilled) {
-        // Focus popup window when showing KeepItem for shortcut-initiated autofill
-        if (closeData.windowClose) {
-          await focusPopupWindow();
-        }
-
-        const toastId = crypto.randomUUID();
-
-        wsNotify('toast', { message: getMessage('this_tab_autofill_partial'), type: 'info', autoClose: false, toastId });
-
-        wsNotify('navigate', {
-          path: '/',
-          options: {
-            state: {
-              action: 'autofillT2Failed',
-              vaultId: closeData.vaultId,
-              deviceId: closeData.deviceId,
-              itemId: closeData.itemId,
-              s_password: closeData.s_password,
-              hkdfSaltAB: closeData.hkdfSaltAB,
-              sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-              toastId
-            }
-          }
-        });
-
-        return true;
-      }
-
-      // For shortcut-initiated autofill, close the window after success
-      if (closeData.windowClose) {
-        await closePopupWindow();
-        return true;
-      }
-
-      const separateWindow = await popupIsInSeparateWindow();
-
-      if (!separateWindow) {
-        await closePopupWindow();
-      }
-
-      // In background context, always notify popup (it may be in a separate window or Safari)
-      wsNotify('toast', { message: getMessage('this_tab_autofill_success'), type: 'success' });
-      wsNotify('navigate', { path: '/' });
-    } else {
-      // Focus popup window when showing KeepItem for shortcut-initiated autofill
-      if (closeData.windowClose) {
-        await focusPopupWindow();
-      }
-
-      const toastId = crypto.randomUUID();
-
-      wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
-
-      wsNotify('navigate', {
-        path: '/',
-        options: {
-          state: {
-            action: 'autofillT2Failed',
-            vaultId: closeData.vaultId,
-            deviceId: closeData.deviceId,
-            itemId: closeData.itemId,
-            s_password: closeData.s_password,
-            hkdfSaltAB: closeData.hkdfSaltAB,
-            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-            toastId
-          }
-        }
-      });
-    }
+    return true;
   }
 
   if (closeData?.action === 'autofillCard') {
@@ -310,6 +172,26 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
         actionData.crossDomainAllowedDomains = [];
       } else if (resolution.needsDialog) {
         if (closeData.windowClose) {
+          const storageKey = `session:autofillCardData-${tabId}`;
+
+          await storage.setItem(storageKey, JSON.stringify({
+            actionData,
+            closeData: {
+              vaultId: closeData.vaultId,
+              deviceId: closeData.deviceId,
+              itemId: closeData.itemId,
+              s_cardNumber: closeData.s_cardNumber,
+              s_expirationDate: closeData.s_expirationDate,
+              s_securityCode: closeData.s_securityCode,
+              hkdfSaltAB: closeData.hkdfSaltAB,
+              sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+              windowClose: true
+            },
+            trustedDomains: resolution.crossDomainAllowedDomains
+          }));
+
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillCardData windowClose dialog)');
+
           try {
             const tab = await browser.tabs.get(tabId);
 
@@ -318,31 +200,23 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
             await new Promise(resolve => setTimeout(resolve, 100));
           } catch { }
 
-          let confirmResult;
-
           try {
-            confirmResult = await sendMessageToTab(tabId, {
+            await sendMessageToTab(tabId, {
               action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
               target: REQUEST_TARGETS.CONTENT,
               unknownDomains: resolution.unknownDomains,
+              storageKey,
               theme: await storage.getItem('local:theme')
             });
           } catch (e) {
             await CatchError(e);
+            await storage.removeItem(storageKey);
 
             wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info' });
             await closePopupWindow();
-
-            return true;
           }
 
-          if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-            await closePopupWindow();
-            return true;
-          }
-
-          await saveCrossDomainPreferences(confirmResult.domainPreferences);
-          actionData.crossDomainAllowedDomains = [...resolution.crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
+          return true;
         } else {
           const storageKey = `session:autofillCardData-${tabId}`;
 
@@ -385,112 +259,9 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
     const autofillRes = await sendMessageToAllFrames(tabId, actionData);
 
-    if (!Array.isArray(autofillRes)) {
-      if (closeData.windowClose) {
-        await focusPopupWindow();
-      }
+    await finishCardAutofill(tabId, actionData, closeData, autofillRes);
 
-      const toastId = crypto.randomUUID();
-
-      wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
-
-      wsNotify('navigate', {
-        path: '/',
-        options: {
-          state: {
-            action: 'autofillCardT2Failed',
-            vaultId: closeData.vaultId,
-            deviceId: closeData.deviceId,
-            itemId: closeData.itemId,
-            s_cardNumber: closeData.s_cardNumber,
-            s_expirationDate: closeData.s_expirationDate,
-            s_securityCode: closeData.s_securityCode,
-            hkdfSaltAB: closeData.hkdfSaltAB,
-            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-            toastId
-          }
-        }
-      });
-
-      return true;
-    }
-
-    const { isOk, isPartial, hasMissingInputs } = aggregateCardAutofillResponses(autofillRes);
-
-    if (isOk && !isPartial && !hasMissingInputs) {
-      // For shortcut-initiated autofill, close the window after success
-      if (closeData.windowClose) {
-        await closePopupWindow();
-        return true;
-      }
-
-      const separateWindow = await popupIsInSeparateWindow();
-
-      if (!separateWindow) {
-        await closePopupWindow();
-      }
-
-      // In background context, always notify popup (it may be in a separate window or Safari)
-      wsNotify('toast', { message: getMessage('this_tab_autofill_success'), type: 'success' });
-      wsNotify('navigate', { path: '/' });
-    } else if (isOk && hasMissingInputs) {
-      // Focus popup window when showing KeepItem for shortcut-initiated autofill
-      if (closeData.windowClose) {
-        await focusPopupWindow();
-      }
-
-      const toastId = crypto.randomUUID();
-
-      wsNotify('toast', { message: getMessage('notification_card_autofill_partial_message'), type: 'info', autoClose: false, toastId });
-
-      wsNotify('navigate', {
-        path: '/',
-        options: {
-          state: {
-            action: 'autofillCardT2Failed',
-            vaultId: closeData.vaultId,
-            deviceId: closeData.deviceId,
-            itemId: closeData.itemId,
-            s_cardNumber: closeData.s_cardNumber,
-            s_expirationDate: closeData.s_expirationDate,
-            s_securityCode: closeData.s_securityCode,
-            hkdfSaltAB: closeData.hkdfSaltAB,
-            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-            toastId
-          }
-        }
-      });
-    } else if (isPartial) {
-      wsNotify('toast', { message: getMessage('notification_card_autofill_partial_message'), type: 'info' });
-      wsNotify('navigate', { path: '/' });
-    } else {
-      // Focus popup window when showing KeepItem for shortcut-initiated autofill
-      if (closeData.windowClose) {
-        await focusPopupWindow();
-      }
-
-      const toastId = crypto.randomUUID();
-
-      wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
-
-      wsNotify('navigate', {
-        path: '/',
-        options: {
-          state: {
-            action: 'autofillCardT2Failed',
-            vaultId: closeData.vaultId,
-            deviceId: closeData.deviceId,
-            itemId: closeData.itemId,
-            s_cardNumber: closeData.s_cardNumber,
-            s_expirationDate: closeData.s_expirationDate,
-            s_securityCode: closeData.s_securityCode,
-            hkdfSaltAB: closeData.hkdfSaltAB,
-            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-            toastId
-          }
-        }
-      });
-    }
+    return true;
   }
 
   if (closeData?.returnToast) {

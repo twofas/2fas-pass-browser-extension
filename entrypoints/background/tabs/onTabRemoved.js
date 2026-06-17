@@ -31,6 +31,10 @@ const onTabRemoved = async (tabId, tabsInputData, savePromptActions) => {
 
   await storage.removeItem(`session:savePromptSuppressed-${tabId}`);
   await storage.removeItem(`session:savePromptContext-${tabId}`);
+  // Pending cross-domain autofill payloads hold encrypted credentials/card data; clear
+  // them when the tab is destroyed so they do not outlive the tab if a dialog is abandoned.
+  await storage.removeItem(`session:autofillData-${tabId}`);
+  await storage.removeItem(`session:autofillCardData-${tabId}`);
 
   logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onTabRemoved');
 

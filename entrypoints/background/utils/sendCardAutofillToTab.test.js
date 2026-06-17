@@ -15,6 +15,7 @@ const aggregateCardAutofillResponses = vi.fn();
 const getItem = vi.fn();
 const injectCSIfNotAlready = vi.fn();
 const notificationShow = vi.fn();
+const handleAutofillCardWithPermission = vi.fn();
 
 vi.mock('@/partials/functions', () => ({
   sendMessageToAllFrames: (...args) => sendMessageToAllFrames(...args),
@@ -35,6 +36,10 @@ vi.mock('@/partials/TwofasNotification', () => ({
 
 vi.mock('@/partials/contentScript/injectCSIfNotAlready', () => ({
   default: (...args) => injectCSIfNotAlready(...args)
+}));
+
+vi.mock('./handleAutofillCardWithPermission', () => ({
+  default: (...args) => handleAutofillCardWithPermission(...args)
 }));
 
 import sendCardAutofillToTab from './sendCardAutofillToTab.js';
@@ -87,5 +92,52 @@ describe('sendCardAutofillToTab — GET_CRYPTO_AVAILABLE has no response (findin
     await sendCardAutofillToTab(1, 'device', 'vault', 'item');
 
     expect(encryptCardSifForTransmission).toHaveBeenCalledWith(expect.anything(), true);
+  });
+});
+
+describe('sendCardAutofillToTab — cross-domain dialog uses the storage-key handoff (finding #1)', () => {
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await storage.removeItem('session:autofillCardData-7');
+    injectCSIfNotAlready.mockResolvedValue(true);
+    getItem.mockResolvedValue(buildItem());
+    sendMessageToTab.mockResolvedValue({ status: 'ok', cryptoAvailable: true });
+    encryptCardSifForTransmission.mockResolvedValue({ status: 'ok', cardNumber: 'cn', expirationDate: 'ed', securityCode: 'sc' });
+    resolveCrossDomainPermissions.mockResolvedValue({
+      needsDialog: true,
+      allBlocked: false,
+      trustedDomains: ['trusted.com'],
+      untrustedDomains: ['untrusted.com'],
+      unknownDomains: ['unknown.com'],
+      crossDomainAllowedDomains: ['trusted.com']
+    });
+  });
+
+  it('delegates to handleAutofillCardWithPermission with the stored actionData and the full domain list', async () => {
+    await sendCardAutofillToTab(7, 'device', 'vault', 'item');
+
+    expect(handleAutofillCardWithPermission).toHaveBeenCalledTimes(1);
+
+    const [tabIdArg, storageKeyArg, domainsArg] = handleAutofillCardWithPermission.mock.calls[0];
+    expect(tabIdArg).toBe(7);
+    expect(storageKeyArg).toBe('session:autofillCardData-7');
+    expect(domainsArg).toEqual(['trusted.com', 'untrusted.com', 'unknown.com']);
+
+    const stored = JSON.parse(await storage.getItem('session:autofillCardData-7'));
+    expect(stored.actionData.cardholderName).toBe('John Doe');
+  });
+
+  it('does not show the inline cross-domain dialog itself', async () => {
+    await sendCardAutofillToTab(7, 'device', 'vault', 'item');
+
+    const dialogCall = sendMessageToTab.mock.calls.find(([, message]) => message && message.unknownDomains !== undefined);
+    expect(dialogCall).toBeUndefined();
+  });
+
+  it('does not fill the frames directly when the dialog path is taken', async () => {
+    await sendCardAutofillToTab(7, 'device', 'vault', 'item');
+
+    const autofillCall = sendMessageToAllFrames.mock.calls.find(([, message]) => message && message.cardholderName !== undefined);
+    expect(autofillCall).toBeUndefined();
   });
 });

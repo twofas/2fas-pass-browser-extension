@@ -9,6 +9,7 @@ import { sendMessageToAllFrames, saveCrossDomainPreferences, aggregateCardAutofi
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
 import openPopupWithFallback from './openPopupWithFallback';
+import { finishLoginAutofill, finishCardAutofill, closePopupWindow } from '../websocket/utils/finishPullRequestAutofill.js';
 
 /**
 * Stores autofill failure data for KeepItem display when popup reopens.
@@ -69,12 +70,21 @@ const processLoginResult = async (tabId, storageKey, actionData, closeData, cros
     logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'processLoginResult - sendMessageToAllFrames threw', { tabId, errorMessage: e?.message });
     await CatchError(e);
     await storage.removeItem(storageKey);
+
+    if (closeData?.windowClose) {
+      return finishLoginAutofill(tabId, actionData, closeData, false);
+    }
+
     await storeAutofillFailureData(tabId, closeData);
 
     return openPopupWithFallback();
   }
 
   await storage.removeItem(storageKey);
+
+  if (closeData?.windowClose) {
+    return finishLoginAutofill(tabId, actionData, closeData, response);
+  }
 
   if (!response) {
     await storeAutofillFailureData(tabId, closeData);
@@ -130,10 +140,11 @@ const processLoginResult = async (tabId, storageKey, actionData, closeData, cros
 * @param {number} tabId - The ID of the tab.
 * @param {string} storageKey - The session storage key.
 * @param {Object} actionData - The autofill action data.
+* @param {Object} closeData - The close data (SIF + windowClose flag) for shortcut recovery.
 * @param {Array<string>} crossDomainAllowedDomains - Allowed domains list.
 * @return {Promise<void>}
 */
-const processCardResult = async (tabId, storageKey, actionData, crossDomainAllowedDomains) => {
+const processCardResult = async (tabId, storageKey, actionData, closeData, crossDomainAllowedDomains) => {
   actionData.iframePermissionGranted = true;
   actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
 
@@ -156,6 +167,10 @@ const processCardResult = async (tabId, storageKey, actionData, crossDomainAllow
     await CatchError(e);
     await storage.removeItem(storageKey);
 
+    if (closeData?.windowClose) {
+      return finishCardAutofill(tabId, actionData, closeData, false);
+    }
+
     return TwofasNotification.show({
       Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
       Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
@@ -163,6 +178,10 @@ const processCardResult = async (tabId, storageKey, actionData, crossDomainAllow
   }
 
   await storage.removeItem(storageKey);
+
+  if (closeData?.windowClose) {
+    return finishCardAutofill(tabId, actionData, closeData, response);
+  }
 
   if (!response) {
     return TwofasNotification.show({
@@ -214,11 +233,6 @@ const processCrossDomainDialogResult = async request => {
     return;
   }
 
-  if (!confirmed) {
-    await storage.removeItem(storageKey);
-    return;
-  }
-
   let storedData;
 
   try {
@@ -235,6 +249,16 @@ const processCrossDomainDialogResult = async request => {
   }
 
   const { actionData, closeData, trustedDomains } = storedData;
+
+  if (!confirmed) {
+    await storage.removeItem(storageKey);
+
+    if (closeData?.windowClose) {
+      await closePopupWindow();
+    }
+
+    return;
+  }
 
   if (!actionData) {
     await storage.removeItem(storageKey);
@@ -256,7 +280,7 @@ const processCrossDomainDialogResult = async request => {
   const isCard = actionData.action === REQUEST_ACTIONS.AUTOFILL_CARD;
 
   if (isCard) {
-    return processCardResult(tabId, storageKey, actionData, crossDomainAllowedDomains);
+    return processCardResult(tabId, storageKey, actionData, closeData, crossDomainAllowedDomains);
   }
 
   return processLoginResult(tabId, storageKey, actionData, closeData, crossDomainAllowedDomains);
