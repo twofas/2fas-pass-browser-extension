@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import getItems from '@/partials/sessionStorage/getItems';
+import { PaymentCard } from '@/models/itemModels';
 
 let isContextMenuConfiguring = false;
 const MAX_RETRY_ATTEMPTS = 3;
@@ -77,7 +78,7 @@ const contextMenuConfigured = async (items = null, retryAttempt = 0) => {
     const paymentCards = [];
 
     for (const item of items) {
-      if (item.constructor.name === 'PaymentCard') {
+      if (item.contentType === PaymentCard.contentType) {
         paymentCards.push(item);
         continue;
       }

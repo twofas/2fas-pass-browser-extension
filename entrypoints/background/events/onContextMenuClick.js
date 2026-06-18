@@ -7,6 +7,7 @@
 import { openPopupWindowInNewWindow, sendAutofillToTab, sendCardAutofillToTab } from '../utils';
 import { AUTOFILL_REGEX, FETCH_REGEX, PULL_REQUEST_TYPES } from '@/constants';
 import getItem from '@/partials/sessionStorage/getItem';
+import { PaymentCard } from '@/models/itemModels';
 
 /**
 * Function to handle context menu click events.
@@ -41,7 +42,7 @@ const onContextMenuClick = async (info, tab) => {
         return false;
       }
 
-      if (item.constructor.name === 'PaymentCard') {
+      if (item.contentType === PaymentCard.contentType) {
         await sendCardAutofillToTab(tab.id, deviceId, vaultId, itemId);
       } else {
         await sendAutofillToTab(tab.id, deviceId, vaultId, itemId);
