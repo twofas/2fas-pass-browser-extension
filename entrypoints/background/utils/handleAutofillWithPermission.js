@@ -9,6 +9,7 @@ import { sendMessageToAllFrames, sendMessageToTab, loadAndClassifyCrossDomainPer
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
 import openPopupWithFallback from './openPopupWithFallback';
+import restoreActionDataPassword from './restoreActionDataPassword';
 
 /**
 * Stores autofill failure data for KeepItem display when popup reopens.
@@ -113,6 +114,19 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
 
   actionData.iframePermissionGranted = true;
   actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
+
+  // Unwrap the at-rest-encrypted password back to plaintext before filling (finding #5).
+  // No-op when crypto is available (the page decrypts it itself).
+  const restored = await restoreActionDataPassword(actionData);
+
+  if (restored.status !== 'ok') {
+    await storage.removeItem(storageKey);
+
+    return TwofasNotification.show({
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+    }, tabId, true);
+  }
 
   try {
     const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);

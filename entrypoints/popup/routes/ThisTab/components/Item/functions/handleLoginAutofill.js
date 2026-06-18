@@ -6,6 +6,7 @@
 
 import { sendMessageToAllFrames, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, resolveCrossDomainPermissions } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
+import protectActionDataPassword from '@/entrypoints/background/utils/protectActionDataPassword';
 import { acquireAutofillTab, showT2Toast, showGenericToast } from './autofillPopupShared';
 import { PULL_REQUEST_TYPES, AUTOFILL_RESULT_CODES } from '@/constants';
 import Login from '@/models/itemModels/Login';
@@ -158,8 +159,18 @@ const handleLoginAutofill = async (item, navigate) => {
     } else if (resolution.needsDialog) {
       const storageKey = `session:autofillData-${tab.id}`;
 
+      // Never persist a plaintext password at rest while the dialog is pending (finding #5).
+      // protectActionDataPassword wraps it with the local key (no-op when crypto is available);
+      // the background unwraps it back to plaintext just before the fill.
+      const protectedResult = await protectActionDataPassword(actionData);
+
+      if (protectedResult.status !== 'ok') {
+        showToast(getMessage('error_autofill_failed'), 'error');
+        return;
+      }
+
       await storage.setItem(storageKey, JSON.stringify({
-        actionData,
+        actionData: protectedResult.actionData,
         closeData: {
           vaultId: item.vaultId,
           deviceId: item.deviceId,

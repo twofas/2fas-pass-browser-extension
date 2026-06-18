@@ -15,6 +15,8 @@ const openPopupWithFallback = vi.fn();
 const finishLoginAutofill = vi.fn();
 const finishCardAutofill = vi.fn();
 const closePopupWindow = vi.fn();
+const restoreActionDataPassword = vi.fn();
+const restoreCardActionData = vi.fn();
 
 vi.mock('@/partials/functions', () => ({
   sendMessageToAllFrames: (...args) => sendMessageToAllFrames(...args),
@@ -40,6 +42,14 @@ vi.mock('../websocket/utils/finishPullRequestAutofill.js', () => ({
   closePopupWindow: (...args) => closePopupWindow(...args)
 }));
 
+vi.mock('./restoreActionDataPassword', () => ({
+  default: (...args) => restoreActionDataPassword(...args)
+}));
+
+vi.mock('./restoreCardActionData', () => ({
+  default: (...args) => restoreCardActionData(...args)
+}));
+
 import processCrossDomainDialogResult from './processCrossDomainDialogResult.js';
 
 const LOGIN_KEY = 'session:autofillData-7';
@@ -56,7 +66,10 @@ beforeEach(async () => {
   injectCSIfNotAlready.mockResolvedValue(true);
   saveCrossDomainPreferences.mockResolvedValue(undefined);
   sendMessageToAllFrames.mockResolvedValue([{ status: 'ok' }]);
+  restoreActionDataPassword.mockResolvedValue({ status: 'ok' });
+  restoreCardActionData.mockResolvedValue({ status: 'ok' });
   vi.spyOn(browser.runtime, 'sendMessage').mockResolvedValue(undefined);
+  vi.spyOn(browser.i18n, 'getMessage').mockImplementation(key => key);
 });
 
 describe('processCrossDomainDialogResult — windowClose routing (finding #1)', () => {
@@ -146,5 +159,85 @@ describe('processCrossDomainDialogResult — non-windowClose unchanged', () => {
     expect(finishCardAutofill).not.toHaveBeenCalled();
     expect(closePopupWindow).not.toHaveBeenCalled();
     expect(sendMessageToAllFrames).not.toHaveBeenCalled();
+  });
+});
+
+describe('processCrossDomainDialogResult — at-rest password unwrap before fill (finding #5)', () => {
+  const findFillCall = () => sendMessageToAllFrames.mock.calls.find(([, message]) => message && 'password' in message);
+
+  it('login confirmed → unwraps the at-rest password to plaintext before transmitting to frames', async () => {
+    restoreActionDataPassword.mockImplementation(async actionData => {
+      actionData.password = 'plaintext-pw';
+      delete actionData.passwordEncryptedAtRest;
+
+      return { status: 'ok' };
+    });
+    await writeStored(LOGIN_KEY, {
+      actionData: { action: REQUEST_ACTIONS.AUTOFILL, username: 'u', password: 'enc-at-rest', passwordEncryptedAtRest: true, cryptoAvailable: false },
+      closeData: { vaultId: 'v' },
+      trustedDomains: []
+    });
+
+    await processCrossDomainDialogResult({ storageKey: LOGIN_KEY, confirmed: true, domainPreferences: {}, allowedDomains: [] });
+
+    expect(restoreActionDataPassword).toHaveBeenCalled();
+
+    const fillCall = findFillCall();
+    expect(fillCall).toBeDefined();
+    expect(fillCall[1].password).toBe('plaintext-pw');
+    expect('passwordEncryptedAtRest' in fillCall[1]).toBe(false);
+  });
+
+  it('login confirmed → does not transmit when the at-rest password cannot be decrypted', async () => {
+    restoreActionDataPassword.mockResolvedValue({ status: 'error' });
+    await writeStored(LOGIN_KEY, {
+      actionData: { action: REQUEST_ACTIONS.AUTOFILL, username: 'u', password: 'enc-at-rest', passwordEncryptedAtRest: true, cryptoAvailable: false },
+      closeData: {},
+      trustedDomains: []
+    });
+
+    await processCrossDomainDialogResult({ storageKey: LOGIN_KEY, confirmed: true, domainPreferences: {}, allowedDomains: [] });
+
+    expect(findFillCall()).toBeUndefined();
+    expect(await storage.getItem(LOGIN_KEY)).toBeNull();
+  });
+
+  it('card confirmed → unwraps the at-rest card fields to plaintext before transmitting to frames', async () => {
+    aggregateCardAutofillResponses.mockReturnValue({ outcome: 'ok' });
+    restoreCardActionData.mockImplementation(async actionData => {
+      actionData.cardNumber = '4111111111111111';
+      delete actionData.cardFieldsEncryptedAtRest;
+
+      return { status: 'ok' };
+    });
+    await writeStored(CARD_KEY, {
+      actionData: { action: REQUEST_ACTIONS.AUTOFILL_CARD, cardNumber: 'enc-cn', cardFieldsEncryptedAtRest: true, cryptoAvailable: false },
+      closeData: {},
+      trustedDomains: []
+    });
+
+    await processCrossDomainDialogResult({ storageKey: CARD_KEY, confirmed: true, domainPreferences: {}, allowedDomains: [] });
+
+    expect(restoreCardActionData).toHaveBeenCalled();
+
+    const fillCall = sendMessageToAllFrames.mock.calls.find(([, message]) => message && 'cardNumber' in message);
+    expect(fillCall).toBeDefined();
+    expect(fillCall[1].cardNumber).toBe('4111111111111111');
+    expect('cardFieldsEncryptedAtRest' in fillCall[1]).toBe(false);
+  });
+
+  it('card confirmed → does not transmit when the at-rest card fields cannot be decrypted', async () => {
+    restoreCardActionData.mockResolvedValue({ status: 'error' });
+    await writeStored(CARD_KEY, {
+      actionData: { action: REQUEST_ACTIONS.AUTOFILL_CARD, cardNumber: 'enc-cn', cardFieldsEncryptedAtRest: true, cryptoAvailable: false },
+      closeData: {},
+      trustedDomains: []
+    });
+
+    await processCrossDomainDialogResult({ storageKey: CARD_KEY, confirmed: true, domainPreferences: {}, allowedDomains: [] });
+
+    const fillCall = sendMessageToAllFrames.mock.calls.find(([, message]) => message && 'cardNumber' in message);
+    expect(fillCall).toBeUndefined();
+    expect(await storage.getItem(CARD_KEY)).toBeNull();
   });
 });

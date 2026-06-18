@@ -9,6 +9,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import handleAutofillCardWithPermission from './handleAutofillCardWithPermission';
+import protectCardActionData from './protectCardActionData';
 
 /**
 * Sends PaymentCard autofill data to a specific tab.
@@ -150,8 +151,28 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   if (resolution?.needsDialog) {
     const storageKey = `session:autofillCardData-${tabId}`;
 
+    // Never persist plaintext card fields at rest. protectCardActionData wraps cardNumber/
+    // expirationDate/securityCode with the local key (no-op when crypto is available and the
+    // values are already transport-encrypted); it returns a separate object so the in-memory
+    // actionData stays plaintext for the direct-fill fallback below. The values are unwrapped
+    // back to plaintext right before transmission (the page cannot decrypt them itself).
+    const protectedResult = await protectCardActionData(actionData);
+
+    if (protectedResult.status !== 'ok') {
+      await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
+        additional: { func: 'sendCardAutofillToTab - protectCardActionData' }
+      }));
+
+      return TwofasNotification.show({
+        Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+        Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      }, tabId, true);
+    }
+
+    const storedActionData = protectedResult.actionData;
+
     try {
-      await storage.setItem(storageKey, JSON.stringify({ actionData }));
+      await storage.setItem(storageKey, JSON.stringify({ actionData: storedActionData }));
       logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - sendCardAutofillToTab (autofillCardData)');
 
       const domains = [

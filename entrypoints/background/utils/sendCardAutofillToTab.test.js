@@ -16,6 +16,7 @@ const getItem = vi.fn();
 const injectCSIfNotAlready = vi.fn();
 const notificationShow = vi.fn();
 const handleAutofillCardWithPermission = vi.fn();
+const protectCardActionData = vi.fn();
 
 vi.mock('@/partials/functions', () => ({
   sendMessageToAllFrames: (...args) => sendMessageToAllFrames(...args),
@@ -42,6 +43,10 @@ vi.mock('./handleAutofillCardWithPermission', () => ({
   default: (...args) => handleAutofillCardWithPermission(...args)
 }));
 
+vi.mock('./protectCardActionData', () => ({
+  default: (...args) => protectCardActionData(...args)
+}));
+
 import sendCardAutofillToTab from './sendCardAutofillToTab.js';
 
 const buildItem = () => ({
@@ -58,6 +63,7 @@ describe('sendCardAutofillToTab — GET_CRYPTO_AVAILABLE has no response (findin
     encryptCardSifForTransmission.mockResolvedValue({ status: 'ok', cardNumber: 'cn', expirationDate: 'ed', securityCode: 'sc' });
     sendMessageToAllFrames.mockResolvedValue([{ status: 'ok', filledFields: {}, missingInputFields: [] }]);
     aggregateCardAutofillResponses.mockReturnValue({ outcome: 'ok' });
+    protectCardActionData.mockImplementation(async actionData => ({ status: 'ok', actionData }));
   });
 
   it('does not throw when sendMessageToTab returns undefined for GET_CRYPTO_AVAILABLE', async () => {
@@ -111,6 +117,7 @@ describe('sendCardAutofillToTab — cross-domain dialog uses the storage-key han
       unknownDomains: ['unknown.com'],
       crossDomainAllowedDomains: ['trusted.com']
     });
+    protectCardActionData.mockImplementation(async actionData => ({ status: 'ok', actionData }));
   });
 
   it('delegates to handleAutofillCardWithPermission with the stored actionData and the full domain list', async () => {
@@ -139,5 +146,42 @@ describe('sendCardAutofillToTab — cross-domain dialog uses the storage-key han
 
     const autofillCall = sendMessageToAllFrames.mock.calls.find(([, message]) => message && message.cardholderName !== undefined);
     expect(autofillCall).toBeUndefined();
+  });
+});
+
+describe('sendCardAutofillToTab — card fields never stored as plaintext at rest (finding #5)', () => {
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await storage.removeItem('session:autofillCardData-7');
+    injectCSIfNotAlready.mockResolvedValue(true);
+    getItem.mockResolvedValue(buildItem());
+    sendMessageToTab.mockResolvedValue(undefined); // cryptoAvailable = false
+    encryptCardSifForTransmission.mockResolvedValue({ status: 'ok', cardNumber: '4111111111111111', expirationDate: '12/30', securityCode: '123' });
+    handleAutofillCardWithPermission.mockResolvedValue(undefined);
+    resolveCrossDomainPermissions.mockResolvedValue({
+      needsDialog: true,
+      allBlocked: false,
+      trustedDomains: [],
+      untrustedDomains: [],
+      unknownDomains: ['unknown.com'],
+      crossDomainAllowedDomains: []
+    });
+    protectCardActionData.mockImplementation(async actionData => ({
+      status: 'ok',
+      actionData: { ...actionData, cardNumber: 'enc-cn', expirationDate: 'enc-ed', securityCode: 'enc-cvv', cardFieldsEncryptedAtRest: true }
+    }));
+  });
+
+  it('protects the card fields before writing the pending cross-domain payload', async () => {
+    await sendCardAutofillToTab(7, 'device', 'vault', 'item');
+
+    expect(protectCardActionData).toHaveBeenCalled();
+
+    const stored = JSON.parse(await storage.getItem('session:autofillCardData-7'));
+    expect(stored.actionData.cardNumber).not.toBe('4111111111111111');
+    expect(stored.actionData.cardNumber).toBe('enc-cn');
+    expect(stored.actionData.cardFieldsEncryptedAtRest).toBe(true);
+
+    await storage.removeItem('session:autofillCardData-7');
   });
 });

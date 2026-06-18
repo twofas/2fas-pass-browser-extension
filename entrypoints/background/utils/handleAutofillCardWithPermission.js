@@ -7,6 +7,7 @@
 import { sendMessageToAllFrames, sendMessageToTab, aggregateCardAutofillResponses, loadAndClassifyCrossDomainPermissions } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
+import restoreCardActionData from './restoreCardActionData';
 
 /**
 * Handles autofill card with cross-domain permission confirmation.
@@ -83,6 +84,19 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
 
   actionData.iframePermissionGranted = true;
   actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
+
+  // Unwrap the at-rest-encrypted card fields back to plaintext before filling (finding #5).
+  // No-op when crypto is available (the page decrypts them itself).
+  const restored = await restoreCardActionData(actionData);
+
+  if (restored.status !== 'ok') {
+    await storage.removeItem(storageKey);
+
+    return TwofasNotification.show({
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+    }, tabId, true);
+  }
 
   try {
     const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);

@@ -6,6 +6,7 @@
 
 import { sendMessageToAllFrames, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptCardSifForTransmission, resolveCrossDomainPermissions } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
+import protectCardActionData from '@/entrypoints/background/utils/protectCardActionData';
 import { acquireAutofillTab, showT2Toast, showGenericToast } from './autofillPopupShared';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import PaymentCard from '@/models/itemModels/PaymentCard';
@@ -174,8 +175,18 @@ const handleCardAutofill = async (item, navigate) => {
     } else if (resolution.needsDialog) {
       const storageKey = `session:autofillCardData-${tab.id}`;
 
+      // Never persist plaintext card fields at rest while the dialog is pending (finding #5).
+      // protectCardActionData wraps them with the local key (no-op when crypto is available);
+      // the background unwraps them back to plaintext just before the fill.
+      const protectedResult = await protectCardActionData(actionData);
+
+      if (protectedResult.status !== 'ok') {
+        showToast(getMessage('error_autofill_failed'), 'error');
+        return;
+      }
+
       await storage.setItem(storageKey, JSON.stringify({
-        actionData
+        actionData: protectedResult.actionData
       }));
 
       browser.runtime.sendMessage({

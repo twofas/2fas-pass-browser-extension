@@ -101,3 +101,49 @@ describe('sendAutofillToTab — GET_CRYPTO_AVAILABLE has no response (finding #1
     expect(encryptValueForTransmission).toHaveBeenCalledWith(PLAINTEXT_PASSWORD);
   });
 });
+
+describe('sendAutofillToTab — at-rest password protection on the cross-domain dialog path (finding #5)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    injectCSIfNotAlready.mockResolvedValue(true);
+    getItem.mockResolvedValue(buildItem());
+    handleAutofillWithPermission.mockResolvedValue(undefined);
+    sendMessageToAllFrames.mockResolvedValue([{ status: 'ok', canAutofillPassword: true }]);
+    resolveCrossDomainPermissions.mockResolvedValue({
+      needsDialog: true,
+      trustedDomains: [],
+      untrustedDomains: [],
+      unknownDomains: ['cross.example']
+    });
+  });
+
+  it('never persists the plaintext password to session storage when the page lacks crypto', async () => {
+    sendMessageToTab.mockResolvedValue(undefined); // cryptoAvailable = false
+    encryptValueForTransmission.mockResolvedValue({ status: 'ok', data: 'enc-at-rest' });
+
+    await sendAutofillToTab(55, 'device', 'vault', 'item');
+
+    const stored = JSON.parse(await storage.getItem('session:autofillData-55'));
+    expect(stored.actionData.password).not.toBe(PLAINTEXT_PASSWORD);
+    expect(stored.actionData.password).toBe('enc-at-rest');
+    expect(stored.actionData.passwordEncryptedAtRest).toBe(true);
+    expect(stored.actionData.cryptoAvailable).toBeFalsy();
+    expect(encryptValueForTransmission).toHaveBeenCalledWith(PLAINTEXT_PASSWORD);
+
+    await storage.removeItem('session:autofillData-55');
+  });
+
+  it('stores the transport-encrypted password as-is (no second encryption) when crypto is available', async () => {
+    sendMessageToTab.mockResolvedValue({ status: 'ok', cryptoAvailable: true });
+    encryptValueForTransmission.mockResolvedValue({ status: 'ok', data: 'enc-transport' });
+
+    await sendAutofillToTab(56, 'device', 'vault', 'item');
+
+    const stored = JSON.parse(await storage.getItem('session:autofillData-56'));
+    expect(stored.actionData.password).toBe('enc-transport');
+    expect(stored.actionData.passwordEncryptedAtRest).toBeFalsy();
+    expect(encryptValueForTransmission).toHaveBeenCalledTimes(1);
+
+    await storage.removeItem('session:autofillData-56');
+  });
+});

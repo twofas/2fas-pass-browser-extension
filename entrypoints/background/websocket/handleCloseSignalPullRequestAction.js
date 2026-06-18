@@ -11,6 +11,8 @@ import sendMessageToTab from '@/partials/functions/sendMessageToTab';
 import resolveCrossDomainPermissions from '@/partials/functions/resolveCrossDomainPermissions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import wsNotify from './wsNotify.js';
+import protectActionDataPassword from '../utils/protectActionDataPassword';
+import protectCardActionData from '../utils/protectCardActionData';
 import { closePopupWindow, finishLoginAutofill, finishCardAutofill } from './utils/finishPullRequestAutofill.js';
 
 /**
@@ -66,11 +68,28 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
       if (resolution.allBlocked) {
         actionData.crossDomainAllowedDomains = [];
       } else if (resolution.needsDialog) {
+        // The decrypted SIF (Top/Highly Secret pull) must not sit in session storage as a
+        // plaintext password while the cross-domain dialog is pending (finding #5). Wrap it
+        // with the local key up front; it is unwrapped back to plaintext just before the fill.
+        const protectedResult = await protectActionDataPassword(actionData);
+
+        if (protectedResult.status !== 'ok') {
+          wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info' });
+
+          if (closeData.windowClose) {
+            await closePopupWindow();
+          }
+
+          return true;
+        }
+
+        const dialogActionData = protectedResult.actionData;
+
         if (closeData.windowClose) {
           const storageKey = `session:autofillData-${tabId}`;
 
           await storage.setItem(storageKey, JSON.stringify({
-            actionData,
+            actionData: dialogActionData,
             closeData: {
               vaultId: closeData.vaultId,
               deviceId: closeData.deviceId,
@@ -114,7 +133,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
           const storageKey = `session:autofillData-${tabId}`;
 
           await storage.setItem(storageKey, JSON.stringify({
-            actionData,
+            actionData: dialogActionData,
             closeData: {
               vaultId: closeData.vaultId,
               deviceId: closeData.deviceId,
@@ -171,11 +190,28 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
       if (resolution.allBlocked) {
         actionData.crossDomainAllowedDomains = [];
       } else if (resolution.needsDialog) {
+        // The decrypted card SIF (Top/Highly Secret pull) must not sit in session storage as
+        // plaintext while the cross-domain dialog is pending (finding #5). Wrap the card fields
+        // with the local key up front; they are unwrapped back to plaintext just before the fill.
+        const protectedResult = await protectCardActionData(actionData);
+
+        if (protectedResult.status !== 'ok') {
+          wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info' });
+
+          if (closeData.windowClose) {
+            await closePopupWindow();
+          }
+
+          return true;
+        }
+
+        const dialogActionData = protectedResult.actionData;
+
         if (closeData.windowClose) {
           const storageKey = `session:autofillCardData-${tabId}`;
 
           await storage.setItem(storageKey, JSON.stringify({
-            actionData,
+            actionData: dialogActionData,
             closeData: {
               vaultId: closeData.vaultId,
               deviceId: closeData.deviceId,
@@ -221,7 +257,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
           const storageKey = `session:autofillCardData-${tabId}`;
 
           await storage.setItem(storageKey, JSON.stringify({
-            actionData,
+            actionData: dialogActionData,
             closeData: {
               vaultId: closeData.vaultId,
               deviceId: closeData.deviceId,

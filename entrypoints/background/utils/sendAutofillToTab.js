@@ -10,6 +10,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import handleAutofillWithPermission from './handleAutofillWithPermission';
+import protectActionDataPassword from './protectActionDataPassword';
 
 /**
 * Function to send autofill data to a specific tab.
@@ -144,9 +145,29 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   if (resolution?.needsDialog) {
     const storageKey = `session:autofillData-${tabId}`;
 
+    // Never persist a plaintext password at rest. protectActionDataPassword wraps the password
+    // with the local key (no-op when crypto is available and the value is already encrypted for
+    // transport); it returns a separate object so the in-memory actionData stays plaintext for
+    // the direct-fill fallback below. The value is unwrapped back to plaintext right before
+    // transmission (the page cannot decrypt it itself).
+    const protectedResult = await protectActionDataPassword(actionData);
+
+    if (protectedResult.status !== 'ok') {
+      await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
+        additional: { func: 'sendAutofillToTab - protectActionDataPassword' }
+      }));
+
+      return TwofasNotification.show({
+        Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+        Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      }, tabId, true);
+    }
+
+    const storedActionData = protectedResult.actionData;
+
     try {
       await storage.setItem(storageKey, JSON.stringify({
-        actionData,
+        actionData: storedActionData,
         closeData: {
           vaultId,
           deviceId,
