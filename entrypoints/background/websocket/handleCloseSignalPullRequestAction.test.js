@@ -72,8 +72,7 @@ describe('handleCloseSignalPullRequestAction — Highly Secret login never store
     deviceId: 'd',
     itemId: 'i',
     s_password: 'enc-sif',
-    hkdfSaltAB: 'salt',
-    sessionKeyForHKDF: 'sk',
+    encryptionItemT2KeyB64: 'keyB64',
     actionData: {
       action: REQUEST_ACTIONS.AUTOFILL,
       username: 'u',
@@ -93,6 +92,11 @@ describe('handleCloseSignalPullRequestAction — Highly Secret login never store
     expect(stored.actionData.password).not.toBe('plaintext-pw');
     expect(stored.actionData.password).toBe('enc-at-rest');
     expect(stored.actionData.passwordEncryptedAtRest).toBe(true);
+    // Recovery key is forwarded as a serializable Base64 string; the non-serializable HKDF
+    // fields are gone (finding #29).
+    expect(stored.closeData.encryptionItemT2KeyB64).toBe('keyB64');
+    expect(stored.closeData.hkdfSaltAB).toBeUndefined();
+    expect(stored.closeData.sessionKeyForHKDF).toBeUndefined();
   });
 });
 
@@ -108,8 +112,7 @@ describe('handleCloseSignalPullRequestAction — Highly Secret card never stored
     s_cardNumber: 'enc-sif-cn',
     s_expirationDate: 'enc-sif-ed',
     s_securityCode: 'enc-sif-cvv',
-    hkdfSaltAB: 'salt',
-    sessionKeyForHKDF: 'sk',
+    encryptionItemT2KeyB64: 'keyB64',
     actionData: {
       action: REQUEST_ACTIONS.AUTOFILL_CARD,
       cardholderName: 'John Doe',
@@ -133,6 +136,11 @@ describe('handleCloseSignalPullRequestAction — Highly Secret card never stored
     expect(stored.actionData.cardNumber).not.toBe('4111111111111111');
     expect(stored.actionData.cardNumber).toBe('enc-cn');
     expect(stored.actionData.cardFieldsEncryptedAtRest).toBe(true);
+    // Recovery key is forwarded as a serializable Base64 string; the non-serializable HKDF
+    // fields are gone (finding #29).
+    expect(stored.closeData.encryptionItemT2KeyB64).toBe('keyB64');
+    expect(stored.closeData.hkdfSaltAB).toBeUndefined();
+    expect(stored.closeData.sessionKeyForHKDF).toBeUndefined();
 
     await storage.removeItem(CARD_KEY);
   });

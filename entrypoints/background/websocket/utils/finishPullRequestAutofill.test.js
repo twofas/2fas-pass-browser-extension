@@ -27,8 +27,7 @@ const LOGIN_CLOSE = {
   deviceId: 'd1',
   itemId: 'i1',
   s_password: 'pw',
-  hkdfSaltAB: 'salt',
-  sessionKeyForHKDF: 'sk'
+  encryptionItemT2KeyB64: 'keyB64'
 };
 
 const CARD_CLOSE = {
@@ -39,8 +38,7 @@ const CARD_CLOSE = {
   s_cardNumber: 'cn',
   s_expirationDate: 'ed',
   s_securityCode: 'cvv',
-  hkdfSaltAB: 'salt',
-  sessionKeyForHKDF: 'sk'
+  encryptionItemT2KeyB64: 'keyB64'
 };
 
 const navigateState = () => {
@@ -63,7 +61,9 @@ describe('finishLoginAutofill', () => {
     await finishLoginAutofill(5, { username: 'u', password: 'p' }, LOGIN_CLOSE, false);
 
     expect(windowsUpdate).toHaveBeenCalledWith(99, { focused: true });
-    expect(navigateState()).toMatchObject({ action: 'autofillT2Failed', s_password: 'pw', itemId: 'i1' });
+    expect(navigateState()).toMatchObject({ action: 'autofillT2Failed', s_password: 'pw', itemId: 'i1', encryptionItemT2KeyB64: 'keyB64' });
+    expect(navigateState().hkdfSaltAB).toBeUndefined();
+    expect(navigateState().sessionKeyForHKDF).toBeUndefined();
     expect(windowsRemove).not.toHaveBeenCalled();
   });
 
@@ -117,7 +117,9 @@ describe('finishCardAutofill', () => {
     await finishCardAutofill(5, {}, CARD_CLOSE, false);
 
     expect(windowsUpdate).toHaveBeenCalledWith(99, { focused: true });
-    expect(navigateState()).toMatchObject({ action: 'autofillCardT2Failed', s_cardNumber: 'cn' });
+    expect(navigateState()).toMatchObject({ action: 'autofillCardT2Failed', s_cardNumber: 'cn', encryptionItemT2KeyB64: 'keyB64' });
+    expect(navigateState().hkdfSaltAB).toBeUndefined();
+    expect(navigateState().sessionKeyForHKDF).toBeUndefined();
   });
 
   it('windowClose: full success → closes the popup window, no success toast', async () => {

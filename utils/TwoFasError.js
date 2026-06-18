@@ -603,6 +603,10 @@ class TwoFasError extends Error {
       message: 'keepPassword: error exporting key',
       code: 9300
     },
+    keepPasswordImportKeyError: {
+      message: 'keepPassword: error importing key',
+      code: 9301
+    },
     // INJECT CS IF NOT ALREADY
     injectCSIfNotAlreadyUnknownTypeError: {
       message: 'injectCSIfNotAlready: unknown type',

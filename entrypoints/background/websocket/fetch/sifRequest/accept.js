@@ -65,11 +65,9 @@ const prepareValueForTransmission = async (value, cryptoAvailable) => {
 * @param {Object} item - The Login item.
 * @param {CryptoKey} encryptionItemT2Key - The T2 encryption key.
 * @param {string} messageId - The message ID.
-* @param {ArrayBuffer} hkdfSaltAB - The HKDF salt as an ArrayBuffer.
-* @param {ArrayBuffer} sessionKeyForHKDF - The session key for HKDF as an ArrayBuffer.
 * @return {Promise<Object>} Result object.
 */
-const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key, messageId, hkdfSaltAB, sessionKeyForHKDF) => {
+const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key, messageId) => {
   const password = info.data.s_password;
   let encryptedValueB64 = null;
   const noPassword = !password || password.length === 0;
@@ -96,6 +94,13 @@ const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key,
 
   await sendPullRequestCompleted(messageId);
 
+  // Export the (extractable) derived ItemT2 key to raw Base64 so the autofill-failure recovery
+  // (KeepItem / AutofillErrorItem) can re-encrypt the pulled SIF. The session HKDF key is
+  // non-extractable and the salt is an ArrayBuffer — neither survives JSON / runtime messaging
+  // (finding #29).
+  const encryptionItemT2KeyRaw = await crypto.subtle.exportKey('raw', encryptionItemT2Key);
+  const encryptionItemT2KeyB64 = ArrayBufferToBase64(encryptionItemT2KeyRaw);
+
   const result = {
     action: 'autofill',
     actionData,
@@ -103,8 +108,7 @@ const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key,
     vaultId: state.data.vaultId,
     itemId: state.data.itemId,
     s_password: password,
-    hkdfSaltAB,
-    sessionKeyForHKDF
+    encryptionItemT2KeyB64
   };
 
   if (state?.from === 'shortcut') {
@@ -121,11 +125,9 @@ const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key,
 * @param {Object} item - The PaymentCard item.
 * @param {CryptoKey} encryptionItemT2Key - The T2 encryption key.
 * @param {string} messageId - The message ID.
-* @param {ArrayBuffer} hkdfSaltAB - The HKDF salt as an ArrayBuffer.
-* @param {ArrayBuffer} sessionKeyForHKDF - The session key for HKDF as an ArrayBuffer.
 * @return {Promise<Object>} Result object.
 */
-const handlePaymentCardAutofillAccept = async (info, state, item, encryptionItemT2Key, messageId, hkdfSaltAB, sessionKeyForHKDF) => {
+const handlePaymentCardAutofillAccept = async (info, state, item, encryptionItemT2Key, messageId) => {
   const cryptoAvailable = state?.data?.cryptoAvailable;
 
   let decryptedCardNumber = '';
@@ -185,6 +187,13 @@ const handlePaymentCardAutofillAccept = async (info, state, item, encryptionItem
 
   await sendPullRequestCompleted(messageId);
 
+  // Export the (extractable) derived ItemT2 key to raw Base64 so the autofill-failure recovery
+  // (KeepItem / AutofillErrorItem) can re-encrypt the pulled SIF. The session HKDF key is
+  // non-extractable and the salt is an ArrayBuffer — neither survives JSON / runtime messaging
+  // (finding #29).
+  const encryptionItemT2KeyRaw = await crypto.subtle.exportKey('raw', encryptionItemT2Key);
+  const encryptionItemT2KeyB64 = ArrayBufferToBase64(encryptionItemT2KeyRaw);
+
   const result = {
     action: 'autofillCard',
     actionData,
@@ -194,8 +203,7 @@ const handlePaymentCardAutofillAccept = async (info, state, item, encryptionItem
     s_cardNumber: info.data.s_cardNumber,
     s_expirationDate: info.data.s_expirationDate,
     s_securityCode: info.data.s_securityCode,
-    hkdfSaltAB,
-    sessionKeyForHKDF
+    encryptionItemT2KeyB64
   };
 
   if (state?.from === 'shortcut') {
@@ -225,11 +233,11 @@ const sifRequestAccept = async (info, state, hkdfSaltAB, sessionKeyForHKDF, mess
       const encryptionItemT2Key = await generateEncryptionAESKey(hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, sessionKeyForHKDF, true);
 
       if (contentType === Login.contentType) {
-        return await handleLoginAutofillAccept(info, state, item, encryptionItemT2Key, messageId, hkdfSaltAB, sessionKeyForHKDF);
+        return await handleLoginAutofillAccept(info, state, item, encryptionItemT2Key, messageId);
       }
 
       if (contentType === PaymentCard.contentType) {
-        return await handlePaymentCardAutofillAccept(info, state, item, encryptionItemT2Key, messageId, hkdfSaltAB, sessionKeyForHKDF);
+        return await handlePaymentCardAutofillAccept(info, state, item, encryptionItemT2Key, messageId);
       }
     }
 

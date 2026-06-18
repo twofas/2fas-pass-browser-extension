@@ -21,8 +21,7 @@ describe('storeAutofillFailureData', () => {
       deviceId: 'd',
       itemId: 'i',
       s_password: 'enc',
-      hkdfSaltAB: 'salt',
-      sessionKeyForHKDF: 'sk',
+      encryptionItemT2KeyB64: 'keyB64',
       securityType: SECURITY_TIER.HIGHLY_SECRET,
       windowClose: true
     });
@@ -35,8 +34,7 @@ describe('storeAutofillFailureData', () => {
       deviceId: 'd',
       itemId: 'i',
       s_password: 'enc',
-      hkdfSaltAB: 'salt',
-      sessionKeyForHKDF: 'sk'
+      encryptionItemT2KeyB64: 'keyB64'
     });
   });
 

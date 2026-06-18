@@ -74,8 +74,7 @@ const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) =>
           deviceId: closeData.deviceId,
           itemId: closeData.itemId,
           s_password: closeData.s_password,
-          hkdfSaltAB: closeData.hkdfSaltAB,
-          sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+          encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
           toastId
         }
       }
@@ -131,8 +130,7 @@ const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) =>
             deviceId: closeData.deviceId,
             itemId: closeData.itemId,
             s_password: closeData.s_password,
-            hkdfSaltAB: closeData.hkdfSaltAB,
-            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+            encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
             toastId
           }
         }
@@ -178,8 +176,7 @@ const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) =>
         deviceId: closeData.deviceId,
         itemId: closeData.itemId,
         s_password: closeData.s_password,
-        hkdfSaltAB: closeData.hkdfSaltAB,
-        sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+        encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
         toastId
       }
     }
@@ -221,8 +218,7 @@ const finishCardAutofill = async (tabId, actionData, closeData, autofillRes) => 
           s_cardNumber: closeData.s_cardNumber,
           s_expirationDate: closeData.s_expirationDate,
           s_securityCode: closeData.s_securityCode,
-          hkdfSaltAB: closeData.hkdfSaltAB,
-          sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+          encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
           toastId
         }
       }
@@ -274,8 +270,7 @@ const finishCardAutofill = async (tabId, actionData, closeData, autofillRes) => 
           s_cardNumber: closeData.s_cardNumber,
           s_expirationDate: closeData.s_expirationDate,
           s_securityCode: closeData.s_securityCode,
-          hkdfSaltAB: closeData.hkdfSaltAB,
-          sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+          encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
           toastId
         }
       }
@@ -311,8 +306,7 @@ const finishCardAutofill = async (tabId, actionData, closeData, autofillRes) => 
         s_cardNumber: closeData.s_cardNumber,
         s_expirationDate: closeData.s_expirationDate,
         s_securityCode: closeData.s_securityCode,
-        hkdfSaltAB: closeData.hkdfSaltAB,
-        sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+        encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
         toastId
       }
     }

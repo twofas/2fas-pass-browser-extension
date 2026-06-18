@@ -82,8 +82,7 @@ const useAutofillFailedCheck = () => {
         deviceId: failureData.deviceId,
         itemId: failureData.itemId,
         s_password: failureData.s_password,
-        hkdfSaltAB: failureData.hkdfSaltAB,
-        sessionKeyForHKDF: failureData.sessionKeyForHKDF
+        encryptionItemT2KeyB64: failureData.encryptionItemT2KeyB64
       },
       replace: true
     });

@@ -95,8 +95,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
               deviceId: closeData.deviceId,
               itemId: closeData.itemId,
               s_password: closeData.s_password,
-              hkdfSaltAB: closeData.hkdfSaltAB,
-              sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+              encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
               windowClose: true
             },
             trustedDomains: resolution.crossDomainAllowedDomains
@@ -139,8 +138,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
               deviceId: closeData.deviceId,
               itemId: closeData.itemId,
               s_password: closeData.s_password,
-              hkdfSaltAB: closeData.hkdfSaltAB,
-              sessionKeyForHKDF: closeData.sessionKeyForHKDF
+              encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64
             }
           }));
 
@@ -219,8 +217,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
               s_cardNumber: closeData.s_cardNumber,
               s_expirationDate: closeData.s_expirationDate,
               s_securityCode: closeData.s_securityCode,
-              hkdfSaltAB: closeData.hkdfSaltAB,
-              sessionKeyForHKDF: closeData.sessionKeyForHKDF,
+              encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
               windowClose: true
             },
             trustedDomains: resolution.crossDomainAllowedDomains
@@ -265,8 +262,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
               s_cardNumber: closeData.s_cardNumber,
               s_expirationDate: closeData.s_expirationDate,
               s_securityCode: closeData.s_securityCode,
-              hkdfSaltAB: closeData.hkdfSaltAB,
-              sessionKeyForHKDF: closeData.sessionKeyForHKDF
+              encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64
             }
           }));
 

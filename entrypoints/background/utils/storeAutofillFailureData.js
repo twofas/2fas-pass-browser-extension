@@ -24,8 +24,7 @@ const storeAutofillFailureData = async (tabId, closeData) => {
     deviceId: closeData.deviceId,
     itemId: closeData.itemId,
     s_password: closeData.s_password,
-    hkdfSaltAB: closeData.hkdfSaltAB,
-    sessionKeyForHKDF: closeData.sessionKeyForHKDF
+    encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64
   }));
 
   logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - storeAutofillFailureData');
