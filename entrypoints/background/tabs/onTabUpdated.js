@@ -139,7 +139,8 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
           values: {
             username: action.username,
             password: action.password,
-            encrypted: action.encrypted || false
+            usernameEncrypted: action.usernameEncrypted || false,
+            passwordEncrypted: action.passwordEncrypted || false
           }
         }));
         logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onTabUpdated (savePromptContext)');
