@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { promptInput } from '../utils';
+import { promptInput, isSavePromptSenderEligible } from '../utils';
 
 /** 
 * Function to handle messages related to prompts.
@@ -26,10 +26,20 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
           return true;
         }
 
-        promptInput(request, sender, tabsInputData)
-          .then(() => { sendResponse({ status: 'ok' }); })
+        // Defence-in-depth: only same-root-domain frames may capture credentials,
+        // even if a cross-domain frame forged this message (finding #19).
+        isSavePromptSenderEligible(sender)
+          .then(eligible => {
+            if (!eligible) {
+              sendResponse({ status: 'error', message: 'Ineligible frame' });
+              return;
+            }
+
+            return promptInput(request, sender, tabsInputData)
+              .then(() => { sendResponse({ status: 'ok' }); });
+          })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
-          
+
         break;
       }
 
@@ -39,17 +49,27 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
           return true;
         }
 
-        if (!tabsInputData[sender.tab.id]) {
-          tabsInputData[sender.tab.id] = {};
-        }
+        isSavePromptSenderEligible(sender)
+          .then(eligible => {
+            if (!eligible) {
+              sendResponse({ status: 'error', message: 'Ineligible frame' });
+              return;
+            }
 
-        request.data.forEach(inputData => {
-          if (inputData?.id) {
-            tabsInputData[sender.tab.id][inputData.id] = inputData;
-          }
-        });
+            if (!tabsInputData[sender.tab.id]) {
+              tabsInputData[sender.tab.id] = {};
+            }
 
-        sendResponse({ status: 'ok' });
+            request.data.forEach(inputData => {
+              if (inputData?.id) {
+                tabsInputData[sender.tab.id][inputData.id] = inputData;
+              }
+            });
+
+            sendResponse({ status: 'ok' });
+          })
+          .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+
         break;
       }
 
@@ -65,8 +85,13 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
       }
 
       case REQUEST_ACTIONS.GET_SAVE_PROMPT: {
-        storage.getItem('local:savePrompt')
-          .then(res => { sendResponse({ status: 'ok', data: res }); })
+        // Tell the prompt content script whether this frame may capture credentials
+        // (top frame or same-root-domain sub-frame) so it can self-gate (finding #19).
+        Promise.all([
+          storage.getItem('local:savePrompt'),
+          isSavePromptSenderEligible(sender)
+        ])
+          .then(([res, eligible]) => { sendResponse({ status: 'ok', data: res, eligible }); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
 
         break;

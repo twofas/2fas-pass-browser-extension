@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import { checkDomainOnIgnoredList, getValuesFromTabsInputData, checkServicesData, savePromptAction, cleanTabsInputData, addSavePromptAction, checkFormData } from '../utils';
+import { checkDomainOnIgnoredList, getValuesFromTabsInputData, checkServicesData, savePromptAction, cleanTabsInputData, addSavePromptAction, checkFormData, isProcessableWebRequestFrame } from '../utils';
 import { ignoredSavePromptUrls, ignoredSavePromptRequestBodyTexts } from '@/constants';
 import isText from '@/partials/functions/isText';
 
@@ -22,6 +22,25 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   // Handle beacon flush from content script (before any other filters)
   if (details?.type === 'ping' && details?.url?.startsWith(`https://${import.meta.env.VITE_BEACON}.invalid`)) {
     if (details?.requestBody?.raw?.[0]?.bytes && details?.tabId) {
+      // Accept beacons from the top document or a same-root-domain sub-frame only;
+      // resolve the tab url only for sub-frames (the common top-frame case skips it).
+      let processable = isProcessableWebRequestFrame(details);
+
+      if (!processable) {
+        let beaconTabUrl;
+
+        try {
+          const beaconTab = await browser.tabs.get(details.tabId);
+          beaconTabUrl = beaconTab?.url;
+        } catch {}
+
+        processable = isProcessableWebRequestFrame(details, beaconTabUrl);
+      }
+
+      if (!processable) {
+        return;
+      }
+
       try {
         const rawData = ArrayBufferToString(details.requestBody.raw[0].bytes);
         const inputs = JSON.parse(rawData);
@@ -72,14 +91,17 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     return;
   }
 
-  if (details?.frameType) {
-    if (details.frameType !== 'outermost_frame') {
-      return;
-    }
-  } else {
-    if (details?.parentFrameId !== -1) {
-      return;
-    }
+  let tab;
+
+  try {
+    tab = await browser.tabs.get(details.tabId);
+  } catch {}
+
+  // Process the top document, plus same-root-domain sub-frames (login forms in
+  // same-site iframes). Cross-root-domain sub-frames (e.g. SSO widgets) are rejected
+  // — their credentials belong to the embedded site, not this page (finding #19).
+  if (!isProcessableWebRequestFrame(details, tab?.url)) {
+    return;
   }
 
   if (details?.requestBody?.raw && details.requestBody.raw.length > 0 && details.requestBody.raw[0].bytes) {
@@ -112,12 +134,6 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   if (!configured) {
     return;
   }
-
-  let tab;
-
-  try {
-    tab = await browser.tabs.get(details.tabId);
-  } catch {}
 
   let storageSavePrompt = null;
   let domainOnIgnoredList;

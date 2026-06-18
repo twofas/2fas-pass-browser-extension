@@ -32,6 +32,12 @@ export default defineContentScript({
     const latestValues = {};
     const beaconPayloads = {};
 
+    // The top frame is always the page itself; sub-frames must be confirmed
+    // same-root-domain by the background (which can see every frame's real origin,
+    // including cross-subdomain ones the frame itself cannot read). Fail-closed:
+    // a sub-frame that cannot be confirmed never captures credentials (finding #19).
+    let eligible = window.top === window.self;
+
     try {
       if (ctx?.isInvalid) {
         return;
@@ -47,8 +53,16 @@ export default defineContentScript({
       } else {
         savePrompt = 'default';
       }
+
+      if (savePromptResponse?.eligible === true) {
+        eligible = true;
+      }
     } catch {
       savePrompt = 'default';
+    }
+
+    if (!eligible) {
+      return;
     }
 
     const cryptoAvailable = isCryptoAvailable();

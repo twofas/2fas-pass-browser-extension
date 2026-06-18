@@ -25,6 +25,9 @@ export { default as cleanTabsInputData } from './savePrompt/cleanTabsInputData.j
 export { default as decryptValues } from './savePrompt/decryptValues.js';
 export { default as decryptValuesProcess } from './savePrompt/decryptValuesProcess.js';
 export { default as getValuesFromTabsInputData } from './savePrompt/getValuesFromTabsInputData.js';
+export { default as isFrameSameRootDomain } from './savePrompt/isFrameSameRootDomain.js';
+export { default as isProcessableWebRequestFrame } from './savePrompt/isProcessableWebRequestFrame.js';
+export { default as isSavePromptSenderEligible } from './savePrompt/isSavePromptSenderEligible.js';
 export { default as handleSavePromptResponse } from './savePrompt/handleSavePromptResponse.js';
 export { default as removeSavePromptAction } from './savePrompt/removeSavePromptAction.js';
 export { default as savePromptAction } from './savePrompt/savePromptAction.js';

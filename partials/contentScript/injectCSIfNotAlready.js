@@ -66,8 +66,11 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
       }
 
       case REQUEST_TARGETS.PROMPT: {
+        // all_frames so credentials typed in same-site iframes are captured for the
+        // save prompt; prompt.js self-gates to the top frame + same-root-domain
+        // sub-frames, so cross-domain iframes load it but never capture (finding #19).
         await browser.scripting.executeScript({
-          target: { tabId: tabID, allFrames: false },
+          target: { tabId: tabID, allFrames: true },
           files: ['content-scripts/prompt.js'],
           injectImmediately: true
         });
