@@ -4,11 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, resolveCrossDomainPermissions } from '@/partials/functions';
+import { sendMessageToAllFrames, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, resolveCrossDomainPermissions, aggregateLoginAutofillResponses } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import protectActionDataPassword from '@/entrypoints/background/utils/protectActionDataPassword';
 import { acquireAutofillTab, showT2Toast, showGenericToast } from './autofillPopupShared';
-import { PULL_REQUEST_TYPES, AUTOFILL_RESULT_CODES } from '@/constants';
+import { PULL_REQUEST_TYPES } from '@/constants';
 import Login from '@/models/itemModels/Login';
 
 /**
@@ -238,17 +238,7 @@ const handleLoginAutofill = async (item, navigate) => {
     return;
   }
 
-  const isOk = res.some(frameResponse => frameResponse.status === 'ok');
-  const allFieldsFilled = res.every(frameResponse => {
-    if (frameResponse.status !== 'ok') {
-      return frameResponse.code === AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS;
-    }
-
-    const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
-    const couldFillPassword = !actionData.password || frameResponse.canAutofillPassword !== false;
-
-    return couldFillUsername && couldFillPassword;
-  });
+  const { isOk, allFieldsFilled } = aggregateLoginAutofillResponses(res, actionData);
 
   if (!isHighlySecret) {
     pageHasPasswordInputs = res.some(r => r.canAutofillPassword);

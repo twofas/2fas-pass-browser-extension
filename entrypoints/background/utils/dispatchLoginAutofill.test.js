@@ -14,8 +14,9 @@ const finishLoginAutofill = vi.fn();
 
 vi.mock('@/utils/CatchError.js', () => ({ default: vi.fn() }));
 
-vi.mock('@/partials/functions', () => ({
-  sendMessageToAllFrames: (...args) => sendMessageToAllFrames(...args)
+vi.mock('@/partials/functions', async () => ({
+  sendMessageToAllFrames: (...args) => sendMessageToAllFrames(...args),
+  aggregateLoginAutofillResponses: (await vi.importActual('@/partials/functions/aggregateLoginAutofillResponses')).default
 }));
 
 vi.mock('@/partials/contentScript/injectCSIfNotAlready', () => ({

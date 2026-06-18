@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 export { default as aggregateCardAutofillResponses } from './aggregateCardAutofillResponses.js';
+export { default as aggregateLoginAutofillResponses } from './aggregateLoginAutofillResponses.js';
 export { default as autoClearAction } from './autoClearAction.js';
 export { default as checkStorageAutoClearActions } from './checkStorageAutoClearActions.js';
 export { default as cleanupDevices } from './cleanupDevices.js';

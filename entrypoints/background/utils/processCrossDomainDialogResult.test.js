@@ -18,10 +18,11 @@ const closePopupWindow = vi.fn();
 const restoreActionDataPassword = vi.fn();
 const restoreCardActionData = vi.fn();
 
-vi.mock('@/partials/functions', () => ({
+vi.mock('@/partials/functions', async () => ({
   sendMessageToAllFrames: (...args) => sendMessageToAllFrames(...args),
   saveCrossDomainPreferences: (...args) => saveCrossDomainPreferences(...args),
-  aggregateCardAutofillResponses: (...args) => aggregateCardAutofillResponses(...args)
+  aggregateCardAutofillResponses: (...args) => aggregateCardAutofillResponses(...args),
+  aggregateLoginAutofillResponses: (await vi.importActual('@/partials/functions/aggregateLoginAutofillResponses')).default
 }));
 
 vi.mock('@/partials/contentScript/injectCSIfNotAlready', () => ({

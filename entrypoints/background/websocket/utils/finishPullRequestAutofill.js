@@ -4,10 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { AUTOFILL_RESULT_CODES } from '@/constants';
 import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import aggregateCardAutofillResponses from '@/partials/functions/aggregateCardAutofillResponses';
+import aggregateLoginAutofillResponses from '@/partials/functions/aggregateLoginAutofillResponses';
 import wsNotify from '../wsNotify.js';
 
 /**
@@ -83,17 +83,7 @@ const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) =>
     return true;
   }
 
-  const isOk = autofillRes.some(frameResponse => frameResponse.status === 'ok');
-  const allFieldsFilled = autofillRes.every(frameResponse => {
-    if (frameResponse.status !== 'ok') {
-      return frameResponse.code === AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS;
-    }
-
-    const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
-    const couldFillPassword = !actionData.password || frameResponse.canAutofillPassword !== false;
-
-    return couldFillUsername && couldFillPassword;
-  });
+  const { isOk, allFieldsFilled } = aggregateLoginAutofillResponses(autofillRes, actionData);
 
   if (isOk) {
     try {

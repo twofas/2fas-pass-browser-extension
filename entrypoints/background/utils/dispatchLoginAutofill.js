@@ -4,8 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { AUTOFILL_RESULT_CODES } from '@/constants';
-import { sendMessageToAllFrames } from '@/partials/functions';
+import { sendMessageToAllFrames, aggregateLoginAutofillResponses } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import openPopupWithFallback from './openPopupWithFallback';
 import storeAutofillFailureData from './storeAutofillFailureData';
@@ -73,17 +72,7 @@ const dispatchLoginAutofill = async (tabId, storageKey, actionData, closeData) =
     return openPopupWithFallback();
   }
 
-  const isOk = response.some(frameResponse => frameResponse.status === 'ok');
-  const allFieldsFilled = response.every(frameResponse => {
-    if (frameResponse.status !== 'ok') {
-      return frameResponse.code === AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS;
-    }
-
-    const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
-    const couldFillPassword = !actionData.password || frameResponse.canAutofillPassword !== false;
-
-    return couldFillUsername && couldFillPassword;
-  });
+  const { isOk, allFieldsFilled } = aggregateLoginAutofillResponses(response, actionData);
 
   if (!isOk) {
     await storeAutofillFailureData(tabId, closeData);

@@ -14,10 +14,11 @@ const notificationShow = vi.fn();
 const openPopupWithFallback = vi.fn();
 const restoreActionDataPassword = vi.fn();
 
-vi.mock('@/partials/functions', () => ({
+vi.mock('@/partials/functions', async () => ({
   sendMessageToAllFrames: (...args) => sendMessageToAllFrames(...args),
   sendMessageToTab: (...args) => sendMessageToTab(...args),
-  loadAndClassifyCrossDomainPermissions: (...args) => loadAndClassifyCrossDomainPermissions(...args)
+  loadAndClassifyCrossDomainPermissions: (...args) => loadAndClassifyCrossDomainPermissions(...args),
+  aggregateLoginAutofillResponses: (await vi.importActual('@/partials/functions/aggregateLoginAutofillResponses')).default
 }));
 
 vi.mock('@/partials/contentScript/injectCSIfNotAlready', () => ({
