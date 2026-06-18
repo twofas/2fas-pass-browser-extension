@@ -58,6 +58,16 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     return; // Ignore the event
   }
 
+  // Capture the real event target synchronously, BEFORE any await. Input events are
+  // composed, so composedPath()[0] reveals the field even when an open shadow root
+  // retargets e.target to the host element. composedPath() is only populated while the
+  // event is dispatching and returns [] once a handler awaits (e.g. the lazy key import
+  // below, hit on the first keystroke of a page session) — so it must be read here, not
+  // after the awaits. Fall back to e.target + the shadow heuristic only when composedPath
+  // is unavailable/empty (e.g. closed shadow roots that hide their internals).
+  const path = typeof e?.composedPath === 'function' ? e.composedPath() : null;
+  let input = (path && path[0]) || e?.target;
+
   if (!localKey?.data && crypto?.subtle) {
     let localKeyResponse = null;
 
@@ -82,8 +92,6 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
       return;
     }
   }
-
-  let input = e?.target;
 
   if (input?.tagName && input.tagName.toLowerCase() !== 'input') {
     const shadowRoots = getShadowRoots(input);
