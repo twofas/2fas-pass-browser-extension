@@ -13,12 +13,14 @@ const loadAndClassifyCrossDomainPermissions = vi.fn();
 const injectCSIfNotAlready = vi.fn();
 const notificationShow = vi.fn();
 const restoreCardActionData = vi.fn();
+const focusTabForDialog = vi.fn();
 
 vi.mock('@/partials/functions', () => ({
   sendMessageToAllFrames: (...args) => sendMessageToAllFrames(...args),
   sendMessageToTab: (...args) => sendMessageToTab(...args),
   aggregateCardAutofillResponses: (...args) => aggregateCardAutofillResponses(...args),
-  loadAndClassifyCrossDomainPermissions: (...args) => loadAndClassifyCrossDomainPermissions(...args)
+  loadAndClassifyCrossDomainPermissions: (...args) => loadAndClassifyCrossDomainPermissions(...args),
+  focusTabForDialog: (...args) => focusTabForDialog(...args)
 }));
 
 vi.mock('@/partials/contentScript/injectCSIfNotAlready', () => ({ default: (...args) => injectCSIfNotAlready(...args) }));

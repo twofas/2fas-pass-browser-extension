@@ -9,6 +9,7 @@ import TwoFasWebSocket from '.';
 import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
 import sendMessageToTab from '@/partials/functions/sendMessageToTab';
 import resolveCrossDomainPermissions from '@/partials/functions/resolveCrossDomainPermissions';
+import focusTabForDialog from '@/partials/functions/focusTabForDialog';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import wsNotify from './wsNotify.js';
 import protectActionDataPassword from '../utils/protectActionDataPassword';
@@ -103,13 +104,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
           logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillData windowClose dialog)');
 
-          try {
-            const tab = await browser.tabs.get(tabId);
-
-            await browser.windows.update(tab.windowId, { focused: true });
-            await browser.tabs.update(tabId, { active: true });
-            await new Promise(resolve => setTimeout(resolve, 100));
-          } catch { }
+          await focusTabForDialog(tabId);
 
           try {
             await sendMessageToTab(tabId, {
@@ -225,13 +220,7 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
           logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillCardData windowClose dialog)');
 
-          try {
-            const tab = await browser.tabs.get(tabId);
-
-            await browser.windows.update(tab.windowId, { focused: true });
-            await browser.tabs.update(tabId, { active: true });
-            await new Promise(resolve => setTimeout(resolve, 100));
-          } catch { }
+          await focusTabForDialog(tabId);
 
           try {
             await sendMessageToTab(tabId, {

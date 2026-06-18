@@ -18,6 +18,7 @@ export { default as deletePush } from './deletePush.js';
 export { default as encryptCardSifForTransmission } from './encryptCardSifForTransmission.js';
 export { default as encryptValueForTransmission } from './encryptValueForTransmission.js';
 export { default as focusPopupWindow } from './focusPopupWindow.js';
+export { default as focusTabForDialog } from './focusTabForDialog.js';
 export { default as generateNonce } from './generateNonce.js';
 export { default as getCurrentDevice } from './getCurrentDevice.js';
 export { default as getInputClickPosition } from './getInputClickPosition.js';

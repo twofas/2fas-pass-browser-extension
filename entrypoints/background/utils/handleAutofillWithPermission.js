@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToTab, loadAndClassifyCrossDomainPermissions } from '@/partials/functions';
+import { sendMessageToTab, loadAndClassifyCrossDomainPermissions, focusTabForDialog } from '@/partials/functions';
 import TwofasNotification from '@/partials/TwofasNotification';
 import restoreActionDataPassword from './restoreActionDataPassword';
 import dispatchLoginAutofill from './dispatchLoginAutofill';
@@ -58,14 +58,7 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
     await storage.setItem(storageKey, JSON.stringify(storedData));
     logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleAutofillWithPermission (trustedDomains update)');
 
-    try {
-      const tab = await browser.tabs.get(tabId);
-
-      await browser.windows.update(tab.windowId, { focused: true });
-      await browser.tabs.update(tabId, { active: true });
-
-      await new Promise(resolve => setTimeout(resolve, 100));
-    } catch { }
+    await focusTabForDialog(tabId);
 
     try {
       await sendMessageToTab(tabId, {

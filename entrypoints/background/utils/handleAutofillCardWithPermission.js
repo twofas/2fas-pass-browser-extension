@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, aggregateCardAutofillResponses, loadAndClassifyCrossDomainPermissions } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, aggregateCardAutofillResponses, loadAndClassifyCrossDomainPermissions, focusTabForDialog } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
 import restoreCardActionData from './restoreCardActionData';
@@ -57,14 +57,7 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
     storedData.trustedDomains = crossDomainAllowedDomains;
     await storage.setItem(storageKey, JSON.stringify(storedData));
 
-    try {
-      const tab = await browser.tabs.get(tabId);
-
-      await browser.windows.update(tab.windowId, { focused: true });
-      await browser.tabs.update(tabId, { active: true });
-
-      await new Promise(resolve => setTimeout(resolve, 100));
-    } catch { }
+    await focusTabForDialog(tabId);
 
     try {
       await sendMessageToTab(tabId, {

@@ -13,11 +13,13 @@ const injectCSIfNotAlready = vi.fn();
 const notificationShow = vi.fn();
 const openPopupWithFallback = vi.fn();
 const restoreActionDataPassword = vi.fn();
+const focusTabForDialog = vi.fn();
 
 vi.mock('@/partials/functions', async () => ({
   sendMessageToAllFrames: (...args) => sendMessageToAllFrames(...args),
   sendMessageToTab: (...args) => sendMessageToTab(...args),
   loadAndClassifyCrossDomainPermissions: (...args) => loadAndClassifyCrossDomainPermissions(...args),
+  focusTabForDialog: (...args) => focusTabForDialog(...args),
   aggregateLoginAutofillResponses: (await vi.importActual('@/partials/functions/aggregateLoginAutofillResponses')).default
 }));
 

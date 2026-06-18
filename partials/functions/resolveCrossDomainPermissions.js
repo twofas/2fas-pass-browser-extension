@@ -150,7 +150,7 @@ const resolveCrossDomainPermissions = async (tabId, autofillType, dataFields) =>
   // Apple's auth widget (and similar) bootstraps slowly; the content script's message
   // listener may not be ready in the first ~300-500ms after injection.
   if (hasUnresponded()) {
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise(resolve => setTimeout(resolve, config.iframePermissionRetryDelay));
 
     try {
       await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);

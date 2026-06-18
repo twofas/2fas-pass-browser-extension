@@ -18,12 +18,14 @@ const finishLoginAutofill = vi.fn();
 const finishCardAutofill = vi.fn();
 const protectActionDataPassword = vi.fn();
 const protectCardActionData = vi.fn();
+const focusTabForDialog = vi.fn();
 
 vi.mock('./utils/addNewSessionIdToDevice', () => ({ default: (...args) => addNewSessionIdToDevice(...args) }));
 vi.mock('.', () => ({ default: { getInstance: () => ({ close: socketClose }) } }));
 vi.mock('@/partials/functions/sendMessageToAllFrames', () => ({ default: (...args) => sendMessageToAllFrames(...args) }));
 vi.mock('@/partials/functions/sendMessageToTab', () => ({ default: (...args) => sendMessageToTab(...args) }));
 vi.mock('@/partials/functions/resolveCrossDomainPermissions', () => ({ default: (...args) => resolveCrossDomainPermissions(...args) }));
+vi.mock('@/partials/functions/focusTabForDialog', () => ({ default: (...args) => focusTabForDialog(...args) }));
 vi.mock('@/partials/contentScript/injectCSIfNotAlready', () => ({ default: (...args) => injectCSIfNotAlready(...args) }));
 vi.mock('./wsNotify.js', () => ({ default: (...args) => wsNotify(...args) }));
 vi.mock('./utils/finishPullRequestAutofill.js', () => ({
