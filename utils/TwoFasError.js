@@ -695,6 +695,15 @@ class TwoFasError extends Error {
       message: 'handleInputEvent: error encrypting data',
       code: 9382
     },
+    // ENCRYPT FLUSH DATA
+    encryptFlushDataNonceError: {
+      message: 'encryptFlushData: error generating nonce',
+      code: 9383
+    },
+    encryptFlushDataEncryptError: {
+      message: 'encryptFlushData: error encrypting data',
+      code: 9384
+    },
     // CONTEXT MENU
     contextMenuConfiguredError: {
       message: 'Error configuring context menu',

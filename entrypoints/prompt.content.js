@@ -11,6 +11,8 @@ import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
 import getShadowRoots from './content/functions/autofillFunctions/getShadowRoots';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import setIDsToInputs from './prompt/setIDsToInputs';
+import isSubmitButtonClick from './prompt/isSubmitButtonClick';
+import encryptFlushData from './prompt/encryptFlushData';
 import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
 import ifCtxIsInvalid from '@/partials/contentScript/ifCtxIsInvalid';
 import checkInitialInputsValues from './prompt/checkInitialInputsValues';
@@ -70,6 +72,7 @@ export default defineContentScript({
       document.removeEventListener('input', handleInput);
       document.removeEventListener('submit', handleFormSubmit, { capture: true });
       document.removeEventListener('keydown', handleKeydown, { capture: true });
+      document.removeEventListener('click', handleClick, { capture: true });
       window.removeEventListener('error', emptyFunc);
       window.removeEventListener('unhandledrejection', emptyFunc);
     };
@@ -95,12 +98,13 @@ export default defineContentScript({
       } catch {}
     };
 
-    const flushAndSendPending = () => {
+    const flushAndSendPending = async () => {
       trackNewInputs();
 
       const pendingData = flushPendingInputs(allInputs, timers, latestValues);
+      const sendData = encrypted ? await encryptFlushData(pendingData, localKey, encrypted) : pendingData;
 
-      for (const inputData of pendingData) {
+      for (const inputData of sendData) {
         try {
           browser.runtime.sendMessage({
             action: REQUEST_ACTIONS.PROMPT_INPUT,
@@ -142,19 +146,23 @@ export default defineContentScript({
       flushAndSendPending();
     };
 
-    const handleBeforeUnload = () => {
-      const pendingData = flushPendingInputs(allInputs, timers, latestValues);
-
-      if (pendingData.length > 0) {
-        try {
-          browser.runtime.sendMessage({
-            action: REQUEST_ACTIONS.PROMPT_INPUT_FLUSH,
-            data: pendingData,
-            target: REQUEST_TARGETS.BACKGROUND_PROMPT
-          });
-        } catch {}
+    const handleClick = e => {
+      if (ifCtxIsInvalid(ctx, removeListeners)) {
+        return;
       }
 
+      if (!isSubmitButtonClick(e)) {
+        return;
+      }
+
+      flushAndSendPending();
+    };
+
+    const handleBeforeUnload = async () => {
+      const pendingData = flushPendingInputs(allInputs, timers, latestValues);
+
+      // Reliable, pre-encrypted carrier — send synchronously before any await so
+      // an in-progress unload cannot interrupt it.
       const beaconData = Object.values(beaconPayloads).filter(entry => !entry.sent);
 
       if (beaconData.length > 0) {
@@ -165,6 +173,21 @@ export default defineContentScript({
       }
 
       removeListeners();
+
+      // Best-effort flush — in encrypted mode the values are encrypted first so a
+      // plaintext entry never lands among the encrypted ones (which would break
+      // the background's single-encryption-state decryption + echo-verification).
+      const flushData = encrypted ? await encryptFlushData(pendingData, localKey, encrypted) : pendingData;
+
+      if (flushData.length > 0) {
+        try {
+          browser.runtime.sendMessage({
+            action: REQUEST_ACTIONS.PROMPT_INPUT_FLUSH,
+            data: flushData,
+            target: REQUEST_TARGETS.BACKGROUND_PROMPT
+          });
+        } catch {}
+      }
     };
 
     const handlePromptMessage = (request, sender, response) => {
@@ -187,6 +210,7 @@ export default defineContentScript({
     document.addEventListener('input', handleInput);
     document.addEventListener('submit', handleFormSubmit, { capture: true });
     document.addEventListener('keydown', handleKeydown, { capture: true });
+    document.addEventListener('click', handleClick, { capture: true });
     window.addEventListener('error', emptyFunc);
     window.addEventListener('unhandledrejection', emptyFunc);
     window.addEventListener('beforeunload', handleBeforeUnload, { once: true });
