@@ -160,7 +160,25 @@ const getLastActiveTab = async (onCatch, filter = null) => {
     return false;
   }
 
-  tabs = tabs.sort((a, b) => b.lastAccessed - a.lastAccessed);
+  // The fallback query above returns the active tab of EVERY normal window, so we must
+  // pick the most recently used one. Prefer the active tab of the last focused window when
+  // we can identify it: Safari does not support tabs.Tab.lastAccessed (BCD version_added:
+  // false), so the lastAccessed comparator yields NaN there and the sort below is a silent
+  // no-op, leaving multi-window order undefined. The match is conditional (find, not filter)
+  // so it never empties an otherwise valid result.
+  if (lastFocusedWindow?.id) {
+    const focusedTab = tabs.find(t => t.windowId === lastFocusedWindow.id);
+
+    if (focusedTab) {
+      return focusedTab;
+    }
+  }
+
+  // Only sort when lastAccessed is a real number; otherwise the comparator produces NaN
+  // (Safari) and the sort silently does nothing.
+  if (typeof tabs[0]?.lastAccessed === 'number') {
+    tabs = tabs.sort((a, b) => b.lastAccessed - a.lastAccessed);
+  }
 
   if (tabs[0]) {
     return tabs[0];

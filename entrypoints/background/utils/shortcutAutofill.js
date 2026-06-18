@@ -110,7 +110,9 @@ const shortcutAutofill = async () => {
     }, null, true);
   }
 
-  tabs = tabs.sort((a, b) => b.lastAccessed - a.lastAccessed);
+  // tabs.query({ currentWindow: true }) returns the single active tab of the current
+  // window, so there is nothing to sort — and tabs.Tab.lastAccessed is unsupported in
+  // Safari (BCD version_added:false), where the comparator would be a NaN no-op anyway.
   const tab = tabs[0];
 
   if (tabIsInternal(tab)) {
