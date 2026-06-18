@@ -40,6 +40,7 @@ const handleLoginAutofill = async (item, navigate) => {
   const hasUsername = item?.content.username && item.content.username.length > 0;
   let passwordDecrypt = true;
   let pageHasPasswordInputs = false;
+  let hasPasswordInAnyFrame = false;
 
   if (isHighlySecret) {
     let canAutofill = false;
@@ -64,6 +65,7 @@ const handleLoginAutofill = async (item, navigate) => {
     }
 
     pageHasPasswordInputs = canAutofillPassword;
+    hasPasswordInAnyFrame = canAutofillPassword;
 
     if (canAutofillPassword) {
       if (!hasPassword) {
@@ -95,6 +97,20 @@ const handleLoginAutofill = async (item, navigate) => {
     } else if (!hasPassword && !hasUsername) {
       showToast(getMessage('this_tab_autofill_no_username_and_password'), 'error');
       return;
+    }
+  }
+
+  // Highly Secret already probed every frame above; only the other tiers need the extra scan.
+  if (!isHighlySecret) {
+    try {
+      const inputCheckResults = await sendMessageToAllFrames(tab.id, {
+        action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
+        target: REQUEST_TARGETS.CONTENT
+      });
+
+      hasPasswordInAnyFrame = inputCheckResults?.some(r => r.canAutofillPassword) || false;
+    } catch (e) {
+      await CatchError(e);
     }
   }
 
@@ -139,7 +155,8 @@ const handleLoginAutofill = async (item, navigate) => {
     target: REQUEST_TARGETS.CONTENT,
     cryptoAvailable: cryptoAvailableRes.cryptoAvailable,
     iframePermissionGranted: true,
-    crossDomainAllowedDomains: []
+    crossDomainAllowedDomains: [],
+    hasPasswordInAnyFrame
   };
 
   if (passwordDecrypt) {
