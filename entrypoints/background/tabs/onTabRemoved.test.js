@@ -18,6 +18,7 @@ describe('onTabRemoved — cross-domain autofill storage cleanup (finding #1 / #
     await storage.removeItem('session:autofillData-42');
     await storage.removeItem('session:autofillCardData-42');
     await storage.removeItem('session:autofillT2FailedPending-42');
+    await storage.removeItem('session:notificationPending-42');
   });
 
   it('removes the pending login autofill data so encrypted credentials do not outlive the tab', async () => {
@@ -42,6 +43,14 @@ describe('onTabRemoved — cross-domain autofill storage cleanup (finding #1 / #
     await onTabRemoved(42, {}, []);
 
     expect(await storage.getItem('session:autofillT2FailedPending-42')).toBeNull();
+  });
+
+  it('removes the pending notification fallback so a queued toast does not outlive the tab (finding #10)', async () => {
+    await storage.setItem('session:notificationPending-42', JSON.stringify({ Title: 'Error', Message: 'Failed to autofill. Please try again.', timeout: true }));
+
+    await onTabRemoved(42, {}, []);
+
+    expect(await storage.getItem('session:notificationPending-42')).toBeNull();
   });
 
   it('only clears the closed tab, leaving other tabs untouched', async () => {
