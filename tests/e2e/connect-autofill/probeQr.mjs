@@ -3,6 +3,10 @@
 // Throwaway probe: launch the dev extension, open the popup, ask the background for a
 // Connect QR session, and print the qrData payload. Proves (a) qrData is extractable
 // programmatically and (b) the WS reaches the relay (a qrData implies a live session).
+/* global chrome */
+// `chrome` is referenced only inside page.evaluate() callbacks, which run in the
+// extension page context where chrome.* is the global API.
+import process from 'node:process';
 import { launchExtension } from '../autofill/extensionDriver.js';
 
 const { context, extensionId } = await launchExtension();

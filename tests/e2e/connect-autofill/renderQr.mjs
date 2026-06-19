@@ -3,6 +3,7 @@
 // Render a QR PNG from a payload string, for injection into the emulator camera via
 // the emulator's `-virtualscene-poster` flag. High contrast + quiet zone so the 2FAS
 // scanner reads it off the virtual-scene wall.
+import process from 'node:process';
 import qrcode from 'qrcode';
 
 const data = process.argv[2];
