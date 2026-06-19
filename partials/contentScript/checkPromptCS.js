@@ -13,6 +13,10 @@ import injectCSIfNotAlready from './injectCSIfNotAlready';
 * @return {Promise<void>}
 */
 const checkPromptCS = async tabId => {
+  if (import.meta.env.BROWSER === 'safari') {
+    return;
+  }
+
   const storagePrompt = await storage.getItem('local:savePrompt');
 
   if (!storagePrompt || storagePrompt === 'default' || storagePrompt === 'default_encrypted') {
