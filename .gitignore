@@ -30,6 +30,14 @@ web-ext.config.ts
 .env.development
 .env.mcp
 testFiles
+
+# Android Maestro E2E: keep flows/scripts, but never commit the large APK or run artifacts
+tests/e2e/android/app/*.apk
+tests/e2e/android/artifacts/
+
+# iOS Maestro E2E: keep flows/scripts, but never commit the built .app or run artifacts
+tests/e2e/ios/app/*.app
+tests/e2e/ios/artifacts/
 mobile-mock
 notes.md
 CLAUDE.md
@@ -40,3 +48,4 @@ CLAUDE.md
 .playwright-mcp
 AGENTS.md
 .mcp.json
+artifacts/

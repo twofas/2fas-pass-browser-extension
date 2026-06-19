@@ -1,0 +1,145 @@
+# 2FAS Pass (iOS) — ONBOARDING entry flow: fresh install → created & encrypted vault.
+# Reusable as a whole: other flows can `- runFlow: ../onboarding.yaml`, or run it via
+# ./onboarding.sh. Self-resets via clearState so every run starts at the intro screen.
+#
+# Param (env): MASTER_PASSWORD  (default: testtesttest — the app's only rule is "At least 9 characters")
+#
+# Screenshots go to ../artifacts/ (i.e. tests/e2e/ios/artifacts/). Unlike Android (FLAG_SECURE
+# blanks in-app frames), the iOS Simulator renders every frame fully, so these screenshots are
+# real per-screen evidence.
+#
+# Every selector below was grounded in the LIVE `maestro hierarchy` of this exact build on a
+# booted iPhone 16 / iOS 26.4 simulator. The iOS UI exposes its labels as `accessibilityText`,
+# which Maestro's text matcher reads.
+appId: com.twofas.org.TwoPASS.dev
+env:
+  MASTER_PASSWORD: testtesttest
+---
+- launchApp:
+    clearState: true
+- takeScreenshot: artifacts/01_intro
+
+# Intro / welcome (3-page carousel — page 1). Same copy as Android.
+- assertVisible: "Local-first Password Manager"
+- assertVisible: "Get Started"
+- tapOn: "Get Started"
+
+# Vault Encryption Setup explainer.
+- assertVisible: "2FAS Pass Vault"
+- assertVisible: "Vault Encryption Setup"
+- takeScreenshot: artifacts/02_vault_setup
+- tapOn: "Continue"
+
+# Generate Secret Words (press-and-hold ring). Maestro 2.6.0 can't sustain longPressOn, so a
+# swipe with start==end + duration fills the ring. One 4s hold completes it on iOS; a guarded
+# `repeat` tops up only while still ungenerated.
+- assertVisible: "Generate Secret Words"
+- assertVisible: "Tap and hold"
+- takeScreenshot: artifacts/03_generate_secret_words
+- swipe:
+    start: "50%,90%"
+    end: "50%,90%"
+    duration: 4000
+- repeat:
+    while:
+      notVisible: "Secret Words Generated!"
+    commands:
+      - swipe:
+          start: "50%,90%"
+          end: "50%,90%"
+          duration: 4000
+
+- assertVisible: "Secret Words Generated!"
+- takeScreenshot: artifacts/04_secret_words_generated
+- tapOn: "Continue"
+
+- assertVisible: "You are halfway there"
+- takeScreenshot: artifacts/05_halfway
+- tapOn: "Create Master Password"
+
+# Create Master Password — on iOS this is a SINGLE screen that reveals the "Confirm password"
+# field only AFTER the first password is entered and "Continue" is tapped. Fields are tapped by
+# point on the input area (right of the label) — tapping the label text does not focus the field.
+- assertVisible: "Create Master Password"
+- takeScreenshot: artifacts/06_master_password_empty
+- tapOn:
+    point: "61%,33%"           # Password field input area
+- inputText: "${MASTER_PASSWORD}"
+- tapOn: "Continue"            # reveals the Confirm password field
+- assertVisible: "Confirm password"
+- tapOn:
+    point: "61%,39%"           # Confirm password field input area
+- inputText: "${MASTER_PASSWORD}"
+- takeScreenshot: artifacts/07_master_password_filled
+- tapOn: "Continue"
+
+# Vault Decryption Kit (recovery PDF). A confirmation TOGGLE ("I understand that…") must be
+# switched ON before "Save PDF file" enables. The toggle is the iOS switch on the right of the row.
+- assertVisible: "Vault Decryption Kit"
+- takeScreenshot: artifacts/08_decryption_kit
+- tapOn:
+    point: "85%,80%"           # the "I understand that…" switch → ON
+- assertVisible: "Save PDF file"
+- tapOn: "Save PDF file"
+
+# iOS share sheet (UIActivityViewController). Closing it does NOT advance onboarding — the kit
+# must actually be PERSISTED, so we go through "Save to Files" → the Files picker's blue "Save".
+- assertVisible:
+    id: "header.closeButton"
+- takeScreenshot: artifacts/09_share_sheet
+
+# The share-sheet → Files-picker → export → advance chain is timing-sensitive on the Simulator,
+# so drive it with a resilient state-machine loop instead of a fixed sequence. Each pass:
+#   * If "Save PDF file" is up   → we fell back to the kit screen; re-open the share sheet.
+#   * If the share sheet is up    → tap "Save to Files" to open the Files picker.
+#   * Otherwise (Files picker, which has an EMPTY accessibility tree) → tap the blue top-right
+#     "Save" button by point. NOTE: y MUST be 13% — at 12% the tap lands just above the button
+#     and silently misses, leaving the picker up.
+# Loop until the app reaches "Setup complete!".
+- repeat:
+    while:
+      notVisible: "Setup complete!"
+    commands:
+      - runFlow:
+          when:
+            visible: "Save PDF file"
+          commands:
+            - tapOn: "Save PDF file"
+            - waitForAnimationToEnd:
+                timeout: 4000
+      - runFlow:
+          when:
+            visible:
+              id: "header.closeButton"
+          commands:
+            - tapOn: "Save to Files"
+            - waitForAnimationToEnd:
+                timeout: 4000
+      - runFlow:
+          when:
+            notVisible: "Save PDF file"
+            notVisible:
+              id: "header.closeButton"
+          commands:
+            - tapOn:
+                point: "87%,13%"
+            - extendedWaitUntil:
+                visible: "Setup complete!"
+                timeout: 8000
+
+# Setup complete!
+- assertVisible: "Setup complete!"
+- assertVisible: "Start using 2FAS Pass"
+- takeScreenshot: artifacts/10_setup_complete
+- tapOn: "Start using 2FAS Pass"
+
+# "Quick setup" upsell sheet → Close.
+- assertVisible: "Quick setup"
+- takeScreenshot: artifacts/11_quick_setup_sheet
+- tapOn: "Close"
+
+# HOME / VAULT — onboarding complete.
+- assertVisible: "No Items available"
+- assertVisible: "Connect"
+- assertVisible: "Settings"
+- takeScreenshot: artifacts/12_home_vault

@@ -1,0 +1,22 @@
+# Reusable subflow — unlock the vault IF the app is showing the lock screen.
+# Self-guarding: when the app is already unlocked/foregrounded the whole block is
+# skipped, so callers can invoke it unconditionally with `- runFlow: shared/unlock-if-locked.yaml`.
+#
+# On iOS, relaunching the app (without clearState) shows the "Master Password" lock screen with
+# the password field already focused. Selectors grounded in the live hierarchy of this build.
+#
+# Param (env): MASTER_PASSWORD  (default: testtesttest)
+appId: com.twofas.org.TwoPASS.dev
+env:
+  MASTER_PASSWORD: testtesttest
+---
+- runFlow:
+    when:
+      visible: "Master Password"
+    commands:
+      - tapOn:
+          point: "51%,39%"        # the Password field input area (keyboard auto-focuses it)
+      - inputText: "${MASTER_PASSWORD}"
+      - tapOn: "Unlock"
+      # Assert a STABLE post-unlock anchor that holds for both an empty and a populated vault.
+      - assertVisible: "Items"
