@@ -37,9 +37,14 @@ const sendMessageToAllFrames = async (tabId, message) => {
 
   return Promise.all(
     frames.map(frame => {
-      return browser.tabs.sendMessage(tabId, message, { frameId: frame.frameId }).catch(() => {
-        return false;
-      });
+      // A rejected sendMessage (no content script in the frame) becomes the false sentinel.
+      // A frame that acknowledges the message but never calls sendResponse RESOLVES to
+      // undefined (not a rejection) — normalize it to the same false sentinel so callers
+      // only ever see a frame response object or false, never a null/undefined that would
+      // throw on a `.status` access.
+      return browser.tabs.sendMessage(tabId, message, { frameId: frame.frameId })
+        .then(frameResponse => frameResponse ?? false)
+        .catch(() => false);
     })
   );
 };

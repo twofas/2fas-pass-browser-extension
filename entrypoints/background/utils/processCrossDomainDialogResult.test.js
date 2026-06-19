@@ -18,6 +18,8 @@ const closePopupWindow = vi.fn();
 const restoreActionDataPassword = vi.fn();
 const restoreCardActionData = vi.fn();
 
+vi.mock('@/utils/CatchError.js', () => ({ default: vi.fn() }));
+
 vi.mock('@/partials/functions', async () => ({
   sendMessageToAllFrames: (...args) => sendMessageToAllFrames(...args),
   saveCrossDomainPreferences: (...args) => saveCrossDomainPreferences(...args),
@@ -160,6 +162,14 @@ describe('processCrossDomainDialogResult — non-windowClose unchanged', () => {
     expect(finishCardAutofill).not.toHaveBeenCalled();
     expect(closePopupWindow).not.toHaveBeenCalled();
     expect(sendMessageToAllFrames).not.toHaveBeenCalled();
+  });
+
+  it('removes the storage key when the stored payload cannot be parsed (review #6)', async () => {
+    await storage.setItem(LOGIN_KEY, '{ not valid json');
+
+    await processCrossDomainDialogResult({ storageKey: LOGIN_KEY, confirmed: true, domainPreferences: {}, allowedDomains: [] });
+
+    expect(await storage.getItem(LOGIN_KEY)).toBeNull();
   });
 });
 

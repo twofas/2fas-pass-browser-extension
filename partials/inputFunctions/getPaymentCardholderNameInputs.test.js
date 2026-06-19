@@ -265,6 +265,39 @@ describe('getPaymentCardholderNameInputs', () => {
     });
   });
 
+  describe('regression: payment context is scoped to the candidate form/container (review #3)', () => {
+    it('does NOT treat a billing name in an unrelated form as a cardholder field just because a card field exists elsewhere on the page', () => {
+      // The card field lives in a SEPARATE checkout form; the profile form's name fields must
+      // not inherit payment context from a document-wide card-field scan.
+      document.body.innerHTML = `
+        <form class="profile">
+          <input autocomplete="given-name" name="firstName" />
+          <input autocomplete="family-name" name="lastName" />
+        </form>
+        <form class="checkout">
+          <input autocomplete="cc-number" name="cardnumber" />
+        </form>
+      `;
+
+      expect(getPaymentCardholderNameInputs()).toEqual([]);
+    });
+
+    it('still detects split billing names when the card field is in the same form', () => {
+      document.body.innerHTML = `
+        <form class="checkout">
+          <input autocomplete="given-name" name="firstName" />
+          <input autocomplete="family-name" name="lastName" />
+          <input autocomplete="cc-number" name="cardnumber" />
+        </form>
+      `;
+
+      const result = getPaymentCardholderNameInputs();
+
+      expect(entryFor(result, entry => entry.element.getAttribute('autocomplete') === 'given-name')?.type).toBe('given');
+      expect(entryFor(result, entry => entry.element.getAttribute('autocomplete') === 'family-name')?.type).toBe('family');
+    });
+  });
+
   describe('shadow DOM', () => {
     it('detects a cc-name field rendered inside an open shadow root', () => {
       document.body.innerHTML = '<div id="host"></div>';

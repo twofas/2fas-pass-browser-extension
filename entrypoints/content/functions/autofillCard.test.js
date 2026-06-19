@@ -60,4 +60,14 @@ describe('isExpirationDateFilled', () => {
   it('returns false when the only present month field failed', () => {
     expect(isExpirationDateFilled([{ type: 'month', success: false }])).toBe(false);
   });
+
+  it('returns false when a duplicate month field failed, even though the first month field was filled (review #10)', () => {
+    // Evaluating only the first field of each type (find) would wrongly report success
+    // when a second month/year field on the page was left unfilled.
+    expect(isExpirationDateFilled([
+      { type: 'month', success: true },
+      { type: 'month', success: false },
+      { type: 'year', success: true }
+    ])).toBe(false);
+  });
 });

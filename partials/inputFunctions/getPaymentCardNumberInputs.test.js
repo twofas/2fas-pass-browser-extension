@@ -167,4 +167,14 @@ describe('getPaymentCardNumberInputs', () => {
       expect(getPaymentCardNumberInputs()).toHaveLength(1);
     });
   });
+
+  describe('regression: cc-number "allow" path matches the trailing field token, not a substring (review #2)', () => {
+    it('rejects a field whose trailing autocomplete token is a conflicting value even though it contains the cc-number substring', () => {
+      // The allow short-circuit must use the trailing field token (here cc-csc, a CVV),
+      // not a raw .includes("cc-number"), otherwise this CVV field is mistaken for the PAN.
+      document.body.innerHTML = '<input autocomplete="cc-number cc-csc" inputmode="numeric" />';
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+  });
 });

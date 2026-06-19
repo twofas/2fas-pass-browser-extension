@@ -113,7 +113,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       target: REQUEST_TARGETS.CONTENT
     });
 
-    hasPasswordInAnyFrame = inputCheckResults?.some(r => r.canAutofillPassword) || false;
+    hasPasswordInAnyFrame = Array.isArray(inputCheckResults) && inputCheckResults.some(r => r.canAutofillPassword);
   } catch (e) {
     await CatchError(e);
   }
@@ -205,7 +205,16 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   try {
     const response = await sendMessageToAllFrames(tabId, actionData);
 
-    const errorResponses = response.filter(frameResponse => frameResponse.status === 'error');
+    // sendMessageToAllFrames returns false (not an array) when no injectable frame exists;
+    // guard before .filter so it degrades to the error notification instead of a TypeError.
+    if (!Array.isArray(response)) {
+      return TwofasNotification.show({
+        Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+        Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      }, tabId, true);
+    }
+
+    const errorResponses = response.filter(frameResponse => frameResponse?.status === 'error');
 
     if (errorResponses.length > 0) {
       if (errorResponses[0]?.status === 'error') {

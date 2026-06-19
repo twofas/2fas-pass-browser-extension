@@ -306,9 +306,9 @@ export const isExpirationDateFilled = expirationResults => {
     return true;
   }
 
-  const monthResult = expirationResults.find(r => r.type === 'month');
-  const yearResult = expirationResults.find(r => r.type === 'year');
-  const presentResults = [monthResult, yearResult].filter(Boolean);
+  // Evaluate every month/year field on the page (not just the first of each type), so a
+  // duplicated month/year input that was left unfilled is not masked by an earlier success.
+  const presentResults = expirationResults.filter(r => r.type === 'month' || r.type === 'year');
 
   return presentResults.length > 0 && presentResults.every(r => r.success);
 };

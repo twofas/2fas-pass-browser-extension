@@ -107,19 +107,19 @@ const filterConflictingAttributes = input => {
   const inputType = (input.type || '').toLowerCase();
   const inputMode = (input.getAttribute('inputmode') || '').toLowerCase();
 
-  if (autocomplete.includes('cc-number')) {
+  // Match the trailing field token exactly (the autofill grammar allows optional
+  // leading section/billing tokens) for BOTH the allow and the deny decision, so the
+  // real PAN token is honoured while values like 'cc-number-honeypot' or a trailing
+  // conflicting token (e.g. 'cc-number cc-csc') are not mistaken for it, and
+  // 'language-preference' is not rejected merely for containing 'language'.
+  const fieldToken = autocomplete ? autocomplete.split(/\s+/).pop() : '';
+
+  if (fieldToken === 'cc-number') {
     return true;
   }
 
-  // Match the trailing field token exactly (the autofill grammar allows optional
-  // leading section/billing tokens) instead of substring-matching, so values like
-  // 'language-preference' are not rejected merely for containing 'language'.
-  if (autocomplete) {
-    const fieldToken = autocomplete.split(/\s+/).pop();
-
-    if (conflictingAutocompleteValues.includes(fieldToken)) {
-      return false;
-    }
+  if (fieldToken && conflictingAutocompleteValues.includes(fieldToken)) {
+    return false;
   }
 
   if (inputType && conflictingInputTypes.includes(inputType)) {
@@ -142,9 +142,11 @@ const filterConflictingAttributes = input => {
 * @return {boolean} True if the input should be kept as card number, false otherwise.
 */
 const filterOtherCardFields = input => {
-  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase();
+  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
 
-  if (autocomplete.includes('cc-number')) {
+  // Honour the trailing field token exactly (matching filterConflictingAttributes) so a
+  // glued/grouped autocomplete is not auto-accepted as a PAN by a bare substring match.
+  if (autocomplete.split(/\s+/).pop() === 'cc-number') {
     return true;
   }
 

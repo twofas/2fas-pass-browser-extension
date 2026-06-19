@@ -76,3 +76,13 @@ describe('sifRequestAccept — explicit key export for autofill recovery (findin
     expect(result.sessionKeyForHKDF).toBeUndefined();
   });
 });
+
+describe('sifRequestAccept — login result carries securityType for partial-fill escalation (review #7)', () => {
+  it('forwards the item securityType so a partial T2 autofill can re-open KeepItem downstream', async () => {
+    getItems.mockResolvedValue([{ id: 'i1', content: { username: 'alice' }, securityType: SECURITY_TIER.HIGHLY_SECRET }]);
+
+    const result = await sifRequestAccept({ data: { s_password: '' } }, loginState(), HKDF_SALT, 'sessionKey', 'msg-3');
+
+    expect(result.securityType).toBe(SECURITY_TIER.HIGHLY_SECRET);
+  });
+});

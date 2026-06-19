@@ -288,4 +288,47 @@ describe('isVisible', () => {
       expect(isVisible(element)).toBe(true);
     });
   });
+
+  describe('positioned elements that escape ancestor overflow clipping (review #1)', () => {
+    // fixed/absolute/sticky elements are not clipped by a non-transformed overflow:hidden
+    // ancestor the way in-flow elements are (fixed resolves against the viewport, absolute
+    // against its containing block — which may sit above an intermediate overflow — and sticky
+    // shifts to stay in view). The reachability walk must NOT geometrically reject them just
+    // because their box lies outside an ancestor's client box.
+    const mountPositioned = (position, targetRect) => {
+      document.body.innerHTML = `<div id="container" style="overflow-x: hidden; overflow-y: hidden"><input id="target" style="position: ${position}" /></div>`;
+      const container = document.getElementById('container');
+      const target = document.getElementById('target');
+      setRect(container, rect(200, 200, { top: 50, left: 0, right: 200, bottom: 250 }));
+      defineProps(container, { clientWidth: 200, clientHeight: 200, scrollWidth: 200, scrollHeight: 200, scrollLeft: 0, scrollTop: 0 });
+      setRect(target, targetRect);
+
+      return target;
+    };
+
+    it('stays visible for a position:fixed element rendered outside an overflow:hidden ancestor', () => {
+      // Rendered far below the clipping container's box but inside the viewport.
+      const target = mountPositioned('fixed', rect(100, 20, { top: 600, left: 10, right: 110, bottom: 620 }));
+
+      expect(isVisible(target)).toBe(true);
+    });
+
+    it('stays visible for a position:absolute element rendered outside an overflow:hidden ancestor', () => {
+      const target = mountPositioned('absolute', rect(100, 20, { top: 600, left: 10, right: 110, bottom: 620 }));
+
+      expect(isVisible(target)).toBe(true);
+    });
+
+    it('stays visible for a position:sticky element rendered outside an overflow:hidden ancestor', () => {
+      const target = mountPositioned('sticky', rect(100, 20, { top: 600, left: 10, right: 110, bottom: 620 }));
+
+      expect(isVisible(target)).toBe(true);
+    });
+
+    it('still hides a position:fixed element parked off-screen (the viewport check still applies)', () => {
+      const target = mountPositioned('fixed', rect(100, 20, { top: 0, left: -9999, right: -9899, bottom: 20 }));
+
+      expect(isVisible(target)).toBe(false);
+    });
+  });
 });

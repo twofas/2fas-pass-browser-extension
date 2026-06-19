@@ -107,13 +107,20 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
           await focusTabForDialog(tabId);
 
           try {
-            await sendMessageToTab(tabId, {
+            const dialogRes = await sendMessageToTab(tabId, {
               action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
               target: REQUEST_TARGETS.CONTENT,
               unknownDomains: resolution.unknownDomains,
               storageKey,
               theme: await storage.getItem('local:theme')
             });
+
+            // sendMessageToTab resolves to undefined (it does not throw) when no content script
+            // receives the message, which would silently orphan the encrypted payload in session
+            // storage until the tab closes. Treat a missing 'ok' status as a delivery failure.
+            if (dialogRes?.status !== 'ok') {
+              throw new Error('Cross-domain confirm dialog was not delivered');
+            }
           } catch (e) {
             await CatchError(e);
             await storage.removeItem(storageKey);
@@ -133,7 +140,10 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
               deviceId: closeData.deviceId,
               itemId: closeData.itemId,
               s_password: closeData.s_password,
-              encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64
+              encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
+              // Carry the tier so dispatchLoginAutofill can escalate a partial HIGHLY_SECRET
+              // fill back to KeepItem after the cross-domain dialog (mirrors sendAutofillToTab).
+              securityType: closeData.securityType
             }
           }));
 
@@ -223,13 +233,20 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
           await focusTabForDialog(tabId);
 
           try {
-            await sendMessageToTab(tabId, {
+            const dialogRes = await sendMessageToTab(tabId, {
               action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
               target: REQUEST_TARGETS.CONTENT,
               unknownDomains: resolution.unknownDomains,
               storageKey,
               theme: await storage.getItem('local:theme')
             });
+
+            // sendMessageToTab resolves to undefined (it does not throw) when no content script
+            // receives the message, which would silently orphan the encrypted payload in session
+            // storage until the tab closes. Treat a missing 'ok' status as a delivery failure.
+            if (dialogRes?.status !== 'ok') {
+              throw new Error('Cross-domain confirm dialog was not delivered');
+            }
           } catch (e) {
             await CatchError(e);
             await storage.removeItem(storageKey);

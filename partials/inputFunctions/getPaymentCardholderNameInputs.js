@@ -8,7 +8,7 @@ import { paymentCardholderNameSelectors } from '@/constants';
 import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
-import { filterDeniedKeywords, makeConflictingAutocompleteFilter } from './shared';
+import { filterDeniedKeywords, makeConflictingAutocompleteFilter, getAssociatedLabelText } from './shared';
 
 const conflictingAutocompleteValues = [
   'cc-number',
@@ -77,55 +77,6 @@ const cardholderLabelKeywords = [
 ];
 
 const filterConflictingAutocomplete = makeConflictingAutocompleteFilter(conflictingAutocompleteValues);
-
-/**
-* Gets the text content of the label associated with an input element.
-* @param {HTMLInputElement} input - The input element.
-* @return {string} The label text in lowercase, or empty string if not found.
-*/
-const getAssociatedLabelText = input => {
-  if (input.id) {
-    const labelByFor = document.querySelector(`label[for="${CSS.escape(input.id)}"]`);
-
-    if (labelByFor) {
-      return labelByFor.textContent.toLowerCase().trim();
-    }
-  }
-
-  const parentLabel = input.closest('label');
-
-  if (parentLabel) {
-    return parentLabel.textContent.toLowerCase().trim();
-  }
-
-  const previousSibling = input.previousElementSibling;
-
-  if (previousSibling && previousSibling.tagName === 'LABEL') {
-    return previousSibling.textContent.toLowerCase().trim();
-  }
-
-  const parent = input.parentElement;
-
-  if (parent) {
-    const siblingLabel = parent.previousElementSibling;
-
-    if (siblingLabel && (siblingLabel.tagName === 'LABEL' || siblingLabel.classList.contains('form-label'))) {
-      return siblingLabel.textContent.toLowerCase().trim();
-    }
-  }
-
-  const grandparent = input.parentElement?.parentElement;
-
-  if (grandparent) {
-    const grandSiblingLabel = grandparent.previousElementSibling;
-
-    if (grandSiblingLabel && (grandSiblingLabel.tagName === 'LABEL' || grandSiblingLabel.classList.contains('form-label'))) {
-      return grandSiblingLabel.textContent.toLowerCase().trim();
-    }
-  }
-
-  return '';
-};
 
 const minKeywordMatchLength = 8;
 
@@ -309,13 +260,16 @@ const cardFieldSelector = 'input[autocomplete="cc-number"], input[autocomplete="
 * Checks if a billing name input is within a payment form context using structural signals
 * (real card fields nearby, or a payment/credit/checkout/billing container) rather than a
 * raw text scan, so unrelated copy mentioning "card"/"billing" cannot create a false context.
+* The card-field lookup is scoped to the candidate's own form/payment container — not the whole
+* document — so an unrelated name field does not inherit payment context from a card field that
+* lives in a separate form elsewhere on the page.
 * @param {HTMLInputElement} input - The input element to check.
 * @return {boolean} True if the input is in a payment context.
 */
 const isInPaymentContext = input => {
-  const rootNode = input.getRootNode();
+  const scope = input.closest('form') || input.closest(paymentContainerSelector);
 
-  if (rootNode.querySelector(cardFieldSelector) !== null) {
+  if (scope && scope.querySelector(cardFieldSelector) !== null) {
     return true;
   }
 

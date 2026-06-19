@@ -108,7 +108,10 @@ const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key,
     vaultId: state.data.vaultId,
     itemId: state.data.itemId,
     s_password: password,
-    encryptionItemT2KeyB64
+    encryptionItemT2KeyB64,
+    // Forwarded so a partial HIGHLY_SECRET autofill can re-open KeepItem after the
+    // cross-domain dialog path (dispatchLoginAutofill gates that escalation on the tier).
+    securityType: item?.securityType
   };
 
   if (state?.from === 'shortcut') {

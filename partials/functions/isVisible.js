@@ -76,7 +76,17 @@ const isVisible = domElement => {
   let effectiveRight = rect.right;
   let effectiveTop = rect.top;
   let effectiveBottom = rect.bottom;
-  let scrollAncestor = domElement.parentElement;
+
+  // fixed/absolute/sticky elements are not clipped by a non-transformed overflow
+  // ancestor the way in-flow elements are: a fixed element is positioned against the
+  // viewport, an absolute element against its containing block (which may sit above an
+  // intermediate overflow:hidden), and a sticky element shifts to stay in view. Running
+  // the clipping-ancestor walk on them produces false negatives (e.g. a position:fixed
+  // modal escaping a parent overflow:hidden), so restrict the walk to in-flow
+  // (static/relative) elements. The viewport reachability check below still applies to
+  // every position.
+  const escapesAncestorClipping = style.position === 'fixed' || style.position === 'absolute' || style.position === 'sticky';
+  let scrollAncestor = escapesAncestorClipping ? null : domElement.parentElement;
 
   while (scrollAncestor && scrollAncestor !== document.body && scrollAncestor !== document.documentElement) {
     const scrollAncestorStyle = window.getComputedStyle(scrollAncestor);

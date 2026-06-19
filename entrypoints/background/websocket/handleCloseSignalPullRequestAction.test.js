@@ -20,6 +20,7 @@ const protectActionDataPassword = vi.fn();
 const protectCardActionData = vi.fn();
 const focusTabForDialog = vi.fn();
 
+vi.mock('@/utils/CatchError.js', () => ({ default: vi.fn() }));
 vi.mock('./utils/addNewSessionIdToDevice', () => ({ default: (...args) => addNewSessionIdToDevice(...args) }));
 vi.mock('.', () => ({ default: { getInstance: () => ({ close: socketClose }) } }));
 vi.mock('@/partials/functions/sendMessageToAllFrames', () => ({ default: (...args) => sendMessageToAllFrames(...args) }));
@@ -43,6 +44,7 @@ const KEY = `session:autofillData-${TAB_ID}`;
 
 beforeEach(async () => {
   vi.clearAllMocks();
+  vi.spyOn(browser.i18n, 'getMessage').mockImplementation(key => key);
   await storage.removeItem(KEY);
   addNewSessionIdToDevice.mockResolvedValue(undefined);
   injectCSIfNotAlready.mockResolvedValue(true);
@@ -145,5 +147,79 @@ describe('handleCloseSignalPullRequestAction — Highly Secret card never stored
     expect(stored.closeData.sessionKeyForHKDF).toBeUndefined();
 
     await storage.removeItem(CARD_KEY);
+  });
+});
+
+describe('handleCloseSignalPullRequestAction — cross-domain dialog send is validated (review #5)', () => {
+  const buildCloseData = () => ({
+    action: 'autofill',
+    windowClose: true,
+    vaultId: 'v',
+    deviceId: 'd',
+    itemId: 'i',
+    s_password: 'enc-sif',
+    encryptionItemT2KeyB64: 'keyB64',
+    actionData: {
+      action: REQUEST_ACTIONS.AUTOFILL,
+      username: 'u',
+      password: 'plaintext-pw',
+      cryptoAvailable: false,
+      noPassword: false,
+      target: REQUEST_TARGETS.CONTENT
+    }
+  });
+
+  it('cleans up the pending payload and closes the popup when the confirm dialog message is not delivered', async () => {
+    // No content script listening: sendMessageToTab resolves to undefined (it does not throw),
+    // so the encrypted payload must not be left orphaned in session storage.
+    sendMessageToTab.mockResolvedValue(undefined);
+
+    await handleCloseSignalPullRequestAction('new-session', 'uuid', buildCloseData(), { data: { tabId: TAB_ID } });
+
+    expect(await storage.getItem(KEY)).toBeNull();
+    expect(closePopupWindow).toHaveBeenCalledTimes(1);
+    expect(wsNotify).toHaveBeenCalledWith('toast', expect.objectContaining({ type: 'info' }));
+  });
+
+  it('keeps the pending payload while the dialog is shown (status ok)', async () => {
+    sendMessageToTab.mockResolvedValue({ status: 'ok', dialogShown: true });
+
+    await handleCloseSignalPullRequestAction('new-session', 'uuid', buildCloseData(), { data: { tabId: TAB_ID } });
+
+    expect(await storage.getItem(KEY)).not.toBeNull();
+    expect(closePopupWindow).not.toHaveBeenCalled();
+
+    await storage.removeItem(KEY);
+  });
+});
+
+describe('handleCloseSignalPullRequestAction — non-windowClose login carries securityType (review #7)', () => {
+  const buildCloseData = () => ({
+    action: 'autofill',
+    securityType: SECURITY_TIER.HIGHLY_SECRET,
+    vaultId: 'v',
+    deviceId: 'd',
+    itemId: 'i',
+    s_password: 'enc-sif',
+    encryptionItemT2KeyB64: 'keyB64',
+    actionData: {
+      action: REQUEST_ACTIONS.AUTOFILL,
+      username: 'u',
+      password: 'plaintext-pw',
+      cryptoAvailable: false,
+      noPassword: false,
+      target: REQUEST_TARGETS.CONTENT
+    }
+  });
+
+  it('stores closeData.securityType so dispatchLoginAutofill can escalate a partial fill to KeepItem', async () => {
+    vi.spyOn(browser.runtime, 'sendMessage').mockResolvedValue(undefined);
+
+    await handleCloseSignalPullRequestAction('new-session', 'uuid', buildCloseData(), { data: { tabId: TAB_ID } });
+
+    const stored = JSON.parse(await storage.getItem(KEY));
+    expect(stored.closeData.securityType).toBe(SECURITY_TIER.HIGHLY_SECRET);
+
+    await storage.removeItem(KEY);
   });
 });

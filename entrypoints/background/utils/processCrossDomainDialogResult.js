@@ -175,6 +175,7 @@ const processCrossDomainDialogResult = async request => {
     storedData = JSON.parse(storedDataJson);
   } catch (e) {
     await CatchError(e);
+    await storage.removeItem(storageKey).catch(() => {});
     return;
   }
 
