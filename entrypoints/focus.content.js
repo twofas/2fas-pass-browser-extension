@@ -11,8 +11,8 @@ import ifCtxIsInvalid from '@/partials/contentScript/ifCtxIsInvalid';
 
 export default defineContentScript({
   matches: ['https://*/*', 'http://*/*'],
-  all_frames: true,
-  match_about_blank: true,
+  allFrames: true,
+  matchAboutBlank: true,
   registration: 'manifest',
   async main (ctx) {
     const emptyFunc = () => {};

@@ -20,8 +20,8 @@ import flushPendingInputs, { BEACON_URL } from './prompt/flushPendingInputs';
 
 export default defineContentScript({
   matches: ['https://*/*', 'http://*/*'],
-  all_frames: true,
-  match_about_blank: true,
+  allFrames: true,
+  matchAboutBlank: true,
   registration: 'runtime',
   async main (ctx) {
     const localKey = { data: null };

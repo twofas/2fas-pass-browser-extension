@@ -14,8 +14,8 @@ import topLayerManager from './utils/topLayerManager';
 
 export default defineContentScript({
   matches: ['https://*/*', 'http://*/*'],
-  all_frames: true,
-  match_about_blank: true,
+  allFrames: true,
+  matchAboutBlank: true,
   registration: 'runtime',
   cssInjectionMode: 'ui',
   async main (ctx) {
