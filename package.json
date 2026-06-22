@@ -78,6 +78,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@testing-library/dom": "^10",
+    "@testing-library/react": "^16",
     "@wxt-dev/module-react": "^1.2.2",
     "dotenv": "^17.4.2",
     "eslint": "^10.5.0",

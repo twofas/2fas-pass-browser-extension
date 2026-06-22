@@ -100,7 +100,7 @@ const CopyWifiPasswordBtn = ({ item, more, setMore }) => {
         intervalIdRef.current = null;
       }
     };
-  }, [item?.id, scheduledTime]);
+  }, [item?.id, item?.sifExists, scheduledTime]);
 
   if (item?.securityType === SECURITY_TIER.SECRET) {
     return (
