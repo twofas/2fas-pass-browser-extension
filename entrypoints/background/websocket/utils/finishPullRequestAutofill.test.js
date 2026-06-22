@@ -10,11 +10,15 @@ const wsNotify = vi.fn();
 const sendMessageToAllFrames = vi.fn();
 const popupIsInSeparateWindow = vi.fn();
 const aggregateCardAutofillResponses = vi.fn();
+const storeAutofillFailureData = vi.fn();
+const openPopupWithFallback = vi.fn();
 
 vi.mock('../wsNotify.js', () => ({ default: (...args) => wsNotify(...args) }));
 vi.mock('@/partials/functions/sendMessageToAllFrames', () => ({ default: (...args) => sendMessageToAllFrames(...args) }));
 vi.mock('@/partials/functions/popupIsInSeparateWindow', () => ({ default: (...args) => popupIsInSeparateWindow(...args) }));
 vi.mock('@/partials/functions/aggregateCardAutofillResponses', () => ({ default: (...args) => aggregateCardAutofillResponses(...args) }));
+vi.mock('../../utils/storeAutofillFailureData', () => ({ default: (...args) => storeAutofillFailureData(...args) }));
+vi.mock('../../utils/openPopupWithFallback', () => ({ default: (...args) => openPopupWithFallback(...args) }));
 
 import { finishLoginAutofill, finishCardAutofill } from './finishPullRequestAutofill.js';
 
@@ -54,6 +58,8 @@ beforeEach(() => {
   vi.spyOn(browser.tabs, 'query').mockResolvedValue([{ windowId: 99 }]);
   windowsRemove = vi.spyOn(browser.windows, 'remove').mockResolvedValue(undefined);
   windowsUpdate = vi.spyOn(browser.windows, 'update').mockResolvedValue(undefined);
+  storeAutofillFailureData.mockResolvedValue(undefined);
+  openPopupWithFallback.mockResolvedValue(undefined);
 });
 
 describe('finishLoginAutofill', () => {
@@ -109,6 +115,47 @@ describe('finishLoginAutofill', () => {
 
     const successToast = wsNotify.mock.calls.find(([type, payload]) => type === 'toast' && payload.type === 'success');
     expect(successToast).toBeDefined();
+  });
+
+  // Regression: the in-popup (non-windowClose) autofill-via-fetch runs in the BACKGROUND while the
+  // toolbar popup is almost always already closed (the user is approving on the phone). The KeepItem
+  // recovery used only wsNotify('navigate'), which is queued into pendingNavigation and then dropped
+  // on reopen (main.jsx applies only the path, Popup.jsx never replays the navigation state) — so no
+  // KeepItem ever appeared. Failure/partial outcomes must use the DURABLE recovery (session storage +
+  // popup reopen), exactly like dispatchLoginAutofill / processLoginResult.
+  it('non-windowClose: no response (false) → durable KeepItem (store + reopen), not ephemeral wsNotify navigate', async () => {
+    await finishLoginAutofill(5, { username: 'u', password: 'p' }, { ...LOGIN_CLOSE, windowClose: false }, false);
+
+    expect(storeAutofillFailureData).toHaveBeenCalledWith(5, expect.objectContaining({ itemId: 'i1', s_password: 'pw', encryptionItemT2KeyB64: 'keyB64' }));
+    expect(openPopupWithFallback).toHaveBeenCalledTimes(1);
+    expect(wsNotify.mock.calls.find(([type]) => type === 'navigate')).toBeUndefined();
+  });
+
+  it('non-windowClose: partial fill → durable KeepItem, not ephemeral wsNotify navigate', async () => {
+    const res = [{ status: 'ok', canAutofillUsername: true, canAutofillPassword: false }];
+
+    await finishLoginAutofill(5, { username: 'u', password: 'p' }, { ...LOGIN_CLOSE, windowClose: false }, res);
+
+    expect(storeAutofillFailureData).toHaveBeenCalledWith(5, expect.objectContaining({ itemId: 'i1' }));
+    expect(openPopupWithFallback).toHaveBeenCalledTimes(1);
+    expect(wsNotify.mock.calls.find(([type]) => type === 'navigate')).toBeUndefined();
+  });
+
+  it('non-windowClose: no ok frame (all errors) → durable KeepItem', async () => {
+    const res = [{ status: 'error', code: 'X' }];
+
+    await finishLoginAutofill(5, { username: 'u', password: 'p' }, { ...LOGIN_CLOSE, windowClose: false }, res);
+
+    expect(storeAutofillFailureData).toHaveBeenCalledWith(5, expect.objectContaining({ itemId: 'i1' }));
+    expect(openPopupWithFallback).toHaveBeenCalledTimes(1);
+  });
+
+  it('windowClose: failure keeps the live wsNotify recovery and does NOT use durable popup-reopen', async () => {
+    await finishLoginAutofill(5, { username: 'u', password: 'p' }, LOGIN_CLOSE, false);
+
+    expect(storeAutofillFailureData).not.toHaveBeenCalled();
+    expect(openPopupWithFallback).not.toHaveBeenCalled();
+    expect(navigateState()).toMatchObject({ action: 'autofillT2Failed' });
   });
 });
 

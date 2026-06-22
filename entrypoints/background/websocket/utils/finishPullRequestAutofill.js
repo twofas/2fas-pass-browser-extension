@@ -8,6 +8,8 @@ import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames'
 import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import aggregateCardAutofillResponses from '@/partials/functions/aggregateCardAutofillResponses';
 import aggregateLoginAutofillResponses from '@/partials/functions/aggregateLoginAutofillResponses';
+import storeAutofillFailureData from '../../utils/storeAutofillFailureData';
+import openPopupWithFallback from '../../utils/openPopupWithFallback';
 import wsNotify from '../wsNotify.js';
 
 /**
@@ -44,6 +46,54 @@ const focusPopupWindow = async () => {
 };
 
 /**
+* Routes a failed/partial Login autofill to the KeepItem recovery screen.
+*
+* The shortcut-initiated flow (closeData.windowClose) keeps its dedicated popup window open, so the
+* result is delivered live over wsNotify (focus + persistent toast + navigation state).
+*
+* The in-popup flow (non-windowClose) runs entirely in the background service worker while the
+* toolbar popup is almost always already closed — the user is approving the pull request on the
+* phone. An ephemeral wsNotify('navigate') would only be queued into wsState.pendingNavigation and
+* then dropped on reopen (main.jsx applies just the path, Popup.jsx never replays the navigation
+* state), so KeepItem would never appear. Persist the recovery to session storage and reopen the
+* popup instead, exactly like dispatchLoginAutofill / processLoginResult.
+* @async
+* @param {number} tabId - The ID of the tab.
+* @param {Object} closeData - The close data (SIF + windowClose flag) for recovery.
+* @param {string} toastMessageKey - i18n key for the live toast (windowClose flow only).
+* @return {Promise<void>}
+*/
+const recoverLoginAutofill = async (tabId, closeData, toastMessageKey) => {
+  if (!closeData.windowClose) {
+    await storeAutofillFailureData(tabId, closeData);
+    await openPopupWithFallback();
+
+    return;
+  }
+
+  await focusPopupWindow();
+
+  const toastId = crypto.randomUUID();
+
+  wsNotify('toast', { message: getMessage(toastMessageKey), type: 'info', autoClose: false, toastId });
+
+  wsNotify('navigate', {
+    path: '/',
+    options: {
+      state: {
+        action: 'autofillT2Failed',
+        vaultId: closeData.vaultId,
+        deviceId: closeData.deviceId,
+        itemId: closeData.itemId,
+        s_password: closeData.s_password,
+        encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
+        toastId
+      }
+    }
+  });
+};
+
+/**
 * Finishes a Login autofill initiated through the pull-request (SIF fetch) flow,
 * notifying the connected popup of the result and managing the popup window.
 * Handles both the shortcut-initiated path (closeData.windowClose) and the
@@ -57,28 +107,7 @@ const focusPopupWindow = async () => {
 */
 const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) => {
   if (!Array.isArray(autofillRes)) {
-    if (closeData.windowClose) {
-      await focusPopupWindow();
-    }
-
-    const toastId = crypto.randomUUID();
-
-    wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
-
-    wsNotify('navigate', {
-      path: '/',
-      options: {
-        state: {
-          action: 'autofillT2Failed',
-          vaultId: closeData.vaultId,
-          deviceId: closeData.deviceId,
-          itemId: closeData.itemId,
-          s_password: closeData.s_password,
-          encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
-          toastId
-        }
-      }
-    });
+    await recoverLoginAutofill(tabId, closeData, 'this_tab_can_t_autofill_t2_failed');
 
     return true;
   }
@@ -102,29 +131,7 @@ const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) =>
     } catch { }
 
     if (!allFieldsFilled) {
-      // Focus popup window when showing KeepItem for shortcut-initiated autofill
-      if (closeData.windowClose) {
-        await focusPopupWindow();
-      }
-
-      const toastId = crypto.randomUUID();
-
-      wsNotify('toast', { message: getMessage('this_tab_autofill_partial'), type: 'info', autoClose: false, toastId });
-
-      wsNotify('navigate', {
-        path: '/',
-        options: {
-          state: {
-            action: 'autofillT2Failed',
-            vaultId: closeData.vaultId,
-            deviceId: closeData.deviceId,
-            itemId: closeData.itemId,
-            s_password: closeData.s_password,
-            encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
-            toastId
-          }
-        }
-      });
+      await recoverLoginAutofill(tabId, closeData, 'this_tab_autofill_partial');
 
       return true;
     }
@@ -148,29 +155,7 @@ const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) =>
     return true;
   }
 
-  // Focus popup window when showing KeepItem for shortcut-initiated autofill
-  if (closeData.windowClose) {
-    await focusPopupWindow();
-  }
-
-  const toastId = crypto.randomUUID();
-
-  wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
-
-  wsNotify('navigate', {
-    path: '/',
-    options: {
-      state: {
-        action: 'autofillT2Failed',
-        vaultId: closeData.vaultId,
-        deviceId: closeData.deviceId,
-        itemId: closeData.itemId,
-        s_password: closeData.s_password,
-        encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
-        toastId
-      }
-    }
-  });
+  await recoverLoginAutofill(tabId, closeData, 'this_tab_can_t_autofill_t2_failed');
 
   return true;
 };
