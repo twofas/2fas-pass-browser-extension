@@ -35,8 +35,8 @@ const autofill = async request => {
 
   setUsernameSkips(passwordInputs, usernameInputs, request.hasPasswordInAnyFrame, passwordForms);
 
-  // Only the current/old password fields are fillable; new and confirm password fields on
-  // registration and change-password forms must never receive the stored password.
+  // Restrict the fill to the password fields that should receive the stored password: new and
+  // confirm fields on multi-field registration and change-password forms are excluded.
   const fillablePasswordInputs = getAutofillPasswordInputs(passwordInputs, usernameInputs);
 
   const hasUsernameData = request.username?.length > 0;

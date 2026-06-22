@@ -100,8 +100,23 @@ describe('autofill password targeting', () => {
     expect(result.canAutofillPassword).toBe(true);
   });
 
-  it('reports no input fields and fills nothing for a lone new-password field with no username', async () => {
+  it('fills a lone new-password field with no username (autocomplete no longer skips it)', async () => {
     document.body.innerHTML = '<input type="password" name="password" autocomplete="new-password" />';
+    setLoginInputsFromDom();
+
+    const result = await autofill({ password: 'secret', noUsername: true, cryptoAvailable: false, iframePermissionGranted: true });
+
+    expect(result.status).toBe('ok');
+    expect(passwordFillNames()).toEqual(['password']);
+  });
+
+  it('reports no input fields when every password field is a new/confirm pair (username-less reset form)', async () => {
+    document.body.innerHTML = `
+      <form>
+        <input type="password" name="p1" autocomplete="new-password" />
+        <input type="password" name="p2" autocomplete="new-password" />
+      </form>
+    `;
     setLoginInputsFromDom();
 
     const result = await autofill({ password: 'secret', noUsername: true, cryptoAvailable: false, iframePermissionGranted: true });

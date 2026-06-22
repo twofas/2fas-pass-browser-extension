@@ -7,9 +7,10 @@
 // @vitest-environment jsdom
 
 // Spec-first tests: these describe how autofill SHOULD choose which password fields to
-// fill, distinguishing the current/old password (fillable) from new/confirm passwords
-// (never filled). The DOM is a real jsdom tree built from realistic login, registration
-// and change-password layouts. No production logic is reimplemented here.
+// fill, distinguishing fillable password fields from the new/confirm fields on multi-field
+// registration and change-password layouts (never filled). The DOM is a real jsdom tree
+// built from realistic login, registration and change-password layouts. No production logic
+// is reimplemented here.
 
 import { describe, it, expect, beforeAll, beforeEach, afterEach } from 'vitest';
 
@@ -49,16 +50,16 @@ describe('classifyPasswordInput', () => {
     expect(classifyPasswordInput(passwordEls()[0])).toBe('current');
   });
 
-  it('classifies autocomplete="new-password" as new', () => {
+  it('does not classify autocomplete="new-password" as new (autocomplete only marks current)', () => {
     mount('<input type="password" autocomplete="new-password" />');
 
-    expect(classifyPasswordInput(passwordEls()[0])).toBe('new');
+    expect(classifyPasswordInput(passwordEls()[0])).toBe('unknown');
   });
 
   it('reads the trailing field token of a grouped autocomplete value', () => {
-    mount('<input type="password" autocomplete="section-blue new-password" />');
+    mount('<input type="password" autocomplete="section-blue current-password" />');
 
-    expect(classifyPasswordInput(passwordEls()[0])).toBe('new');
+    expect(classifyPasswordInput(passwordEls()[0])).toBe('current');
   });
 
   it('classifies by name: oldPassword / currentPassword are current', () => {
@@ -145,10 +146,10 @@ describe('classifyPasswordInput', () => {
     expect(classifyPasswordInput(newInput)).toBe('new');
   });
 
-  it('lets the standardized autocomplete token win over a conflicting name keyword', () => {
-    mount('<input type="password" autocomplete="new-password" name="oldPassword" />');
+  it('lets the standardized current-password autocomplete win over a conflicting name keyword', () => {
+    mount('<input type="password" autocomplete="current-password" name="newPassword" />');
 
-    expect(classifyPasswordInput(passwordEls()[0])).toBe('new');
+    expect(classifyPasswordInput(passwordEls()[0])).toBe('current');
   });
 
   it('treats a confirmation of a new password as new', () => {
@@ -304,10 +305,10 @@ describe('getAutofillPasswordInputs', () => {
     expect(resolve()).toEqual([]);
   });
 
-  it('fills nothing for a single new-password field (reset-link page)', () => {
+  it('fills a single new-password field (autocomplete no longer skips a lone field)', () => {
     mount('<input type="password" name="password" autocomplete="new-password" />');
 
-    expect(resolve()).toEqual([]);
+    expect(namesOf(resolve())).toEqual(['password']);
   });
 
   it('fills only the login password when a login and a registration form coexist', () => {

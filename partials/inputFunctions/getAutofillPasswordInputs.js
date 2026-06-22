@@ -8,7 +8,6 @@ import { currentPasswordKeywords, newPasswordKeywords } from '@/constants';
 import { containsDeniedWord, getAssociatedLabelText } from './shared';
 
 const CURRENT_PASSWORD_AUTOCOMPLETE = 'current-password';
-const NEW_PASSWORD_AUTOCOMPLETE = 'new-password';
 
 // On a username-less form this many password fields (old + new + confirm) signals a
 // change-password layout, where the first field is — with high probability — the old password.
@@ -25,7 +24,7 @@ const FORMLESS_GROUP = null;
 /**
 * Returns the trailing field token of an input's autocomplete attribute. Per the WHATWG
 * autofill grammar optional section/shipping/billing tokens may precede the field token
-* (e.g. 'section-blue new-password'), so the meaningful token is the last one.
+* (e.g. 'section-blue current-password'), so the meaningful token is the last one.
 * @param {HTMLInputElement} input - The input element to inspect.
 * @return {string} The lowercased trailing autocomplete token, or empty string.
 */
@@ -57,9 +56,11 @@ const collectTextSignals = input => [
 
 /**
 * Classifies a password input as the current/old password, a brand-new password, or unknown.
-* The standardized autocomplete token is authoritative; otherwise the field's textual signals
-* are matched against the current/new keyword lists, with the new-password meaning winning when
-* both are present (e.g. "confirm new password").
+* A standardized autocomplete="current-password" token is authoritative for the current meaning;
+* otherwise the field's textual signals are matched against the current/new keyword lists, with
+* the new-password meaning winning when both are present (e.g. "confirm new password"). An
+* autocomplete="new-password" token is NOT treated as decisive, so a field carrying only that
+* attribute falls through to keyword/layout heuristics rather than being skipped outright.
 * @param {HTMLInputElement} input - The password input to classify.
 * @return {'current'|'new'|'unknown'} The resolved password role.
 */
@@ -68,10 +69,6 @@ const classifyPasswordInput = input => {
 
   if (token === CURRENT_PASSWORD_AUTOCOMPLETE) {
     return 'current';
-  }
-
-  if (token === NEW_PASSWORD_AUTOCOMPLETE) {
-    return 'new';
   }
 
   const signals = collectTextSignals(input);
