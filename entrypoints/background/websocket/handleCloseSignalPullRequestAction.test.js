@@ -19,6 +19,8 @@ const finishCardAutofill = vi.fn();
 const protectActionDataPassword = vi.fn();
 const protectCardActionData = vi.fn();
 const focusTabForDialog = vi.fn();
+const handleAutofillWithPermission = vi.fn();
+const handleAutofillCardWithPermission = vi.fn();
 
 vi.mock('@/utils/CatchError.js', () => ({ default: vi.fn() }));
 vi.mock('./utils/addNewSessionIdToDevice', () => ({ default: (...args) => addNewSessionIdToDevice(...args) }));
@@ -36,6 +38,8 @@ vi.mock('./utils/finishPullRequestAutofill.js', () => ({
 }));
 vi.mock('../utils/protectActionDataPassword', () => ({ default: (...args) => protectActionDataPassword(...args) }));
 vi.mock('../utils/protectCardActionData', () => ({ default: (...args) => protectCardActionData(...args) }));
+vi.mock('../utils/handleAutofillWithPermission', () => ({ default: (...args) => handleAutofillWithPermission(...args) }));
+vi.mock('../utils/handleAutofillCardWithPermission', () => ({ default: (...args) => handleAutofillCardWithPermission(...args) }));
 
 import handleCloseSignalPullRequestAction from './handleCloseSignalPullRequestAction.js';
 
@@ -66,6 +70,8 @@ beforeEach(async () => {
     status: 'ok',
     actionData: { ...actionData, cardNumber: 'enc-cn', cardFieldsEncryptedAtRest: true }
   }));
+  handleAutofillWithPermission.mockResolvedValue(undefined);
+  handleAutofillCardWithPermission.mockResolvedValue(undefined);
 });
 
 describe('handleCloseSignalPullRequestAction — Highly Secret login never stored as plaintext (finding #5)', () => {
@@ -221,5 +227,77 @@ describe('handleCloseSignalPullRequestAction — non-windowClose login carries s
     expect(stored.closeData.securityType).toBe(SECURITY_TIER.HIGHLY_SECRET);
 
     await storage.removeItem(KEY);
+  });
+});
+
+// Regression: this handler runs in the BACKGROUND service worker (the /fetch WebSocket was made
+// independent from the popup). browser.runtime.sendMessage does NOT deliver to the sending
+// context's own onMessage listener, so the AUTOFILL(_CARD)_WITH_PERMISSION message it used to
+// post was silently dropped — the entire Highly Secret autofill-via-fetch continuation produced
+// no fill, no cross-domain dialog and no KeepItem. The permission handler must be invoked directly.
+describe('handleCloseSignalPullRequestAction — non-windowClose needsDialog invokes the permission handler directly', () => {
+  beforeEach(() => {
+    resolveCrossDomainPermissions.mockResolvedValue({
+      allBlocked: false,
+      needsDialog: true,
+      unknownDomains: ['cross.example'],
+      crossDomainAllowedDomains: [],
+      trustedDomains: ['trusted.example'],
+      untrustedDomains: ['untrusted.example']
+    });
+  });
+
+  it('login: calls handleAutofillWithPermission(tabId, storageKey, domains) directly', async () => {
+    const closeData = {
+      action: 'autofill',
+      securityType: SECURITY_TIER.HIGHLY_SECRET,
+      vaultId: 'v',
+      deviceId: 'd',
+      itemId: 'i',
+      s_password: 'enc-sif',
+      encryptionItemT2KeyB64: 'keyB64',
+      actionData: {
+        action: REQUEST_ACTIONS.AUTOFILL,
+        username: 'u',
+        password: 'plaintext-pw',
+        cryptoAvailable: false,
+        noPassword: false,
+        target: REQUEST_TARGETS.CONTENT
+      }
+    };
+
+    await handleCloseSignalPullRequestAction('new-session', 'uuid', closeData, { data: { tabId: TAB_ID } });
+
+    expect(handleAutofillWithPermission).toHaveBeenCalledWith(TAB_ID, KEY, ['trusted.example', 'untrusted.example', 'cross.example']);
+
+    await storage.removeItem(KEY);
+  });
+
+  it('card: calls handleAutofillCardWithPermission(tabId, storageKey, domains) directly', async () => {
+    const CARD_KEY = `session:autofillCardData-${TAB_ID}`;
+    const closeData = {
+      action: 'autofillCard',
+      vaultId: 'v',
+      deviceId: 'd',
+      itemId: 'i',
+      s_cardNumber: 'enc-sif-cn',
+      s_expirationDate: 'enc-sif-ed',
+      s_securityCode: 'enc-sif-cvv',
+      encryptionItemT2KeyB64: 'keyB64',
+      actionData: {
+        action: REQUEST_ACTIONS.AUTOFILL_CARD,
+        cardholderName: 'John Doe',
+        cardIssuer: 'visa',
+        cardNumber: '4111111111111111',
+        cryptoAvailable: false,
+        target: REQUEST_TARGETS.CONTENT
+      }
+    };
+
+    await handleCloseSignalPullRequestAction('new-session', 'uuid', closeData, { data: { tabId: TAB_ID } });
+
+    expect(handleAutofillCardWithPermission).toHaveBeenCalledWith(TAB_ID, CARD_KEY, ['trusted.example', 'untrusted.example', 'cross.example']);
+
+    await storage.removeItem(CARD_KEY);
   });
 });

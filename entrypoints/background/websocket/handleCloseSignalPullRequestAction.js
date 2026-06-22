@@ -14,6 +14,8 @@ import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready'
 import wsNotify from './wsNotify.js';
 import protectActionDataPassword from '../utils/protectActionDataPassword';
 import protectCardActionData from '../utils/protectCardActionData';
+import handleAutofillWithPermission from '../utils/handleAutofillWithPermission';
+import handleAutofillCardWithPermission from '../utils/handleAutofillCardWithPermission';
 import { closePopupWindow, finishLoginAutofill, finishCardAutofill } from './utils/finishPullRequestAutofill.js';
 
 /**
@@ -149,13 +151,12 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
           logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillData)');
 
-          browser.runtime.sendMessage({
-            action: REQUEST_ACTIONS.AUTOFILL_WITH_PERMISSION,
-            target: REQUEST_TARGETS.BACKGROUND,
-            tabId,
-            storageKey,
-            domains: [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]
-          });
+          // This handler runs in the background service worker (the /fetch WebSocket is independent
+          // of the popup). browser.runtime.sendMessage does NOT deliver to the sending context's own
+          // onMessage listener, so posting AUTOFILL_WITH_PERMISSION here would be silently dropped and
+          // the whole Highly/Top Secret autofill-via-fetch continuation would stall (no fill, no
+          // cross-domain dialog, no KeepItem). Invoke the handler directly instead.
+          await handleAutofillWithPermission(tabId, storageKey, [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]);
 
           wsNotify('navigate', { path: '/' });
           return true;
@@ -274,13 +275,9 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
 
           logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillCardData)');
 
-          browser.runtime.sendMessage({
-            action: REQUEST_ACTIONS.AUTOFILL_CARD_WITH_PERMISSION,
-            target: REQUEST_TARGETS.BACKGROUND,
-            tabId,
-            storageKey,
-            domains: [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]
-          });
+          // Background→background runtime.sendMessage is dropped (the sender never receives its own
+          // message), so invoke the card permission handler directly — see the login branch above.
+          await handleAutofillCardWithPermission(tabId, storageKey, [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]);
 
           wsNotify('navigate', { path: '/' });
           return true;
