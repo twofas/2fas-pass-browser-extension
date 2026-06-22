@@ -13,6 +13,7 @@ import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import setIDsToInputs from './prompt/setIDsToInputs';
 import isSubmitButtonClick from './prompt/isSubmitButtonClick';
 import encryptFlushData from './prompt/encryptFlushData';
+import ensureLocalKey from './prompt/ensureLocalKey';
 import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
 import ifCtxIsInvalid from '@/partials/contentScript/ifCtxIsInvalid';
 import checkInitialInputsValues from './prompt/checkInitialInputsValues';
@@ -67,6 +68,16 @@ export default defineContentScript({
 
     const cryptoAvailable = isCryptoAvailable();
     const encrypted = cryptoAvailable && savePrompt === 'default_encrypted';
+
+    // Pre-fetch the local key now, while the service worker that just injected this
+    // script is still alive. Encrypted capture/flush/beacon drop credentials when the
+    // key is missing (the unencrypted path does not), so fetching it lazily on the
+    // first keystroke — which can hit a recycled worker and fail — is why the encrypted
+    // mode fails more often. Caching it here makes the encrypted mode as reliable as the
+    // unencrypted one for the page lifetime.
+    if (encrypted) {
+      await ensureLocalKey(localKey);
+    }
 
     const documentShadowRoots = getShadowRoots();
     const passwordInputs = getPasswordInputs(documentShadowRoots);

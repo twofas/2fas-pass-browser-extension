@@ -31,6 +31,7 @@ export { default as isSavePromptSenderEligible } from './savePrompt/isSavePrompt
 export { default as removeSavePromptAction } from './savePrompt/removeSavePromptAction.js';
 export { default as savePromptAction } from './savePrompt/savePromptAction.js';
 export { default as processSavePromptResult } from './savePrompt/processSavePromptResult.js';
+export { default as waitForTabInputData } from './savePrompt/waitForTabInputData.js';
 
 // Core utilities
 export { default as generateLocalKey } from './generateLocalKey.js';

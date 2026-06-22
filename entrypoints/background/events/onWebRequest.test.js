@@ -8,6 +8,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import realIsProcessableWebRequestFrame from '../utils/savePrompt/isProcessableWebRequestFrame.js';
 
 const getConfiguredBoolean = vi.fn();
+const { waitForTabInputDataMock } = vi.hoisted(() => ({ waitForTabInputDataMock: vi.fn() }));
 
 // Real frame gate (the subject of finding #19); stub the rest of the heavy pipeline.
 vi.mock('../utils', () => ({
@@ -18,7 +19,8 @@ vi.mock('../utils', () => ({
   cleanTabsInputData: vi.fn(),
   addSavePromptAction: vi.fn(),
   checkFormData: vi.fn(),
-  isProcessableWebRequestFrame: (...args) => realIsProcessableWebRequestFrame(...args)
+  isProcessableWebRequestFrame: (...args) => realIsProcessableWebRequestFrame(...args),
+  waitForTabInputData: (...args) => waitForTabInputDataMock(...args)
 }));
 
 vi.mock('@/partials/sessionStorage/configured/getConfiguredBoolean', () => ({
@@ -108,5 +110,36 @@ describe('onWebRequest — beacon flush gate (finding #19)', () => {
     const details = { type: 'ping', url: beaconUrl, tabId: TAB_ID, frameType: 'sub_frame', initiator: 'https://login.example.com', requestBody: beaconBody([{ id: 'x', value: '1' }]) };
     await onWebRequest(details, tabsInputData, [], {});
     expect(tabsInputData[TAB_ID]?.x).toEqual({ id: 'x', value: '1' });
+  });
+});
+
+// A recycled MV3 worker drops the in-memory tabsInputData; the submitting POST then
+// arrives with an empty store. onWebRequest must give the content script's submit
+// flush / unload beacon a window to repopulate it before bailing, otherwise the save
+// prompt silently never fires (for both encrypted and unencrypted modes).
+describe('onWebRequest — captured-input recovery after worker restart', () => {
+  it('waits for the flush to repopulate an empty store, then continues past the gate', async () => {
+    const tabsInputData = {}; // empty: simulates a worker restart between typing and submit
+
+    // Simulate the submit flush / beacon arriving during the wait window.
+    waitForTabInputDataMock.mockImplementation(async store => {
+      store[TAB_ID] = { someId: { id: 'someId', type: 'username', value: 'a', url: 'https://example.com' } };
+      return true;
+    });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
+
+    expect(waitForTabInputDataMock).toHaveBeenCalled();
+    expect(getConfiguredBoolean).toHaveBeenCalled();
+  });
+
+  it('bails when the store stays empty (no flush arrives within the wait)', async () => {
+    const tabsInputData = {};
+    waitForTabInputDataMock.mockResolvedValue(false);
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
+
+    expect(waitForTabInputDataMock).toHaveBeenCalled();
+    expect(getConfiguredBoolean).not.toHaveBeenCalled();
   });
 });
