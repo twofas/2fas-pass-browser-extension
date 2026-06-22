@@ -11,6 +11,7 @@ import aggregateLoginAutofillResponses from '@/partials/functions/aggregateLogin
 import storeAutofillFailureData from '../../utils/storeAutofillFailureData';
 import openPopupWithFallback from '../../utils/openPopupWithFallback';
 import wsNotify from '../wsNotify.js';
+import { wsState } from '../wsState.js';
 
 /**
 * Closes the popup window opened for a shortcut-initiated (windowClose) flow.
@@ -51,12 +52,16 @@ const focusPopupWindow = async () => {
 * The shortcut-initiated flow (closeData.windowClose) keeps its dedicated popup window open, so the
 * result is delivered live over wsNotify (focus + persistent toast + navigation state).
 *
-* The in-popup flow (non-windowClose) runs entirely in the background service worker while the
-* toolbar popup is almost always already closed — the user is approving the pull request on the
-* phone. An ephemeral wsNotify('navigate') would only be queued into wsState.pendingNavigation and
-* then dropped on reopen (main.jsx applies just the path, Popup.jsx never replays the navigation
-* state), so KeepItem would never appear. Persist the recovery to session storage and reopen the
-* popup instead, exactly like dispatchLoginAutofill / processLoginResult.
+* The in-popup flow (non-windowClose) runs entirely in the background service worker. The toolbar
+* popup may be CLOSED (the user is approving the pull request on the phone) or still OPEN on the
+* /fetch "waiting" screen. Recovery must cover both:
+*   • DURABLE — storeAutofillFailureData persists the recovery STATE and openPopupWithFallback
+*     reopens a closed popup; useAutofillFailedCheck reads the key when ThisTab mounts.
+*   • LIVE — a path-only wsNotify('navigate', { path: '/' }) moves an already-open popup off /fetch
+*     and remounts ThisTab so the same durable key is consumed. The navigate carries NO state: an
+*     ephemeral navigation state is dropped on reopen (main.jsx applies just the path, Popup.jsx
+*     never replays the state), so the state lives solely in the durable key — otherwise an open
+*     popup would stay stranded on /fetch and KeepItem would never appear.
 * @async
 * @param {number} tabId - The ID of the tab.
 * @param {Object} closeData - The close data (SIF + windowClose flag) for recovery.
@@ -66,6 +71,17 @@ const focusPopupWindow = async () => {
 const recoverLoginAutofill = async (tabId, closeData, toastMessageKey) => {
   if (!closeData.windowClose) {
     await storeAutofillFailureData(tabId, closeData);
+
+    // The pull request is complete and the fetch WS is closing, but its 'close' event (which clears
+    // wsState.active in bgFetchOnClose) is async and races with the reopen below. A reopened popup
+    // whose checkActiveWsAction still sees an active fetch would be forced onto the /fetch route over
+    // the KeepItem recovery. Mark the fetch inactive synchronously so the reopen behaves like a
+    // normal open and lands on '/' (ThisTab → useAutofillFailedCheck → KeepItem).
+    wsState.active = false;
+    wsState.type = null;
+    wsState.fetchState = null;
+
+    wsNotify('navigate', { path: '/' });
     await openPopupWithFallback();
 
     return;

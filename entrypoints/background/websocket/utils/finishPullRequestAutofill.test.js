@@ -21,6 +21,7 @@ vi.mock('../../utils/storeAutofillFailureData', () => ({ default: (...args) => s
 vi.mock('../../utils/openPopupWithFallback', () => ({ default: (...args) => openPopupWithFallback(...args) }));
 
 import { finishLoginAutofill, finishCardAutofill } from './finishPullRequestAutofill.js';
+import { wsState } from '../wsState.js';
 
 let windowsRemove;
 let windowsUpdate;
@@ -117,37 +118,66 @@ describe('finishLoginAutofill', () => {
     expect(successToast).toBeDefined();
   });
 
-  // Regression: the in-popup (non-windowClose) autofill-via-fetch runs in the BACKGROUND while the
-  // toolbar popup is almost always already closed (the user is approving on the phone). The KeepItem
-  // recovery used only wsNotify('navigate'), which is queued into pendingNavigation and then dropped
-  // on reopen (main.jsx applies only the path, Popup.jsx never replays the navigation state) — so no
-  // KeepItem ever appeared. Failure/partial outcomes must use the DURABLE recovery (session storage +
-  // popup reopen), exactly like dispatchLoginAutofill / processLoginResult.
-  it('non-windowClose: no response (false) → durable KeepItem (store + reopen), not ephemeral wsNotify navigate', async () => {
+  // The in-popup (non-windowClose) autofill-via-fetch runs in the BACKGROUND. The toolbar popup may
+  // be CLOSED (user approving on the phone) OR still OPEN on the /fetch "waiting" screen. KeepItem
+  // recovery must work in BOTH cases:
+  //   • DURABLE: storeAutofillFailureData persists the recovery STATE and openPopupWithFallback
+  //     reopens a closed popup; useAutofillFailedCheck reads the key on ThisTab mount.
+  //   • LIVE: a path-only wsNotify('navigate', { path: '/' }) moves an already-open popup off /fetch
+  //     and remounts ThisTab so the same durable key is consumed. The navigate carries NO state — an
+  //     ephemeral navigation state is dropped on reopen (main.jsx applies only the path), so the
+  //     state must live solely in the durable key (else the open-popup case strands on /fetch).
+  it('non-windowClose: no response (false) → durable KeepItem + path-only live navigate (open popup)', async () => {
     await finishLoginAutofill(5, { username: 'u', password: 'p' }, { ...LOGIN_CLOSE, windowClose: false }, false);
 
     expect(storeAutofillFailureData).toHaveBeenCalledWith(5, expect.objectContaining({ itemId: 'i1', s_password: 'pw', encryptionItemT2KeyB64: 'keyB64' }));
     expect(openPopupWithFallback).toHaveBeenCalledTimes(1);
-    expect(wsNotify.mock.calls.find(([type]) => type === 'navigate')).toBeUndefined();
+
+    const navigate = wsNotify.mock.calls.find(([type]) => type === 'navigate');
+    expect(navigate[1]).toEqual({ path: '/' });
+    expect(navigateState()).toBeUndefined();
   });
 
-  it('non-windowClose: partial fill → durable KeepItem, not ephemeral wsNotify navigate', async () => {
+  it('non-windowClose: partial fill → durable KeepItem + path-only live navigate', async () => {
     const res = [{ status: 'ok', canAutofillUsername: true, canAutofillPassword: false }];
 
     await finishLoginAutofill(5, { username: 'u', password: 'p' }, { ...LOGIN_CLOSE, windowClose: false }, res);
 
     expect(storeAutofillFailureData).toHaveBeenCalledWith(5, expect.objectContaining({ itemId: 'i1' }));
     expect(openPopupWithFallback).toHaveBeenCalledTimes(1);
-    expect(wsNotify.mock.calls.find(([type]) => type === 'navigate')).toBeUndefined();
+
+    const navigate = wsNotify.mock.calls.find(([type]) => type === 'navigate');
+    expect(navigate[1]).toEqual({ path: '/' });
+    expect(navigateState()).toBeUndefined();
   });
 
-  it('non-windowClose: no ok frame (all errors) → durable KeepItem', async () => {
+  it('non-windowClose: no ok frame (all errors) → durable KeepItem + path-only live navigate', async () => {
     const res = [{ status: 'error', code: 'X' }];
 
     await finishLoginAutofill(5, { username: 'u', password: 'p' }, { ...LOGIN_CLOSE, windowClose: false }, res);
 
     expect(storeAutofillFailureData).toHaveBeenCalledWith(5, expect.objectContaining({ itemId: 'i1' }));
     expect(openPopupWithFallback).toHaveBeenCalledTimes(1);
+
+    const navigate = wsNotify.mock.calls.find(([type]) => type === 'navigate');
+    expect(navigate[1]).toEqual({ path: '/' });
+  });
+
+  // The fetch WS 'close' event (which clears wsState.active) is async and races with the popup
+  // reopen. If the recovery reopens the popup while the fetch is still reported active, the fresh
+  // popup's checkActiveWsAction forces the /fetch route over the KeepItem recovery (the user lands
+  // on the fetch "waiting" view instead of the list with KeepItem). The recovery must mark the fetch
+  // inactive synchronously so the reopen behaves like a normal open and lands on '/'.
+  it('non-windowClose: failure marks the fetch WS inactive so the reopened popup lands on / not /fetch', async () => {
+    wsState.active = true;
+    wsState.type = 'fetch';
+    wsState.fetchState = 0;
+
+    await finishLoginAutofill(5, { username: 'u', password: 'p' }, { ...LOGIN_CLOSE, windowClose: false }, false);
+
+    expect(wsState.active).toBe(false);
+    expect(wsState.type).toBeNull();
+    expect(wsState.fetchState).toBeNull();
   });
 
   it('windowClose: failure keeps the live wsNotify recovery and does NOT use durable popup-reopen', async () => {
