@@ -16,7 +16,7 @@ import QR from './components/QR';
 import DeviceNew from './components/DeviceNew';
 import DeviceIcon from './components/DeviceIcon';
 import DevicesPagination from './components/DevicesPagination';
-import { getReadyDevices, renderQrFromData } from './functions';
+import { getReadyDevices, renderQrFromData, resolveConnectView } from './functions';
 import NavigationButton from '../../components/NavigationButton';
 import { CONNECT_VIEWS } from '@/constants';
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
@@ -31,6 +31,12 @@ const viewVariants = {
   hidden: { opacity: 0, borderWidth: '0px', pointerEvents: 'none' }
 };
 
+// While the QR is shown the background pushes state changes, but a Safari SW kill stops
+// those pushes silently (no close event fires), leaving a stale QR with no feedback. So
+// the popup polls WS_GET_STATE: each poll also asks the background to resume a persisted
+// session (auto-recovery), and a failed/inactive poll surfaces the reload overlay.
+const LIVENESS_POLL_MS = 10000;
+
 function Connect (props) {
   const { getMessage } = useI18n();
   const { login } = useAuthActions();
@@ -38,24 +44,40 @@ function Connect (props) {
   const [localView, setLocalView] = useState(null);
   const [qrCode, setQrCode] = useState(null);
   const [readyDevices, setReadyDevices] = useState([]);
+  const [devicesLoaded, setDevicesLoaded] = useState(false);
   const [sliderMounted, setSliderMounted] = useState(false);
+  const [livenessLost, setLivenessLost] = useState(false);
   const sliderRef = useRef(null);
   const initDoneRef = useRef(false);
+  const autoReconnectRef = useRef(false);
+  const connectInFlightRef = useRef(false);
 
   const { data, setData } = usePopupState();
 
   const rawConnectView = bgState?.active ? (bgState.connectView || localView) : localView;
-  const connectView = rawConnectView === CONNECT_VIEWS.DeviceSelect && readyDevices.length === 0
-    ? CONNECT_VIEWS.DeviceNew
-    : rawConnectView;
+  // Resolve the visible sub-view. While the saved device list is still loading, this is
+  // null so no section shows yet (avoids flashing the empty DeviceNew/QR screen before the
+  // user's saved devices appear). An active background view is honored immediately, and once
+  // the list has loaded the view never collapses to blank — see resolveConnectView.
+  const connectView = resolveConnectView({ rawConnectView, devicesLoaded, readyDevicesCount: readyDevices.length });
   const connectingLoader = bgState?.progress ?? 264;
   const deviceName = bgState?.deviceName || null;
-  const socketError = bgState?.socketError || false;
+  const socketError = (bgState?.socketError || false) || livenessLost;
 
   const loadReadyDevices = useCallback(async () => {
-    const devices = await getReadyDevices();
-    setReadyDevices(devices);
-    return devices;
+    try {
+      const devices = await getReadyDevices();
+      setReadyDevices(devices);
+      return devices;
+    } catch {
+      setReadyDevices([]);
+      return [];
+    } finally {
+      // Always mark the list as loaded — even on a storage read failure — so the view
+      // resolution never stays stuck on null (a permanently blank Connect screen). On
+      // error it falls back to an empty list, i.e. the DeviceNew screen.
+      setDevicesLoaded(true);
+    }
   }, []);
 
   const updateQrCode = useCallback(async qrData => {
@@ -65,20 +87,28 @@ function Connect (props) {
 
   const switchToQrView = useCallback(async () => {
     logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Connect - switch to QR view');
+    setLivenessLost(false);
+    // Mark a connect as in flight before the view switch so the keep-alive effect, which
+    // fires as soon as connectView becomes QrView, doesn't race a second connect.
+    connectInFlightRef.current = true;
     setLocalView(CONNECT_VIEWS.QrView);
 
-    if (bgState?.active) {
-      await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
-    }
+    try {
+      if (bgState?.active) {
+        await sendCommand(REQUEST_ACTIONS.WS_CANCEL);
+      }
 
-    const result = await sendCommand(REQUEST_ACTIONS.WS_CONNECT_QR);
+      const result = await sendCommand(REQUEST_ACTIONS.WS_CONNECT_QR);
 
-    if (result?.state?.qrData) {
-      await updateQrCode(result.state.qrData);
-    }
+      if (result?.state?.qrData) {
+        await updateQrCode(result.state.qrData);
+      }
 
-    if (result?.status === 'error') {
-      showToast(result.message, 'error');
+      if (result?.status === 'error') {
+        showToast(result.message, 'error');
+      }
+    } finally {
+      connectInFlightRef.current = false;
     }
   }, [bgState?.active, sendCommand, updateQrCode]);
 
@@ -113,14 +143,21 @@ function Connect (props) {
 
   const handleSocketReload = useCallback(async () => {
     logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'Popup-Connect - reload QR');
-    const result = await sendCommand(REQUEST_ACTIONS.WS_RELOAD_QR);
+    connectInFlightRef.current = true;
 
-    if (result?.state?.qrData) {
-      await updateQrCode(result.state.qrData);
-    }
+    try {
+      const result = await sendCommand(REQUEST_ACTIONS.WS_RELOAD_QR);
 
-    if (result?.status === 'error') {
-      showToast(result.message, 'error');
+      if (result?.state?.qrData) {
+        setLivenessLost(false);
+        await updateQrCode(result.state.qrData);
+      }
+
+      if (result?.status === 'error') {
+        showToast(result.message, 'error');
+      }
+    } finally {
+      connectInFlightRef.current = false;
     }
   }, [sendCommand, updateQrCode]);
 
@@ -245,6 +282,85 @@ function Connect (props) {
       }
     };
   }, [readyDevices, sliderMounted, setData, data.connectSliderIndex]);
+
+  // Mirror an active background QR session into localView. If the background later pushes
+  // connectView:null on close, the view falls back to the QR section (with its reload
+  // overlay) rather than going blank.
+  useEffect(function mirrorActiveQrViewToLocal() {
+    if (bgState?.active && bgState?.type === 'connect_qr') {
+      setLocalView(CONNECT_VIEWS.QrView);
+    }
+  }, [bgState?.active, bgState?.type]);
+
+  // Keep the QR connection alive while the QR view is shown. We drive off the REAL state
+  // returned by WS_GET_STATE (not the possibly-stale pushed bgState) because a Safari SW
+  // kill can drop the socket without delivering a close event to the popup. Each query
+  // also asks the background to resume a persisted session after a SW wake. If the WS is
+  // down we re-establish it once via the reload path; if that still fails, livenessLost
+  // surfaces the manual reload overlay. The guard resets on recovery (or on leaving the
+  // view) so a later SW kill is handled again, without tight reconnect loops.
+  useEffect(function keepQrConnectionAlive() {
+    if (connectView !== CONNECT_VIEWS.QrView) {
+      autoReconnectRef.current = false;
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    const check = async () => {
+      // Skip while a user-initiated connect/reload is settling — it owns the socket.
+      if (connectInFlightRef.current) {
+        return;
+      }
+
+      try {
+        const response = await sendCommand(REQUEST_ACTIONS.WS_GET_STATE);
+
+        if (cancelled || connectInFlightRef.current) {
+          return;
+        }
+
+        if (response?.status === 'ok' && response?.state?.active && response?.state?.qrData) {
+          setLivenessLost(false);
+          autoReconnectRef.current = false;
+        } else if (!autoReconnectRef.current) {
+          autoReconnectRef.current = true;
+          connectInFlightRef.current = true;
+
+          try {
+            const result = await sendCommand(REQUEST_ACTIONS.WS_RELOAD_QR);
+
+            if (cancelled) {
+              return;
+            }
+
+            if (result?.state?.qrData) {
+              setLivenessLost(false);
+              await updateQrCode(result.state.qrData);
+            } else {
+              setLivenessLost(true);
+            }
+          } finally {
+            connectInFlightRef.current = false;
+          }
+        } else {
+          setLivenessLost(true);
+        }
+      } catch {
+        if (!cancelled) {
+          setLivenessLost(true);
+        }
+      }
+    };
+
+    check();
+    const intervalId = setInterval(check, LIVENESS_POLL_MS);
+
+    return function stopKeepQrConnectionAlive() {
+      cancelled = true;
+      clearInterval(intervalId);
+    };
+  }, [connectView, sendCommand, updateQrCode]);
 
   // Cleanup: cancel WS on unmount
   useEffect(function cancelConnectWsOnUnmount() {

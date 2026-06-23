@@ -12,19 +12,29 @@
 * @return {Promise<string|null>} The decrypted value or null if an error occurs.
 */
 const decryptValuesProcess = async (value, localKeyCrypto) => {
+  let decryptedBytes = null;
+  let decryptedAB = null;
+
   try {
     const valueAB = Base64ToArrayBuffer(value);
-    const decryptedBytes = DecryptBytes(valueAB);
-    
-    const decryptedAB = await crypto.subtle.decrypt(
+    decryptedBytes = DecryptBytes(valueAB);
+    wipeBuffer(valueAB);
+
+    decryptedAB = await crypto.subtle.decrypt(
       { name: 'AES-GCM', iv: decryptedBytes.iv },
       localKeyCrypto,
       decryptedBytes.data
     );
-    
+
     return ArrayBufferToString(decryptedAB);
   } catch {
     return null;
+  } finally {
+    wipeBuffer(decryptedBytes?.iv);
+    wipeBuffer(decryptedBytes?.data);
+    decryptedBytes = null;
+    wipeBuffer(decryptedAB);
+    decryptedAB = null;
   }
 };
 

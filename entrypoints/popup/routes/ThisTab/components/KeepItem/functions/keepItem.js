@@ -6,7 +6,6 @@
 
 import getItems from '@/partials/sessionStorage/getItems';
 import getItemsKeys from '@/partials/sessionStorage/getItemsKeys';
-import generateEncryptionAESKey from '@/entrypoints/background/websocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
 import saveItems from '@/entrypoints/background/websocket/utils/saveItems';
 import { generateNonce } from '@/partials/functions';
@@ -29,15 +28,16 @@ const keepItem = async state => {
   const sifs = item.sifs || {};
   const updateSifArr = [];
 
-  // generate encryptionItemT2Key
-  const encryptionItemT2Key = await generateEncryptionAESKey(state.hkdfSaltAB, ENCRYPTION_KEYS.ITEM_T2.crypto, state.sessionKeyForHKDF, true);
-  let encryptionItemT2KeyAES_B64;
+  // Import the ItemT2 key forwarded by the autofill flow (raw Base64). It was derived and exported
+  // background-side; re-deriving it here is impossible because the HKDF session key is
+  // non-serializable and never reaches the popup intact (finding #29).
+  const encryptionItemT2KeyAES_B64 = state.encryptionItemT2KeyB64;
+  let encryptionItemT2Key;
 
   try {
-    const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
-    encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
+    encryptionItemT2Key = await crypto.subtle.importKey('raw', Base64ToArrayBuffer(encryptionItemT2KeyAES_B64), { name: 'AES-GCM' }, false, ['encrypt']);
   } catch (e) {
-    throw new TwoFasError(TwoFasError.internalErrors.keepPasswordExportKeyError, { event: e });
+    throw new TwoFasError(TwoFasError.internalErrors.keepPasswordImportKeyError, { event: e });
   }
 
   for (const sifKey of sifs) {

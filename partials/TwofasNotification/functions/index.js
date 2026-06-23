@@ -8,3 +8,5 @@ export { default as sendFrontEndPushAction } from './sendFrontEndPushAction';
 export { default as showFrontEndPush } from './showFrontEndPush';
 export { default as showNativePush } from './showNativePush';
 export { default as showNativePushWithoutTimeout } from './showNativePushWithoutTimeout';
+export { default as showPendingNotification } from './showPendingNotification';
+export { default as storeNotificationFallback } from './storeNotificationFallback';

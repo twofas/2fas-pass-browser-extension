@@ -85,30 +85,41 @@ const generateEncKeys = () => {
     return;
   }
 
-  // Generate random, unique, 128-character strings using crypto
-  let uniqueRandomStrings;
+  // Generate fresh, unique, 128-character keys for every VITE_STORAGE_* value.
+  // In DEVELOPMENT mode existing valid keys are PRESERVED so the dev encryption
+  // keys stay stable across `yarn dev` restarts. The browser session storage is
+  // kept between restarts via the persistent profile (web-ext.config.ts); if
+  // these keys changed mid-session, every previously-synced item would become
+  // unreadable because getKey derives all storage locations from them. PRODUCTION
+  // mode always regenerates - there is no live session to invalidate there.
   try {
-    const storageKeysCount = Object.keys(ENV).filter(key => key.startsWith('VITE_STORAGE_')).length;
-    const randomStrings = new Set();
-    while (randomStrings.size < storageKeysCount) {
-      randomStrings.add(crypto.randomBytes(64).toString('hex'));
-    }
-    uniqueRandomStrings = Array.from(randomStrings);
-  } catch (err) {
-    console.error('Error generating random strings:', err);
-    return;
-  }
+    const isDevelopment = mode === 'DEVELOPMENT';
+    const isValidKey = value => typeof value === 'string' && /^[0-9a-f]{128}$/i.test(value);
+    const storageKeys = Object.keys(ENV).filter(key => key.startsWith('VITE_STORAGE_'));
+    const keysToGenerate = isDevelopment ? storageKeys.filter(key => !isValidKey(ENV[key])) : storageKeys;
+    const existingValues = new Set(storageKeys.map(key => ENV[key]).filter(isValidKey));
+    const newValues = new Set();
 
-  // Assign a unique random string to every ENV key that starts with VITE_STORAGE_
-  try {
-    let randomIndex = 0;
-    for (const key in ENV) {
-      if (key.startsWith('VITE_STORAGE_')) {
-        ENV[key] = uniqueRandomStrings[randomIndex++];
+    while (newValues.size < keysToGenerate.length) {
+      const candidate = crypto.randomBytes(64).toString('hex');
+
+      if (!existingValues.has(candidate)) {
+        newValues.add(candidate);
       }
     }
+
+    const generated = Array.from(newValues);
+    let generatedIndex = 0;
+
+    for (const key of keysToGenerate) {
+      ENV[key] = generated[generatedIndex++];
+    }
+
+    if (isDevelopment) {
+      console.log(`Storage keys: preserved ${storageKeys.length - keysToGenerate.length}, generated ${keysToGenerate.length}.`);
+    }
   } catch (err) {
-    console.error('Error assigning random strings to ENV:', err);
+    console.error('Error generating storage keys:', err);
     return;
   }
 

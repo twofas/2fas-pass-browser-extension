@@ -9,6 +9,35 @@ import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import hasParentContextDeniedKeyword from '../functions/hasParentContextDeniedKeyword';
+import { containsDeniedWord } from './shared';
+
+const userNameWordsLower = userNameWords.map(word => word.toLowerCase());
+let cachedIgnoredTypes = null;
+let cachedUserNameSelector = null;
+
+/**
+* Returns the ignored input types selector string, computed once and cached for the content script lifetime.
+* @return {string} The ignored types selector suffix.
+*/
+const getIgnoredTypes = () => {
+  if (cachedIgnoredTypes === null) {
+    cachedIgnoredTypes = ignoredTypes({ allowUsernameTypes: true });
+  }
+
+  return cachedIgnoredTypes;
+};
+
+/**
+* Returns the combined username selector string, computed once and cached for the content script lifetime.
+* @return {string} The full username CSS selector.
+*/
+const getUserNameSelector = () => {
+  if (cachedUserNameSelector === null) {
+    cachedUserNameSelector = userNameSelectors().map(selector => selector + getIgnoredTypes()).join(', ');
+  }
+
+  return cachedUserNameSelector;
+};
 
 /**
 * Filters out inputs that contain denied keywords in their name, id, or parent elements.
@@ -16,10 +45,10 @@ import hasParentContextDeniedKeyword from '../functions/hasParentContextDeniedKe
 * @return {boolean} True if the input should be kept, false otherwise.
 */
 const filterDeniedKeywords = input => {
-  const name = (input.name || '').toLowerCase();
-  const id = (input.id || '').toLowerCase();
+  const name = input.name || '';
+  const id = input.id || '';
   const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
-  const hasDeniedWord = userNameDeniedKeywords.some(word => name.includes(word) || id.includes(word));
+  const hasDeniedWord = containsDeniedWord(name, userNameDeniedKeywords) || containsDeniedWord(id, userNameDeniedKeywords);
 
   if (hasDeniedWord) {
     return false;
@@ -29,7 +58,7 @@ const filterDeniedKeywords = input => {
     return false;
   }
 
-  if (personalInfoDeniedKeywords.some(word => name.includes(word) || id.includes(word))) {
+  if (containsDeniedWord(name, personalInfoDeniedKeywords) || containsDeniedWord(id, personalInfoDeniedKeywords)) {
     return false;
   }
 
@@ -41,22 +70,57 @@ const filterDeniedKeywords = input => {
 };
 
 /**
+* Resolves an aria-labelledby IDREF list to the combined text of the referenced elements.
+* @param {HTMLInputElement} input - The input owning the aria-labelledby attribute.
+* @param {string} idRefs - The whitespace-separated IDREF list.
+* @return {string} The combined accessible name text, or empty string if unresolved.
+*/
+const resolveLabelledByText = (input, idRefs) => {
+  const rootNode = input.getRootNode();
+
+  return idRefs
+    .split(/\s+/)
+    .map(id => {
+      if (!id) {
+        return '';
+      }
+
+      const referenced = typeof rootNode.getElementById === 'function'
+        ? rootNode.getElementById(id)
+        : rootNode.querySelector(`[id="${id}"]`);
+
+      return referenced ? (referenced.textContent || '') : '';
+    })
+    .join(' ')
+    .trim();
+};
+
+/**
 * Checks if an input matches username-related attributes or has a matching label.
 * @param {HTMLInputElement} input - The input element to check.
-* @param {Document|ShadowRoot} rootNode - The root node to search for labels.
+* @param {Map<string, HTMLLabelElement>} labelMap - Map of label `for` values to label elements within the root node.
 * @return {boolean} True if input matches username criteria.
 */
-const matchesUsernameInput = (input, rootNode) => {
+const matchesUsernameInput = (input, labelMap) => {
   const matchesAttribute = userNameAttributes.some(attribute => {
-    const attrValue = input.getAttribute(attribute);
+    let attrValue = input.getAttribute(attribute);
 
     if (!attrValue) {
       return false;
     }
 
+    // aria-labelledby holds IDREFs, not literal text — resolve to the referenced elements' text.
+    if (attribute === 'aria-labelledby') {
+      attrValue = resolveLabelledByText(input, attrValue);
+
+      if (!attrValue) {
+        return false;
+      }
+    }
+
     const lowerAttrValue = attrValue.toLowerCase();
 
-    return userNameWords.some(word => lowerAttrValue.includes(word.toLowerCase()));
+    return userNameWordsLower.some(word => lowerAttrValue.includes(word));
   });
 
   if (matchesAttribute) {
@@ -64,10 +128,10 @@ const matchesUsernameInput = (input, rootNode) => {
   }
 
   if (input.id) {
-    const label = rootNode.querySelector(`label[for="${input.id}"]`);
-    const labelText = label?.innerText?.toLowerCase();
+    const label = labelMap.get(input.id);
+    const labelText = label?.textContent?.toLowerCase();
 
-    if (labelText && userNameWords.some(word => labelText.includes(word.toLowerCase()))) {
+    if (labelText && userNameWordsLower.some(word => labelText.includes(word))) {
       return true;
     }
   }
@@ -83,10 +147,19 @@ const matchesUsernameInput = (input, rootNode) => {
 */
 const getUsernameInputsFromRoot = (rootNode, userNameSelector) => {
   const userNameInputs = Array.from(rootNode.querySelectorAll(userNameSelector));
-  const allInputs = rootNode.querySelectorAll(`input${ignoredTypes()}`);
+  const allInputs = rootNode.querySelectorAll(`input${getIgnoredTypes()}`);
+  const labelMap = new Map();
+
+  rootNode.querySelectorAll('label[for]').forEach(label => {
+    const forValue = label.getAttribute('for');
+
+    if (forValue && !labelMap.has(forValue)) {
+      labelMap.set(forValue, label);
+    }
+  });
 
   allInputs.forEach(input => {
-    if (matchesUsernameInput(input, rootNode)) {
+    if (matchesUsernameInput(input, labelMap)) {
       userNameInputs.push(input);
     }
   });
@@ -97,47 +170,65 @@ const getUsernameInputsFromRoot = (rootNode, userNameSelector) => {
 /**
 * Checks if an input is inside one of the given forms.
 * @param {HTMLInputElement} input - The input element to check.
-* @param {HTMLFormElement[]} forms - The forms to check against.
+* @param {Set<HTMLFormElement>} formsSet - The set of forms to check against.
 * @return {boolean} True if input is inside one of the forms.
 */
-const isInputInForms = (input, forms) => {
-  if (!forms || forms.length === 0) {
+const isInputInForms = (input, formsSet) => {
+  if (!formsSet || formsSet.size === 0) {
     return false;
   }
 
-  const inputForm = input.closest('form');
-
-  return forms.some(form => form === inputForm);
+  return formsSet.has(input.closest('form'));
 };
 
 /**
 * Gets the username input elements from the document, including those inside shadow DOMs.
 * Prioritizes inputs that share a form with password inputs.
 * @param {HTMLFormElement[]|null} passwordForms - The password form elements to search within.
+* @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
 * @return {HTMLInputElement[]} The array of username input elements.
 */
-const getUsernameInputs = (passwordForms = null) => {
-  const userNameSelector = userNameSelectors().map(selector => selector + ignoredTypes()).join(', ');
+const getUsernameInputs = (passwordForms = null, shadowRoots = null) => {
+  const userNameSelector = getUserNameSelector();
   const regularInputs = getUsernameInputsFromRoot(document, userNameSelector);
-  const shadowRoots = getShadowRoots();
-  const shadowInputs = shadowRoots.flatMap(
+  const resolvedShadowRoots = Array.isArray(shadowRoots) ? shadowRoots : getShadowRoots();
+  const shadowInputs = resolvedShadowRoots.flatMap(
     root => getUsernameInputsFromRoot(root, userNameSelector)
   );
   const userNameInputs = [...regularInputs, ...shadowInputs];
 
   if (passwordForms && Array.isArray(passwordForms) && userNameInputs.length === 0) {
-    const tryInputSelector = 'input' + ignoredTypes();
+    const tryInputSelector = 'input' + getIgnoredTypes() + ':not([type="password"])';
 
     passwordForms.forEach(form => {
       if (!(form instanceof HTMLFormElement)) {
         return;
       }
 
-      const inputs = form.querySelectorAll(tryInputSelector);
+      const candidates = Array.from(form.querySelectorAll(tryInputSelector)).filter(isVisible);
 
-      if (inputs.length > 0) {
-        userNameInputs.push(...inputs);
+      if (candidates.length === 0) {
+        return;
       }
+
+      const firstPasswordInput = form.querySelector('input[type="password"]');
+      let chosen = null;
+
+      if (firstPasswordInput) {
+        candidates.forEach(candidate => {
+          const passwordFollowsCandidate = (candidate.compareDocumentPosition(firstPasswordInput) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+
+          if (passwordFollowsCandidate) {
+            chosen = candidate;
+          }
+        });
+      }
+
+      if (!chosen) {
+        chosen = candidates[0];
+      }
+
+      userNameInputs.push(chosen);
     });
   }
 
@@ -146,7 +237,8 @@ const getUsernameInputs = (passwordForms = null) => {
   const filteredInputs = uniqueInputs.filter(filterDeniedKeywords);
 
   if (passwordForms && passwordForms.length > 0 && filteredInputs.length > 0) {
-    const inputsInPasswordForms = filteredInputs.filter(input => isInputInForms(input, passwordForms));
+    const passwordFormsSet = new Set(passwordForms);
+    const inputsInPasswordForms = filteredInputs.filter(input => isInputInForms(input, passwordFormsSet));
 
     if (inputsInPasswordForms.length > 0) {
       return inputsInPasswordForms;

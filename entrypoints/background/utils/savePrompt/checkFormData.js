@@ -21,7 +21,7 @@ const checkFormData = async (details, values) => {
 
   let decryptedValues = values;
 
-  if (values.encrypted) {
+  if (values.usernameEncrypted || values.passwordEncrypted) {
     decryptedValues = await decryptValues(values);
   }
 

@@ -4,10 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { paymentCardIssuerSelectors, paymentCardDeniedKeywords } from '@/constants';
-import isVisible from '../functions/isVisible';
-import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
-import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
+import { paymentCardIssuerSelectors } from '@/constants';
+import { filterDeniedKeywords, makeConflictingAutocompleteFilter, collectInputs } from './shared';
 
 const conflictingAutocompleteValues = [
   'cc-number',
@@ -21,52 +19,30 @@ const conflictingAutocompleteValues = [
   'cc-csc'
 ];
 
-/**
-* Filters out inputs that have autocomplete attributes indicating non-issuer fields.
-* @param {HTMLElement} input - The input or select element to check.
-* @return {boolean} True if the element should be kept, false otherwise.
-*/
-const filterConflictingAutocomplete = input => {
-  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
-
-  if (!autocomplete) {
-    return true;
-  }
-
-  return !conflictingAutocompleteValues.includes(autocomplete);
-};
+const filterConflictingAutocomplete = makeConflictingAutocompleteFilter(conflictingAutocompleteValues);
 
 /**
-* Filters out inputs that contain denied keywords in their name or id.
-* @param {HTMLElement} input - The input or select element to check.
-* @return {boolean} True if the element should be kept, false otherwise.
-*/
-const filterDeniedKeywords = input => {
-  const name = (input.name || '').toLowerCase();
-  const id = (input.id || '').toLowerCase();
-  const hasDeniedWord = paymentCardDeniedKeywords.some(word => name.includes(word) || id.includes(word));
+ * Checks whether an element explicitly declares itself the card brand/type control.
+ * The W3C autocomplete token is authoritative, so it overrides the denied-keyword heuristic.
+ * @param {HTMLElement} element - The element to check.
+ * @return {boolean} True if the element's autocomplete field token is 'cc-type'.
+ */
+const hasIssuerAutocomplete = element => {
+  const autocomplete = (element.getAttribute('autocomplete') || '').toLowerCase().trim();
 
-  return !hasDeniedWord;
+  return autocomplete.split(/\s+/).pop() === 'cc-type';
 };
 
 /**
  * Gets the payment card issuer input/select elements from the document, including those inside shadow DOMs.
+ * @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
  * @return {Array<{element: HTMLElement, isSelect: boolean}>} The array of issuer elements.
  */
-const getPaymentCardIssuerInputs = () => {
+const getPaymentCardIssuerInputs = (shadowRoots = null) => {
   const issuerSelector = paymentCardIssuerSelectors().join(', ');
-  const regularElements = Array.from(document.querySelectorAll(issuerSelector));
-  const shadowRoots = getShadowRoots();
-
-  const shadowElements = shadowRoots.flatMap(
-    root => Array.from(root.querySelectorAll(issuerSelector))
-  );
-
-  const allElements = [...regularElements, ...shadowElements];
-  const afterVisible = allElements.filter(element => isVisible(element));
-  const afterUnique = afterVisible.filter(uniqueElementOnly);
-  const afterConflicting = afterUnique.filter(filterConflictingAutocomplete);
-  const filteredElements = afterConflicting.filter(filterDeniedKeywords);
+  const visibleUniqueElements = collectInputs(issuerSelector, shadowRoots);
+  const afterConflicting = visibleUniqueElements.filter(filterConflictingAutocomplete);
+  const filteredElements = afterConflicting.filter(element => hasIssuerAutocomplete(element) || filterDeniedKeywords(element));
 
   const result = filteredElements.map(element => ({
     element,

@@ -15,7 +15,8 @@ import { motion } from 'motion/react';
 import ToastsContent from '@/entrypoints/popup/components/ToastsContent';
 import Video1Light from '@/assets/videos/install_video_1_light.mp4?url';
 import Video1Dark from '@/assets/videos/install_video_1_dark.mp4?url';
-import { openPopup, safariBlankLinks } from '@/partials/functions';
+import { safariBlankLinks } from '@/partials/functions';
+import openPopupWithFallback from '@/entrypoints/background/utils/openPopupWithFallback';
 import detectDefaultTheme from './functions/detectDefaultTheme';
 import Logo from '@/assets/logo.svg?react';
 import LogoDark from '@/assets/logo-dark.svg?react';
@@ -49,7 +50,7 @@ function Install () {
 
     if (!settings || settings.isOnToolbar) {
       goToStep(2);
-      await openPopup();
+      await openPopupWithFallback();
     } else {
       showToast(getMessage('install_please_pin_extension'), 'error');
     }
@@ -57,7 +58,7 @@ function Install () {
 
   const handleSkip = useCallback(async () => {
     goToStep(2);
-    await openPopup();
+    await openPopupWithFallback();
   }, []);
 
   const goToStep = useCallback(step => {
@@ -77,7 +78,7 @@ function Install () {
   const onUserSettingsChanged = useCallback(async prop => {
     if (prop.isOnToolbar) {
       goToStep(2);
-      await openPopup();
+      await openPopupWithFallback();
     } else {
       goToStep(1);
     }
@@ -94,7 +95,7 @@ function Install () {
 
     if (!settings || settings.isOnToolbar) {
       goToStep(2);
-      await openPopup();
+      await openPopupWithFallback();
     } else {
       goToStep(1);
     }
@@ -222,7 +223,7 @@ function Install () {
                 <Arrow2 />
               </div>
             ) : (
-              <button className={S.installContentArrowCircle} onClick={openPopup} type="button">
+              <button className={S.installContentArrowCircle} onClick={openPopupWithFallback} type="button">
                 <Arrow2 />
                 <span className={S.installContentPulse} />
                 <span className={S.installContentPulse} style={{ animationDelay: '-1s' }} />

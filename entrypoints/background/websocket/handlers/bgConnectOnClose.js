@@ -9,10 +9,20 @@ import { SOCKET_PATHS, CONNECT_VIEWS } from '@/constants';
 import { networkTest } from '@/partials/functions';
 import { wsState } from '../wsState.js';
 import wsNotify from '../wsNotify.js';
+import { clearQrSession } from '../connect/qrSessionPersistence.js';
+import { stopKeepalive } from '../connect/keepalive.js';
 
 const bgConnectOnClose = async (event, data) => {
   if (wsState._socketData?.uuid !== data?.uuid) {
     return;
+  }
+
+  // Once the QR socket closes (success, error, timeout or cancel) the in-flight session
+  // is over, so drop the persisted resume blob + keepalive alarm. The resume path is ONLY
+  // for a Safari SW kill, where no close event fires at all.
+  if (data?.path === SOCKET_PATHS.CONNECT.QR) {
+    await clearQrSession();
+    await stopKeepalive();
   }
 
   switch (event.code) {

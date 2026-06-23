@@ -18,10 +18,8 @@
 const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObserver) => {
   let currentTopLayerElement = null;
   let originalParent = null;
-  let dialogObserver = null;
   let bodyObserver = null;
-  const trackedDialogs = new WeakSet();
-  const dialogCloseHandlers = new WeakMap();
+  const dialogCloseHandlers = new Map();
 
   const moveShadowHostToTopLayer = topLayerElement => {
     if (currentTopLayerElement === topLayerElement) {
@@ -138,15 +136,34 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
   };
 
   const trackDialog = dialog => {
-    if (trackedDialogs.has(dialog)) {
+    if (dialogCloseHandlers.has(dialog)) {
       return;
     }
-
-    trackedDialogs.add(dialog);
 
     const closeHandler = () => handleDialogClose();
     dialogCloseHandlers.set(dialog, closeHandler);
     dialog.addEventListener('close', closeHandler);
+  };
+
+  const untrackDialog = dialog => {
+    const closeHandler = dialogCloseHandlers.get(dialog);
+
+    if (closeHandler) {
+      dialog.removeEventListener('close', closeHandler);
+      dialogCloseHandlers.delete(dialog);
+    }
+  };
+
+  const pruneDetachedDialogs = () => {
+    if (dialogCloseHandlers.size === 0) {
+      return;
+    }
+
+    for (const dialog of dialogCloseHandlers.keys()) {
+      if (!dialog.isConnected) {
+        untrackDialog(dialog);
+      }
+    }
   };
 
   const handleToggleEvent = event => {
@@ -159,44 +176,21 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
     }
   };
 
-  const setupDialogObserver = dialog => {
-    const observer = new MutationObserver(mutations => {
-      for (const mutation of mutations) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'open') {
-          trackDialog(dialog);
+  const handleDialogOpenChange = dialog => {
+    trackDialog(dialog);
 
-          setTimeout(() => {
-            try {
-              if (dialog.matches(':modal')) {
-                handleTopLayerChange();
-              }
-            } catch {
-              handleTopLayerChange();
-            }
-          }, 0);
+    setTimeout(() => {
+      try {
+        if (dialog.matches(':modal')) {
+          handleTopLayerChange();
         }
+      } catch {
+        handleTopLayerChange();
       }
-    });
-
-    observer.observe(dialog, {
-      attributes: true,
-      attributeFilter: ['open']
-    });
-
-    return observer;
+    }, 0);
   };
 
   const setupBodyObserver = () => {
-    const observers = [];
-
-    const processExistingDialogs = () => {
-      const dialogs = document.querySelectorAll('dialog');
-      dialogs.forEach(dialog => {
-        trackDialog(dialog);
-        observers.push(setupDialogObserver(dialog));
-      });
-    };
-
     const checkRemovedNode = node => {
       if (!currentTopLayerElement) {
         return false;
@@ -214,8 +208,22 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
     };
 
     const observer = new MutationObserver(mutations => {
+      let hasRemovedNodes = false;
+
       for (const mutation of mutations) {
-        if (mutation.type === 'childList') {
+        if (mutation.type === 'attributes') {
+          const target = mutation.target;
+
+          if (target && target.tagName === 'DIALOG') {
+            handleDialogOpenChange(target);
+          }
+
+          continue;
+        }
+
+        if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
+          hasRemovedNodes = true;
+
           mutation.removedNodes.forEach(node => {
             if (node.nodeType === Node.ELEMENT_NODE) {
               if (checkRemovedNode(node)) {
@@ -223,36 +231,28 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
               }
             }
           });
-
-          mutation.addedNodes.forEach(node => {
-            if (node.nodeType === Node.ELEMENT_NODE) {
-              if (node.tagName === 'DIALOG') {
-                trackDialog(node);
-                observers.push(setupDialogObserver(node));
-              }
-
-              const nestedDialogs = node.querySelectorAll ? node.querySelectorAll('dialog') : [];
-              nestedDialogs.forEach(dialog => {
-                trackDialog(dialog);
-                observers.push(setupDialogObserver(dialog));
-              });
-            }
-          });
         }
+      }
+
+      if (hasRemovedNodes) {
+        pruneDetachedDialogs();
       }
     });
 
     observer.observe(document.documentElement, {
+      attributeFilter: ['open'],
+      attributes: true,
       childList: true,
       subtree: true
     });
 
-    processExistingDialogs();
+    document.querySelectorAll('dialog').forEach(dialog => {
+      trackDialog(dialog);
+    });
 
     return {
       disconnect: () => {
         observer.disconnect();
-        observers.forEach(obs => obs.disconnect());
       }
     };
   };
@@ -273,10 +273,10 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
       bodyObserver = null;
     }
 
-    if (dialogObserver) {
-      dialogObserver.disconnect();
-      dialogObserver = null;
-    }
+    dialogCloseHandlers.forEach((closeHandler, dialog) => {
+      dialog.removeEventListener('close', closeHandler);
+    });
+    dialogCloseHandlers.clear();
 
     if (currentTopLayerElement) {
       moveShadowHostToBody();

@@ -1084,12 +1084,12 @@
     "description": "Success message shown when the name is copied to clipboard"
   },
   "details_change_password_in_service": {
-    "message": "Change password in the service",
-    "description": "Button label to open the service's password change page"
+    "message": "Change password on DOMAIN",
+    "description": "Button label to open the service's password change page. DOMAIN is replaced at runtime with the service domain"
   },
   "details_change_password_in_service_title": {
-    "message": "Open the service website in a new tab to change the password",
-    "description": "Title for the change password section in the service"
+    "message": "Open DOMAIN in a new tab to change the password",
+    "description": "Tooltip for the change password button. DOMAIN is replaced at runtime with the service domain"
   },
   "details_toggle_password_visibility": {
     "message": "Toggle password visibility",

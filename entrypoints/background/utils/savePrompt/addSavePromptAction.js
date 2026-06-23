@@ -22,7 +22,7 @@ const addSavePromptAction = async (details, serviceTypeData, values, savePromptA
   }
 
   const { tabId } = details;
-  const { username, password, encrypted } = values;
+  const { username, password, usernameEncrypted, passwordEncrypted } = values;
 
   let tabUrl;
 
@@ -39,7 +39,7 @@ const addSavePromptAction = async (details, serviceTypeData, values, savePromptA
     savePromptActions.splice(existingActionIndex, 1);
   }
 
-  const action = { tabId, url, tabUrl, username, password, encrypted: encrypted || false, serviceTypeData };
+  const action = { tabId, url, tabUrl, username, password, usernameEncrypted: usernameEncrypted || false, passwordEncrypted: passwordEncrypted || false, serviceTypeData };
   savePromptActions.push(action);
 };
 

@@ -4,11 +4,13 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { AUTOFILL_RESULT_CODES } from '@/constants';
 import { sendMessageToAllFrames, sendMessageToTab, encryptValueForTransmission, resolveCrossDomainPermissions } from '@/partials/functions';
 import getItem from '@/partials/sessionStorage/getItem';
 import TwofasNotification from '@/partials/TwofasNotification';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import handleAutofillWithPermission from './handleAutofillWithPermission';
+import protectActionDataPassword from './protectActionDataPassword';
 
 /**
 * Function to send autofill data to a specific tab.
@@ -63,19 +65,23 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     action: REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE,
     target: REQUEST_TARGETS.CONTENT
   });
+  const cryptoAvailable = cryptoAvailableRes?.status === 'ok' && cryptoAvailableRes?.cryptoAvailable;
 
   if (!noPassword) {
     try {
       const decryptedData = await item.decryptSif();
       decryptedPassword = decryptedData.password;
     } catch (e) {
-      throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabDecryptSif, {
+      await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabDecryptSif, {
         event: e,
         additional: { func: 'sendAutofillToTab - decryptSif' }
-      });
-    }
+      }));
 
-    const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
+      return TwofasNotification.show({
+        Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+        Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      }, tabId, true);
+    }
 
     if (!cryptoAvailable) {
       encryptedValueB64 = decryptedPassword;
@@ -83,13 +89,20 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       const passwordResult = await encryptValueForTransmission(decryptedPassword);
 
       if (passwordResult.status !== 'ok') {
-        throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
+        await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
           additional: { func: 'sendAutofillToTab - encryptValueForTransmission' }
-        });
+        }));
+
+        return TwofasNotification.show({
+          Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+          Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+        }, tabId, true);
       }
 
       encryptedValueB64 = passwordResult.data;
     }
+
+    decryptedPassword = null;
   }
 
   let hasPasswordInAnyFrame = false;
@@ -100,7 +113,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
       target: REQUEST_TARGETS.CONTENT
     });
 
-    hasPasswordInAnyFrame = inputCheckResults?.some(r => r.canAutofillPassword) || false;
+    hasPasswordInAnyFrame = Array.isArray(inputCheckResults) && inputCheckResults.some(r => r.canAutofillPassword);
   } catch (e) {
     await CatchError(e);
   }
@@ -112,7 +125,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     target: REQUEST_TARGETS.CONTENT,
     noPassword,
     noUsername,
-    cryptoAvailable: cryptoAvailableRes?.cryptoAvailable,
+    cryptoAvailable,
     iframePermissionGranted: true,
     crossDomainAllowedDomains: [],
     hasPasswordInAnyFrame
@@ -132,9 +145,29 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   if (resolution?.needsDialog) {
     const storageKey = `session:autofillData-${tabId}`;
 
+    // Never persist a plaintext password at rest. protectActionDataPassword wraps the password
+    // with the local key (no-op when crypto is available and the value is already encrypted for
+    // transport); it returns a separate object so the in-memory actionData stays plaintext for
+    // the direct-fill fallback below. The value is unwrapped back to plaintext right before
+    // transmission (the page cannot decrypt it itself).
+    const protectedResult = await protectActionDataPassword(actionData);
+
+    if (protectedResult.status !== 'ok') {
+      await CatchError(new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabEncryptError, {
+        additional: { func: 'sendAutofillToTab - protectActionDataPassword' }
+      }));
+
+      return TwofasNotification.show({
+        Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+        Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      }, tabId, true);
+    }
+
+    const storedActionData = protectedResult.actionData;
+
     try {
       await storage.setItem(storageKey, JSON.stringify({
-        actionData,
+        actionData: storedActionData,
         closeData: {
           vaultId,
           deviceId,
@@ -172,11 +205,20 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
   try {
     const response = await sendMessageToAllFrames(tabId, actionData);
 
-    const errorResponses = response.filter(frameResponse => frameResponse.status === 'error');
+    // sendMessageToAllFrames returns false (not an array) when no injectable frame exists;
+    // guard before .filter so it degrades to the error notification instead of a TypeError.
+    if (!Array.isArray(response)) {
+      return TwofasNotification.show({
+        Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+        Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+      }, tabId, true);
+    }
+
+    const errorResponses = response.filter(frameResponse => frameResponse?.status === 'error');
 
     if (errorResponses.length > 0) {
       if (errorResponses[0]?.status === 'error') {
-        if (errorResponses[0]?.message === 'No username and password provided') {
+        if (errorResponses[0]?.code === AUTOFILL_RESULT_CODES.NO_CREDENTIALS) {
           return TwofasNotification.show({
             Title: getMessage('notification_shortcut_autofill_no_username_and_password_title'),
             Message: getMessage('notification_shortcut_autofill_no_username_and_password_message')

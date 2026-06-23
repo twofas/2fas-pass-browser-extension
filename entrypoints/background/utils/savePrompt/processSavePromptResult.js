@@ -78,7 +78,7 @@ const processSavePromptResult = async (request, savePromptActions, tabUpdateData
 
       let decryptedValues;
 
-      if (values?.encrypted) {
+      if (values?.usernameEncrypted || values?.passwordEncrypted) {
         decryptedValues = await decryptValues(values);
       } else {
         decryptedValues = {
@@ -116,7 +116,7 @@ const processSavePromptResult = async (request, savePromptActions, tabUpdateData
 
       let decryptedValues;
 
-      if (values?.encrypted) {
+      if (values?.usernameEncrypted || values?.passwordEncrypted) {
         decryptedValues = await decryptValues(values);
       } else {
         decryptedValues = {

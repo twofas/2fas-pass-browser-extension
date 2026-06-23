@@ -53,6 +53,7 @@ const serializeExport = data => {
 const buildLegend = () => ({
   keys: {
     t: 'timestamp (ms)',
+    v: 'extension version that produced the entry',
     l: 'level',
     c: 'category',
     x: 'context',

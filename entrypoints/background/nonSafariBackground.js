@@ -18,7 +18,9 @@ const nonSafariBackground = (tabsInputData, savePromptActions, tabUpdateData) =>
 
   browser.webRequest.onBeforeRequest.addListener(
     details => onWebRequest(details, tabsInputData, savePromptActions, tabUpdateData),
-    { urls: ['<all_urls>'], types: ['main_frame', 'xmlhttprequest', 'ping'] },
+    // sub_frame so classic <form> POSTs navigating a same-site iframe reach the save
+    // prompt; onWebRequest gates them to the tab's root domain (finding #19).
+    { urls: ['<all_urls>'], types: ['main_frame', 'sub_frame', 'xmlhttprequest', 'ping'] },
     ['requestBody']
   );
 

@@ -4,18 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, sendMessageToTab, resolveCrossDomainPermissions } from '@/partials/functions';
+import { sendMessageToAllFrames, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, resolveCrossDomainPermissions, aggregateLoginAutofillResponses } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
+import protectActionDataPassword from '@/entrypoints/background/utils/protectActionDataPassword';
+import { acquireAutofillTab, showT2Toast, showGenericToast } from './autofillPopupShared';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import Login from '@/models/itemModels/Login';
-
-const showT2Toast = () => {
-  showToast(getMessage('this_tab_can_t_autofill_t2'), 'info');
-};
-
-const showGenericToast = () => {
-  showToast(getMessage('this_tab_can_t_autofill'), 'info');
-};
 
 /**
 * Handles the autofill action for Login items.
@@ -35,54 +29,18 @@ const handleLoginAutofill = async (item, navigate) => {
     securityType: item?.securityType
   });
 
-  let tab;
+  const prolog = await acquireAutofillTab(onTabError, 'login');
 
-  try {
-    tab = await getLastActiveTab(onTabError, t => !tabIsInternal(t));
-  } catch (e) {
-    await CatchError(e);
-  }
-
-  if (!tab) {
-    logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - autofill aborted, no target tab');
+  if (!prolog) {
     return;
   }
 
-  let injected = false;
-
-  try {
-    injected = await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
-  } catch (e) {
-    onTabError();
-
-    if (!e.message.includes('showing error page')) {
-      await CatchError(e);
-    }
-
-    return;
-  }
-
-  if (!injected) {
-    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - autofill aborted, content script injection failed', { tabId: tab.id });
-    showToast(getMessage('error_autofill_failed'), 'error');
-    return;
-  }
-
-  const cryptoAvailableRes = await sendMessageToTab(tab.id, {
-    action: REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE,
-    target: REQUEST_TARGETS.CONTENT
-  });
-
-  if (!cryptoAvailableRes) {
-    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - autofill aborted, no GET_CRYPTO_AVAILABLE response from top frame', { tabId: tab.id });
-    showToast(getMessage('error_autofill_failed'), 'error');
-    return;
-  }
-
+  const { tab, cryptoAvailableRes } = prolog;
   const hasPassword = item.sifExists;
   const hasUsername = item?.content.username && item.content.username.length > 0;
   let passwordDecrypt = true;
   let pageHasPasswordInputs = false;
+  let hasPasswordInAnyFrame = false;
 
   if (isHighlySecret) {
     let canAutofill = false;
@@ -107,6 +65,7 @@ const handleLoginAutofill = async (item, navigate) => {
     }
 
     pageHasPasswordInputs = canAutofillPassword;
+    hasPasswordInAnyFrame = canAutofillPassword;
 
     if (canAutofillPassword) {
       if (!hasPassword) {
@@ -138,6 +97,20 @@ const handleLoginAutofill = async (item, navigate) => {
     } else if (!hasPassword && !hasUsername) {
       showToast(getMessage('this_tab_autofill_no_username_and_password'), 'error');
       return;
+    }
+  }
+
+  // Highly Secret already probed every frame above; only the other tiers need the extra scan.
+  if (!isHighlySecret) {
+    try {
+      const inputCheckResults = await sendMessageToAllFrames(tab.id, {
+        action: REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS,
+        target: REQUEST_TARGETS.CONTENT
+      });
+
+      hasPasswordInAnyFrame = inputCheckResults?.some(r => r.canAutofillPassword) || false;
+    } catch (e) {
+      await CatchError(e);
     }
   }
 
@@ -181,7 +154,9 @@ const handleLoginAutofill = async (item, navigate) => {
     username: item.content.username,
     target: REQUEST_TARGETS.CONTENT,
     cryptoAvailable: cryptoAvailableRes.cryptoAvailable,
-    iframePermissionGranted: true
+    iframePermissionGranted: true,
+    crossDomainAllowedDomains: [],
+    hasPasswordInAnyFrame
   };
 
   if (passwordDecrypt) {
@@ -201,8 +176,18 @@ const handleLoginAutofill = async (item, navigate) => {
     } else if (resolution.needsDialog) {
       const storageKey = `session:autofillData-${tab.id}`;
 
+      // Never persist a plaintext password at rest while the dialog is pending (finding #5).
+      // protectActionDataPassword wraps it with the local key (no-op when crypto is available);
+      // the background unwraps it back to plaintext just before the fill.
+      const protectedResult = await protectActionDataPassword(actionData);
+
+      if (protectedResult.status !== 'ok') {
+        showToast(getMessage('error_autofill_failed'), 'error');
+        return;
+      }
+
       await storage.setItem(storageKey, JSON.stringify({
-        actionData,
+        actionData: protectedResult.actionData,
         closeData: {
           vaultId: item.vaultId,
           deviceId: item.deviceId,
@@ -270,17 +255,7 @@ const handleLoginAutofill = async (item, navigate) => {
     return;
   }
 
-  const isOk = res.some(frameResponse => frameResponse.status === 'ok');
-  const allFieldsFilled = res.every(frameResponse => {
-    if (frameResponse.status !== 'ok') {
-      return frameResponse.message === 'No input fields found';
-    }
-
-    const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
-    const couldFillPassword = !actionData.password || frameResponse.canAutofillPassword !== false;
-
-    return couldFillUsername && couldFillPassword;
-  });
+  const { isOk, allFieldsFilled } = aggregateLoginAutofillResponses(res, actionData);
 
   if (!isHighlySecret) {
     pageHasPasswordInputs = res.some(r => r.canAutofillPassword);

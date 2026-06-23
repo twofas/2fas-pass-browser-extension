@@ -4,36 +4,15 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, saveCrossDomainPreferences, openPopup } from '@/partials/functions';
+import { sendMessageToAllFrames, saveCrossDomainPreferences, aggregateCardAutofillResponses } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
-
-/**
-* Stores autofill failure data for KeepItem display when popup reopens.
-* @async
-* @param {number} tabId - The ID of the tab.
-* @param {Object} closeData - The close data containing item and SIF info.
-* @return {Promise<void>}
-*/
-const storeAutofillFailureData = async (tabId, closeData) => {
-  if (!closeData) {
-    return;
-  }
-
-  const failureKey = `session:autofillT2FailedPending-${tabId}`;
-
-  await storage.setItem(failureKey, JSON.stringify({
-    action: 'autofillT2Failed',
-    vaultId: closeData.vaultId,
-    deviceId: closeData.deviceId,
-    itemId: closeData.itemId,
-    s_password: closeData.s_password,
-    hkdfSaltAB: closeData.hkdfSaltAB,
-    sessionKeyForHKDF: closeData.sessionKeyForHKDF
-  }));
-
-  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - processCrossDomainDialogResult (storeAutofillFailureData)');
-};
+import openPopupWithFallback from './openPopupWithFallback';
+import restoreActionDataPassword from './restoreActionDataPassword';
+import restoreCardActionData from './restoreCardActionData';
+import storeAutofillFailureData from './storeAutofillFailureData';
+import dispatchLoginAutofill from './dispatchLoginAutofill';
+import { finishLoginAutofill, finishCardAutofill, closePopupWindow } from '../websocket/utils/finishPullRequestAutofill.js';
 
 /**
 * Handles Login autofill after cross-domain dialog result.
@@ -49,77 +28,23 @@ const processLoginResult = async (tabId, storageKey, actionData, closeData, cros
   actionData.iframePermissionGranted = true;
   actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
 
-  try {
-    const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
+  // Unwrap the at-rest-encrypted password back to plaintext before filling (finding #5).
+  // No-op when crypto is available (the page decrypts it itself).
+  const restored = await restoreActionDataPassword(actionData);
 
-    if (!reinjected) {
-      logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'processLoginResult - re-injection after dialog did not verify all frames', { tabId });
-    }
-  } catch (e) {
-    await CatchError(e);
-  }
-
-  let response;
-
-  try {
-    response = await sendMessageToAllFrames(tabId, actionData);
-  } catch (e) {
-    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'processLoginResult - sendMessageToAllFrames threw', { tabId, errorMessage: e?.message });
-    await CatchError(e);
+  if (restored.status !== 'ok') {
     await storage.removeItem(storageKey);
-    await storeAutofillFailureData(tabId, closeData);
 
-    return openPopup();
-  }
-
-  await storage.removeItem(storageKey);
-
-  if (!response) {
-    await storeAutofillFailureData(tabId, closeData);
-
-    return openPopup();
-  }
-
-  const isOk = response.some(frameResponse => frameResponse.status === 'ok');
-  const allFieldsFilled = response.every(frameResponse => {
-    if (frameResponse.status !== 'ok') {
-      return frameResponse.message === 'No input fields found';
+    if (closeData?.windowClose) {
+      return finishLoginAutofill(tabId, actionData, closeData, false);
     }
 
-    const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
-    const couldFillPassword = !actionData.password || frameResponse.canAutofillPassword !== false;
-
-    return couldFillUsername && couldFillPassword;
-  });
-
-  if (!isOk) {
     await storeAutofillFailureData(tabId, closeData);
 
-    return openPopup();
+    return openPopupWithFallback();
   }
 
-  if (!allFieldsFilled && closeData) {
-    if (closeData.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await storeAutofillFailureData(tabId, closeData);
-
-      return openPopup();
-    }
-  }
-
-  try {
-    await sendMessageToAllFrames(tabId, {
-      action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,
-      target: REQUEST_TARGETS.PROMPT
-    });
-  } catch { }
-
-  try {
-    await browser.runtime.sendMessage({
-      action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,
-      target: REQUEST_TARGETS.BACKGROUND_PROMPT,
-      tabId
-    });
-  } catch { }
+  return dispatchLoginAutofill(tabId, storageKey, actionData, closeData);
 };
 
 /**
@@ -128,12 +53,30 @@ const processLoginResult = async (tabId, storageKey, actionData, closeData, cros
 * @param {number} tabId - The ID of the tab.
 * @param {string} storageKey - The session storage key.
 * @param {Object} actionData - The autofill action data.
+* @param {Object} closeData - The close data (SIF + windowClose flag) for shortcut recovery.
 * @param {Array<string>} crossDomainAllowedDomains - Allowed domains list.
 * @return {Promise<void>}
 */
-const processCardResult = async (tabId, storageKey, actionData, crossDomainAllowedDomains) => {
+const processCardResult = async (tabId, storageKey, actionData, closeData, crossDomainAllowedDomains) => {
   actionData.iframePermissionGranted = true;
   actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
+
+  // Unwrap the at-rest-encrypted card fields back to plaintext before filling (finding #5).
+  // No-op when crypto is available (the page decrypts them itself).
+  const restored = await restoreCardActionData(actionData);
+
+  if (restored.status !== 'ok') {
+    await storage.removeItem(storageKey);
+
+    if (closeData?.windowClose) {
+      return finishCardAutofill(tabId, actionData, closeData, false);
+    }
+
+    return TwofasNotification.show({
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+    }, tabId, true);
+  }
 
   try {
     const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
@@ -154,6 +97,10 @@ const processCardResult = async (tabId, storageKey, actionData, crossDomainAllow
     await CatchError(e);
     await storage.removeItem(storageKey);
 
+    if (closeData?.windowClose) {
+      return finishCardAutofill(tabId, actionData, closeData, false);
+    }
+
     return TwofasNotification.show({
       Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
       Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
@@ -162,6 +109,10 @@ const processCardResult = async (tabId, storageKey, actionData, crossDomainAllow
 
   await storage.removeItem(storageKey);
 
+  if (closeData?.windowClose) {
+    return finishCardAutofill(tabId, actionData, closeData, response);
+  }
+
   if (!response) {
     return TwofasNotification.show({
       Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
@@ -169,48 +120,23 @@ const processCardResult = async (tabId, storageKey, actionData, crossDomainAllow
     }, tabId, true);
   }
 
-  const relevantResponses = response.filter(r => r && r.status && r.message !== 'No input fields found') || [];
+  const { outcome } = aggregateCardAutofillResponses(response);
 
-  if (relevantResponses.length === 0) {
+  if (outcome === 'noInputs') {
     return TwofasNotification.show({
       Title: getMessage('notification_card_autofill_no_inputs_title'),
       Message: getMessage('notification_card_autofill_no_inputs_message')
     }, tabId, true);
   }
 
-  const isOk = relevantResponses.some(frameResponse => frameResponse.status === 'ok');
-  const isPartial = relevantResponses.some(frameResponse => frameResponse.status === 'partial');
-
-  const allFilledFields = relevantResponses.reduce((acc, r) => {
-    if (r.filledFields) {
-      Object.keys(r.filledFields).forEach(field => {
-        if (r.filledFields[field]) {
-          acc[field] = true;
-        }
-      });
-    }
-
-    return acc;
-  }, {});
-
-  const allMissingInputFields = relevantResponses
-    .flatMap(r => r.missingInputFields || [])
-    .filter((field, index, self) => self.indexOf(field) === index)
-    .filter(field => !allFilledFields[field]);
-  const hasMissingInputs = allMissingInputFields.length > 0;
-
-  if (!isOk && !isPartial) {
+  if (outcome === 'error') {
     return TwofasNotification.show({
       Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
       Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
-  if (isOk && !isPartial && !hasMissingInputs) {
-    return;
-  }
-
-  if (isPartial || hasMissingInputs) {
+  if (outcome === 'partial') {
     return TwofasNotification.show({
       Title: getMessage('notification_card_autofill_partial_title'),
       Message: getMessage('notification_card_autofill_partial_message')
@@ -237,11 +163,6 @@ const processCrossDomainDialogResult = async request => {
     return;
   }
 
-  if (!confirmed) {
-    await storage.removeItem(storageKey);
-    return;
-  }
-
   let storedData;
 
   try {
@@ -254,10 +175,21 @@ const processCrossDomainDialogResult = async request => {
     storedData = JSON.parse(storedDataJson);
   } catch (e) {
     await CatchError(e);
+    await storage.removeItem(storageKey).catch(() => {});
     return;
   }
 
   const { actionData, closeData, trustedDomains } = storedData;
+
+  if (!confirmed) {
+    await storage.removeItem(storageKey);
+
+    if (closeData?.windowClose) {
+      await closePopupWindow();
+    }
+
+    return;
+  }
 
   if (!actionData) {
     await storage.removeItem(storageKey);
@@ -279,7 +211,7 @@ const processCrossDomainDialogResult = async request => {
   const isCard = actionData.action === REQUEST_ACTIONS.AUTOFILL_CARD;
 
   if (isCard) {
-    return processCardResult(tabId, storageKey, actionData, crossDomainAllowedDomains);
+    return processCardResult(tabId, storageKey, actionData, closeData, crossDomainAllowedDomains);
   }
 
   return processLoginResult(tabId, storageKey, actionData, closeData, crossDomainAllowedDomains);

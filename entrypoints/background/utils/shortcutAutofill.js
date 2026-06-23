@@ -4,12 +4,13 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { tabIsInternal, openPopup, sendMessageToAllFrames } from '@/partials/functions';
+import { tabIsInternal, sendMessageToAllFrames } from '@/partials/functions';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import getItems from '@/partials/sessionStorage/getItems';
 import URIMatcher from '@/partials/URIMatcher';
 import sendAutofillToTab from './sendAutofillToTab';
 import openPopupWindowInNewWindow from './openPopupWindowInNewWindow';
+import openPopupWithFallback from './openPopupWithFallback';
 import TwofasNotification from '@/partials/TwofasNotification';
 import sendMatchingLoginsToTab from './sendMatchingLoginsToTab';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
@@ -93,7 +94,7 @@ const shortcutAutofill = async () => {
   }
 
   if (!configured) {
-    return openPopup();
+    return openPopupWithFallback();
   }
 
   let tabs;
@@ -109,7 +110,9 @@ const shortcutAutofill = async () => {
     }, null, true);
   }
 
-  tabs = tabs.sort((a, b) => b.lastAccessed - a.lastAccessed);
+  // tabs.query({ currentWindow: true }) returns the single active tab of the current
+  // window, so there is nothing to sort — and tabs.Tab.lastAccessed is unsupported in
+  // Safari (BCD version_added:false), where the comparator would be a NaN no-op anyway.
   const tab = tabs[0];
 
   if (tabIsInternal(tab)) {
@@ -130,7 +133,7 @@ const shortcutAutofill = async () => {
   } catch {}
 
   if (matchingLogins.length === 0) {
-    return openPopup();
+    return openPopupWithFallback();
   }
 
   if (matchingLogins.length === 1) {

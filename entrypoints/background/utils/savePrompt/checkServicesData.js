@@ -48,7 +48,7 @@ const checkServicesData = async (details, values, tabUrl) => {
 
   let decryptedValues;
 
-  if (values?.encrypted) {
+  if (values?.usernameEncrypted || values?.passwordEncrypted) {
     decryptedValues = await decryptValues(values);
   } else {
     decryptedValues = {

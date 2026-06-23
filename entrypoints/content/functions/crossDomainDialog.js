@@ -270,9 +270,18 @@ const crossDomainDialog = (request, sendResponse, container) => {
   dialog.appendChild(dialogContent);
 
   const cleanup = () => {
+    window.removeEventListener('pagehide', onPageHide);
+    window.removeEventListener('beforeunload', onPageHide);
     dialog.close();
     dialog.remove();
     activeDialog = null;
+  };
+
+  // Abandoning the page (navigation away or tab close) while the dialog is open must cancel
+  // it, so the pending autofill payload in session storage is cleared instead of lingering
+  // for the rest of the browser session (finding #5).
+  const onPageHide = () => {
+    respondCancel();
   };
 
   const respondCancel = () => {
@@ -323,6 +332,9 @@ const crossDomainDialog = (request, sendResponse, container) => {
   closeBtn.addEventListener('click', respondCancel);
   cancelBtn.addEventListener('click', respondCancel);
   acceptBtn.addEventListener('click', respondAccept);
+
+  window.addEventListener('pagehide', onPageHide);
+  window.addEventListener('beforeunload', onPageHide);
 
   dialog.addEventListener('cancel', e => {
     e.preventDefault();

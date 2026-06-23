@@ -67,6 +67,10 @@ function CardNumber (props) {
     }
 
     if (!itemInstance?.cardNumberExists) {
+      if (originalItem?.isT3orT2WithSif) {
+        setData('sifDecryptError', true);
+      }
+
       return null;
     }
 
@@ -84,7 +88,7 @@ function CardNumber (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedCardNumber, isDecrypting, sifDecryptError, itemInstance, setData]);
+  }, [localDecryptedCardNumber, isDecrypting, sifDecryptError, itemInstance, originalItem, setData]);
 
   const getHiddenMaskValue = () => {
     if (isHighlySecretWithoutSif) {

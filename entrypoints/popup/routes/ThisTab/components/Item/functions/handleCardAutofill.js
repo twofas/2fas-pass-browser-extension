@@ -4,18 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, tabIsInternal, getLastActiveTab, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptValueForTransmission, resolveCrossDomainPermissions } from '@/partials/functions';
+import { sendMessageToAllFrames, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptCardSifForTransmission, resolveCrossDomainPermissions } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
+import protectCardActionData from '@/entrypoints/background/utils/protectCardActionData';
+import { acquireAutofillTab, showT2Toast, showGenericToast } from './autofillPopupShared';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import PaymentCard from '@/models/itemModels/PaymentCard';
-
-const showT2Toast = () => {
-  showToast(getMessage('this_tab_can_t_autofill_t2'), 'info');
-};
-
-const showGenericToast = () => {
-  showToast(getMessage('this_tab_can_t_autofill'), 'info');
-};
 
 /**
 * Handles the autofill action for PaymentCard items.
@@ -35,49 +29,13 @@ const handleCardAutofill = async (item, navigate) => {
     securityType: item?.securityType
   });
 
-  let tab;
+  const prolog = await acquireAutofillTab(onTabError, 'card');
 
-  try {
-    tab = await getLastActiveTab(onTabError, t => !tabIsInternal(t));
-  } catch (e) {
-    await CatchError(e);
-  }
-
-  if (!tab) {
+  if (!prolog) {
     return;
   }
 
-  let injected = false;
-
-  try {
-    injected = await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
-  } catch (e) {
-    onTabError();
-
-    if (!e.message.includes('showing error page')) {
-      await CatchError(e);
-    }
-
-    return;
-  }
-
-  if (!injected) {
-    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - card autofill aborted, content script injection failed', { tabId: tab.id });
-    showToast(getMessage('error_autofill_failed'), 'error');
-    return;
-  }
-
-  const cryptoAvailableRes = await sendMessageToTab(tab.id, {
-    action: REQUEST_ACTIONS.GET_CRYPTO_AVAILABLE,
-    target: REQUEST_TARGETS.CONTENT
-  });
-
-  if (!cryptoAvailableRes) {
-    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - card autofill aborted, no GET_CRYPTO_AVAILABLE response from top frame', { tabId: tab.id });
-    showToast(getMessage('error_autofill_failed'), 'error');
-    return;
-  }
-
+  const { tab, cryptoAvailableRes } = prolog;
   const hasCardData = item.sifExists;
   const hasCardholderName = item?.content?.cardHolder && item.content.cardHolder.length > 0;
   let sifDecrypt = true;
@@ -143,69 +101,34 @@ const handleCardAutofill = async (item, navigate) => {
     }
   }
 
-  let decryptedCardNumber = '';
-  let decryptedExpirationDate = '';
-  let decryptedSecurityCode = '';
   let encryptedCardNumberB64 = null;
   let encryptedExpirationDateB64 = null;
   let encryptedSecurityCodeB64 = null;
 
   if (sifDecrypt) {
-    try {
-      const decryptedValues = await item.decryptSif();
-      decryptedCardNumber = decryptedValues.cardNumber || '';
-      decryptedExpirationDate = decryptedValues.expirationDate || '';
-      decryptedSecurityCode = decryptedValues.securityCode || '';
-    } catch (e) {
+    const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
+    const encryptResult = await encryptCardSifForTransmission(item, cryptoAvailable);
+
+    if (encryptResult.status === 'decryptError') {
       showToast(getMessage('error_autofill_failed'), 'error');
-      await CatchError(e);
+      await CatchError(encryptResult.event);
       return;
     }
 
-    const cryptoAvailable = cryptoAvailableRes.status === 'ok' && cryptoAvailableRes.cryptoAvailable;
-
-    if (!cryptoAvailable) {
-      encryptedCardNumberB64 = decryptedCardNumber;
-      encryptedExpirationDateB64 = decryptedExpirationDate;
-      encryptedSecurityCodeB64 = decryptedSecurityCode;
-    } else {
-      if (decryptedCardNumber) {
-        const cardNumberResult = await encryptValueForTransmission(decryptedCardNumber);
-
-        if (cardNumberResult.status !== 'ok') {
-          showToast(getMessage('error_autofill_failed'), 'error');
-          return;
-        }
-
-        encryptedCardNumberB64 = cardNumberResult.data;
-      }
-
-      if (decryptedExpirationDate) {
-        const expirationDateResult = await encryptValueForTransmission(decryptedExpirationDate);
-
-        if (expirationDateResult.status !== 'ok') {
-          showToast(getMessage('error_autofill_failed'), 'error');
-          return;
-        }
-
-        encryptedExpirationDateB64 = expirationDateResult.data;
-      }
-
-      if (decryptedSecurityCode) {
-        const securityCodeResult = await encryptValueForTransmission(decryptedSecurityCode);
-
-        if (securityCodeResult.status !== 'ok') {
-          showToast(getMessage('error_autofill_failed'), 'error');
-          return;
-        }
-
-        encryptedSecurityCodeB64 = securityCodeResult.data;
-      }
+    if (encryptResult.status === 'importKeyError') {
+      showToast(getMessage('error_autofill_failed'), 'error');
+      await CatchError(encryptResult.event);
+      return;
     }
 
-    decryptedCardNumber = '';
-    decryptedExpirationDate = '';
-    decryptedSecurityCode = '';
+    if (encryptResult.status !== 'ok') {
+      showToast(getMessage('error_autofill_failed'), 'error');
+      return;
+    }
+
+    encryptedCardNumberB64 = encryptResult.cardNumber;
+    encryptedExpirationDateB64 = encryptResult.expirationDate;
+    encryptedSecurityCodeB64 = encryptResult.securityCode;
   }
 
   const actionData = {
@@ -214,7 +137,8 @@ const handleCardAutofill = async (item, navigate) => {
     cardIssuer: item.content.cardIssuer,
     target: REQUEST_TARGETS.CONTENT,
     cryptoAvailable: cryptoAvailableRes.cryptoAvailable,
-    iframePermissionGranted: true
+    iframePermissionGranted: true,
+    crossDomainAllowedDomains: []
   };
 
   if (sifDecrypt) {
@@ -251,8 +175,18 @@ const handleCardAutofill = async (item, navigate) => {
     } else if (resolution.needsDialog) {
       const storageKey = `session:autofillCardData-${tab.id}`;
 
+      // Never persist plaintext card fields at rest while the dialog is pending (finding #5).
+      // protectCardActionData wraps them with the local key (no-op when crypto is available);
+      // the background unwraps them back to plaintext just before the fill.
+      const protectedResult = await protectCardActionData(actionData);
+
+      if (protectedResult.status !== 'ok') {
+        showToast(getMessage('error_autofill_failed'), 'error');
+        return;
+      }
+
       await storage.setItem(storageKey, JSON.stringify({
-        actionData
+        actionData: protectedResult.actionData
       }));
 
       browser.runtime.sendMessage({

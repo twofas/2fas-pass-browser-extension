@@ -9,7 +9,6 @@ import { createMessageRouter, onInstalled, onContextMenuClick, onStorageChange, 
 import nonSafariBackground from './nonSafariBackground';
 import firefoxBackground from './firefoxBackground';
 import initBadgeState from './utils/badge/initBadgeState';
-import onPopupDisconnect from './websocket/onPopupDisconnect.js';
 
 export default defineBackground({
   /**
@@ -60,10 +59,11 @@ export default defineBackground({
 
     browser.storage.onChanged.addListener((change, areaName) => onStorageChange(change, areaName, migrations));
 
+    // The popup opens a `popup-lifecycle` port purely to keep the service worker alive
+    // while it is open (Chrome); it needs no background handling. Only devpanel needs a
+    // handler.
     browser.runtime.onConnect.addListener(port => {
-      if (port.name === 'popup-lifecycle') {
-        port.onDisconnect.addListener(() => onPopupDisconnect());
-      } else if (import.meta.env.DEV && port.name === 'devpanel-ws') {
+      if (import.meta.env.DEV && port.name === 'devpanel-ws') {
         import('./websocket/devPanelTap').then(mod => {
           mod.registerDevPanelPort(port);
         }).catch(() => {});

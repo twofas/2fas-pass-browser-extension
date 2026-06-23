@@ -4,9 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab } from '@/partials/functions';
+import { sendMessageToAllFrames, sendMessageToTab, aggregateCardAutofillResponses, loadAndClassifyCrossDomainPermissions, focusTabForDialog } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import TwofasNotification from '@/partials/TwofasNotification';
+import restoreCardActionData from './restoreCardActionData';
 
 /**
 * Handles autofill card with cross-domain permission confirmation.
@@ -50,35 +51,13 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
     }, tabId, true);
   }
 
-  let trustedList = [];
-  let untrustedList = [];
-
-  try {
-    trustedList = (await storage.getItem('local:crossDomainTrustedDomains')) || [];
-  } catch { }
-
-  try {
-    untrustedList = (await storage.getItem('local:crossDomainUntrustedDomains')) || [];
-  } catch { }
-
-  const unknownDomains = domains.filter(d => !trustedList.includes(d) && !untrustedList.includes(d));
-  const trustedDomains = domains.filter(d => trustedList.includes(d));
-  const allBlocked = unknownDomains.length === 0 && trustedDomains.length === 0;
-
-  const crossDomainAllowedDomains = allBlocked ? [] : [...trustedDomains];
+  const { unknownDomains, crossDomainAllowedDomains } = await loadAndClassifyCrossDomainPermissions(domains);
 
   if (unknownDomains.length > 0) {
     storedData.trustedDomains = crossDomainAllowedDomains;
     await storage.setItem(storageKey, JSON.stringify(storedData));
 
-    try {
-      const tab = await browser.tabs.get(tabId);
-
-      await browser.windows.update(tab.windowId, { focused: true });
-      await browser.tabs.update(tabId, { active: true });
-
-      await new Promise(resolve => setTimeout(resolve, 100));
-    } catch { }
+    await focusTabForDialog(tabId);
 
     try {
       await sendMessageToTab(tabId, {
@@ -98,6 +77,19 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
 
   actionData.iframePermissionGranted = true;
   actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
+
+  // Unwrap the at-rest-encrypted card fields back to plaintext before filling (finding #5).
+  // No-op when crypto is available (the page decrypts them itself).
+  const restored = await restoreCardActionData(actionData);
+
+  if (restored.status !== 'ok') {
+    await storage.removeItem(storageKey);
+
+    return TwofasNotification.show({
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+    }, tabId, true);
+  }
 
   try {
     const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
@@ -133,48 +125,23 @@ const handleAutofillCardWithPermission = async (tabId, storageKey, domains) => {
     }, tabId, true);
   }
 
-  const relevantResponses = response.filter(r => r && r.status && r.message !== 'No input fields found') || [];
+  const { outcome } = aggregateCardAutofillResponses(response);
 
-  if (relevantResponses.length === 0) {
+  if (outcome === 'noInputs') {
     return TwofasNotification.show({
       Title: getMessage('notification_card_autofill_no_inputs_title'),
       Message: getMessage('notification_card_autofill_no_inputs_message')
     }, tabId, true);
   }
 
-  const isOk = relevantResponses.some(frameResponse => frameResponse.status === 'ok');
-  const isPartial = relevantResponses.some(frameResponse => frameResponse.status === 'partial');
-
-  const allFilledFields = relevantResponses.reduce((acc, r) => {
-    if (r.filledFields) {
-      Object.keys(r.filledFields).forEach(field => {
-        if (r.filledFields[field]) {
-          acc[field] = true;
-        }
-      });
-    }
-
-    return acc;
-  }, {});
-
-  const allMissingInputFields = relevantResponses
-    .flatMap(r => r.missingInputFields || [])
-    .filter((field, index, self) => self.indexOf(field) === index)
-    .filter(field => !allFilledFields[field]);
-  const hasMissingInputs = allMissingInputFields.length > 0;
-
-  if (!isOk && !isPartial) {
+  if (outcome === 'error') {
     return TwofasNotification.show({
       Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
       Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
     }, tabId, true);
   }
 
-  if (isOk && !isPartial && !hasMissingInputs) {
-    return;
-  }
-
-  if (isPartial || hasMissingInputs) {
+  if (outcome === 'partial') {
     return TwofasNotification.show({
       Title: getMessage('notification_card_autofill_partial_title'),
       Message: getMessage('notification_card_autofill_partial_message')

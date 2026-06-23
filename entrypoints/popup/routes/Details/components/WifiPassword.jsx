@@ -57,6 +57,10 @@ function WifiPassword (props) {
     }
 
     if (!itemInstance?.sifExists) {
+      if (originalItem?.isT3orT2WithSif) {
+        setData('sifDecryptError', true);
+      }
+
       return null;
     }
 
@@ -74,7 +78,7 @@ function WifiPassword (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedPassword, isDecrypting, sifDecryptError, itemInstance, setData]);
+  }, [localDecryptedPassword, isDecrypting, sifDecryptError, itemInstance, originalItem, setData]);
 
   const isHighlySecretWithoutSif = originalItem?.securityType === SECURITY_TIER.HIGHLY_SECRET && !originalItem?.sifExists;
 

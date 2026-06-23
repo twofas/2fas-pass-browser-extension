@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import generateNonce from './generateNonce.js';
+import getLocalKey from '@/entrypoints/background/utils/getLocalKey';
 
 /**
 * Encrypts a value using the local key for secure transmission.
@@ -23,7 +24,7 @@ const encryptValueForTransmission = async (value, localKeyCrypto) => {
     if (localKeyCrypto) {
       importedKey = localKeyCrypto;
     } else {
-      const localKey = await storage.getItem('local:lKey');
+      const localKey = await getLocalKey();
       const localKeyAB = Base64ToArrayBuffer(localKey);
 
       importedKey = await crypto.subtle.importKey(

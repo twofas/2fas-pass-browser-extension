@@ -14,5 +14,7 @@ export const config = Object.freeze({
   toastAutoClose: 5000,
   defaultStorageIdleLock: 15, // minutes
   handleInputEventDebounce: 100, // milliseconds
+  crossDomainDialogFocusDelay: 100, // milliseconds - settle time after focusing the tab before showing the cross-domain dialog
+  iframePermissionRetryDelay: 200, // milliseconds - wait before retrying CHECK_IFRAME_PERMISSION for slow-bootstrapping iframes
   schemeThreshold: 2 // save devices with scheme version >= 2
 });

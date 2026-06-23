@@ -48,9 +48,10 @@ const inputSetValue = (el, value, options = {}) => {
     el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
   } else {
     el.value = '';
-    el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+    el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
     el.value = value;
     el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
   }
 
   setTimeout(() => {

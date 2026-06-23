@@ -8,13 +8,20 @@ import { createElement, createSVGElement, createTextElement } from '@/partials/D
 import iconSrc from '@/assets/notification-logo.svg?raw';
 import { selectors as S } from '@/constants';
 
-/** 
+let activeBeforeUnloadCleanup = null;
+
+/**
 * Function to create a notification.
 * @param {Object} request - The request object.
 * @param {HTMLElement} container - The container element to search within.
 * @return {void}
 */
 const notification = (request, container) => {
+  if (activeBeforeUnloadCleanup) {
+    activeBeforeUnloadCleanup();
+    activeBeforeUnloadCleanup = null;
+  }
+
   const containerEl = container || document;
 
   let n = {
@@ -68,6 +75,7 @@ const notification = (request, container) => {
   let beforeUnloadTimer = null;
   let autoCloseTimer = null;
   let cleanupTimer = null;
+  let removeTimer = null;
 
   const handleBeforeUnload = () => {
     if (n && n.item) {
@@ -77,6 +85,14 @@ const notification = (request, container) => {
     beforeUnloadTimer = setTimeout(() => {
       closeNotification();
     }, 1400);
+  };
+
+  const cleanupBeforeUnload = () => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+
+    if (activeBeforeUnloadCleanup === cleanupBeforeUnload) {
+      activeBeforeUnloadCleanup = null;
+    }
   };
 
   const closeNotification = () => {
@@ -105,16 +121,27 @@ const notification = (request, container) => {
       cleanupTimer = null;
     }
 
-    window.removeEventListener('beforeunload', handleBeforeUnload);
+    if (removeTimer !== null) {
+      clearTimeout(removeTimer);
+      removeTimer = null;
+    }
+
+    cleanupBeforeUnload();
 
     if (n && n.item) {
       n.item.classList.add('twofas-pass-hidden');
 
       cleanupTimer = setTimeout(() => {
         if (n && n.item) {
+          const oldItem = n.item;
           n.item.classList.remove('twofas-pass-hidden');
           n.item.classList.remove('twofas-pass-visible');
           n.item.classList.add('twofas-pass-old');
+
+          removeTimer = setTimeout(() => {
+            oldItem.remove();
+            removeTimer = null;
+          }, 400);
         }
 
         n = null;
@@ -140,6 +167,7 @@ const notification = (request, container) => {
   }, 1200);
 
   window.addEventListener('beforeunload', handleBeforeUnload);
+  activeBeforeUnloadCleanup = cleanupBeforeUnload;
 
   if (request.timeout) {
     autoCloseTimer = setTimeout(() => {
