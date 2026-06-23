@@ -6,35 +6,17 @@
 
 import addNewSessionIdToDevice from './utils/addNewSessionIdToDevice';
 import TwoFasWebSocket from '.';
-import popupIsInSeparateWindow from '@/partials/functions/popupIsInSeparateWindow';
 import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
 import sendMessageToTab from '@/partials/functions/sendMessageToTab';
 import resolveCrossDomainPermissions from '@/partials/functions/resolveCrossDomainPermissions';
-import saveCrossDomainPreferences from '@/partials/functions/saveCrossDomainPreferences';
+import focusTabForDialog from '@/partials/functions/focusTabForDialog';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import wsNotify from './wsNotify.js';
-
-const closePopupWindow = async () => {
-  try {
-    const extURL = browser.runtime.getURL('/popup.html');
-    const popupTabs = await browser.tabs.query({ url: extURL });
-
-    if (popupTabs?.length > 0) {
-      await browser.windows.remove(popupTabs[0].windowId);
-    }
-  } catch { }
-};
-
-const focusPopupWindow = async () => {
-  try {
-    const extURL = browser.runtime.getURL('/popup.html');
-    const popupTabs = await browser.tabs.query({ url: extURL });
-
-    if (popupTabs?.length > 0) {
-      await browser.windows.update(popupTabs[0].windowId, { focused: true });
-    }
-  } catch { }
-};
+import protectActionDataPassword from '../utils/protectActionDataPassword';
+import protectCardActionData from '../utils/protectCardActionData';
+import handleAutofillWithPermission from '../utils/handleAutofillWithPermission';
+import handleAutofillCardWithPermission from '../utils/handleAutofillCardWithPermission';
+import { closePopupWindow, finishLoginAutofill, finishCardAutofill } from './utils/finishPullRequestAutofill.js';
 
 /**
 * Handles the close signal for the pull request action.
@@ -89,176 +71,111 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
       if (resolution.allBlocked) {
         actionData.crossDomainAllowedDomains = [];
       } else if (resolution.needsDialog) {
+        // The decrypted SIF (Top/Highly Secret pull) must not sit in session storage as a
+        // plaintext password while the cross-domain dialog is pending (finding #5). Wrap it
+        // with the local key up front; it is unwrapped back to plaintext just before the fill.
+        const protectedResult = await protectActionDataPassword(actionData);
+
+        if (protectedResult.status !== 'ok') {
+          wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info' });
+
+          if (closeData.windowClose) {
+            await closePopupWindow();
+          }
+
+          return true;
+        }
+
+        const dialogActionData = protectedResult.actionData;
+
         if (closeData.windowClose) {
-          try {
-            const tab = await browser.tabs.get(tabId);
-
-            await browser.windows.update(tab.windowId, { focused: true });
-            await browser.tabs.update(tabId, { active: true });
-            await new Promise(resolve => setTimeout(resolve, 100));
-          } catch { }
-
-          let confirmResult;
-
-          try {
-            confirmResult = await sendMessageToTab(tabId, {
-              action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
-              target: REQUEST_TARGETS.CONTENT,
-              unknownDomains: resolution.unknownDomains,
-              theme: await storage.getItem('local:theme')
-            });
-          } catch (e) {
-            await CatchError(e);
-
-            wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info' });
-            await closePopupWindow();
-
-            return true;
-          }
-
-          if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-            await closePopupWindow();
-            return true;
-          }
-
-          await saveCrossDomainPreferences(confirmResult.domainPreferences);
-          actionData.crossDomainAllowedDomains = [...resolution.crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
-        } else {
           const storageKey = `session:autofillData-${tabId}`;
 
           await storage.setItem(storageKey, JSON.stringify({
-            actionData,
+            actionData: dialogActionData,
             closeData: {
               vaultId: closeData.vaultId,
               deviceId: closeData.deviceId,
               itemId: closeData.itemId,
               s_password: closeData.s_password,
-              hkdfSaltAB: closeData.hkdfSaltAB,
-              sessionKeyForHKDF: closeData.sessionKeyForHKDF
+              encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
+              windowClose: true
+            },
+            trustedDomains: resolution.crossDomainAllowedDomains
+          }));
+
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillData windowClose dialog)');
+
+          await focusTabForDialog(tabId);
+
+          try {
+            const dialogRes = await sendMessageToTab(tabId, {
+              action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+              target: REQUEST_TARGETS.CONTENT,
+              unknownDomains: resolution.unknownDomains,
+              storageKey,
+              theme: await storage.getItem('local:theme')
+            });
+
+            // sendMessageToTab resolves to undefined (it does not throw) when no content script
+            // receives the message, which would silently orphan the encrypted payload in session
+            // storage until the tab closes. Treat a missing 'ok' status as a delivery failure.
+            if (dialogRes?.status !== 'ok') {
+              throw new Error('Cross-domain confirm dialog was not delivered');
+            }
+          } catch (e) {
+            await CatchError(e);
+            await storage.removeItem(storageKey);
+
+            wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info' });
+            await closePopupWindow();
+          }
+
+          return true;
+        } else {
+          const storageKey = `session:autofillData-${tabId}`;
+
+          await storage.setItem(storageKey, JSON.stringify({
+            actionData: dialogActionData,
+            closeData: {
+              vaultId: closeData.vaultId,
+              deviceId: closeData.deviceId,
+              itemId: closeData.itemId,
+              s_password: closeData.s_password,
+              encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
+              // Carry the tier so dispatchLoginAutofill can escalate a partial HIGHLY_SECRET
+              // fill back to KeepItem after the cross-domain dialog (mirrors sendAutofillToTab).
+              securityType: closeData.securityType
             }
           }));
 
           logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillData)');
 
-          browser.runtime.sendMessage({
-            action: REQUEST_ACTIONS.AUTOFILL_WITH_PERMISSION,
-            target: REQUEST_TARGETS.BACKGROUND,
-            tabId,
-            storageKey,
-            domains: [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]
-          });
+          // This handler runs in the background service worker (the /fetch WebSocket is independent
+          // of the popup). browser.runtime.sendMessage does NOT deliver to the sending context's own
+          // onMessage listener, so posting AUTOFILL_WITH_PERMISSION here would be silently dropped and
+          // the whole Highly/Top Secret autofill-via-fetch continuation would stall (no fill, no
+          // cross-domain dialog, no KeepItem). Invoke the handler directly instead.
+          await handleAutofillWithPermission(tabId, storageKey, [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]);
 
           wsNotify('navigate', { path: '/' });
           return true;
         }
-      } else if (resolution.crossDomainAllowedDomains.length > 0) {
-        actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
+      } else {
+        actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains || [];
       }
     } catch (e) {
       await CatchError(e);
+      actionData.crossDomainAllowedDomains = [];
     }
 
     actionData.iframePermissionGranted = true;
 
     const autofillRes = await sendMessageToAllFrames(tabId, actionData);
-    const isOk = autofillRes?.some(frameResponse => frameResponse.status === 'ok');
-    const allFieldsFilled = autofillRes?.every(frameResponse => {
-      if (frameResponse.status !== 'ok') {
-        return frameResponse.message === 'No input fields found';
-      }
 
-      const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
-      const couldFillPassword = !actionData.password || frameResponse.canAutofillPassword !== false;
+    await finishLoginAutofill(tabId, actionData, closeData, autofillRes);
 
-      return couldFillUsername && couldFillPassword;
-    });
-
-    if (isOk) {
-      try {
-        await sendMessageToAllFrames(tabId, {
-          action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,
-          target: REQUEST_TARGETS.PROMPT
-        });
-      } catch { }
-
-      try {
-        await browser.runtime.sendMessage({
-          action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,
-          target: REQUEST_TARGETS.BACKGROUND_PROMPT,
-          tabId
-        });
-      } catch { }
-
-      if (!allFieldsFilled) {
-        // Focus popup window when showing KeepItem for shortcut-initiated autofill
-        if (closeData.windowClose) {
-          await focusPopupWindow();
-        }
-
-        const toastId = crypto.randomUUID();
-
-        wsNotify('toast', { message: getMessage('this_tab_autofill_partial'), type: 'info', autoClose: false, toastId });
-
-        wsNotify('navigate', {
-          path: '/',
-          options: {
-            state: {
-              action: 'autofillT2Failed',
-              vaultId: closeData.vaultId,
-              deviceId: closeData.deviceId,
-              itemId: closeData.itemId,
-              s_password: closeData.s_password,
-              hkdfSaltAB: closeData.hkdfSaltAB,
-              sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-              toastId
-            }
-          }
-        });
-
-        return true;
-      }
-
-      // For shortcut-initiated autofill, close the window after success
-      if (closeData.windowClose) {
-        await closePopupWindow();
-        return true;
-      }
-
-      const separateWindow = await popupIsInSeparateWindow();
-
-      if (!separateWindow) {
-        await closePopupWindow();
-      }
-
-      // In background context, always notify popup (it may be in a separate window or Safari)
-      wsNotify('toast', { message: getMessage('this_tab_autofill_success'), type: 'success' });
-      wsNotify('navigate', { path: '/' });
-    } else {
-      // Focus popup window when showing KeepItem for shortcut-initiated autofill
-      if (closeData.windowClose) {
-        await focusPopupWindow();
-      }
-
-      const toastId = crypto.randomUUID();
-
-      wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
-
-      wsNotify('navigate', {
-        path: '/',
-        options: {
-          state: {
-            action: 'autofillT2Failed',
-            vaultId: closeData.vaultId,
-            deviceId: closeData.deviceId,
-            itemId: closeData.itemId,
-            s_password: closeData.s_password,
-            hkdfSaltAB: closeData.hkdfSaltAB,
-            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-            toastId
-          }
-        }
-      });
-    }
+    return true;
   }
 
   if (closeData?.action === 'autofillCard') {
@@ -277,45 +194,28 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
       if (resolution.allBlocked) {
         actionData.crossDomainAllowedDomains = [];
       } else if (resolution.needsDialog) {
+        // The decrypted card SIF (Top/Highly Secret pull) must not sit in session storage as
+        // plaintext while the cross-domain dialog is pending (finding #5). Wrap the card fields
+        // with the local key up front; they are unwrapped back to plaintext just before the fill.
+        const protectedResult = await protectCardActionData(actionData);
+
+        if (protectedResult.status !== 'ok') {
+          wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info' });
+
+          if (closeData.windowClose) {
+            await closePopupWindow();
+          }
+
+          return true;
+        }
+
+        const dialogActionData = protectedResult.actionData;
+
         if (closeData.windowClose) {
-          try {
-            const tab = await browser.tabs.get(tabId);
-
-            await browser.windows.update(tab.windowId, { focused: true });
-            await browser.tabs.update(tabId, { active: true });
-            await new Promise(resolve => setTimeout(resolve, 100));
-          } catch { }
-
-          let confirmResult;
-
-          try {
-            confirmResult = await sendMessageToTab(tabId, {
-              action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
-              target: REQUEST_TARGETS.CONTENT,
-              unknownDomains: resolution.unknownDomains,
-              theme: await storage.getItem('local:theme')
-            });
-          } catch (e) {
-            await CatchError(e);
-
-            wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info' });
-            await closePopupWindow();
-
-            return true;
-          }
-
-          if (confirmResult?.status !== 'ok' || !confirmResult?.confirmed) {
-            await closePopupWindow();
-            return true;
-          }
-
-          await saveCrossDomainPreferences(confirmResult.domainPreferences);
-          actionData.crossDomainAllowedDomains = [...resolution.crossDomainAllowedDomains, ...(confirmResult.allowedDomains || [])];
-        } else {
           const storageKey = `session:autofillCardData-${tabId}`;
 
           await storage.setItem(storageKey, JSON.stringify({
-            actionData,
+            actionData: dialogActionData,
             closeData: {
               vaultId: closeData.vaultId,
               deviceId: closeData.deviceId,
@@ -323,132 +223,80 @@ const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData,
               s_cardNumber: closeData.s_cardNumber,
               s_expirationDate: closeData.s_expirationDate,
               s_securityCode: closeData.s_securityCode,
-              hkdfSaltAB: closeData.hkdfSaltAB,
-              sessionKeyForHKDF: closeData.sessionKeyForHKDF
+              encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
+              windowClose: true
+            },
+            trustedDomains: resolution.crossDomainAllowedDomains
+          }));
+
+          logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillCardData windowClose dialog)');
+
+          await focusTabForDialog(tabId);
+
+          try {
+            const dialogRes = await sendMessageToTab(tabId, {
+              action: REQUEST_ACTIONS.SHOW_CROSS_DOMAIN_CONFIRM,
+              target: REQUEST_TARGETS.CONTENT,
+              unknownDomains: resolution.unknownDomains,
+              storageKey,
+              theme: await storage.getItem('local:theme')
+            });
+
+            // sendMessageToTab resolves to undefined (it does not throw) when no content script
+            // receives the message, which would silently orphan the encrypted payload in session
+            // storage until the tab closes. Treat a missing 'ok' status as a delivery failure.
+            if (dialogRes?.status !== 'ok') {
+              throw new Error('Cross-domain confirm dialog was not delivered');
+            }
+          } catch (e) {
+            await CatchError(e);
+            await storage.removeItem(storageKey);
+
+            wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info' });
+            await closePopupWindow();
+          }
+
+          return true;
+        } else {
+          const storageKey = `session:autofillCardData-${tabId}`;
+
+          await storage.setItem(storageKey, JSON.stringify({
+            actionData: dialogActionData,
+            closeData: {
+              vaultId: closeData.vaultId,
+              deviceId: closeData.deviceId,
+              itemId: closeData.itemId,
+              s_cardNumber: closeData.s_cardNumber,
+              s_expirationDate: closeData.s_expirationDate,
+              s_securityCode: closeData.s_securityCode,
+              encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64
             }
           }));
 
           logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleCloseSignalPullRequestAction (autofillCardData)');
 
-          browser.runtime.sendMessage({
-            action: REQUEST_ACTIONS.AUTOFILL_CARD_WITH_PERMISSION,
-            target: REQUEST_TARGETS.BACKGROUND,
-            tabId,
-            storageKey,
-            domains: [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]
-          });
+          // Background→background runtime.sendMessage is dropped (the sender never receives its own
+          // message), so invoke the card permission handler directly — see the login branch above.
+          await handleAutofillCardWithPermission(tabId, storageKey, [...resolution.trustedDomains, ...resolution.untrustedDomains, ...resolution.unknownDomains]);
 
           wsNotify('navigate', { path: '/' });
           return true;
         }
-      } else if (resolution.crossDomainAllowedDomains.length > 0) {
-        actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains;
+      } else {
+        actionData.crossDomainAllowedDomains = resolution.crossDomainAllowedDomains || [];
       }
     } catch (e) {
       await CatchError(e);
+      actionData.crossDomainAllowedDomains = [];
     }
 
     actionData.iframePermissionGranted = true;
 
     const autofillRes = await sendMessageToAllFrames(tabId, actionData);
 
-    const relevantResponses = autofillRes?.filter(r => r && r.status && r.message !== 'No input fields found') || [];
+    await finishCardAutofill(tabId, actionData, closeData, autofillRes);
 
-    const isOk = relevantResponses.some(frameResponse => frameResponse.status === 'ok');
-    const isPartial = relevantResponses.some(frameResponse => frameResponse.status === 'partial');
-
-    const allFilledFields = relevantResponses.reduce((acc, r) => {
-      if (r.filledFields) {
-        Object.keys(r.filledFields).forEach(field => {
-          if (r.filledFields[field]) {
-            acc[field] = true;
-          }
-        });
-      }
-
-      return acc;
-    }, {});
-
-    const allMissingInputFields = relevantResponses
-      .flatMap(r => r.missingInputFields || [])
-      .filter((field, index, self) => self.indexOf(field) === index)
-      .filter(field => !allFilledFields[field]);
-    const hasMissingInputs = allMissingInputFields.length > 0;
-
-    if (isOk && !isPartial && !hasMissingInputs) {
-      // For shortcut-initiated autofill, close the window after success
-      if (closeData.windowClose) {
-        await closePopupWindow();
-        return true;
-      }
-
-      const separateWindow = await popupIsInSeparateWindow();
-
-      if (!separateWindow) {
-        await closePopupWindow();
-      }
-
-      // In background context, always notify popup (it may be in a separate window or Safari)
-      wsNotify('toast', { message: getMessage('this_tab_autofill_success'), type: 'success' });
-      wsNotify('navigate', { path: '/' });
-    } else if (isOk && hasMissingInputs) {
-      // Focus popup window when showing KeepItem for shortcut-initiated autofill
-      if (closeData.windowClose) {
-        await focusPopupWindow();
-      }
-
-      const toastId = crypto.randomUUID();
-
-      wsNotify('toast', { message: getMessage('notification_card_autofill_partial_message'), type: 'info', autoClose: false, toastId });
-
-      wsNotify('navigate', {
-        path: '/',
-        options: {
-          state: {
-            action: 'autofillCardT2Failed',
-            vaultId: closeData.vaultId,
-            deviceId: closeData.deviceId,
-            itemId: closeData.itemId,
-            s_cardNumber: closeData.s_cardNumber,
-            s_expirationDate: closeData.s_expirationDate,
-            s_securityCode: closeData.s_securityCode,
-            hkdfSaltAB: closeData.hkdfSaltAB,
-            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-            toastId
-          }
-        }
-      });
-    } else if (isPartial) {
-      wsNotify('toast', { message: getMessage('notification_card_autofill_partial_message'), type: 'info' });
-      wsNotify('navigate', { path: '/' });
-    } else {
-      // Focus popup window when showing KeepItem for shortcut-initiated autofill
-      if (closeData.windowClose) {
-        await focusPopupWindow();
-      }
-
-      const toastId = crypto.randomUUID();
-
-      wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
-
-      wsNotify('navigate', {
-        path: '/',
-        options: {
-          state: {
-            action: 'autofillCardT2Failed',
-            vaultId: closeData.vaultId,
-            deviceId: closeData.deviceId,
-            itemId: closeData.itemId,
-            s_cardNumber: closeData.s_cardNumber,
-            s_expirationDate: closeData.s_expirationDate,
-            s_securityCode: closeData.s_securityCode,
-            hkdfSaltAB: closeData.hkdfSaltAB,
-            sessionKeyForHKDF: closeData.sessionKeyForHKDF,
-            toastId
-          }
-        }
-      });
-    }
+    return true;
   }
 
   if (closeData?.returnToast) {

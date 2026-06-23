@@ -32,9 +32,14 @@ const closeNotification = (n, timers) => {
 
     timers.cleanup = setTimeout(() => {
       if (n && n.item) {
+        const oldItem = n.item;
         n.item.classList.remove('twofas-pass-hidden');
         n.item.classList.remove('twofas-pass-visible');
         n.item.classList.add('twofas-pass-old');
+
+        setTimeout(() => {
+          oldItem.remove();
+        }, 400);
       }
 
       n = null;
@@ -144,6 +149,10 @@ const dismissAllSavePrompts = container => {
       el.classList.remove('twofas-pass-hidden');
       el.classList.remove('twofas-pass-visible');
       el.classList.add('twofas-pass-old');
+
+      setTimeout(() => {
+        el.remove();
+      }, 400);
     }, 200);
   });
 };

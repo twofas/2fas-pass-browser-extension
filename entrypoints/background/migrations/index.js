@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const migrationModules = import.meta.glob('./migrationsDatabase/*.js', { eager: true });
+const migrationModules = import.meta.glob(['./migrationsDatabase/*.js', '!./migrationsDatabase/*.test.js'], { eager: true });
 
 const MIGRATION_VERSION_KEY = 'local:migrationVersion';
 

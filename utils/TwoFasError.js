@@ -603,6 +603,10 @@ class TwoFasError extends Error {
       message: 'keepPassword: error exporting key',
       code: 9300
     },
+    keepPasswordImportKeyError: {
+      message: 'keepPassword: error importing key',
+      code: 9301
+    },
     // INJECT CS IF NOT ALREADY
     injectCSIfNotAlreadyUnknownTypeError: {
       message: 'injectCSIfNotAlready: unknown type',
@@ -694,6 +698,15 @@ class TwoFasError extends Error {
     handleInputEventEncryptError: {
       message: 'handleInputEvent: error encrypting data',
       code: 9382
+    },
+    // ENCRYPT FLUSH DATA
+    encryptFlushDataNonceError: {
+      message: 'encryptFlushData: error generating nonce',
+      code: 9383
+    },
+    encryptFlushDataEncryptError: {
+      message: 'encryptFlushData: error encrypting data',
+      code: 9384
     },
     // CONTEXT MENU
     contextMenuConfiguredError: {

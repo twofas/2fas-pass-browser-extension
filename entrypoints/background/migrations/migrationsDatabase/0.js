@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { getBrowserInfo, generatePersistentKeys, generateSecurityIcon, generateLocalKey } from '../../utils';
+import { getBrowserInfo, generatePersistentKeys, generateSecurityIcon } from '../../utils';
 import compressPublicKey from '@/partials/functions/compressPublicKey';
 
 /** 
@@ -72,22 +72,6 @@ const defaultStorage = async () => {
     themeEnum.indexOf(storageData?.theme) === -1
   ) {
     itemsToSet.push({ key: 'local:theme', value: 'unset' }); // unset, light, dark
-  }
-
-  // L KEY
-  if (
-    !storageData?.lKey ||
-    storageData?.lKey === null ||
-    storageData?.lKey === undefined
-  ) {
-    let lKey;
-
-    try {
-      lKey = await generateLocalKey();
-      itemsToSet.push({ key: 'local:lKey', value: lKey });
-    } catch (e) {
-      await CatchError(e);
-    }
   }
 
   // CONTEXT MENU

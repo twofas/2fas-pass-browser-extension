@@ -47,7 +47,7 @@
   &.non-fetched {
     cursor: pointer;
 
-    &:hover {
+    &:hover:not(:has(.pass-input-link:hover)) {
       .pass-input-tooltip {
         opacity: 1;
         pointer-events: all;
@@ -526,14 +526,17 @@
 
   &-link {
     display: flex;
+    max-width: 100%;
     overflow: hidden;
 
     &-button {
-      align-items: center;
+      align-items: center !important;
       color: var(--primary-color);
-      display: flex;
-      gap: 6px;
+      display: flex !important;
+      gap: 6px !important;
       line-height: 1;
+      max-width: 100%;
+      min-width: 0;
       padding: 0;
       transition: var(--anim);
 
@@ -549,9 +552,15 @@
       span {
         font-size: 12px;
         font-weight: 500;
+        line-height: 16px;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       svg {
+        flex-shrink: 0;
         height: auto;
         pointer-events: none;
         stroke: currentColor;

@@ -8,16 +8,18 @@ import getPaymentCardNumberInputs from '@/partials/inputFunctions/getPaymentCard
 import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPaymentCardholderNameInputs';
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
+import getShadowRoots from './autofillFunctions/getShadowRoots';
 
 /**
 * Function to check and set autofill inputs for payment cards.
 * @return {Object} Autofill capability status for payment card fields.
 */
 const checkAutofillInputsCard = () => {
-  const cardNumberInputs = getPaymentCardNumberInputs();
-  const cardholderNameInputs = getPaymentCardholderNameInputs();
-  const expirationDateInputs = getPaymentCardExpirationDateInputs();
-  const securityCodeInputs = getPaymentCardSecurityCodeInputs();
+  const shadowRoots = getShadowRoots();
+  const cardNumberInputs = getPaymentCardNumberInputs(shadowRoots);
+  const cardholderNameInputs = getPaymentCardholderNameInputs(shadowRoots);
+  const expirationDateInputs = getPaymentCardExpirationDateInputs(shadowRoots);
+  const securityCodeInputs = getPaymentCardSecurityCodeInputs(shadowRoots);
 
   const hasMonthInput = expirationDateInputs.some(item => item.type === 'month');
   const hasYearInput = expirationDateInputs.some(item => item.type === 'year');

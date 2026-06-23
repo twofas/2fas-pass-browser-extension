@@ -158,6 +158,8 @@ const AppContent = memo(({ blocked }) => {
 * @return {JSX.Element} The rendered app.
 */
 const MainApp = memo(({ blockedValue, mainSectionClassName, sectionRef }) => {
+  usePendingNotificationCheck();
+
   return (
     <section ref={sectionRef} className={mainSectionClassName}>
       <AppContent blocked={blockedValue} />

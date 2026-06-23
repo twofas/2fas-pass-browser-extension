@@ -30,6 +30,26 @@ const onInstalled = async (details, migrations) => {
     return;
   }
 
+  // Snapshot whether this profile was ALREADY initialized BEFORE running migrations.
+  // This ordering is load-bearing: migration 0 (defaultStorage) generates the persistent
+  // keys and sets local:migrationVersion on a true first install, so reading these markers
+  // AFTER runMigrations() would make every fresh install look already-initialized and
+  // permanently suppress onboarding. Safari fires onInstalled with reason 'install' (not
+  // 'update') on a TestFlight/App Store update while local storage survives — in that case
+  // the markers already exist and we must NOT show the onboarding page again.
+  let alreadyInitialized = false;
+
+  try {
+    const [persistentPrivateKey, persistentPublicKey, migrationVersion] = await Promise.all([
+      storage.getItem('local:persistentPrivateKey'),
+      storage.getItem('local:persistentPublicKey'),
+      storage.getItem('local:migrationVersion')
+    ]);
+    alreadyInitialized = Boolean((persistentPrivateKey && persistentPublicKey) || (typeof migrationVersion === 'number' && migrationVersion >= 0));
+  } catch (e) {
+    await CatchError(e);
+  }
+
   if (details?.reason === 'install' || details?.reason === 'update') {
     migrations.state = 'running';
 
@@ -47,7 +67,7 @@ const onInstalled = async (details, migrations) => {
   const idleLockValue = await storage.getItem('local:autoIdleLock');
   setIdleInterval(idleLockValue);
 
-  if (details?.reason === 'install') {
+  if (details?.reason === 'install' && !alreadyInitialized) {
     if (import.meta.env.BROWSER !== 'safari') {
       browser.runtime.setUninstallURL(`https://2fas.com/pass/byebye/`);
     }

@@ -4,16 +4,21 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+export { default as aggregateCardAutofillResponses } from './aggregateCardAutofillResponses.js';
+export { default as aggregateLoginAutofillResponses } from './aggregateLoginAutofillResponses.js';
 export { default as autoClearAction } from './autoClearAction.js';
 export { default as checkStorageAutoClearActions } from './checkStorageAutoClearActions.js';
 export { default as cleanupDevices } from './cleanupDevices.js';
 export { default as closeWindowIfNotInSeparateWindow } from './closeWindowIfNotInSeparateWindow.js';
 export { default as compressPublicKey } from './compressPublicKey.js';
 export { default as copyValue } from './copyValue.js';
+export { default as decryptValueFromTransmission } from './decryptValueFromTransmission.js';
 export { default as delay } from './delay.js';
 export { default as deletePush } from './deletePush.js';
+export { default as encryptCardSifForTransmission } from './encryptCardSifForTransmission.js';
 export { default as encryptValueForTransmission } from './encryptValueForTransmission.js';
 export { default as focusPopupWindow } from './focusPopupWindow.js';
+export { default as focusTabForDialog } from './focusTabForDialog.js';
 export { default as generateNonce } from './generateNonce.js';
 export { default as getCurrentDevice } from './getCurrentDevice.js';
 export { default as getInputClickPosition } from './getInputClickPosition.js';
@@ -31,6 +36,7 @@ export { default as isCardExpired } from './paymentCardExpirationDateValidation.
 export { default as isText } from './isText.js';
 export { default as isURL } from './isURL.js';
 export { default as isVisible } from './isVisible.js';
+export { default as loadAndClassifyCrossDomainPermissions } from './loadAndClassifyCrossDomainPermissions.js';
 export { default as networkTest } from './networkTest.js';
 export { default as openPopup } from './openPopup.js';
 export { default as paymentCardExpirationDateValidation } from './paymentCardExpirationDateValidation.js';

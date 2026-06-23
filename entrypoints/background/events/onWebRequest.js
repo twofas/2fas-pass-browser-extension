@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import { checkDomainOnIgnoredList, getValuesFromTabsInputData, checkServicesData, savePromptAction, cleanTabsInputData, addSavePromptAction, checkFormData } from '../utils';
+import { checkDomainOnIgnoredList, getValuesFromTabsInputData, checkServicesData, savePromptAction, cleanTabsInputData, addSavePromptAction, checkFormData, isProcessableWebRequestFrame, waitForTabInputData } from '../utils';
 import { ignoredSavePromptUrls, ignoredSavePromptRequestBodyTexts } from '@/constants';
 import isText from '@/partials/functions/isText';
 
@@ -22,6 +22,25 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   // Handle beacon flush from content script (before any other filters)
   if (details?.type === 'ping' && details?.url?.startsWith(`https://${import.meta.env.VITE_BEACON}.invalid`)) {
     if (details?.requestBody?.raw?.[0]?.bytes && details?.tabId) {
+      // Accept beacons from the top document or a same-root-domain sub-frame only;
+      // resolve the tab url only for sub-frames (the common top-frame case skips it).
+      let processable = isProcessableWebRequestFrame(details);
+
+      if (!processable) {
+        let beaconTabUrl;
+
+        try {
+          const beaconTab = await browser.tabs.get(details.tabId);
+          beaconTabUrl = beaconTab?.url;
+        } catch {}
+
+        processable = isProcessableWebRequestFrame(details, beaconTabUrl);
+      }
+
+      if (!processable) {
+        return;
+      }
+
       try {
         const rawData = ArrayBufferToString(details.requestBody.raw[0].bytes);
         const inputs = JSON.parse(rawData);
@@ -43,22 +62,13 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     return;
   }
 
-  // COMMENT THIS WHEN DEBUGGING SAVE PROMPT
-  if (!tabsInputData || Object.keys(tabsInputData).length === 0 || !tabsInputData[details?.tabId] || tabsInputData[details?.tabId]?.length <= 0) {
-    return;
-  }
-  // [END] COMMENT THIS WHEN DEBUGGING
-
-  const suppressed = await storage.getItem(`session:savePromptSuppressed-${details.tabId}`);
-
-  if (suppressed) {
-    return;
-  }
-
-  // Base filters
+  // Base filters — cheap, synchronous, and run BEFORE any async work or waiting below so
+  // ordinary GET traffic, bodyless / non-http POSTs, prerenders, pings, ignored URLs and
+  // non-tab (tabId < 0) requests are rejected without cost.
   if (
     !details ||
     !details?.tabId ||
+    details?.tabId < 0 ||
     !details?.method ||
     details?.method !== 'POST' ||
     !details?.requestBody ||
@@ -72,15 +82,40 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     return;
   }
 
-  if (details?.frameType) {
-    if (details.frameType !== 'outermost_frame') {
-      return;
-    }
-  } else {
-    if (details?.parentFrameId !== -1) {
-      return;
-    }
+  const suppressed = await storage.getItem(`session:savePromptSuppressed-${details.tabId}`);
+
+  if (suppressed) {
+    return;
   }
+
+  let tab;
+
+  try {
+    tab = await browser.tabs.get(details.tabId);
+  } catch {}
+
+  // Process the top document, plus same-root-domain sub-frames (login forms in
+  // same-site iframes). Cross-root-domain sub-frames (e.g. SSO widgets) are rejected
+  // — their credentials belong to the embedded site, not this page (finding #19).
+  if (!isProcessableWebRequestFrame(details, tab?.url)) {
+    return;
+  }
+
+  // The captured inputs live only in the in-memory tabsInputData, which the MV3 service
+  // worker drops whenever it is recycled (frequently). When the worker is restarted
+  // between the user typing credentials and submitting, this POST arrives with an empty
+  // store and the save prompt silently never fires — for BOTH the encrypted and
+  // unencrypted modes. The content script re-sends the values around submit (form-submit
+  // flush + unload beacon), so give those a brief window to repopulate the store before
+  // bailing. Runs only for genuine login-candidate POSTs (past the filters + frame gate
+  // above) and returns immediately when the data is already present (the warm-worker case).
+  await waitForTabInputData(tabsInputData, details?.tabId);
+
+  // COMMENT THIS WHEN DEBUGGING SAVE PROMPT
+  if (!tabsInputData || Object.keys(tabsInputData).length === 0 || !tabsInputData[details?.tabId] || tabsInputData[details?.tabId]?.length <= 0) {
+    return;
+  }
+  // [END] COMMENT THIS WHEN DEBUGGING
 
   if (details?.requestBody?.raw && details.requestBody.raw.length > 0 && details.requestBody.raw[0].bytes) {
     let requestBodyRaw = '';
@@ -112,12 +147,6 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   if (!configured) {
     return;
   }
-
-  let tab;
-
-  try {
-    tab = await browser.tabs.get(details.tabId);
-  } catch {}
 
   let storageSavePrompt = null;
   let domainOnIgnoredList;

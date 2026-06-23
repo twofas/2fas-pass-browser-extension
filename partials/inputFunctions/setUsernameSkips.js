@@ -16,14 +16,16 @@
 * @param {HTMLInputElement[]} passwordInputs - The password input elements in this frame.
 * @param {HTMLInputElement[]} usernameInputs - The username input elements.
 * @param {boolean} [hasPasswordInAnyFrame=false] - Whether any frame has password inputs.
+* @param {HTMLFormElement[]|null} [passwordForms=null] - Precomputed password forms to reuse; derived from passwordInputs when omitted.
 * @return {void}
 */
-const setUsernameSkips = (passwordInputs, usernameInputs, hasPasswordInAnyFrame = false) => {
+const setUsernameSkips = (passwordInputs, usernameInputs, hasPasswordInAnyFrame = false, passwordForms = null) => {
   const hasPasswordInputs = passwordInputs.length > 0 || hasPasswordInAnyFrame;
 
-  const passwordForms = passwordInputs
-    .map(input => input.closest('form'))
-    .filter(Boolean);
+  const resolvedPasswordForms = Array.isArray(passwordForms)
+    ? passwordForms
+    : passwordInputs.map(input => input.closest('form')).filter(Boolean);
+  const passwordFormsSet = new Set(resolvedPasswordForms);
 
   usernameInputs.forEach(usernameInput => {
     const usernameForm = usernameInput.closest('form');
@@ -38,9 +40,7 @@ const setUsernameSkips = (passwordInputs, usernameInputs, hasPasswordInAnyFrame 
       return;
     }
 
-    const sharesFormWithPassword = passwordForms.some(
-      passwordForm => passwordForm === usernameForm
-    );
+    const sharesFormWithPassword = passwordFormsSet.has(usernameForm);
 
     usernameInput.setAttribute('twofas-pass-skip', sharesFormWithPassword ? 'false' : 'true');
   });

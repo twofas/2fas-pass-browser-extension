@@ -10,7 +10,6 @@ import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import getItem from '@/partials/sessionStorage/getItem';
 import AutofillErrorItemData from './components/AutofillErrorItemData';
-import generateEncryptionAESKey from '@/entrypoints/background/websocket/utils/generateEncryptionAESKey';
 import getKey from '@/partials/sessionStorage/getKey';
 import { ENCRYPTION_KEYS } from '@/constants';
 
@@ -50,20 +49,13 @@ function AutofillErrorItem (props) {
         sifData.push({ s_securityCode: props.state.s_securityCode });
       }
 
-      if (sifData.length > 0 && props.state.hkdfSaltAB && props.state.sessionKeyForHKDF) {
+      if (sifData.length > 0 && props.state.encryptionItemT2KeyB64) {
         try {
-          const encryptionItemT2Key = await generateEncryptionAESKey(
-            props.state.hkdfSaltAB,
-            ENCRYPTION_KEYS.ITEM_T2.crypto,
-            props.state.sessionKeyForHKDF,
-            true
-          );
-
-          const encryptionItemT2KeyAESRaw = await window.crypto.subtle.exportKey('raw', encryptionItemT2Key);
-          const encryptionItemT2KeyAES_B64 = ArrayBufferToBase64(encryptionItemT2KeyAESRaw);
-
+          // The autofill flow forwarded the raw ItemT2 key (Base64); store it so the SIF stays
+          // decryptable. Re-deriving from the HKDF session key is impossible — it is
+          // non-serializable and never reaches the popup intact (finding #29).
           const itemT2Key = await getKey(ENCRYPTION_KEYS.ITEM_T2.sK, { deviceId: props.deviceId, itemId: props.itemId });
-          await storage.setItem(`session:${itemT2Key}`, encryptionItemT2KeyAES_B64);
+          await storage.setItem(`session:${itemT2Key}`, props.state.encryptionItemT2KeyB64);
 
           logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'Popup - session write - AutofillErrorItem');
 

@@ -74,6 +74,10 @@ function CardSecurityCode (props) {
     }
 
     if (!itemInstance?.securityCodeExists) {
+      if (originalItem?.isT3orT2WithSif) {
+        setData('sifDecryptError', true);
+      }
+
       return null;
     }
 
@@ -91,7 +95,7 @@ function CardSecurityCode (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedSecurityCode, isDecrypting, sifDecryptError, itemInstance, setData]);
+  }, [localDecryptedSecurityCode, isDecrypting, sifDecryptError, itemInstance, originalItem, setData]);
 
   const getSecurityCodeValue = () => {
     if (sifDecryptError || isHighlySecretWithoutSif) {

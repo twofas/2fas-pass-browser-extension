@@ -4,10 +4,8 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { paymentCardNumberSelectors, paymentCardDeniedKeywords } from '@/constants';
-import isVisible from '../functions/isVisible';
-import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
-import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
+import { paymentCardNumberSelectors } from '@/constants';
+import { containsDeniedWord, filterDeniedKeywords, collectInputs } from './shared';
 
 const conflictingAutocompleteValues = [
   'cc-name',
@@ -109,11 +107,18 @@ const filterConflictingAttributes = input => {
   const inputType = (input.type || '').toLowerCase();
   const inputMode = (input.getAttribute('inputmode') || '').toLowerCase();
 
-  if (autocomplete.includes('cc-number')) {
+  // Match the trailing field token exactly (the autofill grammar allows optional
+  // leading section/billing tokens) for BOTH the allow and the deny decision, so the
+  // real PAN token is honoured while values like 'cc-number-honeypot' or a trailing
+  // conflicting token (e.g. 'cc-number cc-csc') are not mistaken for it, and
+  // 'language-preference' is not rejected merely for containing 'language'.
+  const fieldToken = autocomplete ? autocomplete.split(/\s+/).pop() : '';
+
+  if (fieldToken === 'cc-number') {
     return true;
   }
 
-  if (autocomplete && conflictingAutocompleteValues.some(val => autocomplete.includes(val))) {
+  if (fieldToken && conflictingAutocompleteValues.includes(fieldToken)) {
     return false;
   }
 
@@ -129,74 +134,37 @@ const filterConflictingAttributes = input => {
 };
 
 /**
-* Filters out inputs that contain denied keywords in their name or id.
-* @param {HTMLInputElement} input - The input element to check.
-* @return {boolean} True if the input should be kept, false otherwise.
-*/
-const filterDeniedKeywords = input => {
-  const name = (input.name || '').toLowerCase();
-  const id = (input.id || '').toLowerCase();
-  const hasDeniedWord = paymentCardDeniedKeywords.some(word => name.includes(word) || id.includes(word));
-
-  return !hasDeniedWord;
-};
-
-/**
-* Gets the data-field value from closest parent element that has it.
-* @param {HTMLElement} element - The element to check.
-* @return {string} The data-field value or empty string.
-*/
-const getParentDataField = element => {
-  const parent = element.closest('[data-field]');
-
-  if (parent) {
-    return (parent.getAttribute('data-field') || '').toLowerCase();
-  }
-
-  return '';
-};
-
-/**
-* Gets relevant class names from an element.
-* @param {HTMLElement} element - The element to check.
-* @return {string} Space-separated lowercase class names.
-*/
-const getRelevantClasses = element => {
-  return (element.className || '').toLowerCase();
-};
-
-/**
 * Filters out inputs that appear to be cardholder name, CVV, or expiration date fields.
+* Decisions are made from the field's OWN identity (name/id/data-encrypted-name/placeholder)
+* using whole-word matching, so framework validation classes (ng-valid/is-invalid) and
+* ancestor wrappers cannot trigger a false rejection or a false acceptance.
 * @param {HTMLInputElement} input - The input element to check.
 * @return {boolean} True if the input should be kept as card number, false otherwise.
 */
 const filterOtherCardFields = input => {
-  const name = (input.name || '').toLowerCase();
-  const id = (input.id || '').toLowerCase();
-  const dataEncryptedName = (input.getAttribute('data-encrypted-name') || '').toLowerCase();
-  const parentDataField = getParentDataField(input);
-  const classes = getRelevantClasses(input);
-  const combined = name + id + dataEncryptedName + parentDataField + classes;
+  const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
 
-  if (combined.includes('number') || combined.includes('cardnumber') || combined.includes('ccnumber')) {
+  // Honour the trailing field token exactly (matching filterConflictingAttributes) so a
+  // glued/grouped autocomplete is not auto-accepted as a PAN by a bare substring match.
+  if (autocomplete.split(/\s+/).pop() === 'cc-number') {
     return true;
   }
 
-  const isCardholderName = cardholderNameKeywords.some(keyword => combined.includes(keyword));
+  const name = input.name || '';
+  const id = input.id || '';
+  const dataEncryptedName = input.getAttribute('data-encrypted-name') || '';
+  const placeholder = input.getAttribute('placeholder') || '';
+  const ownIdentity = `${name} ${id} ${dataEncryptedName} ${placeholder}`;
 
-  if (isCardholderName) {
+  if (containsDeniedWord(ownIdentity, cardholderNameKeywords)) {
     return false;
   }
 
-  const isSecurityCode = securityCodeKeywords.some(keyword => combined.includes(keyword));
-
-  if (isSecurityCode) {
+  if (containsDeniedWord(ownIdentity, securityCodeKeywords)) {
     return false;
   }
 
-  const isExpiration = expirationKeywords.some(keyword => combined.includes(keyword));
-
-  if (isExpiration) {
+  if (containsDeniedWord(ownIdentity, expirationKeywords)) {
     return false;
   }
 
@@ -205,21 +173,13 @@ const filterOtherCardFields = input => {
 
 /**
 * Gets the payment card number input elements from the document, including those inside shadow DOMs.
+* @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
 * @return {HTMLInputElement[]} The array of payment card number input elements.
 */
-const getPaymentCardNumberInputs = () => {
+const getPaymentCardNumberInputs = (shadowRoots = null) => {
   const cardNumberSelector = paymentCardNumberSelectors().join(', ');
-  const regularInputs = Array.from(document.querySelectorAll(cardNumberSelector));
-  const shadowRoots = getShadowRoots();
-
-  const shadowInputs = shadowRoots.flatMap(
-    root => Array.from(root.querySelectorAll(cardNumberSelector))
-  );
-
-  const allInputs = [...regularInputs, ...shadowInputs];
-  const afterVisible = allInputs.filter(input => isVisible(input));
-  const afterUnique = afterVisible.filter(uniqueElementOnly);
-  const afterConflicting = afterUnique.filter(filterConflictingAttributes);
+  const visibleUniqueInputs = collectInputs(cardNumberSelector, shadowRoots);
+  const afterConflicting = visibleUniqueInputs.filter(filterConflictingAttributes);
   const afterDenied = afterConflicting.filter(filterDeniedKeywords);
   const result = afterDenied.filter(filterOtherCardFields);
 

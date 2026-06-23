@@ -1,0 +1,20 @@
+# Reusable subflow — unlock the vault IF the app is showing the lock screen.
+# Self-guarding: when the app is already unlocked/foregrounded the whole block is
+# skipped, so callers can invoke it unconditionally with `- runFlow: shared/unlock-if-locked.yaml`.
+#
+# Param (env): MASTER_PASSWORD  (default: testtesttest)
+appId: com.twofasapp.pass
+env:
+  MASTER_PASSWORD: testtesttest
+---
+- runFlow:
+    when:
+      visible: "Unlock App"
+    commands:
+      - tapOn: "Password"
+      - inputText: "${MASTER_PASSWORD}"
+      - hideKeyboard
+      - tapOn: "Unlock"
+      # Assert a STABLE post-unlock anchor that holds for both an empty and a
+      # populated vault (NOT "No Items available", which only holds when empty).
+      - assertVisible: "Settings"

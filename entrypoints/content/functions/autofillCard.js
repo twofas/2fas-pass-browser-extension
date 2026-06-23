@@ -9,9 +9,12 @@ import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPayment
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
 import getPaymentCardIssuerInputs from '@/partials/inputFunctions/getPaymentCardIssuerInputs';
-import isTopFrame from '@/partials/functions/isTopFrame';
 import inputSetValue from './autofillFunctions/inputSetValue';
+import getShadowRoots from './autofillFunctions/getShadowRoots';
+import decryptTransmittedValue from './autofillFunctions/decryptTransmittedValue';
+import checkCrossDomainFramePermission from './autofillFunctions/checkCrossDomainFramePermission';
 import {
+  AUTOFILL_RESULT_CODES,
   PaymentCardIssuerVisa,
   PaymentCardIssuerMasterCard,
   PaymentCardIssuerAmericanExpress,
@@ -31,68 +34,6 @@ const issuerVariations = {
   dinersClub: PaymentCardIssuerDinersClub,
   maestro: PaymentCardIssuerMaestro,
   unionPay: PaymentCardIssuerUnionPay
-};
-
-/**
-* Decrypts an encrypted value using the local key.
-* @param {string} encryptedValue - The base64 encoded encrypted value.
-* @return {Promise<{status: string, data?: string, message?: string}>} Decryption result.
-*/
-const decryptValue = async encryptedValue => {
-  let localKeyResponse;
-
-  try {
-    localKeyResponse = await browser.runtime.sendMessage({
-      action: REQUEST_ACTIONS.GET_LOCAL_KEY,
-      target: REQUEST_TARGETS.BACKGROUND
-    });
-  } catch {
-    return { status: 'error', message: 'Failed to get local key' };
-  }
-
-  if (localKeyResponse?.status !== 'ok') {
-    return { status: 'error', message: 'Failed to get local key' };
-  }
-
-  let localKeyAB = Base64ToArrayBuffer(localKeyResponse.data);
-  let localKeyCrypto;
-
-  try {
-    localKeyCrypto = await crypto.subtle.importKey(
-      'raw',
-      localKeyAB,
-      { name: 'AES-GCM' },
-      false,
-      ['decrypt']
-    );
-  } catch (e) {
-    localKeyAB = null;
-    await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillImportKeyError, { event: e }));
-    return { status: 'error', message: 'ImportKey error' };
-  }
-
-  localKeyAB = null;
-
-  let valueAB = Base64ToArrayBuffer(encryptedValue);
-  const decryptedBytes = DecryptBytes(valueAB);
-  valueAB = null;
-
-  try {
-    const decryptedValueAB = await crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: decryptedBytes.iv },
-      localKeyCrypto,
-      decryptedBytes.data
-    );
-
-    localKeyCrypto = null;
-    const decryptedValueString = ArrayBufferToString(decryptedValueAB);
-
-    return { status: 'ok', data: decryptedValueString };
-  } catch (e) {
-    localKeyCrypto = null;
-    await CatchError(new TwoFasError(TwoFasError.internalErrors.contentAutofillDecryptError, { event: e }));
-    return { status: 'error', message: 'Decrypt error' };
-  }
 };
 
 /**
@@ -235,6 +176,9 @@ const setCardholderNameValue = (inputData, fullName, splitName) => {
     inputSetValue(element, splitName.givenName, cardAutofillOptions);
   } else if (type === 'family') {
     inputSetValue(element, splitName.familyName, cardAutofillOptions);
+  } else if (type === 'additional') {
+    // Middle name is not derivable from a full cardholder name; leave the field untouched
+    // rather than writing the entire name into it.
   } else {
     inputSetValue(element, fullName, cardAutofillOptions);
   }
@@ -346,11 +290,12 @@ const setCardIssuerValue = (inputData, issuerValue) => {
 
 /**
 * Checks if expiration date was successfully filled.
-* Returns true if combined field was filled OR both month and year were filled.
+* Returns true if the combined field was filled, or if every separate month/year
+* field present on the page was filled (tolerating the absence of one of them).
 * @param {Array<{success: boolean, type: string}>} expirationResults - Results from expiration date autofill.
 * @return {boolean} True if expiration date is considered filled.
 */
-const isExpirationDateFilled = expirationResults => {
+export const isExpirationDateFilled = expirationResults => {
   if (!expirationResults || expirationResults.length === 0) {
     return false;
   }
@@ -361,18 +306,11 @@ const isExpirationDateFilled = expirationResults => {
     return true;
   }
 
-  const monthResult = expirationResults.find(r => r.type === 'month');
-  const yearResult = expirationResults.find(r => r.type === 'year');
+  // Evaluate every month/year field on the page (not just the first of each type), so a
+  // duplicated month/year input that was left unfilled is not masked by an earlier success.
+  const presentResults = expirationResults.filter(r => r.type === 'month' || r.type === 'year');
 
-  if (monthResult?.success && yearResult?.success) {
-    return true;
-  }
-
-  if (monthResult?.success || yearResult?.success) {
-    return true;
-  }
-
-  return false;
+  return presentResults.length > 0 && presentResults.every(r => r.success);
 };
 
 /**
@@ -385,14 +323,15 @@ const isExpirationDateFilled = expirationResults => {
 * @param {string} [request.cardIssuer] - The card issuer/type to fill.
 * @param {boolean} [request.cryptoAvailable] - Flag indicating encrypted fields need decryption.
 * @param {boolean} [request.iframePermissionGranted] - Flag indicating cross-domain permission was granted.
-* @return {Promise<{status: string, message?: string, filledFields?: Object}>} The status of the autofill operation.
+* @return {Promise<{status: string, code?: string, message?: string, filledFields?: Object}>} The status of the autofill operation.
 */
 const autofillCard = async request => {
-  const cardNumberInputs = getPaymentCardNumberInputs();
-  const cardholderNameInputs = getPaymentCardholderNameInputs();
-  const expirationDateInputs = getPaymentCardExpirationDateInputs();
-  const securityCodeInputs = getPaymentCardSecurityCodeInputs();
-  const cardIssuerInputs = getPaymentCardIssuerInputs();
+  const shadowRoots = getShadowRoots();
+  const cardNumberInputs = getPaymentCardNumberInputs(shadowRoots);
+  const cardholderNameInputs = getPaymentCardholderNameInputs(shadowRoots);
+  const expirationDateInputs = getPaymentCardExpirationDateInputs(shadowRoots);
+  const securityCodeInputs = getPaymentCardSecurityCodeInputs(shadowRoots);
+  const cardIssuerInputs = getPaymentCardIssuerInputs(shadowRoots);
 
   const hasCardNumberData = request.cardNumber?.length > 0;
   const hasCardholderNameData = request.cardholderName?.length > 0;
@@ -421,33 +360,13 @@ const autofillCard = async request => {
   };
 
   if (!canFillCardNumber && !canFillCardholderName && !canFillExpirationDate && !canFillSecurityCode && !canFillCardIssuer) {
-    return { status: 'error', message: 'No input fields found', filledFields };
+    return { status: 'error', code: AUTOFILL_RESULT_CODES.NO_INPUT_FIELDS, message: 'No input fields found', filledFields };
   }
 
-  if (!isTopFrame()) {
-    let frameHostname = '';
-    let isCrossDomain = false;
+  const { allowed } = checkCrossDomainFramePermission(request);
 
-    try {
-      frameHostname = new URL(window.location.href).hostname;
-    } catch { }
-
-    try {
-      const topHostname = new URL(window.top.location.href).hostname;
-      isCrossDomain = frameHostname !== topHostname;
-    } catch {
-      isCrossDomain = true;
-    }
-
-    if (isCrossDomain) {
-      if (request.crossDomainAllowedDomains) {
-        if (!request.crossDomainAllowedDomains.includes(frameHostname)) {
-          return { status: 'cancelled', message: 'Cross-domain autofill not permitted', filledFields };
-        }
-      } else if (!request.iframePermissionGranted) {
-        return { status: 'cancelled', message: 'Cross-domain autofill not permitted', filledFields };
-      }
-    }
+  if (!allowed) {
+    return { status: 'cancelled', code: AUTOFILL_RESULT_CODES.CROSS_DOMAIN_DENIED, message: 'Cross-domain autofill not permitted', filledFields };
   }
 
   if (canFillCardholderName) {
@@ -461,7 +380,7 @@ const autofillCard = async request => {
 
     try {
       if (request.cryptoAvailable && request.cardNumberEncrypted) {
-        const decryptResult = await decryptValue(request.cardNumber);
+        const decryptResult = await decryptTransmittedValue(request.cardNumber);
 
         if (decryptResult.status === 'ok') {
           cardNumberValue = decryptResult.data;
@@ -490,7 +409,7 @@ const autofillCard = async request => {
 
     try {
       if (request.cryptoAvailable && request.expirationDateEncrypted) {
-        const decryptResult = await decryptValue(request.expirationDate);
+        const decryptResult = await decryptTransmittedValue(request.expirationDate);
 
         if (decryptResult.status === 'ok') {
           expirationDateValue = decryptResult.data;
@@ -518,7 +437,7 @@ const autofillCard = async request => {
 
     try {
       if (request.cryptoAvailable && request.securityCodeEncrypted) {
-        const decryptResult = await decryptValue(request.securityCode);
+        const decryptResult = await decryptTransmittedValue(request.securityCode);
 
         if (decryptResult.status === 'ok') {
           securityCodeValue = decryptResult.data;

@@ -6,3 +6,4 @@
 
 export { default as getReadyDevices } from './getReadyDevices.js';
 export { default as renderQrFromData } from './renderQrFromData.js';
+export { default as resolveConnectView } from './resolveConnectView.js';

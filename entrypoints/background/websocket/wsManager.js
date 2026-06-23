@@ -19,6 +19,25 @@ import bgConnectOnMessage from './handlers/bgConnectOnMessage.js';
 import bgConnectOnClose from './handlers/bgConnectOnClose.js';
 import bgFetchOnMessage from './handlers/bgFetchOnMessage.js';
 import bgFetchOnClose from './handlers/bgFetchOnClose.js';
+import { saveQrSession, loadQrSession, clearQrSession } from './connect/qrSessionPersistence.js';
+import { startKeepalive, stopKeepalive } from './connect/keepalive.js';
+
+// Serialises resume attempts: the popup fires WS_GET_STATE from several hooks on mount,
+// and the keepalive alarm may fire concurrently, so without this two resumes could race
+// into createSocket() and fight over the single TwoFasWebSocket instance.
+let resumeInProgress = null;
+
+// Tracks when the popup last queried WS state. The keepalive alarm only re-mints a QR
+// while the popup is actually open (querying); otherwise a Safari SW that keeps dying
+// would churn out fresh QR sessions nobody can see. Resets to 0 on SW restart.
+let lastPopupActivityAt = 0;
+const POPUP_ACTIVITY_WINDOW_MS = 60000;
+
+const notePopupActivity = () => {
+  lastPopupActivityAt = Date.now();
+};
+
+const isPopupRecentlyActive = () => lastPopupActivityAt > 0 && (Date.now() - lastPopupActivityAt) < POPUP_ACTIVITY_WINDOW_MS;
 
 const closeExistingSocket = () => {
   try {
@@ -108,6 +127,15 @@ const startConnectQR = async () => {
   }
 
   wsNotify('stateChange', { active: true, connectView: CONNECT_VIEWS.QrView });
+
+  await saveQrSession({
+    sessionID,
+    qrData: wsState.qrData,
+    ephemeralData: wsState._ephemeralData,
+    socketData: wsState._socketData,
+    connectView: wsState.connectView
+  });
+  await startKeepalive();
 
   return { status: 'ok', state: getPublicState() };
 };
@@ -308,6 +336,8 @@ const cancelCurrentAction = async () => {
 
   closeExistingSocket();
   resetState();
+  await clearQrSession();
+  await stopKeepalive();
   wsNotify('stateChange', { active: false, connectView: null });
 
   return { status: 'ok' };
@@ -365,9 +395,71 @@ const reloadConnectQR = async () => {
     return { status: 'error', message: getMessage('error_general') };
   }
 
-  wsNotify('stateChange', { active: true, socketError: false });
+  wsNotify('stateChange', { active: true, connectView: wsState.connectView, qrData: wsState.qrData, socketError: false });
+
+  await saveQrSession({
+    sessionID,
+    qrData: wsState.qrData,
+    ephemeralData: wsState._ephemeralData,
+    socketData: wsState._socketData,
+    connectView: wsState.connectView
+  });
+  await startKeepalive();
 
   return { status: 'ok', state: getPublicState() };
+};
+
+/**
+* Re-establishes a QR connect after the background service worker was terminated
+* (Safari) and woken again. Rehydrates the persisted ephemeral keypair reference (its
+* private key is still in session storage, keyed by uuid) and mints a FRESH sessionID +
+* QR via reloadConnectQR. We deliberately do NOT reconnect to the old sessionID: the
+* proxy drops the rendezvous once our socket dies, so a re-opened old session pairs to
+* nothing and the phone reports a connection error. No-op when a session is already
+* active in this worker instance, or when nothing valid is persisted.
+* @async
+* @return {Promise<{status: string, state?: Object, message?: string}>} Resume result.
+*/
+const resumeConnectQR = async () => {
+  if (wsState.active) {
+    return { status: 'active', state: getPublicState() };
+  }
+
+  if (resumeInProgress) {
+    return resumeInProgress;
+  }
+
+  resumeInProgress = (async () => {
+    const session = await loadQrSession();
+
+    if (!session?.ephemeralData?.uuid) {
+      await clearQrSession();
+      await stopKeepalive();
+      return { status: 'none' };
+    }
+
+    // Seed the ephemeral data so reloadConnectQR reuses it instead of generating a new
+    // keypair (and a duplicate device entry). reloadConnectQR captures it before its own
+    // resetState, then mints a fresh sessionID/QR and re-persists the session.
+    wsState._ephemeralData = session.ephemeralData;
+
+    const result = await reloadConnectQR();
+
+    if (result?.status === 'ok') {
+      logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'WsManager - resumed QR session after SW wake');
+    } else {
+      await clearQrSession();
+      await stopKeepalive();
+    }
+
+    return result;
+  })();
+
+  try {
+    return await resumeInProgress;
+  } finally {
+    resumeInProgress = null;
+  }
 };
 
 const getActiveRoute = () => {
@@ -392,6 +484,9 @@ export {
   startFetch,
   cancelCurrentAction,
   reloadConnectQR,
+  resumeConnectQR,
+  notePopupActivity,
+  isPopupRecentlyActive,
   getPublicState,
   getActiveRoute,
 };

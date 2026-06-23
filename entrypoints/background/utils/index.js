@@ -25,10 +25,13 @@ export { default as cleanTabsInputData } from './savePrompt/cleanTabsInputData.j
 export { default as decryptValues } from './savePrompt/decryptValues.js';
 export { default as decryptValuesProcess } from './savePrompt/decryptValuesProcess.js';
 export { default as getValuesFromTabsInputData } from './savePrompt/getValuesFromTabsInputData.js';
-export { default as handleSavePromptResponse } from './savePrompt/handleSavePromptResponse.js';
+export { default as isFrameSameRootDomain } from './savePrompt/isFrameSameRootDomain.js';
+export { default as isProcessableWebRequestFrame } from './savePrompt/isProcessableWebRequestFrame.js';
+export { default as isSavePromptSenderEligible } from './savePrompt/isSavePromptSenderEligible.js';
 export { default as removeSavePromptAction } from './savePrompt/removeSavePromptAction.js';
 export { default as savePromptAction } from './savePrompt/savePromptAction.js';
 export { default as processSavePromptResult } from './savePrompt/processSavePromptResult.js';
+export { default as waitForTabInputData } from './savePrompt/waitForTabInputData.js';
 
 // Core utilities
 export { default as generateLocalKey } from './generateLocalKey.js';
@@ -45,7 +48,9 @@ export { default as isBrave } from '../../../partials/browserInfo/isBrave.js';
 export { default as openBrowserPage } from './openBrowserPage.js';
 export { default as openInstallPage } from './openInstallPage.js';
 export { default as openPopupWindowInNewWindow } from './openPopupWindowInNewWindow.js';
+export { default as openPopupWithFallback } from './openPopupWithFallback.js';
 export { default as promptInput } from './promptInput.js';
+export { default as regenerateLocalKey } from './regenerateLocalKey.js';
 export { default as sendAutoClearAction } from './sendAutoClearAction.js';
 export { default as sendAutofillToTab } from './sendAutofillToTab.js';
 export { default as sendCardAutofillToTab } from './sendCardAutofillToTab.js';

@@ -41,6 +41,9 @@ class URIMatcher {
   static M_START_WITH_TYPE = 2;
   static M_EXACT_TYPE = 3;
 
+  static NORMALIZE_URL_CACHE = new Map();
+  static NORMALIZE_URL_CACHE_LIMIT = 500;
+
   static MATCHER_FUNCTIONS = {
     [this.M_DOMAIN_TYPE]: this.baseDomainMatch.bind(this),
     [this.M_HOST_TYPE]: this.hostMatch.bind(this),
@@ -246,13 +249,15 @@ class URIMatcher {
     return `${protocol}//${lowerCaseHostname}${port ? `:${port}` : ''}${pathname}${search}${hash}`;
   }
 
-  static normalizeIDN (url, internalProtocols = false) {
-    if (!this.isText(url)) {
-      throw new Error('Parameter is not a string');
-    }
+  static normalizeIDN (url, internalProtocols = false, skipValidation = false) {
+    if (!skipValidation) {
+      if (!this.isText(url)) {
+        throw new Error('Parameter is not a string');
+      }
 
-    if (!this.isUrl(url, internalProtocols)) {
-      throw new Error('Parameter is not a valid URL');
+      if (!this.isUrl(url, internalProtocols)) {
+        throw new Error('Parameter is not a valid URL');
+      }
     }
 
     return new URL(url).href;
@@ -265,6 +270,13 @@ class URIMatcher {
     
     const trimmed = this.trimText(url);
 
+    const cacheKey = `${internalProtocols ? 1 : 0}|${trimmed}`;
+    const cachedResult = this.NORMALIZE_URL_CACHE.get(cacheKey);
+
+    if (cachedResult !== undefined) {
+      return cachedResult;
+    }
+
     if (!this.isUrl(trimmed, internalProtocols)) {
       throw new Error('Parameter is not a valid URL');
     }
@@ -273,13 +285,20 @@ class URIMatcher {
     let normalizedIDN;
     
     try {
-      normalizedIDN = this.normalizeIDN(prepended, internalProtocols);
+      normalizedIDN = this.normalizeIDN(prepended, internalProtocols, true);
     } catch {
       throw new Error('Parameter is not a valid URL');
     }
 
     const lowerCaseURLWithoutPort = this.getLowerCaseURLWithoutPort(normalizedIDN);
     const urlWithoutTrailingChars = this.removeTrailingChars(lowerCaseURLWithoutPort);
+
+    if (this.NORMALIZE_URL_CACHE.size >= this.NORMALIZE_URL_CACHE_LIMIT) {
+      const oldestKey = this.NORMALIZE_URL_CACHE.keys().next().value;
+      this.NORMALIZE_URL_CACHE.delete(oldestKey);
+    }
+
+    this.NORMALIZE_URL_CACHE.set(cacheKey, urlWithoutTrailingChars);
 
     return urlWithoutTrailingChars;
   }

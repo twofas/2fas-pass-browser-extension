@@ -74,6 +74,10 @@ function SecureNoteText (props) {
     }
 
     if (!itemInstance?.sifExists) {
+      if (originalItem?.isT3orT2WithSif) {
+        setData('sifDecryptError', true);
+      }
+
       return null;
     }
 
@@ -91,7 +95,7 @@ function SecureNoteText (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedText, isDecrypting, sifDecryptError, itemInstance, setData]);
+  }, [localDecryptedText, isDecrypting, sifDecryptError, itemInstance, originalItem, setData]);
 
   const getTextValue = () => {
     if (sifDecryptError) {

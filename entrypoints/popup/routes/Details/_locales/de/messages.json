@@ -88,12 +88,12 @@
     "description": "Success message shown when the name is copied to clipboard"
   },
   "details_change_password_in_service": {
-    "message": "Ändere das Passwort im Service",
-    "description": "Button label to open the service's password change page"
+    "message": "Passwort auf DOMAIN ändern",
+    "description": "Button label to open the service's password change page. DOMAIN is replaced at runtime with the service domain"
   },
   "details_change_password_in_service_title": {
-    "message": "Öffne die Website des Dienstes in einem neuen Tab, um das Passwort zu ändern",
-    "description": "Title for the change password section in the service"
+    "message": "Öffne DOMAIN in einem neuen Tab, um das Passwort zu ändern",
+    "description": "Tooltip for the change password button. DOMAIN is replaced at runtime with the service domain"
   },
   "details_toggle_password_visibility": {
     "message": "Passwortanzeige umschalten",

@@ -11,7 +11,36 @@ import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import generateInputId from './generateInputId';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 
-/** 
+let untaggedInputCounter = 0;
+const untaggedInputKeys = new WeakMap();
+
+/**
+* Returns a stable debounce key for an input element. Tagged inputs key by their
+* twofas-pass-id; untagged inputs (e.g. dynamically added before they receive an id)
+* key by a per-element token kept in a WeakMap, so repeated events on the same element
+* reuse the same key and the debounce timer can be cleared correctly.
+* @param {HTMLInputElement} input - The input element.
+* @return {string} The stable identifier used as the timers key.
+*/
+const getInputIdentifier = input => {
+  const taggedId = input?.getAttribute?.('twofas-pass-id');
+
+  if (taggedId) {
+    return taggedId;
+  }
+
+  let stableKey = untaggedInputKeys.get(input);
+
+  if (!stableKey) {
+    untaggedInputCounter += 1;
+    stableKey = `twofas-pass-untagged-${untaggedInputCounter}`;
+    untaggedInputKeys.set(input, stableKey);
+  }
+
+  return stableKey;
+};
+
+/**
 * Function to handle input events.
 * @async
 * @param {Event} e - The input event.
@@ -28,6 +57,16 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
   if (ignore?.value || !window?.location?.origin || window?.location?.origin.length <= 0) {
     return; // Ignore the event
   }
+
+  // Capture the real event target synchronously, BEFORE any await. Input events are
+  // composed, so composedPath()[0] reveals the field even when an open shadow root
+  // retargets e.target to the host element. composedPath() is only populated while the
+  // event is dispatching and returns [] once a handler awaits (e.g. the lazy key import
+  // below, hit on the first keystroke of a page session) — so it must be read here, not
+  // after the awaits. Fall back to e.target + the shadow heuristic only when composedPath
+  // is unavailable/empty (e.g. closed shadow roots that hide their internals).
+  const path = typeof e?.composedPath === 'function' ? e.composedPath() : null;
+  let input = (path && path[0]) || e?.target;
 
   if (!localKey?.data && crypto?.subtle) {
     let localKeyResponse = null;
@@ -54,8 +93,6 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     }
   }
 
-  let input = e?.target;
-
   if (input?.tagName && input.tagName.toLowerCase() !== 'input') {
     const shadowRoots = getShadowRoots(input);
     const shadowInputs = shadowRoots.flatMap(root => Array.from(root.querySelectorAll('input')));
@@ -71,8 +108,8 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     return;
   }
 
-  // Create unique identifier for this input element
-  const inputIdentifier = input?.getAttribute('twofas-pass-id') || `${input?.name || 'unnamed'}_${input?.type || 'text'}_${Date.now()}`;
+  // Create stable identifier for this input element (works before twofas-pass-id is assigned)
+  const inputIdentifier = getInputIdentifier(input);
 
   // Clear existing timer for this specific input
   if (timers[inputIdentifier]) {
@@ -84,12 +121,13 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     const inputId = input?.getAttribute?.('twofas-pass-id');
 
     if (!inputId && !isElementInArray(input, allInputs)) {
-      const passwordInputs = getPasswordInputs();
+      const documentShadowRoots = getShadowRoots();
+      const passwordInputs = getPasswordInputs(documentShadowRoots);
       const passwordForms = passwordInputs
         .map(input => input.closest('form'))
         .filter(Boolean);
-      const usernameInputs = getUsernameInputs(passwordForms);
-      setUsernameSkips(passwordInputs, usernameInputs);
+      const usernameInputs = getUsernameInputs(passwordForms, documentShadowRoots);
+      setUsernameSkips(passwordInputs, usernameInputs, false, passwordForms);
 
       const allInputsNew = passwordInputs.concat(usernameInputs);
 
@@ -178,12 +216,15 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
         target: REQUEST_TARGETS.BACKGROUND_PROMPT
       });
 
-      if (latestValues?.[data.id]) {
-        latestValues[data.id].sent = true;
+      // Value delivered to the background — drop the cached copy so the
+      // flush/beacon fallbacks (which only read sent === false entries) stay
+      // bounded and no plaintext value lingers in memory for the page lifetime.
+      if (latestValues) {
+        delete latestValues[data.id];
       }
 
-      if (beaconPayloads?.[data.id]) {
-        beaconPayloads[data.id].sent = true;
+      if (beaconPayloads) {
+        delete beaconPayloads[data.id];
       }
     } catch {}
   }, config.handleInputEventDebounce || 100);

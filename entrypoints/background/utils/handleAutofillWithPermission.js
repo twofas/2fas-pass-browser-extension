@@ -4,36 +4,10 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, sendMessageToTab, openPopup } from '@/partials/functions';
-import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
+import { sendMessageToTab, loadAndClassifyCrossDomainPermissions, focusTabForDialog } from '@/partials/functions';
 import TwofasNotification from '@/partials/TwofasNotification';
-
-/**
-* Stores autofill failure data for KeepItem display when popup reopens.
-* @async
-* @param {number} tabId - The ID of the tab.
-* @param {Object} closeData - The close data containing item and SIF info.
-* @return {Promise<void>}
-*/
-const storeAutofillFailureData = async (tabId, closeData) => {
-  if (!closeData) {
-    return;
-  }
-
-  const failureKey = `session:autofillT2FailedPending-${tabId}`;
-
-  await storage.setItem(failureKey, JSON.stringify({
-    action: 'autofillT2Failed',
-    vaultId: closeData.vaultId,
-    deviceId: closeData.deviceId,
-    itemId: closeData.itemId,
-    s_password: closeData.s_password,
-    hkdfSaltAB: closeData.hkdfSaltAB,
-    sessionKeyForHKDF: closeData.sessionKeyForHKDF
-  }));
-
-  logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleAutofillWithPermission (storeAutofillFailureData)');
-};
+import restoreActionDataPassword from './restoreActionDataPassword';
+import dispatchLoginAutofill from './dispatchLoginAutofill';
 
 /**
 * Handles Login autofill with cross-domain permission confirmation.
@@ -77,36 +51,14 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
     }, tabId, true);
   }
 
-  let trustedList = [];
-  let untrustedList = [];
-
-  try {
-    trustedList = (await storage.getItem('local:crossDomainTrustedDomains')) || [];
-  } catch { }
-
-  try {
-    untrustedList = (await storage.getItem('local:crossDomainUntrustedDomains')) || [];
-  } catch { }
-
-  const unknownDomains = domains.filter(d => !trustedList.includes(d) && !untrustedList.includes(d));
-  const trustedDomains = domains.filter(d => trustedList.includes(d));
-  const allBlocked = unknownDomains.length === 0 && trustedDomains.length === 0;
-
-  const crossDomainAllowedDomains = allBlocked ? [] : [...trustedDomains];
+  const { unknownDomains, crossDomainAllowedDomains } = await loadAndClassifyCrossDomainPermissions(domains);
 
   if (unknownDomains.length > 0) {
     storedData.trustedDomains = crossDomainAllowedDomains;
     await storage.setItem(storageKey, JSON.stringify(storedData));
     logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - handleAutofillWithPermission (trustedDomains update)');
 
-    try {
-      const tab = await browser.tabs.get(tabId);
-
-      await browser.windows.update(tab.windowId, { focused: true });
-      await browser.tabs.update(tabId, { active: true });
-
-      await new Promise(resolve => setTimeout(resolve, 100));
-    } catch { }
+    await focusTabForDialog(tabId);
 
     try {
       await sendMessageToTab(tabId, {
@@ -127,77 +79,20 @@ const handleAutofillWithPermission = async (tabId, storageKey, domains) => {
   actionData.iframePermissionGranted = true;
   actionData.crossDomainAllowedDomains = crossDomainAllowedDomains;
 
-  try {
-    const reinjected = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
+  // Unwrap the at-rest-encrypted password back to plaintext before filling (finding #5).
+  // No-op when crypto is available (the page decrypts it itself).
+  const restored = await restoreActionDataPassword(actionData);
 
-    if (!reinjected) {
-      logger.warn(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'handleAutofillWithPermission - re-injection did not verify all frames', { tabId });
-    }
-  } catch (e) {
-    await CatchError(e);
-  }
-
-  let response;
-
-  try {
-    response = await sendMessageToAllFrames(tabId, actionData);
-  } catch (e) {
-    logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'handleAutofillWithPermission - sendMessageToAllFrames threw', { tabId, errorMessage: e?.message });
-    await CatchError(e);
+  if (restored.status !== 'ok') {
     await storage.removeItem(storageKey);
-    await storeAutofillFailureData(tabId, closeData);
 
-    return openPopup();
+    return TwofasNotification.show({
+      Title: getMessage('notification_send_autofill_to_tab_autofill_error_title'),
+      Message: getMessage('notification_send_autofill_to_tab_autofill_error_message')
+    }, tabId, true);
   }
 
-  await storage.removeItem(storageKey);
-
-  if (!response) {
-    await storeAutofillFailureData(tabId, closeData);
-
-    return openPopup();
-  }
-
-  const isOk = response.some(frameResponse => frameResponse.status === 'ok');
-  const allFieldsFilled = response.every(frameResponse => {
-    if (frameResponse.status !== 'ok') {
-      return frameResponse.message === 'No input fields found';
-    }
-
-    const couldFillUsername = !actionData.username || frameResponse.canAutofillUsername !== false;
-    const couldFillPassword = !actionData.password || frameResponse.canAutofillPassword !== false;
-
-    return couldFillUsername && couldFillPassword;
-  });
-
-  if (!isOk) {
-    await storeAutofillFailureData(tabId, closeData);
-
-    return openPopup();
-  }
-
-  if (!allFieldsFilled && closeData) {
-    if (closeData.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await storeAutofillFailureData(tabId, closeData);
-
-      return openPopup();
-    }
-  }
-
-  try {
-    await sendMessageToAllFrames(tabId, {
-      action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,
-      target: REQUEST_TARGETS.PROMPT
-    });
-  } catch { }
-
-  try {
-    await browser.runtime.sendMessage({
-      action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,
-      target: REQUEST_TARGETS.BACKGROUND_PROMPT,
-      tabId
-    });
-  } catch { }
+  return dispatchLoginAutofill(tabId, storageKey, actionData, closeData);
 };
 
 export default handleAutofillWithPermission;

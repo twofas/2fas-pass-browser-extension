@@ -7,6 +7,8 @@
 import { autoClearClipboard, sifT2Reset } from '../utils';
 import { SIF_T2_RESET_REGEX } from '@/constants';
 import { AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants/clipboardFieldTypes';
+import { resumeConnectQR, isPopupRecentlyActive } from '../websocket/wsManager.js';
+import { KEEPALIVE_ALARM, stopKeepalive } from '../websocket/connect/keepalive.js';
 
 /** 
 * Function to handle alarm events.
@@ -17,23 +19,47 @@ import { AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants/clipboardFieldTypes';
 */
 const onAlarm = async alarm => {
   const { name } = alarm;
-  const sifT2ResetRegexTest = SIF_T2_RESET_REGEX.exec(name);
-  const autoClearClipboardRegexTest = AUTO_CLEAR_CLIPBOARD_REGEX.exec(name);
 
   try {
+    if (name === KEEPALIVE_ALARM) {
+      // Safari woke the SW for the keepalive tick. Only re-mint the QR if the popup is
+      // actually open (recently queried) — otherwise nobody can see a regenerated QR, so
+      // stop the wake cycle instead of churning sessions. The popup's own liveness poll
+      // re-arms the alarm via resumeConnectQR when it next queries.
+      if (!isPopupRecentlyActive()) {
+        await stopKeepalive();
+        return true;
+      }
+
+      const result = await resumeConnectQR();
+
+      if (result?.status === 'none' || result?.status === 'error') {
+        await stopKeepalive();
+      }
+
+      return true;
+    }
+
+    const sifT2ResetRegexTest = SIF_T2_RESET_REGEX.exec(name);
+
     if (sifT2ResetRegexTest) {
       const [, deviceId, vaultId, itemId] = sifT2ResetRegexTest;
       logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'AlarmHandler - sifT2Reset alarm', { deviceId, vaultId, itemId });
       await sifT2Reset(deviceId, vaultId, itemId);
       return true;
-    } else if (autoClearClipboardRegexTest) {
+    }
+
+    const autoClearClipboardRegexTest = AUTO_CLEAR_CLIPBOARD_REGEX.exec(name);
+
+    if (autoClearClipboardRegexTest) {
       const [, deviceId, vaultId, itemId, itemType] = autoClearClipboardRegexTest;
       logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'AlarmHandler - autoClearClipboard alarm', { deviceId, vaultId, itemId, itemType });
       await autoClearClipboard(deviceId, vaultId, itemId, itemType);
-    } else {
-      logger.debug(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'AlarmHandler - unknown alarm', { name });
-      return false;
+      return true;
     }
+
+    logger.debug(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'AlarmHandler - unknown alarm', { name });
+    return false;
   } catch (e) {
     await CatchError(e);
   }

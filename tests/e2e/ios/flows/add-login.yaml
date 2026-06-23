@@ -1,0 +1,37 @@
+# 2FAS Pass (iOS) — ADD-LOGIN entry flow. Runs AFTER onboarding on an existing vault.
+# Demonstrates composition: it reuses the shared building blocks rather than re-implementing
+# the unlock + item-creation logic. To create a DIFFERENT login, just change the env values
+# passed to shared/create-login.yaml (or call that subflow from your own flow).
+#
+# Params (env): MASTER_PASSWORD (default testtesttest). The login field values are passed
+# explicitly to the create-login subflow below.
+appId: com.twofas.org.TwoPASS.dev
+env:
+  MASTER_PASSWORD: testtesttest
+---
+# Bring the app to the foreground WITHOUT clearState (preserve the onboarded vault).
+- launchApp
+
+# Unlock only if the app relaunched locked (self-guarding; skipped when already unlocked).
+- runFlow: shared/unlock-if-locked.yaml
+
+# Create the requested Login item (reusable, parameterized subflow).
+- runFlow:
+    file: shared/create-login.yaml
+    env:
+      NAME: "google.com"
+      USERNAME: "John"
+      PASSWORD: "Doe"
+      URI: "google.com"
+      TIER: "Secret"
+- takeScreenshot: artifacts/al_06_saved_list
+
+# Open the item and verify the stored fields round-tripped correctly. (The detail screen renders
+# the URL with zero-width spaces between characters, so we assert the stable label rows instead.)
+- tapOn: "google.com, John"
+- assertVisible: "google.com"            # Title
+- assertVisible: "Username, John"        # Username
+- assertVisible: "URL"                   # URL row label
+- assertVisible:
+    text: "^Security Tier, Secret$"      # Security tier
+- takeScreenshot: artifacts/al_07_item_detail

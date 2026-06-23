@@ -6,6 +6,7 @@
 
 import fs from 'node:fs';
 import process from 'node:process';
+import { pathToFileURL } from 'node:url';
 import targetsRaw from './targets.js';
 import { normalizeTargets } from './normalizeTargets.js';
 import { RESULT, formatTable, exitCodeFor, colorize } from './report.js';
@@ -44,7 +45,7 @@ const record = (results, target, result, detail = '') => results.push({ url: tar
 * @param {{page:import('playwright').Page, target:Object, loadResult:{ok:boolean,error?:string}, serviceWorker:import('playwright').Worker, relayPage:import('playwright').Page, item:Object}} ctx - Test context.
 * @return {Promise<{result:string, detail:string}>} The PASS/FAIL outcome and detail.
 */
-const testLoadedTarget = async ({ page, target, loadResult, serviceWorker, relayPage, item }) => {
+export const testLoadedTarget = async ({ page, target, loadResult, serviceWorker, relayPage, item }) => {
   if (!loadResult.ok) {
     return { result: RESULT.FAIL, detail: `load failed: ${loadResult.error}` };
   }
@@ -157,6 +158,64 @@ const testLoadedTarget = async ({ page, target, loadResult, serviceWorker, relay
 };
 
 /**
+* Runs every target through the sliding-window tab pool and returns the per-target results.
+* Exported so the combined connect+autofill orchestrator reuses the EXACT same logic.
+* @param {{context:import('playwright').BrowserContext, serviceWorker:import('playwright').Worker, relayPage:import('playwright').Page, item:Object, targets:Object[], log:Function, useColor:boolean}} ctx - Run context.
+* @return {Promise<Array<{url:string,result:string,detail:string}>>} The per-target results.
+*/
+export const runTargets = async ({ context, serviceWorker, relayPage, item, targets, log, useColor }) => {
+  const results = [];
+  // Sliding-window tab pool. The autofill+assert step is serial (it targets the
+  // active/foreground tab, and background tabs throttle SPA form rendering), but the
+  // dominant cost — network load — is overlapped: preload up to POOL tabs in PARALLEL,
+  // test in order on the foreground, and recycle each finished tab to preload the next.
+  const POOL = Math.max(1, Math.min(Number(process.env.AUTOFILL_POOL) || 10, targets.length));
+  log(`Running ${targets.length} target(s), preloading up to ${POOL} tab(s) in parallel…`);
+
+  const openPages = [];
+  const inFlight = new Map(); // targetIndex -> { page, gotoPromise }
+  let nextToLoad = 0;
+
+  const startLoad = (targetIndex, page) => {
+    const t = targets[targetIndex];
+    const gotoPromise = page
+      .goto(t.url, { waitUntil: 'load', timeout: 30000 })
+      .then(() => ({ ok: true }))
+      .catch(e => ({ ok: false, error: e?.message || String(e) }));
+
+    inFlight.set(targetIndex, { page, gotoPromise });
+  };
+
+  // Prime the pool: open POOL tabs and kick off the first POOL loads concurrently.
+  for (let i = 0; i < POOL && nextToLoad < targets.length; i++) {
+    const page = await context.newPage();
+    openPages.push(page);
+    startLoad(nextToLoad, page);
+    nextToLoad++;
+  }
+
+  // Consume targets in order; recycle each finished tab to preload the next URL.
+  for (let ti = 0; ti < targets.length; ti++) {
+    const slot = inFlight.get(ti);
+    inFlight.delete(ti);
+
+    const loadResult = await slot.gotoPromise;
+    const { result, detail } = await testLoadedTarget({ page: slot.page, target: targets[ti], loadResult, serviceWorker, relayPage, item });
+
+    record(results, targets[ti], result, detail);
+    log(`[${ti + 1}/${targets.length}] ${colorize(result, result, useColor)}  ${targets[ti].url}${detail ? `  — ${detail}` : ''}`);
+
+    if (nextToLoad < targets.length) {
+      startLoad(nextToLoad, slot.page); // recycle this tab for the next URL
+      nextToLoad++;
+    }
+  }
+
+  await Promise.all(openPages.map(p => p.close().catch(() => {})));
+  return results;
+};
+
+/**
 * Runs the autofill E2E suite across all targets.
 * @return {Promise<void>} Resolves after exiting the process.
 */
@@ -248,56 +307,8 @@ const main = async () => {
 
     log(`Using item: username="${item.username}".`);
 
-    // Sliding-window tab pool. The autofill+assert step is serial (it targets the
-    // active/foreground tab, and background tabs throttle SPA form rendering), but the
-    // dominant cost — network load — is overlapped: we preload up to POOL tabs in
-    // PARALLEL, test in order on the foreground, and recycle each finished tab to
-    // preload the next URL. The window stays full (POOL loads always in flight), so by
-    // the time we reach target i its load has already finished — no network wait in the
-    // hot path. Tune the width with AUTOFILL_POOL (default 10).
-    const POOL = Math.max(1, Math.min(Number(process.env.AUTOFILL_POOL) || 10, targets.length));
-    log(`Running ${targets.length} target(s), preloading up to ${POOL} tab(s) in parallel…`);
-
-    const openPages = [];
-    const inFlight = new Map(); // targetIndex -> { page, gotoPromise }
-    let nextToLoad = 0;
-
-    const startLoad = (targetIndex, page) => {
-      const t = targets[targetIndex];
-      const gotoPromise = page
-        .goto(t.url, { waitUntil: 'load', timeout: 30000 })
-        .then(() => ({ ok: true }))
-        .catch(e => ({ ok: false, error: e?.message || String(e) }));
-
-      inFlight.set(targetIndex, { page, gotoPromise });
-    };
-
-    // Prime the pool: open POOL tabs and kick off the first POOL loads concurrently.
-    for (let i = 0; i < POOL && nextToLoad < targets.length; i++) {
-      const page = await context.newPage();
-      openPages.push(page);
-      startLoad(nextToLoad, page);
-      nextToLoad++;
-    }
-
-    // Consume targets in order; recycle each finished tab to preload the next URL.
-    for (let ti = 0; ti < targets.length; ti++) {
-      const slot = inFlight.get(ti);
-      inFlight.delete(ti);
-
-      const loadResult = await slot.gotoPromise;
-      const { result, detail } = await testLoadedTarget({ page: slot.page, target: targets[ti], loadResult, serviceWorker, relayPage, item });
-
-      record(results, targets[ti], result, detail);
-      log(`[${ti + 1}/${targets.length}] ${colorize(result, result, useColor)}  ${targets[ti].url}${detail ? `  — ${detail}` : ''}`);
-
-      if (nextToLoad < targets.length) {
-        startLoad(nextToLoad, slot.page); // recycle this tab for the next URL
-        nextToLoad++;
-      }
-    }
-
-    await Promise.all(openPages.map(p => p.close().catch(() => {})));
+    const targetResults = await runTargets({ context, serviceWorker, relayPage, item, targets, log, useColor });
+    results.push(...targetResults);
   } finally {
     console.log('\n' + formatTable(results, { color: useColor }) + '\n');
     await context.close().catch(() => {});
@@ -306,7 +317,13 @@ const main = async () => {
   process.exit(exitCodeFor(results, { setupFailure: false }));
 };
 
-main().catch(e => {
-  console.error('[autofill-e2e] fatal', e);
-  process.exit(2);
-});
+// Only run the CLI when invoked directly (`node runAutofillE2E.js`); stay inert when
+// imported (e.g. the combined connect+autofill orchestrator reuses runTargets).
+const isEntryPoint = import.meta.url === pathToFileURL(process.argv[1] || '').href;
+
+if (isEntryPoint) {
+  main().catch(e => {
+    console.error('[autofill-e2e] fatal', e);
+    process.exit(2);
+  });
+}

@@ -53,8 +53,17 @@ const detectContextName = () => {
   return 'extension-page';
 };
 
+const detectAppVersion = () => {
+  try {
+    return browser.runtime.getManifest()?.version || null;
+  } catch {
+    return null;
+  }
+};
+
 const CTX_NAME = detectContextName();
 const CTX_ID = LOGGER_CONSTANTS.CONTEXT_IDS[CTX_NAME] ?? LOGGER_CONSTANTS.CONTEXT_IDS.background;
+const APP_VERSION = detectAppVersion();
 const isContentCtx = CTX_NAME === 'content';
 
 const writer = isContentCtx ? writeLogViaMessage : writeLogDirect;
@@ -66,6 +75,7 @@ const makeLogger = level => (cat, msg, meta) => {
     const safeCat = ALLOWED_CATEGORIES.has(cat) ? cat : DEFAULT_CATEGORY;
     const entry = {
       t: Date.now(),
+      v: APP_VERSION,
       l: level,
       c: safeCat,
       x: CTX_ID,

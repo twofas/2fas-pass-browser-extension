@@ -8,6 +8,7 @@ import { isText, checkStorageAutoClearActions } from '@/partials/functions';
 import { openBrowserPage, openPopupWindowInNewWindow, openInstallPage, getLocalKey, sendAutoClearAction, handleAutofillCardWithPermission, handleAutofillWithPermission, processCrossDomainDialogResult, processMatchingLoginsResult, processSavePromptResult, handleLogEvent } from '../utils';
 import runMigrations from '../migrations';
 import onTabFocused from '../tabs/onTabFocused';
+import shouldHandleTabFocus from '../tabs/shouldHandleTabFocus';
 import handleCheckShareLinkSupport from './handleCheckShareLinkSupport';
 
 /** 
@@ -94,6 +95,11 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
       }
 
       case REQUEST_ACTIONS.TAB_FOCUS: {
+        if (!shouldHandleTabFocus(sender?.tab?.id)) {
+          sendResponse({ status: 'ok' });
+          break;
+        }
+
         onTabFocused(sender.tab)
           .finally(async () => {
             sendResponse({ status: 'ok' });

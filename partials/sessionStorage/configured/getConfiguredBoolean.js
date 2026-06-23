@@ -16,12 +16,13 @@ const getConfiguredBoolean = async () => {
     const configuredValue = await getConfigured();
     return configuredValue < Date.now();
   } catch {
-    try {
-      const sv = await storage.getItem('session:storageVersion');
-      return typeof sv === 'number' && sv > 0;
-    } catch {
-      return false;
-    }
+    // getConfigured() throws only when the configured state cannot be verified
+    // (crypto/decrypt failure - e.g. keys or storage env no longer match the
+    // data). Reporting "configured" here based on session:storageVersion would
+    // mask that invalid state and show an empty item list instead of the honest
+    // locked/reconnect screen. A genuinely-absent configured value does NOT throw
+    // (getConfigured returns a far-future default), so this only affects real errors.
+    return false;
   }
 };
 

@@ -6,7 +6,8 @@
 
 import sendMessageToAllFrames from './sendMessageToAllFrames.js';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready.js';
-import classifyCrossDomainPermissions from './classifyCrossDomainPermissions.js';
+import loadAndClassifyCrossDomainPermissions from './loadAndClassifyCrossDomainPermissions.js';
+import { isTrackerHostUrl } from './filterInjectableFrames.js';
 
 /**
 * Discovers cross-domain frame hostnames in a tab via webNavigation, independent
@@ -16,7 +17,7 @@ import classifyCrossDomainPermissions from './classifyCrossDomainPermissions.js'
 * @param {number} tabId - The tab to inspect.
 * @return {Promise<Set<string>>} Set of cross-domain hostnames (excluding the top frame's hostname).
 */
-const discoverCrossDomainHostnames = async tabId => {
+export const discoverCrossDomainHostnames = async tabId => {
   let frames = [];
 
   try {
@@ -29,7 +30,10 @@ const discoverCrossDomainHostnames = async tabId => {
     return new Set();
   }
 
-  const validFrames = frames.filter(f => f?.url && (f.url.startsWith('http://') || f.url.startsWith('https://')));
+  // Mirror filterInjectableFrames: tracker iframes are not messaged, so they must not be
+  // discovered as cross-domain hostnames either — otherwise they look "unresponded" and
+  // falsely trigger the iframePermissionRetryDelay wait on every tracker-heavy page.
+  const validFrames = frames.filter(f => f?.url && (f.url.startsWith('http://') || f.url.startsWith('https://')) && !isTrackerHostUrl(f.url));
   const topFrame = validFrames.find(f => f.parentFrameId === -1);
 
   let topHostname = null;
@@ -150,7 +154,7 @@ const resolveCrossDomainPermissions = async (tabId, autofillType, dataFields) =>
   // Apple's auth widget (and similar) bootstraps slowly; the content script's message
   // listener may not be ready in the first ~300-500ms after injection.
   if (hasUnresponded()) {
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise(resolve => setTimeout(resolve, config.iframePermissionRetryDelay));
 
     try {
       await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
@@ -175,20 +179,7 @@ const resolveCrossDomainPermissions = async (tabId, autofillType, dataFields) =>
     return result;
   }
 
-  let trustedList = [];
-  let untrustedList = [];
-
-  try {
-    const stored = await storage.getItem('local:crossDomainTrustedDomains');
-    trustedList = stored || [];
-  } catch { }
-
-  try {
-    const stored = await storage.getItem('local:crossDomainUntrustedDomains');
-    untrustedList = stored || [];
-  } catch { }
-
-  return classifyCrossDomainPermissions(respondedNeedsPermission, trustedList, untrustedList);
+  return loadAndClassifyCrossDomainPermissions(respondedNeedsPermission);
 };
 
 export default resolveCrossDomainPermissions;

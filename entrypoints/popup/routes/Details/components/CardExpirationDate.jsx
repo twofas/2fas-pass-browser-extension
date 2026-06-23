@@ -62,6 +62,10 @@ function CardExpirationDate (props) {
     }
 
     if (!itemInstance?.expirationDateExists) {
+      if (originalItem?.isT3orT2WithSif) {
+        setData('sifDecryptError', true);
+      }
+
       return null;
     }
 
@@ -79,7 +83,7 @@ function CardExpirationDate (props) {
     } finally {
       setIsDecrypting(false);
     }
-  }, [localDecryptedExpirationDate, isDecrypting, sifDecryptError, itemInstance, setData]);
+  }, [localDecryptedExpirationDate, isDecrypting, sifDecryptError, itemInstance, originalItem, setData]);
 
   const getExpirationDateValue = () => {
     if (sifDecryptError || isHighlySecretWithoutSif) {
