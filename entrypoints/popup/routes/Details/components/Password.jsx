@@ -73,6 +73,18 @@ function Password (props) {
     }
   }, [data.item]);
 
+  const changePasswordDomain = useMemo(() => {
+    if (!changePasswordUrl) {
+      return '';
+    }
+
+    try {
+      return new URL(changePasswordUrl).hostname;
+    } catch {
+      return '';
+    }
+  }, [changePasswordUrl]);
+
   const decryptPasswordOnDemand = useCallback(async () => {
     if (localDecryptedPassword !== null || isDecrypting || sifDecryptError) {
       return localDecryptedPassword;
@@ -453,9 +465,9 @@ function Password (props) {
                   type="button"
                   onClick={handleChangePasswordClick}
                   className={`${bS.btn} ${bS.btnClear} ${pI.passInputLinkButton}`}
-                  title={getMessage('details_change_password_in_service_title')}
+                  title={getMessage('details_change_password_in_service_title').replace('DOMAIN', changePasswordDomain)}
                 >
-                  <span>{getMessage('details_change_password_in_service')}</span>
+                  <span>{getMessage('details_change_password_in_service').replace('DOMAIN', changePasswordDomain)}</span>
                   <ExternalLinkIcon />
                 </button>
               </motion.div>
