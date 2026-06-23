@@ -16,7 +16,7 @@ import QR from './components/QR';
 import DeviceNew from './components/DeviceNew';
 import DeviceIcon from './components/DeviceIcon';
 import DevicesPagination from './components/DevicesPagination';
-import { getReadyDevices, renderQrFromData } from './functions';
+import { getReadyDevices, renderQrFromData, resolveConnectView } from './functions';
 import NavigationButton from '../../components/NavigationButton';
 import { CONNECT_VIEWS } from '@/constants';
 import { Splide, SplideSlide, SplideTrack } from '@splidejs/react-splide';
@@ -44,6 +44,7 @@ function Connect (props) {
   const [localView, setLocalView] = useState(null);
   const [qrCode, setQrCode] = useState(null);
   const [readyDevices, setReadyDevices] = useState([]);
+  const [devicesLoaded, setDevicesLoaded] = useState(false);
   const [sliderMounted, setSliderMounted] = useState(false);
   const [livenessLost, setLivenessLost] = useState(false);
   const sliderRef = useRef(null);
@@ -54,21 +55,29 @@ function Connect (props) {
   const { data, setData } = usePopupState();
 
   const rawConnectView = bgState?.active ? (bgState.connectView || localView) : localView;
-  // Never collapse to a blank screen: if no view resolves (e.g. a resumed QR session
-  // closed and the background pushed connectView:null while localView was unset), fall
-  // back to the device list instead of hiding every section.
-  const resolvedConnectView = rawConnectView || CONNECT_VIEWS.DeviceSelect;
-  const connectView = resolvedConnectView === CONNECT_VIEWS.DeviceSelect && readyDevices.length === 0
-    ? CONNECT_VIEWS.DeviceNew
-    : resolvedConnectView;
+  // Resolve the visible sub-view. While the saved device list is still loading, this is
+  // null so no section shows yet (avoids flashing the empty DeviceNew/QR screen before the
+  // user's saved devices appear). An active background view is honored immediately, and once
+  // the list has loaded the view never collapses to blank — see resolveConnectView.
+  const connectView = resolveConnectView({ rawConnectView, devicesLoaded, readyDevicesCount: readyDevices.length });
   const connectingLoader = bgState?.progress ?? 264;
   const deviceName = bgState?.deviceName || null;
   const socketError = (bgState?.socketError || false) || livenessLost;
 
   const loadReadyDevices = useCallback(async () => {
-    const devices = await getReadyDevices();
-    setReadyDevices(devices);
-    return devices;
+    try {
+      const devices = await getReadyDevices();
+      setReadyDevices(devices);
+      return devices;
+    } catch {
+      setReadyDevices([]);
+      return [];
+    } finally {
+      // Always mark the list as loaded — even on a storage read failure — so the view
+      // resolution never stays stuck on null (a permanently blank Connect screen). On
+      // error it falls back to an empty list, i.e. the DeviceNew screen.
+      setDevicesLoaded(true);
+    }
   }, []);
 
   const updateQrCode = useCallback(async qrData => {
