@@ -20,7 +20,18 @@ export default defineContentScript({
   cssInjectionMode: 'ui',
   async main (ctx) {
     try {
-      await initI18n();
+      // Only the top frame renders localized text — every i18n-using handler
+      // (notification, matching-logins, save prompt, cross-domain dialog) is top-frame
+      // -only. Sub-frames / iframes never use i18n, so they skip the initI18n()
+      // service-worker round-trip entirely and register their message listener below
+      // immediately; this is what stops the autofill injection-verification loop from
+      // stalling while it waits on tracker iframes to become responsive. The top frame
+      // kicks initI18n() off WITHOUT awaiting (fire-and-forget) so its listener is not
+      // gated on the SW either; the text-rendering handlers await i18n themselves
+      // (see I18N_DEPENDENT_ACTIONS in contentOnMessage).
+      if (isTopFrame()) {
+        initI18n();
+      }
 
       logger.debug(LOGGER_CONSTANTS.CATEGORIES.CONTENT, 'ContentScript - main initialized', {
         topFrame: isTopFrame()

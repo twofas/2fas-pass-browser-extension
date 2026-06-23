@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import filterInjectableFrames, { RESTRICTED_HOSTS_BY_BROWSER, isRestrictedHostUrl } from './filterInjectableFrames.js';
+import filterInjectableFrames, { RESTRICTED_HOSTS_BY_BROWSER, isRestrictedHostUrl, TRACKER_HOSTS, isTrackerHostUrl } from './filterInjectableFrames.js';
 
 // Shapes mirror browser.webNavigation.getAllFrames results: top frame has
 // parentFrameId -1; sub-frames point at their parent's frameId.
@@ -233,6 +233,66 @@ describe('filterInjectableFrames', () => {
         { frameId: 1, parentFrameId: 0, url: 'https://accounts.google.com/signin' }
       ];
       expect(frameIds(frames)).toEqual([0, 1]);
+    });
+  });
+
+  describe('isTrackerHostUrl (third-party ad / analytics hosts)', () => {
+    it('flags pure ad/analytics registrable domains and their subdomains, browser-agnostically', () => {
+      expect(isTrackerHostUrl('https://demdex.net/dest5.html')).toBe(true);
+      expect(isTrackerHostUrl('https://statefarm.demdex.net/dest5.html')).toBe(true);
+      expect(isTrackerHostUrl('https://insight.adsrvr.org/track/cei')).toBe(true);
+      expect(isTrackerHostUrl('https://cdn-pci.optimizely.com/client_storage/x.html')).toBe(true);
+      expect(isTrackerHostUrl('https://googleads.g.doubleclick.net/pagead')).toBe(true);
+    });
+
+    it('flags a mixed-domain tracker only on its exact tracking host, not the parent domain', () => {
+      expect(isTrackerHostUrl('https://tr.snapchat.com/cm/i')).toBe(true);
+      // The product domain itself can host a real login form — it must stay injectable.
+      expect(isTrackerHostUrl('https://accounts.snapchat.com/login')).toBe(false);
+      expect(isTrackerHostUrl('https://snapchat.com/')).toBe(false);
+    });
+
+    it('does NOT flag legitimate login hosts', () => {
+      expect(isTrackerHostUrl('https://accounts.google.com/signin')).toBe(false);
+      expect(isTrackerHostUrl('https://login.bank.com/')).toBe(false);
+      expect(isTrackerHostUrl('https://auth.proofing.statefarm.com/login-ui/login')).toBe(false);
+      expect(isTrackerHostUrl('https://example.com/')).toBe(false);
+    });
+
+    it('does not over-match unrelated hosts or invalid input', () => {
+      expect(isTrackerHostUrl('https://example.com/demdex.net')).toBe(false);
+      expect(isTrackerHostUrl('https://demdex.net.evil.com/')).toBe(false);
+      expect(isTrackerHostUrl('not a url')).toBe(false);
+    });
+
+    it('exposes a frozen tracker host list', () => {
+      expect(Array.isArray(TRACKER_HOSTS)).toBe(true);
+      expect(TRACKER_HOSTS).toEqual(expect.arrayContaining(['demdex.net', 'adsrvr.org', 'optimizely.com', 'tr.snapchat.com']));
+    });
+  });
+
+  describe('tracker/ad hosts are not counted as injectable frames', () => {
+    // Trackers are dropped on EVERY browser (unlike RESTRICTED_HOSTS_BY_BROWSER),
+    // so these do not depend on import.meta.env.BROWSER.
+    it('drops cross-origin tracker iframes but keeps the top frame and a legit login iframe', () => {
+      const frames = [
+        { frameId: 0, parentFrameId: -1, url: 'https://auth.proofing.statefarm.com/login-ui/login' },
+        { frameId: 1, parentFrameId: 0, url: 'https://cdn-pci.optimizely.com/client_storage/x.html' },
+        { frameId: 2, parentFrameId: 0, url: 'https://statefarm.demdex.net/dest5.html' },
+        { frameId: 3, parentFrameId: 0, url: 'https://tr.snapchat.com/cm/i' },
+        { frameId: 4, parentFrameId: 0, url: 'https://insight.adsrvr.org/track/cei' },
+        { frameId: 5, parentFrameId: 0, url: 'https://login.partner-bank.com/sso' }
+      ];
+      expect(frameIds(frames)).toEqual([0, 5]);
+    });
+
+    it('drops an about:blank child of a tracker frame (inherited origin)', () => {
+      const frames = [
+        { frameId: 0, parentFrameId: -1, url: 'https://example.com/' },
+        { frameId: 1, parentFrameId: 0, url: 'https://adsrvr.org/track' },
+        { frameId: 2, parentFrameId: 1, url: 'about:blank' }
+      ];
+      expect(frameIds(frames)).toEqual([0]);
     });
   });
 

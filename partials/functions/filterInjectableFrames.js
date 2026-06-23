@@ -75,6 +75,79 @@ const isRestrictedHostUrl = (url, browser) => {
 };
 
 /**
+* Third-party ad / analytics / tag hosts that are embedded as iframes on countless
+* sites but never carry a user-facing login (or card) form the extension autofills.
+* They DO run the content script (ordinary https), so unlike RESTRICTED_HOSTS they
+* answer eventually — but they are routinely slow to bootstrap (their own analytics
+* JS saturates the frame's main thread), so counting them in the injection
+* -verification expected frame count drags the whole loop into its stabilisation /
+* timeout path on every autofill over a tracker-heavy page (measured: ~2.2s on a
+* StateFarm login embedding 6 of these). Dropping them shrinks the messaged set and
+* the expected frame count to the frames that can actually hold a login form.
+*
+* Entries are matched as the hostname itself OR any subdomain of it. Pure ad/analytics
+* networks are listed by registrable domain (every subdomain is theirs). Companies
+* whose PARENT domain can host a genuine login (Snapchat, Bing, LinkedIn, TikTok,
+* Facebook) are listed ONLY by their exact tracking sub-host, never the eTLD+1, so a
+* real login iframe on the parent domain stays injectable. The list is deliberately
+* conservative and incomplete: a tracker not listed here simply falls back to the
+* previous (slower) behaviour — it is never wrongly autofilled.
+* @type {ReadonlyArray<string>}
+*/
+const TRACKER_HOSTS = Object.freeze([
+  'doubleclick.net',
+  'google-analytics.com',
+  'googletagmanager.com',
+  'googlesyndication.com',
+  'googleadservices.com',
+  'demdex.net',
+  'omtrdc.net',
+  'adsrvr.org',
+  'adnxs.com',
+  'rubiconproject.com',
+  'pubmatic.com',
+  'casalemedia.com',
+  'bidswitch.net',
+  'criteo.com',
+  'criteo.net',
+  'amazon-adsystem.com',
+  'rlcdn.com',
+  'crwdcntrl.net',
+  'agkn.com',
+  'optimizely.com',
+  'hotjar.com',
+  'mouseflow.com',
+  'taboola.com',
+  'outbrain.com',
+  'scorecardresearch.com',
+  'quantserve.com',
+  'sc-static.net',
+  'tr.snapchat.com',
+  'bat.bing.com',
+  'px.ads.linkedin.com',
+  'analytics.tiktok.com',
+  'connect.facebook.net'
+]);
+
+/**
+* Checks whether an http(s) frame URL points at a known third-party ad/analytics host
+* (TRACKER_HOSTS) — the hostname itself or any subdomain of a listed entry.
+* @param {string} url - An http:// or https:// frame URL.
+* @return {boolean} True when the host is a known tracker that holds no login form.
+*/
+const isTrackerHostUrl = url => {
+  let hostname;
+
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    return false;
+  }
+
+  return TRACKER_HOSTS.some(host => hostname === host || hostname.endsWith(`.${host}`));
+};
+
+/**
 * Checks whether a frame URL is an inherited-origin document (about:blank /
 * about:srcdoc). Such frames have no origin of their own — they inherit the
 * origin of the document that created them — so their own URL is not enough to
@@ -126,7 +199,7 @@ const filterInjectableFrames = frames => {
     }
 
     if (isHttpFrameUrl(parent.url)) {
-      return !isRestrictedHostUrl(parent.url, currentBrowser);
+      return !isRestrictedHostUrl(parent.url, currentBrowser) && !isTrackerHostUrl(parent.url);
     }
 
     if (isInheritedOriginFrameUrl(parent.url)) {
@@ -142,7 +215,7 @@ const filterInjectableFrames = frames => {
     }
 
     if (isHttpFrameUrl(frame.url)) {
-      return !isRestrictedHostUrl(frame.url, currentBrowser);
+      return !isRestrictedHostUrl(frame.url, currentBrowser) && !isTrackerHostUrl(frame.url);
     }
 
     if (isInheritedOriginFrameUrl(frame.url)) {
@@ -153,5 +226,5 @@ const filterInjectableFrames = frames => {
   });
 };
 
-export { RESTRICTED_HOSTS_BY_BROWSER, isRestrictedHostUrl };
+export { RESTRICTED_HOSTS_BY_BROWSER, isRestrictedHostUrl, TRACKER_HOSTS, isTrackerHostUrl };
 export default filterInjectableFrames;
