@@ -40,6 +40,7 @@ export default defineContentScript({
       let handleMessage;
       let topLayerCleanup = null;
       let styleObserverCleanup = null;
+      let handleVisibilityChange = null;
       const emptyFunc = () => {};
       const cryptoAvailable = isCryptoAvailable();
 
@@ -47,6 +48,11 @@ export default defineContentScript({
         browser.runtime.onMessage.removeListener(handleMessage);
         window.removeEventListener('error', emptyFunc);
         window.removeEventListener('unhandledrejection', emptyFunc);
+
+        if (handleVisibilityChange) {
+          document.removeEventListener('visibilitychange', handleVisibilityChange);
+          handleVisibilityChange = null;
+        }
 
         if (topLayerCleanup) {
           topLayerCleanup();
@@ -82,6 +88,24 @@ export default defineContentScript({
             );
 
             topLayerCleanup = topLayer.cleanup;
+
+            // The top-layer manager watches the whole document subtree; suspend it while the
+            // tab is hidden and re-sync on return. setupStyleObserver stays on — it is a
+            // cheap single-element anti-tamper control. Pause immediately when the frame
+            // mounts hidden (e.g. a background-opened tab).
+            handleVisibilityChange = () => {
+              if (document.hidden) {
+                topLayer.pause();
+              } else {
+                topLayer.resume();
+              }
+            };
+
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+
+            if (document.hidden) {
+              topLayer.pause();
+            }
 
             handleMessage = (request, sender, sendResponse) => {
               if (ifCtxIsInvalid(ctx, removeListeners)) {
