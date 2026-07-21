@@ -133,10 +133,42 @@ const getParentDataField = element => {
 */
 const getAssociatedLabelText = input => {
   if (input.id) {
-    const rootNode = input.getRootNode();
-    const labelByFor = typeof rootNode.querySelector === 'function'
-      ? rootNode.querySelector(`label[for="${CSS.escape(input.id)}"]`)
-      : null;
+    const selector = `label[for="${CSS.escape(input.id)}"]`;
+    // Duplicate ids across coexisting login/registration panels are common (invalid HTML, but
+    // widely shipped); a document-wide first-match can pull a foreign field's label and
+    // misclassify this one. Resolve within the input's own form first. Form-less inputs fall back
+    // to root-wide matches, trusting multiple matches only when either the input is the first
+    // element with its id (the HTML-spec association target — use the first label, as browsers do)
+    // or all matching labels carry identical text (hidden component clones). A non-first duplicate
+    // with differing texts is left to the structural lookups below.
+    const form = input.closest('form');
+    let labelByFor = form ? form.querySelector(selector) : null;
+
+    if (!labelByFor) {
+      const rootNode = input.getRootNode();
+      const rootMatches = typeof rootNode.querySelectorAll === 'function'
+        ? Array.from(rootNode.querySelectorAll(selector))
+        : [];
+
+      if (rootMatches.length === 1) {
+        labelByFor = rootMatches[0];
+      } else if (rootMatches.length > 1) {
+        const specTarget = typeof rootNode.getElementById === 'function'
+          ? rootNode.getElementById(input.id)
+          : rootNode.querySelector(`[id="${CSS.escape(input.id)}"]`);
+
+        if (specTarget === input) {
+          labelByFor = rootMatches[0];
+        } else {
+          const firstText = (rootMatches[0].textContent || '').toLowerCase().trim();
+          const allTextsIdentical = rootMatches.every(label => (label.textContent || '').toLowerCase().trim() === firstText);
+
+          if (allTextsIdentical) {
+            labelByFor = rootMatches[0];
+          }
+        }
+      }
+    }
 
     if (labelByFor) {
       return (labelByFor.textContent || '').toLowerCase().trim();
