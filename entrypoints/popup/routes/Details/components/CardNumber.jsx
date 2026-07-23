@@ -68,7 +68,7 @@ function CardNumber (props) {
     }
 
     if (!itemInstance?.cardNumberExists) {
-      if (originalItem?.isT3orT2WithSif) {
+      if (originalItem?.cardNumberExists) {
         setData('sifDecryptError', true);
       }
 

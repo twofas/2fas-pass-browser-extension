@@ -63,7 +63,7 @@ function CardExpirationDate (props) {
     }
 
     if (!itemInstance?.expirationDateExists) {
-      if (originalItem?.isT3orT2WithSif) {
+      if (originalItem?.expirationDateExists) {
         setData('sifDecryptError', true);
       }
 

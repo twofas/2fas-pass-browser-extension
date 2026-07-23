@@ -75,7 +75,7 @@ function CardSecurityCode (props) {
     }
 
     if (!itemInstance?.securityCodeExists) {
-      if (originalItem?.isT3orT2WithSif) {
+      if (originalItem?.securityCodeExists) {
         setData('sifDecryptError', true);
       }
 

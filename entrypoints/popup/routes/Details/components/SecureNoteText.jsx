@@ -74,7 +74,7 @@ function SecureNoteText (props) {
     }
 
     if (!itemInstance?.sifExists) {
-      if (originalItem?.isT3orT2WithSif) {
+      if (originalItem?.sifExists) {
         setData('sifDecryptError', true);
       }
 
