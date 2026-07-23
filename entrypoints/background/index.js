@@ -9,6 +9,7 @@ import { createMessageRouter, onInstalled, onContextMenuClick, onStorageChange, 
 import nonSafariBackground from './nonSafariBackground';
 import firefoxBackground from './firefoxBackground';
 import initBadgeState from './utils/badge/initBadgeState';
+import { resumeWsSession } from './websocket/wsManager.js';
 
 export default defineBackground({
   /**
@@ -79,4 +80,8 @@ export default defineBackground({
     }
 
     initBadgeState();
+
+    // The SW may have just been woken from a termination mid-session (Safari) — run the
+    // session-resume decision tree without blocking startup.
+    resumeWsSession().catch(() => {});
 }});

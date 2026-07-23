@@ -17,6 +17,16 @@ export const useWS = () => {
     }).then(response => {
       setWsActive(response?.state?.active ?? false);
       setConnectView(response?.state?.connectView ?? null);
+
+      if (response?.pendingUpdates?.toasts?.length > 0) {
+        response.pendingUpdates.toasts.forEach(toast => {
+          if (toast.toastId) {
+            showToast(toast.message, toast.type, toast.autoClose !== false, { toastId: toast.toastId });
+          } else {
+            showToast(toast.message, toast.type, toast.autoClose !== false);
+          }
+        });
+      }
     }).catch(() => {});
 
     const handler = message => {
