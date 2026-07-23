@@ -15,6 +15,7 @@ import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import { useI18n } from '@/partials/context/I18nContext';
 
 /**
@@ -194,7 +195,8 @@ function CardExpirationDate (props) {
       } else if (itemInstance?.expirationDateExists) {
         expirationDateToCopy = await decryptExpirationDateOnDemand();
       } else {
-        expirationDateToCopy = '';
+        showToast(getMessage('this_tab_copy_disabled_no_expiration_date'), 'error');
+        return;
       }
 
       await copyValue(expirationDateToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'expirationDate');
@@ -244,15 +246,18 @@ function CardExpirationDate (props) {
 
             <div className={pI.passInputBottomButtons}>
               {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.expirationDateExists) && !sifDecryptError) && (
-                <button
-                  type='button'
-                  className={`${bS.btn} ${pI.iconButton}`}
-                  onClick={handleCopyExpirationDate}
-                  title={getMessage('details_copy_expiration_date')}
-                  tabIndex={-1}
-                >
-                  <CopyIcon />
-                </button>
+                <CopyTooltip text={getMessage('this_tab_copy_disabled_no_expiration_date')} active={!itemInstance?.expirationDateExists}>
+                  <button
+                    type='button'
+                    className={`${bS.btn} ${pI.iconButton}`}
+                    onClick={handleCopyExpirationDate}
+                    disabled={!itemInstance?.expirationDateExists}
+                    title={!itemInstance?.expirationDateExists ? undefined : getMessage('details_copy_expiration_date')}
+                    tabIndex={-1}
+                  >
+                    <CopyIcon />
+                  </button>
+                </CopyTooltip>
               )}
             </div>
 

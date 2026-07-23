@@ -14,6 +14,7 @@ import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import { useI18n } from '@/partials/context/I18nContext';
 
 const usernameMobileVariants = {
@@ -46,12 +47,12 @@ function Username (props) {
   }, [data?.item?.content?.username]);
 
   const handleCopyUsername = useCallback(async username => {
-    if (!username) {
-      await copyValue('', data.item.deviceId, data.item.vaultId, data.item.id, 'username');
-    } else {
-      await copyValue(username, data.item.deviceId, data.item.vaultId, data.item.id, 'username');
+    if (!username || username.length === 0) {
+      showToast(getMessage('this_tab_copy_disabled_no_username'), 'error');
+      return;
     }
 
+    await copyValue(username, data.item.deviceId, data.item.vaultId, data.item.id, 'username');
     showToast(getMessage('notification_username_copied'), 'success');
   }, [data.item.id]);
 
@@ -146,15 +147,18 @@ function Username (props) {
               autoComplete="on"
               autoCapitalize="off"
             />
-          <button
-            type='button'
-            className={`${bS.btn} ${pI.iconButton}`}
-            onClick={() => handleCopyUsername(input.value)}
-            title={getMessage('this_tab_copy_to_clipboard')}
-            tabIndex={-1}
-          >
-            <CopyIcon />
-          </button>
+          <CopyTooltip text={getMessage('this_tab_copy_disabled_no_username')} active={!input.value}>
+            <button
+              type='button'
+              className={`${bS.btn} ${pI.iconButton}`}
+              onClick={() => handleCopyUsername(input.value)}
+              disabled={!input.value}
+              title={!input.value ? undefined : getMessage('this_tab_copy_to_clipboard')}
+              tabIndex={-1}
+            >
+              <CopyIcon />
+            </button>
+          </CopyTooltip>
         </div>
         <motion.div
           className={`${pI.passInputAdditional} ${data.usernameEditable ? '' : pI.removeMarginTop}`}

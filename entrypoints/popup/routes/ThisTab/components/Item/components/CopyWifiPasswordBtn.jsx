@@ -12,6 +12,7 @@ import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import Wifi from '@/models/itemModels/Wifi';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import ItemFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
 import ItemPasswordIcon from '@/assets/popup-window/service-password.svg?react';
 
@@ -103,13 +104,18 @@ const CopyWifiPasswordBtn = ({ item, more, setMore }) => {
   }, [item?.id, item?.sifExists, scheduledTime]);
 
   if (item?.securityType === SECURITY_TIER.SECRET) {
+    const isEmpty = !item?.sifExists;
+
     return (
-      <button
-        onClick={async () => await handleWifiPassword(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={getMessage('this_tab_copy_wifi_password')}
-      >
-        <ItemPasswordIcon className={S.itemPassword} />
-      </button>
+      <CopyTooltip text={getMessage('this_tab_copy_disabled_no_password')} active={isEmpty} position='bottom'>
+        <button
+          onClick={async () => await handleWifiPassword(item.deviceId, item.vaultId, item.id, more, setMore)}
+          title={isEmpty ? undefined : getMessage('this_tab_copy_wifi_password')}
+          disabled={isEmpty}
+        >
+          <ItemPasswordIcon className={S.itemPassword} />
+        </button>
+      </CopyTooltip>
     );
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
     return (

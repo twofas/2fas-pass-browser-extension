@@ -12,6 +12,7 @@ import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import PaymentCard from '@/models/itemModels/PaymentCard';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import ItemFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
 import ItemCopyIcon from '@/assets/popup-window/card-number.svg?react';
 
@@ -102,34 +103,42 @@ const CopyCardNumberBtn = ({ item, more, setMore }) => {
     };
   }, [item?.id, item?.sifExists, scheduledTime]);
 
+  const isEmpty = !item?.cardNumberExists;
+
   if (item?.securityType === SECURITY_TIER.SECRET) {
     return (
-      <button
-        onClick={async () => await handleCardNumber(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={getMessage('this_tab_copy_card_number')}
-      >
-        <ItemCopyIcon className={S.itemCopyCardNumber} />
-      </button>
+      <CopyTooltip text={getMessage('this_tab_copy_disabled_no_card_number')} active={isEmpty} position='bottom'>
+        <button
+          onClick={async () => await handleCardNumber(item.deviceId, item.vaultId, item.id, more, setMore)}
+          title={isEmpty ? undefined : getMessage('this_tab_copy_card_number')}
+          disabled={isEmpty}
+        >
+          <ItemCopyIcon className={S.itemCopyCardNumber} />
+        </button>
+      </CopyTooltip>
     );
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
     return (
-      <button
-        onClick={async () => await handleCardNumber(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={getMessage('this_tab_copy_card_number')}
-        className={S.itemPasswordLoader}
-      >
-        <svg
-          ref={loaderRef}
-          className={S.itemLoader}
-          viewBox="0 0 96 96"
-          xmlns="http://www.w3.org/2000/svg"
+      <CopyTooltip text={getMessage('this_tab_copy_disabled_no_card_number')} active={isEmpty} position='bottom'>
+        <button
+          onClick={async () => await handleCardNumber(item.deviceId, item.vaultId, item.id, more, setMore)}
+          title={isEmpty ? undefined : getMessage('this_tab_copy_card_number')}
+          disabled={isEmpty}
+          className={S.itemPasswordLoader}
         >
-          <circle cx="48" cy="48" r="42" className={S.itemLoaderBg} />
-          <circle cx="48" cy="48" r="42" />
-        </svg>
+          <svg
+            ref={loaderRef}
+            className={S.itemLoader}
+            viewBox="0 0 96 96"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="48" cy="48" r="42" className={S.itemLoaderBg} />
+            <circle cx="48" cy="48" r="42" />
+          </svg>
 
-        <ItemCopyIcon className={S.itemCopyCardNumber} />
-      </button>
+          <ItemCopyIcon className={S.itemCopyCardNumber} />
+        </button>
+      </CopyTooltip>
     );
   } else {
     return (

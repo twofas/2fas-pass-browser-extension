@@ -13,6 +13,7 @@ import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import { useI18n } from '@/partials/context/I18nContext';
 
 /** 
@@ -40,7 +41,8 @@ function Name (props) {
   }, [data?.item?.content?.name]);
 
   const handleCopyName = useCallback(async name => {
-    if (!name) {
+    if (!name || name.length === 0) {
+      showToast(getMessage('this_tab_copy_disabled_no_name'), 'error');
       return;
     }
 
@@ -122,15 +124,18 @@ function Name (props) {
               autoComplete="off"
               autoCapitalize="off"
             />
-          <button
-            type='button'
-            className={`${bS.btn} ${pI.iconButton}`}
-            onClick={() => handleCopyName(input.value)}
-            title={getMessage('this_tab_copy_to_clipboard')}
-            tabIndex={-1}
-          >
-            <CopyIcon />
-          </button>
+          <CopyTooltip text={getMessage('this_tab_copy_disabled_no_name')} active={!input.value}>
+            <button
+              type='button'
+              className={`${bS.btn} ${pI.iconButton}`}
+              onClick={() => handleCopyName(input.value)}
+              disabled={!input.value}
+              title={!input.value ? undefined : getMessage('this_tab_copy_to_clipboard')}
+              tabIndex={-1}
+            >
+              <CopyIcon />
+            </button>
+          </CopyTooltip>
         </div>
       </div>
       )}

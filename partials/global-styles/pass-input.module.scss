@@ -208,6 +208,14 @@
       flex-shrink: 0;
       height: 100%;
 
+      > span {
+        margin-right: 12px;
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+
       a,
       button {
         align-items: center;

@@ -74,3 +74,35 @@ describe('CopyPasswordBtn — Highly Secret fetched countdown timer', () => {
     expect(getSpy).toHaveBeenCalledWith(ALARM_NAME);
   });
 });
+
+describe('CopyPasswordBtn — SECRET item without stored password (issue #46)', () => {
+  it('renders a disabled copy button with the active tooltip when sifExists is false', () => {
+    const item = { ...makeItem(false), securityType: SECURITY_TIER.SECRET };
+
+    const { container } = render(
+      createElement(CopyPasswordBtn, { item, more: false, setMore: () => {} })
+    );
+
+    const wrapper = container.firstChild;
+    const button = container.querySelector('button');
+
+    expect(button).not.toBeNull();
+    expect(button.disabled).toBe(true);
+    expect(button.hasAttribute('title')).toBe(false);
+    expect(wrapper.getAttribute('data-tooltip')).toBe('this_tab_copy_disabled_no_password');
+  });
+
+  it('renders an enabled copy button when the SECRET item has a stored password', () => {
+    const item = { ...makeItem(true), securityType: SECURITY_TIER.SECRET };
+
+    const { container } = render(
+      createElement(CopyPasswordBtn, { item, more: false, setMore: () => {} })
+    );
+
+    const button = container.querySelector('button');
+
+    expect(button.disabled).toBe(false);
+    expect(button.getAttribute('title')).toBe('this_tab_copy_password');
+    expect(container.firstChild.hasAttribute('data-tooltip')).toBe(false);
+  });
+});

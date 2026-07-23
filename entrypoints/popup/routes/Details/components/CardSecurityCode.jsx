@@ -18,6 +18,7 @@ import getSecurityCodeMask from '@/entrypoints/popup/components/PaymentCardSecur
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import { useI18n } from '@/partials/context/I18nContext';
 
 /**
@@ -259,7 +260,8 @@ function CardSecurityCode (props) {
       } else if (itemInstance?.securityCodeExists) {
         securityCodeToCopy = await decryptSecurityCodeOnDemand();
       } else {
-        securityCodeToCopy = '';
+        showToast(getMessage('this_tab_copy_disabled_no_security_code'), 'error');
+        return;
       }
 
       await copyValue(securityCodeToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'securityCode');
@@ -414,15 +416,18 @@ function CardSecurityCode (props) {
                 <VisibleIcon />
               </button>
               {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.securityCodeExists) && !sifDecryptError) && (
-                <button
-                  type='button'
-                  className={`${bS.btn} ${pI.iconButton}`}
-                  onClick={handleCopySecurityCode}
-                  title={getMessage('this_tab_copy_card_security_code')}
-                  tabIndex={-1}
-                >
-                  <CopyIcon />
-                </button>
+                <CopyTooltip text={getMessage('this_tab_copy_disabled_no_security_code')} active={!itemInstance?.securityCodeExists}>
+                  <button
+                    type='button'
+                    className={`${bS.btn} ${pI.iconButton}`}
+                    onClick={handleCopySecurityCode}
+                    disabled={!itemInstance?.securityCodeExists}
+                    title={!itemInstance?.securityCodeExists ? undefined : getMessage('this_tab_copy_card_security_code')}
+                    tabIndex={-1}
+                  >
+                    <CopyIcon />
+                  </button>
+                </CopyTooltip>
               )}
             </div>
 

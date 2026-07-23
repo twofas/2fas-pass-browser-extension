@@ -38,9 +38,8 @@ const handleCardNumber = async (deviceId, vaultId, itemId, more, setMore) => {
     return;
   }
 
-  if (!item.sifExists) {
-    navigator.clipboard.writeText('');
-    showToast(getMessage('notification_card_number_copied'), 'success');
+  if (!item.cardNumberExists) {
+    showToast(getMessage('this_tab_copy_disabled_no_card_number'), 'error');
     return;
   }
 

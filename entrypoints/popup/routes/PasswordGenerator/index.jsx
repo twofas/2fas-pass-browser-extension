@@ -243,7 +243,7 @@ function PasswordGenerator (props) {
                                   }
                                 }}
                                 className={bS.btnIcon}
-                                title={getMessage('copy_to_clipboard')}
+                                title={getMessage('this_tab_copy_to_clipboard')}
                                 tabIndex={-1}
                               >
                                 <CopyIcon />
