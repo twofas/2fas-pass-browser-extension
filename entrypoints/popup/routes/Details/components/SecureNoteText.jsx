@@ -22,7 +22,7 @@ import { useI18n } from '@/partials/context/I18nContext';
 * @param {Object} props - The component props.
 * @return {JSX.Element} The rendered component.
 */
-const TEXTAREA_LINE_HEIGHT = 19;
+const TEXTAREA_MIN_HEIGHT = 20;
 
 function SecureNoteText (props) {
   const { getMessage } = useI18n();
@@ -147,7 +147,7 @@ function SecureNoteText (props) {
             }
 
             const scrollHeight = textareaRef.current.scrollHeight;
-            const targetHeight = Math.max(TEXTAREA_LINE_HEIGHT, Math.min(scrollHeight, 200));
+            const targetHeight = Math.max(TEXTAREA_MIN_HEIGHT, Math.min(scrollHeight, 200));
 
             animate(0, targetHeight, {
               duration: 0.2,
