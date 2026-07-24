@@ -2452,7 +2452,7 @@
     "description": "Tooltip on disabled copy button when the Wi-Fi item has no SSID"
   },
   "this_tab_copy_disabled_no_text": {
-    "message": "Ta notatka nie zawiera tekstu",
+    "message": "Ta notatka nie zawiera treści",
     "description": "Tooltip on disabled copy button when the secure note has no text"
   },
   "this_tab_copy_disabled_no_card_number": {
@@ -2468,7 +2468,7 @@
     "description": "Tooltip on disabled copy button when the payment card has no expiration date"
   },
   "this_tab_copy_disabled_no_card_holder": {
-    "message": "Ten element nie zawiera nazwiska posiadacza karty",
+    "message": "Ten element nie zawiera właściciela karty",
     "description": "Tooltip on disabled copy button when the payment card has no cardholder name"
   },
   "this_tab_copy_disabled_no_uri": {
