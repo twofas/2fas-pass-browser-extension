@@ -156,43 +156,43 @@
     "description": "Button label in dropdown menu to share an item via 2FAS Share"
   },
   "this_tab_copy_disabled_no_username": {
-    "message": "There is no username stored in this item",
+    "message": "No username stored in this Item",
     "description": "Tooltip on disabled copy button when the item has no username"
   },
   "this_tab_copy_disabled_no_password": {
-    "message": "There is no password stored in this item",
+    "message": "No password stored in this Item",
     "description": "Tooltip on disabled copy button when the item has no password"
   },
   "this_tab_copy_disabled_no_name": {
-    "message": "There is no name stored in this item",
+    "message": "No name stored in this Item",
     "description": "Tooltip on disabled copy button when the item has no name"
   },
   "this_tab_copy_disabled_no_ssid": {
-    "message": "There is no network name (SSID) stored in this item",
+    "message": "No network name (SSID) stored in this Item",
     "description": "Tooltip on disabled copy button when the Wi-Fi item has no SSID"
   },
   "this_tab_copy_disabled_no_text": {
-    "message": "There is no text stored in this note",
+    "message": "No text stored in this note",
     "description": "Tooltip on disabled copy button when the secure note has no text"
   },
   "this_tab_copy_disabled_no_card_number": {
-    "message": "There is no card number stored in this item",
+    "message": "No card number stored in this Item",
     "description": "Tooltip on disabled copy button when the payment card has no card number"
   },
   "this_tab_copy_disabled_no_security_code": {
-    "message": "There is no security code stored in this item",
+    "message": "No security code stored in this Item",
     "description": "Tooltip on disabled copy button when the payment card has no security code"
   },
   "this_tab_copy_disabled_no_expiration_date": {
-    "message": "There is no expiration date stored in this item",
+    "message": "No expiration date stored in this Item",
     "description": "Tooltip on disabled copy button when the payment card has no expiration date"
   },
   "this_tab_copy_disabled_no_card_holder": {
-    "message": "There is no cardholder name stored in this item",
+    "message": "No cardholder name stored in this Item",
     "description": "Tooltip on disabled copy button when the payment card has no cardholder name"
   },
   "this_tab_copy_disabled_no_uri": {
-    "message": "There is no URL stored in this item",
+    "message": "No URL stored in this Item",
     "description": "Tooltip on disabled copy button when the item has no URL"
   }
 }
