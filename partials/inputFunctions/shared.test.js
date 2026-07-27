@@ -184,6 +184,49 @@ describe('shared payment-field helpers', () => {
 
       expect(getAssociatedLabelText(document.getElementById('pw'))).toBe('');
     });
+
+    it('prefers the label inside the input own form over an earlier foreign-form label with the same for', () => {
+      document.body.innerHTML = `
+        <form id="register"><label for="pw">Create password</label><input id="pw" type="password" /></form>
+        <form id="login"><label for="pw">Password</label><input id="pw" type="password" /></form>
+      `;
+
+      const loginInput = document.querySelector('#login input');
+
+      expect(getAssociatedLabelText(loginInput)).toBe('password');
+    });
+
+    it('uses the first label for a form-less input that is the first element with its id (HTML spec association)', () => {
+      document.body.innerHTML = `
+        <div><label for="pw">Create a new password</label><input id="pw" type="password" /></div>
+        <div style="display:none"><form><label for="pw">Password</label><input id="pw" type="password" /></form></div>
+      `;
+
+      expect(getAssociatedLabelText(document.querySelector('input'))).toBe('create a new password');
+    });
+
+    it('trusts duplicate labels that all carry identical text (hidden responsive/modal clones)', () => {
+      document.body.innerHTML = `
+        <div style="display:none"><label for="pw">Current password</label><input id="pw" type="password" /></div>
+        <div><label for="pw">Current password</label><input id="pw" type="password" /></div>
+      `;
+
+      const visibleInput = document.querySelectorAll('input')[1];
+
+      expect(getAssociatedLabelText(visibleInput)).toBe('current password');
+    });
+
+    it('resolves nothing by for/id for a non-first duplicate whose candidate labels differ in text', () => {
+      // Column layout keeps the structural fallbacks out of the way, isolating the for/id branch.
+      document.body.innerHTML = `
+        <div><div><label for="pw">Create password</label></div><div><input id="pw" type="password" /></div></div>
+        <div><div><label for="pw">Password</label></div><div><input id="pw" type="password" /></div></div>
+      `;
+
+      const secondInput = document.querySelectorAll('input')[1];
+
+      expect(getAssociatedLabelText(secondInput)).toBe('');
+    });
   });
 
   describe('collectInputs', () => {

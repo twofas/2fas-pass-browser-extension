@@ -327,6 +327,88 @@ describe('getAutofillPasswordInputs', () => {
     expect(namesOf(resolve())).toEqual(['loginPassword']);
   });
 
+  it('fills the login password when an earlier registration form duplicates its id and carries a "Create password" label', () => {
+    // Coexisting registration + login forms reuse id="Password"; a document-wide first-match
+    // would give the login field the registration "Create password" label and wrongly skip it.
+    mount(`
+      <form id="register" action="/register">
+        <input type="email" name="EmailAddress" id="EmailAddress" />
+        <label for="Password">Create password</label>
+        <input type="password" name="Password" id="Password" />
+      </form>
+      <form id="login" action="/login">
+        <input type="email" name="Username" id="Username" />
+        <label for="Password">Password</label>
+        <input type="password" name="Password" id="Password" />
+      </form>
+    `);
+
+    const loginPassword = passwordEls()[1];
+
+    expect(classifyPasswordInput(loginPassword)).toBe('unknown');
+    expect(resolve()).toEqual([loginPassword]);
+  });
+
+  it('fills the current field on a form-less change-password panel duplicated as a hidden responsive clone', () => {
+    // Form-less panel duplicated as a hidden clone (same ids, identical label texts). The
+    // label text is the only "current" signal, so identical-text duplicates must stay trusted.
+    mount(`
+      <section class="desktop-view">
+        <div><div><label for="password">Current password</label></div><div><input type="password" id="password" name="password" /></div></div>
+        <div><div><label for="password-new">New password</label></div><div><input type="password" id="password-new" name="passwordNew" /></div></div>
+      </section>
+      <section class="mobile-view" style="display:none">
+        <div><div><label for="password">Current password</label></div><div><input type="password" id="password" name="password" /></div></div>
+        <div><div><label for="password-new">New password</label></div><div><input type="password" id="password-new" name="passwordNew" /></div></div>
+      </section>
+    `);
+
+    // The real pipeline passes only visible inputs — mirror that.
+    const [visibleCurrent, visibleNew] = Array.from(document.querySelectorAll('.desktop-view input'));
+
+    expect(classifyPasswordInput(visibleCurrent)).toBe('current');
+    expect(getAutofillPasswordInputs([visibleCurrent, visibleNew], [])).toEqual([visibleCurrent]);
+  });
+
+  it('does not fill a form-less reset field whose "Create a new password" label has a differing hidden duplicate (misfill guard)', () => {
+    // Visible reset field (first element with the id) plus a hidden login modal reusing it. The
+    // reset field must keep its own label, stay "new", and never receive the stored password.
+    mount(`
+      <main>
+        <div><label for="password">Create a new password</label></div>
+        <div><input type="password" id="password" name="pwd1" /></div>
+      </main>
+      <div style="display:none">
+        <form action="/login">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="Password" />
+        </form>
+      </div>
+    `);
+
+    const resetInput = document.querySelector('main input');
+
+    expect(classifyPasswordInput(resetInput)).toBe('new');
+    expect(getAutofillPasswordInputs([resetInput], [])).toEqual([]);
+  });
+
+  it('keeps the current classification when a single control has an extra hidden error label (multi-label, no duplicate ids)', () => {
+    // Multi-label markup: a visible label plus a hidden error label on the same unique control.
+    // The differing second label must not disqualify the association.
+    mount(`
+      <div><label for="cur-pass">Current password</label></div>
+      <div><input type="password" id="cur-pass" name="fld_a" /></div>
+      <div><label for="cur-pass" hidden>Current password is required</label></div>
+      <div><label for="new-pass">New password</label></div>
+      <div><input type="password" id="new-pass" name="fld_b" /></div>
+    `);
+
+    const [current, next] = passwordEls();
+
+    expect(classifyPasswordInput(current)).toBe('current');
+    expect(namesOf(getAutofillPasswordInputs([current, next], []))).toEqual(['fld_a']);
+  });
+
   it('fills only the first field on a formless username-less 3-field change widget', () => {
     mount(`
       <input type="password" name="p1" />

@@ -62,14 +62,24 @@ class TwoFasWebSocket {
     }
   };
 
+  #restartTimeout () {
+    this.#clearTimeout();
+    this.timeoutID = setTimeout(() => this.close(true), 1000 * 60 * config.webSocketInternalTimeout);
+  };
+
   #clearInstance () {
     TwoFasWebSocket.exists = false;
     TwoFasWebSocket.instance = null;
   };
 
   #onOpen () {
-    this.timeoutID = setTimeout(() => this.close(true), 1000 * 60 * config.webSocketInternalTimeout);
+    this.#restartTimeout();
     TwoFasWebSocket.#notifyStateChange(true);
+
+    if (typeof this.onActivity === 'function') {
+      this.onActivity('open');
+    }
+
     logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'TwoFasWebSocket - connected');
   };
 
@@ -112,7 +122,11 @@ class TwoFasWebSocket {
             throw new TwoFasError(TwoFasError.internalErrors.websocketEventNotTrusted, { additional: { func: 'TwoFasWebSocket - addEventListener message' } });
           }
 
-          this.#clearTimeout();
+          this.#restartTimeout();
+
+          if (typeof this.onActivity === 'function') {
+            this.onActivity('message');
+          }
 
           let json;
 

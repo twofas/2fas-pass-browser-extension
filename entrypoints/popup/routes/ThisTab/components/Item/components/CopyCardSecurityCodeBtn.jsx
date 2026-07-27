@@ -7,6 +7,7 @@
 import S from '../styles/Item.module.scss';
 import { useI18n } from '@/partials/context/I18nContext';
 import handleCardSecurityCode from '../functions/handleCardSecurityCode';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import ItemCopyIcon from '@/assets/popup-window/card-security-code.svg?react';
 
 /**
@@ -19,24 +20,31 @@ import ItemCopyIcon from '@/assets/popup-window/card-security-code.svg?react';
 */
 const CopyCardSecurityCodeBtn = ({ item, more, setMore }) => {
   const { getMessage } = useI18n();
+  const isEmpty = !item?.securityCodeExists;
 
   if (item?.securityType === SECURITY_TIER.SECRET) {
     return (
-      <button
-        onClick={async () => await handleCardSecurityCode(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={getMessage('this_tab_copy_card_security_code')}
-      >
-        <ItemCopyIcon className={S.itemCopySecurityCode} />
-      </button>
+      <CopyTooltip text={getMessage('this_tab_copy_disabled_no_security_code')} active={isEmpty} position='bottom'>
+        <button
+          onClick={async () => await handleCardSecurityCode(item.deviceId, item.vaultId, item.id, more, setMore)}
+          title={isEmpty ? undefined : getMessage('this_tab_copy_card_security_code')}
+          disabled={isEmpty}
+        >
+          <ItemCopyIcon className={S.itemCopySecurityCode} />
+        </button>
+      </CopyTooltip>
     );
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
     return (
-      <button
-        onClick={async () => await handleCardSecurityCode(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={getMessage('this_tab_copy_card_security_code')}
-      >
-        <ItemCopyIcon className={S.itemCopySecurityCode} />
-      </button>
+      <CopyTooltip text={getMessage('this_tab_copy_disabled_no_security_code')} active={isEmpty} position='bottom'>
+        <button
+          onClick={async () => await handleCardSecurityCode(item.deviceId, item.vaultId, item.id, more, setMore)}
+          title={isEmpty ? undefined : getMessage('this_tab_copy_card_security_code')}
+          disabled={isEmpty}
+        >
+          <ItemCopyIcon className={S.itemCopySecurityCode} />
+        </button>
+      </CopyTooltip>
     );
   } else {
     return null;

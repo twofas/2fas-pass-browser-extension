@@ -22,9 +22,9 @@ const SHADOW_ROOT_CANDIDATE_NODE_NAMES = Object.freeze(new Set([
 * Resolves an element's shadow root, including closed ones (mode: 'closed') where the
 * browser exposes a privileged content-script API for them. Open roots come straight
 * from element.shadowRoot; closed roots are read in place — the page is never modified —
-* via browser.dom.openOrClosedShadowRoot on Chromium (browser maps to chrome there) or
-* element.openOrClosedShadowRoot on Firefox. Safari exposes neither API, so closed roots
-* stay invisible there and the function degrades to open-only.
+* via browser.dom.openOrClosedShadowRoot on Chromium (browser maps to chrome there) and
+* Safari 26+, or element.openOrClosedShadowRoot on Firefox. Safari below 26 exposes neither
+* API, so closed roots stay invisible there and the function degrades to open-only.
 * @param {Element|null} element - The element whose shadow root should be resolved.
 * @return {ShadowRoot|null} The element's open or closed shadow root, or null when none is accessible.
 */
@@ -33,26 +33,26 @@ const getOpenOrClosedShadowRoot = element => {
     return null;
   }
 
-  if (element.shadowRoot) {
-    return element.shadowRoot;
-  }
+  try {
+    if (element.shadowRoot) {
+      return element.shadowRoot;
+    }
 
-  const nodeName = element.nodeName;
-  const isCandidate = SHADOW_ROOT_CANDIDATE_NODE_NAMES.has(nodeName) || Boolean(nodeName?.includes('-'));
+    const nodeName = element.nodeName;
+    const isCandidate = SHADOW_ROOT_CANDIDATE_NODE_NAMES.has(nodeName) || Boolean(nodeName?.includes('-'));
 
-  if (!isCandidate) {
-    return null;
-  }
-
-  if (browser?.dom?.openOrClosedShadowRoot) {
-    try {
-      return browser.dom.openOrClosedShadowRoot(element);
-    } catch {
+    if (!isCandidate) {
       return null;
     }
-  }
 
-  return element.openOrClosedShadowRoot ?? null;
+    if (browser?.dom?.openOrClosedShadowRoot) {
+      return browser.dom.openOrClosedShadowRoot(element);
+    }
+
+    return element.openOrClosedShadowRoot ?? null;
+  } catch {
+    return null;
+  }
 };
 
 export default getOpenOrClosedShadowRoot;

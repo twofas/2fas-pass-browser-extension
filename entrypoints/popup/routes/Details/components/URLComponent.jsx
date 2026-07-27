@@ -18,6 +18,7 @@ import updateItem from '../functions/updateItem';
 import { useUriTempIds } from '../context/UriTempIdsContext';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import TrashIcon from '@/assets/popup-window/trash.svg?react';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import { useI18n } from '@/partials/context/I18nContext';
 
 const urlVariants = {
@@ -63,6 +64,12 @@ function URLComponent (props) {
 
   const handleCopyUri = useCallback(async index => {
     const uriText = data?.item?.content?.uris && data?.item?.content?.uris?.[index] ? data.item.content.uris[index].text : '';
+
+    if (!uriText || uriText.length === 0) {
+      showToast(getMessage('this_tab_copy_disabled_no_uri'), 'error');
+      return;
+    }
+
     await copyValue(uriText, data.item.deviceId, data.item.vaultId, data.item.id, 'uri');
     showToast(getMessage('notification_uri_copied'), 'success');
   }, [data.item]);
@@ -214,15 +221,18 @@ function URLComponent (props) {
                 autoCapitalize="off"
               />
               <div className={pI.passInputBottomButtons}>
-                <button
-                  type='button'
-                  className={`${bS.btn} ${pI.iconButton}`}
-                  onClick={() => handleCopyUri(index)}
-                  title={getMessage('this_tab_copy_to_clipboard')}
-                  tabIndex={-1}
-                >
-                  <CopyIcon />
-                </button>
+                <CopyTooltip text={getMessage('this_tab_copy_disabled_no_uri')} active={!uri.text}>
+                  <button
+                    type='button'
+                    className={`${bS.btn} ${pI.iconButton}`}
+                    onClick={() => handleCopyUri(index)}
+                    disabled={!uri.text}
+                    title={!uri.text ? undefined : getMessage('this_tab_copy_to_clipboard')}
+                    tabIndex={-1}
+                  >
+                    <CopyIcon />
+                  </button>
+                </CopyTooltip>
                 <button
                   type='button'
                   className={`${bS.btn} ${pI.iconButton} ${pI.trashButton} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.hiddenButton}`}

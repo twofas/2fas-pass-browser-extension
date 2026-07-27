@@ -58,7 +58,7 @@ function LoginItemView (props) {
       </button>
       <div className={S.itemAdditionalButtons}>
         <CopyPasswordBtn item={props.data} more={props.more} setMore={props.setMore} />
-        <CopyUsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} more={props.more} setMore={props.setMore} />
+        <CopyUsernameBtn deviceId={props.data.deviceId} vaultId={props.data.vaultId} itemId={props.data.id} username={props.data?.content?.username} more={props.more} setMore={props.setMore} />
         <MoreBtn more={props.more} setMore={props.setMore} ref={moreBtnRef} />
       </div>
       {props.more && (

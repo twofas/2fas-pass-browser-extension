@@ -18,6 +18,7 @@ import { copyValue, getCurrentDevice } from '@/partials/functions';
 import { filterXSS } from 'xss';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
 import Tooltip from '@/entrypoints/popup/components/Tooltip';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
@@ -128,6 +129,12 @@ function LoginAddNewView() {
   const handleCopyPassword = async form => {
     try {
       const currentPassword = form.getFieldState('s_password').value;
+
+      if (!currentPassword || currentPassword.length === 0) {
+        showToast(getMessage('this_tab_copy_disabled_no_password'), 'error');
+        return;
+      }
+
       await copyValue(currentPassword, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'password');
       showToast(getMessage('notification_password_copied'), 'success');
     } catch (e) {
@@ -139,6 +146,12 @@ function LoginAddNewView() {
   const handleCopyUrl = async form => {
     try {
       const currentUrl = form.getFieldState('url').value;
+
+      if (!currentUrl || currentUrl.length === 0) {
+        showToast(getMessage('this_tab_copy_disabled_no_uri'), 'error');
+        return;
+      }
+
       await copyValue(currentUrl, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'uri');
       showToast(getMessage('notification_uri_copied'), 'success');
     } catch (e) {
@@ -150,6 +163,12 @@ function LoginAddNewView() {
   const handleCopyUsername = async form => {
     try {
       const currentUsername = form.getFieldState('username').value;
+
+      if (!currentUsername || currentUsername.length === 0) {
+        showToast(getMessage('this_tab_copy_disabled_no_username'), 'error');
+        return;
+      }
+
       await copyValue(currentUsername, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'username');
       showToast(getMessage('notification_username_copied'), 'success');
     } catch (e) {
@@ -255,15 +274,18 @@ function LoginAddNewView() {
                     }}
                   />
                   <div className={pI.passInputBottomButtons}>
-                    <button
-                      type='button'
-                      className={`${bS.btn} ${pI.iconButton}`}
-                      onClick={() => handleCopyUrl(form)}
-                      title={getMessage('this_tab_copy_to_clipboard')}
-                      tabIndex={-1}
-                    >
-                      <CopyIcon />
-                    </button>
+                    <CopyTooltip text={getMessage('this_tab_copy_disabled_no_uri')} active={!input.value}>
+                      <button
+                        type='button'
+                        className={`${bS.btn} ${pI.iconButton}`}
+                        onClick={() => handleCopyUrl(form)}
+                        title={!input.value ? undefined : getMessage('this_tab_copy_to_clipboard')}
+                        disabled={!input.value}
+                        tabIndex={-1}
+                      >
+                        <CopyIcon />
+                      </button>
+                    </CopyTooltip>
                   </div>
                 </div>
                 <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
@@ -328,16 +350,18 @@ function LoginAddNewView() {
                       }}
                     />
                     <div className={pI.passInputBottomButtons}>
-                      <button
-                        type='button'
-                        className={`${bS.btn} ${pI.iconButton}`}
-                        onClick={() => handleCopyUsername(form)}
-                        title={getMessage('this_tab_copy_to_clipboard')}
-                        disabled={data?.onMobile ? 'disabled' : ''}
-                        tabIndex={-1}
-                      >
-                        <CopyIcon />
-                      </button>
+                      <CopyTooltip text={getMessage('this_tab_copy_disabled_no_username')} active={!data?.onMobile && !input.value}>
+                        <button
+                          type='button'
+                          className={`${bS.btn} ${pI.iconButton}`}
+                          onClick={() => handleCopyUsername(form)}
+                          title={data?.onMobile || !input.value ? undefined : getMessage('this_tab_copy_to_clipboard')}
+                          disabled={data?.onMobile || !input.value}
+                          tabIndex={-1}
+                        >
+                          <CopyIcon />
+                        </button>
+                      </CopyTooltip>
                     </div>
                   </div>
                 </div>
@@ -384,15 +408,18 @@ function LoginAddNewView() {
                       >
                         <VisibleIcon />
                       </button>
-                      <button
-                        type='button'
-                        className={`${bS.btn} ${pI.iconButton}`}
-                        onClick={() => handleCopyPassword(form)}
-                        title={getMessage('this_tab_copy_to_clipboard')}
-                        tabIndex={-1}
-                      >
-                        <CopyIcon />
-                      </button>
+                      <CopyTooltip text={getMessage('this_tab_copy_disabled_no_password')} active={!input.value}>
+                        <button
+                          type='button'
+                          className={`${bS.btn} ${pI.iconButton}`}
+                          onClick={() => handleCopyPassword(form)}
+                          title={!input.value ? undefined : getMessage('this_tab_copy_to_clipboard')}
+                          disabled={!input.value}
+                          tabIndex={-1}
+                        >
+                          <CopyIcon />
+                        </button>
+                      </CopyTooltip>
                     </div>
                   </div>
                   <Tooltip className={`${pI.passInputAdditional} tooltip`}>

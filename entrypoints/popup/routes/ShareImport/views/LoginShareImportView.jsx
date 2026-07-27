@@ -17,6 +17,7 @@ import Login from '@/models/itemModels/Login';
 import URIMatcher from '@/partials/URIMatcher';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
 import { useI18n } from '@/partials/context/I18nContext';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import AddIcon from '@/assets/popup-window/add-new-2.svg?react';
@@ -53,6 +54,12 @@ function LoginShareImportView () {
   const handleCopyPassword = useCallback(async form => {
     try {
       const currentPassword = form.getFieldState('password').value;
+
+      if (!currentPassword || currentPassword.length === 0) {
+        showToast(getMessage('this_tab_copy_disabled_no_password'), 'error');
+        return;
+      }
+
       await copyValue(currentPassword, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'password');
       showToast(getMessage('notification_password_copied'), 'success');
     } catch (e) {
@@ -64,6 +71,12 @@ function LoginShareImportView () {
   const handleCopyUsername = useCallback(async form => {
     try {
       const currentUsername = form.getFieldState('username').value;
+
+      if (!currentUsername || currentUsername.length === 0) {
+        showToast(getMessage('this_tab_copy_disabled_no_username'), 'error');
+        return;
+      }
+
       await copyValue(currentUsername, '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'username');
       showToast(getMessage('notification_username_copied'), 'success');
     } catch (e) {
@@ -241,15 +254,18 @@ function LoginShareImportView () {
                   }}
                 />
                 <div className={pI.passInputBottomButtons}>
-                  <button
-                    type='button'
-                    className={`${bS.btn} ${pI.iconButton}`}
-                    onClick={() => handleCopyUsername(form)}
-                    title={getMessage('this_tab_copy_to_clipboard')}
-                    tabIndex={-1}
-                  >
-                    <CopyIcon />
-                  </button>
+                  <CopyTooltip text={getMessage('this_tab_copy_disabled_no_username')} active={!input.value}>
+                    <button
+                      type='button'
+                      className={`${bS.btn} ${pI.iconButton}`}
+                      onClick={() => handleCopyUsername(form)}
+                      title={!input.value ? undefined : getMessage('this_tab_copy_to_clipboard')}
+                      disabled={!input.value}
+                      tabIndex={-1}
+                    >
+                      <CopyIcon />
+                    </button>
+                  </CopyTooltip>
                 </div>
               </div>
             </div>
@@ -287,15 +303,18 @@ function LoginShareImportView () {
                   >
                     <VisibleIcon />
                   </button>
-                  <button
-                    type='button'
-                    className={`${bS.btn} ${pI.iconButton}`}
-                    onClick={() => handleCopyPassword(form)}
-                    title={getMessage('this_tab_copy_to_clipboard')}
-                    tabIndex={-1}
-                  >
-                    <CopyIcon />
-                  </button>
+                  <CopyTooltip text={getMessage('this_tab_copy_disabled_no_password')} active={!input.value}>
+                    <button
+                      type='button'
+                      className={`${bS.btn} ${pI.iconButton}`}
+                      onClick={() => handleCopyPassword(form)}
+                      title={!input.value ? undefined : getMessage('this_tab_copy_to_clipboard')}
+                      disabled={!input.value}
+                      tabIndex={-1}
+                    >
+                      <CopyIcon />
+                    </button>
+                  </CopyTooltip>
                 </div>
               </div>
             </div>

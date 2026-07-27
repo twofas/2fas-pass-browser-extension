@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { startConnectQR, startConnectPush, startFetch, cancelCurrentAction, reloadConnectQR, resumeConnectQR, notePopupActivity, getPublicState } from '../websocket/wsManager.js';
+import { startConnectQR, startConnectPush, startFetch, cancelCurrentAction, reloadConnectQR, resumeWsSession, notePopupActivity, getPublicState } from '../websocket/wsManager.js';
 import { consumePendingUpdates } from '../websocket/wsState.js';
 
 const onWsMessage = (request, sender, sendResponse) => {
@@ -60,15 +60,15 @@ const onWsMessage = (request, sender, sendResponse) => {
 
       case REQUEST_ACTIONS.WS_GET_STATE: {
         // A popup querying state means it is open and watching. When nothing is active,
-        // the background SW may have just been woken from a Safari termination — resume a
-        // persisted QR session (minting a fresh QR) before reporting state, so the popup
-        // shows a live, scannable QR.
+        // the background SW may have just been woken from a Safari termination — resume
+        // the persisted session (re-opening the socket, or minting a fresh QR) before
+        // reporting state, so the popup shows the live session.
         notePopupActivity();
 
         (async () => {
           try {
             if (!getPublicState().active) {
-              await resumeConnectQR();
+              await resumeWsSession();
             }
           } catch {}
 

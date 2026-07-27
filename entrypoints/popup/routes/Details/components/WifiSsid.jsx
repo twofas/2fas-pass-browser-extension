@@ -13,6 +13,7 @@ import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import updateItem from '../functions/updateItem';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import { useI18n } from '@/partials/context/I18nContext';
 
 function WifiSsid (props) {
@@ -35,8 +36,13 @@ function WifiSsid (props) {
   }, [data?.item?.content?.ssid]);
 
   const handleCopySsid = useCallback(async ssid => {
+    if (!ssid || ssid.length === 0) {
+      showToast(getMessage('this_tab_copy_disabled_no_ssid'), 'error');
+      return;
+    }
+
     try {
-      await copyValue(ssid || '', data.item.deviceId, data.item.vaultId, data.item.id, 'ssid');
+      await copyValue(ssid, data.item.deviceId, data.item.vaultId, data.item.id, 'ssid');
       showToast(getMessage('notification_wifi_ssid_copied'), 'success');
     } catch (e) {
       showToast(getMessage('error_wifi_ssid_copy_failed'), 'error');
@@ -118,15 +124,18 @@ function WifiSsid (props) {
               autoComplete="off"
               autoCapitalize="off"
             />
-            <button
-              type='button'
-              className={`${bS.btn} ${pI.iconButton}`}
-              onClick={() => handleCopySsid(input.value)}
-              title={getMessage('this_tab_copy_to_clipboard')}
-              tabIndex={-1}
-            >
-              <CopyIcon />
-            </button>
+            <CopyTooltip text={getMessage('this_tab_copy_disabled_no_ssid')} active={!input.value}>
+              <button
+                type='button'
+                className={`${bS.btn} ${pI.iconButton}`}
+                onClick={() => handleCopySsid(input.value)}
+                disabled={!input.value}
+                title={!input.value ? undefined : getMessage('this_tab_copy_to_clipboard')}
+                tabIndex={-1}
+              >
+                <CopyIcon />
+              </button>
+            </CopyTooltip>
           </div>
         </div>
       )}

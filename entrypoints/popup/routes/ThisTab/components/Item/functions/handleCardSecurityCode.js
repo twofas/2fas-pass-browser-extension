@@ -38,9 +38,8 @@ const handleCardSecurityCode = async (deviceId, vaultId, itemId, more, setMore) 
     return;
   }
 
-  if (!item.sifExists) {
-    navigator.clipboard.writeText('');
-    showToast(getMessage('notification_card_security_code_copied'), 'success');
+  if (!item.securityCodeExists) {
+    showToast(getMessage('this_tab_copy_disabled_no_security_code'), 'error');
     return;
   }
 

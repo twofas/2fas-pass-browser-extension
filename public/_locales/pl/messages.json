@@ -644,7 +644,7 @@
     "description": "Header asking if the user wants to update an existing login item"
   },
   "content_save_prompt_don_t_ask": {
-    "message": "Ignoruj tą domenę",
+    "message": "Ignoruj tę domenę",
     "description": "Option to prevent the save prompt from appearing in the future"
   },
   "content_save_prompt_add_login": {
@@ -2434,6 +2434,46 @@
   "this_tab_more_share": {
     "message": "Udostępnij ten element",
     "description": "Button label in dropdown menu to share an item via 2FAS Share"
+  },
+  "this_tab_copy_disabled_no_username": {
+    "message": "Ten element nie zawiera nazwy użytkownika",
+    "description": "Tooltip on disabled copy button when the item has no username"
+  },
+  "this_tab_copy_disabled_no_password": {
+    "message": "Ten element nie zawiera hasła",
+    "description": "Tooltip on disabled copy button when the item has no password"
+  },
+  "this_tab_copy_disabled_no_name": {
+    "message": "Ten element nie zawiera nazwy",
+    "description": "Tooltip on disabled copy button when the item has no name"
+  },
+  "this_tab_copy_disabled_no_ssid": {
+    "message": "Ten element nie zawiera nazwy sieci (SSID)",
+    "description": "Tooltip on disabled copy button when the Wi-Fi item has no SSID"
+  },
+  "this_tab_copy_disabled_no_text": {
+    "message": "Ta notatka nie zawiera treści",
+    "description": "Tooltip on disabled copy button when the secure note has no text"
+  },
+  "this_tab_copy_disabled_no_card_number": {
+    "message": "Ten element nie zawiera numeru karty",
+    "description": "Tooltip on disabled copy button when the payment card has no card number"
+  },
+  "this_tab_copy_disabled_no_security_code": {
+    "message": "Ten element nie zawiera kodu bezpieczeństwa",
+    "description": "Tooltip on disabled copy button when the payment card has no security code"
+  },
+  "this_tab_copy_disabled_no_expiration_date": {
+    "message": "Ten element nie zawiera daty ważności",
+    "description": "Tooltip on disabled copy button when the payment card has no expiration date"
+  },
+  "this_tab_copy_disabled_no_card_holder": {
+    "message": "Ten element nie zawiera właściciela karty",
+    "description": "Tooltip on disabled copy button when the payment card has no cardholder name"
+  },
+  "this_tab_copy_disabled_no_uri": {
+    "message": "Ten element nie zawiera adresu URL",
+    "description": "Tooltip on disabled copy button when the item has no URL"
   },
   "all_items_list_no_search_results": {
     "message": "Brak wyników wyszukiwania. Spróbuj ponownie.",

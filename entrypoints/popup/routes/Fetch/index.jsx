@@ -28,6 +28,7 @@ function Fetch (props) {
   const fetchState = bgState?.fetchState ?? (state?.action === PULL_REQUEST_TYPES.UPDATE_DATA ? FETCH_STATE.CONTINUE_UPDATE : FETCH_STATE.PUSH_NOTIFICATION);
   const errorText = bgState?.fetchErrorText || getMessage('fetch_connection_error_header');
   const currentAction = bgState?.fetchAction || state?.action;
+  useWsLiveness(fetchState === FETCH_STATE.PUSH_NOTIFICATION || fetchState === FETCH_STATE.CONTINUE_UPDATE);
 
   const getPushNotificationDescription = useCallback(action => {
     switch (action) {

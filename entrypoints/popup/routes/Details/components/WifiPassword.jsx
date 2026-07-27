@@ -15,6 +15,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import { useI18n } from '@/partials/context/I18nContext';
 
 function WifiPassword (props) {
@@ -57,7 +58,7 @@ function WifiPassword (props) {
     }
 
     if (!itemInstance?.sifExists) {
-      if (originalItem?.isT3orT2WithSif) {
+      if (originalItem?.sifExists) {
         setData('sifDecryptError', true);
       }
 
@@ -174,7 +175,8 @@ function WifiPassword (props) {
       } else if (itemInstance?.sifExists) {
         passwordToCopy = await decryptPasswordOnDemand();
       } else {
-        passwordToCopy = '';
+        showToast(getMessage('this_tab_copy_disabled_no_password'), 'error');
+        return;
       }
 
       await copyValue(passwordToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'wifiPassword');
@@ -336,15 +338,18 @@ function WifiPassword (props) {
                   <VisibleIcon />
                 </button>
                 {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.sifExists) && !sifDecryptError) && (
-                  <button
-                    type='button'
-                    className={`${bS.btn} ${pI.iconButton}`}
-                    onClick={handleCopyPassword}
-                    title={getMessage('this_tab_copy_to_clipboard')}
-                    tabIndex={-1}
-                  >
-                    <CopyIcon />
-                  </button>
+                  <CopyTooltip text={getMessage('this_tab_copy_disabled_no_password')} active={!itemInstance?.sifExists}>
+                    <button
+                      type='button'
+                      className={`${bS.btn} ${pI.iconButton}`}
+                      onClick={handleCopyPassword}
+                      disabled={!itemInstance?.sifExists}
+                      title={!itemInstance?.sifExists ? undefined : getMessage('this_tab_copy_to_clipboard')}
+                      tabIndex={-1}
+                    >
+                      <CopyIcon />
+                    </button>
+                  </CopyTooltip>
                 )}
               </div>
 

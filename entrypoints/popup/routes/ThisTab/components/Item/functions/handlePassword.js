@@ -39,8 +39,7 @@ const handlePassword = async (deviceId, vaultId, itemId, more, setMore) => {
   }
 
   if (!item.sifExists) {
-    navigator.clipboard.writeText('');
-    showToast(getMessage('notification_password_copied'), 'success');
+    showToast(getMessage('this_tab_copy_disabled_no_password'), 'error');
     return;
   }
 
