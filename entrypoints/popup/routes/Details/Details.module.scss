@@ -187,7 +187,9 @@
   }
 
   &-secure-note-textarea {
+    min-height: 20px;
     overflow: hidden;
+    padding: 2px;
     resize: vertical !important;
     transition: none;
   }

@@ -19,8 +19,9 @@ import bgConnectOnMessage from './handlers/bgConnectOnMessage.js';
 import bgConnectOnClose from './handlers/bgConnectOnClose.js';
 import bgFetchOnMessage from './handlers/bgFetchOnMessage.js';
 import bgFetchOnClose from './handlers/bgFetchOnClose.js';
-import { saveQrSession, loadQrSession, clearQrSession } from './connect/qrSessionPersistence.js';
+import { saveWsSession, loadWsSession, clearWsSession, bumpWsSessionActivity, markWsSessionConversation } from './wsSessionPersistence.js';
 import { startKeepalive, stopKeepalive } from './connect/keepalive.js';
+import { startSelfTick, stopSelfTick } from './selfTick.js';
 
 // Serialises resume attempts: the popup fires WS_GET_STATE from several hooks on mount,
 // and the keepalive alarm may fire concurrently, so without this two resumes could race
@@ -38,6 +39,14 @@ const notePopupActivity = () => {
 };
 
 const isPopupRecentlyActive = () => lastPopupActivityAt > 0 && (Date.now() - lastPopupActivityAt) < POPUP_ACTIVITY_WINDOW_MS;
+
+const handleSocketActivity = kind => {
+  if (kind === 'message') {
+    markWsSessionConversation().catch(() => {});
+  } else {
+    bumpWsSessionActivity().catch(() => {});
+  }
+};
 
 const closeExistingSocket = () => {
   try {
@@ -75,6 +84,7 @@ const createSocket = async (sessionId, onMessage, onClose, messageData) => {
     return null;
   }
 
+  socket.onActivity = handleSocketActivity;
   socket.open();
   socket.addEventListener('message', onMessage, messageData);
   socket.addEventListener('close', onClose, messageData);
@@ -128,7 +138,8 @@ const startConnectQR = async () => {
 
   wsNotify('stateChange', { active: true, connectView: CONNECT_VIEWS.QrView });
 
-  await saveQrSession({
+  await saveWsSession({
+    type: 'connect_qr',
     sessionID,
     qrData: wsState.qrData,
     ephemeralData: wsState._ephemeralData,
@@ -136,6 +147,7 @@ const startConnectQR = async () => {
     connectView: wsState.connectView
   });
   await startKeepalive();
+  startSelfTick();
 
   return { status: 'ok', state: getPublicState() };
 };
@@ -201,6 +213,18 @@ const startConnectPush = async deviceId => {
     wsNotify('stateChange', { active: false });
     return { status: 'error', message: getMessage('error_general') };
   }
+
+  await saveWsSession({
+    type: 'connect_push',
+    sessionID: sessionId,
+    deviceId: device.id,
+    deviceName: wsState.deviceName,
+    ephemeralData: wsState._ephemeralData,
+    socketData: wsState._socketData,
+    connectView: wsState.connectView
+  });
+  await startKeepalive();
+  startSelfTick();
 
   try {
     await socket.waitForOpen();
@@ -271,6 +295,7 @@ const startFetch = async (fetchAction, fetchData, from) => {
   }
 
   wsState._socketData = {
+    uuid: crypto.randomUUID(),
     state: wsState.fetchLocationState,
     device,
   };
@@ -283,6 +308,17 @@ const startFetch = async (fetchAction, fetchData, from) => {
     wsNotify('stateChange', { active: true, fetchState: wsState.fetchState, fetchErrorText: wsState.fetchErrorText });
     return { status: 'ok', state: getPublicState() };
   }
+
+  await saveWsSession({
+    type: 'fetch',
+    sessionID: sessionId,
+    deviceId: device.id,
+    fetchAction: wsState.fetchAction,
+    fetchLocationState: wsState.fetchLocationState,
+    socketData: { uuid: wsState._socketData.uuid, path: null, action: null }
+  });
+  await startKeepalive();
+  startSelfTick();
 
   try {
     await socket.waitForOpen();
@@ -300,6 +336,15 @@ const startFetch = async (fetchAction, fetchData, from) => {
     wsState.fetchLocationState.data.notificationId = json?.notificationId;
     wsState.fetchLocationState.notificationId = json?.notificationId;
     wsState._socketData.state = wsState.fetchLocationState;
+
+    await saveWsSession({
+      type: 'fetch',
+      sessionID: sessionId,
+      deviceId: device.id,
+      fetchAction: wsState.fetchAction,
+      fetchLocationState: wsState.fetchLocationState,
+      socketData: { uuid: wsState._socketData.uuid, path: null, action: null }
+    });
 
     if (json?.error === 'UNREGISTERED') {
       cancelCurrentAction();
@@ -336,8 +381,9 @@ const cancelCurrentAction = async () => {
 
   closeExistingSocket();
   resetState();
-  await clearQrSession();
+  await clearWsSession();
   await stopKeepalive();
+  stopSelfTick();
   wsNotify('stateChange', { active: false, connectView: null });
 
   return { status: 'ok' };
@@ -397,7 +443,8 @@ const reloadConnectQR = async () => {
 
   wsNotify('stateChange', { active: true, connectView: wsState.connectView, qrData: wsState.qrData, socketError: false });
 
-  await saveQrSession({
+  await saveWsSession({
+    type: 'connect_qr',
     sessionID,
     qrData: wsState.qrData,
     ephemeralData: wsState._ephemeralData,
@@ -405,22 +452,147 @@ const reloadConnectQR = async () => {
     connectView: wsState.connectView
   });
   await startKeepalive();
+  startSelfTick();
 
   return { status: 'ok', state: getPublicState() };
 };
 
+// Replays a close event the dead socket never delivered: rehydrates just enough
+// wsState for the existing close handlers (toast/view logic), then hands them a
+// synthetic event. The handlers guard on wsState._socketData?.uuid === data?.uuid,
+// so the SAME object is assigned to wsState._socketData and passed as data.
+const dispatchSyntheticClose = async (descriptor, code) => {
+  try {
+    wsState.type = descriptor.type;
+
+    if (descriptor.type === 'fetch') {
+      wsState.fetchAction = descriptor.fetchAction;
+      wsState.fetchLocationState = descriptor.fetchLocationState;
+      wsState._socketData = { uuid: descriptor.socketData?.uuid, state: descriptor.fetchLocationState, device: descriptor.deviceId ? { id: descriptor.deviceId } : null };
+      await bgFetchOnClose({ code }, wsState._socketData);
+    } else {
+      wsState.deviceName = descriptor.deviceName;
+      wsState._socketData = descriptor.socketData || {};
+      await bgConnectOnClose({ code }, wsState._socketData);
+    }
+  } catch (e) {
+    await CatchError(e);
+  } finally {
+    resetState();
+    await clearWsSession();
+    await stopKeepalive();
+    stopSelfTick();
+  }
+};
+
+// Re-opens the socket for a push session still awaiting the mobile device. The uuid in
+// descriptor.socketData IS the ephemeral-keypair uuid used by the crypto handshake
+// (its private key survives in session storage), so it is KEPT — never re-minted.
+// The push notification was already delivered before the SW died; it is NOT re-sent.
+const resumeConnectPush = async descriptor => {
+  const devices = await storage.getItem('local:devices') || [];
+  const device = devices.find(d => d.id === descriptor.deviceId);
+
+  if (wsState.active) {
+    return { status: 'active', state: getPublicState() };
+  }
+
+  if (!device?.sessionId || !descriptor.socketData?.uuid || !descriptor.sessionID) {
+    await dispatchSyntheticClose(descriptor, WEBSOCKET_STATES.MOBILE_DISCONNECTED);
+    return { status: 'error' };
+  }
+
+  wsState.type = 'connect_push';
+  wsState.active = true;
+  wsState.connectView = CONNECT_VIEWS.PushSent;
+  wsState.deviceName = descriptor.deviceName;
+  wsState._ephemeralData = descriptor.ephemeralData;
+  wsState._socketData = { uuid: descriptor.socketData.uuid, path: descriptor.socketData.path, action: descriptor.socketData.action };
+
+  // The push already delivered to the phone references the sessionID minted at
+  // session start, so reconnect to the PERSISTED one — the device's current
+  // sessionId may have rotated meanwhile and would mispair.
+  const sessionId = descriptor.sessionID;
+  const socket = await createSocket(sessionId, bgConnectOnMessage, bgConnectOnClose, wsState._socketData);
+
+  if (!socket) {
+    await dispatchSyntheticClose(descriptor, WEBSOCKET_STATES.MOBILE_DISCONNECTED);
+    return { status: 'error' };
+  }
+
+  await bumpWsSessionActivity();
+  await startKeepalive();
+  startSelfTick();
+  wsNotify('stateChange', { active: true, connectView: wsState.connectView, deviceName: wsState.deviceName });
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'WsManager - resumed push session after SW wake');
+  return { status: 'ok', state: getPublicState() };
+};
+
+// Re-opens the socket for a fetch session still awaiting the mobile device. A fresh
+// registration binds a NEW _socketData object, so a fresh uuid is minted (the stored
+// one belonged to the dead socket) and the descriptor is re-saved so a later synthetic
+// close rehydrated from it still passes the close handlers' uuid guard.
+const resumeFetch = async descriptor => {
+  let device = null;
+
+  try {
+    device = await getCurrentDevice(descriptor.deviceId || null);
+  } catch {}
+
+  if (wsState.active) {
+    return { status: 'active', state: getPublicState() };
+  }
+
+  if (!device?.sessionId || !descriptor.sessionID) {
+    await dispatchSyntheticClose(descriptor, WEBSOCKET_STATES.MOBILE_DISCONNECTED);
+    return { status: 'error' };
+  }
+
+  wsState.type = 'fetch';
+  wsState.active = true;
+  wsState.fetchAction = descriptor.fetchAction;
+  wsState.fetchLocationState = descriptor.fetchLocationState;
+  wsState.fetchState = descriptor.fetchAction === PULL_REQUEST_TYPES.UPDATE_DATA ? 3 : 0; // FETCH_STATE.CONTINUE_UPDATE : FETCH_STATE.PUSH_NOTIFICATION
+  wsState._socketData = { uuid: crypto.randomUUID(), state: descriptor.fetchLocationState, device };
+
+  // The push already delivered to the phone references the sessionID minted at
+  // session start, so reconnect to the PERSISTED one — the device's current
+  // sessionId may have rotated meanwhile and would mispair.
+  const sessionId = descriptor.sessionID;
+  const socket = await createSocket(sessionId, bgFetchOnMessage, bgFetchOnClose, wsState._socketData);
+
+  if (!socket) {
+    await dispatchSyntheticClose(descriptor, WEBSOCKET_STATES.MOBILE_DISCONNECTED);
+    return { status: 'error' };
+  }
+
+  await saveWsSession({
+    type: 'fetch',
+    sessionID: sessionId,
+    deviceId: device.id,
+    fetchAction: wsState.fetchAction,
+    fetchLocationState: wsState.fetchLocationState,
+    socketData: { uuid: wsState._socketData.uuid, path: null, action: null },
+    savedAt: descriptor.savedAt
+  });
+  await startKeepalive();
+  startSelfTick();
+  wsNotify('stateChange', { active: true, fetchState: wsState.fetchState, fetchAction: wsState.fetchAction });
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'WsManager - resumed fetch session after SW wake');
+  return { status: 'ok', state: getPublicState() };
+};
+
 /**
-* Re-establishes a QR connect after the background service worker was terminated
-* (Safari) and woken again. Rehydrates the persisted ephemeral keypair reference (its
-* private key is still in session storage, keyed by uuid) and mints a FRESH sessionID +
-* QR via reloadConnectQR. We deliberately do NOT reconnect to the old sessionID: the
-* proxy drops the rendezvous once our socket dies, so a re-opened old session pairs to
-* nothing and the phone reports a connection error. No-op when a session is already
-* active in this worker instance, or when nothing valid is persisted.
+* Session-resume decision tree, run after the background service worker was terminated
+* (Safari) and woken again. Loads the persisted descriptor and either enforces the
+* timeout (synthetic close through the existing close handlers), declares a dead
+* mid-conversation session disconnected, transparently re-establishes the socket
+* (push/fetch still awaiting the mobile device), or re-mints a QR while the popup is
+* watching. No-op when a session is already active in this worker instance.
 * @async
 * @return {Promise<{status: string, state?: Object, message?: string}>} Resume result.
 */
-const resumeConnectQR = async () => {
+const resumeWsSession = async () => {
   if (wsState.active) {
     return { status: 'active', state: getPublicState() };
   }
@@ -430,29 +602,63 @@ const resumeConnectQR = async () => {
   }
 
   resumeInProgress = (async () => {
-    const session = await loadQrSession();
+    const loaded = await loadWsSession();
 
-    if (!session?.ephemeralData?.uuid) {
-      await clearQrSession();
+    // Re-check after the awaited load: its decrypt awaits give a user-initiated
+    // start a window to complete, and tearing that fresh session down here
+    // (dispatch/clear/stopKeepalive) would kill it from under the user.
+    if (wsState.active) {
+      return { status: 'active', state: getPublicState() };
+    }
+
+    if (!loaded?.descriptor) {
       await stopKeepalive();
       return { status: 'none' };
     }
 
-    // Seed the ephemeral data so reloadConnectQR reuses it instead of generating a new
-    // keypair (and a duplicate device entry). reloadConnectQR captures it before its own
-    // resetState, then mints a fresh sessionID/QR and re-persists the session.
-    wsState._ephemeralData = session.ephemeralData;
+    const { descriptor, expired } = loaded;
 
-    const result = await reloadConnectQR();
-
-    if (result?.status === 'ok') {
-      logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'WsManager - resumed QR session after SW wake');
-    } else {
-      await clearQrSession();
-      await stopKeepalive();
+    if (expired) {
+      await dispatchSyntheticClose(descriptor, WEBSOCKET_STATES.CONNECTION_TIMEOUT);
+      return { status: 'timeout' };
     }
 
-    return result;
+    if (descriptor.phase === 'active_conversation') {
+      await dispatchSyntheticClose(descriptor, WEBSOCKET_STATES.MOBILE_DISCONNECTED);
+      return { status: 'disconnected' };
+    }
+
+    if (descriptor.type === 'connect_qr') {
+      // Only re-mint a QR while the popup is actually open (recently querying) —
+      // otherwise nobody can see the regenerated QR, so stay idle instead of churning
+      // sessions. We deliberately do NOT reconnect to the old sessionID: the proxy
+      // drops the rendezvous once our socket dies, so reloadConnectQR reuses the
+      // persisted ephemeral keypair but mints a fresh sessionID/QR.
+      if (!isPopupRecentlyActive()) {
+        await stopKeepalive();
+        return { status: 'idle' };
+      }
+
+      wsState._ephemeralData = descriptor.ephemeralData;
+      const result = await reloadConnectQR();
+
+      // On 'busy' another session grabbed the socket mid-await — its descriptor and
+      // keepalive belong to that NEW session, so only a genuine 'error' cleans up.
+      if (result?.status === 'ok') {
+        logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'WsManager - resumed QR session after SW wake');
+      } else if (result?.status === 'error') {
+        await clearWsSession();
+        await stopKeepalive();
+      }
+
+      return result;
+    }
+
+    if (descriptor.type === 'connect_push') {
+      return resumeConnectPush(descriptor);
+    }
+
+    return resumeFetch(descriptor);
   })();
 
   try {
@@ -484,7 +690,7 @@ export {
   startFetch,
   cancelCurrentAction,
   reloadConnectQR,
-  resumeConnectQR,
+  resumeWsSession,
   notePopupActivity,
   isPopupRecentlyActive,
   getPublicState,

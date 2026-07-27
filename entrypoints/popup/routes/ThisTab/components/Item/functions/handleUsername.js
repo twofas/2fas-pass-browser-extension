@@ -40,6 +40,12 @@ const handleUsername = async (deviceId, vaultId, itemId, more, setMore) => {
 
   try {
     const { username } = item.content;
+
+    if (!username || username.length === 0) {
+      showToast(getMessage('this_tab_copy_disabled_no_username'), 'error');
+      return;
+    }
+
     await copyValue(username, deviceId, vaultId, item.id, 'username');
     showToast(getMessage('notification_username_copied'), 'success');
   } catch (e) {

@@ -40,6 +40,12 @@ const handleSsid = async (deviceId, vaultId, itemId, more, setMore) => {
 
   try {
     const { ssid } = item.content;
+
+    if (!ssid || ssid.length === 0) {
+      showToast(getMessage('this_tab_copy_disabled_no_ssid'), 'error');
+      return;
+    }
+
     await copyValue(ssid, deviceId, vaultId, item.id, 'ssid');
     showToast(getMessage('notification_wifi_ssid_copied'), 'success');
   } catch (e) {

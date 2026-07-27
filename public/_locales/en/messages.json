@@ -2435,6 +2435,46 @@
     "message": "Share this Item",
     "description": "Button label in dropdown menu to share an item via 2FAS Share"
   },
+  "this_tab_copy_disabled_no_username": {
+    "message": "No username stored in this Item",
+    "description": "Tooltip on disabled copy button when the item has no username"
+  },
+  "this_tab_copy_disabled_no_password": {
+    "message": "No password stored in this Item",
+    "description": "Tooltip on disabled copy button when the item has no password"
+  },
+  "this_tab_copy_disabled_no_name": {
+    "message": "No name stored in this Item",
+    "description": "Tooltip on disabled copy button when the item has no name"
+  },
+  "this_tab_copy_disabled_no_ssid": {
+    "message": "No network name (SSID) stored in this Item",
+    "description": "Tooltip on disabled copy button when the Wi-Fi item has no SSID"
+  },
+  "this_tab_copy_disabled_no_text": {
+    "message": "No text stored in this note",
+    "description": "Tooltip on disabled copy button when the secure note has no text"
+  },
+  "this_tab_copy_disabled_no_card_number": {
+    "message": "No card number stored in this Item",
+    "description": "Tooltip on disabled copy button when the payment card has no card number"
+  },
+  "this_tab_copy_disabled_no_security_code": {
+    "message": "No security code stored in this Item",
+    "description": "Tooltip on disabled copy button when the payment card has no security code"
+  },
+  "this_tab_copy_disabled_no_expiration_date": {
+    "message": "No expiration date stored in this Item",
+    "description": "Tooltip on disabled copy button when the payment card has no expiration date"
+  },
+  "this_tab_copy_disabled_no_card_holder": {
+    "message": "No cardholder name stored in this Item",
+    "description": "Tooltip on disabled copy button when the payment card has no cardholder name"
+  },
+  "this_tab_copy_disabled_no_uri": {
+    "message": "No URL stored in this Item",
+    "description": "Tooltip on disabled copy button when the item has no URL"
+  },
   "all_items_list_no_search_results": {
     "message": "No search results. Please try again.",
     "description": "Message displayed when no search results are found"

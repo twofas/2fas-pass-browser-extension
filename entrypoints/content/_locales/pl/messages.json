@@ -12,7 +12,7 @@
     "description": "Header asking if the user wants to update an existing login item"
   },
   "content_save_prompt_don_t_ask": {
-    "message": "Ignoruj tą domenę",
+    "message": "Ignoruj tę domenę",
     "description": "Option to prevent the save prompt from appearing in the future"
   },
   "content_save_prompt_add_login": {

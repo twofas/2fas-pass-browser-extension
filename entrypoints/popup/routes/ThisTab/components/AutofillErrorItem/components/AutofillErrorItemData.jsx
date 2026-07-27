@@ -7,33 +7,40 @@
 import S from '../styles/AutofillErrorItem.module.scss';
 import { memo, useState, useEffect, useCallback } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import { copyValue } from '@/partials/functions';
 
 const COPY_MESSAGES = {
   password: {
     success: 'notification_password_copied',
-    error: 'error_password_copy_failed'
+    error: 'error_password_copy_failed',
+    empty: 'this_tab_copy_disabled_no_password'
   },
   username: {
     success: 'notification_username_copied',
-    error: 'error_username_copy_failed'
+    error: 'error_username_copy_failed',
+    empty: 'this_tab_copy_disabled_no_username'
   },
   cardHolder: {
     success: 'details_cardholder_copied',
-    error: 'error_cardholder_copy_failed'
+    error: 'error_cardholder_copy_failed',
+    empty: 'this_tab_copy_disabled_no_card_holder'
   },
   cardNumber: {
     success: 'notification_card_number_copied',
-    error: 'error_card_number_copy_failed'
+    error: 'error_card_number_copy_failed',
+    empty: 'this_tab_copy_disabled_no_card_number'
   },
   securityCode: {
     success: 'notification_card_security_code_copied',
-    error: 'error_card_security_code_copy_failed'
+    error: 'error_card_security_code_copy_failed',
+    empty: 'this_tab_copy_disabled_no_security_code'
   },
   expirationDate: {
     success: 'notification_expiration_date_copied',
-    error: 'error_expiration_date_copy_failed'
+    error: 'error_expiration_date_copy_failed',
+    empty: 'this_tab_copy_disabled_no_expiration_date'
   }
 };
 
@@ -52,9 +59,16 @@ const COPY_MESSAGES = {
 const AutofillErrorItemDataLine = memo(function AutofillErrorItemDataLine (props) {
   const { getMessage } = useI18n();
   const { name, value, displayValue, type, deviceId, vaultId, itemId } = props;
+  const isEmpty = !value || value.length === 0;
+  const emptyMessageKey = COPY_MESSAGES[type]?.empty || 'this_tab_copy_disabled_no_name';
 
   const handleCopy = useCallback(async () => {
     const messages = COPY_MESSAGES[type] || { success: 'notification_copied', error: 'error_copy_failed' };
+
+    if (!value || value.length === 0) {
+      showToast(getMessage(COPY_MESSAGES[type]?.empty || 'this_tab_copy_disabled_no_name'), 'error');
+      return;
+    }
 
     try {
       await copyValue(value, deviceId, vaultId, itemId, type);
@@ -72,13 +86,16 @@ const AutofillErrorItemDataLine = memo(function AutofillErrorItemDataLine (props
         <p>{displayValue || getMessage('no_value')}</p>
       </div>
       <div className={S.autofillErrorItemContentDataLineActions}>
-        <button
-          type='button'
-          onClick={handleCopy}
-          title={getMessage('this_tab_copy_to_clipboard')}
-        >
-          <CopyIcon />
-        </button>
+        <CopyTooltip text={getMessage(emptyMessageKey)} active={isEmpty}>
+          <button
+            type='button'
+            onClick={handleCopy}
+            title={isEmpty ? undefined : getMessage('this_tab_copy_to_clipboard')}
+            disabled={isEmpty}
+          >
+            <CopyIcon />
+          </button>
+        </CopyTooltip>
       </div>
     </div>
   );

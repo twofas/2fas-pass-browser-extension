@@ -8,11 +8,22 @@ import deletePush from '@/partials/functions/deletePush';
 import networkTest from '@/partials/functions/networkTest';
 import { wsState } from '../wsState.js';
 import wsNotify from '../wsNotify.js';
+import { clearWsSession } from '../wsSessionPersistence.js';
+import { stopKeepalive } from '../connect/keepalive.js';
+import { stopSelfTick } from '../selfTick.js';
 
 const bgFetchOnClose = async (event, data) => {
+  if (wsState._socketData?.uuid !== data?.uuid) {
+    return;
+  }
+
   if (data?.state?.data?.itemId && data?.state?.data?.notificationId) {
     await deletePush(data.state.data.deviceId, data.state.data.notificationId);
   }
+
+  await clearWsSession();
+  await stopKeepalive();
+  stopSelfTick();
 
   switch (event.code) {
     case 1001:

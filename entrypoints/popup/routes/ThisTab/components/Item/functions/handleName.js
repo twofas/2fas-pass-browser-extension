@@ -40,6 +40,12 @@ const handleName = async (deviceId, vaultId, itemId, more, setMore) => {
 
   try {
     const { name } = item.content;
+
+    if (!name || name.length === 0) {
+      showToast(getMessage('this_tab_copy_disabled_no_name'), 'error');
+      return;
+    }
+
     await copyValue(name, deviceId, vaultId, item.id, 'name');
     showToast(getMessage('notification_secure_note_name_copied'), 'success');
   } catch (e) {

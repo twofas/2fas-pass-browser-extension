@@ -7,7 +7,7 @@
 import { autoClearClipboard, sifT2Reset } from '../utils';
 import { SIF_T2_RESET_REGEX } from '@/constants';
 import { AUTO_CLEAR_CLIPBOARD_REGEX } from '@/constants/clipboardFieldTypes';
-import { resumeConnectQR, isPopupRecentlyActive } from '../websocket/wsManager.js';
+import { resumeWsSession } from '../websocket/wsManager.js';
 import { KEEPALIVE_ALARM, stopKeepalive } from '../websocket/connect/keepalive.js';
 
 /** 
@@ -22,18 +22,13 @@ const onAlarm = async alarm => {
 
   try {
     if (name === KEEPALIVE_ALARM) {
-      // Safari woke the SW for the keepalive tick. Only re-mint the QR if the popup is
-      // actually open (recently queried) — otherwise nobody can see a regenerated QR, so
-      // stop the wake cycle instead of churning sessions. The popup's own liveness poll
-      // re-arms the alarm via resumeConnectQR when it next queries.
-      if (!isPopupRecentlyActive()) {
-        await stopKeepalive();
-        return true;
-      }
+      // Safari woke the SW for the keepalive tick. Run the session-resume decision
+      // tree: enforce the timeout, re-open a push/fetch socket, or re-mint a QR (the
+      // popup-open gate for QR lives inside resumeWsSession). Stop the wake cycle when
+      // there is nothing to keep alive.
+      const result = await resumeWsSession();
 
-      const result = await resumeConnectQR();
-
-      if (result?.status === 'none' || result?.status === 'error') {
+      if (result?.status === 'none' || result?.status === 'error' || result?.status === 'idle') {
         await stopKeepalive();
       }
 

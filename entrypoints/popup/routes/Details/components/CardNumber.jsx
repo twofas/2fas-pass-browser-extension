@@ -17,6 +17,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import { useI18n } from '@/partials/context/I18nContext';
 
 /**
@@ -67,7 +68,7 @@ function CardNumber (props) {
     }
 
     if (!itemInstance?.cardNumberExists) {
-      if (originalItem?.isT3orT2WithSif) {
+      if (originalItem?.cardNumberExists) {
         setData('sifDecryptError', true);
       }
 
@@ -237,7 +238,8 @@ function CardNumber (props) {
       } else if (itemInstance?.cardNumberExists) {
         cardNumberToCopy = await decryptCardNumberOnDemand();
       } else {
-        cardNumberToCopy = '';
+        showToast(getMessage('this_tab_copy_disabled_no_card_number'), 'error');
+        return;
       }
 
       await copyValue(cardNumberToCopy, itemInstance?.deviceId, itemInstance?.vaultId, itemInstance?.id, 'cardNumber');
@@ -390,15 +392,18 @@ function CardNumber (props) {
                 <VisibleIcon />
               </button>
               {((originalItem?.securityType === SECURITY_TIER.SECRET || itemInstance?.cardNumberExists) && !sifDecryptError) && (
-                <button
-                  type='button'
-                  className={`${bS.btn} ${pI.iconButton}`}
-                  onClick={handleCopyCardNumber}
-                  title={getMessage('this_tab_copy_card_number')}
-                  tabIndex={-1}
-                >
-                  <CopyIcon />
-                </button>
+                <CopyTooltip text={getMessage('this_tab_copy_disabled_no_card_number')} active={!itemInstance?.cardNumberExists}>
+                  <button
+                    type='button'
+                    className={`${bS.btn} ${pI.iconButton}`}
+                    onClick={handleCopyCardNumber}
+                    disabled={!itemInstance?.cardNumberExists}
+                    title={!itemInstance?.cardNumberExists ? undefined : getMessage('this_tab_copy_card_number')}
+                    tabIndex={-1}
+                  >
+                    <CopyIcon />
+                  </button>
+                </CopyTooltip>
               )}
             </div>
 

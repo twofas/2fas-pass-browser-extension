@@ -2435,6 +2435,46 @@
     "message": "Diesen Eintrag teilen",
     "description": "Button label in dropdown menu to share an item via 2FAS Share"
   },
+  "this_tab_copy_disabled_no_username": {
+    "message": "In diesem Element ist kein Benutzername gespeichert",
+    "description": "Tooltip on disabled copy button when the item has no username"
+  },
+  "this_tab_copy_disabled_no_password": {
+    "message": "In diesem Element ist kein Passwort gespeichert",
+    "description": "Tooltip on disabled copy button when the item has no password"
+  },
+  "this_tab_copy_disabled_no_name": {
+    "message": "In diesem Element ist kein Name gespeichert",
+    "description": "Tooltip on disabled copy button when the item has no name"
+  },
+  "this_tab_copy_disabled_no_ssid": {
+    "message": "In diesem Element ist kein Netzwerkname (SSID) gespeichert",
+    "description": "Tooltip on disabled copy button when the Wi-Fi item has no SSID"
+  },
+  "this_tab_copy_disabled_no_text": {
+    "message": "In dieser Notiz ist kein Text gespeichert",
+    "description": "Tooltip on disabled copy button when the secure note has no text"
+  },
+  "this_tab_copy_disabled_no_card_number": {
+    "message": "In diesem Element ist keine Kartennummer gespeichert",
+    "description": "Tooltip on disabled copy button when the payment card has no card number"
+  },
+  "this_tab_copy_disabled_no_security_code": {
+    "message": "In diesem Element ist kein Sicherheitscode gespeichert",
+    "description": "Tooltip on disabled copy button when the payment card has no security code"
+  },
+  "this_tab_copy_disabled_no_expiration_date": {
+    "message": "In diesem Element ist kein Ablaufdatum gespeichert",
+    "description": "Tooltip on disabled copy button when the payment card has no expiration date"
+  },
+  "this_tab_copy_disabled_no_card_holder": {
+    "message": "In diesem Element ist kein Karteninhaber gespeichert",
+    "description": "Tooltip on disabled copy button when the payment card has no cardholder name"
+  },
+  "this_tab_copy_disabled_no_uri": {
+    "message": "In diesem Element ist keine URL gespeichert",
+    "description": "Tooltip on disabled copy button when the item has no URL"
+  },
   "all_items_list_no_search_results": {
     "message": "Keine Suchergebnisse. Bitte versuche es erneut.",
     "description": "Message displayed when no search results are found"

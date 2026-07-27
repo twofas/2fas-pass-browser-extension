@@ -13,8 +13,9 @@
 // sifExists becomes false. While the details view stays open the user can still click "Edit":
 // decryptPasswordOnDemand() then hits the `!itemInstance?.sifExists` branch. It used to return null
 // silently, so the field entered edit mode EMPTY with no feedback. It must instead raise
-// sifDecryptError so the "decryption error / expired" overlay is shown — but ONLY when a SIF was
-// expected (originalItem.isT3orT2WithSif), so the before-expiry Edit/Cancel/Edit flow still works.
+// sifDecryptError so the "decryption error / expired" overlay is shown — but ONLY when the original
+// item actually HAD an encrypted SIF (originalItem.sifExists), so a legitimately empty password
+// (e.g. a Secret-tier login synced with no password) still enters edit mode without a false error.
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, act, cleanup } from '@testing-library/react';
@@ -85,6 +86,7 @@ vi.mock('@/assets/popup-window/new-tab.svg?react', () => ({ default: () => creat
 
 import Password from './Password';
 import Login from '@/models/itemModels/Login';
+import { copyValue } from '@/partials/functions';
 
 const makeOriginal = (overrides = {}) => ({
   securityType: SECURITY_TIER.HIGHLY_SECRET,
@@ -113,7 +115,8 @@ describe('Password — editing a Highly Secret item after the fetched SIF expire
   it('raises sifDecryptError when clicking Edit and the SIF is gone (so the error overlay can show)', async () => {
     mockData.item = new Login({ deviceId: 'd', vaultId: 'v', id: 'i', __sifExists: false, __isT3orT2WithSif: false });
 
-    renderPassword({ originalItem: makeOriginal({ sifExists: false }) });
+    // originalItem was loaded before the timeout, so its in-memory copy still holds the SIF.
+    renderPassword({ originalItem: makeOriginal() });
 
     await act(async () => {
       fireEvent.click(screen.getByText('edit'));
@@ -142,5 +145,93 @@ describe('Password — editing a Highly Secret item after the fetched SIF expire
     renderPassword({ originalItem: makeOriginal({ sifExists: false }), sifDecryptError: true });
 
     expect(screen.getByText('details_password_decrypt_error')).toBeTruthy();
+  });
+});
+
+describe('Password — SECRET item with a legitimately empty password (issue: false decrypt error)', () => {
+  beforeEach(() => {
+    setData.mockClear();
+    setBatchData.mockClear();
+    setItem.mockClear();
+    mockData = { item: null, passwordEditable: false, passwordVisible: false, passwordMobile: false };
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  // Secret-tier (T3) login synced from mobile with an empty password: s_password is null, so
+  // sifExists is false on BOTH originalItem and the store item. isT3orT2WithSif is still true
+  // (tier alone). Clicking Edit must NOT raise sifDecryptError — nothing failed to decrypt.
+  it('does NOT raise sifDecryptError when clicking Edit and the password was always empty', async () => {
+    mockData.item = new Login({ deviceId: 'd', vaultId: 'v', id: 'i', __sifExists: false, __isT3orT2WithSif: true });
+
+    renderPassword({ originalItem: makeOriginal({ securityType: SECURITY_TIER.SECRET, sifExists: false }) });
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('edit'));
+    });
+
+    expect(setData).not.toHaveBeenCalledWith('sifDecryptError', true);
+    expect(setBatchData).toHaveBeenCalledWith({
+      passwordVisible: false,
+      passwordEditable: true,
+      editedSif: ''
+    });
+  });
+
+  it('does NOT raise sifDecryptError when toggling visibility and the password was always empty', async () => {
+    mockData.item = new Login({ deviceId: 'd', vaultId: 'v', id: 'i', __sifExists: false, __isT3orT2WithSif: true });
+
+    renderPassword({ originalItem: makeOriginal({ securityType: SECURITY_TIER.SECRET, sifExists: false }) });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTitle('details_toggle_password_visibility'));
+    });
+
+    expect(setData).not.toHaveBeenCalledWith('sifDecryptError', true);
+    expect(setData).toHaveBeenCalledWith('passwordVisible', true);
+  });
+});
+
+describe('Password — copy button for a SECRET item without stored SIF', () => {
+  beforeEach(() => {
+    setData.mockClear();
+    setBatchData.mockClear();
+    setItem.mockClear();
+    copyValue.mockClear();
+    mockData = { item: null, passwordEditable: false, passwordVisible: false, passwordMobile: false };
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('disables the copy button, activates the tooltip and never copies when the SIF is empty', async () => {
+    mockData.item = new Login({ deviceId: 'd', vaultId: 'v', id: 'i', __sifExists: false, __isT3orT2WithSif: true });
+
+    const { container } = renderPassword({ originalItem: makeOriginal({ securityType: SECURITY_TIER.SECRET, sifExists: false }) });
+
+    const wrapper = container.querySelector('span[data-tooltip="this_tab_copy_disabled_no_password"]');
+    expect(wrapper).toBeTruthy();
+
+    const copyButton = wrapper.querySelector('button');
+    expect(copyButton.disabled).toBe(true);
+
+    await act(async () => {
+      fireEvent.click(copyButton);
+    });
+
+    expect(copyValue).not.toHaveBeenCalled();
+  });
+
+  it('keeps the copy button enabled without an active tooltip when the SIF exists', () => {
+    mockData.item = new Login({ deviceId: 'd', vaultId: 'v', id: 'i', __sifExists: true, __isT3orT2WithSif: true, __decrypted: 'hunter2' });
+
+    const { container } = renderPassword({ originalItem: makeOriginal({ securityType: SECURITY_TIER.SECRET }) });
+
+    const copyButton = screen.getByTitle('this_tab_copy_to_clipboard');
+    expect(copyButton.disabled).toBe(false);
+    expect(container.querySelector('span[data-tooltip]')).toBeNull();
   });
 });

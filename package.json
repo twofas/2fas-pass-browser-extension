@@ -1,7 +1,7 @@
 {
   "name": "2fas-pass-browser-extension",
   "description": "This is the official 2FAS Pass Browser Extension project.",
-  "version": "1.8.4",
+  "version": "1.8.5",
   "type": "module",
   "repository": {
     "type": "git",
@@ -45,8 +45,6 @@
     "analyze": "wxt build --analyze --analyze-open",
     "test": "vitest --run",
     "test-watch": "vitest",
-    "test:autofill": "wxt build --mode development --mv3 && node tests/e2e/autofill/runAutofillE2E.js",
-    "test:open-browser": "node tests/e2e/autofill/openBrowser.js",
     "generate-license-info-html": "npx -y license-report --output=html >> open-source-licenses.html",
     "generate-license-info-json": "npx -y license-report --output=json >> open-source-licenses.json",
     "generate-license-info": "yarn generate-license-info-html && yarn generate-license-info-json",

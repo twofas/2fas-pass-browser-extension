@@ -12,6 +12,7 @@ import getLoaderProgress from '@/partials/functions/getLoaderProgress';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import SecureNote from '@/models/itemModels/SecureNote';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
+import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import ItemFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
 import ItemCopyIcon from '@/assets/popup-window/copy2.svg?react';
 
@@ -103,13 +104,18 @@ const CopySecureNoteBtn = ({ item, more, setMore }) => {
   }, [item?.id, item?.sifExists, scheduledTime]);
 
   if (item?.securityType === SECURITY_TIER.SECRET) {
+    const isEmpty = !item?.sifExists;
+
     return (
-      <button
-        onClick={async () => await handleSecureNoteText(item.deviceId, item.vaultId, item.id, more, setMore)}
-        title={getMessage('this_tab_copy_text')}
-      >
-        <ItemCopyIcon className={S.itemCopy2} />
-      </button>
+      <CopyTooltip text={getMessage('this_tab_copy_disabled_no_text')} active={isEmpty} position='bottom'>
+        <button
+          onClick={async () => await handleSecureNoteText(item.deviceId, item.vaultId, item.id, more, setMore)}
+          title={isEmpty ? undefined : getMessage('this_tab_copy_text')}
+          disabled={isEmpty}
+        >
+          <ItemCopyIcon className={S.itemCopy2} />
+        </button>
+      </CopyTooltip>
     );
   } else if (item?.securityType === SECURITY_TIER.HIGHLY_SECRET && item?.sifExists) {
     return (

@@ -103,7 +103,35 @@ describe('getOpenOrClosedShadowRoot', () => {
     expect(getOpenOrClosedShadowRoot(host)).toBe(closedRoot);
   });
 
-  it('returns null on Safari, where neither privileged API exists', () => {
+  it('returns null when element.openOrClosedShadowRoot throws on Firefox', () => {
+    const host = mountHost('<div></div>');
+
+    host.attachShadow({ mode: 'closed' });
+
+    Object.defineProperty(host, 'openOrClosedShadowRoot', {
+      configurable: true,
+      get: () => {
+        throw new Error('blocked');
+      }
+    });
+
+    expect(getOpenOrClosedShadowRoot(host)).toBeNull();
+  });
+
+  it('returns null when element.shadowRoot throws on a dead wrapper', () => {
+    const host = mountHost('<div></div>');
+
+    Object.defineProperty(host, 'shadowRoot', {
+      configurable: true,
+      get: () => {
+        throw new Error('can\'t access dead object');
+      }
+    });
+
+    expect(getOpenOrClosedShadowRoot(host)).toBeNull();
+  });
+
+  it('returns null when neither privileged API exists, as on Safari below 26', () => {
     const host = mountHost('<div></div>');
 
     host.attachShadow({ mode: 'closed' });

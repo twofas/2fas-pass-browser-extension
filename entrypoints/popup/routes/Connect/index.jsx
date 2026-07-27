@@ -63,6 +63,7 @@ function Connect (props) {
   const connectingLoader = bgState?.progress ?? 264;
   const deviceName = bgState?.deviceName || null;
   const socketError = (bgState?.socketError || false) || livenessLost;
+  useWsLiveness(connectView === CONNECT_VIEWS.PushSent);
 
   const loadReadyDevices = useCallback(async () => {
     try {

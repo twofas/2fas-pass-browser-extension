@@ -19,6 +19,7 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
   let currentTopLayerElement = null;
   let originalParent = null;
   let bodyObserver = null;
+  let isPaused = false;
   const dialogCloseHandlers = new Map();
 
   const moveShadowHostToTopLayer = topLayerElement => {
@@ -118,6 +119,10 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
   };
 
   const handleTopLayerChange = () => {
+    if (isPaused) {
+      return;
+    }
+
     ensureShadowHostInDocument();
 
     const activeTopLayer = findActiveTopLayerElement();
@@ -257,15 +262,12 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
     };
   };
 
-  document.addEventListener('toggle', handleToggleEvent, true);
+  const startObserving = () => {
+    document.addEventListener('toggle', handleToggleEvent, true);
+    bodyObserver = setupBodyObserver();
+  };
 
-  bodyObserver = setupBodyObserver();
-
-  setTimeout(() => {
-    handleTopLayerChange();
-  }, 100);
-
-  const cleanup = () => {
+  const stopObserving = () => {
     document.removeEventListener('toggle', handleToggleEvent, true);
 
     if (bodyObserver) {
@@ -277,6 +279,35 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
       dialog.removeEventListener('close', closeHandler);
     });
     dialogCloseHandlers.clear();
+  };
+
+  startObserving();
+
+  setTimeout(() => {
+    handleTopLayerChange();
+  }, 100);
+
+  const pause = () => {
+    if (isPaused) {
+      return;
+    }
+
+    isPaused = true;
+    stopObserving();
+  };
+
+  const resume = () => {
+    if (!isPaused) {
+      return;
+    }
+
+    isPaused = false;
+    startObserving();
+    handleTopLayerChange();
+  };
+
+  const cleanup = () => {
+    stopObserving();
 
     if (currentTopLayerElement) {
       moveShadowHostToBody();
@@ -284,9 +315,10 @@ const topLayerManager = (shadowHost, disconnectStyleObserver, reconnectStyleObse
 
     currentTopLayerElement = null;
     originalParent = null;
+    isPaused = false;
   };
 
-  return { cleanup };
+  return { cleanup, pause, resume };
 };
 
 export default topLayerManager;
