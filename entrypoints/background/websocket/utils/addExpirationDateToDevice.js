@@ -6,15 +6,19 @@
 
 import isPaidDeviceConnected from '@/partials/functions/isPaidDeviceConnected';
 
-/** 
-* Adds the expiration date to the device with the given UUID.
+/**
+* Adds the expiration date to the device matching the given identifiers.
 * @async
-* @param {string} uuid - The UUID of the device.
+* @param {Object} identifiers - The identifiers of the device.
+* @param {string} [identifiers.uuid] - The UUID of the device assigned for the current session.
+* @param {string} [identifiers.deviceId] - The persistent ID of the device.
 * @param {string} expirationDate - The expiration date in Base64 to add.
 */
-const addExpirationDateToDevice = async (uuid, expirationDate) => {
+const addExpirationDateToDevice = async (identifiers, expirationDate) => {
+  const { uuid, deviceId } = identifiers || {};
   const devices = await storage.getItem('local:devices') || [];
-  const device = devices.find(d => d.uuid === uuid);
+  // deviceId is the persistent identifier, uuid is only valid for the current session
+  const device = devices.find(d => deviceId && d.id === deviceId) || devices.find(d => uuid && d.uuid === uuid);
 
   if (!device) {
     throw new TwoFasError(TwoFasError.internalErrors.deviceNotFound, { additional: { func: 'addExpirationDateToDevice' } });

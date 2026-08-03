@@ -33,11 +33,22 @@ const isPaidDeviceConnected = async () => { // FUTURE - Change for multiple devi
     return false;
   }
 
-  const expirationDateParsed = atob(expirationDate);
-  const expirationDateInt = parseInt(expirationDateParsed, 10);
+  let expirationDateParsed;
+
+  try {
+    expirationDateParsed = atob(expirationDate);
+  } catch {
+    return false;
+  }
+
+  if (!/^\d+$/.test(expirationDateParsed)) {
+    return false;
+  }
+
+  const expirationDateInt = Number(expirationDateParsed);
   const currentDate = Date.now();
 
-  return !isNaN(expirationDateInt) && expirationDateInt > currentDate;
+  return Number.isSafeInteger(expirationDateInt) && expirationDateInt > currentDate;
 };
 
 export default isPaidDeviceConnected;

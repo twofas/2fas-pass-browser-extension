@@ -17,10 +17,11 @@ import { ENCRYPTION_KEYS } from '@/constants';
 * @param {Object} json - The JSON object containing the transfer data.
 * @param {ArrayBuffer} hkdfSaltAB - The salt for HKDF.
 * @param {CryptoKey} sessionKeyForHKDF - The session key for HKDF.
-* @param {string} uuid - The unique identifier for the user.
+* @param {string} uuid - The unique identifier of the pairing session.
+* @param {string} deviceId - The persistent ID of the paired device.
 * @return {Promise<Object>} The response object containing the result of the action.
 */
-const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid) => {
+const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid, deviceId) => {
   const { totalChunks, totalSize, sha256GzipVaultDataEnc, newSessionIdEnc } = json.payload;
   let newSessionIdDec_B64;
 
@@ -52,7 +53,7 @@ const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid) => 
     }
   }
 
-  // OPTIONAL
+  // OPTIONAL - a missing field means the mobile app reports no active subscription
   let expirationDateDec_B64 = null;
 
   if (json?.payload?.expirationDateEnc && json?.payload?.expirationDateEnc?.length > 0) {
@@ -62,13 +63,15 @@ const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid) => 
       const expirationDateDecBytes = DecryptBytes(expirationDateEncAB);
       const expirationDateDec_AB = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: expirationDateDecBytes.iv }, encryptionDataKeyAES, expirationDateDecBytes.data);
       expirationDateDec_B64 = ArrayBufferToBase64(expirationDateDec_AB);
-    } catch {}
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.errors.decryptExpirationDate, { event: e });
+    }
   }
 
   try {
-    await addExpirationDateToDevice(uuid, expirationDateDec_B64);
+    await addExpirationDateToDevice({ uuid, deviceId }, expirationDateDec_B64);
   } catch (e) {
-    throw new TwoFasError(TwoFasError.errors.addExpirationDateToDevice, { event: e });
+    await CatchError(new TwoFasError(TwoFasError.errors.addExpirationDateToDevice, { event: e }));
   }
 
   const socket = TwoFasWebSocket.getInstance();
