@@ -18,8 +18,15 @@ const isPaidDeviceConnected = async () => { // FUTURE - Change for multiple devi
     return false;
   }
 
+  // Skip placeholders pushed by generateEphemeralKeys before a pairing completes
+  const pairedDevices = devices.filter(d => d?.id);
+
+  if (pairedDevices.length === 0) {
+    return false;
+  }
+
   // Get latest device by updatedAt
-  const latestDevice = devices.reduce((latest, device) => {
+  const latestDevice = pairedDevices.reduce((latest, device) => {
     return (!latest || (device?.updatedAt && device.updatedAt > latest.updatedAt)) ? device : latest;
   }, null);
 

@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import setIdleInterval from '@/partials/functions/setIdleInterval';
+import restoreDefaultIdleLockIfNotPaid from '@/partials/functions/restoreDefaultIdleLockIfNotPaid';
 import initContextMenu from '../contextMenu/initContextMenu';
 import { setBadgeLocked, updateBadge } from '../utils';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
@@ -61,6 +62,7 @@ const onStartup = async migrations => {
     );
 
     await storage.setItem('local:devices', filteredDevices);
+    await restoreDefaultIdleLockIfNotPaid();
   }
 };
 

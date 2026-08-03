@@ -13,12 +13,12 @@ import wsNotify from './wsNotify.js';
 /**
 * Handles the close signal action.
 * @param {string} newSessionId - The new session ID.
-* @param {string} uuid - The unique identifier for the user.
+* @param {Object} identifiers - The identifiers of the device ({ uuid, deviceId }).
 * @param {Object} closeData - The data related to the close action.
 * @return {Promise<void>}
 */
-const handleCloseSignalAction = async (newSessionId, uuid, closeData) => {
-  await addNewSessionIdToDevice(uuid, newSessionId); // FUTURE - Change to deviceId instead of uuid?
+const handleCloseSignalAction = async (newSessionId, identifiers, closeData) => {
+  await addNewSessionIdToDevice(identifiers, newSessionId);
 
   if (closeData?.returnUrl === '/') {
     wsNotify('stateChange', { connectView: CONNECT_VIEWS.DeviceSelect });

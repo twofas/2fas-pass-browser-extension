@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import isPaidDeviceConnected from '@/partials/functions/isPaidDeviceConnected';
+import restoreDefaultIdleLockIfNotPaid from '@/partials/functions/restoreDefaultIdleLockIfNotPaid';
 
 /**
 * Adds the expiration date to the device matching the given identifiers.
@@ -28,20 +28,7 @@ const addExpirationDateToDevice = async (identifiers, expirationDate) => {
   device.updatedAt = Date.now();
 
   await storage.setItem('local:devices', devices);
-
-  const paidDeviceConnected = await isPaidDeviceConnected();
-
-  if (!paidDeviceConnected) {
-    const autoIdleLockStorage = await storage.getItem('local:autoIdleLock');
-    
-    if (autoIdleLockStorage === 'default' || autoIdleLockStorage === null) {
-      await storage.setItem('local:autoIdleLock', config.defaultStorageIdleLock);
-
-      if (import.meta.env.BROWSER !== 'safari') {
-        browser.idle.setDetectionInterval(config.defaultStorageIdleLock * 60);
-      }
-    }
-  }
+  await restoreDefaultIdleLockIfNotPaid();
 };
 
 export default addExpirationDateToDevice;

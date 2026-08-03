@@ -21,13 +21,13 @@ import { closePopupWindow, finishLoginAutofill, finishCardAutofill } from './uti
 /**
 * Handles the close signal for the pull request action.
 * @param {string} newSessionId - The new session ID.
-* @param {string} uuid - The unique identifier for the user.
+* @param {Object} identifiers - The identifiers of the device ({ uuid, deviceId }).
 * @param {Object} closeData - The data related to the close action.
 * @param {Object} state - The current state of fetch action.
 * @return {Promise<void>}
 */
-const handleCloseSignalPullRequestAction = async (newSessionId, uuid, closeData, state) => {
-  await addNewSessionIdToDevice(uuid, newSessionId); // FUTURE - Change to deviceId instead of uuid?
+const handleCloseSignalPullRequestAction = async (newSessionId, identifiers, closeData, state) => {
+  await addNewSessionIdToDevice(identifiers, newSessionId);
 
   try {
     const socket = TwoFasWebSocket.getInstance();

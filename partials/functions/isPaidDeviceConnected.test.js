@@ -65,6 +65,19 @@ describe('isPaidDeviceConnected', () => {
     expect(await isPaidDeviceConnected()).toBe(false);
   });
 
+  it('ignores the unpaired placeholder an abandoned connect attempt leaves behind', async () => {
+    await storage.setItem('local:devices', [
+      { id: 'd1', updatedAt: 1, expirationDate: FUTURE },
+      { uuid: 'ephemeral-uuid', updatedAt: 2 }
+    ]);
+    expect(await isPaidDeviceConnected()).toBe(true);
+  });
+
+  it('returns false when only unpaired placeholders are stored', async () => {
+    await storage.setItem('local:devices', [{ uuid: 'ephemeral-uuid', updatedAt: 2 }]);
+    expect(await isPaidDeviceConnected()).toBe(false);
+  });
+
   it('reads the expiration date of the most recently updated device', async () => {
     await storage.setItem('local:devices', [
       { id: 'd1', updatedAt: 1, expirationDate: FUTURE },

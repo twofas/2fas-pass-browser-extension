@@ -12,6 +12,7 @@ import useScrollPosition from '@/entrypoints/popup/hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import DisconnectIcon from '@/assets/popup-window/disconnect-device.svg?react';
 import { getCurrentDevice } from '@/partials/functions';
+import restoreDefaultIdleLockIfNotPaid from '@/partials/functions/restoreDefaultIdleLockIfNotPaid';
 import ConfirmDialog from '@/entrypoints/popup/components/ConfirmDialog';
 
 /**
@@ -78,6 +79,7 @@ function SettingsDevices (props) {
     const sortedDevices = filteredDevices.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
     const updatedDevices = sortedDevices.filter(device => device.id !== deviceId);
     await storage.setItem('local:devices', updatedDevices);
+    await restoreDefaultIdleLockIfNotPaid();
 
     logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsDevices - device removed', {
       deviceId,
