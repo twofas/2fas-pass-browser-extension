@@ -4,16 +4,20 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
-* Add new session ID to the device.
+/**
+* Add new session ID to the device matching the given identifiers.
 * @async
-* @param {string} uuid - The UUID of the device.
+* @param {Object} identifiers - The identifiers of the device.
+* @param {string} [identifiers.uuid] - The UUID of the device assigned for the current session.
+* @param {string} [identifiers.deviceId] - The persistent ID of the device.
 * @param {string} newSessionId - The new session ID to add.
 * @return {Promise<void>}
 */
-const addNewSessionIdToDevice = async (uuid, newSessionId) => {
+const addNewSessionIdToDevice = async (identifiers, newSessionId) => {
+  const { uuid, deviceId } = identifiers || {};
   const devices = await storage.getItem('local:devices') || [];
-  const device = devices.find(d => d.uuid === uuid);
+  // deviceId is the persistent identifier, uuid is dropped by cleanupDevices mid-conversation
+  const device = devices.find(d => deviceId && d.id === deviceId) || devices.find(d => uuid && d.uuid === uuid);
 
   if (!device) {
     throw new TwoFasError(TwoFasError.internalErrors.deviceNotFound, { additional: { func: 'addNewSessionIdToDevice' } });

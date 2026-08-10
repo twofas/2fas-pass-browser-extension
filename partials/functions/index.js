@@ -42,6 +42,7 @@ export { default as openPopup } from './openPopup.js';
 export { default as paymentCardExpirationDateValidation } from './paymentCardExpirationDateValidation.js';
 export { default as popupIsInSeparateWindow } from './popupIsInSeparateWindow.js';
 export { default as resolveCrossDomainPermissions } from './resolveCrossDomainPermissions.js';
+export { default as restoreDefaultIdleLockIfNotPaid } from './restoreDefaultIdleLockIfNotPaid.js';
 export { default as safariBlankLinks } from './safariBlankLinks.js';
 export { default as sanitizeObject } from './sanitizeObject.js';
 export { default as saveCrossDomainPreferences } from './saveCrossDomainPreferences.js';

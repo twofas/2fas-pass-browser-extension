@@ -49,11 +49,24 @@ function IdleLock () {
       setDisabled(false);
     };
 
-    try {
-      getPremium().then(getDefaultIdleLock);
-    } catch (e) {
-      CatchError(e);
-    }
+    const loadSettings = async () => {
+      try {
+        await getPremium();
+      } catch (e) {
+        await CatchError(e);
+      }
+
+      try {
+        await getDefaultIdleLock();
+      } catch (e) {
+        await CatchError(e);
+        setIL(config.defaultStorageIdleLock);
+        setLoading(false);
+        setDisabled(false);
+      }
+    };
+
+    loadSettings();
   }, []);
 
   const idleLockOptions = [
