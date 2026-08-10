@@ -73,9 +73,7 @@ export default defineContentScript({
           onMount: (container, shadow, shadowHost) => {
             const standardStyles = 'position: fixed !important; z-index: 2147483647 !important;';
             shadowHost.style = standardStyles;
-            shadow.children[0].setAttribute('style', 'z-index: 2147483647 !important;');
-            shadow.children[0].setAttribute('style', 'pointer-events: none !important;');
-            shadow.children[0].getElementsByTagName('body')[0].style = 'margin: 0 !important; padding: 0 !important; overflow: hidden !important;';
+            container.setAttribute('style', 'pointer-events: none !important; margin: 0 !important; padding: 0 !important; overflow: hidden !important;');
 
             const styleObserver = setupStyleObserver(shadowHost, standardStyles);
 

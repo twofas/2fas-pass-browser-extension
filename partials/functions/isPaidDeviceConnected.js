@@ -18,8 +18,15 @@ const isPaidDeviceConnected = async () => { // FUTURE - Change for multiple devi
     return false;
   }
 
+  // Skip placeholders pushed by generateEphemeralKeys before a pairing completes
+  const pairedDevices = devices.filter(d => d?.id);
+
+  if (pairedDevices.length === 0) {
+    return false;
+  }
+
   // Get latest device by updatedAt
-  const latestDevice = devices.reduce((latest, device) => {
+  const latestDevice = pairedDevices.reduce((latest, device) => {
     return (!latest || (device?.updatedAt && device.updatedAt > latest.updatedAt)) ? device : latest;
   }, null);
 
@@ -33,11 +40,22 @@ const isPaidDeviceConnected = async () => { // FUTURE - Change for multiple devi
     return false;
   }
 
-  const expirationDateParsed = atob(expirationDate);
-  const expirationDateInt = parseInt(expirationDateParsed, 10);
+  let expirationDateParsed;
+
+  try {
+    expirationDateParsed = atob(expirationDate);
+  } catch {
+    return false;
+  }
+
+  if (!/^\d+$/.test(expirationDateParsed)) {
+    return false;
+  }
+
+  const expirationDateInt = Number(expirationDateParsed);
   const currentDate = Date.now();
 
-  return !isNaN(expirationDateInt) && expirationDateInt > currentDate;
+  return Number.isSafeInteger(expirationDateInt) && expirationDateInt > currentDate;
 };
 
 export default isPaidDeviceConnected;

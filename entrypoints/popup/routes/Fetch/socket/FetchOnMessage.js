@@ -80,7 +80,7 @@ const FetchOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.CLOSE_WITH_SUCCESS: {
-        await handleCloseSignalPullRequestAction(data.newSessionId, data.device.uuid, data.closeData, data.state);
+        await handleCloseSignalPullRequestAction(data.newSessionId, { uuid: data.device.uuid, deviceId: data.deviceId || data.device.id }, data.closeData, data.state);
         break;
       }
   

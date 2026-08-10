@@ -120,7 +120,7 @@ const ConnectOnMessage = async (json, data) => {
       }
   
       case SOCKET_ACTIONS.CLOSE_WITH_SUCCESS: {
-        await handleCloseSignalAction(data.newSessionId, data.uuid, data.closeData);
+        await handleCloseSignalAction(data.newSessionId, { uuid: data.uuid, deviceId: data.deviceId }, data.closeData);
         break;
       }
   
