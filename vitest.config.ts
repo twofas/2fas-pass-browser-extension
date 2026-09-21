@@ -4,11 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { defineConfig } from 'vitest/config';
+import { configDefaults, defineConfig } from 'vitest/config';
 import { WxtVitest } from 'wxt/testing/vitest-plugin';
 
 export default defineConfig({
   test: {
+    exclude: [...configDefaults.exclude, 'testFiles/**'],
     setupFiles: ['./vitest.setup.ts']
   },
   plugins: [WxtVitest()]
