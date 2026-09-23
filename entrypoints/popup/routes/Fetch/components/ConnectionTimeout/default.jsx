@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import Lottie from 'lottie-react';
+import { LottieLight } from 'lottie-react';
 import { useState, useEffect } from 'react';
 
 /**
@@ -44,16 +44,16 @@ const ConnectionTimeoutDefault = () => {
   return (
     <>
       <div className='theme-light'>
-        <Lottie
-          animationData={lightAnimationData}
+        <LottieLight
+          src={lightAnimationData}
           autoplay={true}
           loop={false}
           style={{ height: '86px', width: '120px' }}
         />
       </div>
       <div className="theme-dark">
-        <Lottie
-          animationData={darkAnimationData}
+        <LottieLight
+          src={darkAnimationData}
           autoplay={true}
           loop={false}
           style={{ height: '86px', width: '120px' }}

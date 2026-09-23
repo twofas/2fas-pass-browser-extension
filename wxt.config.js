@@ -16,10 +16,10 @@ export default defineConfig({
   },
   vite: configEnv => ({
     resolve: {
-      alias: {
-        'lottie-web': 'lottie-web/build/player/lottie_light',
-        'lottie-react': 'lottie-react/build/index.es.js'
-      }
+      alias: [
+        { find: /^lottie-web$/, replacement: 'lottie-web/build/player/lottie_light.js' },
+        { find: /^lottie-web\/build\/player\/lottie_svg\.js$/, replacement: 'lottie-web/build/player/lottie_light.js' }
+      ]
     },
     css: {
       modules: {
