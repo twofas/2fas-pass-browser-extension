@@ -20,7 +20,6 @@
 		3780B0CE2EE2FD7B00D68A1E /* install.html in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C22EE2FD7B00D68A1E /* install.html */; };
 		3780B0CF2EE2FD7B00D68A1E /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C32EE2FD7B00D68A1E /* background.js */; };
 		3780B0D02EE2FD7B00D68A1E /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C42EE2FD7B00D68A1E /* popup.html */; };
-		3780B0D12EE2FD7B00D68A1E /* styles in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C52EE2FD7B00D68A1E /* styles */; };
 		3780B0D22EE2FD7B00D68A1E /* chunks in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C62EE2FD7B00D68A1E /* chunks */; };
 		3780B0D32EE2FD7B00D68A1E /* content-scripts in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C72EE2FD7B00D68A1E /* content-scripts */; };
 		3780B0D42EE2FD7B00D68A1E /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C82EE2FD7B00D68A1E /* icons */; };
@@ -80,7 +79,6 @@
 		3780B0C22EE2FD7B00D68A1E /* install.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = install.html; path = "../../.output/safari-mv3-dev/install.html"; sourceTree = "<group>"; };
 		3780B0C32EE2FD7B00D68A1E /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = "../../.output/safari-mv3-dev/background.js"; sourceTree = "<group>"; };
 		3780B0C42EE2FD7B00D68A1E /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = "../../.output/safari-mv3-dev/popup.html"; sourceTree = "<group>"; };
-		3780B0C52EE2FD7B00D68A1E /* styles */ = {isa = PBXFileReference; lastKnownFileType = folder; name = styles; path = "../../.output/safari-mv3-dev/styles"; sourceTree = "<group>"; };
 		3780B0C62EE2FD7B00D68A1E /* chunks */ = {isa = PBXFileReference; lastKnownFileType = folder; name = chunks; path = "../../.output/safari-mv3-dev/chunks"; sourceTree = "<group>"; };
 		3780B0C72EE2FD7B00D68A1E /* content-scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "content-scripts"; path = "../../.output/safari-mv3-dev/content-scripts"; sourceTree = "<group>"; };
 		3780B0C82EE2FD7B00D68A1E /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = "../../.output/safari-mv3-dev/icons"; sourceTree = "<group>"; };
@@ -208,7 +206,6 @@
 				5AFAD0E71000000000000001 /* safari-download.html */,
 				3780B0C32EE2FD7B00D68A1E /* background.js */,
 				3780B0C42EE2FD7B00D68A1E /* popup.html */,
-				3780B0C52EE2FD7B00D68A1E /* styles */,
 				3780B0C62EE2FD7B00D68A1E /* chunks */,
 				3780B0C72EE2FD7B00D68A1E /* content-scripts */,
 				3780B0C82EE2FD7B00D68A1E /* icons */,
@@ -274,7 +271,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2610;
-				LastUpgradeCheck = 2620;
+				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					3780B0862EE2FD7A00D68A1E = {
 						CreatedOnToolsVersion = 26.1.1;
@@ -329,7 +326,6 @@
 				3780B0CF2EE2FD7B00D68A1E /* background.js in Resources */,
 				3780B0D02EE2FD7B00D68A1E /* popup.html in Resources */,
 				3780B0D52EE2FD7B00D68A1E /* manifest.json in Resources */,
-				3780B0D12EE2FD7B00D68A1E /* styles in Resources */,
 				3780B0D42EE2FD7B00D68A1E /* icons in Resources */,
 				3780B0D92EE2FD7B00D68A1E /* animations in Resources */,
 				3780B0CE2EE2FD7B00D68A1E /* install.html in Resources */,
@@ -530,7 +526,7 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 110;
+				CURRENT_PROJECT_VERSION = 111;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -544,8 +540,8 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.4;
-				MARKETING_VERSION = 1.8.6;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MARKETING_VERSION = 1.8.7;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -567,7 +563,7 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 110;
+				CURRENT_PROJECT_VERSION = 111;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -581,8 +577,8 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.4;
-				MARKETING_VERSION = 1.8.6;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MARKETING_VERSION = 1.8.7;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -605,7 +601,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 110;
+				CURRENT_PROJECT_VERSION = 111;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -621,8 +617,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.8.6;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MARKETING_VERSION = 1.8.7;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -648,7 +644,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 110;
+				CURRENT_PROJECT_VERSION = 111;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -664,8 +660,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 1.8.6;
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
+				MARKETING_VERSION = 1.8.7;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,

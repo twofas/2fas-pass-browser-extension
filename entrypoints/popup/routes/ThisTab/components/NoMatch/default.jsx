@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../../ThisTab.module.scss';
-import Lottie from 'lottie-react';
+import { LottieLight } from 'lottie-react';
 import { useState, useEffect } from 'react';
 
 /**
@@ -52,16 +52,16 @@ const NoMatchDefault = ({ onAnimationReady }) => {
   return (
     <div className={`${S.thisTabMatchingLoginsEmpty} ${S.active}`}>
       <div className='theme-light'>
-        <Lottie
-          animationData={lightAnimationData}
+        <LottieLight
+          src={lightAnimationData}
           autoplay={true}
           loop={false}
           style={{ height: '86px', width: '120px' }}
         />
       </div>
       <div className="theme-dark">
-        <Lottie
-          animationData={darkAnimationData}
+        <LottieLight
+          src={darkAnimationData}
           autoplay={true}
           loop={false}
           style={{ height: '86px', width: '120px' }}

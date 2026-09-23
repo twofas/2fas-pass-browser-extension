@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import isVisible from '@/partials/functions/isVisible';
-import getElementInitialScale from './getElementInitialScale';
+import animateAutofilledInput from './animateAutofilledInput';
 
 /**
 * Function to set the value of an input element with a smooth transition effect.
@@ -17,7 +17,6 @@ import getElementInitialScale from './getElementInitialScale';
 */
 const inputSetValue = (el, value, options = {}) => {
   const { respectSkipAttribute = true } = options;
-  const AUTOFILL_RESET_DELAY = 200;
 
   if (!isVisible(el)) {
     return;
@@ -31,10 +30,7 @@ const inputSetValue = (el, value, options = {}) => {
     }
   }
 
-  const initialElementScale = getElementInitialScale(el);
-
-  el.classList.add('twofas-pass-input-autofill');
-  el.style.scale = `${initialElementScale * 1.05}`;
+  animateAutofilledInput(el);
 
   el.focus();
 
@@ -53,15 +49,6 @@ const inputSetValue = (el, value, options = {}) => {
     el.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
     el.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
   }
-
-  setTimeout(() => {
-    if (!el.isConnected) {
-      return;
-    }
-
-    el.style.scale = '';
-    el.classList.remove('twofas-pass-input-autofill');
-  }, AUTOFILL_RESET_DELAY);
 };
 
 export default inputSetValue;
