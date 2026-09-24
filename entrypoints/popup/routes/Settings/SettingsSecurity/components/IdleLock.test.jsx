@@ -85,3 +85,33 @@ describe('IdleLock — premium status drives the "only on restart" option', () =
     expect(screen.getByRole('option', { name: 'default' }).disabled).toBe(false);
   });
 });
+
+describe('IdleLock — a stored "only on restart" choice without premium must explain the 15-minute fallback', () => {
+  it('shows the fallback hint for a free user who kept "only on restart"', async () => {
+    await storage.setItem('local:autoIdleLock', 'default');
+
+    render(createElement(IdleLock));
+
+    await waitFor(() => expect(screen.getByTestId('idle-lock-select')).toBeTruthy());
+    expect(screen.getByText('settings_idle_lock_premium_inactive')).toBeTruthy();
+  });
+
+  it('hides the fallback hint for a paid user', async () => {
+    isPaidDeviceConnected.mockResolvedValue(true);
+    await storage.setItem('local:autoIdleLock', 'default');
+
+    render(createElement(IdleLock));
+
+    await waitFor(() => expect(screen.getByTestId('idle-lock-select')).toBeTruthy());
+    expect(screen.queryByText('settings_idle_lock_premium_inactive')).toBeNull();
+  });
+
+  it('hides the fallback hint for a free user with a timed idle lock', async () => {
+    await storage.setItem('local:autoIdleLock', 15);
+
+    render(createElement(IdleLock));
+
+    await waitFor(() => expect(screen.getByTestId('idle-lock-select')).toBeTruthy());
+    expect(screen.queryByText('settings_idle_lock_premium_inactive')).toBeNull();
+  });
+});

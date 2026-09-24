@@ -4,8 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import restoreDefaultIdleLockIfNotPaid from './restoreDefaultIdleLockIfNotPaid';
-
 /**
 * Cleans up the devices stored in local storage by removing unnecessary properties and duplicates.
 * @async
@@ -43,7 +41,6 @@ const cleanupDevices = async () => {
   }, []);
 
   await storage.setItem('local:devices', uniqueDevices);
-  await restoreDefaultIdleLockIfNotPaid();
 };
 
 export default cleanupDevices;

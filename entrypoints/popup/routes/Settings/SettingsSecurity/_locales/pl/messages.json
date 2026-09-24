@@ -43,6 +43,10 @@
     "message": "Wybierz czas, po upływie którego rozszerzenie przeglądarki automatycznie się zablokuje, jeśli nie będziesz z niego korzystać.",
     "description": "Description for configuring idle lock behavior"
   },
+  "settings_idle_lock_premium_inactive": {
+    "message": "Opcja „Tylko po restarcie” wymaga planu unlimited. Dopóki aplikacja mobilna go nie potwierdzi, rozszerzenie przeglądarki zablokuje się po MINUTES minutach braku aktywności.",
+    "description": "Hint shown when \"Only on restart\" is stored but no active unlimited plan is confirmed, so the idle lock falls back to MINUTES minutes"
+  },
   "settings_idle_lock_tooltip_1": {
     "message": "Automatycznie zablokuj rozszerzenie przeglądarki przy braku aktywności",
     "description": "Tooltip explaining that the idle lock setting applies only to the extension"

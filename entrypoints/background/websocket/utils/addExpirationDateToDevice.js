@@ -4,8 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import restoreDefaultIdleLockIfNotPaid from '@/partials/functions/restoreDefaultIdleLockIfNotPaid';
-
 /**
 * Adds the expiration date to the device matching the given identifiers.
 * @async
@@ -28,7 +26,6 @@ const addExpirationDateToDevice = async (identifiers, expirationDate) => {
   device.updatedAt = Date.now();
 
   await storage.setItem('local:devices', devices);
-  await restoreDefaultIdleLockIfNotPaid();
 };
 
 export default addExpirationDateToDevice;
