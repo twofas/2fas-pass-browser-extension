@@ -31,8 +31,8 @@ beforeEach(async () => {
   await storage.removeItem('local:autoIdleLock');
 });
 
-describe('onStartup — the 30-day sweep must not leave a premium-only idle lock behind', () => {
-  it('restores the default idle lock when the swept device was the last paid one', async () => {
+describe('onStartup — the 30-day sweep must not overwrite the user\'s idle lock choice', () => {
+  it('keeps the "only on restart" choice when the swept device was the last paid one', async () => {
     const staleAt = Date.now() - (config.devicesCleanupThreshold + 1) * 24 * 60 * 60 * 1000;
     await storage.setItem('local:devices', [paidDevice({ updatedAt: staleAt })]);
     await storage.setItem('local:autoIdleLock', 'default');
@@ -40,7 +40,7 @@ describe('onStartup — the 30-day sweep must not leave a premium-only idle lock
     await onStartup({ state: false });
 
     expect(await storage.getItem('local:devices')).toEqual([]);
-    expect(await storage.getItem('local:autoIdleLock')).toBe(config.defaultStorageIdleLock);
+    expect(await storage.getItem('local:autoIdleLock')).toBe('default');
   });
 
   it('keeps the "only on restart" choice when a paid device survives the sweep', async () => {

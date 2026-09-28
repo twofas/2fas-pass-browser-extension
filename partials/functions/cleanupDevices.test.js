@@ -14,20 +14,19 @@ const paidDevice = extra => ({ id: 'd1', uuid: 'u1', scheme: 2, updatedAt: 1, ex
 
 beforeEach(async () => {
   vi.clearAllMocks();
-  browser.idle.setDetectionInterval = vi.fn();
   await storage.removeItem('local:devices');
   await storage.removeItem('local:autoIdleLock');
 });
 
-describe('cleanupDevices — pruning devices must not leave a premium-only idle lock behind', () => {
-  it('restores the default idle lock when the pruned device was the last paid one', async () => {
+describe('cleanupDevices — pruning devices must not overwrite the user\'s idle lock choice', () => {
+  it('keeps the "only on restart" choice when the pruned device was the last paid one', async () => {
     await storage.setItem('local:devices', [paidDevice({ scheme: 1 })]);
     await storage.setItem('local:autoIdleLock', 'default');
 
     await cleanupDevices();
 
     expect(await storage.getItem('local:devices')).toEqual([]);
-    expect(await storage.getItem('local:autoIdleLock')).toBe(config.defaultStorageIdleLock);
+    expect(await storage.getItem('local:autoIdleLock')).toBe('default');
   });
 
   it('keeps the "only on restart" choice when a paid device survives the cleanup', async () => {

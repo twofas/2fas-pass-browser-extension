@@ -47,7 +47,6 @@ const removeFirstDevice = async () => {
 
 beforeEach(async () => {
   vi.clearAllMocks();
-  browser.idle.setDetectionInterval = vi.fn();
   getCurrentDevice.mockRejectedValue(new Error('no current device'));
   await storage.removeItem('local:devices');
   await storage.removeItem('local:autoIdleLock');
@@ -57,15 +56,15 @@ afterEach(() => {
   cleanup();
 });
 
-describe('SettingsDevices — disconnecting the last paid device must not leave a premium-only idle lock', () => {
-  it('restores the default idle lock when the removed device was the only paid one', async () => {
+describe('SettingsDevices — disconnecting a device must not overwrite the user\'s idle lock choice', () => {
+  it('keeps the "only on restart" choice when the removed device was the only paid one', async () => {
     await storage.setItem('local:devices', [paidDevice()]);
     await storage.setItem('local:autoIdleLock', 'default');
 
     await removeFirstDevice();
 
     expect(await storage.getItem('local:devices')).toEqual([]);
-    expect(await storage.getItem('local:autoIdleLock')).toBe(config.defaultStorageIdleLock);
+    expect(await storage.getItem('local:autoIdleLock')).toBe('default');
   });
 
   it('keeps the "only on restart" choice when a paid device remains', async () => {

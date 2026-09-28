@@ -111,7 +111,11 @@ function IdleLock () {
     <div className={S.settingsIdleLock}>
       <h4>{getMessage('settings_idle_lock_header')}</h4>
       <p>{getMessage('settings_idle_lock_description')}</p>
-    
+
+      {!premium && iL === 'default' && (
+        <p>{getMessage('settings_idle_lock_premium_inactive').replace('MINUTES', config.defaultStorageIdleLock)}</p>
+      )}
+
       <form action="#" className={S.settingsIdleLockForm}>
         <AdvancedSelect
           className='react-select-container react-select-idle-lock-container'

@@ -43,6 +43,10 @@
     "message": "Select the time after which the Browser Extension will automatically lock itself if you don't use it.",
     "description": "Description for configuring idle lock behavior"
   },
+  "settings_idle_lock_premium_inactive": {
+    "message": "\"Only on restart\" requires the unlimited plan. Until your mobile app confirms it, the Browser Extension locks after MINUTES minutes of inactivity.",
+    "description": "Hint shown when \"Only on restart\" is stored but no active unlimited plan is confirmed, so the idle lock falls back to MINUTES minutes"
+  },
   "settings_idle_lock_tooltip_1": {
     "message": "Autolock browser extensions when idle",
     "description": "Tooltip explaining that the idle lock setting applies only to the extension"

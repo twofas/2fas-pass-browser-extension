@@ -48,11 +48,13 @@ const isPaidDeviceConnected = async () => { // FUTURE - Change for multiple devi
     return false;
   }
 
-  if (!/^\d+$/.test(expirationDateParsed)) {
+  const expirationDateMatch = /^(\d+)\)?$/.exec(expirationDateParsed);
+
+  if (!expirationDateMatch) {
     return false;
   }
 
-  const expirationDateInt = Number(expirationDateParsed);
+  const expirationDateInt = Number(expirationDateMatch[1]);
   const currentDate = Date.now();
 
   return Number.isSafeInteger(expirationDateInt) && expirationDateInt > currentDate;

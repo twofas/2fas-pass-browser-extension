@@ -6,10 +6,6 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const isPaidDeviceConnected = vi.fn();
-
-vi.mock('@/partials/functions/isPaidDeviceConnected', () => ({ default: (...args) => isPaidDeviceConnected(...args) }));
-
 import addExpirationDateToDevice from './addExpirationDateToDevice.js';
 
 const UUID = 'uuid-1';
@@ -18,8 +14,6 @@ const FUTURE_B64 = btoa('1900000000000');
 
 beforeEach(async () => {
   vi.clearAllMocks();
-  browser.idle.setDetectionInterval = vi.fn();
-  isPaidDeviceConnected.mockResolvedValue(true);
   await storage.removeItem('local:devices');
   await storage.removeItem('local:autoIdleLock');
 });
@@ -100,22 +94,12 @@ describe('addExpirationDateToDevice — device lookup', () => {
   });
 });
 
-describe('addExpirationDateToDevice — idle lock side effect', () => {
-  it('restores the default idle lock when no paid device remains', async () => {
-    isPaidDeviceConnected.mockResolvedValue(false);
+describe('addExpirationDateToDevice — never touches the stored idle lock', () => {
+  it('keeps the "only on restart" choice when the device reports no paid plan', async () => {
     await storage.setItem('local:devices', [{ id: DEVICE_ID, uuid: UUID, updatedAt: 1 }]);
     await storage.setItem('local:autoIdleLock', 'default');
 
     await addExpirationDateToDevice({ uuid: UUID, deviceId: DEVICE_ID }, null);
-
-    expect(await storage.getItem('local:autoIdleLock')).toBe(config.defaultStorageIdleLock);
-  });
-
-  it('leaves the idle lock untouched while a paid device is connected', async () => {
-    await storage.setItem('local:devices', [{ id: DEVICE_ID, uuid: UUID, updatedAt: 1 }]);
-    await storage.setItem('local:autoIdleLock', 'default');
-
-    await addExpirationDateToDevice({ uuid: UUID, deviceId: DEVICE_ID }, FUTURE_B64);
 
     expect(await storage.getItem('local:autoIdleLock')).toBe('default');
   });

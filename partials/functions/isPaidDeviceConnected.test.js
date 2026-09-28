@@ -40,6 +40,31 @@ describe('isPaidDeviceConnected', () => {
     expect(await isPaidDeviceConnected()).toBe(false);
   });
 
+  it('treats the iOS payload with a trailing closing parenthesis as paid', async () => {
+    await storage.setItem('local:devices', [{ id: 'd1', updatedAt: 1, expirationDate: btoa(`${Date.now() + 1000 * 60 * 60 * 24})`) }]);
+    expect(await isPaidDeviceConnected()).toBe(true);
+  });
+
+  it('returns false for an expired iOS payload with a trailing closing parenthesis', async () => {
+    await storage.setItem('local:devices', [{ id: 'd1', updatedAt: 1, expirationDate: btoa(`${Date.now() - 1000 * 60 * 60 * 24})`) }]);
+    expect(await isPaidDeviceConnected()).toBe(false);
+  });
+
+  it('returns false when more than one closing parenthesis follows the digits', async () => {
+    await storage.setItem('local:devices', [{ id: 'd1', updatedAt: 1, expirationDate: btoa('1900000000000))') }]);
+    expect(await isPaidDeviceConnected()).toBe(false);
+  });
+
+  it('returns false when the digits are wrapped in parentheses', async () => {
+    await storage.setItem('local:devices', [{ id: 'd1', updatedAt: 1, expirationDate: btoa('(1900000000000)') }]);
+    expect(await isPaidDeviceConnected()).toBe(false);
+  });
+
+  it('returns false when a newline follows the closing parenthesis', async () => {
+    await storage.setItem('local:devices', [{ id: 'd1', updatedAt: 1, expirationDate: btoa('1900000000000)\n') }]);
+    expect(await isPaidDeviceConnected()).toBe(false);
+  });
+
   it('returns false when the decoded value has trailing junk after the digits', async () => {
     await storage.setItem('local:devices', [{ id: 'd1', updatedAt: 1, expirationDate: btoa('1900000000000junk') }]);
     expect(await isPaidDeviceConnected()).toBe(false);
