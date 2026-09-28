@@ -1999,6 +1999,10 @@
     "message": "Wähe eine Zeit, nach welcher die Browser-Erweiterung sich automatisch sperrt.",
     "description": "Description for configuring idle lock behavior"
   },
+  "settings_idle_lock_premium_inactive": {
+    "message": "„Nur beim Neustart“ erfordert den Unlimited Plan. Bis deine mobile App ihn bestätigt, sperrt sich die Browser-Erweiterung nach MINUTES Minuten Inaktivität.",
+    "description": "Hint shown when \"Only on restart\" is stored but no active unlimited plan is confirmed, so the idle lock falls back to MINUTES minutes"
+  },
   "settings_idle_lock_tooltip_1": {
     "message": "Browser-Erweiterung bei Inaktivität automatisch sperren.",
     "description": "Tooltip explaining that the idle lock setting applies only to the extension"

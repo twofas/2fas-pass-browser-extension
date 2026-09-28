@@ -4,21 +4,18 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-/** 
-* Function to set the idle interval for the browser.
-* @param {string} idleLockValue - The idle lock value to set (in seconds).
-* @return {Promise<void>} A promise that resolves when the idle interval is set.
+/**
+* Function to set the idle detection interval for the browser.
+* @param {number|string|null} idleLockValue - The stored idle lock in minutes, or 'default' for "only on restart". Any value other than a positive integer falls back to the default interval.
+* @return {void}
 */
 const setIdleInterval = idleLockValue => {
   if (import.meta.env.BROWSER === 'safari') {
     return;
   }
-  
-  if (idleLockValue === 'default') {
-    browser.idle.setDetectionInterval(config.defaultStorageIdleLock * 60);
-  } else {
-    browser.idle.setDetectionInterval(idleLockValue * 60);
-  }
+
+  const minutes = Number.isInteger(idleLockValue) && idleLockValue > 0 ? idleLockValue : config.defaultStorageIdleLock;
+  browser.idle.setDetectionInterval(minutes * 60);
 };
 
 export default setIdleInterval;
