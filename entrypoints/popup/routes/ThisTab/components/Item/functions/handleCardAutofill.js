@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptCardSifForTransmission, resolveCrossDomainPermissions } from '@/partials/functions';
+import { sendMessageToAllFrames, popupIsInSeparateWindow, closeWindowIfNotInSeparateWindow, encryptCardSifForTransmission, resolveCrossDomainPermissions, aggregateCardAutofillResponses } from '@/partials/functions';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import protectCardActionData from '@/entrypoints/background/utils/protectCardActionData';
 import { acquireAutofillTab, showT2Toast, showGenericToast } from './autofillPopupShared';
@@ -230,16 +230,14 @@ const handleCardAutofill = async (item, navigate) => {
     return;
   }
 
-  const isOk = res.some(frameResponse => frameResponse.status === 'ok');
-  const isPartial = res.some(frameResponse => frameResponse.status === 'partial');
-  const partialResponse = res.find(frameResponse => frameResponse.status === 'partial');
+  const { outcome } = aggregateCardAutofillResponses(res);
 
-  if (isPartial && partialResponse?.failedFields) {
+  if (outcome === 'partial') {
     showToast(getMessage('notification_card_autofill_partial_message'), 'info');
     return;
   }
 
-  if (isOk) {
+  if (outcome === 'ok') {
     const separateWindow = await popupIsInSeparateWindow();
 
     if (!sifDecrypt && needsFetchSif) {

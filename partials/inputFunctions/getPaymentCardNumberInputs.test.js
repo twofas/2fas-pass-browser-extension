@@ -150,6 +150,34 @@ describe('getPaymentCardNumberInputs', () => {
       expect(getPaymentCardNumberInputs()).toEqual([]);
     });
 
+    it('does not treat a card-verification field (name="CreditCardVerificationNumber") inside a payment form as the card number', () => {
+      document.body.innerHTML = `
+        <form id="paymentForm">
+          <input type="text" id="CreditCardNumber" name="CreditCardNumber" />
+          <input type="text" id="CreditCardVerificationNumber" name="CreditCardVerificationNumber" />
+        </form>
+      `;
+
+      expect(getPaymentCardNumberInputs().map(input => input.name)).toEqual(['CreditCardNumber']);
+    });
+
+    it('does not treat delimited card-verification fields inside a payment form as the card number', () => {
+      document.body.innerHTML = `
+        <form id="paymentForm">
+          <input type="text" name="billing_card_verification_value" />
+          <input type="text" id="new-card-verification" />
+        </form>
+      `;
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+
+    it('does not treat a CCV field (name="ccv") inside a payment form as the card number', () => {
+      document.body.innerHTML = '<form id="paymentForm"><input type="text" name="ccv" /></form>';
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+
     it('still detects a card-number field whose name merely contains a short token as a substring', () => {
       // 'commerce' contains 'mm' (an expiry keyword) — the PAN must NOT be dropped for it.
       document.body.innerHTML = '<input type="text" name="commerce-card-number" />';

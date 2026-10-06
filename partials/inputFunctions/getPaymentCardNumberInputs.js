@@ -90,7 +90,7 @@ const cardholderNameKeywords = [
 ];
 
 const securityCodeKeywords = [
-  'cvv', 'cvc', 'csc', 'cvn', 'cid', 'securitycode', 'cardcode', 'verificationcode', 'x_card_code'
+  'cvv', 'cvc', 'csc', 'ccv', 'cvn', 'cid', 'securitycode', 'cardcode', 'verificationcode', 'cardverification', 'card_verification', 'card-verification', 'x_card_code'
 ];
 
 const expirationKeywords = [

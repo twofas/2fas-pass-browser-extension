@@ -86,6 +86,43 @@ describe('getPaymentCardExpirationDateInputs', () => {
     });
   });
 
+  describe('regression: abbreviated ExpMon/ExpYr selects (summitracing.com)', () => {
+    const months = '<option value="1">1</option><option value="12">12</option>';
+    const years = '<option value="2026">2026</option><option value="2031">2031</option>';
+
+    it('detects ExpMon/ExpYr selects labelled "Expiration date: month/year" as month and year', () => {
+      document.body.innerHTML = `
+        <div id="payment-option-container-card">
+          <select autocomplete="off" id="ExpMon" name="ExpMon" aria-label="Expiration date: month">${months}</select>
+          <select id="ExpYr" name="ExpYr" autocomplete="off" aria-label="Expiration date: year">${years}</select>
+        </div>
+      `;
+
+      const result = getPaymentCardExpirationDateInputs();
+
+      expect(typesOf(result)).toEqual(['month', 'year']);
+      expect(result.every(entry => entry.isSelect === true)).toBe(true);
+    });
+
+    it('classifies ExpMon/ExpYr selects by their abbreviated names when no aria-label is present', () => {
+      document.body.innerHTML = `
+        <select id="ExpMon" name="ExpMon">${months}</select>
+        <select id="ExpYr" name="ExpYr">${years}</select>
+      `;
+
+      expect(typesOf(getPaymentCardExpirationDateInputs())).toEqual(['month', 'year']);
+    });
+
+    it('detects expiry selects by an "expiration" aria-label even when the name is opaque', () => {
+      document.body.innerHTML = `
+        <select name="f1" aria-label="Expiration month">${months}</select>
+        <select name="f2" aria-label="Expiry year">${years}</select>
+      `;
+
+      expect(typesOf(getPaymentCardExpirationDateInputs())).toEqual(['month', 'year']);
+    });
+  });
+
   describe('isolation from other card fields', () => {
     it('returns only the expiry field from a full checkout form', () => {
       document.body.innerHTML = `
