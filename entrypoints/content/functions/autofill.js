@@ -8,10 +8,20 @@ import { AUTOFILL_RESULT_CODES } from '@/constants';
 import trimString from '@/partials/functions/trimString';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import getAutofillPasswordInputs from '@/partials/inputFunctions/getAutofillPasswordInputs';
+import { isRevealedPasswordInput } from '@/partials/inputFunctions/revealedPasswordInputs';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import getLoginInputs from './autofillFunctions/getLoginInputs';
 import decryptTransmittedValue from './autofillFunctions/decryptTransmittedValue';
 import checkCrossDomainFramePermission from './autofillFunctions/checkCrossDomainFramePermission';
+
+/**
+* Tells whether an input may receive the password: a masked password field or a password field a
+* "show password" toggle revealed. Re-checked right before the fill, so a detection mistake or a
+* DOM change during decryption can never route the password into any other field.
+* @param {HTMLInputElement} input - The candidate input element.
+* @return {boolean} True if the input is a password field.
+*/
+const isPasswordTarget = input => input?.type === 'password' || isRevealedPasswordInput(input);
 
 /**
 * Function to autofill input fields with the username trimmed (a blank one is not filled) and the password exactly as stored.
@@ -71,7 +81,9 @@ const autofill = async request => {
   }
 
   if (canFillUsername) {
-    usernameInputs.forEach(input => inputSetValue(input, username, { respectSkipAttribute: false }));
+    usernameInputs
+      .filter(input => !isPasswordTarget(input))
+      .forEach(input => inputSetValue(input, username, { respectSkipAttribute: false }));
   }
 
   if (canFillPassword) {
@@ -100,7 +112,9 @@ const autofill = async request => {
     }
 
     if (passwordValue) {
-      fillablePasswordInputs.forEach(input => inputSetValue(input, passwordValue, { respectSkipAttribute: false }));
+      fillablePasswordInputs
+        .filter(isPasswordTarget)
+        .forEach(input => inputSetValue(input, passwordValue, { respectSkipAttribute: false }));
     }
 
     passwordValue = null;

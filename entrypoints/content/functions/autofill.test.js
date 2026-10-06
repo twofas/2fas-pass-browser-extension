@@ -128,6 +128,56 @@ describe('autofill password targeting', () => {
   });
 });
 
+describe('autofill field guards (defence in depth against detection mistakes)', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+    inputSetValueMock.mockClear();
+    getLoginInputsMock.mockReset();
+  });
+
+  it('never writes the username into a password-typed input, even if detection listed it as a username', async () => {
+    document.body.innerHTML = '<form><input type="text" name="username" /><input type="password" name="password" /></form>';
+    const [username, password] = Array.from(document.querySelectorAll('input'));
+
+    getLoginInputsMock.mockReturnValue({ passwordInputs: [password], passwordForms: [password.closest('form')], usernameInputs: [username, password] });
+
+    await autofill({ username: 'user', password: 'secret', cryptoAvailable: false, iframePermissionGranted: true });
+
+    const usernameFills = inputSetValueMock.mock.calls.filter(call => call[1] === 'user');
+
+    expect(usernameFills.map(call => call[0].name)).toEqual(['username']);
+  });
+
+  it('never writes the password into a plain text input, even if detection listed it as a password', async () => {
+    document.body.innerHTML = '<form><input type="text" name="username" /><input type="text" name="current_comment" /><input type="password" name="password" autocomplete="current-password" /></form>';
+    const [username, comment, password] = Array.from(document.querySelectorAll('input'));
+
+    getLoginInputsMock.mockReturnValue({ passwordInputs: [comment, password], passwordForms: [password.closest('form')], usernameInputs: [username] });
+
+    await autofill({ username: 'user', password: 'secret', cryptoAvailable: false, iframePermissionGranted: true });
+
+    const passwordFills = inputSetValueMock.mock.calls.filter(call => call[1] === 'secret');
+
+    expect(passwordFills.map(call => call[0].name)).toEqual(['password']);
+  });
+
+  it('skips a password target whose type changed to something other than text or password before the fill', async () => {
+    document.body.innerHTML = '<form><input type="password" name="password" /></form>';
+    const password = document.querySelector('input');
+
+    getLoginInputsMock.mockReturnValue({ passwordInputs: [password], passwordForms: [password.closest('form')], usernameInputs: [] });
+    decryptTransmittedValueMock.mockImplementationOnce(async () => {
+      password.type = 'email';
+
+      return { status: 'ok', data: 'secret' };
+    });
+
+    await autofill({ password: 'ENCRYPTED', noUsername: true, cryptoAvailable: true, iframePermissionGranted: true });
+
+    expect(inputSetValueMock).not.toHaveBeenCalled();
+  });
+});
+
 describe('autofill trimmed usernames and untouched passwords', () => {
   const filledValues = () => inputSetValueMock.mock.calls.map(call => [call[0].name, call[1]]);
 

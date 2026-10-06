@@ -167,4 +167,58 @@ describe('getUsernameInputs detection', () => {
       expect(result[0].name).toBe('inside');
     });
   });
+
+  describe('revealed password fields (show-password toggle flipped type to text)', () => {
+    it('does not treat a revealed password field inside a login-form container as a username', () => {
+      document.body.innerHTML = `
+        <form id="loginForm">
+          <input type="email" name="email" />
+          <label for="haslo">Hasło</label>
+          <input type="text" id="haslo" name="haslo" />
+        </form>
+      `;
+
+      const result = getUsernameInputs();
+
+      expect(result.map(input => input.name)).toEqual(['email']);
+    });
+
+    it('does not treat a revealed password field whose placeholder mentions login as a username', () => {
+      document.body.innerHTML = `
+        <form>
+          <input type="email" name="email" />
+          <input type="text" id="pw" name="pw" placeholder="Your login password" />
+        </form>
+      `;
+
+      const result = getUsernameInputs();
+
+      expect(result.map(input => input.name)).toEqual(['email']);
+    });
+
+    it('never picks the revealed password field as the fallback username of its form', () => {
+      document.body.innerHTML = `
+        <form id="f">
+          <input type="text" name="haslo" autocomplete="current-password" />
+          <input type="text" name="captcha" />
+        </form>
+      `;
+      const form = document.getElementById('f');
+
+      const result = getUsernameInputs([form]);
+
+      expect(result.some(input => input.name === 'haslo')).toBe(false);
+    });
+
+    it('returns no username for a password-only step whose password is revealed', () => {
+      document.body.innerHTML = `
+        <form id="f">
+          <input type="text" name="haslo" autocomplete="current-password" />
+        </form>
+      `;
+      const form = document.getElementById('f');
+
+      expect(getUsernameInputs([form])).toEqual([]);
+    });
+  });
 });

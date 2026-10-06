@@ -10,6 +10,7 @@ import getShadowRoots from '../../entrypoints/content/functions/autofillFunction
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import hasParentContextDeniedKeyword from '../functions/hasParentContextDeniedKeyword';
 import { containsDeniedWord } from './shared';
+import { isRevealedPasswordInput } from './revealedPasswordInputs';
 
 const userNameWordsLower = userNameWords.map(word => word.toLowerCase());
 let cachedIgnoredTypes = null;
@@ -40,11 +41,16 @@ const getUserNameSelector = () => {
 };
 
 /**
-* Filters out inputs that contain denied keywords in their name, id, or parent elements.
+* Filters out inputs that contain denied keywords in their name, id, or parent elements, and
+* password fields revealed by a "show password" toggle.
 * @param {HTMLInputElement} input - The input element to check.
 * @return {boolean} True if the input should be kept, false otherwise.
 */
 const filterDeniedKeywords = input => {
+  if (isRevealedPasswordInput(input)) {
+    return false;
+  }
+
   const name = input.name || '';
   const id = input.id || '';
   const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
@@ -205,13 +211,15 @@ const getUsernameInputs = (passwordForms = null, shadowRoots = null) => {
         return;
       }
 
-      const candidates = Array.from(form.querySelectorAll(tryInputSelector)).filter(isVisible);
+      const candidates = Array.from(form.querySelectorAll(tryInputSelector))
+        .filter(input => isVisible(input) && !isRevealedPasswordInput(input));
 
       if (candidates.length === 0) {
         return;
       }
 
-      const firstPasswordInput = form.querySelector('input[type="password"]');
+      const firstPasswordInput = Array.from(form.querySelectorAll('input'))
+        .find(input => input.type === 'password' || isRevealedPasswordInput(input));
       let chosen = null;
 
       if (firstPasswordInput) {
