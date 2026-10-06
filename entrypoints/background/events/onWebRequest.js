@@ -8,6 +8,8 @@ import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfig
 import { checkDomainOnIgnoredList, getValuesFromTabsInputData, checkServicesData, savePromptAction, cleanTabsInputData, addSavePromptAction, checkFormData, isProcessableWebRequestFrame, waitForTabInputData } from '../utils';
 import { ignoredSavePromptUrls, ignoredSavePromptRequestBodyTexts } from '@/constants';
 import isText from '@/partials/functions/isText';
+import isSavePromptBeaconRequest, { isSavePromptBeaconType } from '../utils/savePrompt/isSavePromptBeaconRequest';
+import requestBodyBytesToString from '../utils/savePrompt/requestBodyBytesToString';
 
 /** 
 * Function to handle web requests for saving prompts.
@@ -20,7 +22,7 @@ import isText from '@/partials/functions/isText';
 */
 const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdateData) => {
   // Handle beacon flush from content script (before any other filters)
-  if (details?.type === 'ping' && details?.url?.startsWith(`https://${import.meta.env.VITE_BEACON}.invalid`)) {
+  if (isSavePromptBeaconRequest(details)) {
     if (details?.requestBody?.raw?.[0]?.bytes && details?.tabId) {
       // Accept beacons from the top document or a same-root-domain sub-frame only;
       // resolve the tab url only for sub-frames (the common top-frame case skips it).
@@ -42,7 +44,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
       }
 
       try {
-        const rawData = ArrayBufferToString(details.requestBody.raw[0].bytes);
+        const rawData = requestBodyBytesToString(details.requestBody.raw[0].bytes);
         const inputs = JSON.parse(rawData);
 
         if (Array.isArray(inputs)) {
@@ -73,7 +75,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     details?.method !== 'POST' ||
     !details?.requestBody ||
     details?.requestBody?.error ||
-    details?.type === 'ping' ||
+    isSavePromptBeaconType(details) ||
     !details?.url ||
     (details?.url.substring(0, 7) !== 'http://' && details.url.substring(0, 8) !== 'https://') ||
     details?.documentLifecycle === 'prerender' ||
@@ -121,7 +123,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     let requestBodyRaw = '';
 
     try {
-      requestBodyRaw = ArrayBufferToString(details.requestBody.raw[0].bytes);
+      requestBodyRaw = requestBodyBytesToString(details.requestBody.raw[0].bytes);
     } catch {}
 
     if (

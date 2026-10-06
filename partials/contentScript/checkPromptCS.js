@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import injectPromptCSIntoFrames from './injectPromptCSIntoFrames';
+import isSavePromptSupported from '@/partials/functions/isSavePromptSupported';
 
 /**
 * Pending checks per tab. tabs.onActivated and tabs.onUpdated can reach checkPromptCS for the same tab at the same
@@ -20,7 +21,7 @@ const pendingChecks = new Map();
 * @return {Promise<void>}
 */
 const injectPromptCS = async tabId => {
-  if (import.meta.env.BROWSER === 'safari') {
+  if (!isSavePromptSupported()) {
     return;
   }
 
@@ -32,7 +33,7 @@ const injectPromptCS = async tabId => {
 };
 
 /**
-* Checks if the prompt content script is injected, and injects it if not. Skipped on Safari.
+* Checks if the prompt content script is injected, and injects it if not. Skipped where the save prompt is unsupported (Safari older than 18.4).
 * @async
 * @param {number} tabId - The ID of the tab to check.
 * @return {Promise<void>}

@@ -12,6 +12,9 @@
 // injected prompt.js, which captures and encrypts every typed credential and
 // ships it to the background where it sits unused. checkPromptCS must early-return
 // on Safari so the input-capturing script is never injected there.
+// Update: Safari 18.4 added requestBody to webRequest.onBeforeRequest, so the pipeline
+// now runs there from 18.4 — the finding #58 tests below pin Safari 18.3, the
+// "Safari version gate" block covers 18.4+.
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
@@ -31,6 +34,14 @@ describe('checkPromptCS', () => {
   });
 
   describe('Safari (finding #58: dead save-prompt pipeline)', () => {
+    beforeEach(() => {
+      vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.3 Safari/605.1.15' });
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
     it('does not inject the prompt content script on Safari even when savePrompt is default', async () => {
       vi.stubEnv('BROWSER', 'safari');
       await storage.setItem('local:savePrompt', 'default');
@@ -56,6 +67,47 @@ describe('checkPromptCS', () => {
         expect(injectPromptCSIntoFrames).not.toHaveBeenCalled();
       }
     );
+  });
+
+  // Safari 18.4 added requestBody / extraInfoSpec to webRequest.onBeforeRequest, so the
+  // save-prompt pipeline is registered there from 18.4 (registerSavePromptWebRequest).
+  // Older Safari keeps the finding #58 behaviour above: prompt.js is never injected.
+  describe('Safari version gate', () => {
+    const safariUA = version => `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/${version} Safari/605.1.15`;
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it.each(['18.4', '26.0'])('injects the prompt content script on Safari %s', async version => {
+      vi.stubEnv('BROWSER', 'safari');
+      vi.stubGlobal('navigator', { userAgent: safariUA(version) });
+      await storage.setItem('local:savePrompt', 'default');
+
+      await checkPromptCS(123);
+
+      expect(injectPromptCSIntoFrames).toHaveBeenCalledWith(123);
+    });
+
+    it.each(['17.6', '18.3'])('does not inject on Safari %s', async version => {
+      vi.stubEnv('BROWSER', 'safari');
+      vi.stubGlobal('navigator', { userAgent: safariUA(version) });
+      await storage.setItem('local:savePrompt', 'default');
+
+      await checkPromptCS(123);
+
+      expect(injectPromptCSIntoFrames).not.toHaveBeenCalled();
+    });
+
+    it('does not inject on Safari 18.4 when savePrompt is set to none', async () => {
+      vi.stubEnv('BROWSER', 'safari');
+      vi.stubGlobal('navigator', { userAgent: safariUA('18.4') });
+      await storage.setItem('local:savePrompt', 'none');
+
+      await checkPromptCS(123);
+
+      expect(injectPromptCSIntoFrames).not.toHaveBeenCalled();
+    });
   });
 
   // tabs.onActivated and tabs.onUpdated can both reach checkPromptCS for the same tab at

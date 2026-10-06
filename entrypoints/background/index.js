@@ -7,6 +7,7 @@
 import { onTabUpdated, onTabActivated, onTabCreated, onTabRemoved } from './tabs';
 import { createMessageRouter, onInstalled, onContextMenuClick, onStorageChange, onAlarm, onCommand, onStartup } from './events';
 import nonSafariBackground from './nonSafariBackground';
+import registerSavePromptWebRequest from './registerSavePromptWebRequest';
 import firefoxBackground from './firefoxBackground';
 import initBadgeState from './utils/badge/initBadgeState';
 import { resumeWsSession } from './websocket/wsManager.js';
@@ -71,8 +72,10 @@ export default defineBackground({
       }
     });
 
+    registerSavePromptWebRequest(tabsInputData, savePromptActions, tabUpdateData);
+
     if (import.meta.env.BROWSER !== 'safari') {
-      nonSafariBackground(tabsInputData, savePromptActions, tabUpdateData);
+      nonSafariBackground();
     }
 
     if (import.meta.env.BROWSER === 'firefox') {

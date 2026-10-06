@@ -6,6 +6,7 @@
 
 import decryptValues from './decryptValues';
 import isText from '@/partials/functions/isText';
+import requestBodyBytesToString from './requestBodyBytesToString';
 
 /**
 * Function to check if the form data contains the username and password.
@@ -46,7 +47,7 @@ const checkFormData = async (details, values) => {
     let rawBodyString = '';
 
     try {
-      rawBodyString = ArrayBufferToString(details.requestBody.raw[0].bytes);
+      rawBodyString = requestBodyBytesToString(details.requestBody.raw[0].bytes);
     } catch {
       return false;
     }
