@@ -10,12 +10,13 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { Form, Field } from 'react-final-form';
-import { getCurrentDevice, copyValue } from '@/partials/functions';
+import { getCurrentDevice, copyValue, trimNote } from '@/partials/functions';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
 import usePopupState from '../../../store/popupState/usePopupState';
 import Login from '@/models/itemModels/Login';
 import URIMatcher from '@/partials/URIMatcher';
-import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
+import { PULL_REQUEST_TYPES } from '@/constants';
+import { getLoginStringField, getLoginPasswordField } from '@/entrypoints/popup/routes/AddNew/functions/loginFormValues';
 import { useI18n } from '@/partials/context/I18nContext';
 import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
 import VisibleIcon from '@/assets/popup-window/visible.svg?react';
@@ -88,17 +89,17 @@ function LoginShareImportView () {
   const validate = useCallback(values => {
     const errors = {};
 
-    if (!values?.name || values.name.length <= 0) {
+    if (!values?.name?.trim()) {
       errors.name = getMessage('share_import_name_required');
-    } else if (values.name.length > 255) {
+    } else if (values.name.trim().length > 255) {
       errors.name = getMessage('share_import_name_max_length');
     }
 
-    if (values?.username && values.username.length > 255) {
+    if (values?.username && values.username.trim().length > 255) {
       errors.username = getMessage('share_import_username_max_length');
     }
 
-    if (values?.notes && values.notes.length > 16384) {
+    if (values?.notes && trimNote(values.notes).length > 16384) {
       errors.notes = getMessage('share_import_notes_max_length');
     }
 
@@ -129,7 +130,7 @@ function LoginShareImportView () {
     const deviceId = device.id;
 
     const processedUris = uris
-      .filter(uri => uri.text && uri.text.length > 0)
+      .filter(uri => uri.text && uri.text.trim().length > 0)
       .map(uri => ({
         text: uri.text,
         matcher: uri.matcher
@@ -140,12 +141,8 @@ function LoginShareImportView () {
       content: {
         name: e.name ? e.name : '',
         uris: processedUris,
-        username: e.username
-          ? { value: e.username, action: REQUEST_STRING_ACTIONS.SET }
-          : { value: '', action: REQUEST_STRING_ACTIONS.GENERATE },
-        s_password: e.password
-          ? { value: e.password, action: REQUEST_STRING_ACTIONS.SET }
-          : { value: '', action: REQUEST_STRING_ACTIONS.GENERATE },
+        username: getLoginStringField(e.username),
+        s_password: getLoginPasswordField(e.password),
         notes: e.notes || ''
       }
     };
@@ -350,7 +347,7 @@ function LoginShareImportView () {
           <button
             type='submit'
             className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-            disabled={submitting || !values?.name || values.name.length === 0 ? 'disabled' : ''}
+            disabled={submitting || !values?.name?.trim() ? 'disabled' : ''}
           >
             {getMessage('share_import_add_item')}
           </button>

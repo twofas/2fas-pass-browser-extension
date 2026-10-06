@@ -86,3 +86,13 @@ describe('sifRequestAccept — login result carries securityType for partial-fil
     expect(result.securityType).toBe(SECURITY_TIER.HIGHLY_SECRET);
   });
 });
+
+describe('sifRequestAccept — blank username', () => {
+  it('treats a username of whitespace only as no username', async () => {
+    getItems.mockResolvedValue([{ id: 'i1', content: { username: '  ' } }]);
+
+    const result = await sifRequestAccept({ data: { s_password: '' } }, loginState(), HKDF_SALT, 'sessionKey', 'msg-4');
+
+    expect(result.actionData.noUsername).toBe(true);
+  });
+});

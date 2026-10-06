@@ -7,10 +7,12 @@
 import getItems from '@/partials/sessionStorage/getItems';
 import URIMatcher from '@/partials/URIMatcher';
 import { getPageUrl } from '@/partials/functions';
+import trimString from '@/partials/functions/trimString';
 import decryptValues from './decryptValues';
 
 /**
-* Function to check the items data.
+* Function to check the items data. The typed username is compared with the stored ones trimmed, as it is saved; the password
+* is never trimmed, so it is compared exactly.
 * @async
 * @param {Object} details - The details of the tab.
 * @param {Object} values - The values to check.
@@ -57,8 +59,10 @@ const checkServicesData = async (details, values, tabUrl) => {
     };
   }
 
+  const username = trimString(decryptedValues.username);
+
   // Check username if exists
-  const matchedItemsMatchedUsername = matchedItems.filter(item => item?.content?.username === decryptedValues.username);
+  const matchedItemsMatchedUsername = matchedItems.filter(item => trimString(item?.content?.username) === username);
 
   if (!matchedItemsMatchedUsername || matchedItemsMatchedUsername.length <= 0) {
     return { type: 'newService' };
