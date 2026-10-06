@@ -8,6 +8,8 @@ import isTabIsPopupWindow from './isTabIsPopupWindow';
 import updateNoAccountItem from '../contextMenu/updateNoAccountItem';
 import getItems from '@/partials/sessionStorage/getItems';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
+import checkPromptCS from '@/partials/contentScript/checkPromptCS';
+import tabIsInternal from '@/partials/functions/tabIsInternal';
 import { sendDomainToPopupWindow, setBadgeLocked, setBadgeIcon, setBadgeText } from '../utils';
 
 /** 
@@ -61,10 +63,19 @@ const onTabActivated = async ({ tabId }) => {
     }
 
     if (!isPopupWindow) {
-      await Promise.all([
+      const tasks = [
         sendDomainToPopupWindow(tabId).catch(() => {}),
         updateNoAccountItem(tabId, items).catch(() => {})
-      ]);
+      ];
+
+      // onTabUpdated injects prompt.js only into a tab that is active at status 'complete',
+      // so a tab that finished loading in the background gets it on activation. A tab that
+      // is still loading is left to onTabUpdated (it will be active when it completes).
+      if (tab.status === 'complete' && !tab.discarded && !tabIsInternal(tab)) {
+        tasks.push(checkPromptCS(tabId).catch(() => {}));
+      }
+
+      await Promise.all(tasks);
     }
 
     return true;
