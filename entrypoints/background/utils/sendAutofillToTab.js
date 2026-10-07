@@ -57,7 +57,7 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     noPassword = true;
   }
 
-  if (!item?.content?.username || item?.content?.username?.length <= 0) {
+  if (!item?.content?.username?.trim()) {
     noUsername = true;
   }
 

@@ -10,6 +10,7 @@
  */
 const paymentCardExpirationMonthPlaceholders = Object.freeze([
   'month',
+  'mon',
   'mm',
   'miesiąc',
   'miesiac',

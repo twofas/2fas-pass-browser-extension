@@ -211,3 +211,21 @@ describe('sendAutofillToTab — AUTOFILL frame resolves to undefined on multi-fr
     expect(notificationShow).not.toHaveBeenCalled();
   });
 });
+
+describe('sendAutofillToTab — blank username', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    injectCSIfNotAlready.mockResolvedValue(true);
+    getItem.mockResolvedValue({ ...buildItem(), content: { username: ' \t ' } });
+    sendMessageToTab.mockResolvedValue(undefined);
+    resolveCrossDomainPermissions.mockResolvedValue({ needsDialog: false, allBlocked: false, crossDomainAllowedDomains: [] });
+    sendMessageToAllFrames.mockResolvedValue([{ status: 'ok', canAutofillPassword: true }]);
+  });
+
+  it('treats a username of whitespace only as no username', async () => {
+    await sendAutofillToTab(1, 'device', 'vault', 'item');
+
+    expect(getAutofillMessage().noUsername).toBe(true);
+    expect(resolveCrossDomainPermissions).toHaveBeenCalledWith(1, 'login', { hasUsername: false, hasPassword: true });
+  });
+});

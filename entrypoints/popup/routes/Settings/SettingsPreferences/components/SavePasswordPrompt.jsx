@@ -5,11 +5,12 @@
 // See LICENSE file for full terms
 
 import S from '../../Settings.module.scss';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
 import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
+import isSavePromptSupported from '@/partials/functions/isSavePromptSupported';
 
 /**
 * Function to render the Save Password Prompt component.
@@ -17,45 +18,17 @@ import MenuArrowIcon from '@/assets/popup-window/menu-arrow.svg?react';
 */
 function SavePasswordPrompt () {
   const { getMessage } = useI18n();
-
-  if (import.meta.env.BROWSER === 'safari') {
-    return null; // Safari does not support this feature
-  }
-
   const [sP, setSP] = useState('default');
   const [isInitialized, setIsInitialized] = useState(false);
-
-  useEffect(function initializeSavePromptSetting() {
-    const initializeSavePrompt = async () => {
-      try {
-        let storageSavePasswordPrompt = await storage.getItem('local:savePrompt');
-
-        if (!storageSavePasswordPrompt) {
-          storageSavePasswordPrompt = 'default';
-          await storage.setItem('local:savePrompt', storageSavePasswordPrompt);
-        } else {
-          setSP(storageSavePasswordPrompt);
-        }
-
-        browser.privacy.services.passwordSavingEnabled.set({
-          value: storageSavePasswordPrompt === 'browser'
-        }).catch(() => {});
-
-        setIsInitialized(true);
-      } catch (e) {
-        await CatchError(e);
-        setIsInitialized(true);
-      }
-    };
-
-    initializeSavePrompt();
-  }, []);
+  const savePromptSupported = useMemo(() => isSavePromptSupported(), []);
+  // Safari has no privacy API (and no "privacy" permission), so the browser's own password saving cannot be toggled there.
+  const browserPasswordSavingAvailable = import.meta.env.BROWSER !== 'safari';
 
   const promptOptions = [
     { value: 'default', label: getMessage('settings_save_prompt_pass') },
     { value: 'default_encrypted', label: getMessage('settings_save_prompt_pass_encrypted') },
-    { value: 'browser', label: getMessage('settings_save_prompt_browser') },
-    { value: 'none', label: getMessage('settings_save_prompt_none') },
+    ...(browserPasswordSavingAvailable ? [{ value: 'browser', label: getMessage('settings_save_prompt_browser') }] : []),
+    { value: 'none', label: getMessage('settings_save_prompt_none') }
   ];
 
   const handleSavePasswordPromptChange = useCallback(async change => {
@@ -71,9 +44,11 @@ function SavePasswordPrompt () {
 
       logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'SettingsSavePasswordPrompt - changed', { value });
 
-      browser.privacy.services.passwordSavingEnabled.set({
-        value: value === 'browser'
-      }).catch(() => {});
+      if (browserPasswordSavingAvailable) {
+        browser.privacy.services.passwordSavingEnabled.set({
+          value: value === 'browser'
+        }).catch(() => {});
+      }
 
       if (value === 'none' || value === 'browser') {
         browser.runtime.sendMessage({
@@ -90,7 +65,43 @@ function SavePasswordPrompt () {
       showToast(getMessage('error_general_setting'), 'error');
       await CatchError(e);
     }
-  }, [isInitialized]);
+  }, [isInitialized, browserPasswordSavingAvailable]);
+
+  useEffect(function initializeSavePromptSetting() {
+    if (!savePromptSupported) {
+      return;
+    }
+
+    const initializeSavePrompt = async () => {
+      try {
+        let storageSavePasswordPrompt = await storage.getItem('local:savePrompt');
+
+        if (!storageSavePasswordPrompt) {
+          storageSavePasswordPrompt = 'default';
+          await storage.setItem('local:savePrompt', storageSavePasswordPrompt);
+        } else {
+          setSP(storageSavePasswordPrompt);
+        }
+
+        if (browserPasswordSavingAvailable) {
+          browser.privacy.services.passwordSavingEnabled.set({
+            value: storageSavePasswordPrompt === 'browser'
+          }).catch(() => {});
+        }
+
+        setIsInitialized(true);
+      } catch (e) {
+        await CatchError(e);
+        setIsInitialized(true);
+      }
+    };
+
+    initializeSavePrompt();
+  }, [savePromptSupported, browserPasswordSavingAvailable]);
+
+  if (!savePromptSupported) {
+    return null;
+  }
 
   return (
     <div className={S.settingsSavePasswordPrompt}>

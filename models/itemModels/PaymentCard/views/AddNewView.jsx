@@ -50,13 +50,13 @@ function PaymentCardAddNewView () {
   const validate = values => {
     const errors = {};
 
-    if (!values?.name || values?.name?.length <= 0) {
+    if (!values?.name?.trim()) {
       errors.name = getMessage('add_new_validate_card_name_required');
-    } else if (values.name?.length > 255) {
+    } else if (values.name.trim().length > 255) {
       errors.name = getMessage('add_new_validate_card_name_length');
     }
 
-    if (values?.cardHolder && values.cardHolder?.length > 255) {
+    if (values?.cardHolder && values.cardHolder.trim().length > 255) {
       errors.cardHolder = getMessage('add_new_validate_cardholder_length');
     }
 
@@ -88,7 +88,7 @@ function PaymentCardAddNewView () {
     }
 
     if (values?.securityCode && values.securityCode?.length > 0) {
-      if (!/^\d{3,4}$/.test(values.securityCode)) {
+      if (!/^\d{3,4}$/.test(values.securityCode.trim())) {
         errors.securityCode = getMessage('add_new_validate_security_code_invalid');
       }
     }
@@ -292,7 +292,7 @@ function PaymentCardAddNewView () {
               className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
               disabled={
                 submitting ||
-                !data?.name || data?.name?.length === 0 ||
+                !data?.name?.trim() ||
                 hasLiveValidationErrors
                 ? 'disabled' : ''
               }

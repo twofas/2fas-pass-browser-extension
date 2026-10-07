@@ -10,6 +10,7 @@ import TwoFasWebSocket from '.';
 import { ENCRYPTION_KEYS, PULL_REQUEST_TYPES } from '@/constants';
 import getItem from '@/partials/sessionStorage/getItem';
 import isText from '@/partials/functions/isText';
+import trimItemContent from '@/partials/functions/trimItemContent';
 
 /** 
 * Handles the pull request action.
@@ -81,6 +82,8 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       if (!state?.data || !state?.data?.contentType) {
         throw new TwoFasError(TwoFasError.errors.newLoginNoData);
       }
+
+      state.data.content = trimItemContent(state.data.content);
 
       switch (state.data.contentType) {
         case 'login': {
@@ -233,6 +236,8 @@ const handlePullRequest = async (json, hkdfSaltAB, sessionKeyForHKDF, state) => 
       if (!state?.data || !state?.data?.content || !state?.data?.itemId || !state?.data?.contentType) {
         throw new TwoFasError(TwoFasError.errors.updateLoginWrongData);
       }
+
+      state.data.content = trimItemContent(state.data.content);
 
       switch (state.data.contentType) {
         case 'login': {

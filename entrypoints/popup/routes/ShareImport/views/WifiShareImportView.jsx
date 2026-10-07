@@ -10,7 +10,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { Form, Field } from 'react-final-form';
-import { getCurrentDevice } from '@/partials/functions';
+import { getCurrentDevice, trimNote } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
 import Wifi from '@/models/itemModels/Wifi';
 import { PULL_REQUEST_TYPES } from '@/constants';
@@ -44,17 +44,17 @@ function WifiShareImportView () {
   const validate = useCallback(values => {
     const errors = {};
 
-    if (!values?.name || values.name.length <= 0) {
+    if (!values?.name?.trim()) {
       errors.name = getMessage('add_new_validate_wifi_name_required');
-    } else if (values.name.length > 255) {
+    } else if (values.name.trim().length > 255) {
       errors.name = getMessage('add_new_validate_wifi_name_length');
     }
 
-    if (values?.ssid && values.ssid.length > 255) {
+    if (values?.ssid && values.ssid.trim().length > 255) {
       errors.ssid = getMessage('add_new_validate_wifi_ssid_length');
     }
 
-    if (values?.notes && values.notes.length > 16384) {
+    if (values?.notes && trimNote(values.notes).length > 16384) {
       errors.notes = getMessage('share_import_notes_max_length');
     }
 
@@ -263,7 +263,7 @@ function WifiShareImportView () {
             className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
             disabled={
               submitting ||
-              !values?.name || values.name.length === 0
+              !values?.name?.trim()
                 ? 'disabled' : ''
             }
           >

@@ -4,26 +4,14 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { onIdleStateChange, onWebRequest, onUpdateAvailable } from './events';
+import { onIdleStateChange, onUpdateAvailable } from './events';
 
-/** 
-* Function to handle non-Safari background tasks.
-* @param {Object} tabsInputData - The input data for all tabs.
-* @param {Array} savePromptActions - The list of save prompt actions.
-* @param {Object} tabUpdateData - The data for updating tabs.
+/**
+* Function to handle non-Safari background tasks. The save prompt webRequest listener is registered by registerSavePromptWebRequest.
 * @return {void}
 */
-const nonSafariBackground = (tabsInputData, savePromptActions, tabUpdateData) => {
+const nonSafariBackground = () => {
   browser.idle.onStateChanged.addListener(onIdleStateChange);
-
-  browser.webRequest.onBeforeRequest.addListener(
-    details => onWebRequest(details, tabsInputData, savePromptActions, tabUpdateData),
-    // sub_frame so classic <form> POSTs navigating a same-site iframe reach the save
-    // prompt; onWebRequest gates them to the tab's root domain (finding #19).
-    { urls: ['<all_urls>'], types: ['main_frame', 'sub_frame', 'xmlhttprequest', 'ping'] },
-    ['requestBody']
-  );
-
   browser.runtime.onUpdateAvailable.addListener(onUpdateAvailable);
 };
 

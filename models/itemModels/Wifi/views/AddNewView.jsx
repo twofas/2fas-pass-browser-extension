@@ -54,19 +54,19 @@ function WifiAddNewView () {
       return false;
     }
 
-    return name.length > 255;
+    return name.trim().length > 255;
   }, [data?.name]);
 
   const validate = values => {
     const errors = {};
 
-    if (!values?.name || values?.name?.length <= 0) {
+    if (!values?.name?.trim()) {
       errors.name = getMessage('add_new_validate_wifi_name_required');
-    } else if (values.name?.length > 255) {
+    } else if (values.name.trim().length > 255) {
       errors.name = getMessage('add_new_validate_wifi_name_length');
     }
 
-    if (values?.ssid && values.ssid?.length > 255) {
+    if (values?.ssid && values.ssid.trim().length > 255) {
       errors.ssid = getMessage('add_new_validate_wifi_ssid_length');
     }
 
@@ -284,7 +284,7 @@ function WifiAddNewView () {
               className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
               disabled={
                 submitting ||
-                !data?.name || data?.name?.length === 0
+                !data?.name?.trim()
                 ? 'disabled' : ''
               }
             >

@@ -34,7 +34,7 @@ const hasAutofillableInputs = (autofillType, dataFields = {}) => {
 
   if (autofillType === 'login') {
     const { hasUsername = true, hasPassword = true } = dataFields;
-    const passwordInputs = getPasswordInputs(shadowRoots);
+    const passwordInputs = getPasswordInputs(shadowRoots, { includeRevealed: true });
     const passwordForms = passwordInputs
       .map(input => input.closest('form'))
       .filter(Boolean);

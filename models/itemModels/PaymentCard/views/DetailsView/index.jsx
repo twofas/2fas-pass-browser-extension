@@ -55,15 +55,15 @@ function PaymentCardDetailsView(props) {
     const errors = {};
 
     if (data.nameEditable) {
-      if (!values?.content?.name || values?.content?.name?.length <= 0) {
+      if (!values?.content?.name?.trim()) {
         errors.name = getMessage('details_name_required');
-      } else if (values.content?.name?.length > 255) {
+      } else if (values.content.name.trim().length > 255) {
         errors.name = getMessage('details_name_max_length');
       }
     }
 
     if (data.cardHolderEditable) {
-      if (values?.content?.cardHolder && values.content?.cardHolder?.length > 255) {
+      if (values?.content?.cardHolder && values.content.cardHolder.trim().length > 255) {
         errors.cardHolder = getMessage('details_cardholder_max_length');
       }
     }

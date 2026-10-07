@@ -206,4 +206,85 @@ describe('getPasswordInputs', () => {
       expect(result[0].name).toBe('shadow');
     });
   });
+
+  describe('revealed password fields (show-password toggle flipped type to text)', () => {
+    it('ignores a revealed field by default', () => {
+      mount(`
+        <form>
+          <input type="email" name="email" />
+          <input type="text" name="password" autocomplete="current-password" />
+        </form>
+      `);
+
+      expect(getPasswordInputs()).toEqual([]);
+    });
+
+    it('returns a revealed field when includeRevealed is set', () => {
+      mount(`
+        <form>
+          <input type="email" name="email" />
+          <input type="text" name="password" autocomplete="current-password" />
+        </form>
+      `);
+
+      const result = getPasswordInputs(null, { includeRevealed: true });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].name).toBe('password');
+    });
+
+    it('keeps masked and revealed fields in document order', () => {
+      mount(`
+        <form>
+          <input type="text" name="current_password" />
+          <input type="password" name="new_password" />
+          <input type="password" name="confirm_password" />
+        </form>
+      `);
+
+      const result = getPasswordInputs(null, { includeRevealed: true });
+
+      expect(result.map(input => input.name)).toEqual(['current_password', 'new_password', 'confirm_password']);
+    });
+
+    it('returns a field that was masked during an earlier scan and is revealed now', () => {
+      mount('<form><input type="email" name="email" /><input type="password" name="f1" /></form>');
+
+      const field = document.querySelector('input[name="f1"]');
+
+      getPasswordInputs();
+      field.type = 'text';
+
+      expect(getPasswordInputs(null, { includeRevealed: true })).toEqual([field]);
+    });
+
+    it('never returns ordinary text fields when includeRevealed is set', () => {
+      mount(`
+        <form>
+          <input type="text" name="username" />
+          <input type="text" name="password_hint" />
+          <input type="password" name="password" />
+        </form>
+      `);
+
+      const result = getPasswordInputs(null, { includeRevealed: true });
+
+      expect(result.map(input => input.name)).toEqual(['password']);
+    });
+
+    it('ignores a revealed field that is not visible', () => {
+      mount('<form><input type="text" name="password" data-invisible="true" /></form>');
+
+      expect(getPasswordInputs(null, { includeRevealed: true })).toEqual([]);
+    });
+
+    it('finds a revealed field inside an open shadow root', () => {
+      attachShadow('<div id="host"></div>', '<input type="text" name="password" autocomplete="current-password" />');
+
+      const result = getPasswordInputs(null, { includeRevealed: true });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].name).toBe('password');
+    });
+  });
 });

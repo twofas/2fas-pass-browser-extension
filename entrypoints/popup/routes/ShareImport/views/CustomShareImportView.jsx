@@ -10,7 +10,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { Form, Field } from 'react-final-form';
-import { getCurrentDevice } from '@/partials/functions';
+import { getCurrentDevice, trimNote } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
 import SecureNote from '@/models/itemModels/SecureNote';
 import { PULL_REQUEST_TYPES } from '@/constants';
@@ -29,19 +29,19 @@ function CustomShareImportView () {
       return false;
     }
 
-    return name.length > 255;
+    return name.trim().length > 255;
   }, [data?.name]);
 
   const validate = useCallback(values => {
     const errors = {};
 
-    if (!values?.name || values.name.length <= 0) {
+    if (!values?.name?.trim()) {
       errors.name = getMessage('share_import_name_required');
-    } else if (values.name.length > 255) {
+    } else if (values.name.trim().length > 255) {
       errors.name = getMessage('share_import_name_max_length');
     }
 
-    if (values?.text && values.text.length > 16384) {
+    if (values?.text && trimNote(values.text).length > 16384) {
       errors.text = getMessage('share_import_text_max_length');
     }
 
@@ -150,7 +150,7 @@ function CustomShareImportView () {
           <button
             type='submit'
             className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-            disabled={submitting || !values?.name || values.name.length === 0 ? 'disabled' : ''}
+            disabled={submitting || !values?.name?.trim() ? 'disabled' : ''}
           >
             {getMessage('share_import_add_item')}
           </button>

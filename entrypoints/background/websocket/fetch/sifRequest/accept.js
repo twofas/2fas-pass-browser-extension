@@ -71,7 +71,7 @@ const handleLoginAutofillAccept = async (info, state, item, encryptionItemT2Key,
   const password = info.data.s_password;
   let encryptedValueB64 = null;
   const noPassword = !password || password.length === 0;
-  const noUsername = !item?.content?.username || item?.content?.username?.length === 0;
+  const noUsername = !item?.content?.username?.trim();
   let decryptedPassword = '';
 
   if (!noPassword) {

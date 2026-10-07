@@ -143,3 +143,52 @@ describe('onWebRequest — captured-input recovery after worker restart', () => 
     expect(getConfiguredBoolean).not.toHaveBeenCalled();
   });
 });
+
+// Firefox and Safari report navigator.sendBeacon() as 'beacon' (Chromium: 'ping'), and
+// Safari delivers requestBody.raw[].bytes as a Uint8Array without frameType / initiator.
+describe('onWebRequest — beacon type and Safari request shapes', () => {
+  const beaconUrl = `https://${import.meta.env.VITE_BEACON}.invalid`;
+  const safariBeaconBody = inputs => ({ raw: [{ bytes: new TextEncoder().encode(JSON.stringify(inputs)) }] });
+
+  it('accepts a Firefox top-frame beacon of type beacon', async () => {
+    const tabsInputData = {};
+    const details = { type: 'beacon', url: `${beaconUrl}/`, tabId: TAB_ID, parentFrameId: -1, originUrl: 'https://www.example.com/', requestBody: { raw: [{ bytes: new TextEncoder().encode(JSON.stringify([{ id: 'x', value: '1' }])).buffer }] } };
+    await onWebRequest(details, tabsInputData, [], {});
+    expect(tabsInputData[TAB_ID]?.x).toEqual({ id: 'x', value: '1' });
+  });
+
+  it('accepts a Safari top-frame beacon with Uint8Array bytes', async () => {
+    const tabsInputData = {};
+    const details = { type: 'beacon', url: `${beaconUrl}/`, tabId: TAB_ID, frameId: 0, parentFrameId: -1, requestBody: safariBeaconBody([{ id: 'x', value: '1' }]) };
+    await onWebRequest(details, tabsInputData, [], {});
+    expect(tabsInputData[TAB_ID]?.x).toEqual({ id: 'x', value: '1' });
+  });
+
+  it('drops a Safari sub-frame beacon (no frame origin reported, fail-closed)', async () => {
+    const tabsInputData = {};
+    const details = { type: 'beacon', url: `${beaconUrl}/`, tabId: TAB_ID, frameId: 12, parentFrameId: 3, requestBody: safariBeaconBody([{ id: 'x', value: '1' }]) };
+    await onWebRequest(details, tabsInputData, [], {});
+    expect(tabsInputData[TAB_ID]).toBeUndefined();
+  });
+
+  it('never processes another site beacon as a login submission', async () => {
+    const details = { type: 'beacon', url: 'https://analytics.example.com/collect', tabId: TAB_ID, method: 'POST', parentFrameId: -1, requestBody: { formData: { u: ['a'] } } };
+    await onWebRequest(details, newTabsInputData(), [], {});
+    expect(waitForTabInputDataMock).not.toHaveBeenCalled();
+    expect(getConfiguredBoolean).not.toHaveBeenCalled();
+  });
+
+  it('does not treat a look-alike host as the prompt.js beacon', async () => {
+    const tabsInputData = {};
+    const details = { type: 'ping', url: `${beaconUrl}.evil.com/`, tabId: TAB_ID, frameType: 'outermost_frame', requestBody: safariBeaconBody([{ id: 'x', value: '1' }]) };
+    await onWebRequest(details, tabsInputData, [], {});
+    expect(tabsInputData[TAB_ID]).toBeUndefined();
+  });
+
+  it('passes a Safari top-frame login POST through the frame gate', async () => {
+    const details = postDetails({ type: 'xmlhttprequest', frameId: 0, parentFrameId: -1, requestBody: { raw: [{ bytes: new TextEncoder().encode('{"u":"a"}') }] } });
+    waitForTabInputDataMock.mockResolvedValue();
+    await onWebRequest(details, newTabsInputData(), [], {});
+    expect(getConfiguredBoolean).toHaveBeenCalled();
+  });
+});

@@ -40,13 +40,13 @@ function LoginDetailsView(props) {
   const validate = values => {
     const errors = {};
 
-    if (!values?.content?.name || values?.content?.name?.length <= 0) {
+    if (!values?.content?.name?.trim()) {
       errors.name = getMessage('details_name_required');
-    } else if (values?.content?.name?.length > 255) {
+    } else if (values.content.name.trim().length > 255) {
       errors.name = getMessage('details_name_max_length');
     } 
     
-    if (values?.content?.username && values?.content?.username?.length > 255) {
+    if (values?.content?.username && values.content.username.trim().length > 255) {
       errors.username = getMessage('details_username_max_length');
     }
 

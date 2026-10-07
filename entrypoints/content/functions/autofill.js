@@ -5,15 +5,27 @@
 // See LICENSE file for full terms
 
 import { AUTOFILL_RESULT_CODES } from '@/constants';
+import trimString from '@/partials/functions/trimString';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import getAutofillPasswordInputs from '@/partials/inputFunctions/getAutofillPasswordInputs';
+import { isRevealedPasswordInput } from '@/partials/inputFunctions/revealedPasswordInputs';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import getLoginInputs from './autofillFunctions/getLoginInputs';
 import decryptTransmittedValue from './autofillFunctions/decryptTransmittedValue';
 import checkCrossDomainFramePermission from './autofillFunctions/checkCrossDomainFramePermission';
 
 /**
-* Function to autofill input fields.
+* Tells whether an input may receive the password: a masked password field or a password field a
+* "show password" toggle revealed. Re-checked right before the fill, so a detection mistake or a
+* DOM change during decryption can never route the password into any other field.
+* @param {HTMLInputElement} input - The candidate input element.
+* @return {boolean} True if the input is a password field.
+*/
+const isPasswordTarget = input => input?.type === 'password' || isRevealedPasswordInput(input);
+
+/**
+* Function to autofill input fields with the username trimmed (a blank one is not filled) and the password exactly as stored.
+* Passwords are never trimmed or changed.
 * @param {Object} request - The request object containing username and password data.
 * @param {string} [request.username] - The username to fill.
 * @param {string} [request.password] - The password to fill (may be encrypted).
@@ -25,7 +37,11 @@ import checkCrossDomainFramePermission from './autofillFunctions/checkCrossDomai
 * @return {Promise<{status: string, code?: string, message?: string, canAutofillPassword?: boolean, canAutofillUsername?: boolean}>} The status of the autofill operation.
 */
 const autofill = async request => {
-  if (request.noPassword && request.noUsername) {
+  const username = trimString(request.username);
+  const hasUsernameData = username?.length > 0;
+  const hasPasswordData = request.password?.length > 0;
+
+  if ((request.noPassword && request.noUsername) || (!hasUsernameData && !hasPasswordData)) {
     return { status: 'error', code: AUTOFILL_RESULT_CODES.NO_CREDENTIALS, message: 'No username and password provided' };
   }
 
@@ -39,8 +55,6 @@ const autofill = async request => {
   // confirm fields on multi-field registration and change-password forms are excluded.
   const fillablePasswordInputs = getAutofillPasswordInputs(passwordInputs, usernameInputs);
 
-  const hasUsernameData = request.username?.length > 0;
-  const hasPasswordData = request.password?.length > 0;
   const canFillUsername = hasUsernameData && usernameInputs.length > 0;
   const canFillPassword = hasPasswordData && fillablePasswordInputs.length > 0;
 
@@ -67,7 +81,9 @@ const autofill = async request => {
   }
 
   if (canFillUsername) {
-    usernameInputs.forEach(input => inputSetValue(input, request.username, { respectSkipAttribute: false }));
+    usernameInputs
+      .filter(input => !isPasswordTarget(input))
+      .forEach(input => inputSetValue(input, username, { respectSkipAttribute: false }));
   }
 
   if (canFillPassword) {
@@ -85,7 +101,22 @@ const autofill = async request => {
       passwordValue = request.password;
     }
 
-    fillablePasswordInputs.forEach(input => inputSetValue(input, passwordValue, { respectSkipAttribute: false }));
+    if (!passwordValue && !canFillUsername) {
+      return {
+        status: 'error',
+        code: AUTOFILL_RESULT_CODES.NO_CREDENTIALS,
+        message: 'No username and password provided',
+        canAutofillPassword,
+        canAutofillUsername
+      };
+    }
+
+    if (passwordValue) {
+      fillablePasswordInputs
+        .filter(isPasswordTarget)
+        .forEach(input => inputSetValue(input, passwordValue, { respectSkipAttribute: false }));
+    }
+
     passwordValue = null;
   }
 

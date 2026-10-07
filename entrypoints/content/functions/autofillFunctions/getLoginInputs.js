@@ -15,11 +15,12 @@ import getShadowRoots from './getShadowRoots';
 * filling, and (test) verification can never use a different notion of "the login
 * fields" — they all run this same code. The shadow DOM is scanned once and the result
 * is shared with both getters, instead of each getter re-traversing the whole tree.
+* Password fields revealed by a "show password" toggle (type="text") count as password inputs.
 * @return {{passwordInputs: HTMLInputElement[], passwordForms: HTMLFormElement[], usernameInputs: HTMLInputElement[]}} The resolved login inputs.
 */
 const getLoginInputs = () => {
   const shadowRoots = getShadowRoots();
-  const passwordInputs = getPasswordInputs(shadowRoots);
+  const passwordInputs = getPasswordInputs(shadowRoots, { includeRevealed: true });
   const passwordForms = passwordInputs
     .map(input => input.closest('form'))
     .filter(Boolean);
