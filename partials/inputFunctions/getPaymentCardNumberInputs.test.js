@@ -205,4 +205,52 @@ describe('getPaymentCardNumberInputs', () => {
       expect(getPaymentCardNumberInputs()).toEqual([]);
     });
   });
+
+  describe('detection by label (paymentCardNumberWords)', () => {
+    it('detects a field with an opaque name whose label names the card number, next to another labelled card field', () => {
+      document.body.innerHTML = `
+        <form>
+          <label for="f1">Card number</label><input type="text" id="f1" name="field_1" />
+          <label for="f2">Expiry date</label><input type="text" id="f2" name="field_2" />
+        </form>
+      `;
+
+      expect(getPaymentCardNumberInputs().map(input => input.id)).toEqual(['f1']);
+    });
+
+    it('detects a field labelled in another Chromium language inside a payment container', () => {
+      document.body.innerHTML = '<div class="checkout-payment"><label for="f1">Número do cartão</label><input type="tel" id="f1" name="x" /></div>';
+
+      expect(getPaymentCardNumberInputs()).toHaveLength(1);
+    });
+
+    it('does not detect a lone "Card number" field outside of a payment context', () => {
+      document.body.innerHTML = '<form><label for="f1">Card number</label><input type="text" id="f1" name="x" /></form>';
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+
+    it('does not detect a gift card number field', () => {
+      document.body.innerHTML = `
+        <form class="checkout-payment">
+          <label for="f1">Gift card number</label><input type="text" id="f1" name="x" />
+          <div class="giftcard-section"><label for="f2">Card number</label><input type="text" id="f2" name="y" /></div>
+        </form>
+      `;
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+
+    it('still rejects a labelled field with a conflicting type', () => {
+      document.body.innerHTML = '<div class="payment"><label for="f1">Card number</label><input type="email" id="f1" /></div>';
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+
+    it('does not return a field twice when both its name and its label match', () => {
+      document.body.innerHTML = '<div class="payment"><label for="f1">Card number</label><input type="text" id="f1" name="cardnumber" /></div>';
+
+      expect(getPaymentCardNumberInputs()).toHaveLength(1);
+    });
+  });
 });

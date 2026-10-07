@@ -221,4 +221,39 @@ describe('getUsernameInputs detection', () => {
       expect(getUsernameInputs([form])).toEqual([]);
     });
   });
+
+  describe('non-credential fields (Chromium IsNotPasswordField)', () => {
+    it('does not take a one-time code field for the username', () => {
+      document.body.innerHTML = `
+        <form id="f">
+          <input type="text" name="otp_code" />
+          <input type="text" autocomplete="one-time-code" name="code" />
+          <input type="password" name="password" />
+        </form>
+      `;
+
+      expect(getUsernameInputs([document.getElementById('f')])).toEqual([]);
+    });
+
+    it('falls back to the field before the password, skipping a one-time code field', () => {
+      document.body.innerHTML = `
+        <form id="f">
+          <input type="text" name="field_a" />
+          <input type="text" name="smsCode" />
+          <input type="password" name="password" />
+        </form>
+      `;
+
+      expect(getUsernameInputs([document.getElementById('f')]).map(input => input.name)).toEqual(['field_a']);
+    });
+
+    it('does not take a card or Social Security Number field for the username', () => {
+      document.body.innerHTML = `
+        <input type="text" name="user_ssn" placeholder="Username" />
+        <input type="text" autocomplete="cc-name" aria-label="User name" />
+      `;
+
+      expect(getUsernameInputs()).toEqual([]);
+    });
+  });
 });

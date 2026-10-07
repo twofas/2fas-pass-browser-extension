@@ -11,6 +11,7 @@ import getPasswordInputs from '@/partials/inputFunctions/getPasswordInputs';
 import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import generateInputId from './generateInputId';
+import { isHiddenPasswordValue, isProbablyNotUsername } from './credentialValueRules';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 
 let untaggedInputCounter = 0;
@@ -144,15 +145,25 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
       }
     }
 
+    const type = input.type === 'password' ? 'password' : 'username';
+
+    if (type === 'password' && isHiddenPasswordValue(input.value)) {
+      delete timers[inputIdentifier];
+      return;
+    }
+
+    const capturedValue = type === 'username' && isProbablyNotUsername(input.value) ? '' : input.value;
+    const encryptValue = encrypted && capturedValue.length > 0;
+
     const data = {
       id: input.getAttribute('twofas-pass-id'),
-      type: input.type === 'password' ? 'password' : 'username',
+      type,
       url: window?.location?.origin,
       timestamp: Date.now(),
-      encrypted
+      encrypted: encryptValue
     };
 
-    if (encrypted) {
+    if (encryptValue) {
       let nonce, value;
 
       try {
@@ -166,7 +177,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
         value = await crypto.subtle.encrypt(
           { name: 'AES-GCM', iv: nonce.ArrayBuffer },
           localKey.data,
-          StringToArrayBuffer(input.value)
+          StringToArrayBuffer(capturedValue)
         );
       } catch (e) {
         await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventEncryptError, { additional: { func: 'handleInputEvent', event: e } }));
@@ -178,7 +189,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
 
       data.value = encryptedValueB64;
     } else {
-      data.value = input.value;
+      data.value = capturedValue;
     }
 
     if (latestValues) {
@@ -186,7 +197,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     }
 
     if (beaconPayloads && localKey?.data) {
-      if (encrypted) {
+      if (encryptValue || capturedValue.length === 0) {
         beaconPayloads[data.id] = { ...data, sent: false };
       } else {
         try {
@@ -194,7 +205,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
           const beaconEncValue = await crypto.subtle.encrypt(
             { name: 'AES-GCM', iv: beaconNonce.ArrayBuffer },
             localKey.data,
-            StringToArrayBuffer(input.value)
+            StringToArrayBuffer(capturedValue)
           );
           const beaconEncBytes = EncryptBytes(beaconNonce.ArrayBuffer, beaconEncValue);
 

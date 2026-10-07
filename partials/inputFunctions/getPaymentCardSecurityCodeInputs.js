@@ -5,7 +5,10 @@
 // See LICENSE file for full terms
 
 import { paymentCardSecurityCodeSelectors } from '@/constants';
+import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
+import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import { filterDeniedKeywords, makeConflictingAutocompleteFilter, collectInputs } from './shared';
+import { getPaymentCardElementsByLabel } from './paymentCardLabels';
 
 const conflictingAutocompleteValues = [
   'cc-number',
@@ -16,19 +19,25 @@ const conflictingAutocompleteValues = [
   'cc-exp',
   'cc-exp-month',
   'cc-exp-year',
-  'cc-type'
+  'cc-type',
+  'one-time-code'
 ];
 
 const filterConflictingAutocomplete = makeConflictingAutocompleteFilter(conflictingAutocompleteValues);
 
 /**
 * Gets the payment card security code input elements from the document, including those inside shadow DOMs.
+* Fields are found by their identifiers (selectors) and, inside a payment context, by the words of their label.
 * @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
 * @return {HTMLInputElement[]} The array of payment card security code input elements.
 */
 const getPaymentCardSecurityCodeInputs = (shadowRoots = null) => {
   const securityCodeSelector = paymentCardSecurityCodeSelectors().join(', ');
-  const visibleUniqueInputs = collectInputs(securityCodeSelector, shadowRoots);
+  const resolvedShadowRoots = Array.isArray(shadowRoots) ? shadowRoots : getShadowRoots();
+  const visibleUniqueInputs = [
+    ...collectInputs(securityCodeSelector, resolvedShadowRoots),
+    ...getPaymentCardElementsByLabel('securityCode', resolvedShadowRoots)
+  ].filter(uniqueElementOnly);
   const afterConflicting = visibleUniqueInputs.filter(filterConflictingAutocomplete);
   const result = afterConflicting.filter(filterDeniedKeywords);
 

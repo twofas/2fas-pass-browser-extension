@@ -311,4 +311,35 @@ describe('getPaymentCardholderNameInputs', () => {
       expect(result[0].type).toBe('full');
     });
   });
+
+  describe('detection by label (paymentCardholderNameWords)', () => {
+    it('detects a field labelled in a newly covered Chromium language', () => {
+      document.body.innerHTML = '<form class="payment"><label for="h">Имя держателя карты</label><input type="text" id="h" name="x" /></form>';
+
+      expect(getPaymentCardholderNameInputs()).toHaveLength(1);
+    });
+
+    it('does not detect the Adyen "Cardholder birthdate" tax field', () => {
+      document.body.innerHTML = `
+        <form class="payment">
+          <label for="t">Cardholder birthdate (YYMMDD) or Corporate registration number (10 digits)</label>
+          <input type="text" id="t" name="x" />
+        </form>
+      `;
+
+      expect(getPaymentCardholderNameInputs()).toEqual([]);
+    });
+
+    it('does not detect a "CPF do titular do cartão" field', () => {
+      document.body.innerHTML = '<form class="payment"><label for="t">CPF do titular do cartão</label><input type="text" id="t" name="x" /></form>';
+
+      expect(getPaymentCardholderNameInputs()).toEqual([]);
+    });
+
+    it('does not detect a labelled field inside a gift card section', () => {
+      document.body.innerHTML = '<form class="payment"><div class="gift-card"><label for="h">Name on card</label><input type="text" id="h" name="x" /></div></form>';
+
+      expect(getPaymentCardholderNameInputs()).toEqual([]);
+    });
+  });
 });

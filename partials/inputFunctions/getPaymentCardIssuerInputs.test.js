@@ -102,4 +102,21 @@ describe('getPaymentCardIssuerInputs', () => {
       expect(result[0].isSelect).toBe(true);
     });
   });
+
+  describe('detection by label (paymentCardIssuerWords)', () => {
+    it('detects a select with an opaque name labelled "Card type" in a payment form', () => {
+      document.body.innerHTML = '<form class="payment"><label for="t">Card type</label><select id="t" name="x"><option>Visa</option></select></form>';
+
+      const result = getPaymentCardIssuerInputs();
+
+      expect(result).toHaveLength(1);
+      expect(result[0].isSelect).toBe(true);
+    });
+
+    it('does not detect an "Account type" select', () => {
+      document.body.innerHTML = '<form class="payment"><label for="t">Account type</label><select id="t" name="x"><option>Personal</option></select></form>';
+
+      expect(getPaymentCardIssuerInputs()).toEqual([]);
+    });
+  });
 });

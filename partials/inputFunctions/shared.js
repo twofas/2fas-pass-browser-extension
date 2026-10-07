@@ -203,6 +203,32 @@ const getAssociatedLabelText = input => {
 };
 
 /**
+* Resolves an aria-labelledby IDREF list to the combined text of the referenced elements.
+* @param {HTMLInputElement} input - The input owning the aria-labelledby attribute.
+* @param {string} idRefs - The whitespace-separated IDREF list.
+* @return {string} The combined accessible name text, or empty string if unresolved.
+*/
+const resolveLabelledByText = (input, idRefs) => {
+  const rootNode = input.getRootNode();
+
+  return idRefs
+    .split(/\s+/)
+    .map(id => {
+      if (!id) {
+        return '';
+      }
+
+      const referenced = typeof rootNode.getElementById === 'function'
+        ? rootNode.getElementById(id)
+        : rootNode.querySelector(`[id="${id}"]`);
+
+      return referenced ? (referenced.textContent || '') : '';
+    })
+    .join(' ')
+    .trim();
+};
+
+/**
 * Collects visible, unique elements matching a selector from the document and all shadow roots.
 * @param {string} selector - The CSS selector to query.
 * @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
@@ -222,4 +248,4 @@ const collectInputs = (selector, shadowRoots = null) => {
   return afterVisible.filter(uniqueElementOnly);
 };
 
-export { containsDeniedWord, filterDeniedKeywords, makeConflictingAutocompleteFilter, getParentDataField, getAssociatedLabelText, collectInputs };
+export { containsDeniedWord, filterDeniedKeywords, makeConflictingAutocompleteFilter, getParentDataField, getAssociatedLabelText, resolveLabelledByText, collectInputs };

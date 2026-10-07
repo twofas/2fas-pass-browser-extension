@@ -6,6 +6,8 @@
 
 export { default as paymentCardAttributes } from './paymentCardAttributes.js';
 export { default as paymentCardDeniedKeywords } from './paymentCardDeniedKeywords.js';
+export { default as paymentCardLabelDeniedWords } from './paymentCardLabelDeniedWords.js';
+export { default as paymentCardParentContextDeniedKeywords } from './paymentCardParentContextDeniedKeywords.js';
 export { default as paymentCardFormTexts } from './paymentCardFormTexts.js';
 
 // Payment Card Number
@@ -28,7 +30,9 @@ export {
   paymentCardExpirationDateWords,
   paymentCardExpirationDateSelectors,
   paymentCardExpirationMonthPlaceholders,
-  paymentCardExpirationYearPlaceholders
+  paymentCardExpirationYearPlaceholders,
+  paymentCardExpirationMonthWords,
+  paymentCardExpirationYearWords
 } from './paymentCardExpirationDate/index.js';
 
 // Payment Card Security Code

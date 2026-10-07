@@ -9,3 +9,5 @@ export { default as paymentCardExpirationDateWords } from './paymentCardExpirati
 export { default as paymentCardExpirationDateSelectors } from './paymentCardExpirationDateSelectors.js';
 export { default as paymentCardExpirationMonthPlaceholders } from './paymentCardExpirationMonthPlaceholders.js';
 export { default as paymentCardExpirationYearPlaceholders } from './paymentCardExpirationYearPlaceholders.js';
+export { default as paymentCardExpirationMonthWords } from './paymentCardExpirationMonthWords.js';
+export { default as paymentCardExpirationYearWords } from './paymentCardExpirationYearWords.js';

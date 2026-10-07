@@ -200,4 +200,56 @@ describe('getPaymentCardExpirationDateInputs', () => {
       expect(result[0].type).toBe('combined');
     });
   });
+
+  describe('detection by label (paymentCardExpirationDateWords)', () => {
+    it('detects a combined field with an opaque name labelled "Expiry date (MM/YY)"', () => {
+      document.body.innerHTML = '<div class="payment"><label for="f1">Expiry date (MM/YY)</label><input type="text" id="f1" name="field_3" /></div>';
+
+      const result = getPaymentCardExpirationDateInputs();
+
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe('combined');
+    });
+
+    it('detects labelled month and year selects and types them from the label', () => {
+      document.body.innerHTML = `
+        <form class="checkout">
+          <label for="m">Expiry month</label>
+          <select id="m" name="a"><option value="">--</option><option value="01">01</option><option value="12">12</option></select>
+          <label for="y">Expiry year</label>
+          <select id="y" name="b"><option value="">--</option><option value="2026">2026</option><option value="2027">2027</option></select>
+        </form>
+      `;
+
+      const result = getPaymentCardExpirationDateInputs();
+
+      expect(result.map(entry => [entry.element.id, entry.type, entry.isSelect])).toEqual([['m', 'month', true], ['y', 'year', true]]);
+    });
+
+    it('types a select labelled only "Expiration date" from its month options', () => {
+      const months = Array.from({ length: 12 }, (_, i) => `<option value="${String(i + 1).padStart(2, '0')}">${i + 1}</option>`).join('');
+      document.body.innerHTML = `<div class="payment"><label for="m">Expiration date</label><select id="m" name="a"><option value="">Month</option>${months}</select></div>`;
+
+      const result = getPaymentCardExpirationDateInputs();
+
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe('month');
+    });
+
+    it('types a select labelled only "Expiration date" from its year options', () => {
+      const years = Array.from({ length: 12 }, (_, i) => `<option value="${2026 + i}">${2026 + i}</option>`).join('');
+      document.body.innerHTML = `<div class="payment"><label for="y">Expiration date</label><select id="y" name="a">${years}</select></div>`;
+
+      const result = getPaymentCardExpirationDateInputs();
+
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe('year');
+    });
+
+    it('does not detect a date of birth field in a checkout', () => {
+      document.body.innerHTML = '<div class="checkout"><label for="f1">Date of birth (MM/YY)</label><input type="text" id="f1" name="x" /></div>';
+
+      expect(getPaymentCardExpirationDateInputs()).toEqual([]);
+    });
+  });
 });

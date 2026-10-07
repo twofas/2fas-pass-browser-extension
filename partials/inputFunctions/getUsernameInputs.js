@@ -9,8 +9,9 @@ import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import hasParentContextDeniedKeyword from '../functions/hasParentContextDeniedKeyword';
-import { containsDeniedWord } from './shared';
+import { containsDeniedWord, resolveLabelledByText } from './shared';
 import { isRevealedPasswordInput } from './revealedPasswordInputs';
+import isNotCredentialField from './isNotCredentialField';
 
 const userNameWordsLower = userNameWords.map(word => word.toLowerCase());
 let cachedIgnoredTypes = null;
@@ -41,13 +42,13 @@ const getUserNameSelector = () => {
 };
 
 /**
-* Filters out inputs that contain denied keywords in their name, id, or parent elements, and
-* password fields revealed by a "show password" toggle.
+* Filters out inputs that contain denied keywords in their name, id, or parent elements, password fields
+* revealed by a "show password" toggle, and one-time code, card and Social Security Number fields.
 * @param {HTMLInputElement} input - The input element to check.
 * @return {boolean} True if the input should be kept, false otherwise.
 */
 const filterDeniedKeywords = input => {
-  if (isRevealedPasswordInput(input)) {
+  if (isRevealedPasswordInput(input) || isNotCredentialField(input)) {
     return false;
   }
 
@@ -73,32 +74,6 @@ const filterDeniedKeywords = input => {
   }
 
   return true;
-};
-
-/**
-* Resolves an aria-labelledby IDREF list to the combined text of the referenced elements.
-* @param {HTMLInputElement} input - The input owning the aria-labelledby attribute.
-* @param {string} idRefs - The whitespace-separated IDREF list.
-* @return {string} The combined accessible name text, or empty string if unresolved.
-*/
-const resolveLabelledByText = (input, idRefs) => {
-  const rootNode = input.getRootNode();
-
-  return idRefs
-    .split(/\s+/)
-    .map(id => {
-      if (!id) {
-        return '';
-      }
-
-      const referenced = typeof rootNode.getElementById === 'function'
-        ? rootNode.getElementById(id)
-        : rootNode.querySelector(`[id="${id}"]`);
-
-      return referenced ? (referenced.textContent || '') : '';
-    })
-    .join(' ')
-    .trim();
 };
 
 /**
@@ -212,7 +187,7 @@ const getUsernameInputs = (passwordForms = null, shadowRoots = null) => {
       }
 
       const candidates = Array.from(form.querySelectorAll(tryInputSelector))
-        .filter(input => isVisible(input) && !isRevealedPasswordInput(input));
+        .filter(input => isVisible(input) && !isRevealedPasswordInput(input) && !isNotCredentialField(input));
 
       if (candidates.length === 0) {
         return;

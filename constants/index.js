@@ -56,6 +56,8 @@ export { AUTOFILL_RESULT_CODES } from './autofillResultCodes.js';
 export {
   paymentCardAttributes,
   paymentCardDeniedKeywords,
+  paymentCardLabelDeniedWords,
+  paymentCardParentContextDeniedKeywords,
   paymentCardFormTexts,
   paymentCardNumberTexts,
   paymentCardNumberWords,
@@ -68,6 +70,8 @@ export {
   paymentCardExpirationDateSelectors,
   paymentCardExpirationMonthPlaceholders,
   paymentCardExpirationYearPlaceholders,
+  paymentCardExpirationMonthWords,
+  paymentCardExpirationYearWords,
   paymentCardSecurityCodeTexts,
   paymentCardSecurityCodeWords,
   paymentCardSecurityCodeSelectors,

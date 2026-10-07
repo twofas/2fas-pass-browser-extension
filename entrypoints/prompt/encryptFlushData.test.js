@@ -106,4 +106,11 @@ describe('encryptFlushData — restores the encrypted-mode invariant', () => {
     expect(result[0].encrypted).toBe(true);
     expect(CatchError).toHaveBeenCalled();
   });
+
+  it('passes an empty value through unencrypted — there is nothing to protect and it must stay empty', async () => {
+    const result = await encryptFlushData([plaintextEntry({ value: '' })], { data: 'key' }, true);
+
+    expect(result).toEqual([plaintextEntry({ value: '' })]);
+    expect(crypto.subtle.encrypt).not.toHaveBeenCalled();
+  });
 });

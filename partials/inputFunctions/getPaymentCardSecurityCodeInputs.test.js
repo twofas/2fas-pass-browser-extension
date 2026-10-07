@@ -223,4 +223,45 @@ describe('getPaymentCardSecurityCodeInputs', () => {
       expect(getPaymentCardSecurityCodeInputs()).toHaveLength(1);
     });
   });
+
+  describe('detection by label (paymentCardSecurityCodeWords)', () => {
+    it('detects a masked field with an opaque name labelled "Security code" in a card form', () => {
+      document.body.innerHTML = `
+        <form>
+          <input type="text" autocomplete="cc-number" />
+          <label for="f2">Security code</label><input type="password" id="f2" name="field_2" />
+        </form>
+      `;
+
+      expect(getPaymentCardSecurityCodeInputs().map(input => input.id)).toEqual(['f2']);
+    });
+
+    it('detects a field labelled in another Chromium language next to a labelled card number', () => {
+      document.body.innerHTML = `
+        <form>
+          <label for="f1">Kartennummer</label><input type="text" id="f1" name="a" />
+          <label for="f2">Kartenprüfnummer</label><input type="text" id="f2" name="b" />
+        </form>
+      `;
+
+      expect(getPaymentCardSecurityCodeInputs().map(input => input.id)).toEqual(['f2']);
+    });
+
+    it('does not detect a "Security code" field on a two-factor page', () => {
+      document.body.innerHTML = '<form><label for="f1">Security code</label><input type="text" id="f1" name="x" /></form>';
+
+      expect(getPaymentCardSecurityCodeInputs()).toEqual([]);
+    });
+
+    it('does not detect a one-time code field in a checkout', () => {
+      document.body.innerHTML = `
+        <div class="checkout-payment">
+          <label for="f1">Enter the security code we sent by SMS</label><input type="text" id="f1" name="x" />
+          <label for="f2">Security code</label><input type="text" id="f2" name="y" autocomplete="one-time-code" />
+        </div>
+      `;
+
+      expect(getPaymentCardSecurityCodeInputs()).toEqual([]);
+    });
+  });
 });
