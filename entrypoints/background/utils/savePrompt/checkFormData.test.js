@@ -69,3 +69,17 @@ describe('checkFormData — per-field encryption', () => {
     expect(result).toBe(false);
   });
 });
+
+// Safari reports requestBody.raw[].bytes as a Uint8Array (Chromium / Firefox: ArrayBuffer).
+describe('checkFormData — raw body shapes', () => {
+  const values = { username: 'alice', password: 'hunter2', usernameEncrypted: false, passwordEncrypted: false };
+  const jsonBytes = () => new TextEncoder().encode(JSON.stringify({ login: 'alice', pass: 'hunter2' }));
+
+  it('matches a JSON body delivered as an ArrayBuffer (Chromium / Firefox)', async () => {
+    await expect(checkFormData({ requestBody: { raw: [{ bytes: jsonBytes().buffer }] } }, values)).resolves.toBe(true);
+  });
+
+  it('matches a JSON body delivered as a Uint8Array (Safari)', async () => {
+    await expect(checkFormData({ requestBody: { raw: [{ bytes: jsonBytes() }] } }, values)).resolves.toBe(true);
+  });
+});

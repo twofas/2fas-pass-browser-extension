@@ -13,6 +13,7 @@ import { Form } from 'react-final-form';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import SecureNote from '@/models/itemModels/SecureNote';
 import { PULL_REQUEST_TYPES } from '@/constants';
+import trimNote from '@/partials/functions/trimNote';
 import { useI18n } from '@/partials/context/I18nContext';
 
 const Name = lazy(() => import('@/entrypoints/popup/routes/Details/components/Name'));
@@ -57,16 +58,16 @@ function SecureNoteDetailsView(props) {
   const validate = values => {
     const errors = {};
 
-    if (!values?.content?.name || values?.content?.name?.length <= 0) {
+    if (!values?.content?.name?.trim()) {
       errors.name = getMessage('details_name_required');
-    } else if (values.content?.name?.length > 255) {
+    } else if (values.content.name.trim().length > 255) {
       errors.name = getMessage('details_name_max_length');
     }
 
     if (data.sifEditable) {
       const tempText = values?.editedSif || '';
 
-      if (tempText.length > 16384) {
+      if (trimNote(tempText).length > 16384) {
         if (errors?.content === undefined) {
           errors.content = {};
         }
@@ -75,7 +76,7 @@ function SecureNoteDetailsView(props) {
       }
     }
 
-    if (values?.content?.additionalInfo && values?.content?.additionalInfo?.length > 16384) {
+    if (values?.content?.additionalInfo && trimNote(values.content.additionalInfo).length > 16384) {
       if (errors?.content === undefined) {
         errors.content = {};
       }

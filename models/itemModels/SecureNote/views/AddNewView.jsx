@@ -10,7 +10,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { memo, useState, useMemo } from 'react';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import { Form, Field } from 'react-final-form';
-import { getCurrentDevice } from '@/partials/functions';
+import { getCurrentDevice, trimNote } from '@/partials/functions';
 import SecureNote from '@/models/itemModels/SecureNote';
 import { useNavigate, useLocation } from 'react-router';
 import { PULL_REQUEST_TYPES } from '@/constants';
@@ -35,7 +35,7 @@ function SecureNoteAddNewView() {
       return false;
     }
 
-    return name.length > 255;
+    return name.trim().length > 255;
   }, [data?.name]);
 
   const isTextInvalid = useMemo(() => {
@@ -45,19 +45,19 @@ function SecureNoteAddNewView() {
       return false;
     }
 
-    return text.length > 16384;
+    return trimNote(text).length > 16384;
   }, [data?.text]);
 
   const validate = values => {
     const errors = {};
 
-    if (!values?.name || values?.name?.length <= 0) {
+    if (!values?.name?.trim()) {
       errors.name = getMessage('secure_note_name_required');
-    } else if (values.name?.length > 255) {
+    } else if (values.name.trim().length > 255) {
       errors.name = getMessage('secure_note_name_max_length');
     }
     
-    if (values?.text && values?.text?.length > 16384) {
+    if (values?.text && trimNote(values.text).length > 16384) {
       errors.text = getMessage('secure_note_text_max_length');
     }
 
@@ -186,7 +186,7 @@ function SecureNoteAddNewView() {
             <button
               type='submit'
               className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
-              disabled={submitting || !data?.name || data?.name?.length === 0 ? 'disabled' : ''}
+              disabled={submitting || !data?.name?.trim() ? 'disabled' : ''}
             >
               {getMessage('continue')}
             </button>

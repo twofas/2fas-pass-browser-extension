@@ -16,7 +16,11 @@ vi.mock('@/constants', async () => {
     userNameWords: ['user', 'login', 'email'],
     userNameDeniedKeywords: ['password', 'pass', 'pwd'],
     personalInfoDeniedKeywords: [],
-    personalInfoDeniedAutocompleteValues: []
+    personalInfoDeniedAutocompleteValues: [],
+    passwordKeywords: ['password', 'haslo'],
+    passwordIdentifierKeywords: ['pass', 'pwd'],
+    passwordDeniedKeywords: [],
+    passwordDeniedAutocompleteValues: []
   };
 });
 

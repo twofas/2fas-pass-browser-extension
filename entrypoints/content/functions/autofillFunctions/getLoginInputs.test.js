@@ -42,9 +42,19 @@ describe('getLoginInputs', () => {
 
     getLoginInputs();
 
-    expect(getPasswordInputsMock).toHaveBeenCalledWith(sharedRoots);
+    expect(getPasswordInputsMock.mock.calls[0][0]).toBe(sharedRoots);
     expect(getUsernameInputsMock).toHaveBeenCalledTimes(1);
     expect(getUsernameInputsMock.mock.calls[0][1]).toBe(sharedRoots);
+  });
+
+  it('includes revealed (show-password toggled) password fields in detection', () => {
+    getShadowRootsMock.mockReturnValue([]);
+    getPasswordInputsMock.mockReturnValue([]);
+    getUsernameInputsMock.mockReturnValue([]);
+
+    getLoginInputs();
+
+    expect(getPasswordInputsMock.mock.calls[0][1]).toEqual({ includeRevealed: true });
   });
 
   it('passes the password forms as the first username getter argument', () => {

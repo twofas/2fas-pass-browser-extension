@@ -23,6 +23,7 @@ import VisibleIcon from '@/assets/popup-window/visible.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 import { PULL_REQUEST_TYPES, REQUEST_STRING_ACTIONS } from '@/constants';
+import { getLoginStringField, getLoginPasswordField } from '@/entrypoints/popup/routes/AddNew/functions/loginFormValues';
 import Login from '@/models/itemModels/Login';
 import { useI18n } from '@/partials/context/I18nContext';
 
@@ -205,12 +206,8 @@ function LoginAddNewView() {
       formData.content.username = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
       formData.content.s_password = { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
     } else {
-      formData.content.username = e.username
-        ? { value: e.username, action: REQUEST_STRING_ACTIONS.SET }
-        : { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
-      formData.content.s_password = e.s_password
-        ? { value: e.s_password, action: REQUEST_STRING_ACTIONS.SET }
-        : { value: '', action: REQUEST_STRING_ACTIONS.GENERATE };
+      formData.content.username = getLoginStringField(e.username);
+      formData.content.s_password = getLoginPasswordField(e.s_password);
     }
 
     logger.info(LOGGER_CONSTANTS.CATEGORIES.ITEM, 'LoginAddNewView - submit add login', {

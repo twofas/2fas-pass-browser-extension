@@ -37,7 +37,7 @@ const handleLoginAutofill = async (item, navigate) => {
 
   const { tab, cryptoAvailableRes } = prolog;
   const hasPassword = item.sifExists;
-  const hasUsername = item?.content.username && item.content.username.length > 0;
+  const hasUsername = Boolean(item?.content?.username?.trim());
   let passwordDecrypt = true;
   let pageHasPasswordInputs = false;
   let hasPasswordInAnyFrame = false;

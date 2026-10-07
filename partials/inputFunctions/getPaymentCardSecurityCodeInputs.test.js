@@ -57,6 +57,89 @@ describe('getPaymentCardSecurityCodeInputs', () => {
     });
   });
 
+  describe('regression: card-verification naming and "CCV" (summitracing.com)', () => {
+    it('detects a field named CreditCardVerificationNumber', () => {
+      document.body.innerHTML = '<input type="text" id="CreditCardVerificationNumber" name="CreditCardVerificationNumber" />';
+
+      expect(getPaymentCardSecurityCodeInputs()).toHaveLength(1);
+    });
+
+    it('detects card-verification compounds delimited by - or _ in the name or id', () => {
+      document.body.innerHTML = `
+        <input type="text" name="billing_card_verification_value" />
+        <input type="text" id="new-card-verification" />
+      `;
+
+      expect(getPaymentCardSecurityCodeInputs()).toHaveLength(2);
+    });
+
+    it('detects a field literally named or identified as "ccv"', () => {
+      document.body.innerHTML = '<input type="text" name="ccv" />';
+      expect(getPaymentCardSecurityCodeInputs()).toHaveLength(1);
+
+      document.body.innerHTML = '<input type="text" id="CCV" />';
+      expect(getPaymentCardSecurityCodeInputs()).toHaveLength(1);
+    });
+
+    it('returns only the security code from the Summit card form, not the card number', () => {
+      document.body.innerHTML = `
+        <div id="payment-option-container-card">
+          <input type="text" id="CreditCardNumber" name="CreditCardNumber" />
+          <select id="ExpMon" name="ExpMon" aria-label="Expiration date: month"><option value="1">1</option></select>
+          <select id="ExpYr" name="ExpYr" aria-label="Expiration date: year"><option value="2031">2031</option></select>
+          <input type="text" id="CreditCardVerificationNumber" name="CreditCardVerificationNumber" />
+        </div>
+      `;
+
+      const result = getPaymentCardSecurityCodeInputs();
+
+      expect(result.map(input => input.name)).toEqual(['CreditCardVerificationNumber']);
+    });
+  });
+
+  describe('regression: generic verification fields must not be taken for a security code', () => {
+    it('ignores password, email, phone and TOTP verification fields', () => {
+      document.body.innerHTML = `
+        <input type="text" name="passwordVerification" />
+        <input type="text" name="email_verification" />
+        <input type="text" id="phoneVerificationCode" />
+        <input type="text" name="totp-verification" />
+        <input type="text" name="verificationNumber" />
+      `;
+
+      expect(getPaymentCardSecurityCodeInputs()).toEqual([]);
+    });
+
+    it('ignores bare verificationCode/verificationValue fields (SMS/e-mail codes), in any delimiter style', () => {
+      document.body.innerHTML = `
+        <input type="text" name="verificationCode" />
+        <input type="text" id="verification_code" />
+        <input type="text" name="verification-value" />
+        <input type="text" aria-label="verificationValue" />
+      `;
+
+      expect(getPaymentCardSecurityCodeInputs()).toEqual([]);
+    });
+
+    it('still detects card-scoped verificationCode/verificationValue fields', () => {
+      document.body.innerHTML = `
+        <input type="text" name="cardVerificationCode" />
+        <input type="text" id="card_verification_value" />
+      `;
+
+      expect(getPaymentCardSecurityCodeInputs()).toHaveLength(2);
+    });
+
+    it('does not match "ccv" as an embedded substring (e.g. accVerification)', () => {
+      document.body.innerHTML = `
+        <input type="text" name="accVerification" />
+        <input type="text" id="saccvault" />
+      `;
+
+      expect(getPaymentCardSecurityCodeInputs()).toEqual([]);
+    });
+  });
+
   describe('isolation from other card fields', () => {
     it('returns only the security-code field from a full checkout form', () => {
       document.body.innerHTML = `

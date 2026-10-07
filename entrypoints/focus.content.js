@@ -7,6 +7,7 @@
 import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
 import focusOnMessage from './focus/events/focusOnMessage';
 import focusFunc from './focus/functions/focusFunc';
+import watchRevealedPasswordInputs from './focus/functions/watchRevealedPasswordInputs';
 import ifCtxIsInvalid from '@/partials/contentScript/ifCtxIsInvalid';
 
 export default defineContentScript({
@@ -38,11 +39,14 @@ export default defineContentScript({
     window.addEventListener('error', emptyFunc);
     window.addEventListener('unhandledrejection', emptyFunc);
 
+    const stopWatchingRevealedPasswords = watchRevealedPasswordInputs();
+
     const removeListeners = () => {
       browser.runtime.onMessage.removeListener(focusOnMessageHandler);
       window.removeEventListener('focus', focusFuncAction);
       window.removeEventListener('error', emptyFunc);
       window.removeEventListener('unhandledrejection', emptyFunc);
+      stopWatchingRevealedPasswords();
     };
 
     window.addEventListener('beforeunload', removeListeners, { once: true });

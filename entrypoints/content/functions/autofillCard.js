@@ -9,6 +9,7 @@ import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPayment
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
 import getPaymentCardIssuerInputs from '@/partials/inputFunctions/getPaymentCardIssuerInputs';
+import trimString from '@/partials/functions/trimString';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import getShadowRoots from './autofillFunctions/getShadowRoots';
 import decryptTransmittedValue from './autofillFunctions/decryptTransmittedValue';
@@ -314,7 +315,7 @@ export const isExpirationDateFilled = expirationResults => {
 };
 
 /**
-* Function to autofill payment card input fields.
+* Function to autofill payment card input fields with the card values trimmed; a blank value is not filled.
 * @param {Object} request - The request object containing card data.
 * @param {string} [request.cardholderName] - The cardholder name to fill.
 * @param {string} [request.cardNumber] - The card number to fill (may be encrypted).
@@ -333,11 +334,17 @@ const autofillCard = async request => {
   const securityCodeInputs = getPaymentCardSecurityCodeInputs(shadowRoots);
   const cardIssuerInputs = getPaymentCardIssuerInputs(shadowRoots);
 
-  const hasCardNumberData = request.cardNumber?.length > 0;
-  const hasCardholderNameData = request.cardholderName?.length > 0;
-  const hasExpirationDateData = request.expirationDate?.length > 0;
-  const hasSecurityCodeData = request.securityCode?.length > 0;
-  const hasCardIssuerData = request.cardIssuer?.length > 0;
+  const cardholderName = trimString(request.cardholderName);
+  const cardIssuer = trimString(request.cardIssuer);
+  const cardNumberEncrypted = request.cryptoAvailable && request.cardNumberEncrypted;
+  const expirationDateEncrypted = request.cryptoAvailable && request.expirationDateEncrypted;
+  const securityCodeEncrypted = request.cryptoAvailable && request.securityCodeEncrypted;
+
+  const hasCardNumberData = (cardNumberEncrypted ? request.cardNumber : request.cardNumber?.replace(/\s/g, ''))?.length > 0;
+  const hasCardholderNameData = cardholderName?.length > 0;
+  const hasExpirationDateData = (expirationDateEncrypted ? request.expirationDate : trimString(request.expirationDate))?.length > 0;
+  const hasSecurityCodeData = (securityCodeEncrypted ? request.securityCode : trimString(request.securityCode))?.length > 0;
+  const hasCardIssuerData = cardIssuer?.length > 0;
 
   const hasCardNumberInput = cardNumberInputs.length > 0;
   const hasCardholderNameInput = cardholderNameInputs.length > 0;
@@ -370,8 +377,8 @@ const autofillCard = async request => {
   }
 
   if (canFillCardholderName) {
-    const splitName = splitFullName(request.cardholderName);
-    cardholderNameInputs.forEach(inputData => setCardholderNameValue(inputData, request.cardholderName, splitName));
+    const splitName = splitFullName(cardholderName);
+    cardholderNameInputs.forEach(inputData => setCardholderNameValue(inputData, cardholderName, splitName));
     filledFields.cardholderName = true;
   }
 
@@ -379,7 +386,7 @@ const autofillCard = async request => {
     let cardNumberValue = null;
 
     try {
-      if (request.cryptoAvailable && request.cardNumberEncrypted) {
+      if (cardNumberEncrypted) {
         const decryptResult = await decryptTransmittedValue(request.cardNumber);
 
         if (decryptResult.status === 'ok') {
@@ -392,9 +399,10 @@ const autofillCard = async request => {
       cardNumberValue = null;
     }
 
-    if (cardNumberValue) {
-      const cardNumberWithoutSpaces = cardNumberValue.replace(/\s/g, '');
-      cardNumberValue = null;
+    const cardNumberWithoutSpaces = cardNumberValue ? cardNumberValue.replace(/\s/g, '') : '';
+    cardNumberValue = null;
+
+    if (cardNumberWithoutSpaces) {
       cardNumberInputs.forEach(input => {
         inputSetValue(input, cardNumberWithoutSpaces, cardAutofillOptions);
       });
@@ -408,14 +416,14 @@ const autofillCard = async request => {
     let expirationDateValue = null;
 
     try {
-      if (request.cryptoAvailable && request.expirationDateEncrypted) {
+      if (expirationDateEncrypted) {
         const decryptResult = await decryptTransmittedValue(request.expirationDate);
 
         if (decryptResult.status === 'ok') {
-          expirationDateValue = decryptResult.data;
+          expirationDateValue = trimString(decryptResult.data);
         }
       } else if (request.expirationDate) {
-        expirationDateValue = request.expirationDate;
+        expirationDateValue = trimString(request.expirationDate);
       }
     } catch {
       expirationDateValue = null;
@@ -436,14 +444,14 @@ const autofillCard = async request => {
     let securityCodeValue = null;
 
     try {
-      if (request.cryptoAvailable && request.securityCodeEncrypted) {
+      if (securityCodeEncrypted) {
         const decryptResult = await decryptTransmittedValue(request.securityCode);
 
         if (decryptResult.status === 'ok') {
-          securityCodeValue = decryptResult.data;
+          securityCodeValue = trimString(decryptResult.data);
         }
       } else if (request.securityCode) {
-        securityCodeValue = request.securityCode;
+        securityCodeValue = trimString(request.securityCode);
       }
     } catch {
       securityCodeValue = null;
@@ -460,7 +468,7 @@ const autofillCard = async request => {
 
   if (canFillCardIssuer) {
     cardIssuerInputs.forEach(inputData => {
-      setCardIssuerValue(inputData, request.cardIssuer);
+      setCardIssuerValue(inputData, cardIssuer);
     });
     filledFields.cardIssuer = true;
   }

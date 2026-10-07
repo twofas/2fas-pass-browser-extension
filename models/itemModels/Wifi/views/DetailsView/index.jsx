@@ -13,6 +13,7 @@ import { Form } from 'react-final-form';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import Wifi from '@/models/itemModels/Wifi';
 import { PULL_REQUEST_TYPES } from '@/constants';
+import trimNote from '@/partials/functions/trimNote';
 import { useI18n } from '@/partials/context/I18nContext';
 import { QrDialogProvider } from '@/entrypoints/popup/context/QrDialogContext';
 
@@ -37,18 +38,18 @@ function WifiDetailsView (props) {
   const validate = values => {
     const errors = {};
 
-    if (!values?.content?.name || values?.content?.name?.length <= 0) {
+    if (!values?.content?.name?.trim()) {
       errors.name = getMessage('details_name_required');
-    } else if (values.content?.name?.length > 255) {
+    } else if (values.content.name.trim().length > 255) {
       errors.name = getMessage('details_name_max_length');
     }
 
-    if (values?.content?.ssid && values?.content?.ssid?.length > 255) {
+    if (values?.content?.ssid && values.content.ssid.trim().length > 255) {
       errors.ssid = getMessage('details_wifi_ssid_max_length');
     }
 
     if (data.notesEditable) {
-      if (values?.content?.notes && values?.content?.notes?.length > 16384) {
+      if (values?.content?.notes && trimNote(values.content.notes).length > 16384) {
         errors.notes = getMessage('details_wifi_notes_max_length');
       }
     }

@@ -127,6 +127,7 @@ export default defineConfig({
       manifestObj.incognito = 'spanning';
     } else {
       // Safari
+      // webRequest: save prompt submit detection, registered only on Safari 18.4+ (isSavePromptSupported)
       manifestObj.permissions = [
         "activeTab",
         "tabs",
@@ -135,7 +136,8 @@ export default defineConfig({
         "clipboardWrite",
         "webNavigation",
         "alarms",
-        "scripting"
+        "scripting",
+        "webRequest"
       ];
 
       manifestObj.commands = {

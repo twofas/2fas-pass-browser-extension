@@ -10,7 +10,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { Form, Field } from 'react-final-form';
-import { getCurrentDevice, paymentCardExpirationDateValidation } from '@/partials/functions';
+import { getCurrentDevice, paymentCardExpirationDateValidation, trimNote } from '@/partials/functions';
 import usePopupState from '../../../store/popupState/usePopupState';
 import PaymentCard from '@/models/itemModels/PaymentCard';
 import { PULL_REQUEST_TYPES, PAYMENT_CARD_REGEX } from '@/constants';
@@ -44,13 +44,13 @@ function PaymentCardShareImportView () {
   const validate = useCallback(values => {
     const errors = {};
 
-    if (!values?.name || values.name.length <= 0) {
+    if (!values?.name?.trim()) {
       errors.name = getMessage('add_new_validate_card_name_required');
-    } else if (values.name.length > 255) {
+    } else if (values.name.trim().length > 255) {
       errors.name = getMessage('add_new_validate_card_name_length');
     }
 
-    if (values?.cardHolder && values.cardHolder.length > 255) {
+    if (values?.cardHolder && values.cardHolder.trim().length > 255) {
       errors.cardHolder = getMessage('add_new_validate_cardholder_length');
     }
 
@@ -82,12 +82,12 @@ function PaymentCardShareImportView () {
     }
 
     if (data?.securityCode && data.securityCode.length > 0) {
-      if (!/^\d{3,4}$/.test(data.securityCode)) {
+      if (!/^\d{3,4}$/.test(data.securityCode.trim())) {
         errors.securityCode = getMessage('add_new_validate_security_code_invalid');
       }
     }
 
-    if (values?.notes && values.notes.length > 16384) {
+    if (values?.notes && trimNote(values.notes).length > 16384) {
       errors.notes = getMessage('share_import_notes_max_length');
     }
 
@@ -298,7 +298,7 @@ function PaymentCardShareImportView () {
             className={`${bS.btn} ${bS.btnTheme} ${bS.btnSimpleAction}`}
             disabled={
               submitting ||
-              !values?.name || values.name.length === 0 ||
+              !values?.name?.trim() ||
               hasLiveValidationErrors
                 ? 'disabled' : ''
             }
