@@ -6,7 +6,7 @@
 
 import { HEX_REGEX, selectors as S } from '@/constants';
 import { createElement, createSVGElement, createTextElement } from '@/partials/DOMElements';
-import { getDomain } from '@/partials/functions';
+import getDomain from '@/partials/functions/getDomain';
 import logoSrc from '@/assets/logo.svg?raw';
 import logoSrcDark from '@/assets/logo-dark.svg?raw';
 import closeSrc from '@/assets/popup-window/cancel.svg?raw';

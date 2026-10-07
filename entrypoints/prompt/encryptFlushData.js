@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { generateNonce } from '@/partials/functions';
+import generateNonce from '@/partials/functions/generateNonce';
 
 /**
 * Normalises flush payloads to the encrypted-mode invariant before they reach the

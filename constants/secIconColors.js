@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const secIconColors = Object.freeze([
+const secIconColors = /* @__PURE__ */ Object.freeze([
   { light: '#40c7cf', dark: '#3ec0c7' },
   { light: '#3058e8', dark: '#4a67cf' },
   { light: '#8130e8', dark: '#6c3ea8' },

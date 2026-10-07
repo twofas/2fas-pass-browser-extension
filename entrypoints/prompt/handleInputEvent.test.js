@@ -19,11 +19,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('@/utils/CatchError.js', () => ({ default: vi.fn() }));
 
-vi.mock('@/partials/functions', () => ({
-  isVisible: () => true,
-  isElementInArray: (element, array) => Array.isArray(array) && array.includes(element),
-  generateNonce: vi.fn()
+vi.mock('@/partials/functions/isVisible', () => ({ default: () => true }));
+vi.mock('@/partials/functions/isElementInArray', () => ({
+  default: (element, array) => Array.isArray(array) && array.includes(element)
 }));
+vi.mock('@/partials/functions/generateNonce', () => ({ default: vi.fn() }));
 
 vi.mock('@/partials/inputFunctions/getPasswordInputs', () => ({ default: () => [] }));
 vi.mock('@/partials/inputFunctions/getUsernameInputs', () => ({
@@ -38,7 +38,7 @@ const hoisted = vi.hoisted(() => ({ idCounter: 0 }));
 vi.mock('./generateInputId', () => ({ default: () => `gen-id-${++hoisted.idCounter}` }));
 
 import handleInputEvent from './handleInputEvent';
-import { generateNonce } from '@/partials/functions';
+import generateNonce from '@/partials/functions/generateNonce';
 
 const DEBOUNCE = 100;
 

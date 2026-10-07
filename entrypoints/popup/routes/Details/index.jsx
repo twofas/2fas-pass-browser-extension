@@ -12,7 +12,8 @@ import usePopupState from '../../store/popupState/usePopupState';
 import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
-import { matchModel, Login, getModelClass } from '@/models/itemModels';
+import { matchModel, Login } from '@/models/itemModels';
+import getItemViews from '../../utils/getItemViews';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import ClearLink from '../../components/ClearLink';
 import ServiceFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
@@ -164,33 +165,33 @@ function Details(props) {
     }
   }, [params.deviceId, params.vaultId, params.id]);
 
-  const ModelClass = useMemo(() => {
+  const itemViews = useMemo(() => {
     if (loading) {
       return null;
     }
 
-    return getModelClass(data?.item?.contentType);
+    return getItemViews(data?.item?.contentType);
   }, [loading, data?.item?.contentType]);
 
   const modelComponent = useMemo(() => {
-    if (loading || !ModelClass?.DetailsComponent) {
+    if (loading || !itemViews?.DetailsComponent) {
       return null;
     }
 
-    const DetailsComponent = ModelClass.DetailsComponent;
+    const DetailsComponent = itemViews.DetailsComponent;
     return <DetailsComponent {...props} originalItem={originalItem} />;
-  }, [loading, ModelClass, props, originalItem]);
+  }, [loading, itemViews, props, originalItem]);
 
   useEffect(function loadItemDetailsOnMount() {
     getOriginalItem().then(fetchItemData);
   }, [fetchItemData, getOriginalItem]);
 
   useEffect(function redirectIfDetailsViewMissing() {
-    if (!loading && data?.item && !ModelClass?.DetailsComponent) {
+    if (!loading && data?.item && !itemViews?.DetailsComponent) {
       showToast(getMessage('details_item_not_found'), 'error');
       navigate('/');
     }
-  }, [loading, ModelClass, data?.item, navigate]);
+  }, [loading, itemViews, data?.item, navigate]);
 
   useScrollPosition(scrollableRef, loading);
 

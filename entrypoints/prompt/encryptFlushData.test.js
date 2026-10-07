@@ -21,12 +21,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('@/utils/CatchError.js', () => ({ default: vi.fn() }));
 
-vi.mock('@/partials/functions', () => ({
-  generateNonce: vi.fn()
-}));
+vi.mock('@/partials/functions/generateNonce', () => ({ default: vi.fn() }));
 
 import encryptFlushData from './encryptFlushData';
-import { generateNonce } from '@/partials/functions';
+import generateNonce from '@/partials/functions/generateNonce';
 import CatchError from '@/utils/CatchError.js';
 
 const plaintextEntry = (overrides = {}) => ({
