@@ -7,7 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useCallback, useEffect, useRef, useMemo } from 'react';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupState from '../../../store/popupState/usePopupState';
@@ -160,7 +160,7 @@ function Username (props) {
             </button>
           </CopyTooltip>
         </div>
-        <motion.div
+        <m.div
           className={`${pI.passInputAdditional} ${data.usernameEditable ? '' : pI.removeMarginTop}`}
           variants={usernameMobileVariants}
           initial="hidden"
@@ -179,7 +179,7 @@ function Username (props) {
               </span>
             </label>
           </div>
-        </motion.div>
+        </m.div>
       </div>
       )}
     </Field>

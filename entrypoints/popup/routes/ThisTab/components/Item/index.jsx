@@ -8,7 +8,7 @@ import S from './styles/Item.module.scss';
 
 import { useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import { useIsItemOpen, useItemMenuActions } from '../../context/ItemListContext';
-import getItemViews from '@/entrypoints/popup/utils/getItemViews';
+import getItemView from '@/entrypoints/popup/utils/getItemView';
 import LoadingItemView from './components/LoadingItemView';
 
 function Item (props) {
@@ -80,7 +80,7 @@ function Item (props) {
     return null;
   }
 
-  const ModelComponent = getItemViews(props.data?.contentType)?.ItemComponent || LoadingItemView;
+  const ModelComponent = getItemView(props.data?.contentType) || LoadingItemView;
 
   return (
     <div

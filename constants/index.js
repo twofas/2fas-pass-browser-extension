@@ -23,9 +23,7 @@ export { default as SOCKET_PATHS } from './SOCKET_PATHS.js';
 export { default as userNameAttributes } from './userNameAttributes.js';
 export { default as userNameDeniedKeywords } from './userNameDeniedKeywords.js';
 export { default as parentContextDeniedKeywords } from './parentContextDeniedKeywords.js';
-export { default as userNameFormTexts } from './userNameFormTexts.js';
 export { default as userNameSelectors } from './userNameSelectors.js';
-export { default as userNameTexts } from './userNameTexts.js';
 export { default as userNameWords } from './userNameWords.js';
 export { default as personalInfoDeniedKeywords } from './personalInfoDeniedKeywords.js';
 export { default as personalInfoDeniedAutocompleteValues } from './personalInfoDeniedAutocompleteValues.js';
@@ -54,28 +52,21 @@ export { AUTOFILL_RESULT_CODES } from './autofillResultCodes.js';
 
 // Re-export all payment card-related constants
 export {
-  paymentCardAttributes,
   paymentCardDeniedKeywords,
   paymentCardLabelDeniedWords,
   paymentCardParentContextDeniedKeywords,
-  paymentCardFormTexts,
-  paymentCardNumberTexts,
   paymentCardNumberWords,
   paymentCardNumberSelectors,
-  paymentCardholderNameTexts,
   paymentCardholderNameWords,
   paymentCardholderNameSelectors,
-  paymentCardExpirationDateTexts,
   paymentCardExpirationDateWords,
   paymentCardExpirationDateSelectors,
   paymentCardExpirationMonthPlaceholders,
   paymentCardExpirationYearPlaceholders,
   paymentCardExpirationMonthWords,
   paymentCardExpirationYearWords,
-  paymentCardSecurityCodeTexts,
   paymentCardSecurityCodeWords,
   paymentCardSecurityCodeSelectors,
-  paymentCardIssuerTexts,
   paymentCardIssuerWords,
   paymentCardIssuerSelectors,
   PaymentCardIssuerVisa,

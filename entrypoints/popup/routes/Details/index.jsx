@@ -13,7 +13,7 @@ import usePopupStateStore from '../../store/popupState';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import { matchModel, Login } from '@/models/itemModels';
-import getItemViews from '../../utils/getItemViews';
+import getDetailsView from './functions/getDetailsView';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import ClearLink from '../../components/ClearLink';
 import ServiceFetchIcon from '@/assets/popup-window/service-fetch.svg?react';
@@ -165,33 +165,32 @@ function Details(props) {
     }
   }, [params.deviceId, params.vaultId, params.id]);
 
-  const itemViews = useMemo(() => {
+  const DetailsView = useMemo(() => {
     if (loading) {
       return null;
     }
 
-    return getItemViews(data?.item?.contentType);
+    return getDetailsView(data?.item?.contentType);
   }, [loading, data?.item?.contentType]);
 
   const modelComponent = useMemo(() => {
-    if (loading || !itemViews?.DetailsComponent) {
+    if (loading || !DetailsView) {
       return null;
     }
 
-    const DetailsComponent = itemViews.DetailsComponent;
-    return <DetailsComponent {...props} originalItem={originalItem} />;
-  }, [loading, itemViews, props, originalItem]);
+    return <DetailsView {...props} originalItem={originalItem} />;
+  }, [loading, DetailsView, props, originalItem]);
 
   useEffect(function loadItemDetailsOnMount() {
     getOriginalItem().then(fetchItemData);
   }, [fetchItemData, getOriginalItem]);
 
   useEffect(function redirectIfDetailsViewMissing() {
-    if (!loading && data?.item && !itemViews?.DetailsComponent) {
+    if (!loading && data?.item && !DetailsView) {
       showToast(getMessage('details_item_not_found'), 'error');
       navigate('/');
     }
-  }, [loading, itemViews, data?.item, navigate]);
+  }, [loading, DetailsView, data?.item, navigate]);
 
   useScrollPosition(scrollableRef, loading);
 

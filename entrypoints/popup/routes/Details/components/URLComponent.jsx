@@ -9,7 +9,7 @@ import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
 import domainValidation from '@/partials/functions/domainValidation.jsx';
 import { useCallback, useEffect, useRef } from 'react';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import copyValue from '@/partials/functions/copyValue';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
@@ -189,7 +189,7 @@ function URLComponent (props) {
   return (
     <Field name={`content.uris[${index}].text`}>
       {({ input }) => (
-        <motion.div
+        <m.div
           className={`${pI.passInput} ${data?.domainsEditable?.[uri._tempId] ? '' : pI.disabled} ${inputError === `uris[${index}]` ? pI.error : ''}`}
           variants={urlVariants}
           initial={isNew ? 'hidden' : false}
@@ -247,7 +247,7 @@ function URLComponent (props) {
             <div className={`${pI.passInputAdditional} ${pI.noValidDomain}`}>
               {domainValidation(input.value)}
             </div>
-          </motion.div>
+          </m.div>
         )}
       </Field>
   );

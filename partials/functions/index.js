@@ -43,7 +43,6 @@ export { default as paymentCardExpirationDateValidation } from './paymentCardExp
 export { default as popupIsInSeparateWindow } from './popupIsInSeparateWindow.js';
 export { default as resolveCrossDomainPermissions } from './resolveCrossDomainPermissions.js';
 export { default as safariBlankLinks } from './safariBlankLinks.js';
-export { default as sanitizeObject } from './sanitizeObject.js';
 export { default as saveCrossDomainPreferences } from './saveCrossDomainPreferences.js';
 export { default as sendMessageToAllFrames } from './sendMessageToAllFrames.js';
 export { default as sendMessageToTab } from './sendMessageToTab.js';

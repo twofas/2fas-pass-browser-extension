@@ -8,7 +8,7 @@
  * Internationalized placeholder keywords for payment card expiration year fields.
  * Used to detect year inputs based on placeholder, aria-label, and similar attributes.
  */
-const paymentCardExpirationYearPlaceholders = Object.freeze([
+const paymentCardExpirationYearPlaceholders = /* @__PURE__ */ Object.freeze([
   'year',
   'yr',
   'yy',

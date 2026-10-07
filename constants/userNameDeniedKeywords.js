@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const userNameDeniedKeywords = Object.freeze([
+const userNameDeniedKeywords = /* @__PURE__ */ Object.freeze([
   'password',
   'pass',
   'pwd',

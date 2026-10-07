@@ -20,13 +20,14 @@ import usePopupHref from './hooks/usePopupHref';
 import useNavigationEvents from './hooks/useNavigationEvents';
 import { ScrollableRefProvider } from './context/ScrollableRefProvider';
 import { I18nProvider } from '@/partials/context/I18nContext';
-import PrimeReactLocaleProvider from '@/partials/context/PrimeReactLocaleProvider';
 import Blocked from './routes/Blocked';
 import ThisTab from './routes/ThisTab';
 import { ErrorBoundary } from 'react-error-boundary';
+import { LazyMotion, domAnimation } from 'motion/react';
+import { loadAddNewRoute, loadDetailsRoute } from './utils/itemRouteLoaders';
 
 const Connect = lazy(() => import('./routes/Connect'));
-const AddNew = lazy(() => import('./routes/AddNew'));
+const AddNew = lazy(loadAddNewRoute);
 const Settings = lazy(() => import('./routes/Settings'));
 const SettingsAbout = lazy(() => import('./routes/Settings/SettingsAbout'));
 const SettingsPreferences = lazy(() => import('./routes/Settings/SettingsPreferences'));
@@ -38,7 +39,7 @@ const SettingsCrossDomainAutofill = lazy(() => import('./routes/Settings/Setting
 const SettingsLogs = lazy(() => import('./routes/Settings/SettingsLogs'));
 const Fetch = lazy(() => import('./routes/Fetch'));
 const FetchExternal = lazy(() => import('./routes/FetchExternal'));
-const Details = lazy(() => import('./routes/Details'));
+const Details = lazy(loadDetailsRoute);
 const Share = lazy(() => import('./routes/Share'));
 const ShareResult = lazy(() => import('./routes/ShareResult'));
 const ShareImport = lazy(() => import('./routes/ShareImport'));
@@ -436,24 +437,24 @@ const PopupMain = memo(() => {
 */
 function Popup() {
   return (
-    <ErrorBoundary
-      fallbackRender={props => <ErrorFallback {...props} className={`${S.pass} ${S.passScreen} ${S.passError}`} />}
-      onError={(error, info) => {
-        CatchError(new TwoFasError(TwoFasError.internalErrors.errorFallbackRenderError, {
-          additional: { error, info }
-        }));
-      }}
-    >
-      <HashRouter>
-        <I18nProvider>
-          <PrimeReactLocaleProvider>
+    <LazyMotion features={domAnimation} strict={import.meta.env.DEV}>
+      <ErrorBoundary
+        fallbackRender={props => <ErrorFallback {...props} className={`${S.pass} ${S.passScreen} ${S.passError}`} />}
+        onError={(error, info) => {
+          CatchError(new TwoFasError(TwoFasError.internalErrors.errorFallbackRenderError, {
+            additional: { error, info }
+          }));
+        }}
+      >
+        <HashRouter>
+          <I18nProvider>
             <AuthProvider>
               <PopupMain />
             </AuthProvider>
-          </PrimeReactLocaleProvider>
-        </I18nProvider>
-      </HashRouter>
-    </ErrorBoundary>
+          </I18nProvider>
+        </HashRouter>
+      </ErrorBoundary>
+    </LazyMotion>
   );
 }
 

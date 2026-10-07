@@ -6,7 +6,7 @@
 
 // Words naming a password field, matched against a text input's name, id, placeholder,
 // aria-label and label text to recognise a password revealed by a "show password" toggle.
-const passwordKeywords = Object.freeze([
+const passwordKeywords = /* @__PURE__ */ Object.freeze([
   'password',
   'passwd',
   'passphrase',
@@ -61,7 +61,7 @@ const passwordKeywords = Object.freeze([
 
 // Abbreviations naming a password field. Matched against name and id only: in free text
 // (labels, placeholders) a word such as "pass" too often means something else ("boarding pass").
-const passwordIdentifierKeywords = Object.freeze([
+const passwordIdentifierKeywords = /* @__PURE__ */ Object.freeze([
   'pass',
   'pwd',
   'pword',
@@ -72,7 +72,7 @@ const passwordIdentifierKeywords = Object.freeze([
 
 // Words marking a field that mentions a password without being one (hint, security question,
 // one-time code, search box).
-const passwordDeniedKeywords = Object.freeze([
+const passwordDeniedKeywords = /* @__PURE__ */ Object.freeze([
   'hint',
   'question',
   'answer',
@@ -96,7 +96,7 @@ const passwordDeniedKeywords = Object.freeze([
 ]);
 
 // Autocomplete field tokens that explicitly describe something other than a password.
-const passwordDeniedAutocompleteValues = Object.freeze([
+const passwordDeniedAutocompleteValues = /* @__PURE__ */ Object.freeze([
   'username',
   'email',
   'one-time-code'

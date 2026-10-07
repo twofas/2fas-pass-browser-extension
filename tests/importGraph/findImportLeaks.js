@@ -27,7 +27,13 @@ const FORBIDDEN_PACKAGES = new Set([
   'lottie-web',
   'zustand',
   'qrcode',
-  'primereact'
+  'primereact',
+  'react-toastify',
+  'react-error-boundary',
+  'lottie-react',
+  '@splidejs/react-splide',
+  '@tanstack/react-virtual',
+  'xss'
 ]);
 
 /**

@@ -4,14 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const CONNECT_VIEWS = {
+const CONNECT_VIEWS = /* @__PURE__ */ Object.freeze({
   QrView: 'qrView',
   Progress: 'progress',
   DeviceSelect: 'deviceSelect',
   DeviceNew: 'deviceNew',
   PushSent: 'pushSent',
-};
-
-Object.freeze(CONNECT_VIEWS);
+});
 
 export default CONNECT_VIEWS;

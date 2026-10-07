@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 // camelCase - other cases are generated in paymentCardNumberSelectors.js
-const paymentCardNumberTexts = Object.freeze([
+const paymentCardNumberTexts = /* @__PURE__ */ Object.freeze([
   'cardNumber',
   'cardnumber',
   'card-Number',

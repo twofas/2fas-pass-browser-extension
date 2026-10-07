@@ -10,7 +10,7 @@ import { useParams } from 'react-router';
 import useScrollPosition from '../../hooks/useScrollPosition';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import { Login, SecureNote, PaymentCard, Wifi } from '@/models/itemModels';
-import getItemViews from '../../utils/getItemViews';
+import getAddNewView from './functions/getAddNewView';
 
 const MODEL_BY_PARAM = {
   [Login.contentType.toLowerCase()]: Login.contentType,
@@ -32,7 +32,7 @@ function AddNew(props) {
 
   const modelComponent = useMemo(() => {
     const contentType = MODEL_BY_PARAM[params.model?.toLowerCase()];
-    const AddNewView = getItemViews(contentType)?.AddNewComponent;
+    const AddNewView = getAddNewView(contentType);
 
     if (!AddNewView) {
       return null;

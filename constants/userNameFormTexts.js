@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 // camelCase - other cases are generated in userNameSelectors.js
-const userNameFormTexts = Object.freeze([
+const userNameFormTexts = /* @__PURE__ */ Object.freeze([
   'login-Form',
   'login_Form',
   'loginForm',

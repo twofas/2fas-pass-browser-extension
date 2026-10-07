@@ -13,6 +13,7 @@ import getItem from '@/partials/sessionStorage/getItem';
 import usePopupState from '../../../store/popupState/usePopupState';
 import PaymentCard from '@/models/itemModels/PaymentCard';
 import PaymentCardExpirationDate from '@/entrypoints/popup/components/PaymentCardExpirationDate';
+import focusWhenEnabled from '@/entrypoints/popup/utils/focusWhenEnabled';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import CopyIcon from '@/assets/popup-window/copy-to-clipboard.svg?react';
 import CopyTooltip from '@/entrypoints/popup/components/CopyTooltip';
@@ -128,9 +129,11 @@ function CardExpirationDate (props) {
   }, [localDecryptedExpirationDate, isDecrypting, itemInstance?.expirationDateExists, decryptExpirationDateOnDemand]);
 
   useEffect(function focusExpirationDateInputWhenEditable() {
-    if (data?.expirationDateEditable && inputRef.current) {
-      inputRef.current.focus();
+    if (!data?.expirationDateEditable) {
+      return;
     }
+
+    return focusWhenEnabled(() => inputRef.current);
   }, [data?.expirationDateEditable]);
 
   const generateErrorOverlay = () => {

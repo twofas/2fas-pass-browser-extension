@@ -4,7 +4,6 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export { default as paymentCardExpirationDateTexts } from './paymentCardExpirationDateTexts.js';
 export { default as paymentCardExpirationDateWords } from './paymentCardExpirationDateWords.js';
 export { default as paymentCardExpirationDateSelectors } from './paymentCardExpirationDateSelectors.js';
 export { default as paymentCardExpirationMonthPlaceholders } from './paymentCardExpirationMonthPlaceholders.js';

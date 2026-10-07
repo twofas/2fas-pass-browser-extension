@@ -7,7 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { copyValue, isText } from '@/partials/functions';
 import { findPasswordChangeUrl } from '../functions/checkPasswordChangeSupport';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
@@ -438,7 +438,7 @@ function Password (props) {
               {generateSecurityTypeTooltip(originalItem)}
               {generateErrorOverlay()}
             </div>
-            <motion.div
+            <m.div
               className={`${pI.passInputAdditional} ${data?.passwordEditable ? '' : pI.removeMarginTop}`}
               variants={passwordMobileVariants}
               initial="hidden"
@@ -457,9 +457,9 @@ function Password (props) {
                   </span>
                 </label>
               </div>
-            </motion.div>
+            </m.div>
             {!checkingUrl && changePasswordUrl && (
-              <motion.div
+              <m.div
                 className={pI.passInputLink}
                 variants={changePasswordVariants}
                 initial="hidden"
@@ -475,7 +475,7 @@ function Password (props) {
                   <span>{getMessage('details_change_password_in_service').replace('DOMAIN', changePasswordDomain)}</span>
                   <ExternalLinkIcon />
                 </button>
-              </motion.div>
+              </m.div>
             )}
           </div>
         )}

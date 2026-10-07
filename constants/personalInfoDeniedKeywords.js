@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const personalInfoDeniedKeywords = Object.freeze([
+const personalInfoDeniedKeywords = /* @__PURE__ */ Object.freeze([
   // --- First name ---
   'firstname',
   'first_name',

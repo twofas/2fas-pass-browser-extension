@@ -8,7 +8,7 @@ import '@splidejs/react-splide/css/core';
 import S from './Connect.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, useCallback, useRef, memo, lazy } from 'react';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useAuthActions } from '@/hooks/useAuth';
 import InfoIcon from '@/assets/popup-window/info.svg?react';
 import DeviceQrIcon from '@/assets/popup-window/device-qr.svg?react';
@@ -374,7 +374,7 @@ function Connect (props) {
     <div className={`${props.className ? props.className : ''}`}>
       <div>
         {/* QR View */}
-        <motion.section
+        <m.section
           className={S.connect}
           variants={viewVariants}
           initial="hidden"
@@ -402,10 +402,10 @@ function Connect (props) {
               <p>{getMessage('connect_description')}</p>
             </div>
           </div>
-        </motion.section>
+        </m.section>
 
         {/* Device Select */}
-        <motion.section
+        <m.section
           className={S.deviceSelect}
           variants={viewVariants}
           initial="hidden"
@@ -493,10 +493,10 @@ function Connect (props) {
               </button>
             </div>
           </div>
-        </motion.section>
+        </m.section>
 
         {/* Device New */}
-        <motion.section
+        <m.section
           className={S.deviceNew}
           variants={viewVariants}
           initial="hidden"
@@ -504,10 +504,10 @@ function Connect (props) {
           animate={connectView === CONNECT_VIEWS.DeviceNew ? 'visible' : 'hidden'}
         >
           <DeviceNew onConnect={switchToQrView} />
-        </motion.section>
+        </m.section>
 
         {/* Progress */}
-        <motion.section
+        <m.section
           className={S.progress}
           variants={viewVariants}
           initial="hidden"
@@ -532,10 +532,10 @@ function Connect (props) {
               <span>{deviceName}</span>
             </div>
           </div>
-        </motion.section>
+        </m.section>
 
         {/* Push Sent */}
-        <motion.section
+        <m.section
           className={S.push}
           variants={viewVariants}
           initial="hidden"
@@ -572,7 +572,7 @@ function Connect (props) {
               </div>
             </div>
           </div>
-        </motion.section>
+        </m.section>
       </div>
     </div>
   );

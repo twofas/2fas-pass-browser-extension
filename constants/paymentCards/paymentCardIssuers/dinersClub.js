@@ -8,7 +8,7 @@
  * Diners Club credit card name variations for form detection
  * @type {Readonly<string[]>}
  */
-const PaymentCardIssuerDinersClub = Object.freeze([
+const PaymentCardIssuerDinersClub = /* @__PURE__ */ Object.freeze([
   'Diners Club',
   'DINERS CLUB',
   'Diners',

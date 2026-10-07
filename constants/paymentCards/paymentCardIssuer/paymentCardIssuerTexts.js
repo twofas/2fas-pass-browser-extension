@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 // camelCase - other cases are generated in paymentCardIssuerSelectors.js
-const paymentCardIssuerTexts = Object.freeze([
+const paymentCardIssuerTexts = /* @__PURE__ */ Object.freeze([
   'cardType',
   'card-Type',
   'card_Type',

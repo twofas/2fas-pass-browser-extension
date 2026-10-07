@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const userNameWords = Object.freeze([
+const userNameWords = /* @__PURE__ */ Object.freeze([
   // user / username
   'user',
   'username',

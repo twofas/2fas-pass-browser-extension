@@ -8,7 +8,7 @@
  * MasterCard credit card name variations for form detection
  * @type {Readonly<string[]>}
  */
-const PaymentCardIssuerMasterCard = Object.freeze([
+const PaymentCardIssuerMasterCard = /* @__PURE__ */ Object.freeze([
   'MasterCard',
   'Mastercard',
   'Master Card',

@@ -7,7 +7,7 @@
 import S from '@/entrypoints/popup/routes/AddNew/AddNew.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useNavigate, useLocation } from 'react-router';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import getDomainInfo from '@/entrypoints/popup/routes/AddNew/functions/getDomainInfo';
@@ -313,7 +313,7 @@ function LoginAddNewView() {
               </div>
             )}
           </Field>
-          <motion.div
+          <m.div
             className={`${S.addNewAdditional} ${data?.additionalOverflow ? S.overflowH : ''}`}
             variants={additionalVariants}
             initial={data?.onMobile !== false ? 'hidden' : 'visible'}
@@ -427,7 +427,7 @@ function LoginAddNewView() {
                 </div>
               )}
             </Field>
-          </motion.div>
+          </m.div>
           <div className={S.addNewButtons}>
             <button
               type="submit"

@@ -7,7 +7,7 @@
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { Field } from 'react-final-form';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import usePopupState from '../../../store/popupState/usePopupState';
 import getItem from '@/partials/sessionStorage/getItem';
 import { useCallback, useEffect, useRef } from 'react';
@@ -93,7 +93,7 @@ function Notes () {
             </button>
           </div>
           <div className={pI.passInputBottomMotion}>
-            <motion.div
+            <m.div
               className={`${pI.passInputBottom} ${pI.note} ${data.notesEditable ? pI.noteEditable : ''}`}
               variants={notesVariants}
               initial="hidden"
@@ -116,7 +116,7 @@ function Notes () {
                 autoComplete="off"
                 autoCapitalize="off"
               />
-            </motion.div>
+            </m.div>
           </div>
         </div>
       )}

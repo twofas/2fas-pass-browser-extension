@@ -4,11 +4,9 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const REQUEST_STRING_ACTIONS = {
+const REQUEST_STRING_ACTIONS = /* @__PURE__ */ Object.freeze({
   SET: 'set',
   GENERATE: 'generate'
-};
-
-Object.freeze(REQUEST_STRING_ACTIONS);
+});
 
 export default REQUEST_STRING_ACTIONS;

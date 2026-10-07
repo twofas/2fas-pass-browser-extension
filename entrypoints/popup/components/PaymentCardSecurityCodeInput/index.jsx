@@ -10,10 +10,11 @@ import getSecurityCodeMask from './getSecurityCodeMask';
 import isSecurityCodeInvalid from './validateSecurityCode';
 import isSecurityCodeTooLong from './isSecurityCodeTooLong';
 import { useI18n } from '@/partials/context/I18nContext';
+import { getLoadedInputMask, loadInputMask } from '@/partials/primereact/loadInputMask';
 
 /**
 * PaymentCardSecurityCodeInput component with dynamic mask based on card type.
-* Lazy loads PrimeReact InputMask for optimized bundle size.
+* Lazy loads PrimeReact InputMask for optimized bundle size, rendering it at once when another field loaded it already.
 * @param {Object} props - Component props.
 * @param {string} props.value - The security code value.
 * @param {Function} props.onChange - Change handler function.
@@ -28,10 +29,10 @@ import { useI18n } from '@/partials/context/I18nContext';
 */
 const PaymentCardSecurityCodeInput = ({ value, onChange, id, cardNumber, securityType, sifExists, onTooLongChange, ref, ...inputProps }) => {
   const { getMessage } = useI18n();
-  const [InputMask, setInputMask] = useState(null);
+  const [InputMask, setInputMask] = useState(getLoadedInputMask);
+  const [inputMaskUnavailable, setInputMaskUnavailable] = useState(false);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
-  const loadedRef = useRef(false);
   const { handleMouseDown, handleFocus, handleClick, handleDoubleClick, handleKeyDown, handleKeyUp, handleSelect } = useInputMaskFocus();
 
   const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
@@ -53,16 +54,19 @@ const PaymentCardSecurityCodeInput = ({ value, onChange, id, cardNumber, securit
   );
 
   useEffect(function lazyLoadInputMaskLibrary() {
-    if (loadedRef.current) {
+    if (InputMask) {
       return;
     }
 
-    loadedRef.current = true;
-
-    import('primereact/inputmask').then(module => {
-      setInputMask(() => module.InputMask);
-    });
-  }, []);
+    loadInputMask()
+      .then(LoadedInputMask => {
+        setInputMask(() => LoadedInputMask);
+      })
+      .catch(e => {
+        setInputMaskUnavailable(true);
+        CatchError(e);
+      });
+  }, [InputMask]);
 
   useEffect(function notifySecurityCodeTooLong() {
     if (onTooLongChange) {
@@ -109,7 +113,7 @@ const PaymentCardSecurityCodeInput = ({ value, onChange, id, cardNumber, securit
         placeholder={getMessage('placeholder_payment_card_security_code')}
         id={id}
         onChange={e => onChange(e)}
-        disabled
+        disabled={inputMaskUnavailable ? inputProps.disabled : true}
       />
     );
   }

@@ -8,7 +8,7 @@
  * Internationalized placeholder keywords for payment card expiration month fields.
  * Used to detect month inputs based on placeholder, aria-label, and similar attributes.
  */
-const paymentCardExpirationMonthPlaceholders = Object.freeze([
+const paymentCardExpirationMonthPlaceholders = /* @__PURE__ */ Object.freeze([
   'month',
   'mon',
   'mm',

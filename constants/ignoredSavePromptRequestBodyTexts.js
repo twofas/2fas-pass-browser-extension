@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const ignoredSavePromptRequestBodyTexts = Object.freeze([
+const ignoredSavePromptRequestBodyTexts = /* @__PURE__ */ Object.freeze([
   'visitorId',
   'customerId',
   'publisher',

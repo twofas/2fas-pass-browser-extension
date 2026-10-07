@@ -4,13 +4,11 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const SOCKET_PATHS = {
+const SOCKET_PATHS = /* @__PURE__ */ Object.freeze({
   CONNECT: {
     QR: 'connect_qr',
     PUSH: 'connect_push'
   }
-};
-
-Object.freeze(SOCKET_PATHS);
+});
 
 export default SOCKET_PATHS;

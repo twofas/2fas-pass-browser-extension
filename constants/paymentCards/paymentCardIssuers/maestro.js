@@ -8,7 +8,7 @@
  * Maestro debit card name variations for form detection
  * @type {Readonly<string[]>}
  */
-const PaymentCardIssuerMaestro = Object.freeze([
+const PaymentCardIssuerMaestro = /* @__PURE__ */ Object.freeze([
   'Maestro',
   'MAESTRO',
   'maestro',
