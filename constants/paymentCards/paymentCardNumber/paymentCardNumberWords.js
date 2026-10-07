@@ -9,46 +9,49 @@
 * aria-labelledby text, placeholder or title. Matched by partials/inputFunctions/paymentCardLabels.js:
 * words of up to 6 characters must stand alone, longer ones must start a word (an inflected ending is
 * allowed), CJK/Hangul phrases match anywhere. Only phrases scoped to the card are listed, never a bare
-* "number" or "card". Languages are limited to the ones covered by Chromium's credit card autofill patterns.
+* "number" or "card". Languages: every language of the extension's i18n (English, Polish, German — enforced by
+* paymentCardWords.test.js) plus the ones covered by Chromium's credit card autofill patterns.
 */
 const paymentCardNumberWords = /* @__PURE__ */ Object.freeze([
-  'card number', // English
-  'card num', // English
-  'card no.', // English
-  'card #', // English
-  'cc number', // English
-  'cc #', // English
-  'kartennummer', // German
-  'kreditkartennummer', // German
-  'karten-nr', // German
-  'kartennr', // German
-  'número de tarjeta', // Spanish
-  'numero de tarjeta', // Spanish
-  'número de la tarjeta', // Spanish
-  'numero de la tarjeta', // Spanish
-  'numéro de carte', // French
-  'numero de carte', // French
-  'numéro de la carte', // French
-  'numero de la carte', // French
-  'n° de carte', // French
-  'numero carta', // Italian
-  'numero della carta', // Italian
-  'numero di carta', // Italian
-  'número do cartão', // Portuguese
-  'numero do cartao', // Portuguese
-  'número de cartão', // Portuguese
-  'numero de cartao', // Portuguese
-  'номер карты', // Russian
-  'номер банковской карты', // Russian
-  'номер кредитной карты', // Russian
-  'カード番号', // Japanese
-  '卡号', // Chinese (Simplified)
-  '卡號', // Chinese (Traditional)
-  '카드 번호', // Korean
-  '카드번호', // Korean
-  'nomor kartu', // Indonesian
-  'no. kartu', // Indonesian
-  'no kartu' // Indonesian
+  'card number',
+  'card num',
+  'card no.',
+  'card #',
+  'cc number',
+  'cc #',
+  'kartennummer',
+  'kreditkartennummer',
+  'karten-nr',
+  'kartennr',
+  'numer karty',
+  'nr karty',
+  'número de tarjeta',
+  'numero de tarjeta',
+  'número de la tarjeta',
+  'numero de la tarjeta',
+  'numéro de carte',
+  'numero de carte',
+  'numéro de la carte',
+  'numero de la carte',
+  'n° de carte',
+  'numero carta',
+  'numero della carta',
+  'numero di carta',
+  'número do cartão',
+  'numero do cartao',
+  'número de cartão',
+  'numero de cartao',
+  'номер карты',
+  'номер банковской карты',
+  'номер кредитной карты',
+  'カード番号',
+  '卡号',
+  '卡號',
+  '카드 번호',
+  '카드번호',
+  'nomor kartu',
+  'no. kartu',
+  'no kartu'
 ]);
 
 export default paymentCardNumberWords;

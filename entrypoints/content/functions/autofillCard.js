@@ -9,6 +9,7 @@ import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPayment
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
 import getPaymentCardIssuerInputs from '@/partials/inputFunctions/getPaymentCardIssuerInputs';
+import { createPaymentCardLabelPass } from '@/partials/inputFunctions/paymentCardLabels';
 import trimString from '@/partials/functions/trimString';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import getShadowRoots from './autofillFunctions/getShadowRoots';
@@ -328,11 +329,12 @@ export const isExpirationDateFilled = expirationResults => {
 */
 const autofillCard = async request => {
   const shadowRoots = getShadowRoots();
-  const cardNumberInputs = getPaymentCardNumberInputs(shadowRoots);
+  const labelPass = createPaymentCardLabelPass();
+  const cardNumberInputs = getPaymentCardNumberInputs(shadowRoots, labelPass);
   const cardholderNameInputs = getPaymentCardholderNameInputs(shadowRoots);
-  const expirationDateInputs = getPaymentCardExpirationDateInputs(shadowRoots);
-  const securityCodeInputs = getPaymentCardSecurityCodeInputs(shadowRoots);
-  const cardIssuerInputs = getPaymentCardIssuerInputs(shadowRoots);
+  const expirationDateInputs = getPaymentCardExpirationDateInputs(shadowRoots, labelPass);
+  const securityCodeInputs = getPaymentCardSecurityCodeInputs(shadowRoots, labelPass);
+  const cardIssuerInputs = getPaymentCardIssuerInputs(shadowRoots, labelPass);
 
   const cardholderName = trimString(request.cardholderName);
   const cardIssuer = trimString(request.cardIssuer);

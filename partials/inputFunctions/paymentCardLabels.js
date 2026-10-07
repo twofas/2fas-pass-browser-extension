@@ -30,6 +30,13 @@ const NOT_FOLLOWED_BY_WORD = '(?![\\p{L}\\p{N}])';
 const paymentContainerSelector = '[data-testid*="payment" i], [data-testid*="credit" i], [data-testid*="card" i], ' +
   '[class*="payment" i], [class*="credit" i], [class*="checkout" i], [class*="billing" i]';
 
+// Label-found fields get a stricter context: no "card" test ids (login and product "cards"), no container
+// further than a few levels up, and never <body>/<html> (e.g. body.woocommerce-checkout wraps every field).
+const strictPaymentContainerSelector = '[data-testid*="payment" i], [data-testid*="credit" i], ' +
+  '[class*="payment" i], [class*="credit" i], [class*="checkout" i], [class*="billing" i]';
+const PAYMENT_CONTAINER_MAX_DEPTH = 6;
+const LABEL_PAIR_MAX_DEPTH = 4;
+
 const cardFieldSelector = 'input[autocomplete="cc-number"], input[autocomplete="cc-exp"], ' +
   'input[autocomplete="cc-exp-month"], input[autocomplete="cc-exp-year"], input[autocomplete="cc-csc"]';
 
@@ -38,12 +45,13 @@ const escapeRegex = text => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const hasDeniedParentContext = createParentContextChecker(paymentCardParentContextDeniedKeywords, 6);
 
 /**
-* Normalizes a label text for matching: lowercase, every whitespace run (also non-breaking) collapsed to
-* one space, typographic apostrophes unified to "'".
+* Normalizes a label text for matching: NFC, lowercase, every whitespace run (also non-breaking) collapsed
+* to one space, typographic apostrophes unified to "'".
 * @param {string|null|undefined} text - The raw text.
 * @return {string} The normalized text.
 */
 const normalizeLabelText = text => String(text || '')
+  .normalize('NFC')
   .toLowerCase()
   .replace(/[‘’ʼ`´]/g, '\'')
   .replace(/\s+/g, ' ')
@@ -192,8 +200,90 @@ const isInPaymentContext = input => {
 };
 
 /**
-* Checks whether the field's form (or its document/shadow root when it has no form) holds another
-* visible field whose label names a DIFFERENT card field, e.g. "Card number" next to "Expiry date".
+* Checks whether a node is the document body or root element.
+* @param {Node} node - The node to check.
+* @return {boolean} True for <body> and <html>.
+*/
+const isDocumentLevel = node => node === document.body || node === document.documentElement;
+
+/**
+* Finds the closest ancestor matching a selector within a few levels, never crossing <body>/<html>.
+* @param {HTMLElement} element - The starting element.
+* @param {string} selector - The CSS selector.
+* @param {number} maxDepth - How many ancestors to inspect.
+* @return {HTMLElement|null} The matching ancestor, or null.
+*/
+const findAncestorWithin = (element, selector, maxDepth) => {
+  let current = element.parentElement;
+
+  for (let depth = 0; current && depth < maxDepth; depth++) {
+    if (isDocumentLevel(current)) {
+      return null;
+    }
+
+    if (current.matches(selector)) {
+      return current;
+    }
+
+    current = current.parentElement;
+  }
+
+  return null;
+};
+
+/**
+* Strict payment context for fields found by their label: an autocomplete card field in the same form or
+* close payment container, or a payment container a few levels up (never <body>/<html>, no "card" test ids).
+* @param {HTMLElement} element - The input or select element to check.
+* @return {boolean} True if the field is in a payment context.
+*/
+const isInStrictPaymentContext = element => {
+  const container = findAncestorWithin(element, strictPaymentContainerSelector, PAYMENT_CONTAINER_MAX_DEPTH);
+  const scope = element.closest('form') || container;
+
+  if (scope && scope.querySelector(cardFieldSelector) !== null) {
+    return true;
+  }
+
+  return container !== null;
+};
+
+/**
+* Returns the scope in which two label-found card fields count as one form: their form, otherwise the highest
+* ancestor within a few levels (never <body>/<html>), or the shadow root of a component.
+* @param {HTMLElement} element - The field.
+* @return {Element|ShadowRoot|null} The scope, or null when the field sits right under <body>.
+*/
+const getLabelPairingScope = element => {
+  const form = element.closest('form');
+
+  if (form) {
+    return form;
+  }
+
+  let scope = null;
+  let current = element.parentElement;
+
+  for (let depth = 0; current && depth < LABEL_PAIR_MAX_DEPTH && !isDocumentLevel(current); depth++) {
+    scope = current;
+    current = current.parentElement;
+  }
+
+  if (!current) {
+    const rootNode = element.getRootNode();
+
+    if (typeof ShadowRoot !== 'undefined' && rootNode instanceof ShadowRoot) {
+      return rootNode;
+    }
+  }
+
+  return scope;
+};
+
+/**
+* Checks whether a close scope (see getLabelPairingScope) holds another visible field whose label names a
+* DIFFERENT card field, e.g. "Card number" next to "Expiry date". Both fields must see each other, so two
+* fields in distant sections of a form-less page never vouch for each other.
 * @param {HTMLElement} element - The field found by its label.
 * @param {string} field - The card field the element was classified as.
 * @param {Map<HTMLElement, string>} labelledElements - Every element of the root classified by its label.
@@ -201,16 +291,63 @@ const isInPaymentContext = input => {
 * @return {boolean} True if a second labelled card field shares the scope.
 */
 const hasOtherLabelledCardField = (element, field, labelledElements, isElementVisible) => {
-  const scope = element.closest('form') || element.getRootNode();
+  const scope = getLabelPairingScope(element);
+
+  if (!scope) {
+    return false;
+  }
 
   for (const [other, otherField] of labelledElements) {
-    if (other !== element && otherField !== field && scope.contains(other) && isElementVisible(other)) {
+    if (other === element || otherField === field || !scope.contains(other) || !isElementVisible(other)) {
+      continue;
+    }
+
+    const otherScope = getLabelPairingScope(other);
+
+    if (otherScope && otherScope.contains(element)) {
       return true;
     }
   }
 
   return false;
 };
+
+/**
+* Returns the scope used to decide whether the selectors already found a card field: the field's form, or
+* its document/shadow root.
+* @param {HTMLElement} element - The field.
+* @return {Element|Document|ShadowRoot} The scope.
+*/
+const getCardFieldScope = element => element.closest('form') || element.getRootNode();
+
+/**
+* Keeps label-found fields only where the identifier selectors found nothing: a label is a fallback for
+* unnamed fields, never a second source next to a real card field.
+* @param {HTMLElement[]} labelElements - Fields found by their label.
+* @param {HTMLElement[]} selectorElements - Fields found by the selectors.
+* @param {(selectorElement: HTMLElement, labelElement: HTMLElement) => boolean} [covers] - Whether a selector field covers the label field.
+* @return {HTMLElement[]} The label-found fields to keep.
+*/
+const withoutSelectorCoveredScopes = (labelElements, selectorElements, covers = () => true) => labelElements.filter(labelElement => {
+  if (selectorElements.includes(labelElement)) {
+    return false;
+  }
+
+  const scope = getCardFieldScope(labelElement);
+
+  return !selectorElements.some(selectorElement => covers(selectorElement, labelElement) && scope.contains(selectorElement));
+});
+
+/**
+* Creates the cache of one detection pass: the label classification of every candidate (per document/shadow
+* root) and their visibility, shared by the card field getters called together (e.g. by autofillCard).
+* Create a new pass for every detection; the DOM may change between passes.
+* @return {{labelledByRoot: Map, visibility: Map}} The pass cache.
+*/
+const createPaymentCardLabelPass = () => ({
+  labelledByRoot: new Map(),
+  visibility: new Map()
+});
 
 const inputCandidateSelector = () => `input${ignoredTypes({ allowUsernameTypes: true })}`;
 const selectCandidateSelector = 'select:not([disabled])';
@@ -225,14 +362,15 @@ const fieldCandidateSelectors = {
 /**
 * Finds the payment card fields of one kind by the words of their labels, as the username field is found
 * by userNameWords. A field counts only when it is visible, its label names exactly that card field and no
-* denied phrase, no ancestor marks a gift card/voucher/loyalty section, and it sits in a payment context:
-* a payment container, a form with an autocomplete card field, or next to a field labelled as another card
-* field.
+* denied phrase, no ancestor marks a gift card/voucher/loyalty section, and it sits in a strict payment
+* context: a close payment container, a form with an autocomplete card field, or close to a field labelled as
+* another card field.
 * @param {'number'|'securityCode'|'expiration'|'issuer'} field - The card field to look for.
 * @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
+* @param {Object|null} [labelPass] - Cache from createPaymentCardLabelPass() shared by the getters of one detection pass.
 * @return {HTMLElement[]} The matching, visible, unique elements.
 */
-const getPaymentCardElementsByLabel = (field, shadowRoots = null) => {
+const getPaymentCardElementsByLabel = (field, shadowRoots = null, labelPass = null) => {
   const getFieldSelector = fieldCandidateSelectors[field];
 
   if (!getFieldSelector) {
@@ -242,7 +380,8 @@ const getPaymentCardElementsByLabel = (field, shadowRoots = null) => {
   const fieldSelector = getFieldSelector();
   const allCandidatesSelector = `${inputCandidateSelector()}, ${selectCandidateSelector}`;
   const resolvedShadowRoots = Array.isArray(shadowRoots) ? shadowRoots : getShadowRoots();
-  const visibility = new Map();
+  const pass = labelPass || createPaymentCardLabelPass();
+  const { visibility } = pass;
   const isElementVisible = element => {
     if (!visibility.has(element)) {
       visibility.set(element, isVisible(element));
@@ -253,15 +392,21 @@ const getPaymentCardElementsByLabel = (field, shadowRoots = null) => {
   const found = [];
 
   [document, ...resolvedShadowRoots].forEach(root => {
-    const labelledElements = new Map();
+    let labelledElements = pass.labelledByRoot.get(root);
 
-    root.querySelectorAll(allCandidatesSelector).forEach(element => {
-      const elementField = classifyPaymentCardLabel(element);
+    if (!labelledElements) {
+      labelledElements = new Map();
 
-      if (elementField) {
-        labelledElements.set(element, elementField);
-      }
-    });
+      root.querySelectorAll(allCandidatesSelector).forEach(element => {
+        const elementField = classifyPaymentCardLabel(element);
+
+        if (elementField) {
+          labelledElements.set(element, elementField);
+        }
+      });
+
+      pass.labelledByRoot.set(root, labelledElements);
+    }
 
     labelledElements.forEach((elementField, element) => {
       if (elementField !== field || !element.matches(fieldSelector) || !isElementVisible(element)) {
@@ -272,7 +417,7 @@ const getPaymentCardElementsByLabel = (field, shadowRoots = null) => {
         return;
       }
 
-      if (isInPaymentContext(element) || hasOtherLabelledCardField(element, elementField, labelledElements, isElementVisible)) {
+      if (isInStrictPaymentContext(element) || hasOtherLabelledCardField(element, elementField, labelledElements, isElementVisible)) {
         found.push(element);
       }
     });
@@ -289,5 +434,8 @@ export {
   classifyPaymentCardLabel,
   isInPaymentContext,
   hasDeniedParentContext,
+  getCardFieldScope,
+  withoutSelectorCoveredScopes,
+  createPaymentCardLabelPass,
   getPaymentCardElementsByLabel
 };

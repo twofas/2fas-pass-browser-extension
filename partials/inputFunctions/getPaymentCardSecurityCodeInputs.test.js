@@ -264,4 +264,26 @@ describe('getPaymentCardSecurityCodeInputs', () => {
       expect(getPaymentCardSecurityCodeInputs()).toEqual([]);
     });
   });
+
+  describe('label detection is only a fallback', () => {
+    it('ignores a labelled field when the selectors already found the security code in the same form', () => {
+      document.body.innerHTML = `
+        <form>
+          <input type="text" name="cvc" id="real" />
+          <label for="other">Security code</label><input type="text" id="other" name="field_9" />
+        </form>
+      `;
+
+      expect(getPaymentCardSecurityCodeInputs().map(input => input.id)).toEqual(['real']);
+    });
+
+    it('does not fill an e-mailed two-factor code on a form-less page that also shows a card number', () => {
+      document.body.innerHTML = `
+        <div><label for="n">Card number</label><input type="text" id="n" name="a" /></div>
+        <div class="account"><label for="s">Enter the security code we emailed you</label><input type="text" id="s" name="b" /></div>
+      `;
+
+      expect(getPaymentCardSecurityCodeInputs()).toEqual([]);
+    });
+  });
 });

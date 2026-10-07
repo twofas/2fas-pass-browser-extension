@@ -7,61 +7,67 @@
 /**
 * Lowercase phrases that name the CARDHOLDER (name on card) field in its visible label, aria-label,
 * placeholder or title. Used by partials/inputFunctions/getPaymentCardholderNameInputs.js. Only phrases
-* scoped to the card are listed, never a bare "name". Languages are limited to the ones covered by
-* Chromium's credit card autofill patterns; the Polish and Dutch phrases predate that rule and are kept.
+* scoped to the card are listed, never a bare "name". Languages: every language of the extension's i18n (English,
+* Polish, German — enforced by paymentCardWords.test.js) plus the ones covered by Chromium's credit card autofill
+* patterns; the Dutch phrases predate that rule and are kept.
 */
 const paymentCardholderNameWords = /* @__PURE__ */ Object.freeze([
-  'name on card', // English
-  'name on the card', // English
-  'full name on card', // English
-  'cardholder name', // English
-  'cardholder', // English
-  'card holder', // English
-  'card owner', // English
-  'card name', // English
-  'name auf der karte', // German
-  'karteninhaber', // German
-  'nombre en la tarjeta', // Spanish
-  'nombre en tarjeta', // Spanish
-  'nombre del titular', // Spanish
-  'titular de la tarjeta', // Spanish
-  'nom sur la carte', // French
-  'nom du titulaire', // French
-  'titulaire de la carte', // French
-  'porteur de la carte', // French
-  'nome sulla carta', // Italian
-  'titolare della carta', // Italian
-  'titolare carta', // Italian
-  'intestatario della carta', // Italian
-  'nome no cartão', // Portuguese
-  'nome do titular', // Portuguese
-  'nome impresso no cartão', // Portuguese
-  'titular do cartão', // Portuguese
-  'имя на карте', // Russian
-  'имя владельца карты', // Russian
-  'владелец карты', // Russian
-  'держатель карты', // Russian
-  'имя держателя карты', // Russian
-  'カード名義', // Japanese
-  'カード所有者', // Japanese
-  'カード上の名前', // Japanese
-  '持卡人', // Chinese
-  '卡片姓名', // Chinese
-  '卡片上的姓名', // Chinese (Simplified)
-  '信用卡上的姓名', // Chinese (Traditional)
-  '开户名', // Chinese (Simplified)
-  '카드상의 이름', // Korean
-  '카드 소유자', // Korean
-  '카드소유자', // Korean
-  'nama pada kartu', // Indonesian
-  'nama di kartu', // Indonesian
-  'nama pemegang kartu', // Indonesian
-  'imię na karcie', // Polish
-  'imię i nazwisko na karcie', // Polish
-  'nazwa na karcie', // Polish
-  'posiadacz karty', // Polish
-  'naam op kaart', // Dutch
-  'kaarthouder' // Dutch
+  'name on card',
+  'name on the card',
+  'full name on card',
+  'cardholder name',
+  'cardholder',
+  'card holder',
+  'card owner',
+  'card name',
+  'name auf der karte',
+  'karteninhaber',
+  'kartenbesitzer',
+  'nombre en la tarjeta',
+  'nombre en tarjeta',
+  'nombre del titular',
+  'titular de la tarjeta',
+  'nom sur la carte',
+  'nom du titulaire',
+  'titulaire de la carte',
+  'porteur de la carte',
+  'nome sulla carta',
+  'titolare della carta',
+  'titolare carta',
+  'intestatario della carta',
+  'nome no cartão',
+  'nome do titular',
+  'nome impresso no cartão',
+  'titular do cartão',
+  'имя на карте',
+  'имя владельца карты',
+  'владелец карты',
+  'держатель карты',
+  'имя держателя карты',
+  'カード名義',
+  'カード所有者',
+  'カード上の名前',
+  '持卡人',
+  '卡片姓名',
+  '卡片上的姓名',
+  '信用卡上的姓名',
+  '开户名',
+  '카드상의 이름',
+  '카드 소유자',
+  '카드소유자',
+  'nama pada kartu',
+  'nama di kartu',
+  'nama pemegang kartu',
+  'imię na karcie',
+  'imie na karcie',
+  'imię i nazwisko na karcie',
+  'nazwa na karcie',
+  'posiadacz karty',
+  'posiadacza karty',
+  'właściciel karty',
+  'właściciela karty',
+  'naam op kaart',
+  'kaarthouder'
 ]);
 
 export default paymentCardholderNameWords;

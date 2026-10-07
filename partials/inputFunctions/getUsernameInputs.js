@@ -48,7 +48,7 @@ const getUserNameSelector = () => {
 * @return {boolean} True if the input should be kept, false otherwise.
 */
 const filterDeniedKeywords = input => {
-  if (isRevealedPasswordInput(input) || isNotCredentialField(input)) {
+  if (isRevealedPasswordInput(input) || isNotCredentialField(input, { username: true })) {
     return false;
   }
 
@@ -187,7 +187,7 @@ const getUsernameInputs = (passwordForms = null, shadowRoots = null) => {
       }
 
       const candidates = Array.from(form.querySelectorAll(tryInputSelector))
-        .filter(input => isVisible(input) && !isRevealedPasswordInput(input) && !isNotCredentialField(input));
+        .filter(input => isVisible(input) && !isRevealedPasswordInput(input) && !isNotCredentialField(input, { username: true }));
 
       if (candidates.length === 0) {
         return;

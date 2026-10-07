@@ -10,53 +10,53 @@ const passwordKeywords = Object.freeze([
   'password',
   'passwd',
   'passphrase',
-  'haslo', // Polish
-  'hasło', // Polish
-  'passwort', // German
-  'kennwort', // German
-  'contrasena', // Spanish
-  'contraseña', // Spanish
-  'contrasenya', // Catalan
-  'senha', // Portuguese
-  'motdepasse', // French
-  'mot de passe', // French
-  'wachtwoord', // Dutch
-  'losenord', // Swedish
-  'lösenord', // Swedish
-  'adgangskode', // Danish
-  'passord', // Norwegian
-  'salasana', // Finnish
-  'parool', // Estonian
-  'heslo', // Czech, Slovak
-  'jelszo', // Hungarian
-  'jelszó', // Hungarian
-  'geslo', // Slovenian
-  'lozinka', // Croatian, Bosnian, Serbian
-  'slaptazodis', // Lithuanian
-  'slaptažodis', // Lithuanian
-  'sifre', // Turkish
-  'şifre', // Turkish
-  'пароль', // Russian, Ukrainian, Belarusian
-  'парола', // Bulgarian
-  'лозинка', // Serbian, Macedonian
-  'κωδικός πρόσβασης', // Greek
-  'סיסמה', // Hebrew
-  'סיסמא', // Hebrew
-  'كلمة المرور', // Arabic
-  'كلمة السر', // Arabic
-  'رمز عبور', // Persian
-  'گذرواژه', // Persian
-  'पासवर्ड', // Hindi
-  'パスワード', // Japanese
-  '密码', // Chinese Simplified
-  '密碼', // Chinese Traditional
-  '비밀번호', // Korean
-  'รหัสผ่าน', // Thai
-  'mật khẩu', // Vietnamese
-  'mat khau', // Vietnamese
-  'kata sandi', // Indonesian
-  'katasandi', // Indonesian
-  'kata laluan' // Malay
+  'haslo',
+  'hasło',
+  'passwort',
+  'kennwort',
+  'contrasena',
+  'contraseña',
+  'contrasenya',
+  'senha',
+  'motdepasse',
+  'mot de passe',
+  'wachtwoord',
+  'losenord',
+  'lösenord',
+  'adgangskode',
+  'passord',
+  'salasana',
+  'parool',
+  'heslo',
+  'jelszo',
+  'jelszó',
+  'geslo',
+  'lozinka',
+  'slaptazodis',
+  'slaptažodis',
+  'sifre',
+  'şifre',
+  'пароль',
+  'парола',
+  'лозинка',
+  'κωδικός πρόσβασης',
+  'סיסמה',
+  'סיסמא',
+  'كلمة المرور',
+  'كلمة السر',
+  'رمز عبور',
+  'گذرواژه',
+  'पासवर्ड',
+  'パスワード',
+  '密码',
+  '密碼',
+  '비밀번호',
+  'รหัสผ่าน',
+  'mật khẩu',
+  'mat khau',
+  'kata sandi',
+  'katasandi',
+  'kata laluan'
 ]);
 
 // Abbreviations naming a password field. Matched against name and id only: in free text

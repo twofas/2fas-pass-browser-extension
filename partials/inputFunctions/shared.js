@@ -220,7 +220,7 @@ const resolveLabelledByText = (input, idRefs) => {
 
       const referenced = typeof rootNode.getElementById === 'function'
         ? rootNode.getElementById(id)
-        : rootNode.querySelector(`[id="${id}"]`);
+        : rootNode.querySelector(`[id="${CSS.escape(id)}"]`);
 
       return referenced ? (referenced.textContent || '') : '';
     })

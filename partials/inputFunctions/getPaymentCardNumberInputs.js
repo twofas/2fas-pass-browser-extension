@@ -8,7 +8,7 @@ import { paymentCardNumberSelectors } from '@/constants';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import { containsDeniedWord, filterDeniedKeywords, collectInputs } from './shared';
-import { getPaymentCardElementsByLabel } from './paymentCardLabels';
+import { getPaymentCardElementsByLabel, withoutSelectorCoveredScopes } from './paymentCardLabels';
 
 const conflictingAutocompleteValues = [
   'cc-name',
@@ -176,22 +176,25 @@ const filterOtherCardFields = input => {
 
 /**
 * Gets the payment card number input elements from the document, including those inside shadow DOMs.
-* Fields are found by their identifiers (selectors) and, inside a payment context, by the words of their label.
+* Fields are found by their identifiers (selectors) and, inside a payment context where the selectors found
+* none, by the words of their label.
 * @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
+* @param {Object|null} [labelPass] - Label classification cache shared by the getters of one detection pass (createPaymentCardLabelPass()).
 * @return {HTMLInputElement[]} The array of payment card number input elements.
 */
-const getPaymentCardNumberInputs = (shadowRoots = null) => {
+const getPaymentCardNumberInputs = (shadowRoots = null, labelPass = null) => {
   const cardNumberSelector = paymentCardNumberSelectors().join(', ');
   const resolvedShadowRoots = Array.isArray(shadowRoots) ? shadowRoots : getShadowRoots();
-  const visibleUniqueInputs = [
-    ...collectInputs(cardNumberSelector, resolvedShadowRoots),
-    ...getPaymentCardElementsByLabel('number', resolvedShadowRoots)
-  ].filter(uniqueElementOnly);
-  const afterConflicting = visibleUniqueInputs.filter(filterConflictingAttributes);
-  const afterDenied = afterConflicting.filter(filterDeniedKeywords);
-  const result = afterDenied.filter(filterOtherCardFields);
+  const filterCardNumberInputs = inputs => inputs
+    .filter(filterConflictingAttributes)
+    .filter(filterDeniedKeywords)
+    .filter(filterOtherCardFields);
+  const selectorInputs = filterCardNumberInputs(collectInputs(cardNumberSelector, resolvedShadowRoots));
+  const labelInputs = filterCardNumberInputs(
+    withoutSelectorCoveredScopes(getPaymentCardElementsByLabel('number', resolvedShadowRoots, labelPass), selectorInputs)
+  );
 
-  return result;
+  return [...selectorInputs, ...labelInputs].filter(uniqueElementOnly);
 };
 
 export default getPaymentCardNumberInputs;

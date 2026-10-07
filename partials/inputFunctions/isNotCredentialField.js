@@ -28,14 +28,17 @@ const socialSecurityTokens = ['ssn'];
 const socialSecurityPattern = /social.?security/;
 
 const cardSecurityCodeTokens = ['cvv', 'cvc', 'csc', 'cvn', 'cvd', 'ccv', 'cid', 'cccid'];
+// "cid" is also a customer ID login, so it disqualifies password fields only.
+const usernameCardSecurityCodeTokens = cardSecurityCodeTokens.filter(token => token !== 'cid');
 const cardSecurityCodePattern = /card.?(?:identification|verification|code|pin)|security.?(?:code|value)|c-v-v/;
 
 /**
 * Checks whether an identifier names a one-time code, a Social Security Number or a card security code.
 * @param {string} value - The name or id.
+* @param {string[]} securityCodeTokens - The card security code tokens to match.
 * @return {boolean} True if the identifier names a non-credential field.
 */
-const isNonCredentialIdentifier = value => {
+const isNonCredentialIdentifier = (value, securityCodeTokens) => {
   const lowerValue = String(value || '').toLowerCase();
 
   if (!lowerValue) {
@@ -45,7 +48,7 @@ const isNonCredentialIdentifier = value => {
   return oneTimeCodePatterns.some(pattern => pattern.test(lowerValue)) ||
     containsDeniedWord(value, socialSecurityTokens) ||
     socialSecurityPattern.test(lowerValue) ||
-    containsDeniedWord(value, cardSecurityCodeTokens) ||
+    containsDeniedWord(value, securityCodeTokens) ||
     cardSecurityCodePattern.test(lowerValue);
 };
 
@@ -56,9 +59,11 @@ const isNonCredentialIdentifier = value => {
 * "verification" does not disqualify a field (password and e-mail confirmation fields stay credentials), and
 * short tokens such as "ssn" or "cvv" must stand alone ("className" is not an SSN field).
 * @param {HTMLElement} input - The input element to check.
+* @param {Object} [options] - Check options.
+* @param {boolean} [options.username=false] - Checking a username candidate: a field named "cid" (customer ID) is allowed.
 * @return {boolean} True if the field must not be treated as a username or password field.
 */
-const isNotCredentialField = input => {
+const isNotCredentialField = (input, { username = false } = {}) => {
   const autocomplete = (input.getAttribute('autocomplete') || '').toLowerCase().trim();
   const fieldToken = autocomplete ? autocomplete.split(/\s+/).pop() : '';
 
@@ -66,7 +71,10 @@ const isNotCredentialField = input => {
     return true;
   }
 
-  return isNonCredentialIdentifier(input.name || input.getAttribute('name')) || isNonCredentialIdentifier(input.id);
+  const securityCodeTokens = username ? usernameCardSecurityCodeTokens : cardSecurityCodeTokens;
+
+  return isNonCredentialIdentifier(input.name || input.getAttribute('name'), securityCodeTokens) ||
+    isNonCredentialIdentifier(input.id, securityCodeTokens);
 };
 
 export default isNotCredentialField;

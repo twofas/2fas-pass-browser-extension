@@ -253,4 +253,28 @@ describe('getPaymentCardNumberInputs', () => {
       expect(getPaymentCardNumberInputs()).toHaveLength(1);
     });
   });
+
+  describe('label detection is only a fallback', () => {
+    it('ignores a labelled field when the selectors already found the card number in the same form', () => {
+      document.body.innerHTML = `
+        <form>
+          <input type="text" autocomplete="cc-number" id="real" />
+          <label for="other">Card number</label><input type="text" id="other" name="field_9" />
+        </form>
+      `;
+
+      expect(getPaymentCardNumberInputs().map(input => input.id)).toEqual(['real']);
+    });
+
+    it('does not fill a rewards card number on a checkout page', () => {
+      document.body.className = 'woocommerce-checkout';
+      document.body.innerHTML = `
+        <form><label for="r">Rewards card number</label><input type="text" id="r" name="a" /></form>
+        <form><label for="e">Expiry date</label><input type="text" id="e" name="b" /></form>
+      `;
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+      document.body.className = '';
+    });
+  });
 });

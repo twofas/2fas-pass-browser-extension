@@ -9,50 +9,55 @@
 * visible label, aria-label, aria-labelledby text, placeholder or title. Matched by
 * partials/inputFunctions/paymentCardLabels.js: words of up to 6 characters must stand alone, longer ones
 * must start a word (an inflected ending is allowed), CJK/Hangul phrases match anywhere. A bare "date",
-* "month" or "year" is never listed. Languages are limited to the ones covered by Chromium's credit card
-* autofill patterns.
+* "month" or "year" is never listed. Languages: every language of the extension's i18n (English, Polish, German —
+* enforced by paymentCardWords.test.js) plus the ones covered by Chromium's credit card autofill patterns.
 */
 const paymentCardExpirationDateWords = /* @__PURE__ */ Object.freeze([
-  'expiry', // English
-  'expiration', // English, French
-  'expires', // English
-  'expire', // English, French
-  'exp date', // English
-  'exp. date', // English
-  'valid thru', // English
-  'valid through', // English
-  'valid until', // English
-  'mm/yy', // Format
-  'mm / yy', // Format
-  'mm/yyyy', // Format
-  'mm / yyyy', // Format
-  'mm-yy', // Format
-  'ablaufdatum', // German
-  'gültig bis', // German
-  'gueltig bis', // German
-  'gültigkeit', // German
-  'verfallsdatum', // German
-  'mm/jj', // German format
-  'mm/jjjj', // German format
-  'caducidad', // Spanish
-  'vencimiento', // Spanish, Portuguese
-  'fecha de expiración', // Spanish
-  'fecha de expiracion', // Spanish
-  'mm/aa', // Spanish, French, Portuguese format
-  'mm/aaaa', // Spanish, French, Portuguese format
-  'scadenza', // Italian
-  'validade', // Portuguese
-  'срок действия', // Russian
-  'мм/гг', // Russian format
-  '有効期限', // Japanese
-  '有效期', // Chinese (Simplified)
-  '过期', // Chinese (Simplified)
-  '到期', // Chinese (Traditional)
-  '만료', // Korean
-  '유효기간', // Korean
-  '유효 기간', // Korean
-  'masa berlaku', // Indonesian
-  'berlaku hingga' // Indonesian
+  'expiry',
+  'expiration',
+  'expires',
+  'expire',
+  'exp date',
+  'exp. date',
+  'valid thru',
+  'valid through',
+  'valid until',
+  'mm/yy',
+  'mm / yy',
+  'mm/yyyy',
+  'mm / yyyy',
+  'mm-yy',
+  'ablaufdatum',
+  'gültig bis',
+  'gueltig bis',
+  'gültigkeit',
+  'verfallsdatum',
+  'mm/jj',
+  'mm/jjjj',
+  'ważności',
+  'ważna do',
+  'data wygaśnięcia',
+  'mm/rr',
+  'mm/rrrr',
+  'caducidad',
+  'vencimiento',
+  'fecha de expiración',
+  'fecha de expiracion',
+  'mm/aa',
+  'mm/aaaa',
+  'scadenza',
+  'validade',
+  'срок действия',
+  'мм/гг',
+  '有効期限',
+  '有效期',
+  '过期',
+  '到期',
+  '만료',
+  '유효기간',
+  '유효 기간',
+  'masa berlaku',
+  'berlaku hingga'
 ]);
 
 export default paymentCardExpirationDateWords;

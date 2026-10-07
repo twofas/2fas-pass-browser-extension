@@ -8,33 +8,35 @@
 * Lowercase phrases that name the payment card ISSUER (type/brand) select in its visible label,
 * aria-label, aria-labelledby text or title. Matched by partials/inputFunctions/paymentCardLabels.js:
 * longer phrases must start a word (an inflected ending is allowed), CJK/Hangul phrases match anywhere.
-* A bare "type" is never listed. Languages are limited to the ones covered by Chromium's credit card
-* autofill patterns.
+* A bare "type" is never listed. Languages: every language of the extension's i18n (English, Polish, German —
+* enforced by paymentCardWords.test.js) plus the ones covered by Chromium's credit card autofill patterns.
 */
 const paymentCardIssuerWords = /* @__PURE__ */ Object.freeze([
-  'card type', // English
-  'card brand', // English
-  'type of card', // English
-  'kartentyp', // German
-  'kartenart', // German
-  'tipo de tarjeta', // Spanish
-  'type de carte', // French
-  'tipo di carta', // Italian
-  'tipo carta', // Italian
-  'tipo de cartão', // Portuguese
-  'tipo de cartao', // Portuguese
-  'bandeira do cartão', // Portuguese
-  'тип карты', // Russian
-  'カードの種類', // Japanese
-  'カード種類', // Japanese
-  'カードブランド', // Japanese
-  '卡类型', // Chinese (Simplified)
-  '卡類型', // Chinese (Traditional)
-  '卡别', // Chinese (Simplified)
-  '卡別', // Chinese (Traditional)
-  '카드 종류', // Korean
-  '카드종류', // Korean
-  'jenis kartu' // Indonesian
+  'card type',
+  'card brand',
+  'type of card',
+  'kartentyp',
+  'kartenart',
+  'typ karty',
+  'rodzaj karty',
+  'tipo de tarjeta',
+  'type de carte',
+  'tipo di carta',
+  'tipo carta',
+  'tipo de cartão',
+  'tipo de cartao',
+  'bandeira do cartão',
+  'тип карты',
+  'カードの種類',
+  'カード種類',
+  'カードブランド',
+  '卡类型',
+  '卡類型',
+  '卡别',
+  '卡別',
+  '카드 종류',
+  '카드종류',
+  'jenis kartu'
 ]);
 
 export default paymentCardIssuerWords;

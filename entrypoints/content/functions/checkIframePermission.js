@@ -10,6 +10,7 @@ import getPaymentCardNumberInputs from '@/partials/inputFunctions/getPaymentCard
 import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPaymentCardholderNameInputs';
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
+import { createPaymentCardLabelPass } from '@/partials/inputFunctions/paymentCardLabels';
 import isTopFrame from '@/partials/functions/isTopFrame';
 import getFrameHostname from '@/partials/functions/getFrameHostname';
 import getShadowRoots from './autofillFunctions/getShadowRoots';
@@ -25,11 +26,12 @@ const hasAutofillableInputs = (autofillType, dataFields = {}) => {
 
   if (autofillType === 'card') {
     const { hasCardholderName = true, hasCardNumber = true, hasExpirationDate = true, hasSecurityCode = true } = dataFields;
+    const labelPass = createPaymentCardLabelPass();
 
-    return (hasCardNumber && getPaymentCardNumberInputs(shadowRoots).length > 0) ||
+    return (hasCardNumber && getPaymentCardNumberInputs(shadowRoots, labelPass).length > 0) ||
       (hasCardholderName && getPaymentCardholderNameInputs(shadowRoots).length > 0) ||
-      (hasExpirationDate && getPaymentCardExpirationDateInputs(shadowRoots).length > 0) ||
-      (hasSecurityCode && getPaymentCardSecurityCodeInputs(shadowRoots).length > 0);
+      (hasExpirationDate && getPaymentCardExpirationDateInputs(shadowRoots, labelPass).length > 0) ||
+      (hasSecurityCode && getPaymentCardSecurityCodeInputs(shadowRoots, labelPass).length > 0);
   }
 
   if (autofillType === 'login') {

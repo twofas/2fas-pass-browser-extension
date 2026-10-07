@@ -72,4 +72,18 @@ describe('isNotCredentialField', () => {
   it.each(['username', 'email', 'current-password', 'new-password', 'webauthn'])('keeps the autocomplete token "%s"', autocomplete => {
     expect(isNotCredentialField(field({ autocomplete }))).toBe(false);
   });
+
+  describe('customer ID named "cid"', () => {
+    it('keeps a username field named cid when checked as a username', () => {
+      expect(isNotCredentialField(field({ name: 'cid' }), { username: true })).toBe(false);
+    });
+
+    it('still rejects a masked field named cid (the American Express code) as a password', () => {
+      expect(isNotCredentialField(field({ name: 'cid', type: 'password' }))).toBe(true);
+    });
+
+    it('still rejects other card security code names as a username', () => {
+      expect(isNotCredentialField(field({ name: 'cvv' }), { username: true })).toBe(true);
+    });
+  });
 });

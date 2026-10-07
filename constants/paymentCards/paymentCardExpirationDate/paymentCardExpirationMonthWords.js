@@ -6,21 +6,23 @@
 
 /**
 * Lowercase words that mark an expiration date field found by its label as the MONTH part. Checked only
-* against the visible label of a field already recognised as an expiration date field. Languages are
-* limited to the ones covered by Chromium's credit card autofill patterns.
+* against the visible label of a field already recognised as an expiration date field. Languages: every language
+* of the extension's i18n (English, Polish, German — enforced by paymentCardWords.test.js) plus the ones covered
+* by Chromium's credit card autofill patterns.
 */
 const paymentCardExpirationMonthWords = /* @__PURE__ */ Object.freeze([
-  'month', // English
-  'mm', // Format
-  'monat', // German
-  'mes', // Spanish
-  'mois', // French
-  'mese', // Italian
-  'mês', // Portuguese
-  'месяц', // Russian
-  '月', // Japanese, Chinese
-  '월', // Korean
-  'bulan' // Indonesian
+  'month',
+  'mm',
+  'monat',
+  'miesiąc',
+  'mes',
+  'mois',
+  'mese',
+  'mês',
+  'месяц',
+  '月',
+  '월',
+  'bulan'
 ]);
 
 export default paymentCardExpirationMonthWords;

@@ -256,4 +256,17 @@ describe('getUsernameInputs detection', () => {
       expect(getUsernameInputs()).toEqual([]);
     });
   });
+
+  describe('customer ID login', () => {
+    it('detects a login field named cid as the username', () => {
+      document.body.innerHTML = `
+        <form id="f">
+          <input type="text" name="cid" placeholder="Customer ID" />
+          <input type="password" name="password" />
+        </form>
+      `;
+
+      expect(getUsernameInputs([document.getElementById('f')]).map(input => input.name)).toEqual(['cid']);
+    });
+  });
 });

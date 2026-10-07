@@ -39,16 +39,18 @@ describe('checkAutofillInputsCard', () => {
     expect(getShadowRootsMock).toHaveBeenCalledTimes(1);
   });
 
-  it('shares the same shadow-roots array with every card getter', () => {
+  it('shares the same shadow-roots array and label pass with every card getter', () => {
     const sharedRoots = [{ marker: 'shadow-root' }];
 
     getShadowRootsMock.mockReturnValue(sharedRoots);
 
     checkAutofillInputsCard();
 
-    expect(numberMock).toHaveBeenCalledWith(sharedRoots);
+    const labelPass = numberMock.mock.calls[0][1];
+
+    expect(numberMock).toHaveBeenCalledWith(sharedRoots, expect.objectContaining({ labelledByRoot: expect.any(Map) }));
     expect(holderMock).toHaveBeenCalledWith(sharedRoots);
-    expect(expirationMock).toHaveBeenCalledWith(sharedRoots);
-    expect(securityCodeMock).toHaveBeenCalledWith(sharedRoots);
+    expect(expirationMock).toHaveBeenCalledWith(sharedRoots, labelPass);
+    expect(securityCodeMock).toHaveBeenCalledWith(sharedRoots, labelPass);
   });
 });

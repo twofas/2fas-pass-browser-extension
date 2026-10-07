@@ -313,6 +313,12 @@ describe('getPaymentCardholderNameInputs', () => {
   });
 
   describe('detection by label (paymentCardholderNameWords)', () => {
+    it('detects a field labelled in Polish, an i18n language of the extension', () => {
+      document.body.innerHTML = '<form class="payment"><label for="h">Właściciel karty</label><input type="text" id="h" name="x" /></form>';
+
+      expect(getPaymentCardholderNameInputs()).toHaveLength(1);
+    });
+
     it('detects a field labelled in a newly covered Chromium language', () => {
       document.body.innerHTML = '<form class="payment"><label for="h">Имя держателя карты</label><input type="text" id="h" name="x" /></form>';
 
@@ -340,6 +346,14 @@ describe('getPaymentCardholderNameInputs', () => {
       document.body.innerHTML = '<form class="payment"><div class="gift-card"><label for="h">Name on card</label><input type="text" id="h" name="x" /></div></form>';
 
       expect(getPaymentCardholderNameInputs()).toEqual([]);
+    });
+  });
+
+  describe('Polish "Imię na karcie" (name on card)', () => {
+    it.each(['Imię na karcie', 'Imie na karcie'])('treats "%s" as the full cardholder name', label => {
+      document.body.innerHTML = `<form class="payment"><label for="h">${label}</label><input type="text" id="h" name="x" /></form>`;
+
+      expect(getPaymentCardholderNameInputs().map(entry => entry.type)).toEqual(['full']);
     });
   });
 });

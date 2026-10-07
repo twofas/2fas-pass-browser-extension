@@ -12,7 +12,8 @@ const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
  * Creates a check that looks for whole-word keywords in the class names and IDs of an element's ancestors.
- * Uses word boundary matching to avoid false positives (e.g. "subscriber" != "subscribe").
+ * Uses word boundary matching to avoid false positives (e.g. "subscriber" != "subscribe"); camelCase words are
+ * split as well (e.g. "giftCardForm" contains "gift").
  * @param {string[]} keywords - The denied keywords.
  * @param {number} [maxDepth=MAX_PARENT_DEPTH] - How many ancestors to inspect.
  * @return {(input: HTMLElement) => boolean} Returns true when an ancestor carries a denied keyword.
@@ -24,11 +25,16 @@ export const createParentContextChecker = (keywords, maxDepth = MAX_PARENT_DEPTH
     return new RegExp(`(^|[^a-z0-9])${escaped}($|[^a-z0-9])`);
   });
 
-  const elementHasDeniedKeyword = element => {
-    const className = (element.className || '').toString().toLowerCase();
-    const id = (element.id || '').toLowerCase();
+  const getVariants = value => {
+    const text = String(value || '');
 
-    return keywordRegexes.some(regex => regex.test(className) || regex.test(id));
+    return [text.toLowerCase(), text.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase()];
+  };
+
+  const elementHasDeniedKeyword = element => {
+    const values = [...getVariants(element.className), ...getVariants(element.id)];
+
+    return keywordRegexes.some(regex => values.some(value => regex.test(value)));
   };
 
   return input => {

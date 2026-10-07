@@ -8,7 +8,7 @@ import { paymentCardIssuerSelectors } from '@/constants';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import { filterDeniedKeywords, makeConflictingAutocompleteFilter, collectInputs } from './shared';
-import { getPaymentCardElementsByLabel } from './paymentCardLabels';
+import { getPaymentCardElementsByLabel, withoutSelectorCoveredScopes } from './paymentCardLabels';
 
 const conflictingAutocompleteValues = [
   'cc-number',
@@ -38,19 +38,23 @@ const hasIssuerAutocomplete = element => {
 
 /**
  * Gets the payment card issuer input/select elements from the document, including those inside shadow DOMs.
- * Fields are found by their identifiers (selectors) and, inside a payment context, selects by the words of their label.
+ * Fields are found by their identifiers (selectors) and, inside a payment context where the selectors found
+ * none, selects by the words of their label.
  * @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
+* @param {Object|null} [labelPass] - Label classification cache shared by the getters of one detection pass (createPaymentCardLabelPass()).
  * @return {Array<{element: HTMLElement, isSelect: boolean}>} The array of issuer elements.
  */
-const getPaymentCardIssuerInputs = (shadowRoots = null) => {
+const getPaymentCardIssuerInputs = (shadowRoots = null, labelPass = null) => {
   const issuerSelector = paymentCardIssuerSelectors().join(', ');
   const resolvedShadowRoots = Array.isArray(shadowRoots) ? shadowRoots : getShadowRoots();
-  const visibleUniqueElements = [
-    ...collectInputs(issuerSelector, resolvedShadowRoots),
-    ...getPaymentCardElementsByLabel('issuer', resolvedShadowRoots)
-  ].filter(uniqueElementOnly);
-  const afterConflicting = visibleUniqueElements.filter(filterConflictingAutocomplete);
-  const filteredElements = afterConflicting.filter(element => hasIssuerAutocomplete(element) || filterDeniedKeywords(element));
+  const filterIssuerElements = elements => elements
+    .filter(filterConflictingAutocomplete)
+    .filter(element => hasIssuerAutocomplete(element) || filterDeniedKeywords(element));
+  const selectorElements = filterIssuerElements(collectInputs(issuerSelector, resolvedShadowRoots));
+  const labelElements = filterIssuerElements(
+    withoutSelectorCoveredScopes(getPaymentCardElementsByLabel('issuer', resolvedShadowRoots, labelPass), selectorElements)
+  );
+  const filteredElements = [...selectorElements, ...labelElements].filter(uniqueElementOnly);
 
   const result = filteredElements.map(element => ({
     element,

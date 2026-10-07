@@ -44,8 +44,9 @@ const givenNameLabelKeywords = ['first name', 'given name', 'first-name', 'given
 const familyNameLabelKeywords = ['last name', 'family name', 'surname', 'last-name', 'family-name', 'lastname', 'familyname', 'nazwisko', 'nachname', 'apellido', 'achternaam', 'cognome'];
 const additionalNameLabelKeywords = ['middle name', 'additional name', 'middle-name', 'middlename', 'second name'];
 // Labels that ask for the COMBINED name; these must win over the split-name keywords
-// (e.g. "first and last name" contains the substring "last name" but is a full-name field).
-const combinedNameLabelKeywords = ['full name', 'first and last', 'first & last', 'first/last', 'first / last'];
+// (e.g. "first and last name" contains the substring "last name" but is a full-name field; the Polish
+// "Imię na karcie" means "name on card", not "first name").
+const combinedNameLabelKeywords = ['full name', 'first and last', 'first & last', 'first/last', 'first / last', 'imię na karcie', 'imie na karcie'];
 
 const filterConflictingAutocomplete = makeConflictingAutocompleteFilter(conflictingAutocompleteValues);
 

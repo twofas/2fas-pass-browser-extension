@@ -33,18 +33,18 @@ const paymentCardDeniedKeywords = Object.freeze([
   'dateofbirth',
   'date_of_birth',
   'bday',
-  'geburtsdatum', // German
-  'geburtstag', // German
-  'data_urodzenia', // Polish
-  'dataurodzenia', // Polish
-  'date_naissance', // French
-  'fecha_nacimiento', // Spanish
-  'data_nascita', // Italian
-  'data_nascimento', // Portuguese
-  'geboortedatum', // Dutch
-  'datum_narozeni', // Czech
-  'fodelsedatum', // Swedish
-  'dogum_tarihi', // Turkish
+  'geburtsdatum',
+  'geburtstag',
+  'data_urodzenia',
+  'dataurodzenia',
+  'date_naissance',
+  'fecha_nacimiento',
+  'data_nascita',
+  'data_nascimento',
+  'geboortedatum',
+  'datum_narozeni',
+  'fodelsedatum',
+  'dogum_tarihi',
   'gender'
 ]);
 

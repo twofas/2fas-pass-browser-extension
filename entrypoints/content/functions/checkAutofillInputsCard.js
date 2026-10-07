@@ -8,6 +8,7 @@ import getPaymentCardNumberInputs from '@/partials/inputFunctions/getPaymentCard
 import getPaymentCardholderNameInputs from '@/partials/inputFunctions/getPaymentCardholderNameInputs';
 import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPaymentCardExpirationDateInputs';
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
+import { createPaymentCardLabelPass } from '@/partials/inputFunctions/paymentCardLabels';
 import getShadowRoots from './autofillFunctions/getShadowRoots';
 
 /**
@@ -16,10 +17,11 @@ import getShadowRoots from './autofillFunctions/getShadowRoots';
 */
 const checkAutofillInputsCard = () => {
   const shadowRoots = getShadowRoots();
-  const cardNumberInputs = getPaymentCardNumberInputs(shadowRoots);
+  const labelPass = createPaymentCardLabelPass();
+  const cardNumberInputs = getPaymentCardNumberInputs(shadowRoots, labelPass);
   const cardholderNameInputs = getPaymentCardholderNameInputs(shadowRoots);
-  const expirationDateInputs = getPaymentCardExpirationDateInputs(shadowRoots);
-  const securityCodeInputs = getPaymentCardSecurityCodeInputs(shadowRoots);
+  const expirationDateInputs = getPaymentCardExpirationDateInputs(shadowRoots, labelPass);
+  const securityCodeInputs = getPaymentCardSecurityCodeInputs(shadowRoots, labelPass);
 
   const hasMonthInput = expirationDateInputs.some(item => item.type === 'month');
   const hasYearInput = expirationDateInputs.some(item => item.type === 'year');
