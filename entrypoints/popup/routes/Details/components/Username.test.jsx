@@ -23,8 +23,8 @@ vi.mock('react-final-form', () => ({
   Field: ({ children }) => children({ input: { value: mockInputValue, onChange: () => {} }, meta: {} })
 }));
 
-vi.mock('motion/react', () => ({
-  motion: { div: ({ children }) => createElement('div', null, children) }
+vi.mock('motion/react-m', () => ({
+  div: ({ children }) => createElement('div', null, children)
 }));
 
 vi.mock('@/partials/functions/copyValue', () => ({

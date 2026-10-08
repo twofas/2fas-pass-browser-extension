@@ -9,9 +9,11 @@ import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import { isRevealedPasswordInput, rememberPasswordInputs } from './revealedPasswordInputs';
+import isNotCredentialField from './isNotCredentialField';
 
 /**
-* Gets the password input elements from the document, including those inside shadow DOMs.
+* Gets the password input elements from the document, including those inside shadow DOMs. Masked one-time
+* code, card security code and Social Security Number fields are not passwords and are left out.
 * @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
 * @param {Object} [options] - Detection options.
 * @param {boolean} [options.includeRevealed=false] - Also return password fields a "show password" toggle switched to type="text".
@@ -35,7 +37,9 @@ const getPasswordInputs = (shadowRoots = null, options = {}) => {
   }
 
   const visibleInputs = allInputs.filter(input => isVisible(input));
-  const uniqueInputs = visibleInputs.filter(uniqueElementOnly);
+  const uniqueInputs = visibleInputs
+    .filter(uniqueElementOnly)
+    .filter(input => !isNotCredentialField(input));
 
   rememberPasswordInputs(uniqueInputs);
 

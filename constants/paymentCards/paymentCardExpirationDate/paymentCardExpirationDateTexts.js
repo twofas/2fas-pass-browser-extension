@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 // camelCase - other cases are generated in paymentCardExpirationDateSelectors.js
-const paymentCardExpirationDateTexts = Object.freeze([
+const paymentCardExpirationDateTexts = /* @__PURE__ */ Object.freeze([
   'ccExp',
   'cc-Exp',
   'cc_Exp',

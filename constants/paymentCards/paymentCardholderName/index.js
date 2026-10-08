@@ -4,6 +4,5 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export { default as paymentCardholderNameTexts } from './paymentCardholderNameTexts.js';
 export { default as paymentCardholderNameWords } from './paymentCardholderNameWords.js';
 export { default as paymentCardholderNameSelectors } from './paymentCardholderNameSelectors.js';

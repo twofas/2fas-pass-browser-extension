@@ -8,7 +8,7 @@
  * UnionPay credit card name variations for form detection
  * @type {Readonly<string[]>}
  */
-const PaymentCardIssuerUnionPay = Object.freeze([
+const PaymentCardIssuerUnionPay = /* @__PURE__ */ Object.freeze([
   'UnionPay',
   'UNIONPAY',
   'unionpay',

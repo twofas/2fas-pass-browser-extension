@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const selectors = Object.freeze({
+const selectors = /* @__PURE__ */ Object.freeze({
   notification: {
     container: 'div.twofas-pass-notification-container',
     notification: 'div.twofas-pass-notification-item'

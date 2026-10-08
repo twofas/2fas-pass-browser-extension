@@ -7,9 +7,14 @@
 import {
   paymentCardExpirationDateSelectors,
   paymentCardExpirationMonthPlaceholders,
-  paymentCardExpirationYearPlaceholders
+  paymentCardExpirationYearPlaceholders,
+  paymentCardExpirationMonthWords,
+  paymentCardExpirationYearWords
 } from '@/constants';
+import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
+import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import { containsDeniedWord, filterDeniedKeywords, makeConflictingAutocompleteFilter, getParentDataField, collectInputs } from './shared';
+import { createLabelMatcher, getElementLabelTexts, getPaymentCardElementsByLabel, getCardFieldScope } from './paymentCardLabels';
 
 const conflictingAutocompleteValues = [
   'cc-number',
@@ -23,8 +28,70 @@ const conflictingAutocompleteValues = [
 
 const filterConflictingAutocomplete = makeConflictingAutocompleteFilter(conflictingAutocompleteValues);
 
+const matchesMonthLabelWord = createLabelMatcher(paymentCardExpirationMonthWords);
+const matchesYearLabelWord = createLabelMatcher(paymentCardExpirationYearWords);
+
+const MONTH_OPTION_REGEX = /^(0?[1-9]|1[0-2])$/;
+const FOUR_DIGIT_YEAR_OPTION_REGEX = /^(19|20)\d{2}$/;
+const TWO_DIGIT_OPTION_REGEX = /^\d{2}$/;
+const MONTHS_IN_YEAR = 12;
+
 /**
-* Determines the type of expiration date input based on autocomplete, name/id, and text hints.
+* Reads the month/year part from the field's visible label texts.
+* @param {HTMLElement} element - The input or select element.
+* @return {string|null} 'combined', 'month', 'year', or null when the label names neither part.
+*/
+const getExpirationDateTypeFromLabel = element => {
+  const texts = getElementLabelTexts(element);
+  const hasMonth = texts.some(matchesMonthLabelWord);
+  const hasYear = texts.some(matchesYearLabelWord);
+
+  if (hasMonth && hasYear) {
+    return 'combined';
+  }
+
+  if (hasMonth) {
+    return 'month';
+  }
+
+  if (hasYear) {
+    return 'year';
+  }
+
+  return null;
+};
+
+/**
+* Infers the month/year part of a select from its option values (01–12 for months, years otherwise).
+* @param {HTMLSelectElement} select - The select element.
+* @return {string|null} 'month', 'year', or null when the options do not tell.
+*/
+const getExpirationDateTypeFromOptions = select => {
+  const values = Array.from(select.options || [])
+    .map(option => (option.value || '').trim())
+    .filter(Boolean);
+
+  if (values.length === 0) {
+    return null;
+  }
+
+  const monthCount = values.filter(value => MONTH_OPTION_REGEX.test(value)).length;
+  const yearCount = values.filter(value => FOUR_DIGIT_YEAR_OPTION_REGEX.test(value) || (TWO_DIGIT_OPTION_REGEX.test(value) && !MONTH_OPTION_REGEX.test(value))).length;
+
+  if (monthCount === MONTHS_IN_YEAR && values.length <= MONTHS_IN_YEAR + 1) {
+    return 'month';
+  }
+
+  if (yearCount > monthCount && yearCount >= values.length / 2) {
+    return 'year';
+  }
+
+  return null;
+};
+
+/**
+* Determines the type of expiration date input based on autocomplete, name/id, text hints, then (for a
+* select) its options, then the visible label.
 * @param {HTMLElement} element - The input or select element.
 * @return {string} The type: 'combined', 'month', or 'year'.
 */
@@ -79,31 +146,55 @@ const getExpirationDateType = element => {
     return 'year';
   }
 
-  return 'combined';
+  const optionsType = element.tagName.toLowerCase() === 'select' ? getExpirationDateTypeFromOptions(element) : null;
+
+  if (optionsType) {
+    return optionsType;
+  }
+
+  return getExpirationDateTypeFromLabel(element) || 'combined';
 };
 
 /**
+* Checks whether a selector-found expiration field already fills the part of a label-found one: the same
+* part (month/year), or either of them is the combined date.
+* @param {string} selectorType - The type of the selector-found field.
+* @param {string} labelType - The type of the label-found field.
+* @return {boolean} True if the label-found field is redundant.
+*/
+const coversExpirationType = (selectorType, labelType) => selectorType === labelType || selectorType === 'combined' || labelType === 'combined';
+
+/**
 * Gets the payment card expiration date input/select elements from the document, including those inside shadow DOMs.
+* Fields are found by their identifiers (selectors) and, inside a payment context where the selectors did not
+* find the same part, by the words of their label.
 * @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
+* @param {Object|null} [labelPass] - Label classification cache shared by the getters of one detection pass (createPaymentCardLabelPass()).
 * @return {Array<{element: HTMLElement, type: string}>} The array of expiration date elements with their type.
 */
-const getPaymentCardExpirationDateInputs = (shadowRoots = null) => {
+const getPaymentCardExpirationDateInputs = (shadowRoots = null, labelPass = null) => {
   const expirationDateSelector = paymentCardExpirationDateSelectors().join(', ');
-  const visibleUniqueElements = collectInputs(expirationDateSelector, shadowRoots);
-  const afterConflicting = visibleUniqueElements.filter(filterConflictingAutocomplete);
-  const filteredElements = afterConflicting.filter(filterDeniedKeywords);
-
-  const result = filteredElements.map(element => {
-    const tagName = element.tagName.toLowerCase();
-
-    return {
-      element,
-      type: getExpirationDateType(element),
-      isSelect: tagName === 'select'
-    };
+  const resolvedShadowRoots = Array.isArray(shadowRoots) ? shadowRoots : getShadowRoots();
+  const filterExpirationElements = elements => elements
+    .filter(filterConflictingAutocomplete)
+    .filter(filterDeniedKeywords);
+  const toResult = element => ({
+    element,
+    type: getExpirationDateType(element),
+    isSelect: element.tagName.toLowerCase() === 'select'
   });
+  const selectorResults = filterExpirationElements(collectInputs(expirationDateSelector, resolvedShadowRoots)).map(toResult);
+  const selectorElements = selectorResults.map(result => result.element);
+  const labelResults = filterExpirationElements(getPaymentCardElementsByLabel('expiration', resolvedShadowRoots, labelPass))
+    .filter((element, index, elements) => !selectorElements.includes(element) && uniqueElementOnly(element, index, elements))
+    .map(toResult)
+    .filter(labelResult => {
+      const scope = getCardFieldScope(labelResult.element);
 
-  return result;
+      return !selectorResults.some(selectorResult => coversExpirationType(selectorResult.type, labelResult.type) && scope.contains(selectorResult.element));
+    });
+
+  return [...selectorResults, ...labelResults];
 };
 
 export default getPaymentCardExpirationDateInputs;

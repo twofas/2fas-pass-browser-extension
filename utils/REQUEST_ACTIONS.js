@@ -22,7 +22,6 @@ export const REQUEST_ACTIONS = Object.freeze({
   SAVE_PROMPT: 'savePrompt', // content
   CONTENT_SCRIPT_CHECK: 'contentScriptCheck', // content, prompt
   NOTIFICATION: 'notification', // content
-  GET_DOMAIN_INFO: 'getDomainInfo', // content
   PROMPT_INPUT: 'promptInput', // background prompt
   OPEN_BROWSER_PAGE: 'openBrowserPage', // background, popup
   OPEN_POPUP_WINDOW_IN_NEW_WINDOW: 'openPopupWindowInNewWindow', // background, popup

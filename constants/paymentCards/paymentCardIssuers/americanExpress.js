@@ -8,7 +8,7 @@
  * American Express credit card name variations for form detection
  * @type {Readonly<string[]>}
  */
-const PaymentCardIssuerAmericanExpress = Object.freeze([
+const PaymentCardIssuerAmericanExpress = /* @__PURE__ */ Object.freeze([
   'American Express',
   'AMERICAN EXPRESS',
   'american express',

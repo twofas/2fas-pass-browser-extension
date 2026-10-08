@@ -6,7 +6,7 @@
 
 import { HEX_REGEX, ENCRYPTION_KEYS } from '@/constants';
 import getKey from '@/partials/sessionStorage/getKey';
-import { generateNonce } from '@/partials/functions';
+import generateNonce from '@/partials/functions/generateNonce';
 
 /**
 * Class representing an item.

@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 // camelCase - other cases are generated in selectors
-const paymentCardFormTexts = Object.freeze([
+const paymentCardFormTexts = /* @__PURE__ */ Object.freeze([
   'payment-Form',
   'payment_Form',
   'paymentForm',

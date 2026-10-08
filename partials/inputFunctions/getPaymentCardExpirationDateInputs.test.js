@@ -200,4 +200,98 @@ describe('getPaymentCardExpirationDateInputs', () => {
       expect(result[0].type).toBe('combined');
     });
   });
+
+  describe('detection by label (paymentCardExpirationDateWords)', () => {
+    it('detects Polish labelled month and year selects and types them from the label', () => {
+      document.body.innerHTML = `
+        <form class="checkout">
+          <label for="m">Data ważności – miesiąc</label><select id="m" name="a"><option value="1">1</option></select>
+          <label for="y">Data ważności – rok</label><select id="y" name="b"><option value="1">1</option></select>
+        </form>
+      `;
+
+      expect(getPaymentCardExpirationDateInputs().map(entry => [entry.element.id, entry.type])).toEqual([['m', 'month'], ['y', 'year']]);
+    });
+
+    it('detects a combined field with an opaque name labelled "Expiry date (MM/YY)"', () => {
+      document.body.innerHTML = '<div class="payment"><label for="f1">Expiry date (MM/YY)</label><input type="text" id="f1" name="field_3" /></div>';
+
+      const result = getPaymentCardExpirationDateInputs();
+
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe('combined');
+    });
+
+    it('detects labelled month and year selects and types them from the label', () => {
+      document.body.innerHTML = `
+        <form class="checkout">
+          <label for="m">Expiry month</label>
+          <select id="m" name="a"><option value="">--</option><option value="01">01</option><option value="12">12</option></select>
+          <label for="y">Expiry year</label>
+          <select id="y" name="b"><option value="">--</option><option value="2026">2026</option><option value="2027">2027</option></select>
+        </form>
+      `;
+
+      const result = getPaymentCardExpirationDateInputs();
+
+      expect(result.map(entry => [entry.element.id, entry.type, entry.isSelect])).toEqual([['m', 'month', true], ['y', 'year', true]]);
+    });
+
+    it('types a select labelled only "Expiration date" from its month options', () => {
+      const months = Array.from({ length: 12 }, (_, i) => `<option value="${String(i + 1).padStart(2, '0')}">${i + 1}</option>`).join('');
+      document.body.innerHTML = `<div class="payment"><label for="m">Expiration date</label><select id="m" name="a"><option value="">Month</option>${months}</select></div>`;
+
+      const result = getPaymentCardExpirationDateInputs();
+
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe('month');
+    });
+
+    it('types a select labelled only "Expiration date" from its year options', () => {
+      const years = Array.from({ length: 12 }, (_, i) => `<option value="${2026 + i}">${2026 + i}</option>`).join('');
+      document.body.innerHTML = `<div class="payment"><label for="y">Expiration date</label><select id="y" name="a">${years}</select></div>`;
+
+      const result = getPaymentCardExpirationDateInputs();
+
+      expect(result).toHaveLength(1);
+      expect(result[0].type).toBe('year');
+    });
+
+    it('does not detect a date of birth field in a checkout', () => {
+      document.body.innerHTML = '<div class="checkout"><label for="f1">Date of birth (MM/YY)</label><input type="text" id="f1" name="x" /></div>';
+
+      expect(getPaymentCardExpirationDateInputs()).toEqual([]);
+    });
+  });
+
+  describe('label detection is only a fallback', () => {
+    it('keeps a label-only year select next to a selector-found month', () => {
+      document.body.innerHTML = `
+        <form class="checkout">
+          <select name="exp_month" id="m"><option value="01">01</option></select>
+          <label for="y">Expiry year</label><select id="y" name="b"><option value="2026">2026</option></select>
+        </form>
+      `;
+
+      expect(getPaymentCardExpirationDateInputs().map(entry => [entry.element.id, entry.type])).toEqual([['m', 'month'], ['y', 'year']]);
+    });
+
+    it('ignores a labelled field when the selectors already found a combined expiry in the same form', () => {
+      document.body.innerHTML = `
+        <form class="checkout">
+          <input type="text" autocomplete="cc-exp" id="real" />
+          <label for="other">Expiry date</label><input type="text" id="other" name="field_9" />
+        </form>
+      `;
+
+      expect(getPaymentCardExpirationDateInputs().map(entry => entry.element.id)).toEqual(['real']);
+    });
+
+    it('types a month select from its options even when the label shows MM/YY', () => {
+      const months = Array.from({ length: 12 }, (_, i) => `<option value="${String(i + 1).padStart(2, '0')}">${i + 1}</option>`).join('');
+      document.body.innerHTML = `<div class="payment"><label for="m">Expiry date (MM/YY)</label><select id="m" name="a">${months}</select></div>`;
+
+      expect(getPaymentCardExpirationDateInputs().map(entry => entry.type)).toEqual(['month']);
+    });
+  });
 });

@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const ENCRYPTION_KEYS = {
+const ENCRYPTION_KEYS = /* @__PURE__ */ Object.freeze({
   DATA: {
     crypto: 'Data',
     sK: 'data_key'
@@ -23,8 +23,6 @@ const ENCRYPTION_KEYS = {
   ITEM_NEW: {
     crypto: 'ItemNew'
   }
-};
-
-Object.freeze(ENCRYPTION_KEYS);
+});
 
 export default ENCRYPTION_KEYS;

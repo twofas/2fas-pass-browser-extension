@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 // camelCase - other cases are generated in paymentCardholderNameSelectors.js
-const paymentCardholderNameTexts = Object.freeze([
+const paymentCardholderNameTexts = /* @__PURE__ */ Object.freeze([
   'cardholderName',
   'cardholder-Name',
   'cardholder_Name',

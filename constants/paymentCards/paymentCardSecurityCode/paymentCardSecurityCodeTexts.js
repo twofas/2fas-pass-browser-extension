@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 // camelCase - other cases are generated in paymentCardSecurityCodeSelectors.js
-const paymentCardSecurityCodeTexts = Object.freeze([
+const paymentCardSecurityCodeTexts = /* @__PURE__ */ Object.freeze([
   'ccCsc',
   'cc-Csc',
   'cc_Csc',

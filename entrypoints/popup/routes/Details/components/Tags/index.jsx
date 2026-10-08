@@ -8,7 +8,7 @@ import S from './Tags.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import { Field } from 'react-final-form';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useState, useRef, useCallback, useMemo, memo } from 'react';
 import useTags from '../../../../hooks/useTags';
 import AdvancedSelect from '@/partials/components/AdvancedSelect';
@@ -172,7 +172,7 @@ function Tags () {
             <div className={`${S.tagsContainer} ${data.tagsEditable ? S.editable : S.disabled}`}>
               {validTags.length > 0 ? (
                 validTags.map(tagId => (
-                  <motion.div
+                  <m.div
                     key={tagId}
                     className={`${S.tagsPill} ${data.tagsEditable ? S.editable : ''}`}
                     title={getTagName(tagId, availableTags)}
@@ -198,7 +198,7 @@ function Tags () {
                         <CloseIcon />
                       </button>
                     )}
-                  </motion.div>
+                  </m.div>
                 ))
               ) : (
                 !data.tagsEditable && (

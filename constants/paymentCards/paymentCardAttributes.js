@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const paymentCardAttributes = Object.freeze([
+const paymentCardAttributes = /* @__PURE__ */ Object.freeze([
   'name',
   'autocomplete',
   'label',

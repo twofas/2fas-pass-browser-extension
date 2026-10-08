@@ -8,7 +8,7 @@
  * Keywords to check in parent elements' class names, IDs, and data attributes
  * to identify non-login forms like newsletter, search, or subscription forms.
  */
-const parentContextDeniedKeywords = Object.freeze([
+const parentContextDeniedKeywords = /* @__PURE__ */ Object.freeze([
   'newsletter',
   'search',
   'subscribe',

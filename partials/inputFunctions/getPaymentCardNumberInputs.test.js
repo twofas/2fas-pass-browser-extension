@@ -137,6 +137,14 @@ describe('getPaymentCardNumberInputs', () => {
     });
   });
 
+  describe('regression: a payment method field is not the card number (mcd.delawareinc.com)', () => {
+    it('does not treat a text input identified as the payment method as the card number', () => {
+      document.body.innerHTML = '<input type="text" id="paymentMethod" />';
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+  });
+
   describe('regression: fused CVV/security identifiers stay rejected (verification follow-up)', () => {
     it('does not treat a CVV field (id="cvv2") inside a payment form as the card number', () => {
       document.body.innerHTML = '<form id="paymentForm"><input type="text" id="cvv2" /></form>';
@@ -203,6 +211,78 @@ describe('getPaymentCardNumberInputs', () => {
       document.body.innerHTML = '<input autocomplete="cc-number cc-csc" inputmode="numeric" />';
 
       expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+  });
+
+  describe('detection by label (paymentCardNumberWords)', () => {
+    it('detects a field with an opaque name whose label names the card number, next to another labelled card field', () => {
+      document.body.innerHTML = `
+        <form>
+          <label for="f1">Card number</label><input type="text" id="f1" name="field_1" />
+          <label for="f2">Expiry date</label><input type="text" id="f2" name="field_2" />
+        </form>
+      `;
+
+      expect(getPaymentCardNumberInputs().map(input => input.id)).toEqual(['f1']);
+    });
+
+    it('detects a field labelled in another Chromium language inside a payment container', () => {
+      document.body.innerHTML = '<div class="checkout-payment"><label for="f1">Número do cartão</label><input type="tel" id="f1" name="x" /></div>';
+
+      expect(getPaymentCardNumberInputs()).toHaveLength(1);
+    });
+
+    it('does not detect a lone "Card number" field outside of a payment context', () => {
+      document.body.innerHTML = '<form><label for="f1">Card number</label><input type="text" id="f1" name="x" /></form>';
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+
+    it('does not detect a gift card number field', () => {
+      document.body.innerHTML = `
+        <form class="checkout-payment">
+          <label for="f1">Gift card number</label><input type="text" id="f1" name="x" />
+          <div class="giftcard-section"><label for="f2">Card number</label><input type="text" id="f2" name="y" /></div>
+        </form>
+      `;
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+
+    it('still rejects a labelled field with a conflicting type', () => {
+      document.body.innerHTML = '<div class="payment"><label for="f1">Card number</label><input type="email" id="f1" /></div>';
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+
+    it('does not return a field twice when both its name and its label match', () => {
+      document.body.innerHTML = '<div class="payment"><label for="f1">Card number</label><input type="text" id="f1" name="cardnumber" /></div>';
+
+      expect(getPaymentCardNumberInputs()).toHaveLength(1);
+    });
+  });
+
+  describe('label detection is only a fallback', () => {
+    it('ignores a labelled field when the selectors already found the card number in the same form', () => {
+      document.body.innerHTML = `
+        <form>
+          <input type="text" autocomplete="cc-number" id="real" />
+          <label for="other">Card number</label><input type="text" id="other" name="field_9" />
+        </form>
+      `;
+
+      expect(getPaymentCardNumberInputs().map(input => input.id)).toEqual(['real']);
+    });
+
+    it('does not fill a rewards card number on a checkout page', () => {
+      document.body.className = 'woocommerce-checkout';
+      document.body.innerHTML = `
+        <form><label for="r">Rewards card number</label><input type="text" id="r" name="a" /></form>
+        <form><label for="e">Expiry date</label><input type="text" id="e" name="b" /></form>
+      `;
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+      document.body.className = '';
     });
   });
 });

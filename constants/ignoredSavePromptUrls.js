@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const ignoredSavePromptUrls = Object.freeze([
+const ignoredSavePromptUrls = /* @__PURE__ */ Object.freeze([
   'captcha',
   'google-analytics',
   'analytics',

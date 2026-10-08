@@ -9,8 +9,8 @@ import { memo, useCallback, useRef, useEffect, useState, useMemo } from 'react';
 import CalendarIcon from '@/assets/popup-window/calendar.svg?react';
 import isExpirationDateInvalid from './validateExpirationDate';
 import { useI18n } from '@/partials/context/I18nContext';
-import { InputMask } from 'primereact/inputmask';
-import { Calendar } from 'primereact/calendar';
+import { getLoadedInputMask, loadInputMask } from '@/partials/primereact/loadInputMask';
+import { getLoadedCalendar, loadCalendar, applyCalendarLocale } from '@/partials/primereact/loadCalendar';
 
 const PANEL_CLASS = 'payment-card-expiration-date-panel';
 const PANEL_WIDTH = 220;
@@ -20,7 +20,9 @@ const VIEWPORT_PADDING = 8;
 
 /**
 * PaymentCardExpirationDate component for selecting card expiration date.
-* Uses InputMask with MM/YY format and a calendar button for month picker popup.
+* Uses InputMask with MM/YY format and a calendar button for month picker popup. PrimeReact is loaded only here:
+* the InputMask chunk on mount (rendered at once when another field loaded it already), the Calendar chunk on
+* intent — the pointer entering the calendar button — and a click that comes first opens it once it has loaded.
 * @param {Object} props - Component props.
 * @param {string} props.value - The expiration date value in MM/YY format.
 * @param {Function} props.onChange - Change handler function receiving formatted string.
@@ -32,12 +34,16 @@ const VIEWPORT_PADDING = 8;
 * @return {JSX.Element} The rendered component.
 */
 const PaymentCardExpirationDate = ({ value, onChange, inputId, disabled, securityType, sifExists, ref }) => {
-  const { getMessage } = useI18n();
+  const { getMessage, lang } = useI18n();
   const [containerElement, setContainerElement] = useState(null);
   const [positionClasses, setPositionClasses] = useState('');
+  const [InputMask, setInputMask] = useState(getLoadedInputMask);
+  const [inputMaskUnavailable, setInputMaskUnavailable] = useState(false);
+  const [Calendar, setCalendar] = useState(getLoadedCalendar);
   const calendarRef = useRef(null);
   const buttonRef = useRef(null);
   const isOpenRef = useRef(false);
+  const showCalendarWhenLoadedRef = useRef(false);
 
   const containerCallbackRef = useCallback(node => {
     if (node) {
@@ -137,8 +143,26 @@ const PaymentCardExpirationDate = ({ value, onChange, inputId, disabled, securit
     }
   }, [formatDateToExpiration, onChange]);
 
+  const requestCalendar = useCallback(() => {
+    if (Calendar) {
+      return;
+    }
+
+    loadCalendar()
+      .then(LoadedCalendar => {
+        applyCalendarLocale(getMessage);
+        setCalendar(() => LoadedCalendar);
+      })
+      .catch(e => {
+        showCalendarWhenLoadedRef.current = false;
+        CatchError(e);
+      });
+  }, [Calendar, getMessage]);
+
   const handleCalendarButtonClick = useCallback(() => {
     if (!calendarRef.current) {
+      showCalendarWhenLoadedRef.current = true;
+      requestCalendar();
       return;
     }
 
@@ -148,7 +172,7 @@ const PaymentCardExpirationDate = ({ value, onChange, inputId, disabled, securit
       calculatePosition();
       calendarRef.current.show();
     }
-  }, [calculatePosition]);
+  }, [calculatePosition, requestCalendar]);
 
   const handleCalendarShow = useCallback(() => {
     isOpenRef.current = true;
@@ -172,6 +196,37 @@ const PaymentCardExpirationDate = ({ value, onChange, inputId, disabled, securit
     calendarRef.current.hide();
   }, []);
 
+  useEffect(function lazyLoadInputMask() {
+    if (InputMask) {
+      return;
+    }
+
+    loadInputMask()
+      .then(LoadedInputMask => {
+        setInputMask(() => LoadedInputMask);
+      })
+      .catch(e => {
+        setInputMaskUnavailable(true);
+        CatchError(e);
+      });
+  }, [InputMask]);
+
+  useEffect(function applyCalendarLocaleOnLanguageChange() {
+    if (Calendar) {
+      applyCalendarLocale(getMessage);
+    }
+  }, [Calendar, getMessage, lang]);
+
+  useEffect(function showCalendarRequestedBeforeLoad() {
+    if (!Calendar || !showCalendarWhenLoadedRef.current || !calendarRef.current) {
+      return;
+    }
+
+    showCalendarWhenLoadedRef.current = false;
+    calculatePosition();
+    calendarRef.current.show();
+  }, [Calendar, calculatePosition]);
+
   useEffect(function closeCalendarOnScroll() {
     window.addEventListener('scroll', handleScroll, true);
 
@@ -182,7 +237,7 @@ const PaymentCardExpirationDate = ({ value, onChange, inputId, disabled, securit
 
   const inputClassName = `${S.paymentCardExpirationDateInput}${isInvalid ? ` ${S.paymentCardExpirationDateInputError}` : ''}`;
 
-  if (isHighlySecretWithoutSif) {
+  if (isHighlySecretWithoutSif || (!InputMask && !inputMaskUnavailable)) {
     return (
       <div className={S.paymentCardExpirationDate}>
         <input
@@ -190,14 +245,14 @@ const PaymentCardExpirationDate = ({ value, onChange, inputId, disabled, securit
           className={inputClassName}
           value={displayValue}
           onChange={e => onChange(e.target.value)}
-          placeholder=''
+          placeholder={isHighlySecretWithoutSif ? '' : getMessage('placeholder_payment_card_expiration_date')}
           id={inputId}
           disabled
         />
         <button
           ref={buttonRef}
           type='button'
-          className={`${S.paymentCardExpirationDateButton} ${S.paymentCardExpirationDateButtonHidden}`}
+          className={`${S.paymentCardExpirationDateButton} ${isHighlySecretWithoutSif || disabled ? S.paymentCardExpirationDateButtonHidden : ''}`}
           disabled
           title={getMessage('button_open_calendar')}
           tabIndex={-1}
@@ -210,49 +265,65 @@ const PaymentCardExpirationDate = ({ value, onChange, inputId, disabled, securit
 
   return (
     <div ref={containerCallbackRef} className={S.paymentCardExpirationDate}>
-      <InputMask
-        ref={ref}
-        className={inputClassName}
-        value={displayValue}
-        onChange={handleInputChange}
-        onMouseDown={handleInputMouseDown}
-        onFocus={handleInputFocus}
-        onClick={handleInputClick}
-        onDoubleClick={handleInputDoubleClick}
-        onKeyDown={handleInputKeyDown}
-        onKeyUp={handleInputKeyUp}
-        onSelect={handleInputSelect}
-        mask='99/99'
-        slotChar=' '
-        placeholder={getMessage('placeholder_payment_card_expiration_date')}
-        id={inputId}
-        disabled={disabled}
-        autoClear={false}
-      />
+      {InputMask ? (
+        <InputMask
+          ref={ref}
+          className={inputClassName}
+          value={displayValue}
+          onChange={handleInputChange}
+          onMouseDown={handleInputMouseDown}
+          onFocus={handleInputFocus}
+          onClick={handleInputClick}
+          onDoubleClick={handleInputDoubleClick}
+          onKeyDown={handleInputKeyDown}
+          onKeyUp={handleInputKeyUp}
+          onSelect={handleInputSelect}
+          mask='99/99'
+          slotChar=' '
+          placeholder={getMessage('placeholder_payment_card_expiration_date')}
+          id={inputId}
+          disabled={disabled}
+          autoClear={false}
+        />
+      ) : (
+        <input
+          ref={ref}
+          className={inputClassName}
+          value={displayValue}
+          onChange={handleInputChange}
+          placeholder={getMessage('placeholder_payment_card_expiration_date')}
+          id={inputId}
+          disabled={disabled}
+          maxLength={5}
+        />
+      )}
       <button
         ref={buttonRef}
         type='button'
         className={`${S.paymentCardExpirationDateButton} ${disabled ? S.paymentCardExpirationDateButtonHidden : ''}`}
         onClick={handleCalendarButtonClick}
+        onPointerEnter={requestCalendar}
         disabled={disabled}
         title={getMessage('button_open_calendar')}
         tabIndex={-1}
       >
         <CalendarIcon />
       </button>
-      <Calendar
-        ref={calendarRef}
-        className={S.paymentCardExpirationDateCalendar}
-        panelClassName={`${PANEL_CLASS}${positionClasses}`}
-        value={parseExpirationToDate(displayValue)}
-        onChange={handleCalendarChange}
-        onShow={handleCalendarShow}
-        onHide={handleCalendarHide}
-        view='month'
-        dateFormat='mm/yy'
-        disabled={disabled}
-        appendTo={containerElement}
-      />
+      {Calendar && (
+        <Calendar
+          ref={calendarRef}
+          className={S.paymentCardExpirationDateCalendar}
+          panelClassName={`${PANEL_CLASS}${positionClasses}`}
+          value={parseExpirationToDate(displayValue)}
+          onChange={handleCalendarChange}
+          onShow={handleCalendarShow}
+          onHide={handleCalendarHide}
+          view='month'
+          dateFormat='mm/yy'
+          disabled={disabled}
+          appendTo={containerElement}
+        />
+      )}
     </div>
   );
 };

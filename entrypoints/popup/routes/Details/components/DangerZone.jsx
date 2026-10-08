@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../Details.module.scss';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { PULL_REQUEST_TYPES } from '@/constants';
 import usePopupState from '../../../store/popupState/usePopupState';
 import ClearLink from '@/entrypoints/popup/components/ClearLink';
@@ -41,7 +41,7 @@ function DangerZone (props) {
         <ChevronIcon />
       </button>
 
-      <motion.div
+      <m.div
         className={S.detailsDangerZoneBody}
         variants={dangerZoneVariants}
         initial='hidden'
@@ -66,7 +66,7 @@ function DangerZone (props) {
         >
           <span>{getMessage('details_delete')}</span>
         </ClearLink>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

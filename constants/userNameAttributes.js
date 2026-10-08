@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const userNameAttributes = Object.freeze([
+const userNameAttributes = /* @__PURE__ */ Object.freeze([
   'name',
   'autocomplete',
   'label',

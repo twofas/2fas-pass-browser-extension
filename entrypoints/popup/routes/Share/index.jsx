@@ -8,7 +8,7 @@ import S from './Share.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useParams, useNavigate } from 'react-router';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import getItem from '@/partials/sessionStorage/getItem';
 import NavigationButton from '@/entrypoints/popup/components/NavigationButton';
 import ItemIcon from '@/entrypoints/popup/components/ItemIcon';
@@ -266,7 +266,7 @@ function ShareForm ({ item, getMessage, navigate }) {
           <span className={S.shareOptionTitle}>{getMessage('share_password_title')}</span>
           <p className={S.shareOptionDesc}>{getMessage('share_password_desc')}</p>
 
-          <motion.div
+          <m.div
             className={S.sharePasswordCollapse}
             variants={passwordVariants}
             initial={usePassword ? 'visible' : 'hidden'}
@@ -291,7 +291,7 @@ function ShareForm ({ item, getMessage, navigate }) {
                 <VisibleIcon />
               </button>
             </div>
-          </motion.div>
+          </m.div>
         </div>
         <div className={S.shareOptionControl}>
           <div className={bS.passToggle}>

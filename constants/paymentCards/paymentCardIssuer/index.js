@@ -4,6 +4,5 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-export { default as paymentCardIssuerTexts } from './paymentCardIssuerTexts.js';
 export { default as paymentCardIssuerWords } from './paymentCardIssuerWords.js';
-export { default as paymentCardIssuerSelectors } from './paymentCardIssuerSelectors.js';
+export { default as paymentCardIssuerSelectors, paymentCardIssuerGenericSelectors } from './paymentCardIssuerSelectors.js';

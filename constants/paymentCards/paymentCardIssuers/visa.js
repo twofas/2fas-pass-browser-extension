@@ -8,7 +8,7 @@
  * Visa credit card name variations for form detection
  * @type {Readonly<string[]>}
  */
-const PaymentCardIssuerVisa = Object.freeze([
+const PaymentCardIssuerVisa = /* @__PURE__ */ Object.freeze([
   'Visa',
   'VISA',
   'visa',

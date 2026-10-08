@@ -4,7 +4,9 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { userNameTexts, userNameFormTexts, userNameAttributes } from '@/constants';
+import userNameTexts from './userNameTexts.js';
+import userNameFormTexts from './userNameFormTexts.js';
+import userNameAttributes from './userNameAttributes.js';
 
 /** 
 * Function to get user name input selectors.

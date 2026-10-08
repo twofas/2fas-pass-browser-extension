@@ -9,7 +9,6 @@ import checkAutofillInputsCard from '../functions/checkAutofillInputsCard';
 import checkIframePermission from '../functions/checkIframePermission';
 import autofill from '../functions/autofill';
 import autofillCard from '../functions/autofillCard';
-import getDomainInfo from '../functions/getDomainInfo';
 import notification from '../functions/notification';
 import matchingLogins from '../functions/matchingLogins';
 import savePrompt, { dismissAllSavePrompts } from '../functions/savePrompt';
@@ -23,7 +22,7 @@ import e2eReadAutofillValues from '../functions/e2eReadAutofillValues';
 * run only after i18n has loaded. Every one is already top-frame-only (see the gate
 * below), so sub-frame / iframe content scripts never reach them — those frames never need
 * i18n at all. The autofill / inject path (CONTENT_SCRIPT_CHECK, CHECK_AUTOFILL_INPUTS,
-* AUTOFILL, CHECK_IFRAME_PERMISSION, GET_DOMAIN_INFO, GET_CRYPTO_AVAILABLE) is deliberately
+* AUTOFILL, CHECK_IFRAME_PERMISSION, GET_CRYPTO_AVAILABLE) is deliberately
 * absent: it uses no i18n and must answer immediately, without waiting on the initI18n()
 * service-worker round-trip. NOTIFICATION is also absent — it renders text passed in the
 * request (no getMessage), so gating it would only delay its response for no benefit.
@@ -94,11 +93,6 @@ const contentOnMessage = (request, sender, sendResponse, isTopFrame, container, 
     }
 
     switch (request.action) {
-      case REQUEST_ACTIONS.GET_DOMAIN_INFO: {
-        sendResponse(getDomainInfo());
-        break;
-      }
-
       case REQUEST_ACTIONS.CHECK_AUTOFILL_INPUTS: {
         sendResponse(checkAutofillInputs());
         break;

@@ -9,7 +9,7 @@
 // or substrings (long/accented tokens) against an input's name, id, placeholder, aria-label
 // and associated label text. Accent-free variants are included for attribute names that
 // strip diacritics.
-const currentPasswordKeywords = Object.freeze([
+const currentPasswordKeywords = /* @__PURE__ */ Object.freeze([
   'current',
   'old',
   'existing',
@@ -55,7 +55,7 @@ const currentPasswordKeywords = Object.freeze([
 // Keywords that mark a password field as a NEW / confirmation / repeat password — a field
 // that must NOT receive the existing stored password (registration and change-password
 // forms). Matched the same way as the current-password keywords.
-const newPasswordKeywords = Object.freeze([
+const newPasswordKeywords = /* @__PURE__ */ Object.freeze([
   'new',
   'confirm',
   'repeat',

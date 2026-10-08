@@ -11,11 +11,11 @@ import S from './Install.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
 import { useState, useEffect, lazy, useCallback, useRef } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import ToastsContent from '@/entrypoints/popup/components/ToastsContent';
 import Video1Light from '@/assets/videos/install_video_1_light.mp4?url';
 import Video1Dark from '@/assets/videos/install_video_1_dark.mp4?url';
-import { safariBlankLinks } from '@/partials/functions';
+import safariBlankLinks from '@/partials/functions/safariBlankLinks';
 import openPopupWithFallback from '@/entrypoints/background/utils/openPopupWithFallback';
 import detectDefaultTheme from './functions/detectDefaultTheme';
 import Logo from '@/assets/logo.svg?react';
@@ -176,7 +176,7 @@ function Install () {
         </aside>
 
         <main className={S.installContent}>
-          <motion.div
+          <m.div
             className={S.installContentStep}
             variants={stepVariants}
             initial="hidden"
@@ -210,9 +210,9 @@ function Install () {
                 {getMessage('install_skip_for_now')}
               </button>
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             className={S.installContentStep}
             variants={stepVariants}
             initial="hidden"
@@ -240,7 +240,7 @@ function Install () {
             </h1>
 
             <p className={S.installContentDescription}>{getMessage('install_step2_description')}</p>
-          </motion.div>
+          </m.div>
         </main>
       </section>
 
