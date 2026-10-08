@@ -4,30 +4,26 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, getLastActiveTab } from '@/partials/functions';
+import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 
-/** 
-* Function to get domain information.
+/**
+* Function to get the password rules (minlength, maxlength, pattern) of the page in a tab.
 * @async
-* @return {Promise<Object>} The domain information.
+* @param {Object} tab - The tab to read, from getLastActiveTab.
+* @return {Promise<Object>} The password rules; null values when the page has none or cannot be read.
 */
-const getDomainInfo = async () => {
+const getDomainInfo = async tab => {
   let framesInfo;
   const data = {
     minLength: null,
     maxLength: null,
-    pattern: null,
-    url: null
+    pattern: null
   };
-  const onCatch = () => data;
-  const tab = await getLastActiveTab(onCatch);
 
-  if (!tab) {
+  if (!tab?.id) {
     return data;
   }
-
-  data.url = tab.url;
 
   try {
     await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);

@@ -148,6 +148,24 @@ const isTrackerHostUrl = url => {
 };
 
 /**
+* Checks whether a frame holds the document the user is looking at. Chromium reports
+* documentLifecycle for every frame: besides 'active' it lists the omnibox search prerender
+* (e.g. google.com/search/warmup.html, a second outermost frame with parentFrameId -1),
+* back/forward-cached pages and unloading documents. executeScript({ allFrames: true }) never
+* reaches those and they never answer CONTENT_SCRIPT_CHECK, so counting them stalls the
+* injection verification. Firefox and Safari do not report the field; their frames are active.
+* @param {Object} frame - A frame from browser.webNavigation.getAllFrames.
+* @return {boolean} True when the frame's document is active.
+*/
+const isActiveDocumentFrame = frame => {
+  if (!frame) {
+    return false;
+  }
+
+  return frame.documentLifecycle === undefined || frame.documentLifecycle === null || frame.documentLifecycle === 'active';
+};
+
+/**
 * Checks whether a frame URL is an inherited-origin document (about:blank /
 * about:srcdoc). Such frames have no origin of their own — they inherit the
 * origin of the document that created them — so their own URL is not enough to
@@ -173,7 +191,8 @@ const isInheritedOriginFrameUrl = url => url === 'about:blank' || url === 'about
 * domains) are dropped — the browser never injects there, so counting them would
 * stall the injection-verification loop. An inherited-origin frame inherits its
 * creator's origin, so one whose ancestor resolves to a restricted host is dropped
-* too.
+* too. Frames whose document is not active (prerender, back/forward cache, unloading)
+* are dropped for the same reason (see isActiveDocumentFrame).
 * @param {Array<Object>} frames - Frames from browser.webNavigation.getAllFrames.
 * @return {Array<Object>} The subset of frames that can host the content script.
 */
@@ -210,7 +229,7 @@ const filterInjectableFrames = frames => {
   };
 
   return frames.filter(frame => {
-    if (!frame || !frame.url) {
+    if (!frame || !frame.url || !isActiveDocumentFrame(frame)) {
       return false;
     }
 
@@ -226,5 +245,5 @@ const filterInjectableFrames = frames => {
   });
 };
 
-export { RESTRICTED_HOSTS_BY_BROWSER, isRestrictedHostUrl, TRACKER_HOSTS, isTrackerHostUrl };
+export { RESTRICTED_HOSTS_BY_BROWSER, isRestrictedHostUrl, TRACKER_HOSTS, isTrackerHostUrl, isActiveDocumentFrame };
 export default filterInjectableFrames;

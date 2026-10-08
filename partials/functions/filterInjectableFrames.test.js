@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import filterInjectableFrames, { RESTRICTED_HOSTS_BY_BROWSER, isRestrictedHostUrl, TRACKER_HOSTS, isTrackerHostUrl } from './filterInjectableFrames.js';
+import filterInjectableFrames, { RESTRICTED_HOSTS_BY_BROWSER, isRestrictedHostUrl, TRACKER_HOSTS, isTrackerHostUrl, isActiveDocumentFrame } from './filterInjectableFrames.js';
 
 // Shapes mirror browser.webNavigation.getAllFrames results: top frame has
 // parentFrameId -1; sub-frames point at their parent's frameId.
@@ -293,6 +293,65 @@ describe('filterInjectableFrames', () => {
         { frameId: 2, parentFrameId: 1, url: 'about:blank' }
       ];
       expect(frameIds(frames)).toEqual([0]);
+    });
+  });
+
+  describe('inactive documents are not injectable', () => {
+    // Chrome reports the omnibox search prerender as a second outermost frame of the tab.
+    // executeScript({ allFrames: true }) never reaches it and it never answers, so counting
+    // it forced a full re-injection of content.js on every cold injectCSIfNotAlready call.
+    it('drops a prerendered outermost frame and keeps the active ones', () => {
+      const frames = [
+        { frameId: 0, parentFrameId: -1, frameType: 'outermost_frame', documentLifecycle: 'active', url: 'https://workspace.google.com/products/meet/' },
+        { frameId: 6, parentFrameId: 0, frameType: 'sub_frame', documentLifecycle: 'active', url: 'https://workspace.google.com/js/components/utils/cookie-sharing.html' },
+        { frameId: 5, parentFrameId: -1, frameType: 'outermost_frame', documentLifecycle: 'prerender', url: 'https://www.google.com/search/warmup.html' }
+      ];
+      expect(frameIds(frames)).toEqual([0, 6]);
+    });
+
+    it('drops back/forward-cached and unloading documents', () => {
+      const frames = [
+        { frameId: 0, parentFrameId: -1, documentLifecycle: 'active', url: 'https://example.com/' },
+        { frameId: 1, parentFrameId: -1, documentLifecycle: 'cached', url: 'https://example.com/previous' },
+        { frameId: 2, parentFrameId: 0, documentLifecycle: 'pending_deletion', url: 'https://example.com/old-frame' }
+      ];
+      expect(frameIds(frames)).toEqual([0]);
+    });
+
+    it('drops an about:blank frame inside a prerendered document', () => {
+      const frames = [
+        { frameId: 0, parentFrameId: -1, documentLifecycle: 'active', url: 'https://example.com/' },
+        { frameId: 5, parentFrameId: -1, documentLifecycle: 'prerender', url: 'https://www.google.com/search/warmup.html' },
+        { frameId: 7, parentFrameId: 5, documentLifecycle: 'prerender', url: 'about:blank' }
+      ];
+      expect(frameIds(frames)).toEqual([0]);
+    });
+
+    it('keeps frames that do not report documentLifecycle (Firefox, Safari)', () => {
+      const frames = [
+        { frameId: 0, parentFrameId: -1, url: 'https://example.com/' },
+        { frameId: 1, parentFrameId: 0, url: 'https://login.example.com/' }
+      ];
+      expect(frameIds(frames)).toEqual([0, 1]);
+    });
+  });
+
+  describe('isActiveDocumentFrame', () => {
+    it('accepts active documents and frames without documentLifecycle', () => {
+      expect(isActiveDocumentFrame({ documentLifecycle: 'active' })).toBe(true);
+      expect(isActiveDocumentFrame({})).toBe(true);
+    });
+
+    it('rejects prerendered, cached, unloading and unknown lifecycles', () => {
+      expect(isActiveDocumentFrame({ documentLifecycle: 'prerender' })).toBe(false);
+      expect(isActiveDocumentFrame({ documentLifecycle: 'cached' })).toBe(false);
+      expect(isActiveDocumentFrame({ documentLifecycle: 'pending_deletion' })).toBe(false);
+      expect(isActiveDocumentFrame({ documentLifecycle: 'future_state' })).toBe(false);
+    });
+
+    it('rejects a missing frame', () => {
+      expect(isActiveDocumentFrame(null)).toBe(false);
+      expect(isActiveDocumentFrame(undefined)).toBe(false);
     });
   });
 
