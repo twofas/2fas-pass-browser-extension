@@ -7,7 +7,7 @@
 import sendMessageToAllFrames from './sendMessageToAllFrames.js';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready.js';
 import loadAndClassifyCrossDomainPermissions from './loadAndClassifyCrossDomainPermissions.js';
-import { isTrackerHostUrl } from './filterInjectableFrames.js';
+import { isTrackerHostUrl, isActiveDocumentFrame } from './filterInjectableFrames.js';
 
 /**
 * Discovers cross-domain frame hostnames in a tab via webNavigation, independent
@@ -30,10 +30,11 @@ export const discoverCrossDomainHostnames = async tabId => {
     return new Set();
   }
 
-  // Mirror filterInjectableFrames: tracker iframes are not messaged, so they must not be
-  // discovered as cross-domain hostnames either — otherwise they look "unresponded" and
-  // falsely trigger the iframePermissionRetryDelay wait on every tracker-heavy page.
-  const validFrames = frames.filter(f => f?.url && (f.url.startsWith('http://') || f.url.startsWith('https://')) && !isTrackerHostUrl(f.url));
+  // Mirror filterInjectableFrames: tracker iframes and inactive documents are not messaged,
+  // so they must not be discovered as cross-domain hostnames either — otherwise they look
+  // "unresponded" and falsely trigger the iframePermissionRetryDelay wait. A prerendered
+  // page is also an outermost frame (parentFrameId -1) and must not be taken for the top frame.
+  const validFrames = frames.filter(f => f?.url && (f.url.startsWith('http://') || f.url.startsWith('https://')) && !isTrackerHostUrl(f.url) && isActiveDocumentFrame(f));
   const topFrame = validFrames.find(f => f.parentFrameId === -1);
 
   let topHostname = null;

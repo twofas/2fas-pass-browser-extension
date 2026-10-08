@@ -8,7 +8,7 @@
  * Discover credit card name variations for form detection
  * @type {Readonly<string[]>}
  */
-const PaymentCardIssuerDiscover = Object.freeze([
+const PaymentCardIssuerDiscover = /* @__PURE__ */ Object.freeze([
   'Discover',
   'DISCOVER',
   'discover',

@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { createRoot } from 'react-dom/client';
+import { LazyMotion, domAnimation } from 'motion/react';
 import Install from './Install.jsx';
 import { preloadAllFontsAsync } from '@/partials/functions/preloadFonts.js';
 import { I18nProvider } from '@/partials/context/I18nContext.jsx';
@@ -17,9 +18,11 @@ const init = async () => {
   await initI18n();
 
   createRoot(document.getElementById('root')).render(
-    <I18nProvider>
-      <Install />
-    </I18nProvider>
+    <LazyMotion features={domAnimation} strict={import.meta.env.DEV}>
+      <I18nProvider>
+        <Install />
+      </I18nProvider>
+    </LazyMotion>
   );
 };
 

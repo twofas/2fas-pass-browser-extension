@@ -4,79 +4,47 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { sendMessageToAllFrames, getLastActiveTab } from '@/partials/functions';
-import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
+import readPasswordRules from './readPasswordRules';
 
-/** 
-* Function to get domain information.
+/**
+* Function to get the password rules (minlength, maxlength, pattern) of the page in a tab.
+* Reads the top frame with one injected function instead of injecting the content script.
 * @async
-* @return {Promise<Object>} The domain information.
+* @param {Object} tab - The tab to read, from getLastActiveTab.
+* @return {Promise<Object>} The password rules; null values when the page has none or cannot be read.
 */
-const getDomainInfo = async () => {
-  let framesInfo;
+const getDomainInfo = async tab => {
   const data = {
     minLength: null,
     maxLength: null,
-    pattern: null,
-    url: null
+    pattern: null
   };
-  const onCatch = () => data;
-  const tab = await getLastActiveTab(onCatch);
 
-  if (!tab) {
+  if (!tab?.id) {
     return data;
   }
 
-  data.url = tab.url;
+  let results;
 
   try {
-    await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
+    results = await browser.scripting.executeScript({
+      target: { tabId: tab.id, frameIds: [0] },
+      func: readPasswordRules,
+      injectImmediately: true
+    });
   } catch {
     return data;
   }
 
-  try {
-    framesInfo = await sendMessageToAllFrames(tab.id,
-      {
-        action: REQUEST_ACTIONS.GET_DOMAIN_INFO,
-        target: REQUEST_TARGETS.CONTENT
-      }
-    );
-  } catch {
+  const rules = Array.isArray(results) ? results[0]?.result : null;
+
+  if (!rules) {
     return data;
   }
 
-  if (!framesInfo || !Array.isArray(framesInfo)) {
-    return data;
-  }
-
-  const filteredFramesInfo = framesInfo.filter(Boolean);
-
-  if (!filteredFramesInfo || filteredFramesInfo.length <= 0) {
-    return data;
-  }
-
-  const tabInfo = filteredFramesInfo[0];
-
-  if (!tabInfo) {
-    return data;
-  }
-
-  if (tabInfo?.minLength) {
-    try {
-      data.minLength = tabInfo.minLength || null;
-    } catch {}
-  }
-
-  if (tabInfo?.maxLength) {
-    try {
-      data.maxLength = tabInfo.maxLength || null;
-    } catch {}
-  }
-
-  if (tabInfo?.pattern) {
-    data.pattern = tabInfo.pattern;
-  }
+  data.minLength = rules.minLength || null;
+  data.maxLength = rules.maxLength || null;
+  data.pattern = rules.pattern || null;
 
   return data;
 };

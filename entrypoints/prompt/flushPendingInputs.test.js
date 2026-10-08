@@ -79,4 +79,18 @@ describe('flushPendingInputs — harvests skip-tagged usernames (finding #9)', (
 
     expect(data.map(d => d.id).sort()).toEqual(['p1', 'u3']);
   });
+
+  describe('captured value rules (Chromium kHiddenValueRe / IsProbablyNotUsername)', () => {
+    it('does not flush a password field the site has masked before submit', () => {
+      const masked = addInput({ id: 'p1', value: '••••••••', type: 'password' });
+
+      expect(flushPendingInputs([masked], {}, {})).toEqual([]);
+    });
+
+    it('flushes an empty value for a username of one or two digits', () => {
+      const digits = addInput({ id: 'u1', value: '12' });
+
+      expect(flushPendingInputs([digits], {}, {})).toMatchObject([{ id: 'u1', type: 'username', value: '', encrypted: false }]);
+    });
+  });
 });

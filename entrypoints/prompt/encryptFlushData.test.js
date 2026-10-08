@@ -21,12 +21,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('@/utils/CatchError.js', () => ({ default: vi.fn() }));
 
-vi.mock('@/partials/functions', () => ({
-  generateNonce: vi.fn()
-}));
+vi.mock('@/partials/functions/generateNonce', () => ({ default: vi.fn() }));
 
 import encryptFlushData from './encryptFlushData';
-import { generateNonce } from '@/partials/functions';
+import generateNonce from '@/partials/functions/generateNonce';
 import CatchError from '@/utils/CatchError.js';
 
 const plaintextEntry = (overrides = {}) => ({
@@ -107,5 +105,12 @@ describe('encryptFlushData — restores the encrypted-mode invariant', () => {
     expect(result.map(r => r.id)).toEqual(['p1']);
     expect(result[0].encrypted).toBe(true);
     expect(CatchError).toHaveBeenCalled();
+  });
+
+  it('passes an empty value through unencrypted — there is nothing to protect and it must stay empty', async () => {
+    const result = await encryptFlushData([plaintextEntry({ value: '' })], { data: 'key' }, true);
+
+    expect(result).toEqual([plaintextEntry({ value: '' })]);
+    expect(crypto.subtle.encrypt).not.toHaveBeenCalled();
   });
 });

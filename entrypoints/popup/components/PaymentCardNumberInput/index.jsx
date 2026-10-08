@@ -9,10 +9,11 @@ import { memo, useMemo, useRef, useLayoutEffect, useCallback, useState, useEffec
 import getCardNumberMask from './getCardNumberMask';
 import isCardNumberInvalid from './validateCardNumber';
 import { useI18n } from '@/partials/context/I18nContext';
+import { getLoadedInputMask, loadInputMask } from '@/partials/primereact/loadInputMask';
 
 /**
 * PaymentCardNumberInput component with dynamic mask based on card type.
-* Lazy loads PrimeReact InputMask for optimized bundle size.
+* Lazy loads PrimeReact InputMask for optimized bundle size, rendering it at once when another field loaded it already.
 * @param {Object} props - Component props.
 * @param {string} props.value - The card number value.
 * @param {Function} props.onChange - Change handler function.
@@ -26,10 +27,10 @@ import { useI18n } from '@/partials/context/I18nContext';
 */
 const PaymentCardNumberInput = ({ value, onChange, id, securityType, sifExists, placeholder, ref, ...inputProps }) => {
   const { getMessage } = useI18n();
-  const [InputMask, setInputMask] = useState(null);
+  const [InputMask, setInputMask] = useState(getLoadedInputMask);
+  const [inputMaskUnavailable, setInputMaskUnavailable] = useState(false);
   const cursorPositionRef = useRef(null);
   const previousMaskRef = useRef(null);
-  const loadedRef = useRef(false);
   const { handleMouseDown, handleFocus, handleClick, handleDoubleClick, handleKeyDown, handleKeyUp, handleSelect } = useInputMaskFocus();
 
   const isHighlySecretWithoutSif = securityType === SECURITY_TIER.HIGHLY_SECRET && !sifExists;
@@ -46,16 +47,19 @@ const PaymentCardNumberInput = ({ value, onChange, id, securityType, sifExists, 
   );
 
   useEffect(function lazyLoadInputMaskLibrary() {
-    if (loadedRef.current) {
+    if (InputMask) {
       return;
     }
 
-    loadedRef.current = true;
-
-    import('primereact/inputmask').then(module => {
-      setInputMask(() => module.InputMask);
-    });
-  }, []);
+    loadInputMask()
+      .then(LoadedInputMask => {
+        setInputMask(() => LoadedInputMask);
+      })
+      .catch(e => {
+        setInputMaskUnavailable(true);
+        CatchError(e);
+      });
+  }, [InputMask]);
 
   useLayoutEffect(function restoreCursorOnMaskChange() {
     if (previousMaskRef.current && previousMaskRef.current !== mask) {
@@ -98,7 +102,7 @@ const PaymentCardNumberInput = ({ value, onChange, id, securityType, sifExists, 
         value={displayValue}
         id={id}
         onChange={e => onChange(e)}
-        disabled={!InputMask || isHighlySecretWithoutSif}
+        disabled={isHighlySecretWithoutSif || (!InputMask && !inputMaskUnavailable)}
       />
     );
   }

@@ -4,110 +4,54 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const paymentCardNumberWords = Object.freeze([
-  'card', // English
-  'credit card', // English
-  'card number', // English
-  'debit card', // English
-  'payment card', // English
-  'kartë', // Albanian
-  'txartela', // Basque
-  'картка', // Belarusian
-  'kartica', // Bosnian
-  'карта', // Bulgarian
-  'targeta', // Catalan
-  'carta', // Corsican
-  'kartica', // Croatian
-  'karta', // Czech
-  'kort', // Danish
-  'kaart', // Dutch
-  'kaart', // Estonian
-  'kortti', // Finnish
-  'carte', // French
-  'kaart', // Frisian
-  'tarxeta', // Galician
-  'Karte', // German
-  'κάρτα', // Greek
-  'kártya', // Hungarian
-  'kort', // Icelandic
-  'cárta', // Irish
-  'carta', // Italian
-  'karte', // Latvian
-  'kortelė', // Lithuanian
-  'Kaart', // Luxembourgish
-  'картичка', // Macedonian
-  'karta', // Maltese
-  'kort', // Norwegian
-  'karta', // Polish
-  'cartão', // Portuguese
-  'card', // Romanian
-  'карта', // Russian
-  'cairt', // Scots Gaelic
-  'картица', // Serbian
-  'karta', // Slovak
-  'kartica', // Slovenian
-  'tarjeta', // Spanish
-  'kort', // Swedish
-  'карта', // Tatar
-  'картка', // Ukrainian
-  'cerdyn', // Welsh
-  'קאַרד', // Yiddish
-  'քdelays', // Armenian
-  'kart', // Azerbaijani
-  'কার্ড', // Bengali
-  '卡', // Chinese Simplified
-  '卡', // Chinese Traditional
-  'ბარათი', // Georgian
-  'કાર્ડ', // Gujarati
-  'कार्ड', // Hindi
-  'daim npav', // Hmong
-  'カード', // Japanese
-  'ಕಾರ್ಡ್', // Kannada
-  'карта', // Kazakh
-  'កាត', // Khmer
-  '카드', // Korean
-  'карта', // Kyrgyz
-  'ບັດ', // Lao
-  'കാർഡ്', // Malayalam
-  'कार्ड', // Marathi
-  'карт', // Mongolian
-  'ကတ်', // Myanmar (Burmese)
-  'कार्ड', // Nepali
-  'କାର୍ଡ', // Odia
-  'کارت', // Pashto
-  'ਕਾਰਡ', // Punjabi
-  'ڪارڊ', // Sindhi
-  'කාඩ්පත', // Sinhala
-  'корт', // Tajik
-  'அட்டை', // Tamil
-  'కార్డు', // Telugu
-  'บัตร', // Thai
-  'kart', // Turkish
-  'karta', // Turkmen
-  'کارڈ', // Urdu
-  'كارتا', // Uyghur
-  'karta', // Uzbek
-  'thẻ', // Vietnamese
-  'بطاقة', // Arabic
-  'כרטיס', // Hebrew
-  'kart', // Kurdish (Kurmanji)
-  'کارت', // Persian
-  'kaart', // Afrikaans
-  'karete', // Sesotho
-  'kaarka', // Somali
-  'kadi', // Swahili
-  'ikhadi', // Zulu
-  'card', // Filipino
-  'kāleka', // Hawaiian
-  'kartu', // Indonesian
-  'kertu', // Javanese
-  'karatra', // Malagasy
-  'kad', // Malay
-  'kāri', // Maori
-  'kata', // Samoan
-  'kartu', // Sundanese
-  'karto', // Esperanto
-  'kat' // Haitian Creole
+/**
+* Lowercase phrases that name a payment card NUMBER field in its visible label, aria-label,
+* aria-labelledby text, placeholder or title. Matched by partials/inputFunctions/paymentCardLabels.js:
+* words of up to 6 characters must stand alone, longer ones must start a word (an inflected ending is
+* allowed), CJK/Hangul phrases match anywhere. Only phrases scoped to the card are listed, never a bare
+* "number" or "card". Languages: every language of the extension's i18n (English, Polish, German — enforced by
+* paymentCardWords.test.js) plus the ones covered by Chromium's credit card autofill patterns.
+*/
+const paymentCardNumberWords = /* @__PURE__ */ Object.freeze([
+  'card number',
+  'card num',
+  'card no.',
+  'card #',
+  'cc number',
+  'cc #',
+  'kartennummer',
+  'kreditkartennummer',
+  'karten-nr',
+  'kartennr',
+  'numer karty',
+  'nr karty',
+  'número de tarjeta',
+  'numero de tarjeta',
+  'número de la tarjeta',
+  'numero de la tarjeta',
+  'numéro de carte',
+  'numero de carte',
+  'numéro de la carte',
+  'numero de la carte',
+  'n° de carte',
+  'numero carta',
+  'numero della carta',
+  'numero di carta',
+  'número do cartão',
+  'numero do cartao',
+  'número de cartão',
+  'numero de cartao',
+  'номер карты',
+  'номер банковской карты',
+  'номер кредитной карты',
+  'カード番号',
+  '卡号',
+  '卡號',
+  '카드 번호',
+  '카드번호',
+  'nomor kartu',
+  'no. kartu',
+  'no kartu'
 ]);
 
 export default paymentCardNumberWords;

@@ -8,7 +8,7 @@
  * JCB credit card name variations for form detection
  * @type {Readonly<string[]>}
  */
-const PaymentCardIssuerJCB = Object.freeze([
+const PaymentCardIssuerJCB = /* @__PURE__ */ Object.freeze([
   'JCB',
   'jcb',
   'Japan Credit Bureau',

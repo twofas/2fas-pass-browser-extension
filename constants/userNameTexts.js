@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 // camelCase - other cases are generated in userNameSelectors.js
-const userNameTexts = Object.freeze([
+const userNameTexts = /* @__PURE__ */ Object.freeze([
   'account',
   'accountId',
   'accountID',

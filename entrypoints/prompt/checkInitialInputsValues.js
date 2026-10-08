@@ -6,9 +6,11 @@
 // See LICENSE file for full terms
 
 import generateNonce from '@/partials/functions/generateNonce';
+import { isHiddenPasswordValue, isProbablyNotUsername } from './credentialValueRules';
 
 /**
-* Function to check initial input values and send them to background if they have values.
+* Function to check initial input values and send them to background if they have values. A masked password
+* ("********" shown for a remembered one) and a username of one or two digits are not reported.
 * @param {HTMLInputElement[]} inputs - The array of input elements.
 * @param {Object} localKey - The local key object.
 * @param {boolean} encrypted - Flag indicating if the input should be encrypted.
@@ -21,14 +23,20 @@ const checkInitialInputsValues = async (inputs, localKey, encrypted) => {
     }
 
     const inputId = input.getAttribute('twofas-pass-id');
-    
+
     if (!inputId) {
+      continue;
+    }
+
+    const type = input.type === 'password' ? 'password' : 'username';
+
+    if ((type === 'password' && isHiddenPasswordValue(input.value)) || (type === 'username' && isProbablyNotUsername(input.value))) {
       continue;
     }
 
     const data = {
       id: inputId,
-      type: input.type === 'password' ? 'password' : 'username',
+      type,
       url: window?.location?.origin,
       timestamp: Date.now(),
       encrypted

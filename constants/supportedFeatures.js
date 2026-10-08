@@ -4,15 +4,13 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const supportedFeatures = {
+const supportedFeatures = /* @__PURE__ */ Object.freeze({
   items: {
     secureNote: 'items.secureNote',
     paymentCard: 'items.paymentCard',
     wifi: 'items.wifi',
     shareLink: 'shareLink'
   }
-};
-
-Object.freeze(supportedFeatures);
+});
 
 export default supportedFeatures;

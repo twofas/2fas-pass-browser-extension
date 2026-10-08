@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-const personalInfoDeniedAutocompleteValues = Object.freeze([
+const personalInfoDeniedAutocompleteValues = /* @__PURE__ */ Object.freeze([
   'given-name',
   'family-name',
   'additional-name',

@@ -7,7 +7,7 @@
 import S from './UpdateComponent.module.scss';
 import { useCallback, useState, useEffect } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import RefreshIcon from '@/assets/popup-window/refresh.svg?react';
 
 const updateBarVariants = {
@@ -86,7 +86,7 @@ function UpdateComponent () {
   }, [messageListener]);
 
   return (
-    <motion.div
+    <m.div
       className={S.updateContainer}
       variants={updateBarVariants}
       initial='hidden'
@@ -107,7 +107,7 @@ function UpdateComponent () {
           {getMessage('update_button')}
         </button>
       </div>
-    </motion.div>
+    </m.div>
   );
 }
 

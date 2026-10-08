@@ -4,11 +4,12 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { paymentCardholderNameSelectors } from '@/constants';
+import { paymentCardholderNameSelectors, paymentCardholderNameWords } from '@/constants';
 import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import { filterDeniedKeywords, makeConflictingAutocompleteFilter, getAssociatedLabelText } from './shared';
+import { hasDeniedLabelText, hasDeniedParentContext, isInPaymentContext } from './paymentCardLabels';
 
 const conflictingAutocompleteValues = [
   'cc-number',
@@ -43,38 +44,9 @@ const givenNameLabelKeywords = ['first name', 'given name', 'first-name', 'given
 const familyNameLabelKeywords = ['last name', 'family name', 'surname', 'last-name', 'family-name', 'lastname', 'familyname', 'nazwisko', 'nachname', 'apellido', 'achternaam', 'cognome'];
 const additionalNameLabelKeywords = ['middle name', 'additional name', 'middle-name', 'middlename', 'second name'];
 // Labels that ask for the COMBINED name; these must win over the split-name keywords
-// (e.g. "first and last name" contains the substring "last name" but is a full-name field).
-const combinedNameLabelKeywords = ['full name', 'first and last', 'first & last', 'first/last', 'first / last'];
-
-const cardholderLabelKeywords = [
-  'name on card',
-  'cardholder name',
-  'cardholder',
-  'card holder',
-  'card name',
-  'full name on card',
-  'imię na karcie',
-  'imię i nazwisko na karcie',
-  'nazwa na karcie',
-  'posiadacz karty',
-  'nombre en la tarjeta',
-  'nombre en tarjeta',
-  'titular de la tarjeta',
-  'nom sur la carte',
-  'titulaire de la carte',
-  'name auf der karte',
-  'karteninhaber',
-  'nome sulla carta',
-  'titolare della carta',
-  'naam op kaart',
-  'kaarthouder',
-  'カード名義',
-  'カード所有者',
-  '卡片姓名',
-  '持卡人',
-  'nome no cartão',
-  'titular do cartão'
-];
+// (e.g. "first and last name" contains the substring "last name" but is a full-name field; the Polish
+// "Imię na karcie" means "name on card", not "first name").
+const combinedNameLabelKeywords = ['full name', 'first and last', 'first & last', 'first/last', 'first / last', 'imię na karcie', 'imie na karcie'];
 
 const filterConflictingAutocomplete = makeConflictingAutocompleteFilter(conflictingAutocompleteValues);
 
@@ -90,7 +62,7 @@ const matchesCardholderKeyword = text => {
     return false;
   }
 
-  return cardholderLabelKeywords.some(keyword => {
+  return paymentCardholderNameWords.some(keyword => {
     if (text.includes(keyword)) {
       return true;
     }
@@ -183,7 +155,8 @@ const getNameFieldType = input => {
 };
 
 /**
-* Gets inputs that have associated labels matching cardholder name keywords.
+* Gets inputs that have associated labels matching cardholder name words, skipping labels that name
+* something else (e.g. "Cardholder birthdate") and gift card/voucher sections.
 * @param {Document|ShadowRoot} rootNode - The root node to search in.
 * @return {HTMLInputElement[]} The array of cardholder name input elements found by label.
 */
@@ -197,6 +170,11 @@ const getInputsByLabelFromRoot = rootNode => {
     const placeholder = (input.getAttribute('placeholder') || '').toLowerCase();
 
     const textsToCheck = [labelText, ariaLabel, placeholder].filter(Boolean);
+
+    if (hasDeniedLabelText(textsToCheck) || hasDeniedParentContext(input)) {
+      return;
+    }
+
     const hasMatch = textsToCheck.some(text => matchesCardholderKeyword(text));
 
     if (hasMatch) {
@@ -248,42 +226,6 @@ const getBillingNameInputsFromRoot = rootNode => {
   const lastNameInputs = Array.from(rootNode.querySelectorAll(lastNameSelectors.join(', ')));
 
   return [...billingInputs, ...firstNameInputs, ...lastNameInputs];
-};
-
-const paymentContainerSelector = '[data-testid*="payment" i], [data-testid*="credit" i], [data-testid*="card" i], ' +
-  '[class*="payment" i], [class*="credit" i], [class*="checkout" i], [class*="billing" i]';
-
-const cardFieldSelector = 'input[autocomplete="cc-number"], input[autocomplete="cc-exp"], ' +
-  'input[autocomplete="cc-exp-month"], input[autocomplete="cc-exp-year"], input[autocomplete="cc-csc"]';
-
-/**
-* Checks if a billing name input is within a payment form context using structural signals
-* (real card fields nearby, or a payment/credit/checkout/billing container) rather than a
-* raw text scan, so unrelated copy mentioning "card"/"billing" cannot create a false context.
-* The card-field lookup is scoped to the candidate's own form/payment container — not the whole
-* document — so an unrelated name field does not inherit payment context from a card field that
-* lives in a separate form elsewhere on the page.
-* @param {HTMLInputElement} input - The input element to check.
-* @return {boolean} True if the input is in a payment context.
-*/
-const isInPaymentContext = input => {
-  const scope = input.closest('form') || input.closest(paymentContainerSelector);
-
-  if (scope && scope.querySelector(cardFieldSelector) !== null) {
-    return true;
-  }
-
-  if (input.closest(paymentContainerSelector)) {
-    return true;
-  }
-
-  const form = input.closest('form');
-
-  if (form && form.querySelector(paymentContainerSelector)) {
-    return true;
-  }
-
-  return false;
 };
 
 /**

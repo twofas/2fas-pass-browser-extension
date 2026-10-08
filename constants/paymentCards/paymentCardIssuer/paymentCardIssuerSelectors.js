@@ -5,8 +5,33 @@
 // See LICENSE file for full terms
 
 import paymentCardIssuerTexts from './paymentCardIssuerTexts.js';
-import paymentCardFormTexts from '../paymentCardFormTexts.js';
+import paymentCardIssuerGenericTexts from './paymentCardIssuerGenericTexts.js';
 import paymentCardAttributes from '../paymentCardAttributes.js';
+
+/**
+ * Adds the select and input selectors matching each text as an id or as the value of an identifying attribute.
+ * @param {Array<string>} selectors - The selector list to extend.
+ * @param {ReadonlyArray<string>} texts - The texts.
+ * @return {void}
+ */
+const addTextSelectors = (selectors, texts) => {
+  texts.forEach(text => {
+    selectors.push(`select#${text}`);
+    selectors.push(`select#${text.toLowerCase()}`);
+    selectors.push(`select#${text.toUpperCase()}`);
+    selectors.push(`select#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}`);
+
+    selectors.push(`input#${text}`);
+    selectors.push(`input#${text.toLowerCase()}`);
+    selectors.push(`input#${text.toUpperCase()}`);
+    selectors.push(`input#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}`);
+
+    paymentCardAttributes.forEach(attr => {
+      selectors.push(`select[${attr}="${text}" i]`);
+      selectors.push(`input[${attr}="${text}" i]`);
+    });
+  });
+};
 
 /**
  * Function to get payment card issuer input selectors.
@@ -32,44 +57,20 @@ const paymentCardIssuerSelectors = () => {
     'input[name*="card-type" i]'
   ];
 
-  paymentCardIssuerTexts.forEach(text => {
-    selectors.push(`select#${text}`);
-    selectors.push(`select#${text.toLowerCase()}`);
-    selectors.push(`select#${text.toUpperCase()}`);
-    selectors.push(`select#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}`);
+  addTextSelectors(selectors, paymentCardIssuerTexts);
 
-    selectors.push(`input#${text}`);
-    selectors.push(`input#${text.toLowerCase()}`);
-    selectors.push(`input#${text.toUpperCase()}`);
-    selectors.push(`input#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()}`);
+  return [...new Set(selectors)];
+};
 
-    paymentCardAttributes.forEach(attr => {
-      selectors.push(`select[${attr}="${text}" i]`);
-      selectors.push(`input[${attr}="${text}" i]`);
-    });
-  });
+/**
+ * Function to get the selectors of issuer controls named only by a generic word (issuer, brand, network, provider).
+ * They name the card brand only inside a payment card form, so the caller must check that context.
+ * @return {Array<string>} An array of generic payment card issuer input selectors.
+ */
+export const paymentCardIssuerGenericSelectors = () => {
+  const selectors = [];
 
-  paymentCardFormTexts.forEach(text => {
-    selectors.push(`#${text} select[name*="type" i]`);
-    selectors.push(`#${text.toLowerCase()} select[name*="type" i]`);
-    selectors.push(`#${text.toUpperCase()} select[name*="type" i]`);
-    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} select[name*="type" i]`);
-
-    selectors.push(`#${text} input[name*="type" i]`);
-    selectors.push(`#${text.toLowerCase()} input[name*="type" i]`);
-    selectors.push(`#${text.toUpperCase()} input[name*="type" i]`);
-    selectors.push(`#${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="type" i]`);
-
-    selectors.push(`.${text} select[name*="type" i]`);
-    selectors.push(`.${text.toLowerCase()} select[name*="type" i]`);
-    selectors.push(`.${text.toUpperCase()} select[name*="type" i]`);
-    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} select[name*="type" i]`);
-
-    selectors.push(`.${text} input[name*="type" i]`);
-    selectors.push(`.${text.toLowerCase()} input[name*="type" i]`);
-    selectors.push(`.${text.toUpperCase()} input[name*="type" i]`);
-    selectors.push(`.${text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()} input[name*="type" i]`);
-  });
+  addTextSelectors(selectors, paymentCardIssuerGenericTexts);
 
   return [...new Set(selectors)];
 };

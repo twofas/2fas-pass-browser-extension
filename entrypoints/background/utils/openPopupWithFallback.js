@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { openPopup } from '@/partials/functions';
+import openPopup from '@/partials/functions/openPopup';
 import isFirefoxBelow149 from '@/partials/browserInfo/isFirefoxBelow149';
 import openPopupWindowInNewWindow from './openPopupWindowInNewWindow';
 

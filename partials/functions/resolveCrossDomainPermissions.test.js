@@ -49,4 +49,16 @@ describe('discoverCrossDomainHostnames', () => {
 
     expect([...result].sort()).toEqual(['pay.processor.com']);
   });
+
+  it('ignores a prerendered outermost frame (it is never messaged)', async () => {
+    setFrames([
+      { frameId: 5, parentFrameId: -1, frameType: 'outermost_frame', documentLifecycle: 'prerender', url: 'https://www.google.com/search/warmup.html' },
+      { frameId: 0, parentFrameId: -1, frameType: 'outermost_frame', documentLifecycle: 'active', url: 'https://shop.example.com/checkout' },
+      { frameId: 1, parentFrameId: 0, frameType: 'sub_frame', documentLifecycle: 'active', url: 'https://pay.processor.com/widget' }
+    ]);
+
+    const result = await discoverCrossDomainHostnames(123);
+
+    expect([...result].sort()).toEqual(['pay.processor.com']);
+  });
 });

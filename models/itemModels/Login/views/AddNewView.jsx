@@ -7,11 +7,12 @@
 import S from '@/entrypoints/popup/routes/AddNew/AddNew.module.scss';
 import pI from '@/partials/global-styles/pass-input.module.scss';
 import bS from '@/partials/global-styles/buttons.module.scss';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useNavigate, useLocation } from 'react-router';
 import usePopupState from '@/entrypoints/popup/store/popupState/usePopupState';
 import getDomainInfo from '@/entrypoints/popup/routes/AddNew/functions/getDomainInfo';
-import { useEffect, useState } from 'react';
+import getLastActiveTab from '@/partials/functions/getLastActiveTab';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Form, Field } from 'react-final-form';
 import onMessage from '@/entrypoints/popup/routes/AddNew/events/onMessage';
 import { copyValue, getCurrentDevice } from '@/partials/functions';
@@ -32,6 +33,12 @@ const additionalVariants = {
   visible: { maxHeight: '189px' }
 };
 
+const PAGE_PASSWORD_RULES = [
+  { key: 'minLength', sanitize: true },
+  { key: 'maxLength', sanitize: true },
+  { key: 'pattern', sanitize: false }
+];
+
 /**
 * AddNew component for creating a new login entry.
 * @return {JSX.Element} The rendered component.
@@ -41,18 +48,26 @@ function LoginAddNewView() {
   const navigate = useNavigate();
   const location = useLocation();
   const { data, setData } = usePopupState();
+  const [initialized, setInitialized] = useState(false);
+  const urlEditedRef = useRef(false);
 
-  const [loading, setLoading] = useState(true);
+  // Layout effect: the defaults (e.g. onMobile) are written before the first paint, so the form
+  // never flashes with unset fields. Only the tab URL and password rules load after the paint.
+  useLayoutEffect(function initializeLoginAddNewView() {
+    let cancelled = false;
 
-  useEffect(function initializeLoginAddNewView() {
-    const messageListener = async (request, sender, sendResponse) => onMessage(request, sender, sendResponse, value => setData('url', value));
+    const messageListener = async (request, sender, sendResponse) => onMessage(request, sender, sendResponse, value => {
+      urlEditedRef.current = true;
+      setData('url', value);
+    });
     browser.runtime.onMessage.addListener(messageListener);
 
-    const initializeData = async () => {
+    const initializeData = () => {
+      const resolvedKeys = new Set();
+
       try {
         const stateData = location?.state?.data || {};
         const storeData = data || {};
-        const domainData = await getDomainInfo();
         const isReturningFromPasswordGenerator = location?.state?.from === 'passwordGenerator';
         const isReturningFromFetch = location?.state?.from === 'fetch';
         const generatedPassword = location?.state?.generatedPassword;
@@ -90,12 +105,12 @@ function LoginAddNewView() {
         };
 
         const fieldDefinitions = [
-          { key: 'url', fallback: domainData.url, sanitize: true },
+          { key: 'url', fallback: undefined, sanitize: true },
           { key: 'username', fallback: undefined, sanitize: true },
           { key: 's_password', fallback: undefined, sanitize: true },
-          { key: 'minLength', fallback: domainData.minLength, sanitize: true },
-          { key: 'maxLength', fallback: domainData.maxLength, sanitize: true },
-          { key: 'pattern', fallback: domainData.pattern, sanitize: false },
+          { key: 'minLength', fallback: undefined, sanitize: true },
+          { key: 'maxLength', fallback: undefined, sanitize: true },
+          { key: 'pattern', fallback: undefined, sanitize: false },
           { key: 'onMobile', fallback: true, sanitize: false },
           { key: 'additionalOverflow', fallback: true, sanitize: false },
           { key: 'passwordVisible', fallback: undefined, sanitize: false }
@@ -106,19 +121,53 @@ function LoginAddNewView() {
 
           if (value !== null) {
             setData(key, value);
+            resolvedKeys.add(key);
           }
         });
-
-        setLoading(false);
       } catch (e) {
         CatchError(e);
-        setLoading(false);
+      }
+
+      return resolvedKeys;
+    };
+
+    const loadPageData = async resolvedKeys => {
+      try {
+        const tab = await getLastActiveTab();
+
+        if (cancelled || !tab) {
+          return;
+        }
+
+        if (!resolvedKeys.has('url') && !urlEditedRef.current && tab.url) {
+          setData('url', filterXSS(tab.url));
+        }
+
+        const domainData = await getDomainInfo(tab);
+
+        if (cancelled) {
+          return;
+        }
+
+        PAGE_PASSWORD_RULES.forEach(({ key, sanitize }) => {
+          const value = domainData?.[key];
+
+          if (resolvedKeys.has(key) || value === null || value === undefined) {
+            return;
+          }
+
+          setData(key, sanitize && typeof value === 'string' ? filterXSS(value) : value);
+        });
+      } catch (e) {
+        CatchError(e);
       }
     };
 
-    initializeData();
+    loadPageData(initializeData());
+    setInitialized(true);
 
-    return function removeLoginAddNewMessageListener() {
+    return function cleanupLoginAddNewView() {
+      cancelled = true;
       browser.runtime.onMessage.removeListener(messageListener);
     };
   }, [location?.state?.data, location?.state?.generatedPassword]);
@@ -228,7 +277,7 @@ function LoginAddNewView() {
     });
   };
 
-  if (loading) {
+  if (!initialized) {
     return null;
   }
 
@@ -267,6 +316,7 @@ function LoginAddNewView() {
                     autoCapitalize="off"
                     onChange={e => {
                       input.onChange(e);
+                      urlEditedRef.current = true;
                       setData('url', e.target.value);
                     }}
                   />
@@ -313,7 +363,7 @@ function LoginAddNewView() {
               </div>
             )}
           </Field>
-          <motion.div
+          <m.div
             className={`${S.addNewAdditional} ${data?.additionalOverflow ? S.overflowH : ''}`}
             variants={additionalVariants}
             initial={data?.onMobile !== false ? 'hidden' : 'visible'}
@@ -427,7 +477,7 @@ function LoginAddNewView() {
                 </div>
               )}
             </Field>
-          </motion.div>
+          </m.div>
           <div className={S.addNewButtons}>
             <button
               type="submit"

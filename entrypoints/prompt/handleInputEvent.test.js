@@ -19,11 +19,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('@/utils/CatchError.js', () => ({ default: vi.fn() }));
 
-vi.mock('@/partials/functions', () => ({
-  isVisible: () => true,
-  isElementInArray: (element, array) => Array.isArray(array) && array.includes(element),
-  generateNonce: vi.fn()
+vi.mock('@/partials/functions/isVisible', () => ({ default: () => true }));
+vi.mock('@/partials/functions/isElementInArray', () => ({
+  default: (element, array) => Array.isArray(array) && array.includes(element)
 }));
+vi.mock('@/partials/functions/generateNonce', () => ({ default: vi.fn() }));
 
 vi.mock('@/partials/inputFunctions/getPasswordInputs', () => ({ default: () => [] }));
 vi.mock('@/partials/inputFunctions/getUsernameInputs', () => ({
@@ -38,7 +38,7 @@ const hoisted = vi.hoisted(() => ({ idCounter: 0 }));
 vi.mock('./generateInputId', () => ({ default: () => `gen-id-${++hoisted.idCounter}` }));
 
 import handleInputEvent from './handleInputEvent';
-import { generateNonce } from '@/partials/functions';
+import generateNonce from '@/partials/functions/generateNonce';
 
 const DEBOUNCE = 100;
 
@@ -332,5 +332,87 @@ describe('handleInputEvent — shadow DOM retargeting via composedPath (finding 
     expect(promptCall).toBeTruthy();
     expect(promptCall[0].data.id).toBe('pass-id');
     expect(promptCall[0].data.type).toBe('password');
+  });
+});
+
+// After Chromium's password manager: a password value made of one repeated symbol ("••••••") is the site's
+// mask, not the password, and a username that is empty or one/two digits is not a username.
+describe('handleInputEvent — captured value rules (Chromium kHiddenValueRe / IsProbablyNotUsername)', () => {
+  let timers;
+
+  const addTaggedInput = (value, { type = 'text', id = 'id-1' } = {}) => {
+    const input = document.createElement('input');
+    input.type = type;
+    input.value = value;
+    input.setAttribute('twofas-pass-id', id);
+    document.body.appendChild(input);
+
+    return input;
+  };
+
+  const fire = (input, { encrypted = false, latestValues, beaconPayloads } = {}) =>
+    handleInputEvent({ target: input }, [input], { data: 'present' }, timers, { value: false }, encrypted, latestValues, beaconPayloads);
+
+  const sentData = () => browser.runtime.sendMessage.mock.calls[0][0].data;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    document.body.innerHTML = '';
+    hoisted.idCounter = 0;
+    timers = {};
+    browser.runtime.sendMessage = vi.fn().mockResolvedValue({ status: 'ok' });
+    generateNonce.mockResolvedValue({ ArrayBuffer: new ArrayBuffer(12) });
+    vi.stubGlobal('crypto', { subtle: { encrypt: vi.fn().mockResolvedValue(new ArrayBuffer(16)) } });
+  });
+
+  afterEach(() => {
+    vi.runOnlyPendingTimers();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+    document.body.innerHTML = '';
+  });
+
+  it.each(['••••••••', '********', '●●●●'])('does not capture the masked password value "%s"', async value => {
+    const latestValues = {};
+
+    await fire(addTaggedInput(value, { type: 'password' }), { latestValues });
+    await vi.advanceTimersByTimeAsync(DEBOUNCE + 50);
+
+    expect(browser.runtime.sendMessage).not.toHaveBeenCalled();
+    expect(latestValues).toEqual({});
+  });
+
+  it('captures a real password', async () => {
+    await fire(addTaggedInput('pa$$w0rd', { type: 'password' }));
+    await vi.advanceTimersByTimeAsync(DEBOUNCE + 50);
+
+    expect(sentData()).toMatchObject({ type: 'password', value: 'pa$$w0rd' });
+  });
+
+  it.each(['1', '12'])('sends an empty, unencrypted value for the username "%s"', async value => {
+    await fire(addTaggedInput(value), { encrypted: true });
+    await vi.advanceTimersByTimeAsync(DEBOUNCE + 50);
+
+    expect(sentData()).toMatchObject({ type: 'username', value: '', encrypted: false });
+    expect(crypto.subtle.encrypt).not.toHaveBeenCalled();
+  });
+
+  it('sends an empty, unencrypted value for a cleared password field', async () => {
+    const beaconPayloads = {};
+    browser.runtime.sendMessage = vi.fn().mockRejectedValue(new Error('disconnected'));
+
+    await fire(addTaggedInput('', { type: 'password' }), { encrypted: true, beaconPayloads });
+    await vi.advanceTimersByTimeAsync(DEBOUNCE + 50);
+
+    expect(browser.runtime.sendMessage.mock.calls[0][0].data).toMatchObject({ value: '', encrypted: false });
+    expect(beaconPayloads['id-1']).toMatchObject({ value: '', encrypted: false });
+    expect(crypto.subtle.encrypt).not.toHaveBeenCalled();
+  });
+
+  it.each(['123', 'ab', 'jan'])('captures the username "%s"', async value => {
+    await fire(addTaggedInput(value));
+    await vi.advanceTimersByTimeAsync(DEBOUNCE + 50);
+
+    expect(sentData()).toMatchObject({ type: 'username', value });
   });
 });

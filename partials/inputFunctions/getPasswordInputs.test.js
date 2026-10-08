@@ -287,4 +287,24 @@ describe('getPasswordInputs', () => {
       expect(result[0].name).toBe('password');
     });
   });
+
+  describe('non-credential fields (Chromium IsNotPasswordField)', () => {
+    it('skips masked card security code and one-time code fields', () => {
+      document.body.innerHTML = `
+        <input type="password" name="cvv" />
+        <input type="password" autocomplete="cc-csc" />
+        <input type="password" autocomplete="one-time-code" />
+        <input type="password" name="otpInput" />
+        <input type="password" name="password" />
+      `;
+
+      expect(getPasswordInputs().map(input => input.name)).toEqual(['password']);
+    });
+
+    it('keeps a password confirmation field named with "verification"', () => {
+      document.body.innerHTML = '<input type="password" name="password" /><input type="password" name="passwordVerification" />';
+
+      expect(getPasswordInputs()).toHaveLength(2);
+    });
+  });
 });

@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from './ThisTab.module.scss';
-import { motion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { useEffect, useState, useRef, useCallback, useMemo, memo, useContext } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import { ScrollableRefContext } from '../../context/ScrollableRefProvider';
@@ -27,6 +27,8 @@ import { AllItemsList, Filters, KeepItem, MatchingItemsList, ModelFilter, NoMatc
 import { ItemListProvider } from './context/ItemListContext';
 import { QrDialogProvider } from '../../context/QrDialogContext';
 import QrDialog from '../../components/QrDialog';
+import scheduleIdleTask from '../../utils/scheduleIdleTask';
+import { prefetchItemRoutes } from '../../utils/itemRouteLoaders';
 
 const thisTabTopVariants = {
   visible: { height: 'auto', transition: { duration: 0.2, ease: 'easeOut' } },
@@ -696,15 +698,19 @@ function ThisTab (props) {
     };
   }, [loading, data?.searchValue, focusSearchPreservingScrollOnMount]);
 
+  useEffect(function prefetchItemRoutesWhenIdle() {
+    return scheduleIdleTask(prefetchItemRoutes);
+  }, []);
+
   return (
     <div className={`${props.className ? props.className : ''}`}>
       <QrDialogProvider>
         <div ref={scrollableRef}>
-          <section className={S.thisTab}>
+          <section className={S.thisTab} onPointerEnter={prefetchItemRoutes}>
           <KeepItem />
 
           <div className={S.thisTabContainer}>
-            <motion.div
+            <m.div
               ref={thisTabTopRef}
               className={S.thisTabTop}
               variants={thisTabTopVariants}
@@ -742,7 +748,7 @@ function ThisTab (props) {
                     onAnimationReady={handleAnimationReady}
                   />
                 </div>
-              </motion.div>
+              </m.div>
 
               <div className={allLoginsClass}>
                 <ModelFilter loading={loading} />

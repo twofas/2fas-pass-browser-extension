@@ -5,7 +5,10 @@
 // See LICENSE file for full terms
 
 import { paymentCardSecurityCodeSelectors } from '@/constants';
+import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
+import uniqueElementOnly from '@/partials/functions/uniqueElementOnly';
 import { filterDeniedKeywords, makeConflictingAutocompleteFilter, collectInputs } from './shared';
+import { getPaymentCardElementsByLabel, withoutSelectorCoveredScopes } from './paymentCardLabels';
 
 const conflictingAutocompleteValues = [
   'cc-number',
@@ -16,23 +19,32 @@ const conflictingAutocompleteValues = [
   'cc-exp',
   'cc-exp-month',
   'cc-exp-year',
-  'cc-type'
+  'cc-type',
+  'one-time-code'
 ];
 
 const filterConflictingAutocomplete = makeConflictingAutocompleteFilter(conflictingAutocompleteValues);
 
 /**
 * Gets the payment card security code input elements from the document, including those inside shadow DOMs.
+* Fields are found by their identifiers (selectors) and, inside a payment context where the selectors found
+* none, by the words of their label.
 * @param {ShadowRoot[]|null} [shadowRoots] - Precomputed shadow roots to reuse for the current pass; the DOM is scanned only when omitted.
+* @param {Object|null} [labelPass] - Label classification cache shared by the getters of one detection pass (createPaymentCardLabelPass()).
 * @return {HTMLInputElement[]} The array of payment card security code input elements.
 */
-const getPaymentCardSecurityCodeInputs = (shadowRoots = null) => {
+const getPaymentCardSecurityCodeInputs = (shadowRoots = null, labelPass = null) => {
   const securityCodeSelector = paymentCardSecurityCodeSelectors().join(', ');
-  const visibleUniqueInputs = collectInputs(securityCodeSelector, shadowRoots);
-  const afterConflicting = visibleUniqueInputs.filter(filterConflictingAutocomplete);
-  const result = afterConflicting.filter(filterDeniedKeywords);
+  const resolvedShadowRoots = Array.isArray(shadowRoots) ? shadowRoots : getShadowRoots();
+  const filterSecurityCodeInputs = inputs => inputs
+    .filter(filterConflictingAutocomplete)
+    .filter(filterDeniedKeywords);
+  const selectorInputs = filterSecurityCodeInputs(collectInputs(securityCodeSelector, resolvedShadowRoots));
+  const labelInputs = filterSecurityCodeInputs(
+    withoutSelectorCoveredScopes(getPaymentCardElementsByLabel('securityCode', resolvedShadowRoots, labelPass), selectorInputs)
+  );
 
-  return result;
+  return [...selectorInputs, ...labelInputs].filter(uniqueElementOnly);
 };
 
 export default getPaymentCardSecurityCodeInputs;
