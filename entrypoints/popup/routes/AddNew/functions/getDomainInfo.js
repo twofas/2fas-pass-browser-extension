@@ -4,17 +4,16 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import sendMessageToAllFrames from '@/partials/functions/sendMessageToAllFrames';
-import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
+import readPasswordRules from './readPasswordRules';
 
 /**
 * Function to get the password rules (minlength, maxlength, pattern) of the page in a tab.
+* Reads the top frame with one injected function instead of injecting the content script.
 * @async
 * @param {Object} tab - The tab to read, from getLastActiveTab.
 * @return {Promise<Object>} The password rules; null values when the page has none or cannot be read.
 */
 const getDomainInfo = async tab => {
-  let framesInfo;
   const data = {
     minLength: null,
     maxLength: null,
@@ -25,54 +24,27 @@ const getDomainInfo = async tab => {
     return data;
   }
 
+  let results;
+
   try {
-    await injectCSIfNotAlready(tab.id, REQUEST_TARGETS.CONTENT);
+    results = await browser.scripting.executeScript({
+      target: { tabId: tab.id, frameIds: [0] },
+      func: readPasswordRules,
+      injectImmediately: true
+    });
   } catch {
     return data;
   }
 
-  try {
-    framesInfo = await sendMessageToAllFrames(tab.id,
-      {
-        action: REQUEST_ACTIONS.GET_DOMAIN_INFO,
-        target: REQUEST_TARGETS.CONTENT
-      }
-    );
-  } catch {
+  const rules = Array.isArray(results) ? results[0]?.result : null;
+
+  if (!rules) {
     return data;
   }
 
-  if (!framesInfo || !Array.isArray(framesInfo)) {
-    return data;
-  }
-
-  const filteredFramesInfo = framesInfo.filter(Boolean);
-
-  if (!filteredFramesInfo || filteredFramesInfo.length <= 0) {
-    return data;
-  }
-
-  const tabInfo = filteredFramesInfo[0];
-
-  if (!tabInfo) {
-    return data;
-  }
-
-  if (tabInfo?.minLength) {
-    try {
-      data.minLength = tabInfo.minLength || null;
-    } catch {}
-  }
-
-  if (tabInfo?.maxLength) {
-    try {
-      data.maxLength = tabInfo.maxLength || null;
-    } catch {}
-  }
-
-  if (tabInfo?.pattern) {
-    data.pattern = tabInfo.pattern;
-  }
+  data.minLength = rules.minLength || null;
+  data.maxLength = rules.maxLength || null;
+  data.pattern = rules.pattern || null;
 
   return data;
 };

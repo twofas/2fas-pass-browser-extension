@@ -39,7 +39,6 @@ vi.mock('../functions/checkAutofillInputsCard', () => ({ default: vi.fn(() => ({
 vi.mock('../functions/checkIframePermission', () => ({ default: vi.fn(() => Promise.resolve({ needsPermission: false, frameInfo: {} })) }));
 vi.mock('../functions/autofill', () => ({ default: vi.fn(() => Promise.resolve({ status: 'ok' })) }));
 vi.mock('../functions/autofillCard', () => ({ default: vi.fn(() => Promise.resolve({ status: 'ok' })) }));
-vi.mock('../functions/getDomainInfo', () => ({ default: vi.fn(() => ({})) }));
 vi.mock('../functions/notification', () => ({ default: vi.fn(() => ({ status: 'ok' })) }));
 vi.mock('../functions/matchingLogins', () => ({ default: vi.fn() }));
 vi.mock('../functions/savePrompt', () => ({ default: vi.fn(), dismissAllSavePrompts: vi.fn() }));
