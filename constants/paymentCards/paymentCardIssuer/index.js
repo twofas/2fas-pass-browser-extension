@@ -5,4 +5,4 @@
 // See LICENSE file for full terms
 
 export { default as paymentCardIssuerWords } from './paymentCardIssuerWords.js';
-export { default as paymentCardIssuerSelectors } from './paymentCardIssuerSelectors.js';
+export { default as paymentCardIssuerSelectors, paymentCardIssuerGenericSelectors } from './paymentCardIssuerSelectors.js';

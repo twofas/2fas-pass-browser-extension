@@ -10,33 +10,14 @@ import getPaymentCardExpirationDateInputs from '@/partials/inputFunctions/getPay
 import getPaymentCardSecurityCodeInputs from '@/partials/inputFunctions/getPaymentCardSecurityCodeInputs';
 import getPaymentCardIssuerInputs from '@/partials/inputFunctions/getPaymentCardIssuerInputs';
 import { createPaymentCardLabelPass } from '@/partials/inputFunctions/paymentCardLabels';
+import { resolvePaymentCardIssuerKey, findPaymentCardIssuerOption } from '@/partials/inputFunctions/paymentCardIssuerMatch';
+import { isIssuerRadioUsable } from '@/partials/inputFunctions/getPaymentCardIssuerRadioGroups';
 import trimString from '@/partials/functions/trimString';
 import inputSetValue from './autofillFunctions/inputSetValue';
 import getShadowRoots from './autofillFunctions/getShadowRoots';
 import decryptTransmittedValue from './autofillFunctions/decryptTransmittedValue';
 import checkCrossDomainFramePermission from './autofillFunctions/checkCrossDomainFramePermission';
-import {
-  AUTOFILL_RESULT_CODES,
-  PaymentCardIssuerVisa,
-  PaymentCardIssuerMasterCard,
-  PaymentCardIssuerAmericanExpress,
-  PaymentCardIssuerDiscover,
-  PaymentCardIssuerJCB,
-  PaymentCardIssuerDinersClub,
-  PaymentCardIssuerMaestro,
-  PaymentCardIssuerUnionPay
-} from '@/constants';
-
-const issuerVariations = {
-  visa: PaymentCardIssuerVisa,
-  mastercard: PaymentCardIssuerMasterCard,
-  americanExpress: PaymentCardIssuerAmericanExpress,
-  discover: PaymentCardIssuerDiscover,
-  jcb: PaymentCardIssuerJCB,
-  dinersClub: PaymentCardIssuerDinersClub,
-  maestro: PaymentCardIssuerMaestro,
-  unionPay: PaymentCardIssuerUnionPay
-};
+import { AUTOFILL_RESULT_CODES } from '@/constants';
 
 /**
 * Parses expiration date string into month and year components.
@@ -245,46 +226,66 @@ const setExpirationDateValue = (inputData, parsedDate) => {
 };
 
 /**
-* Gets all name variations for a given card issuer.
-* @param {string} issuer - The card issuer identifier.
-* @return {string[]} Array of name variations for the issuer.
+* Picks the option of a brand select that names the card issuer and notifies the page; a select without such an
+* option is left as it is.
+* @param {HTMLSelectElement} select - The brand select.
+* @param {string} issuerValue - The card issuer to set.
+* @return {void}
 */
-const getIssuerVariations = issuer => {
-  if (!issuer) {
-    return [];
+const setIssuerSelectValue = (select, issuerValue) => {
+  const option = findPaymentCardIssuerOption(select, issuerValue);
+
+  if (!option || select.value === option.value) {
+    return;
   }
 
-  const issuerLower = issuer.toLowerCase();
-
-  for (const [key, variations] of Object.entries(issuerVariations)) {
-    const keyLower = key.toLowerCase();
-
-    if (issuerLower === keyLower || issuerLower.includes(keyLower)) {
-      return [...variations];
-    }
-
-    const hasMatch = variations.some(variation => variation.toLowerCase() === issuerLower);
-
-    if (hasMatch) {
-      return [...variations];
-    }
-  }
-
-  return [issuer];
+  select.value = option.value;
+  select.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
 };
 
 /**
-* Sets the card issuer value for an input or select element.
-* @param {Object} inputData - The input data object with element and isSelect properties.
+* Checks the radio of the card's brand in a brand radio group with a click, as the user would, so the page gets
+* its click/input/change events; no radio value is ever written. Nothing happens when the brand is not offered
+* exactly once or its radio cannot be picked.
+* @param {{radios: HTMLInputElement[], issuerKeys: string[]}} radioGroup - The brand radio group.
+* @param {string} issuerValue - The card issuer to set.
+* @return {void}
+*/
+const checkIssuerRadio = (radioGroup, issuerValue) => {
+  const issuerKey = resolvePaymentCardIssuerKey(issuerValue);
+
+  if (!issuerKey) {
+    return;
+  }
+
+  const matchingRadios = radioGroup.radios.filter((radio, index) => radioGroup.issuerKeys[index] === issuerKey);
+
+  if (matchingRadios.length !== 1) {
+    return;
+  }
+
+  const [radio] = matchingRadios;
+
+  if (radio.checked || !isIssuerRadioUsable(radio)) {
+    return;
+  }
+
+  radio.click();
+};
+
+/**
+* Sets the card issuer value for a select, a text input or a brand radio group.
+* @param {Object} inputData - The issuer control from getPaymentCardIssuerInputs().
 * @param {string} issuerValue - The card issuer value to set.
 * @return {void}
 */
 const setCardIssuerValue = (inputData, issuerValue) => {
-  const { element, isSelect } = inputData;
-  const variations = getIssuerVariations(issuerValue);
+  const { element, isSelect, isRadioGroup } = inputData;
 
-  if (isSelect) {
-    setSelectValue(element, issuerValue, variations);
+  if (isRadioGroup) {
+    checkIssuerRadio(inputData, issuerValue);
+  } else if (isSelect) {
+    setIssuerSelectValue(element, issuerValue);
   } else {
     inputSetValue(element, issuerValue, cardAutofillOptions);
   }

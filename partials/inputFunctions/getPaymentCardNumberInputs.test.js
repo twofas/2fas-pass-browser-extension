@@ -137,6 +137,14 @@ describe('getPaymentCardNumberInputs', () => {
     });
   });
 
+  describe('regression: a payment method field is not the card number (mcd.delawareinc.com)', () => {
+    it('does not treat a text input identified as the payment method as the card number', () => {
+      document.body.innerHTML = '<input type="text" id="paymentMethod" />';
+
+      expect(getPaymentCardNumberInputs()).toEqual([]);
+    });
+  });
+
   describe('regression: fused CVV/security identifiers stay rejected (verification follow-up)', () => {
     it('does not treat a CVV field (id="cvv2") inside a payment form as the card number', () => {
       document.body.innerHTML = '<form id="paymentForm"><input type="text" id="cvv2" /></form>';

@@ -12,7 +12,8 @@ import {
   paymentCardSecurityCodeWords,
   paymentCardIssuerWords,
   paymentCardLabelDeniedWords,
-  paymentCardParentContextDeniedKeywords
+  paymentCardParentContextDeniedKeywords,
+  paymentCardDedicatedFormSelectors
 } from '@/constants';
 import isVisible from '../functions/isVisible';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
@@ -39,6 +40,12 @@ const LABEL_PAIR_MAX_DEPTH = 4;
 
 const cardFieldSelector = 'input[autocomplete="cc-number"], input[autocomplete="cc-exp"], ' +
   'input[autocomplete="cc-exp-month"], input[autocomplete="cc-exp-year"], input[autocomplete="cc-csc"]';
+
+const cardAutocompleteFieldSelector = ['cc-number', 'cc-csc', 'cc-exp', 'cc-exp-month', 'cc-exp-year', 'cc-name', 'cc-type']
+  .map(token => `input[autocomplete~="${token}" i], select[autocomplete~="${token}" i]`)
+  .join(', ');
+
+let cardFormSelector = null;
 
 const escapeRegex = text => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -281,6 +288,28 @@ const getLabelPairingScope = element => {
 };
 
 /**
+* Checks whether a field sits in a form marked as a payment card form: an ancestor whose id, class or form name
+* identifies a card form (creditCardForm, card-details, …), or a close scope (see getLabelPairingScope) holding a
+* field with a cc-* autocomplete token. A payment, checkout or billing form alone does not count: it may offer
+* PayPal or a bank transfer instead of a card.
+* @param {HTMLElement} element - The input or select element to check.
+* @return {boolean} True if the field is in a payment card form.
+*/
+const isInPaymentCardForm = element => {
+  if (!cardFormSelector) {
+    cardFormSelector = paymentCardDedicatedFormSelectors().join(', ');
+  }
+
+  if (element.closest(cardFormSelector)) {
+    return true;
+  }
+
+  const scope = getLabelPairingScope(element);
+
+  return scope !== null && scope.querySelector(cardAutocompleteFieldSelector) !== null;
+};
+
+/**
 * Checks whether a close scope (see getLabelPairingScope) holds another visible field whose label names a
 * DIFFERENT card field, e.g. "Card number" next to "Expiry date". Both fields must see each other, so two
 * fields in distant sections of a form-less page never vouch for each other.
@@ -433,6 +462,7 @@ export {
   hasDeniedLabelText,
   classifyPaymentCardLabel,
   isInPaymentContext,
+  isInPaymentCardForm,
   hasDeniedParentContext,
   getCardFieldScope,
   withoutSelectorCoveredScopes,

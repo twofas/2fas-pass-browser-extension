@@ -7,6 +7,7 @@
 export { default as paymentCardDeniedKeywords } from './paymentCardDeniedKeywords.js';
 export { default as paymentCardLabelDeniedWords } from './paymentCardLabelDeniedWords.js';
 export { default as paymentCardParentContextDeniedKeywords } from './paymentCardParentContextDeniedKeywords.js';
+export { default as paymentCardDedicatedFormSelectors } from './paymentCardDedicatedFormSelectors.js';
 
 // Payment Card Number
 export {
@@ -39,7 +40,8 @@ export {
 // Payment Card Issuer (field detection)
 export {
   paymentCardIssuerWords,
-  paymentCardIssuerSelectors
+  paymentCardIssuerSelectors,
+  paymentCardIssuerGenericSelectors
 } from './paymentCardIssuer/index.js';
 
 // Payment Card Issuers (name variations)
