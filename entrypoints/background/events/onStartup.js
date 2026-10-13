@@ -9,9 +9,10 @@ import initContextMenu from '../contextMenu/initContextMenu';
 import { setBadgeLocked, updateBadge } from '../utils';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import getItems from '@/partials/sessionStorage/getItems';
+import initializeStorage from '../migrations/initializeStorage';
 
 /**
-* Function to clean up old devices from local storage on startup and ensure migrations are marked as complete.
+* Function to bring the storage up to date and clean up old devices from local storage on startup.
 * @async
 * @param {Object} migrations - The state object to track migrations.
 * @return {Promise<void>} A promise that resolves when the cleanup is complete.
@@ -19,11 +20,7 @@ import getItems from '@/partials/sessionStorage/getItems';
 const onStartup = async migrations => {
   logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'BackgroundSW - onStartup');
 
-  // Mark migrations as complete on normal browser startup
-  // This is critical because onInstalled only fires on install/update
-  if (migrations && !migrations.state) {
-    migrations.state = true;
-  }
+  await initializeStorage(migrations);
 
   try {
     const configured = await getConfiguredBoolean();

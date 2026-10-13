@@ -6,8 +6,16 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+vi.mock('@/utils/CatchError.js', () => ({ default: vi.fn() }));
 vi.mock('../contextMenu/initContextMenu', () => ({ default: vi.fn() }));
-vi.mock('../utils', () => ({ setBadgeLocked: vi.fn(async () => {}), updateBadge: vi.fn(async () => {}) }));
+
+vi.mock('../utils', () => ({
+  setBadgeLocked: vi.fn(async () => {}),
+  updateBadge: vi.fn(async () => {})
+}));
+
+const runMigrations = vi.fn(async () => {});
+vi.mock('../migrations', () => ({ default: (...args) => runMigrations(...args) }));
 vi.mock('@/partials/sessionStorage/configured/getConfiguredBoolean', () => ({ default: vi.fn(async () => false) }));
 vi.mock('@/partials/sessionStorage/getItems', () => ({ default: vi.fn(async () => []) }));
 
@@ -27,11 +35,24 @@ const paidDevice = extra => ({
 beforeEach(async () => {
   vi.clearAllMocks();
   browser.idle.setDetectionInterval = vi.fn();
-  await storage.removeItem('local:devices');
-  await storage.removeItem('local:autoIdleLock');
+  browser.tabs.create = vi.fn(async () => ({}));
+  await browser.storage.local.clear();
+});
+
+describe('onStartup — a new Safari profile starts with an empty storage and may get no onInstalled', () => {
+  it('runs the migrations without opening the onboarding page', async () => {
+    await onStartup({ state: false });
+
+    expect(runMigrations).toHaveBeenCalledTimes(1);
+    expect(browser.tabs.create).not.toHaveBeenCalled();
+  });
 });
 
 describe('onStartup — the 30-day sweep must not overwrite the user\'s idle lock choice', () => {
+  beforeEach(async () => {
+    await storage.setItem('local:migrationVersion', 3);
+  });
+
   it('keeps the "only on restart" choice when the swept device was the last paid one', async () => {
     const staleAt = Date.now() - (config.devicesCleanupThreshold + 1) * 24 * 60 * 60 * 1000;
     await storage.setItem('local:devices', [paidDevice({ updatedAt: staleAt })]);

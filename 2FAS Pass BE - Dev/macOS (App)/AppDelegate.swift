@@ -1,21 +1,13 @@
+// SPDX-License-Identifier: BUSL-1.1
 //
-//  AppDelegate.swift
-//  macOS (App)
-//
-//  Created by Greg on 5.12.2025.
-//
+// Copyright © 2025 Two Factor Authentication Service, Inc.
+// Licensed under the Business Source License 1.1
+// See LICENSE file for full terms
 
 import Cocoa
 
-@main
-class AppDelegate: NSObject, NSApplicationDelegate {
-
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        // Override point for customization after application launch.
-    }
-
+final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return true
     }
-
 }

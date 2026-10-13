@@ -6,7 +6,7 @@
 
 import { isText, checkStorageAutoClearActions } from '@/partials/functions';
 import { openBrowserPage, openPopupWindowInNewWindow, openInstallPage, getLocalKey, sendAutoClearAction, handleAutofillCardWithPermission, handleAutofillWithPermission, processCrossDomainDialogResult, processMatchingLoginsResult, processSavePromptResult, handleLogEvent } from '../utils';
-import runMigrations from '../migrations';
+import { resetStorage } from '../migrations/initializeStorage';
 import onTabFocused from '../tabs/onTabFocused';
 import shouldHandleTabFocus from '../tabs/shouldHandleTabFocus';
 import handleCheckShareLinkSupport from './handleCheckShareLinkSupport';
@@ -65,23 +65,10 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
       }
 
       case REQUEST_ACTIONS.RESET_EXTENSION: {
-        // Set to 'running' instead of false to prevent race conditions
-        migrations.state = 'running';
-
-        browser.storage.local.clear()
-          .then(async () => {
-            await browser.storage.session.clear();
-            logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onMessage (RESET_EXTENSION clear)');
-          })
-          .then(async () => { await runMigrations(); })
-          .then(() => { migrations.state = true; })
+        resetStorage(migrations)
           .then(async () => { await openInstallPage(); })
           .then(() => { sendResponse({ status: 'ok' }); })
-          .catch(e => {
-            // Ensure migrations.state is set even on error
-            migrations.state = true;
-            sendResponse({ status: 'error', message: e.message });
-          });
+          .catch(e => { sendResponse({ status: 'error', message: e.message }); });
 
         break;
       }
