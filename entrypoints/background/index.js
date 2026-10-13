@@ -11,6 +11,7 @@ import registerSavePromptWebRequest from './registerSavePromptWebRequest';
 import firefoxBackground from './firefoxBackground';
 import initBadgeState from './utils/badge/initBadgeState';
 import { resumeWsSession } from './websocket/wsManager.js';
+import initializeStorage from './migrations/initializeStorage';
 
 export default defineBackground({
   /**
@@ -32,15 +33,10 @@ export default defineBackground({
     const tabsInputData = {};
     const tabUpdateData = {};
     const savePromptActions = [];
-    const migrations = { state: false };
+    const migrations = { state: false, freshStorage: false };
 
-    // Fallback: Set migrations to true after a short delay if not set by onInstalled/onStartup
-    // This handles edge cases where neither event fires (e.g., extension reload during development)
-    setTimeout(() => {
-      if (!migrations.state) {
-        migrations.state = true;
-      }
-    }, 1000);
+    // Safari gives every profile its own empty storage and may not fire onInstalled there, so initialize on every start.
+    initializeStorage(migrations).catch(e => CatchError(e));
 
     browser.runtime.onInstalled.addListener(async details => await onInstalled(details, migrations));
     browser.runtime.onMessage.addListener(createMessageRouter({ migrations, tabsInputData, savePromptActions, tabUpdateData }));

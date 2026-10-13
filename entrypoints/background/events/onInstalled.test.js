@@ -33,11 +33,13 @@ const getConfiguredBoolean = vi.fn(async () => false);
 vi.mock('@/partials/sessionStorage/configured/getConfiguredBoolean', () => ({ default: (...args) => getConfiguredBoolean(...args) }));
 
 import onInstalled from './onInstalled.js';
+import initializeStorage from '../migrations/initializeStorage.js';
 
 const newMigrations = () => ({ state: false });
 
 beforeEach(async () => {
   vi.clearAllMocks();
+  runMigrations.mockImplementation(async () => {});
   await browser.storage.local.clear();
   await browser.storage.session.clear();
   // setUninstallURL is called on a genuine first install (non-safari); fakeBrowser may
@@ -63,6 +65,10 @@ describe('onInstalled — onboarding page is shown ONLY on a genuine first insta
   });
 
   it('does NOT open the install page on a normal update', async () => {
+    await storage.setItem('local:persistentPrivateKey', 'PRIV');
+    await storage.setItem('local:persistentPublicKey', 'PUB');
+    await storage.setItem('local:migrationVersion', 3);
+
     await onInstalled({ reason: 'update', previousVersion: '1.8.3' }, newMigrations());
 
     expect(openInstallPage).not.toHaveBeenCalled();
@@ -93,6 +99,37 @@ describe('onInstalled — onboarding page is shown ONLY on a genuine first insta
     });
 
     await onInstalled({ reason: 'install' }, newMigrations());
+
+    expect(openInstallPage).toHaveBeenCalledTimes(1);
+  });
+
+  it('does NOT open the install page on an update from an install older than the migration version (persistent keys only)', async () => {
+    await storage.setItem('local:persistentPrivateKey', 'PRIV');
+    await storage.setItem('local:persistentPublicKey', 'PUB');
+
+    await onInstalled({ reason: 'update', previousVersion: '1.8.1' }, newMigrations());
+
+    expect(openInstallPage).not.toHaveBeenCalled();
+  });
+
+  it('does NOT open the install page on an update even when the storage never ran a migration (a Safari profile stuck without keys gets the update)', async () => {
+    await onInstalled({ reason: 'update', previousVersion: '1.8.9' }, newMigrations());
+
+    expect(runMigrations).toHaveBeenCalledTimes(1);
+    expect(openInstallPage).not.toHaveBeenCalled();
+  });
+
+  it('opens the install page when the background start-up run initialized the fresh storage before onInstalled arrived', async () => {
+    runMigrations.mockImplementation(async () => {
+      await storage.setItem('local:persistentPrivateKey', 'PRIV');
+      await storage.setItem('local:persistentPublicKey', 'PUB');
+      await storage.setItem('local:migrationVersion', 3);
+    });
+
+    const migrations = newMigrations();
+    await initializeStorage(migrations);
+
+    await onInstalled({ reason: 'install' }, migrations);
 
     expect(openInstallPage).toHaveBeenCalledTimes(1);
   });

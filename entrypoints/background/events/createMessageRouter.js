@@ -8,6 +8,7 @@ import onMessage from './onMessage';
 import onPromptMessage from './onPromptMessage';
 import onWsMessage from './onWsMessage';
 import handleE2EMessage from '../devE2E';
+import { whenStorageInitialized } from '../migrations/initializeStorage';
 
 const createMessageRouter = ({ migrations, tabsInputData, savePromptActions, tabUpdateData }) => (request, sender, sendResponse) => {
   if (sender.id !== browser.runtime.id) {
@@ -25,8 +26,12 @@ const createMessageRouter = ({ migrations, tabsInputData, savePromptActions, tab
     case REQUEST_TARGETS.BACKGROUND_PROMPT:
       return onPromptMessage(request, sender, sendResponse, tabsInputData);
 
-    case REQUEST_TARGETS.BACKGROUND_WS:
-      return onWsMessage(request, sender, sendResponse);
+    case REQUEST_TARGETS.BACKGROUND_WS: {
+      // Connect and Fetch need the persistent keys, which a fresh storage gets from the running initialization.
+      whenStorageInitialized().then(() => onWsMessage(request, sender, sendResponse));
+
+      return true;
+    }
 
     default:
       // DEV-only autofill E2E harness seam (tests/e2e/autofill). Stripped from prod.
