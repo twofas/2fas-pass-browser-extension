@@ -153,6 +153,99 @@ describe('getUsernameInputs detection', () => {
     });
   });
 
+  describe('login form inside a page container with a denied class name', () => {
+    it('detects the e-mail of a login form wrapped in a "contact-form" container (serwis.ptpp.pl)', () => {
+      document.body.innerHTML = `
+        <div class="contact-form">
+          <form id="f" action="/auth/login" method="post">
+            <p class="one_half"><input type="email" name="your-email" placeholder="Email" /></p>
+            <p class="one_half last"><input type="password" name="your-password" placeholder="Hasło" /></p>
+          </form>
+        </div>
+      `;
+
+      const result = getUsernameInputs([document.getElementById('f')]);
+
+      expect(result.map(input => input.name)).toEqual(['your-email']);
+    });
+
+    it('detects the username of a login form placed deep inside a "pi-marketing-container" layout (logon.vanguard.com)', () => {
+      document.body.innerHTML = `
+        <div class="pi-marketing-container">
+          <div class="pi-two-tile-layout">
+            <div class="pi-form-tile">
+              <lgn-username-password>
+                <div class="username-password-container">
+                  <form id="username-password-form">
+                    <div class="username-row">
+                      <c11n-input><input type="text" id="USER" name="USER" autocomplete="username webauthn" /></c11n-input>
+                    </div>
+                    <c11n-input><input type="password" id="PASSWORD-blocked" name="PASSWORD-blocked" autocomplete="current-password" /></c11n-input>
+                  </form>
+                </div>
+              </lgn-username-password>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const result = getUsernameInputs([document.getElementById('username-password-form')]);
+
+      expect(result.map(input => input.id)).toEqual(['USER']);
+    });
+
+    it('detects the username of an identifier-first login step placed in a marketing page layout', () => {
+      document.body.innerHTML = `
+        <div class="marketing-site">
+          <div class="marketing-hero">
+            <form id="identifier"><input type="email" name="email" autocomplete="username" /></form>
+          </div>
+        </div>
+      `;
+
+      expect(getUsernameInputs([]).map(input => input.name)).toEqual(['email']);
+    });
+
+    it('still rejects an e-mail field in a newsletter form that has no password field', () => {
+      document.body.innerHTML = `
+        <form id="login"><input type="email" name="login-email" /><input type="password" name="pw" /></form>
+        <div class="newsletter">
+          <form id="nl"><input type="email" name="newsletter-mail" /></form>
+        </div>
+      `;
+
+      expect(getUsernameInputs([]).map(input => input.name)).toEqual(['login-email']);
+    });
+
+    it('still rejects a newsletter e-mail inside a page-wide form that also holds the login (ASP.NET WebForms)', () => {
+      document.body.innerHTML = `
+        <form id="aspnetForm">
+          <div class="login-box">
+            <input type="email" name="ctl00$Login$Email" />
+            <input type="password" name="ctl00$Login$Password" />
+          </div>
+          <div class="footer-newsletter">
+            <input type="email" name="ctl00$Footer$Email" />
+          </div>
+        </form>
+      `;
+
+      const result = getUsernameInputs([document.getElementById('aspnetForm')]);
+
+      expect(result.map(input => input.name)).toEqual(['ctl00$Login$Email']);
+    });
+
+    it('still rejects an e-mail field in a contact container when no password form is known', () => {
+      document.body.innerHTML = `
+        <div class="contact-form">
+          <form><input type="email" name="email" /></form>
+        </div>
+      `;
+
+      expect(getUsernameInputs([])).toEqual([]);
+    });
+  });
+
   describe('prioritisation', () => {
     it('returns only the username input that shares a form with the password field', () => {
       document.body.innerHTML = `

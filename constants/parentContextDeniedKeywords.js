@@ -15,7 +15,6 @@ const parentContextDeniedKeywords = /* @__PURE__ */ Object.freeze([
   'promo',
   'offer',
   'contact',
-  'marketing',
   'notification',
   'alert',
   'footer-email',
