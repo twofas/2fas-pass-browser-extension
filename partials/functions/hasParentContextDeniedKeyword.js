@@ -14,9 +14,11 @@ const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
  * Creates a check that looks for whole-word keywords in the class names and IDs of an element's ancestors.
  * Uses word boundary matching to avoid false positives (e.g. "subscriber" != "subscribe"); camelCase words are
  * split as well (e.g. "giftCardForm" contains "gift").
+ * The returned check takes an optional boundary element: the climb stops before it, so the boundary and
+ * everything above it are not inspected.
  * @param {string[]} keywords - The denied keywords.
  * @param {number} [maxDepth=MAX_PARENT_DEPTH] - How many ancestors to inspect.
- * @return {(input: HTMLElement) => boolean} Returns true when an ancestor carries a denied keyword.
+ * @return {(input: HTMLElement, boundary?: HTMLElement|null) => boolean} Returns true when an ancestor carries a denied keyword.
  */
 export const createParentContextChecker = (keywords, maxDepth = MAX_PARENT_DEPTH) => {
   const keywordRegexes = keywords.map(keyword => {
@@ -37,11 +39,11 @@ export const createParentContextChecker = (keywords, maxDepth = MAX_PARENT_DEPTH
     return keywordRegexes.some(regex => values.some(value => regex.test(value)));
   };
 
-  return input => {
+  return (input, boundary = null) => {
     let current = input.parentElement;
     let depth = 0;
 
-    while (current && current !== document.body && depth < maxDepth) {
+    while (current && current !== document.body && current !== boundary && depth < maxDepth) {
       if (elementHasDeniedKeyword(current)) {
         return true;
       }
@@ -58,6 +60,7 @@ export const createParentContextChecker = (keywords, maxDepth = MAX_PARENT_DEPTH
  * Checks if any parent element of an input contains keywords indicating
  * a non-login form context (newsletter, search, subscribe, etc.).
  * @param {HTMLInputElement} input - The input element to check.
+ * @param {HTMLElement|null} [boundary=null] - Element at which the climb stops; it and its ancestors are not inspected.
  * @return {boolean} True if a denied keyword is found in parent elements.
  */
 const hasParentContextDeniedKeyword = createParentContextChecker(parentContextDeniedKeywords);

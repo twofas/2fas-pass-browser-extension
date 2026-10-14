@@ -44,10 +44,14 @@ const getUserNameSelector = () => {
 /**
 * Filters out inputs that contain denied keywords in their name, id, or parent elements, password fields
 * revealed by a "show password" toggle, and one-time code, card and Social Security Number fields.
+* For an input that shares a form with a password field, only the parent elements inside that form are
+* checked: the form is a login form, whatever the page layout around it is called (e.g. "contact-form"),
+* while a newsletter box inside a page-wide form is still rejected.
 * @param {HTMLInputElement} input - The input element to check.
+* @param {Set<HTMLFormElement>} passwordFormsSet - The forms that contain a password input.
 * @return {boolean} True if the input should be kept, false otherwise.
 */
-const filterDeniedKeywords = input => {
+const filterDeniedKeywords = (input, passwordFormsSet) => {
   if (isRevealedPasswordInput(input) || isNotCredentialField(input, { username: true })) {
     return false;
   }
@@ -69,7 +73,10 @@ const filterDeniedKeywords = input => {
     return false;
   }
 
-  if (hasParentContextDeniedKeyword(input)) {
+  const form = input.closest('form');
+  const parentContextBoundary = form && passwordFormsSet.has(form) ? form : null;
+
+  if (hasParentContextDeniedKeyword(input, parentContextBoundary)) {
     return false;
   }
 
@@ -215,12 +222,12 @@ const getUsernameInputs = (passwordForms = null, shadowRoots = null) => {
     });
   }
 
+  const passwordFormsSet = new Set(Array.isArray(passwordForms) ? passwordForms : []);
   const visibleInputs = userNameInputs.filter(input => isVisible(input));
   const uniqueInputs = visibleInputs.filter(uniqueElementOnly);
-  const filteredInputs = uniqueInputs.filter(filterDeniedKeywords);
+  const filteredInputs = uniqueInputs.filter(input => filterDeniedKeywords(input, passwordFormsSet));
 
-  if (passwordForms && passwordForms.length > 0 && filteredInputs.length > 0) {
-    const passwordFormsSet = new Set(passwordForms);
+  if (passwordFormsSet.size > 0 && filteredInputs.length > 0) {
     const inputsInPasswordForms = filteredInputs.filter(input => isInputInForms(input, passwordFormsSet));
 
     if (inputsInPasswordForms.length > 0) {
