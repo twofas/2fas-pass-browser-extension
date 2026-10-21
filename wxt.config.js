@@ -38,7 +38,7 @@ export default defineConfig({
           comparisons: true,
           computed_props: true,
           conditionals: true,
-          dead_code: false,
+          dead_code: true,
           directives: false,
           drop_console: false,
           drop_debugger: false,
