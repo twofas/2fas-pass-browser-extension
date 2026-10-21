@@ -32,6 +32,20 @@ const updateBarVariants = {
 };
 
 /**
+* Function to read the result of runtime.requestUpdateCheck(). Chrome resolves the promise with
+* `{ status, version }`; the webextension-polyfill resolved it with `[status, details]`.
+* @param {Object|Array|undefined} result - The resolved value of requestUpdateCheck().
+* @return {{ status: string|null, version: string|null }} The update check status and the available version.
+*/
+const readUpdateCheckResult = result => {
+  if (Array.isArray(result)) {
+    return { status: result[0] ?? null, version: result[1]?.version ?? null };
+  }
+
+  return { status: result?.status ?? null, version: result?.version ?? null };
+};
+
+/**
 * Component displaying update notification when extension update is available.
 * @return {JSX.Element} Element representing the UpdateComponent.
 */
@@ -40,6 +54,8 @@ function UpdateComponent () {
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
   const handleUpdate = useCallback(async () => {
+    logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'UpdateComponent - update clicked');
+
     try {
       if (browser?.runtime?.reload) {
         await browser.runtime.reload();
@@ -72,7 +88,10 @@ function UpdateComponent () {
 
     if (browser?.runtime?.requestUpdateCheck && typeof browser?.runtime?.requestUpdateCheck === 'function') {
       browser.runtime.requestUpdateCheck()
-        .then(([status]) => {
+        .then(result => {
+          const { status, version } = readUpdateCheckResult(result);
+          logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'UpdateComponent - update check result', { status, version });
+
           if (status === 'update_available') {
             setUpdateAvailable(true);
           }
