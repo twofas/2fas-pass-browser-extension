@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { onIdleStateChange, onUpdateAvailable } from './events';
+import restoreIdleInterval from '@/partials/functions/restoreIdleInterval';
 
 /**
 * Function to handle non-Safari background tasks. The save prompt webRequest listener is registered by registerSavePromptWebRequest.
@@ -13,6 +14,7 @@ import { onIdleStateChange, onUpdateAvailable } from './events';
 const nonSafariBackground = () => {
   browser.idle.onStateChanged.addListener(onIdleStateChange);
   browser.runtime.onUpdateAvailable.addListener(onUpdateAvailable);
+  restoreIdleInterval();
 };
 
 export default nonSafariBackground;
