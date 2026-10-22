@@ -11,6 +11,8 @@
 * @return {Promise<void>}
 */
 const onUpdateAvailable = async details => {
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.SYSTEM, 'BackgroundSW - update available', { version: details?.version });
+
   try {
     await browser.runtime.sendMessage({
       action: REQUEST_ACTIONS.UPDATE_AVAILABLE,

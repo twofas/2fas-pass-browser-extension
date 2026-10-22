@@ -279,6 +279,10 @@
     "message": "Bitte beende diese Aktion, bevor du eine neue anfängst.",
     "description": "Toast message shown when user tries to start a new WebSocket action while another is in progress"
   },
+  "popup_background_not_responding": {
+    "message": "2FAS Pass reagiert nicht. Starte deinen Browser neu und versuche es erneut.",
+    "description": "Toast shown in the popup when the extension background does not respond (e.g. after an app update applied while the browser was running)"
+  },
   "notification_send_autofill_to_tab_lack_of_service_title": {
     "message": "Fehler",
     "description": "Title for the notification when the autofill service is not found"
