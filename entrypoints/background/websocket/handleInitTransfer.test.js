@@ -11,8 +11,13 @@ const addFcmTokenToDevice = vi.fn();
 const addExpirationDateToDevice = vi.fn();
 const sendMessage = vi.fn();
 const CatchErrorMock = vi.fn();
+const loggerInfo = vi.fn();
 
 vi.mock('@/utils/CatchError.js', () => ({ default: (...args) => CatchErrorMock(...args) }));
+vi.mock('@/utils/logger', () => {
+  const logger = { info: (...args) => loggerInfo(...args), debug: vi.fn(), warn: vi.fn(), error: vi.fn() };
+  return { logger, default: logger };
+});
 vi.mock('./utils/generateEncryptionAESKey', () => ({ default: (...args) => generateEncryptionAESKey(...args) }));
 vi.mock('./utils/addFcmTokenToDevice', () => ({ default: (...args) => addFcmTokenToDevice(...args) }));
 vi.mock('./utils/addExpirationDateToDevice', () => ({ default: (...args) => addExpirationDateToDevice(...args) }));
@@ -101,5 +106,33 @@ describe('handleInitTransfer — device lookup uses both identifiers', () => {
     await handleInitTransfer(json, HKDF_SALT, 'sessionKey', UUID, DEVICE_ID);
 
     expect(addExpirationDateToDevice).toHaveBeenCalledWith({ uuid: UUID, deviceId: DEVICE_ID }, null);
+  });
+});
+
+describe('handleInitTransfer — logs whether the FCM token was sent', () => {
+  it('logs fcmTokenPresent: true and stores the token when fcmTokenEnc is present', async () => {
+    const json = await buildJson({ fcmTokenEnc: await encryptToB64('fcm-token') });
+
+    await handleInitTransfer(json, HKDF_SALT, 'sessionKey', UUID, DEVICE_ID);
+
+    expect(loggerInfo).toHaveBeenCalledWith(LOGGER_CONSTANTS.CATEGORIES.WS, 'PairingFlow - init transfer received', { fcmTokenPresent: true });
+    expect(addFcmTokenToDevice).toHaveBeenCalledTimes(1);
+  });
+
+  it('logs fcmTokenPresent: false when fcmTokenEnc is absent', async () => {
+    const json = await buildJson({});
+
+    await handleInitTransfer(json, HKDF_SALT, 'sessionKey', UUID, DEVICE_ID);
+
+    expect(loggerInfo).toHaveBeenCalledWith(LOGGER_CONSTANTS.CATEGORIES.WS, 'PairingFlow - init transfer received', { fcmTokenPresent: false });
+    expect(addFcmTokenToDevice).not.toHaveBeenCalled();
+  });
+
+  it('logs fcmTokenPresent: false when fcmTokenEnc is an empty string', async () => {
+    const json = await buildJson({ fcmTokenEnc: '' });
+
+    await handleInitTransfer(json, HKDF_SALT, 'sessionKey', UUID, DEVICE_ID);
+
+    expect(loggerInfo).toHaveBeenCalledWith(LOGGER_CONSTANTS.CATEGORIES.WS, 'PairingFlow - init transfer received', { fcmTokenPresent: false });
   });
 });
