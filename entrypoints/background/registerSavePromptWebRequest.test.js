@@ -42,7 +42,7 @@ describe('registerSavePromptWebRequest', () => {
   it.each(['chrome', 'edge', 'opera'])('keeps the single Chromium listener on %s (ping, no beacon)', browserName => {
     vi.stubEnv('BROWSER', browserName);
 
-    expect(registerSavePromptWebRequest({}, [], {})).toBe(true);
+    expect(registerSavePromptWebRequest({}, [])).toBe(true);
     expect(addListener).toHaveBeenCalledTimes(1);
     expect(addListener).toHaveBeenCalledWith(expect.any(Function), MAIN_FILTER, ['requestBody']);
   });
@@ -50,7 +50,7 @@ describe('registerSavePromptWebRequest', () => {
   it('adds a beacon listener limited to the prompt.js beacon URL on Firefox', () => {
     vi.stubEnv('BROWSER', 'firefox');
 
-    expect(registerSavePromptWebRequest({}, [], {})).toBe(true);
+    expect(registerSavePromptWebRequest({}, [])).toBe(true);
     expect(addListener).toHaveBeenCalledTimes(2);
     expect(addListener).toHaveBeenNthCalledWith(1, expect.any(Function), MAIN_FILTER, ['requestBody']);
     expect(addListener).toHaveBeenNthCalledWith(2, expect.any(Function), BEACON_FILTER, ['requestBody']);
@@ -61,7 +61,7 @@ describe('registerSavePromptWebRequest', () => {
     vi.stubEnv('BROWSER', 'safari');
     vi.stubGlobal('navigator', { userAgent: safariUA('18.4') });
 
-    expect(registerSavePromptWebRequest({}, [], {})).toBe(true);
+    expect(registerSavePromptWebRequest({}, [])).toBe(true);
     expect(addListener).toHaveBeenNthCalledWith(1, expect.any(Function), MAIN_FILTER, ['requestBody']);
     expect(addListener).toHaveBeenNthCalledWith(2, expect.any(Function), BEACON_FILTER, ['requestBody']);
   });
@@ -70,7 +70,7 @@ describe('registerSavePromptWebRequest', () => {
     vi.stubEnv('BROWSER', 'safari');
     vi.stubGlobal('navigator', { userAgent: safariUA('18.3') });
 
-    expect(registerSavePromptWebRequest({}, [], {})).toBe(false);
+    expect(registerSavePromptWebRequest({}, [])).toBe(false);
     expect(addListener).not.toHaveBeenCalled();
   });
 
@@ -78,7 +78,7 @@ describe('registerSavePromptWebRequest', () => {
     vi.stubEnv('BROWSER', 'chrome');
     browser.webRequest = undefined;
 
-    expect(registerSavePromptWebRequest({}, [], {})).toBe(false);
+    expect(registerSavePromptWebRequest({}, [])).toBe(false);
   });
 
   it('does not throw when the browser rejects the main listener', () => {
@@ -87,7 +87,7 @@ describe('registerSavePromptWebRequest', () => {
       throw new Error('Invalid filter');
     });
 
-    expect(registerSavePromptWebRequest({}, [], {})).toBe(false);
+    expect(registerSavePromptWebRequest({}, [])).toBe(false);
     expect(addListener).toHaveBeenCalledTimes(1);
   });
 
@@ -97,21 +97,20 @@ describe('registerSavePromptWebRequest', () => {
       throw new Error("'beacon' is an unknown resource type");
     });
 
-    expect(registerSavePromptWebRequest({}, [], {})).toBe(true);
+    expect(registerSavePromptWebRequest({}, [])).toBe(true);
   });
 
   it('forwards both listeners to onWebRequest with the shared background state', () => {
     vi.stubEnv('BROWSER', 'firefox');
     const tabsInputData = {};
     const savePromptActions = [];
-    const tabUpdateData = {};
     const details = { tabId: 1, method: 'POST' };
 
-    registerSavePromptWebRequest(tabsInputData, savePromptActions, tabUpdateData);
+    registerSavePromptWebRequest(tabsInputData, savePromptActions);
     addListener.mock.calls[0][0](details);
     addListener.mock.calls[1][0](details);
 
     expect(onWebRequest).toHaveBeenCalledTimes(2);
-    expect(onWebRequest).toHaveBeenCalledWith(details, tabsInputData, savePromptActions, tabUpdateData);
+    expect(onWebRequest).toHaveBeenCalledWith(details, tabsInputData, savePromptActions);
   });
 });

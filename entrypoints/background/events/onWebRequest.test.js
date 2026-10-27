@@ -27,11 +27,6 @@ vi.mock('@/partials/sessionStorage/configured/getConfiguredBoolean', () => ({
   default: (...args) => getConfiguredBoolean(...args)
 }));
 
-vi.mock('@/constants', () => ({
-  ignoredSavePromptUrls: [],
-  ignoredSavePromptRequestBodyTexts: []
-}));
-
 vi.mock('@/partials/functions/isText', () => ({ default: () => true }));
 
 import onWebRequest from './onWebRequest.js';
@@ -105,6 +100,25 @@ describe('onWebRequest — beacon flush gate (finding #19)', () => {
     expect(tabsInputData[TAB_ID]).toBeUndefined();
   });
 
+  it('drops beacon entries encrypted with a local key rotated out by a lock', async () => {
+    const getLocalKeyId = (await import('../utils/getLocalKeyId')).default;
+    const key = 'q83vEjRWeJCrze8SNFZ4kKvN7xI0VniQq83vEjRWeJA=';
+    await storage.setItem('session:lKey', key);
+    const keyId = await getLocalKeyId(key);
+    const tabsInputData = {};
+    const details = {
+      type: 'ping',
+      url: beaconUrl,
+      tabId: TAB_ID,
+      frameType: 'outermost_frame',
+      requestBody: beaconBody([{ id: 'old', value: 'c1', encrypted: true, keyId: 'other' }, { id: 'cur', value: 'c2', encrypted: true, keyId }])
+    };
+
+    await onWebRequest(details, tabsInputData, [], {});
+
+    expect(Object.keys(tabsInputData[TAB_ID])).toEqual(['cur']);
+  });
+
   it('accepts a same-root-domain sub-frame beacon', async () => {
     const tabsInputData = {};
     const details = { type: 'ping', url: beaconUrl, tabId: TAB_ID, frameType: 'sub_frame', initiator: 'https://login.example.com', requestBody: beaconBody([{ id: 'x', value: '1' }]) };
@@ -119,7 +133,13 @@ describe('onWebRequest — beacon flush gate (finding #19)', () => {
 // prompt silently never fires (for both encrypted and unencrypted modes).
 describe('onWebRequest — captured-input recovery after worker restart', () => {
   it('waits for the flush to repopulate an empty store, then continues past the gate', async () => {
+    const utils = await import('../utils');
     const tabsInputData = {}; // empty: simulates a worker restart between typing and submit
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValue({});
 
     // Simulate the submit flush / beacon arriving during the wait window.
     waitForTabInputDataMock.mockImplementation(async store => {
@@ -130,17 +150,29 @@ describe('onWebRequest — captured-input recovery after worker restart', () => 
     await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
 
     expect(waitForTabInputDataMock).toHaveBeenCalled();
-    expect(getConfiguredBoolean).toHaveBeenCalled();
+    expect(utils.getValuesFromTabsInputData).toHaveBeenCalled();
   });
 
   it('bails when the store stays empty (no flush arrives within the wait)', async () => {
+    const utils = await import('../utils');
     const tabsInputData = {};
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
     waitForTabInputDataMock.mockResolvedValue(false);
 
     await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
 
     expect(waitForTabInputDataMock).toHaveBeenCalled();
-    expect(getConfiguredBoolean).not.toHaveBeenCalled();
+    expect(utils.getValuesFromTabsInputData).not.toHaveBeenCalled();
+  });
+
+  it('does not wait for inputs while the vault is locked', async () => {
+    getConfiguredBoolean.mockResolvedValue(false);
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(waitForTabInputDataMock).not.toHaveBeenCalled();
   });
 });
 
@@ -190,5 +222,136 @@ describe('onWebRequest — beacon type and Safari request shapes', () => {
     waitForTabInputDataMock.mockResolvedValue();
     await onWebRequest(details, newTabsInputData(), [], {});
     expect(getConfiguredBoolean).toHaveBeenCalled();
+  });
+});
+
+describe('onWebRequest — waits for the whole credential pair (password still on its way)', () => {
+  it('waits until the page origin has both a username and a password value', async () => {
+    const utils = await import('../utils');
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    const details = postDetails({ frameType: 'outermost_frame', initiator: 'https://example.com' });
+
+    await onWebRequest(details, newTabsInputData(), [], {});
+
+    const [, tabId, options] = waitForTabInputDataMock.mock.calls[0];
+    expect(tabId).toBe(TAB_ID);
+
+    const usernameOnly = { u: { type: 'username', value: 'jan', url: 'https://example.com' } };
+    const pair = { ...usernameOnly, p: { type: 'password', value: 'S3cret', url: 'https://example.com' } };
+
+    expect(options.isReady(usernameOnly)).toBe(false);
+    expect(options.isReady(pair)).toBe(true);
+  });
+});
+
+describe('onWebRequest — a password typed again is still on its way', () => {
+  it('re-reads the captured values until the body carries them, then shows the prompt', async () => {
+    const utils = await import('../utils');
+    const tabsInputData = newTabsInputData();
+    const oldValues = { username: 'jan', password: 'wrong-first-try' };
+    const newValues = { username: 'jan', password: 'S3cret!' };
+
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValueOnce(oldValues).mockReturnValue(newValues);
+    utils.checkFormData.mockImplementation(async (details, values) => values.password === 'S3cret!');
+    utils.checkServicesData.mockResolvedValue({ type: 'newService' });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
+
+    expect(utils.savePromptAction).toHaveBeenCalledTimes(1);
+    expect(utils.savePromptAction.mock.calls[0][3]).toEqual(newValues);
+  });
+
+  it('gives up when the body never carries the captured values', async () => {
+    const utils = await import('../utils');
+
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValue({ username: 'jan', password: 'S3cret!' });
+    utils.checkFormData.mockResolvedValue(false);
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(utils.checkFormData.mock.calls.length).toBeGreaterThan(1);
+    expect(utils.savePromptAction).not.toHaveBeenCalled();
+  });
+});
+
+describe('onWebRequest — ignore lists', () => {
+  /**
+  * Prepares the pipeline mocks so a request carrying the captured values reaches the prompt.
+  * @param {Object} utils - The mocked utils module.
+  * @return {void}
+  */
+  const prepare = utils => {
+    getConfiguredBoolean.mockResolvedValue(true);
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValue({ username: 'jan', password: 'S3cret!' });
+    utils.checkServicesData.mockResolvedValue({ type: 'newService' });
+  };
+
+  it('shows the prompt for a login body that also sends a userAgent field', async () => {
+    const utils = await import('../utils');
+    prepare(utils);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkFormData.mockResolvedValue(true);
+    const details = postDetails({
+      frameType: 'outermost_frame',
+      requestBody: { raw: [{ bytes: new TextEncoder().encode('{"username":"jan","password":"S3cret!","userAgent":"Mozilla"}').buffer }] }
+    });
+
+    await onWebRequest(details, newTabsInputData(), [], {});
+
+    expect(utils.savePromptAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('reads a telemetry body only once instead of waiting for matching values', async () => {
+    const utils = await import('../utils');
+    prepare(utils);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkFormData.mockResolvedValue(false);
+    const details = postDetails({
+      frameType: 'outermost_frame',
+      requestBody: { raw: [{ bytes: new TextEncoder().encode('{"totalJSHeapSize":1,"domComplete":2}').buffer }] }
+    });
+
+    await onWebRequest(details, newTabsInputData(), [], {});
+
+    expect(utils.checkFormData).toHaveBeenCalledTimes(1);
+    expect(utils.savePromptAction).not.toHaveBeenCalled();
+  });
+
+  it('skips a POST to an analytics host before any work', async () => {
+    await onWebRequest(postDetails({ frameType: 'outermost_frame', url: 'https://www.google-analytics.com/g/collect' }), newTabsInputData(), [], {});
+
+    expect(getConfiguredBoolean).not.toHaveBeenCalled();
+  });
+});
+
+describe('onWebRequest — inputs of an old local key', () => {
+  it('drops them before waiting, so the wait picks up the values the page resends', async () => {
+    const utils = await import('../utils');
+    await storage.setItem('session:lKey', 'q83vEjRWeJCrze8SNFZ4kKvN7xI0VniQq83vEjRWeJA=');
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    const tabsInputData = { [TAB_ID]: { stale: { id: 'stale', type: 'password', value: 'c', encrypted: true, keyId: 'other', url: 'https://example.com' } } };
+    let seenByWait;
+    waitForTabInputDataMock.mockImplementation(async store => {
+      seenByWait = { ...store[TAB_ID] };
+      return false;
+    });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
+
+    expect(seenByWait).toEqual({});
   });
 });

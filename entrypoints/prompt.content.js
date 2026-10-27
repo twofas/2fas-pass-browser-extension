@@ -18,6 +18,14 @@ import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
 import ifCtxIsInvalid from '@/partials/contentScript/ifCtxIsInvalid';
 import checkInitialInputsValues from './prompt/checkInitialInputsValues';
 import flushPendingInputs, { BEACON_URL } from './prompt/flushPendingInputs';
+import sendPromptInputs from './prompt/sendPromptInputs';
+import createLocalKeyFreshnessCheck from './prompt/createLocalKeyFreshnessCheck';
+
+/**
+* Idle time after which the first interaction fetches the local key again (the key rotates on every lock).
+* @type {number}
+*/
+const LOCAL_KEY_IDLE_CHECK = 30000; // milliseconds
 
 export default defineContentScript({
   matches: ['https://*/*', 'http://*/*'],
@@ -25,7 +33,7 @@ export default defineContentScript({
   matchAboutBlank: true,
   registration: 'runtime',
   async main (ctx) {
-    const localKey = { data: null };
+    const localKey = { data: null, keyId: null };
     const timers = {};
     const ignore = { value: false };
     let savePrompt = null;
@@ -79,8 +87,11 @@ export default defineContentScript({
       await ensureLocalKey(localKey);
     }
 
+    // The key rotates on every lock: fetch it again on the first interaction after the page was idle.
+    const checkLocalKey = createLocalKeyFreshnessCheck(localKey, LOCAL_KEY_IDLE_CHECK);
+
     const documentShadowRoots = getShadowRoots();
-    const passwordInputs = getPasswordInputs(documentShadowRoots);
+    const passwordInputs = getPasswordInputs(documentShadowRoots, { includeRevealed: true });
     const passwordForms = passwordInputs
       .map(input => input.closest('form'))
       .filter(Boolean);
@@ -105,7 +116,7 @@ export default defineContentScript({
     const trackNewInputs = () => {
       try {
         const shadowRoots = getShadowRoots();
-        const newPasswordInputs = getPasswordInputs(shadowRoots);
+        const newPasswordInputs = getPasswordInputs(shadowRoots, { includeRevealed: true });
         const newPasswordForms = newPasswordInputs
           .map(input => input.closest('form'))
           .filter(Boolean);
@@ -127,17 +138,8 @@ export default defineContentScript({
       trackNewInputs();
 
       const pendingData = flushPendingInputs(allInputs, timers, latestValues);
-      const sendData = encrypted ? await encryptFlushData(pendingData, localKey, encrypted) : pendingData;
 
-      for (const inputData of sendData) {
-        try {
-          browser.runtime.sendMessage({
-            action: REQUEST_ACTIONS.PROMPT_INPUT,
-            data: inputData,
-            target: REQUEST_TARGETS.BACKGROUND_PROMPT
-          });
-        } catch {}
-      }
+      await sendPromptInputs(pendingData, localKey, encrypted);
     };
 
     const handleFormSubmit = () => {
@@ -148,6 +150,8 @@ export default defineContentScript({
       if (ifCtxIsInvalid(ctx, removeListeners)) {
         return;
       }
+
+      checkLocalKey();
 
       if (e?.key !== 'Enter' || e?.isComposing) {
         return;
@@ -175,6 +179,8 @@ export default defineContentScript({
       if (ifCtxIsInvalid(ctx, removeListeners)) {
         return;
       }
+
+      checkLocalKey();
 
       if (!isSubmitButtonClick(e)) {
         return;

@@ -18,17 +18,16 @@ const SAVE_PROMPT_REQUEST_TYPES = Object.freeze(['main_frame', 'sub_frame', 'xml
 * a second listener limited to the prompt.js beacon URL, which keeps other sites' analytics beacons out.
 * @param {Object} tabsInputData - The input data for all tabs.
 * @param {Array} savePromptActions - The list of save prompt actions.
-* @param {Object} tabUpdateData - The data for updating tabs.
 * @return {boolean} True when the submission listener was registered.
 */
-const registerSavePromptWebRequest = (tabsInputData, savePromptActions, tabUpdateData) => {
+const registerSavePromptWebRequest = (tabsInputData, savePromptActions) => {
   if (!isSavePromptSupported() || !browser?.webRequest?.onBeforeRequest) {
     return false;
   }
 
   try {
     browser.webRequest.onBeforeRequest.addListener(
-      details => onWebRequest(details, tabsInputData, savePromptActions, tabUpdateData),
+      details => onWebRequest(details, tabsInputData, savePromptActions),
       { urls: ['<all_urls>'], types: [...SAVE_PROMPT_REQUEST_TYPES] },
       ['requestBody']
     );
@@ -40,7 +39,7 @@ const registerSavePromptWebRequest = (tabsInputData, savePromptActions, tabUpdat
   if (import.meta.env.BROWSER === 'firefox' || import.meta.env.BROWSER === 'safari') {
     try {
       browser.webRequest.onBeforeRequest.addListener(
-        details => onWebRequest(details, tabsInputData, savePromptActions, tabUpdateData),
+        details => onWebRequest(details, tabsInputData, savePromptActions),
         { urls: [`https://${import.meta.env.VITE_BEACON}.invalid/*`], types: ['beacon'] },
         ['requestBody']
       );

@@ -56,3 +56,34 @@ describe('waitForTabInputData', () => {
     await expect(promise).resolves.toBe(false);
   });
 });
+
+describe('waitForTabInputData — custom readiness', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('keeps waiting while isReady is false although the tab has inputs, and resolves once it is true', async () => {
+    const tabsInputData = { 1: { u: { type: 'username', value: 'jan' } } };
+    const isReady = inputs => Boolean(inputs?.p);
+    const promise = waitForTabInputData(tabsInputData, 1, { maxWait: 600, step: 50, isReady });
+
+    await vi.advanceTimersByTimeAsync(100);
+    tabsInputData[1].p = { type: 'password', value: 'S3cret' };
+    await vi.advanceTimersByTimeAsync(50);
+
+    await expect(promise).resolves.toBe(true);
+  });
+
+  it('resolves false when isReady never becomes true', async () => {
+    const tabsInputData = { 1: { u: { type: 'username', value: 'jan' } } };
+    const promise = waitForTabInputData(tabsInputData, 1, { maxWait: 200, step: 50, isReady: () => false });
+
+    await vi.advanceTimersByTimeAsync(250);
+
+    await expect(promise).resolves.toBe(false);
+  });
+});

@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { promptInput, isSavePromptSenderEligible } from '../utils';
+import { getCurrentLocalKeyId, isStalePromptInput } from '../utils/savePrompt/promptInputKeyId';
 
 /** 
 * Function to handle messages related to prompts.
@@ -35,8 +36,17 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
               return;
             }
 
-            return promptInput(request, sender, tabsInputData)
-              .then(() => { sendResponse({ status: 'ok' }); });
+            // A value encrypted with a key rotated out by a lock can never be decrypted: the page fetches the
+            // current key and sends it again. The key id also tells a page capturing plaintext to refresh its key.
+            return getCurrentLocalKeyId().then(currentKeyId => {
+              if (isStalePromptInput(request.data, currentKeyId)) {
+                sendResponse({ status: 'error', message: 'staleKey' });
+                return;
+              }
+
+              return promptInput(request, sender, tabsInputData)
+                .then(() => { sendResponse({ status: 'ok', keyId: currentKeyId }); });
+            });
           })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
 
@@ -49,8 +59,8 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
           return true;
         }
 
-        isSavePromptSenderEligible(sender)
-          .then(eligible => {
+        Promise.all([isSavePromptSenderEligible(sender), getCurrentLocalKeyId()])
+          .then(([eligible, currentKeyId]) => {
             if (!eligible) {
               sendResponse({ status: 'error', message: 'Ineligible frame' });
               return;
@@ -60,13 +70,22 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
               tabsInputData[sender.tab.id] = {};
             }
 
+            let stale = false;
+
             request.data.forEach(inputData => {
-              if (inputData?.id) {
-                tabsInputData[sender.tab.id][inputData.id] = inputData;
+              if (!inputData?.id) {
+                return;
               }
+
+              if (isStalePromptInput(inputData, currentKeyId)) {
+                stale = true;
+                return;
+              }
+
+              tabsInputData[sender.tab.id][inputData.id] = inputData;
             });
 
-            sendResponse({ status: 'ok' });
+            sendResponse(stale ? { status: 'error', message: 'staleKey' } : { status: 'ok' });
           })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
 

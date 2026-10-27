@@ -15,14 +15,13 @@ import Login from '@/models/itemModels/Login';
 * Cleans up save prompt state after the user has made a choice.
 * Removes the action from the in-memory array and resets tab visibility.
 * @param {string} tabId - The tab ID from the save prompt context.
-* @param {string} url - The URL from the save prompt context.
 * @param {Array} savePromptActions - The in-memory array of pending save prompt actions.
 * @param {Object} tabUpdateData - The tab update tracking data.
 * @return {void}
 */
-const cleanupSavePromptState = (tabId, url, savePromptActions, tabUpdateData) => {
+const cleanupSavePromptState = (tabId, savePromptActions, tabUpdateData) => {
   if (savePromptActions && Array.isArray(savePromptActions)) {
-    removeSavePromptAction(tabId, url, savePromptActions);
+    removeSavePromptAction(tabId, savePromptActions);
   }
 
   if (tabUpdateData && tabUpdateData[tabId]) {
@@ -70,7 +69,7 @@ const processSavePromptResult = async (request, savePromptActions, tabUpdateData
 
   logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - processSavePromptResult');
 
-  cleanupSavePromptState(tabId, url, savePromptActions, tabUpdateData);
+  cleanupSavePromptState(tabId, savePromptActions, tabUpdateData);
 
   switch (status) {
     case SAVE_PROMPT_ACTIONS.NEW_LOGIN: {

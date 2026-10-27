@@ -61,7 +61,7 @@ describe('onPromptMessage — frame eligibility gating (finding #19)', () => {
 
       await vi.waitFor(() => expect(sendResponse).toHaveBeenCalled());
       expect(promptInput).toHaveBeenCalledTimes(1);
-      expect(sendResponse).toHaveBeenCalledWith({ status: 'ok' });
+      expect(sendResponse).toHaveBeenCalledWith(expect.objectContaining({ status: 'ok' }));
     });
 
     it('drops the input (no promptInput) when the sender frame is ineligible', async () => {

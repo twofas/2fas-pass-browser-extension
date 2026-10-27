@@ -33,6 +33,7 @@ vi.mock('@/partials/sessionStorage/getItems', () => ({ default: vi.fn(async () =
 vi.mock('@/partials/sessionStorage/configured/getConfiguredBoolean', () => ({ default: vi.fn(async () => true) }));
 
 import onTabUpdated from './onTabUpdated.js';
+import { sendSavePromptToTab } from '../utils';
 
 describe('onTabUpdated — save-prompt context carries per-field encryption flags (finding #41)', () => {
   beforeEach(async () => {
@@ -92,5 +93,108 @@ describe('onTabUpdated — save-prompt context carries per-field encryption flag
     const ctx = JSON.parse(await storage.getItem('session:savePromptContext-77'));
     expect(ctx.values.usernameEncrypted).toBe(true);
     expect(ctx.values.passwordEncrypted).toBe(false);
+  });
+});
+
+describe('onTabUpdated — a save prompt does not follow the user across the site', () => {
+  const tabId = 88;
+  const action = () => ({
+    tabId,
+    url: 'https://example.com',
+    tabUrl: 'https://example.com/login',
+    username: 'u',
+    password: 'p',
+    serviceTypeData: { type: 'newService' }
+  });
+
+  /**
+  * Simulates one navigation of the tab: 'loading' and then 'complete' on the given url.
+  * @param {string} url - The url the tab navigates to.
+  * @param {Array} actions - The save prompt actions.
+  * @param {Object} tabUpdateData - The tab update data.
+  * @return {Promise<void>}
+  */
+  const navigate = async (url, actions, tabUpdateData) => {
+    vi.spyOn(browser.tabs, 'get').mockResolvedValue({ id: tabId, active: true, url, status: 'complete' });
+    await onTabUpdated(tabId, { status: 'loading', url }, actions, tabUpdateData);
+    await onTabUpdated(tabId, { status: 'complete' }, actions, tabUpdateData);
+  };
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await storage.setItem('local:savePrompt', 'default');
+    await storage.removeItem(`session:savePromptContext-${tabId}`);
+  });
+
+  afterEach(async () => {
+    await storage.removeItem(`session:savePromptContext-${tabId}`);
+    await storage.removeItem('local:savePrompt');
+    vi.restoreAllMocks();
+  });
+
+  it('drops an ignored prompt when the user moves on to other pages', async () => {
+    const now = vi.spyOn(Date, 'now').mockReturnValue(1_000_000);
+    const actions = [{ ...action(), displayedAt: 1_000_000 }];
+    const tabUpdateData = {};
+
+    for (const [index, url] of ['https://example.com/products', 'https://example.com/about', 'https://example.com/cart'].entries()) {
+      now.mockReturnValue(1_000_000 + (index + 1) * 20_000);
+      await navigate(url, actions, tabUpdateData);
+    }
+
+    expect(sendSavePromptToTab).not.toHaveBeenCalled();
+    expect(actions).toHaveLength(0);
+  });
+
+  it('keeps the action when only a frame of the page loads (no url change)', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(1_100_000);
+    const actions = [{ ...action(), displayedAt: 1_000_000 }];
+    vi.spyOn(browser.tabs, 'get').mockResolvedValue({ id: tabId, active: true, url: 'https://example.com/login', status: 'loading' });
+
+    await onTabUpdated(tabId, { status: 'loading' }, actions, {});
+
+    expect(actions).toHaveLength(1);
+  });
+
+  it('shows the prompt again on the page a login redirected to right after it appeared', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(1_000_500);
+    const actions = [{ ...action(), displayedAt: 1_000_000 }];
+
+    await navigate('https://example.com/dashboard', actions, {});
+
+    expect(sendSavePromptToTab).toHaveBeenCalledTimes(1);
+  });
+
+  it('takes the prompt along to a page a slow login redirected to 4 s after it appeared', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(1_004_000);
+    const actions = [{ ...action(), displayedAt: 1_000_000 }];
+
+    await navigate('https://example.com/dashboard', actions, {});
+
+    expect(sendSavePromptToTab).toHaveBeenCalledTimes(1);
+  });
+
+  it('drops an action that could not be shown within a minute instead of showing it on a later page', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(1_000_000 + 61_000);
+    const actions = [{ ...action(), createdAt: 1_000_000 }];
+
+    await navigate('https://example.com/products', actions, {});
+
+    expect(sendSavePromptToTab).not.toHaveBeenCalled();
+    expect(actions).toHaveLength(0);
+  });
+
+  it('shows the prompt once after a form post navigation and not on the next pages', async () => {
+    sendSavePromptToTab.mockResolvedValue(true);
+    const now = vi.spyOn(Date, 'now').mockReturnValue(2_000_000);
+    const actions = [action()];
+    const tabUpdateData = {};
+
+    await navigate('https://example.com/account', actions, tabUpdateData);
+    now.mockReturnValue(2_030_000);
+    await navigate('https://example.com/products', actions, tabUpdateData);
+
+    expect(sendSavePromptToTab).toHaveBeenCalledTimes(1);
+    expect(actions).toHaveLength(0);
   });
 });

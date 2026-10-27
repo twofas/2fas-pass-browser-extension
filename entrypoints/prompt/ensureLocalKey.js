@@ -19,7 +19,7 @@
 * so later capture/flush/beacon never have to drop for want of a key. Best-effort: a
 * failure leaves localKey.data null and the existing lazy fetch retries on keystroke.
 * @async
-* @param {Object} localKey - Shared key holder ({ data: CryptoKey|null }) mutated in place.
+* @param {Object} localKey - Shared key holder ({ data: CryptoKey|null, keyId: string|null }) mutated in place.
 * @return {Promise<void>}
 */
 const ensureLocalKey = async localKey => {
@@ -39,8 +39,56 @@ const ensureLocalKey = async localKey => {
   if (response?.status === 'ok' && response?.data && response.data.length > 0) {
     try {
       localKey.data = await crypto.subtle.importKey('raw', Base64ToArrayBuffer(response.data), { name: 'AES-GCM' }, false, ['encrypt']);
+      localKey.keyId = response.keyId || null;
     } catch {}
   }
 };
+
+/**
+* Refreshes in progress, per key holder.
+* @type {WeakMap<Object, Promise<void>>}
+*/
+const pendingRefreshes = new WeakMap();
+
+/**
+* Replaces the cached local key with the current one. The background rotates the key on every lock and refuses values
+* encrypted with an old key (staleKey), so the page fetches the key again before resending them. The old key stays in
+* place until the new one is imported (a capture running meanwhile still has a key), and concurrent refreshes share one
+* fetch.
+* @param {Object} localKey - Shared key holder ({ data: CryptoKey|null, keyId: string|null }) mutated in place.
+* @return {Promise<void>}
+*/
+export const refreshLocalKey = localKey => {
+  const pending = pendingRefreshes.get(localKey);
+
+  if (pending) {
+    return pending;
+  }
+
+  const refresh = (async () => {
+    const nextKey = { data: null, keyId: null };
+
+    await ensureLocalKey(nextKey);
+
+    if (nextKey.data) {
+      localKey.data = nextKey.data;
+      localKey.keyId = nextKey.keyId;
+    }
+  })().finally(() => {
+    pendingRefreshes.delete(localKey);
+  });
+
+  pendingRefreshes.set(localKey, refresh);
+
+  return refresh;
+};
+
+/**
+* Waits for a refresh of the key holder that is in progress, so a value is not encrypted with the key about to be
+* replaced.
+* @param {Object} localKey - Shared key holder ({ data: CryptoKey|null, keyId: string|null }).
+* @return {Promise<void>}
+*/
+export const waitForLocalKeyRefresh = localKey => pendingRefreshes.get(localKey) || Promise.resolve();
 
 export default ensureLocalKey;

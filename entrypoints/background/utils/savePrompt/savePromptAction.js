@@ -7,6 +7,7 @@
 import sendSavePromptToTab from '../sendSavePromptToTab';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import { getPageUrl } from '@/partials/functions';
+import { markSavePromptActionDisplayed } from './savePromptActionDisplay';
 
 // FUTURE - Try to check initial inputs list? Probably request to content_script?
 /** 
@@ -44,10 +45,9 @@ const removePreviousAndCurrentTabInputData = async (tabId, tabsInputData) => {
 * @param {Object} tabsInputData - The input data for all tabs.
 * @param {Object} values - The values to save in the prompt.
 * @param {Array} savePromptActions - The actions to save the prompt.
-* @param {Object} tabUpdateData - Data for updating the tab.
 * @return {Promise<void>} A promise that resolves when the save prompt action is complete.
 */
-const savePromptAction = async (details, serviceTypeData, tabsInputData, values) => {
+const savePromptAction = async (details, serviceTypeData, tabsInputData, values, savePromptActions) => {
   let tabData;
   
   try {
@@ -80,7 +80,11 @@ const savePromptAction = async (details, serviceTypeData, tabsInputData, values)
 
   logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - savePromptAction');
 
-  await sendSavePromptToTab(details.tabId, serviceTypeData, storageKey);
+  const displayed = await sendSavePromptToTab(details.tabId, serviceTypeData, storageKey);
+
+  if (displayed) {
+    markSavePromptActionDisplayed(details.tabId, savePromptActions);
+  }
 };
 
 export default savePromptAction;

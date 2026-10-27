@@ -6,10 +6,14 @@
 
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import { checkDomainOnIgnoredList, getValuesFromTabsInputData, checkServicesData, savePromptAction, cleanTabsInputData, addSavePromptAction, checkFormData, isProcessableWebRequestFrame, waitForTabInputData } from '../utils';
-import { ignoredSavePromptUrls, ignoredSavePromptRequestBodyTexts } from '@/constants';
-import isText from '@/partials/functions/isText';
 import isSavePromptBeaconRequest, { isSavePromptBeaconType } from '../utils/savePrompt/isSavePromptBeaconRequest';
 import requestBodyBytesToString from '../utils/savePrompt/requestBodyBytesToString';
+import hasCredentialPairForOrigin from '../utils/savePrompt/hasCredentialPairForOrigin';
+import waitForMatchingCredentials from '../utils/savePrompt/waitForMatchingCredentials';
+import { isIgnoredSavePromptUrl, hasIgnoredSavePromptBodyField } from '../utils/savePrompt/savePromptIgnoreRules';
+import parseRequestBody from '../utils/savePrompt/parseRequestBody';
+import getPageUrl from '@/partials/functions/getPageUrl';
+import { getCurrentLocalKeyId, isStalePromptInput, dropStalePromptInputs, hasEncryptedPromptInputs } from '../utils/savePrompt/promptInputKeyId';
 
 /** 
 * Function to handle web requests for saving prompts.
@@ -17,10 +21,9 @@ import requestBodyBytesToString from '../utils/savePrompt/requestBodyBytesToStri
 * @param {Object} details - The details of the web request.
 * @param {Object} tabsInputData - Encrypted input data for the tabs.
 * @param {Array} savePromptActions - The actions to save the prompt.
-* @param {Object} tabUpdateData - Data for updating the tab.
 * @return {Promise<void>} A promise that resolves when the web request is handled.
 */
-const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdateData) => {
+const onWebRequest = async (details, tabsInputData, savePromptActions) => {
   // Handle beacon flush from content script (before any other filters)
   if (isSavePromptBeaconRequest(details)) {
     if (details?.requestBody?.raw?.[0]?.bytes && details?.tabId) {
@@ -52,8 +55,10 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
             tabsInputData[details.tabId] = {};
           }
 
+          const currentKeyId = await getCurrentLocalKeyId();
+
           inputs.forEach(inputData => {
-            if (inputData?.id) {
+            if (inputData?.id && !isStalePromptInput(inputData, currentKeyId)) {
               tabsInputData[details.tabId][inputData.id] = inputData;
             }
           });
@@ -79,7 +84,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     !details?.url ||
     (details?.url.substring(0, 7) !== 'http://' && details.url.substring(0, 8) !== 'https://') ||
     details?.documentLifecycle === 'prerender' ||
-    ignoredSavePromptUrls.some(ignoredUrl => details.url.toLowerCase().includes(ignoredUrl.toLowerCase()))
+    isIgnoredSavePromptUrl(details.url)
   ) {
     return;
   }
@@ -103,41 +108,8 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     return;
   }
 
-  // The captured inputs live only in the in-memory tabsInputData, which the MV3 service
-  // worker drops whenever it is recycled (frequently). When the worker is restarted
-  // between the user typing credentials and submitting, this POST arrives with an empty
-  // store and the save prompt silently never fires — for BOTH the encrypted and
-  // unencrypted modes. The content script re-sends the values around submit (form-submit
-  // flush + unload beacon), so give those a brief window to repopulate the store before
-  // bailing. Runs only for genuine login-candidate POSTs (past the filters + frame gate
-  // above) and returns immediately when the data is already present (the warm-worker case).
-  await waitForTabInputData(tabsInputData, details?.tabId);
-
-  // COMMENT THIS WHEN DEBUGGING SAVE PROMPT
-  if (!tabsInputData || Object.keys(tabsInputData).length === 0 || !tabsInputData[details?.tabId] || tabsInputData[details?.tabId]?.length <= 0) {
-    return;
-  }
-  // [END] COMMENT THIS WHEN DEBUGGING
-
-  if (details?.requestBody?.raw && details.requestBody.raw.length > 0 && details.requestBody.raw[0].bytes) {
-    let requestBodyRaw = '';
-
-    try {
-      requestBodyRaw = requestBodyBytesToString(details.requestBody.raw[0].bytes);
-    } catch {}
-
-    if (
-      requestBodyRaw &&
-      requestBodyRaw.length > 0 &&
-      isText(requestBodyRaw) &&
-      ignoredSavePromptRequestBodyTexts.some(ignoredText => requestBodyRaw.toLowerCase().includes(ignoredText.toLowerCase()))
-    ) {
-      return;
-    }
-  }
-
-  const tabInputs = structuredClone(tabsInputData[details.tabId]);
-
+  // Settings first: nothing below (key ids, the wait for inputs) is worth doing while the vault is locked, the save
+  // prompt is off or the domain is ignored.
   let configured;
 
   try {
@@ -175,24 +147,55 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
     return;
   }
 
-  // Cleanup tabsInputData for this tab ID
-  tabsInputData[details.tabId] = cleanTabsInputData(details, tabInputs, tab?.url);
-
-  // Only when tabsInputData exists for this tab ID
-  if (!tabsInputData || !tabsInputData[details.tabId] || tabsInputData[details.tabId]?.length <= 0) {
-    return;
+  // Inputs encrypted before a lock rotated the local key can never be decrypted; dropping them lets the wait below
+  // pick up the values the page resends with the current key.
+  if (hasEncryptedPromptInputs(tabsInputData, details.tabId)) {
+    dropStalePromptInputs(tabsInputData, details.tabId, await getCurrentLocalKeyId());
   }
 
-  // Only when both username and password exist
-  const values = getValuesFromTabsInputData(tabsInputData[details.tabId]);
+  // The captured inputs live only in the in-memory tabsInputData, which the MV3 service
+  // worker drops whenever it is recycled (frequently). When the worker is restarted
+  // between the user typing credentials and submitting, this POST arrives with an empty
+  // store and the save prompt silently never fires — for BOTH the encrypted and
+  // unencrypted modes. The content script re-sends the values around submit (form-submit
+  // flush + unload beacon), so give those a brief window to repopulate the store before
+  // bailing. Runs only for genuine login-candidate POSTs (past the filters + frame gate
+  // above) and returns immediately when the data is already present (the warm-worker case).
+  //
+  // Wait for the whole pair, not for any input: a username captured earlier must not end the wait while the
+  // password typed just before submitting is still on its way (debounce, encryption).
+  let pageOrigin = '';
 
-  if (!values?.password || !values?.username) {
+  try {
+    pageOrigin = new URL(getPageUrl(details, tab?.url)).origin;
+  } catch {}
+
+  await waitForTabInputData(tabsInputData, details?.tabId, { isReady: inputs => hasCredentialPairForOrigin(inputs, pageOrigin) });
+
+  // COMMENT THIS WHEN DEBUGGING SAVE PROMPT
+  if (!tabsInputData || Object.keys(tabsInputData).length === 0 || !tabsInputData[details?.tabId] || tabsInputData[details?.tabId]?.length <= 0) {
     return;
   }
+  // [END] COMMENT THIS WHEN DEBUGGING
 
-  const formDataOk = await checkFormData(details, values);
+  const requestBody = parseRequestBody(details);
 
-  if (!formDataOk) {
+  // Only when the body carries the latest captured username and password. They are read again for a short while: a
+  // password typed again after a failed attempt may still be on its way while the old one is stored.
+  const values = await waitForMatchingCredentials(async () => {
+    const tabInputs = structuredClone(tabsInputData[details.tabId] || {});
+    tabsInputData[details.tabId] = cleanTabsInputData(details, tabInputs, tab?.url);
+
+    const currentValues = getValuesFromTabsInputData(tabsInputData[details.tabId]);
+
+    if (!currentValues?.password || !currentValues?.username) {
+      return null;
+    }
+
+    return await checkFormData(details, currentValues, requestBody.texts) ? currentValues : null;
+  }, hasIgnoredSavePromptBodyField(details, requestBody) ? { maxWait: 0 } : undefined);
+
+  if (!values) {
     return;
   }
 
@@ -212,7 +215,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, tabUpdate
   // Action
   try {
     await addSavePromptAction(details, serviceTypeData, values, savePromptActions);
-    await savePromptAction(details, serviceTypeData, tabsInputData, values, savePromptActions, tabUpdateData);
+    await savePromptAction(details, serviceTypeData, tabsInputData, values, savePromptActions);
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.onWebRequestSavePromptActionError, { event: e });
   }

@@ -11,8 +11,17 @@ import trimString from '@/partials/functions/trimString';
 import decryptValues from './decryptValues';
 
 /**
-* Function to check the items data. The typed username is compared with the stored ones trimmed, as it is saved; the password
-* is never trimmed, so it is compared exactly.
+* Function to normalize a username for comparison: trimmed and lowercased.
+* @param {string} username - The username.
+* @return {string} The normalized username.
+*/
+const normalizeUsername = username => String(trimString(username) || '').toLowerCase();
+
+/**
+* Function to check the items data. The typed username is compared with the stored ones trimmed, as it is saved, and
+* without letter case (Jan@Example.com and jan@example.com are one login); the password is never trimmed, so it is
+* compared exactly. Stored URI rules are matched against the page that sent the request and the full tab URL, because
+* Chromium reports only the origin as the initiator and a StartsWith or Exact rule would not match it.
 * @async
 * @param {Object} details - The details of the tab.
 * @param {Object} values - The values to check.
@@ -37,14 +46,20 @@ const checkServicesData = async (details, values, tabUrl) => {
     return { type: 'newService' };
   }
 
-  let matchedItems = [];
-  const matchUrl = getPageUrl(details, tabUrl);
+  const matchedItems = [];
+  const matchUrls = [...new Set([getPageUrl(details, tabUrl), tabUrl].filter(Boolean))];
 
-  try {
-    matchedItems = URIMatcher.getMatchedAccounts(items, matchUrl);
-  } catch {}
+  matchUrls.forEach(matchUrl => {
+    try {
+      URIMatcher.getMatchedAccounts(items, matchUrl).forEach(item => {
+        if (!matchedItems.includes(item)) {
+          matchedItems.push(item);
+        }
+      });
+    } catch {}
+  });
 
-  if (!matchedItems || matchedItems.length <= 0) {
+  if (matchedItems.length <= 0) {
     return { type: 'newService' };
   }
 
@@ -59,10 +74,10 @@ const checkServicesData = async (details, values, tabUrl) => {
     };
   }
 
-  const username = trimString(decryptedValues.username);
+  const username = normalizeUsername(decryptedValues.username);
 
   // Check username if exists
-  const matchedItemsMatchedUsername = matchedItems.filter(item => trimString(item?.content?.username) === username);
+  const matchedItemsMatchedUsername = matchedItems.filter(item => normalizeUsername(item?.content?.username) === username);
 
   if (!matchedItemsMatchedUsername || matchedItemsMatchedUsername.length <= 0) {
     return { type: 'newService' };

@@ -68,7 +68,7 @@ export default defineBackground({
       }
     });
 
-    registerSavePromptWebRequest(tabsInputData, savePromptActions, tabUpdateData);
+    registerSavePromptWebRequest(tabsInputData, savePromptActions);
 
     if (import.meta.env.BROWSER !== 'safari') {
       nonSafariBackground();

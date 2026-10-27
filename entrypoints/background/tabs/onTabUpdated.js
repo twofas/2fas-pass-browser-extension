@@ -11,6 +11,7 @@ import checkPromptCS from '@/partials/contentScript/checkPromptCS';
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import getItems from '@/partials/sessionStorage/getItems';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
+import { markSavePromptActionDisplayed, releaseIgnoredSavePromptAction, releaseExpiredSavePromptAction } from '../utils/savePrompt/savePromptActionDisplay';
 
 /** 
 * Function to handle tab updates in the browser.
@@ -27,6 +28,11 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
   }
 
   tabUpdateData[tabID] = tabUpdateData[tabID] && typeof tabUpdateData[tabID] === 'object' ? tabUpdateData[tabID] : { url: null, savePromptVisible: false };
+
+  // Only a navigation of the page itself reports a url; a frame of the page loading (ads, captcha) does not.
+  if (changeInfo.status === 'loading' && changeInfo.url) {
+    releaseIgnoredSavePromptAction(tabID, savePromptActions);
+  }
   
   let configured;
 
@@ -90,13 +96,17 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
       checkPromptCS(tabID).catch(() => {})
     ]);
 
+    if (releaseExpiredSavePromptAction(tabID, savePromptActions)) {
+      return;
+    }
+
     const action = savePromptActions.filter(a => a.tabId === tabID)[0];
 
     if (action && !tabUpdateData[tabID].savePromptVisible) {
       const storageSavePrompt = await storage.getItem('local:savePrompt');
 
       if (storageSavePrompt && storageSavePrompt !== 'default' && storageSavePrompt !== 'default_encrypted') {
-        removeSavePromptAction(tabID, action.url, savePromptActions);
+        removeSavePromptAction(tabID, savePromptActions);
         return;
       }
 
@@ -104,7 +114,7 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
       const requestUrlIgnored = action?.url ? await checkDomainOnIgnoredList(action.url) : false;
 
       if (tabUrlIgnored || requestUrlIgnored) {
-        removeSavePromptAction(tabID, action.url, savePromptActions);
+        removeSavePromptAction(tabID, savePromptActions);
         return;
       }
 
@@ -119,12 +129,12 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
         actionDomain = getRootDomain(new URL(action.url).hostname);
         tabDomain = getRootDomain(new URL(tab.url).hostname);
       } catch {
-        removeSavePromptAction(tabID, action.url, savePromptActions);
+        removeSavePromptAction(tabID, savePromptActions);
         return;
       }
 
       if (actionDomain !== tabDomain) {
-        removeSavePromptAction(tabID, action.url, savePromptActions);
+        removeSavePromptAction(tabID, savePromptActions);
         return;
       }
 
@@ -146,7 +156,11 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
         logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - onTabUpdated (savePromptContext)');
       }
 
-      await sendSavePromptToTab(tabID, action.serviceTypeData, storageKey);
+      const displayed = await sendSavePromptToTab(tabID, action.serviceTypeData, storageKey);
+
+      if (displayed) {
+        markSavePromptActionDisplayed(tabID, savePromptActions);
+      }
     }          
   } catch (e) {
     await CatchError(e);
