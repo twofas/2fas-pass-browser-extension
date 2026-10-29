@@ -21,6 +21,13 @@ import isRecentlyVerifiedInjection from './isRecentlyVerifiedInjection';
 const verifiedInjectionCache = new Map();
 
 /**
+* Runs in progress per tab + script type. A call that arrives while another one is
+* injecting into the same tab waits for it instead of injecting a second time.
+* @type {Map<string, Promise<boolean>>}
+*/
+const pendingInjections = new Map();
+
+/**
 * Gets the count of injectable frames in a tab.
 * @async
 * @param {number} tabID - The ID of the tab.
@@ -47,13 +54,13 @@ const getInjectableFrameCount = async tabID => {
 };
 
 /**
-* Injects the content script and CSS if not already injected.
+* Function to inject the content script and CSS if not already injected (one run).
 * @async
 * @param {number} tabID - The ID of the tab to inject the content script and CSS into.
 * @param {string} type - The type of content script to inject.
-* @return {boolean} Indicates whether the content script was successfully injected.
+* @return {Promise<boolean>} Indicates whether the content script was successfully injected.
 */
-const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { // content / prompt
+const runInjection = async (tabID, type) => {
   const injectScript = async () => {
     switch (type) {
       case REQUEST_TARGETS.CONTENT: {
@@ -131,6 +138,14 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
 
       if (okResponses && okResponses.length >= expectedFrameCount) {
         injected = true;
+        break;
+      }
+
+      // No frame has the script, so waiting cannot help: inject now. Safari takes about
+      // 100 ms to reject each message to a frame without the script, so the retries cost
+      // about half a second there. Retry only while some frames already answer (frames
+      // still loading or an injection under way).
+      if (!okResponses || okResponses.length === 0) {
         break;
       }
     }
@@ -223,6 +238,33 @@ const injectCSIfNotAlready = async (tabID, type = REQUEST_TARGETS.CONTENT) => { 
   }
 
   return injected;
+};
+
+/**
+* Injects the content script and CSS if not already injected. Concurrent calls for the same
+* tab and script type share one run.
+* @async
+* @param {number} tabID - The ID of the tab to inject the content script and CSS into.
+* @param {string} type - The type of content script to inject.
+* @return {Promise<boolean>} Indicates whether the content script was successfully injected.
+*/
+const injectCSIfNotAlready = (tabID, type = REQUEST_TARGETS.CONTENT) => { // content / prompt
+  const pendingKey = `${tabID}:${type}`;
+  const pending = pendingInjections.get(pendingKey);
+
+  if (pending) {
+    return pending;
+  }
+
+  const run = runInjection(tabID, type).finally(() => {
+    if (pendingInjections.get(pendingKey) === run) {
+      pendingInjections.delete(pendingKey);
+    }
+  });
+
+  pendingInjections.set(pendingKey, run);
+
+  return run;
 };
 
 export default injectCSIfNotAlready;

@@ -75,7 +75,8 @@ describe('onContextMenuClick — an autofill item left over from a session that 
     const result = await onContextMenuClick(AUTOFILL_INFO, TAB);
 
     expect(result).toBe(true);
-    expect(sendAutofillToTab).toHaveBeenCalledWith(TAB.id, DEVICE_ID, VAULT_ID, ITEM_ID);
+    expect(getItem).toHaveBeenCalledTimes(1);
+    expect(sendAutofillToTab).toHaveBeenCalledWith(TAB.id, DEVICE_ID, VAULT_ID, ITEM_ID, item);
     expect(initContextMenu).not.toHaveBeenCalled();
   });
 });
@@ -112,6 +113,15 @@ describe('onContextMenuClick — Safari sends no tab for a private window the ex
     expect(result).toBe(false);
     expect(sendAutofillToTab).not.toHaveBeenCalled();
     expect(CatchError).not.toHaveBeenCalled();
+  });
+
+  it('passes the card it already read to the card autofill', async () => {
+    const item = { contentType: 'paymentCard' };
+    getItem.mockResolvedValue(item);
+
+    await onContextMenuClick(AUTOFILL_INFO, TAB);
+
+    expect(sendCardAutofillToTab).toHaveBeenCalledWith(TAB.id, DEVICE_ID, VAULT_ID, ITEM_ID, item);
   });
 
   it('does not check private access when the tab is present', async () => {

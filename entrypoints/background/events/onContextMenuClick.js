@@ -67,9 +67,9 @@ const onContextMenuClick = async (info, tab) => {
       }
 
       if (item.contentType === PaymentCard.contentType) {
-        await sendCardAutofillToTab(tab.id, deviceId, vaultId, itemId);
+        await sendCardAutofillToTab(tab.id, deviceId, vaultId, itemId, item);
       } else {
-        await sendAutofillToTab(tab.id, deviceId, vaultId, itemId);
+        await sendAutofillToTab(tab.id, deviceId, vaultId, itemId, item);
       }
 
       return true;

@@ -19,9 +19,10 @@ import protectActionDataPassword from './protectActionDataPassword';
 * @param {string} deviceId - The ID of the device to use for the autofill data.
 * @param {string} vaultId - The ID of the vault to use for the autofill data.
 * @param {string} itemId - The ID of the item to use for the autofill data.
+* @param {Object|null} [preloadedItem] - The item model when the caller has already read it, so the items are not read again.
 * @return {Promise<void>} A promise that resolves when the autofill data is sent.
 */
-const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
+const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId, preloadedItem = null) => {
   const injectedCS = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
 
   if (!injectedCS) {
@@ -31,10 +32,12 @@ const sendAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     }, tabId, true);
   }
 
-  let item;
+  let item = preloadedItem;
 
   try {
-    item = await getItem(deviceId, vaultId, itemId);
+    if (!item) {
+      item = await getItem(deviceId, vaultId, itemId);
+    }
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabToTabService, {
       event: e,

@@ -18,9 +18,10 @@ import protectCardActionData from './protectCardActionData';
 * @param {string} deviceId - The ID of the device.
 * @param {string} vaultId - The ID of the vault.
 * @param {string} itemId - The ID of the PaymentCard item.
+* @param {Object|null} [preloadedItem] - The item model when the caller has already read it, so the items are not read again.
 * @return {Promise<void>}
 */
-const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
+const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId, preloadedItem = null) => {
   const injectedCS = await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
 
   if (!injectedCS) {
@@ -30,10 +31,12 @@ const sendCardAutofillToTab = async (tabId, deviceId, vaultId, itemId) => {
     }, tabId, true);
   }
 
-  let item;
+  let item = preloadedItem;
 
   try {
-    item = await getItem(deviceId, vaultId, itemId);
+    if (!item) {
+      item = await getItem(deviceId, vaultId, itemId);
+    }
   } catch (e) {
     throw new TwoFasError(TwoFasError.internalErrors.sendAutofillToTabToTabService, {
       event: e,

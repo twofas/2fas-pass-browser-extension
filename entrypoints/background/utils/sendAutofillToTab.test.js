@@ -229,3 +229,30 @@ describe('sendAutofillToTab — blank username', () => {
     expect(resolveCrossDomainPermissions).toHaveBeenCalledWith(1, 'login', { hasUsername: false, hasPassword: true });
   });
 });
+
+describe('sendAutofillToTab — the caller already read the item', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    injectCSIfNotAlready.mockResolvedValue(true);
+    getItem.mockResolvedValue(buildItem());
+    sendMessageToTab.mockResolvedValue({ status: 'ok', cryptoAvailable: false });
+    resolveCrossDomainPermissions.mockResolvedValue({ needsDialog: false, allBlocked: false, crossDomainAllowedDomains: [] });
+    sendMessageToAllFrames.mockResolvedValue([{ status: 'ok', canAutofillPassword: true }]);
+  });
+
+  it('fills with the passed item without reading the items again', async () => {
+    const item = buildItem();
+
+    await sendAutofillToTab(1, 'device', 'vault', 'item', item);
+
+    expect(getItem).not.toHaveBeenCalled();
+    expect(item.decryptSif).toHaveBeenCalledTimes(1);
+    expect(getAutofillMessage()?.username).toBe('user@example.com');
+  });
+
+  it('reads the item when the caller passes none', async () => {
+    await sendAutofillToTab(1, 'device', 'vault', 'item');
+
+    expect(getItem).toHaveBeenCalledWith('device', 'vault', 'item');
+  });
+});

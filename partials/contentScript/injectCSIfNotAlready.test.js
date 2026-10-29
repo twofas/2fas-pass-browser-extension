@@ -52,4 +52,67 @@ describe('injectCSIfNotAlready', () => {
 
     expect(sendMessage.mock.calls.map(([, , options]) => options.frameId)).not.toContain(prerender.frameId);
   });
+  it('injects at once when no frame has the content script yet', async () => {
+    let injected = false;
+    executeScript.mockImplementation(async () => {
+      injected = true;
+      return [];
+    });
+    const sendMessage = vi.spyOn(browser.tabs, 'sendMessage').mockImplementation(async () => {
+      if (!injected) {
+        throw new Error('Could not establish connection. Receiving end does not exist.');
+      }
+
+      return { status: 'ok' };
+    });
+
+    await expect(injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT)).resolves.toBe(true);
+
+    const checksBeforeInjection = sendMessage.mock.invocationCallOrder.filter(order => order < executeScript.mock.invocationCallOrder[0]);
+    expect(checksBeforeInjection).toHaveLength(2);
+    expect(executeScript).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps waiting before injecting while only some frames answer', async () => {
+    let injected = false;
+    executeScript.mockImplementation(async () => {
+      injected = true;
+      return [];
+    });
+    const sendMessage = vi.spyOn(browser.tabs, 'sendMessage').mockImplementation(async (id, message, { frameId }) => {
+      if (!injected && frameId !== top.frameId) {
+        throw new Error('Could not establish connection. Receiving end does not exist.');
+      }
+
+      return { status: 'ok' };
+    });
+
+    await injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT);
+
+    const checksBeforeInjection = sendMessage.mock.invocationCallOrder.filter(order => order < executeScript.mock.invocationCallOrder[0]);
+    expect(checksBeforeInjection.length).toBeGreaterThan(2);
+  });
+
+  it('shares one injection between concurrent calls for the same tab', async () => {
+    let injected = false;
+    executeScript.mockImplementation(async () => {
+      injected = true;
+      return [];
+    });
+    vi.spyOn(browser.tabs, 'sendMessage').mockImplementation(async () => {
+      if (!injected) {
+        throw new Error('Could not establish connection. Receiving end does not exist.');
+      }
+
+      return { status: 'ok' };
+    });
+
+    const results = await Promise.all([
+      injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT),
+      injectCSIfNotAlready(tabId, REQUEST_TARGETS.CONTENT)
+    ]);
+
+    expect(results).toEqual([true, true]);
+    expect(executeScript).toHaveBeenCalledTimes(1);
+  });
 });
