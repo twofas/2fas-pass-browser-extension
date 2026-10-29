@@ -4,20 +4,25 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { shortcutAutofill } from '../utils';
+import { shortcutAutofill, showPrivateAccessInfo } from '../utils';
 
 /** 
 * Function to handle command events.
 * @async
 * @param {string} command - The command to handle.
+* @param {Object} [tab] - The tab that was active when the command was triggered, if the browser sends one.
 * @return {Promise<boolean>} A promise that resolves to true if the command is handled successfully, otherwise false.
 */
-const onCommand = async command => {
+const onCommand = async (command, tab) => {
   logger.info(LOGGER_CONSTANTS.CATEGORIES.USER_ACTION, 'CommandHandler - keyboard shortcut', { command });
 
   try {
     switch (command) {
       case '2fas_pass_shortcut_autofill': {
+        if (!tab?.id && await showPrivateAccessInfo()) {
+          return false;
+        }
+
         await shortcutAutofill();
         return true;
       }

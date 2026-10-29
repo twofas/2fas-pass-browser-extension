@@ -12,7 +12,7 @@ import usePopupStateStore from '../store/popupState';
  * Custom hook for tracking and storing current pathname in popup state.
  * Automatically updates the href in the store when the location changes.
  * Resets data to defaults and scrollPosition to 0 on every route change after hydration.
- * Excludes specific routes from tracking: /fetch, /fetch/*, /blocked
+ * Excludes specific routes from tracking: /fetch, /fetch/*, /blocked, /connect, /private-access
  * @param {boolean} hydrationComplete - Whether Zustand hydration is complete
  * @return {string} Current pathname from the location
  */
@@ -35,7 +35,7 @@ const usePopupHref = (hydrationComplete = false) => {
     }
 
     const pathname = location.pathname;
-    const excludedPaths = ['/fetch', '/blocked', '/connect'];
+    const excludedPaths = ['/fetch', '/blocked', '/connect', '/private-access'];
     const isExcluded = excludedPaths.includes(pathname) || pathname.startsWith('/fetch/');
 
     if (isExcluded) {

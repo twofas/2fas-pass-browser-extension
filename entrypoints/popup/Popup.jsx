@@ -46,6 +46,7 @@ const ShareImport = lazy(() => import('./routes/ShareImport'));
 const PasswordGenerator = lazy(() => import('./routes/PasswordGenerator'));
 const NotFound = lazy(() => import('./routes/NotFound'));
 const ErrorFallback = lazy(() => import('./routes/ErrorFallback'));
+const PrivateAccess = lazy(() => import('./routes/PrivateAccess'));
 
 const routeConfig = [
   { path: '/connect', component: Connect, isGuestRoute: true },
@@ -68,6 +69,7 @@ const routeConfig = [
   { path: '/share-import/:id/:type/:nonce/:key', component: ShareImport, isProtectedRoute: true },
   { path: '/password-generator', component: PasswordGenerator, isProtectedRoute: true },
   { path: '/blocked', component: Blocked },
+  { path: '/private-access', component: PrivateAccess },
   { path: '*', component: NotFound }
 ];
 

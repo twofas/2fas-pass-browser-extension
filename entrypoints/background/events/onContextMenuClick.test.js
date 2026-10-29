@@ -14,13 +14,15 @@ vi.mock('@/partials/sessionStorage/configured/getConfiguredBoolean', () => ({ de
 vi.mock('../utils', () => ({
   openPopupWindowInNewWindow: vi.fn(async () => {}),
   sendAutofillToTab: vi.fn(async () => {}),
-  sendCardAutofillToTab: vi.fn(async () => {})
+  sendCardAutofillToTab: vi.fn(async () => {}),
+  showPrivateAccessInfo: vi.fn(async () => false)
 }));
 
 import initContextMenu from '../contextMenu/initContextMenu';
 import getItem from '@/partials/sessionStorage/getItem';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import { openPopupWindowInNewWindow, sendAutofillToTab } from '../utils';
+import CatchError from '@/utils/CatchError.js';
+import { openPopupWindowInNewWindow, sendAutofillToTab, sendCardAutofillToTab, showPrivateAccessInfo } from '../utils';
 import onContextMenuClick from './onContextMenuClick.js';
 
 const DEVICE_ID = '11111111-1111-4111-8111-111111111111';
@@ -75,6 +77,59 @@ describe('onContextMenuClick — an autofill item left over from a session that 
     expect(result).toBe(true);
     expect(sendAutofillToTab).toHaveBeenCalledWith(TAB.id, DEVICE_ID, VAULT_ID, ITEM_ID);
     expect(initContextMenu).not.toHaveBeenCalled();
+  });
+});
+
+describe('onContextMenuClick — Safari sends no tab for a private window the extension is not allowed into', () => {
+  it('shows the private access info instead of failing on the missing tab', async () => {
+    getItem.mockResolvedValue({ contentType: 'login' });
+    showPrivateAccessInfo.mockResolvedValue(true);
+
+    const result = await onContextMenuClick(AUTOFILL_INFO, undefined);
+
+    expect(result).toBe(false);
+    expect(showPrivateAccessInfo).toHaveBeenCalledTimes(1);
+    expect(sendAutofillToTab).not.toHaveBeenCalled();
+    expect(CatchError).not.toHaveBeenCalled();
+  });
+
+  it('does the same for a payment card', async () => {
+    getItem.mockResolvedValue({ contentType: 'paymentCard' });
+    showPrivateAccessInfo.mockResolvedValue(true);
+
+    await onContextMenuClick(AUTOFILL_INFO, undefined);
+
+    expect(showPrivateAccessInfo).toHaveBeenCalledTimes(1);
+    expect(sendCardAutofillToTab).not.toHaveBeenCalled();
+  });
+
+  it('stops without an error when the tab is missing but private access is granted', async () => {
+    getItem.mockResolvedValue({ contentType: 'login' });
+    showPrivateAccessInfo.mockResolvedValue(false);
+
+    const result = await onContextMenuClick(AUTOFILL_INFO, undefined);
+
+    expect(result).toBe(false);
+    expect(sendAutofillToTab).not.toHaveBeenCalled();
+    expect(CatchError).not.toHaveBeenCalled();
+  });
+
+  it('does not check private access when the tab is present', async () => {
+    getItem.mockResolvedValue({ contentType: 'login' });
+
+    await onContextMenuClick(AUTOFILL_INFO, TAB);
+
+    expect(showPrivateAccessInfo).not.toHaveBeenCalled();
+  });
+
+  it('still opens the fetch popup without a tab, because fetching needs no tab', async () => {
+    const info = { menuItemId: `2fas-pass-fetch-${DEVICE_ID}|${VAULT_ID}|${ITEM_ID}|login` };
+
+    const result = await onContextMenuClick(info, undefined);
+
+    expect(result).toBe(true);
+    expect(showPrivateAccessInfo).not.toHaveBeenCalled();
+    expect(openPopupWindowInNewWindow).toHaveBeenCalledTimes(1);
   });
 });
 

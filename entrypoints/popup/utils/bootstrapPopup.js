@@ -11,7 +11,7 @@ import usePopupStateStore from '../store/popupState/index.js';
 export const WS_STATE_TIMEOUT_MS = 3000;
 export const INIT_TIMEOUT_MS = 3000;
 
-const EXCLUDED_ROUTES = ['/connect', '/', '/fetch', '/blocked'];
+const EXCLUDED_ROUTES = ['/connect', '/', '/fetch', '/blocked', '/private-access'];
 const BACKGROUND_NOT_RESPONDING_TOAST_ID = 'popup-background-not-responding';
 
 /**

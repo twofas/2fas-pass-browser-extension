@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { openPopupWindowInNewWindow, sendAutofillToTab, sendCardAutofillToTab } from '../utils';
+import { openPopupWindowInNewWindow, sendAutofillToTab, sendCardAutofillToTab, showPrivateAccessInfo } from '../utils';
 import { AUTOFILL_REGEX, FETCH_REGEX, PULL_REQUEST_TYPES } from '@/constants';
 import getItem from '@/partials/sessionStorage/getItem';
 import { PaymentCard } from '@/models/itemModels';
@@ -59,6 +59,11 @@ const onContextMenuClick = async (info, tab) => {
 
       if (!item) {
         return handleMissingItem();
+      }
+
+      if (!tab?.id) {
+        await showPrivateAccessInfo();
+        return false;
       }
 
       if (item.contentType === PaymentCard.contentType) {
