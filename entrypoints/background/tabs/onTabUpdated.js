@@ -12,6 +12,7 @@ import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready'
 import getItems from '@/partials/sessionStorage/getItems';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
 import { markSavePromptActionDisplayed, releaseIgnoredSavePromptAction, releaseExpiredSavePromptAction } from '../utils/savePrompt/savePromptActionDisplay';
+import { releaseSavePromptDomainSuppression } from '../utils/savePrompt/savePromptDomainSuppression';
 
 /** 
 * Function to handle tab updates in the browser.
@@ -32,6 +33,7 @@ const onTabUpdated = async (tabID, changeInfo, savePromptActions, tabUpdateData)
   // Only a navigation of the page itself reports a url; a frame of the page loading (ads, captcha) does not.
   if (changeInfo.status === 'loading' && changeInfo.url) {
     releaseIgnoredSavePromptAction(tabID, savePromptActions);
+    await releaseSavePromptDomainSuppression(tabID, changeInfo.url).catch(() => {});
   }
   
   let configured;

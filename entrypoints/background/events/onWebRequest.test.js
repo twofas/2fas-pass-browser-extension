@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import realIsProcessableWebRequestFrame from '../utils/savePrompt/isProcessableWebRequestFrame.js';
 
 const getConfiguredBoolean = vi.fn();
@@ -353,5 +353,34 @@ describe('onWebRequest — inputs of an old local key', () => {
     await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
 
     expect(seenByWait).toEqual({});
+  });
+});
+
+describe('onWebRequest — fetch & autofill turned the save prompt off for the domain', () => {
+  const KEY = `session:savePromptDomainSuppressed-${TAB_ID}`;
+
+  beforeEach(async () => {
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem(KEY, 'example.com');
+  });
+
+  afterEach(async () => {
+    await storage.removeItem(KEY);
+  });
+
+  it('skips a login POST from any page of the suppressed domain', async () => {
+    vi.spyOn(browser.tabs, 'get').mockResolvedValue({ id: TAB_ID, url: 'https://app.example.com/after-login' });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(getConfiguredBoolean).not.toHaveBeenCalled();
+  });
+
+  it('still handles a login POST in the tab once it shows another domain', async () => {
+    vi.spyOn(browser.tabs, 'get').mockResolvedValue({ id: TAB_ID, url: 'https://other.com/login' });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame', url: 'https://api.other.com/login' }), newTabsInputData(), [], {});
+
+    expect(getConfiguredBoolean).toHaveBeenCalled();
   });
 });

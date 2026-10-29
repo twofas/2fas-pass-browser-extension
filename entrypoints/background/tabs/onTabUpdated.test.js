@@ -198,3 +198,28 @@ describe('onTabUpdated — a save prompt does not follow the user across the sit
     expect(actions).toHaveLength(0);
   });
 });
+
+describe('onTabUpdated — save prompt turned off by a fetch & autofill', () => {
+  const KEY = 'session:savePromptDomainSuppressed-78';
+
+  beforeEach(async () => {
+    vi.clearAllMocks();
+    await storage.setItem(KEY, 'example.com');
+  });
+
+  afterEach(async () => {
+    await storage.removeItem(KEY);
+  });
+
+  it('stays off while the tab navigates within the domain', async () => {
+    await onTabUpdated(78, { status: 'loading', url: 'https://app.example.com/dashboard' }, [], {});
+
+    expect(await storage.getItem(KEY)).toBe('example.com');
+  });
+
+  it('comes back when the tab navigates to another domain', async () => {
+    await onTabUpdated(78, { status: 'loading', url: 'https://other.com/' }, [], {});
+
+    expect(await storage.getItem(KEY)).toBeNull();
+  });
+});

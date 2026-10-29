@@ -12,6 +12,7 @@ import hasCredentialPairForOrigin from '../utils/savePrompt/hasCredentialPairFor
 import waitForMatchingCredentials from '../utils/savePrompt/waitForMatchingCredentials';
 import { isIgnoredSavePromptUrl, hasIgnoredSavePromptBodyField } from '../utils/savePrompt/savePromptIgnoreRules';
 import parseRequestBody from '../utils/savePrompt/parseRequestBody';
+import { isSavePromptSuppressedForDomain } from '../utils/savePrompt/savePromptDomainSuppression';
 import getPageUrl from '@/partials/functions/getPageUrl';
 import { getCurrentLocalKeyId, isStalePromptInput, dropStalePromptInputs, hasEncryptedPromptInputs } from '../utils/savePrompt/promptInputKeyId';
 
@@ -105,6 +106,12 @@ const onWebRequest = async (details, tabsInputData, savePromptActions) => {
   // same-site iframes). Cross-root-domain sub-frames (e.g. SSO widgets) are rejected
   // — their credentials belong to the embedded site, not this page (finding #19).
   if (!isProcessableWebRequestFrame(details, tab?.url)) {
+    return;
+  }
+
+  // A fetch & autofill filled a secret that is not saved, so the vault cannot recognise it: no prompt in this tab
+  // until it leaves the domain.
+  if (await isSavePromptSuppressedForDomain(details.tabId, tab?.url || details.url)) {
     return;
   }
 

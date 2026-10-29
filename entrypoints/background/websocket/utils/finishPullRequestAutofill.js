@@ -10,6 +10,7 @@ import aggregateCardAutofillResponses from '@/partials/functions/aggregateCardAu
 import aggregateLoginAutofillResponses from '@/partials/functions/aggregateLoginAutofillResponses';
 import storeAutofillFailureData from '../../utils/storeAutofillFailureData';
 import openPopupWithFallback from '../../utils/openPopupWithFallback';
+import { isFetchedSifAutofill, suppressSavePromptForTabDomain } from '../../utils/savePrompt/savePromptDomainSuppression';
 import wsNotify from '../wsNotify.js';
 import { wsState } from '../wsState.js';
 
@@ -131,6 +132,10 @@ const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) =>
   const { isOk, allFieldsFilled } = aggregateLoginAutofillResponses(autofillRes, actionData);
 
   if (isOk) {
+    if (isFetchedSifAutofill(closeData)) {
+      await suppressSavePromptForTabDomain(tabId).catch(e => CatchError(e));
+    }
+
     try {
       await sendMessageToAllFrames(tabId, {
         action: REQUEST_ACTIONS.IGNORE_SAVE_PROMPT,

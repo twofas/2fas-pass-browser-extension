@@ -159,3 +159,29 @@ describe('dispatchLoginAutofill — failure escalation (non-windowClose)', () =>
     expect(ignoreSavePromptCall()).toBeDefined();
   });
 });
+
+describe('dispatchLoginAutofill — save prompt after fetch & autofill', () => {
+  const SUPPRESSED_KEY = 'session:savePromptDomainSuppressed-5';
+
+  beforeEach(async () => {
+    await storage.removeItem(SUPPRESSED_KEY);
+    vi.spyOn(browser.tabs, 'get').mockResolvedValue({ id: 5, url: 'https://example.com/login' });
+  });
+
+  it('turns the save prompt off for the domain after filling a pulled secret that is not saved', async () => {
+    const actionData = { action: REQUEST_ACTIONS.AUTOFILL, username: 'u', password: 'p' };
+
+    await dispatchLoginAutofill(5, KEY, actionData, { itemId: 'i', s_password: 'enc', encryptionItemT2KeyB64: 'key' });
+
+    expect(await storage.getItem(SUPPRESSED_KEY)).toBe('example.com');
+    await storage.removeItem(SUPPRESSED_KEY);
+  });
+
+  it('keeps the save prompt after filling an item from the vault', async () => {
+    const actionData = { action: REQUEST_ACTIONS.AUTOFILL, username: 'u', password: 'p' };
+
+    await dispatchLoginAutofill(5, KEY, actionData, { itemId: 'i', securityType: 2 });
+
+    expect(await storage.getItem(SUPPRESSED_KEY)).toBeNull();
+  });
+});

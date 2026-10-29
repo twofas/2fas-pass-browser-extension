@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import getKey from '@/partials/sessionStorage/getKey';
+import { getSavePromptDomainSuppressionKey } from '../utils/savePrompt/savePromptDomainSuppression';
 
 /**
 * Function to handle tab removal in the browser.
@@ -30,6 +31,7 @@ const onTabRemoved = async (tabId, tabsInputData, savePromptActions) => {
   }
 
   await storage.removeItem(`session:savePromptSuppressed-${tabId}`);
+  await storage.removeItem(getSavePromptDomainSuppressionKey(tabId));
   await storage.removeItem(`session:savePromptContext-${tabId}`);
   // Pending cross-domain autofill payloads hold encrypted credentials/card data; clear
   // them when the tab is destroyed so they do not outlive the tab if a dialog is abandoned.

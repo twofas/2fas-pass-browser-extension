@@ -835,18 +835,6 @@
     "message": "Fonty",
     "description": "Summary tile: fonts"
   },
-  "licenses_summary_license_types": {
-    "message": "Typy licencji",
-    "description": "Summary tile: number of different license types"
-  },
-  "licenses_summary_without_text": {
-    "message": "Bez tekstu licencji",
-    "description": "Summary tile: entries without a license text"
-  },
-  "licenses_types_label": {
-    "message": "Filtruj według typu licencji",
-    "description": "Accessible label of the license type filter buttons"
-  },
   "licenses_search_placeholder": {
     "message": "Szukaj po nazwie, autorze, licencji…",
     "description": "Placeholder of the search box on the licenses page"

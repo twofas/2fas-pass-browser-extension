@@ -8,6 +8,7 @@ import { sendMessageToAllFrames, aggregateLoginAutofillResponses } from '@/parti
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import openPopupWithFallback from './openPopupWithFallback';
 import storeAutofillFailureData from './storeAutofillFailureData';
+import { isFetchedSifAutofill, suppressSavePromptForTabDomain } from './savePrompt/savePromptDomainSuppression';
 import { finishLoginAutofill } from '../websocket/utils/finishPullRequestAutofill.js';
 
 /**
@@ -86,6 +87,10 @@ const dispatchLoginAutofill = async (tabId, storageKey, actionData, closeData) =
 
       return openPopupWithFallback();
     }
+  }
+
+  if (isFetchedSifAutofill(closeData)) {
+    await suppressSavePromptForTabDomain(tabId).catch(e => CatchError(e));
   }
 
   try {

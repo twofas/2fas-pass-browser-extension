@@ -250,3 +250,28 @@ describe('finishCardAutofill', () => {
     expect(successToast).toBeDefined();
   });
 });
+
+describe('finishLoginAutofill — save prompt after fetch & autofill', () => {
+  const KEY = 'session:savePromptDomainSuppressed-5';
+
+  beforeEach(async () => {
+    await storage.removeItem(KEY);
+    vi.spyOn(browser.tabs, 'get').mockResolvedValue({ id: 5, url: 'https://login.example.com/sign-in' });
+    popupIsInSeparateWindow.mockResolvedValue(false);
+  });
+
+  it('turns the save prompt off for the domain of the tab after a successful fill (the pulled secret is not saved)', async () => {
+    const res = [{ status: 'ok', canAutofillUsername: true, canAutofillPassword: true }];
+
+    await finishLoginAutofill(5, { username: 'u', password: 'p' }, { ...LOGIN_CLOSE, windowClose: false }, res);
+
+    expect(await storage.getItem(KEY)).toBe('example.com');
+    await storage.removeItem(KEY);
+  });
+
+  it('keeps the save prompt when nothing was filled', async () => {
+    await finishLoginAutofill(5, { username: 'u', password: 'p' }, { ...LOGIN_CLOSE, windowClose: false }, [{ status: 'error' }]);
+
+    expect(await storage.getItem(KEY)).toBeNull();
+  });
+});
