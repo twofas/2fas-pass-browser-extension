@@ -184,11 +184,7 @@ export default class PaymentCard extends Item {
       return {};
     }
 
-    const contexts = ['page', 'editable', 'frame'];
-
-    if (import.meta.env.BROWSER !== 'safari')  {
-      contexts.push('page_action');
-    }
+    const contexts = ['all'];
 
     if (
       this.securityType === SECURITY_TIER.SECRET ||

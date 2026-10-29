@@ -12,6 +12,7 @@ import firefoxBackground from './firefoxBackground';
 import initBadgeState from './utils/badge/initBadgeState';
 import { resumeWsSession } from './websocket/wsManager.js';
 import initializeStorage from './migrations/initializeStorage';
+import restoreContextMenu from './contextMenu/restoreContextMenu';
 
 export default defineBackground({
   /**
@@ -79,6 +80,7 @@ export default defineBackground({
     }
 
     initBadgeState();
+    restoreContextMenu().catch(e => CatchError(e));
 
     // The SW may have just been woken from a termination mid-session (Safari) — run the
     // session-resume decision tree without blocking startup.

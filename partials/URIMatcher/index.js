@@ -550,11 +550,18 @@ class URIMatcher {
           ];
         }
 
+        // Domain matching compares root domains (baseDomainMatch), so a subdomain URI such as
+        // mail.google.com also matches accounts.google.com. Build the patterns from the root
+        // domain, otherwise the context menu hides items that the popup and overlay offer.
+        const rootDomain = parsedUrl?.type === ParseResultType.Listed && parsedUrl?.domain && parsedUrl?.topLevelDomains?.length > 0
+          ? `${parsedUrl.domain}.${parsedUrl.topLevelDomains.join('.')}`
+          : parsedUrl.hostname;
+
         return [
-          `*://${parsedUrl.hostname}/`,
-          `*://${parsedUrl.hostname}/*`,
-          `*://*.${parsedUrl.hostname}/`,
-          `*://*.${parsedUrl.hostname}/*`
+          `*://${rootDomain}/`,
+          `*://${rootDomain}/*`,
+          `*://*.${rootDomain}/`,
+          `*://*.${rootDomain}/*`
         ];
       }
 

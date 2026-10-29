@@ -8,6 +8,25 @@ import { openPopupWindowInNewWindow, sendAutofillToTab, sendCardAutofillToTab } 
 import { AUTOFILL_REGEX, FETCH_REGEX, PULL_REQUEST_TYPES } from '@/constants';
 import getItem from '@/partials/sessionStorage/getItem';
 import { PaymentCard } from '@/models/itemModels';
+import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
+import initContextMenu from '../contextMenu/initContextMenu';
+
+/**
+* Function to handle a click on an item that can no longer be read, e.g. one left in the menu after the extension
+* was locked. Rebuilds the menu to match the current state and, when the extension is locked, opens the popup so
+* the user can unlock it.
+* @async
+* @return {Promise<boolean>} Always false, because nothing was filled.
+*/
+const handleMissingItem = async () => {
+  await initContextMenu();
+
+  if (!(await getConfiguredBoolean())) {
+    await openPopupWindowInNewWindow();
+  }
+
+  return false;
+};
 
 /**
 * Function to handle context menu click events.
@@ -35,11 +54,11 @@ const onContextMenuClick = async (info, tab) => {
         item = await getItem(deviceId, vaultId, itemId);
       } catch (e) {
         await CatchError(e);
-        return false;
+        return handleMissingItem();
       }
 
       if (!item) {
-        return false;
+        return handleMissingItem();
       }
 
       if (item.contentType === PaymentCard.contentType) {
@@ -67,6 +86,7 @@ const onContextMenuClick = async (info, tab) => {
     }
 
     switch (menuItemId) {
+      case '2fas-pass-configured':
       case '2fas-pass-not-configured': {
         await openPopupWindowInNewWindow();
         return true;
