@@ -95,7 +95,7 @@ beforeEach(() => {
   // avoiding the real getMessage/i18n toast (unimplemented in the fake browser).
   popupIsInSeparateWindow.mockResolvedValue(false);
   closeWindowIfNotInSeparateWindow.mockResolvedValue(undefined);
-  aggregateLoginAutofillResponses.mockReturnValue({ isOk: true, allFieldsFilled: true });
+  aggregateLoginAutofillResponses.mockReturnValue({ isOk: true, passwordFilled: true });
 });
 
 describe('handleLoginAutofill — forwards hasPasswordInAnyFrame (finding #47)', () => {
@@ -148,5 +148,42 @@ describe('handleLoginAutofill — forwards hasPasswordInAnyFrame (finding #47)',
     expect(autofillMessage.hasPasswordInAnyFrame).toBe(true);
     // T2 already probes CHECK_AUTOFILL_INPUTS up front; the fix must not add a second full scan.
     expect(countInputCheckCalls()).toBe(1);
+  });
+});
+
+describe('handleLoginAutofill — KeepItem only after a fetched secret was not filled', () => {
+  const buildUnfetchedHighlySecretItem = () => ({ ...buildHighlySecretItem(), sifExists: false });
+
+  beforeEach(() => {
+    vi.spyOn(browser.i18n, 'getMessage').mockImplementation(key => key);
+    sendMessageToAllFrames.mockImplementation(async (tabId, message) => {
+      if (isAutofillMessage(message)) {
+        return [{ status: 'ok', canAutofillPassword: false, canAutofillUsername: false }];
+      }
+
+      return [{ status: 'ok', canAutofillPassword: false, canAutofillUsername: true }];
+    });
+  });
+
+  it('does not open KeepItem for a Highly Secret item without a fetched password when no frame reports ok', async () => {
+    aggregateLoginAutofillResponses.mockReturnValue({ isOk: false, passwordFilled: true });
+
+    await handleLoginAutofill(buildUnfetchedHighlySecretItem(), navigate);
+
+    expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('does not open KeepItem for a Highly Secret item without a fetched password when no frame answers', async () => {
+    sendMessageToAllFrames.mockImplementation(async (tabId, message) => {
+      if (isAutofillMessage(message)) {
+        return undefined;
+      }
+
+      return [{ status: 'ok', canAutofillPassword: false, canAutofillUsername: true }];
+    });
+
+    await handleLoginAutofill(buildUnfetchedHighlySecretItem(), navigate);
+
+    expect(navigate).not.toHaveBeenCalled();
   });
 });

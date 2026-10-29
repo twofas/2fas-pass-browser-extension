@@ -234,17 +234,7 @@ const handleLoginAutofill = async (item, navigate) => {
     logger.error(LOGGER_CONSTANTS.CATEGORIES.AUTOFILL, 'Popup-ThisTab - AUTOFILL no response from any frame', { tabId: tab.id });
 
     if (isHighlySecret && !hasPassword) {
-      const toastId = showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
-
-      navigate('/', {
-        state: {
-          action: 'autofillT2Failed',
-          vaultId: item.vaultId,
-          deviceId: item.deviceId,
-          itemId: item.id,
-          toastId
-        }
-      });
+      showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info');
 
       return;
     }
@@ -255,7 +245,7 @@ const handleLoginAutofill = async (item, navigate) => {
     return;
   }
 
-  const { isOk, allFieldsFilled } = aggregateLoginAutofillResponses(res, actionData);
+  const { isOk } = aggregateLoginAutofillResponses(res, actionData);
 
   if (!isHighlySecret) {
     pageHasPasswordInputs = res.some(r => r.canAutofillPassword);
@@ -268,18 +258,6 @@ const handleLoginAutofill = async (item, navigate) => {
       showToast(getMessage('this_tab_autofill_fetch_password'), 'info');
     } else if (!passwordDecrypt && pageHasPasswordInputs) {
       showToast(getMessage('this_tab_autofill_no_password'), 'info');
-    } else if (!allFieldsFilled && isHighlySecret && !hasPassword) {
-      const toastId = showToast(getMessage('this_tab_autofill_partial'), 'info', false);
-
-      navigate('/', {
-        state: {
-          action: 'autofillT2Failed',
-          vaultId: item.vaultId,
-          deviceId: item.deviceId,
-          itemId: item.id,
-          toastId
-        }
-      });
     } else if (!separateWindow) {
       await closeWindowIfNotInSeparateWindow(separateWindow);
     } else {
@@ -287,17 +265,7 @@ const handleLoginAutofill = async (item, navigate) => {
     }
   } else {
     if (isHighlySecret && !hasPassword) {
-      const toastId = showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info', false);
-
-      navigate('/', {
-        state: {
-          action: 'autofillT2Failed',
-          vaultId: item.vaultId,
-          deviceId: item.deviceId,
-          itemId: item.id,
-          toastId
-        }
-      });
+      showToast(getMessage('this_tab_can_t_autofill_t2_failed'), 'info');
 
       return;
     }

@@ -73,7 +73,7 @@ const dispatchLoginAutofill = async (tabId, storageKey, actionData, closeData) =
     return openPopupWithFallback();
   }
 
-  const { isOk, allFieldsFilled } = aggregateLoginAutofillResponses(response, actionData);
+  const { isOk, passwordFilled } = aggregateLoginAutofillResponses(response, actionData);
 
   if (!isOk) {
     await storeAutofillFailureData(tabId, closeData);
@@ -81,12 +81,10 @@ const dispatchLoginAutofill = async (tabId, storageKey, actionData, closeData) =
     return openPopupWithFallback();
   }
 
-  if (!allFieldsFilled && closeData) {
-    if (closeData.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await storeAutofillFailureData(tabId, closeData);
+  if (!passwordFilled && closeData?.securityType === SECURITY_TIER.HIGHLY_SECRET && isFetchedSifAutofill(closeData)) {
+    await storeAutofillFailureData(tabId, closeData);
 
-      return openPopupWithFallback();
-    }
+    return openPopupWithFallback();
   }
 
   if (isFetchedSifAutofill(closeData)) {

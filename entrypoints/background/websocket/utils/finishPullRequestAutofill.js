@@ -129,7 +129,7 @@ const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) =>
     return true;
   }
 
-  const { isOk, allFieldsFilled } = aggregateLoginAutofillResponses(autofillRes, actionData);
+  const { isOk, passwordFilled } = aggregateLoginAutofillResponses(autofillRes, actionData);
 
   if (isOk) {
     if (isFetchedSifAutofill(closeData)) {
@@ -151,7 +151,7 @@ const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) =>
       });
     } catch { }
 
-    if (!allFieldsFilled) {
+    if (!passwordFilled) {
       await recoverLoginAutofill(tabId, closeData, 'this_tab_autofill_partial');
 
       return true;
@@ -182,10 +182,47 @@ const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) =>
 };
 
 /**
+* Routes a PaymentCard autofill that did not fill every fetched card field to the KeepItem
+* recovery screen (focus + persistent toast + navigation state).
+* @async
+* @param {Object} closeData - The close data (SIF + windowClose flag) for recovery.
+* @param {string} toastMessageKey - i18n key for the toast.
+* @return {Promise<void>}
+*/
+const recoverCardAutofill = async (closeData, toastMessageKey) => {
+  if (closeData.windowClose) {
+    await focusPopupWindow();
+  }
+
+  const toastId = crypto.randomUUID();
+
+  wsNotify('toast', { message: getMessage(toastMessageKey), type: 'info', autoClose: false, toastId });
+
+  wsNotify('navigate', {
+    path: '/',
+    options: {
+      state: {
+        action: 'autofillCardT2Failed',
+        vaultId: closeData.vaultId,
+        deviceId: closeData.deviceId,
+        itemId: closeData.itemId,
+        s_cardNumber: closeData.s_cardNumber,
+        s_expirationDate: closeData.s_expirationDate,
+        s_securityCode: closeData.s_securityCode,
+        encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
+        toastId
+      }
+    }
+  });
+};
+
+/**
 * Finishes a PaymentCard autofill initiated through the pull-request (SIF fetch)
 * flow, notifying the connected popup of the result and managing the popup window.
 * Handles both the shortcut-initiated path (closeData.windowClose) and the
-* in-popup path.
+* in-popup path. KeepItem is shown only when a fetched card field (number,
+* expiration date, security code) was not filled; the cardholder name and the
+* issuer are not fetched, so they never trigger it.
 * @async
 * @param {number} tabId - The ID of the tab.
 * @param {Object} actionData - The autofill action data sent to the frames.
@@ -195,30 +232,7 @@ const finishLoginAutofill = async (tabId, actionData, closeData, autofillRes) =>
 */
 const finishCardAutofill = async (tabId, actionData, closeData, autofillRes) => {
   if (!Array.isArray(autofillRes)) {
-    if (closeData.windowClose) {
-      await focusPopupWindow();
-    }
-
-    const toastId = crypto.randomUUID();
-
-    wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
-
-    wsNotify('navigate', {
-      path: '/',
-      options: {
-        state: {
-          action: 'autofillCardT2Failed',
-          vaultId: closeData.vaultId,
-          deviceId: closeData.deviceId,
-          itemId: closeData.itemId,
-          s_cardNumber: closeData.s_cardNumber,
-          s_expirationDate: closeData.s_expirationDate,
-          s_securityCode: closeData.s_securityCode,
-          encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
-          toastId
-        }
-      }
-    });
+    await recoverCardAutofill(closeData, 'this_tab_can_t_autofill_t2_failed');
 
     return true;
   }
@@ -245,68 +259,13 @@ const finishCardAutofill = async (tabId, actionData, closeData, autofillRes) => 
     return true;
   }
 
-  if (isOk && hasMissingInputs) {
-    // Focus popup window when showing KeepItem for shortcut-initiated autofill
-    if (closeData.windowClose) {
-      await focusPopupWindow();
-    }
-
-    const toastId = crypto.randomUUID();
-
-    wsNotify('toast', { message: getMessage('notification_card_autofill_partial_message'), type: 'info', autoClose: false, toastId });
-
-    wsNotify('navigate', {
-      path: '/',
-      options: {
-        state: {
-          action: 'autofillCardT2Failed',
-          vaultId: closeData.vaultId,
-          deviceId: closeData.deviceId,
-          itemId: closeData.itemId,
-          s_cardNumber: closeData.s_cardNumber,
-          s_expirationDate: closeData.s_expirationDate,
-          s_securityCode: closeData.s_securityCode,
-          encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
-          toastId
-        }
-      }
-    });
+  if (isPartial || hasMissingInputs) {
+    await recoverCardAutofill(closeData, 'notification_card_autofill_partial_message');
 
     return true;
   }
 
-  if (isPartial) {
-    wsNotify('toast', { message: getMessage('notification_card_autofill_partial_message'), type: 'info' });
-    wsNotify('navigate', { path: '/' });
-
-    return true;
-  }
-
-  // Focus popup window when showing KeepItem for shortcut-initiated autofill
-  if (closeData.windowClose) {
-    await focusPopupWindow();
-  }
-
-  const toastId = crypto.randomUUID();
-
-  wsNotify('toast', { message: getMessage('this_tab_can_t_autofill_t2_failed'), type: 'info', autoClose: false, toastId });
-
-  wsNotify('navigate', {
-    path: '/',
-    options: {
-      state: {
-        action: 'autofillCardT2Failed',
-        vaultId: closeData.vaultId,
-        deviceId: closeData.deviceId,
-        itemId: closeData.itemId,
-        s_cardNumber: closeData.s_cardNumber,
-        s_expirationDate: closeData.s_expirationDate,
-        s_securityCode: closeData.s_securityCode,
-        encryptionItemT2KeyB64: closeData.encryptionItemT2KeyB64,
-        toastId
-      }
-    }
-  });
+  await recoverCardAutofill(closeData, 'this_tab_can_t_autofill_t2_failed');
 
   return true;
 };

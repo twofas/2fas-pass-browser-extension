@@ -96,6 +96,29 @@ describe('finishLoginAutofill', () => {
     expect(navigateState()).toMatchObject({ action: 'autofillT2Failed' });
   });
 
+  it('windowClose: password filled but no username field → success, no KeepItem (username is not a fetched field)', async () => {
+    const res = [{ status: 'ok', canAutofillUsername: false, canAutofillPassword: true }];
+
+    await finishLoginAutofill(5, { username: 'u', password: 'p' }, LOGIN_CLOSE, res);
+
+    expect(windowsRemove).toHaveBeenCalledWith(99);
+    expect(windowsUpdate).not.toHaveBeenCalled();
+    expect(navigateState()).toBeUndefined();
+  });
+
+  it('non-windowClose: password filled but no username field → success toast, no KeepItem', async () => {
+    popupIsInSeparateWindow.mockResolvedValue(true);
+    const res = [{ status: 'ok', canAutofillUsername: false, canAutofillPassword: true }];
+
+    await finishLoginAutofill(5, { username: 'u', password: 'p' }, { ...LOGIN_CLOSE, windowClose: false }, res);
+
+    expect(storeAutofillFailureData).not.toHaveBeenCalled();
+    expect(openPopupWithFallback).not.toHaveBeenCalled();
+
+    const successToast = wsNotify.mock.calls.find(([type, payload]) => type === 'toast' && payload.type === 'success');
+    expect(successToast).toBeDefined();
+  });
+
   it('windowClose: no ok frame → focuses the popup window and routes to autofillT2Failed', async () => {
     const res = [{ status: 'error', code: 'X' }];
 
@@ -218,16 +241,23 @@ describe('finishCardAutofill', () => {
     expect(navigateState()).toMatchObject({ action: 'autofillCardT2Failed' });
   });
 
-  it('windowClose: partial → notifies partial toast and navigates home without touching the window', async () => {
+  it('windowClose: a fetched field failed to fill (partial) → focuses the popup window and routes to autofillCardT2Failed', async () => {
     aggregateCardAutofillResponses.mockReturnValue({ isOk: false, isPartial: true, hasMissingInputs: false });
 
     await finishCardAutofill(5, {}, CARD_CLOSE, [{ status: 'partial' }]);
 
+    expect(windowsUpdate).toHaveBeenCalledWith(99, { focused: true });
     expect(windowsRemove).not.toHaveBeenCalled();
-    expect(windowsUpdate).not.toHaveBeenCalled();
+    expect(navigateState()).toMatchObject({ action: 'autofillCardT2Failed', s_cardNumber: 'cn' });
+  });
 
-    const navigate = wsNotify.mock.calls.find(([type]) => type === 'navigate');
-    expect(navigate[1]).toEqual({ path: '/' });
+  it('non-windowClose: a fetched field failed to fill (partial) → routes to autofillCardT2Failed', async () => {
+    aggregateCardAutofillResponses.mockReturnValue({ isOk: true, isPartial: true, hasMissingInputs: false });
+
+    await finishCardAutofill(5, {}, { ...CARD_CLOSE, windowClose: false }, [{ status: 'ok' }, { status: 'partial' }]);
+
+    expect(windowsUpdate).not.toHaveBeenCalled();
+    expect(navigateState()).toMatchObject({ action: 'autofillCardT2Failed' });
   });
 
   it('windowClose: total failure → focuses the popup window and routes to autofillCardT2Failed', async () => {
