@@ -28336,5 +28336,90 @@
     "licenseFiles": {
       "LICENSE": "MIT License\n\nCopyright (c) 2019 Paul Henschel\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n"
     }
+  },
+  {
+    "department": "kessler",
+    "relatedTo": "stuff",
+    "name": "Inter (font)",
+    "licensePeriod": "perpetual",
+    "material": "material",
+    "licenseType": "OFL-1.1",
+    "link": "https://github.com/rsms/inter",
+    "remoteVersion": "4.1",
+    "installedVersion": "4.001",
+    "definedVersion": "4.1",
+    "author": "Rasmus Andersson",
+    "dependencyType": "font",
+    "direct": true,
+    "depth": 1,
+    "requiredBy": {
+      "2fas-pass-browser-extension@1.8.14": "Browser extension (popup, install page)"
+    },
+    "description": "",
+    "homepage": "https://rsms.me/",
+    "repository": "https://github.com/rsms/inter",
+    "copyright": "Copyright 2016 The Inter Project Authors",
+    "designer": "Rasmus Andersson",
+    "designerUrl": "https://rsms.me/",
+    "manufacturer": "rsms",
+    "licenseDescription": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL",
+    "licenseUrl": "http://scripts.sil.org/OFL",
+    "styles": "Regular",
+    "axes": "opsz 14–32 (default 14), wght 100–900 (default 400)",
+    "glyphs": 2937,
+    "source": "web/InterVariable.woff2 from https://github.com/rsms/inter/releases/tag/v4.1",
+    "modifications": "Vertical metrics set to the values of Inter 3.19, so the layout does not change: hhea ascender 2234, descender -655, line gap 0; OS/2 usWinAscent 2234, usWinDescent 655, sTypoAscender 1536, sTypoDescender -512, sTypoLineGap 0, USE_TYPO_METRICS off; OS/2 xAvgCharWidth 1337. Glyphs, names and every other table are unchanged.",
+    "paths": "public/fonts/inter.woff2",
+    "sha256": {
+      "public/fonts/inter.woff2": "d1ee37d17c4418674a51c653887d85517ee256fc91332ee9ac4043311c16348f"
+    },
+    "licenseFilesSource": "public/fonts/OFL-Inter.txt",
+    "licenseFiles": {
+      "OFL-Inter.txt": "Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter)\n\nThis Font Software is licensed under the SIL Open Font License, Version 1.1.\nThis license is copied below, and is also available with a FAQ at:\nhttp://scripts.sil.org/OFL\n\n-----------------------------------------------------------\nSIL OPEN FONT LICENSE Version 1.1 - 26 February 2007\n-----------------------------------------------------------\n\nPREAMBLE\nThe goals of the Open Font License (OFL) are to stimulate worldwide\ndevelopment of collaborative font projects, to support the font creation\nefforts of academic and linguistic communities, and to provide a free and\nopen framework in which fonts may be shared and improved in partnership\nwith others.\n\nThe OFL allows the licensed fonts to be used, studied, modified and\nredistributed freely as long as they are not sold by themselves. The\nfonts, including any derivative works, can be bundled, embedded,\nredistributed and/or sold with any software provided that any reserved\nnames are not used by derivative works. The fonts and derivatives,\nhowever, cannot be released under any other type of license. The\nrequirement for fonts to remain under this license does not apply\nto any document created using the fonts or their derivatives.\n\nDEFINITIONS\n\"Font Software\" refers to the set of files released by the Copyright\nHolder(s) under this license and clearly marked as such. This may\ninclude source files, build scripts and documentation.\n\n\"Reserved Font Name\" refers to any names specified as such after the\ncopyright statement(s).\n\n\"Original Version\" refers to the collection of Font Software components as\ndistributed by the Copyright Holder(s).\n\n\"Modified Version\" refers to any derivative made by adding to, deleting,\nor substituting -- in part or in whole -- any of the components of the\nOriginal Version, by changing formats or by porting the Font Software to a\nnew environment.\n\n\"Author\" refers to any designer, engineer, programmer, technical\nwriter or other person who contributed to the Font Software.\n\nPERMISSION AND CONDITIONS\nPermission is hereby granted, free of charge, to any person obtaining\na copy of the Font Software, to use, study, copy, merge, embed, modify,\nredistribute, and sell modified and unmodified copies of the Font\nSoftware, subject to the following conditions:\n\n1) Neither the Font Software nor any of its individual components,\nin Original or Modified Versions, may be sold by itself.\n\n2) Original or Modified Versions of the Font Software may be bundled,\nredistributed and/or sold with any software, provided that each copy\ncontains the above copyright notice and this license. These can be\nincluded either as stand-alone text files, human-readable headers or\nin the appropriate machine-readable metadata fields within text or\nbinary files as long as those fields can be easily viewed by the user.\n\n3) No Modified Version of the Font Software may use the Reserved Font\nName(s) unless explicit written permission is granted by the corresponding\nCopyright Holder. This restriction only applies to the primary font name as\npresented to the users.\n\n4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font\nSoftware shall not be used to promote, endorse or advertise any\nModified Version, except to acknowledge the contribution(s) of the\nCopyright Holder(s) and the Author(s) or with their explicit written\npermission.\n\n5) The Font Software, modified or unmodified, in part or in whole,\nmust be distributed entirely under this license, and must not be\ndistributed under any other license. The requirement for fonts to\nremain under this license does not apply to any document created\nusing the Font Software.\n\nTERMINATION\nThis license becomes null and void if any of the above conditions are\nnot met.\n\nDISCLAIMER\nTHE FONT SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT\nOF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE\nCOPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,\nINCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL\nDAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING\nFROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM\nOTHER DEALINGS IN THE FONT SOFTWARE.\n"
+    }
+  },
+  {
+    "department": "kessler",
+    "relatedTo": "stuff",
+    "name": "Montserrat (font)",
+    "licensePeriod": "perpetual",
+    "material": "material",
+    "licenseType": "OFL-1.1",
+    "link": "https://github.com/JulietaUla/Montserrat",
+    "remoteVersion": "7.222",
+    "installedVersion": "8.000",
+    "definedVersion": "8.000",
+    "author": "Julieta Ulanovsky",
+    "dependencyType": "font",
+    "direct": true,
+    "depth": 1,
+    "requiredBy": {
+      "2fas-pass-browser-extension@1.8.14": "Safari container app (macOS)"
+    },
+    "description": "",
+    "homepage": "http://www.zkysky.com.ar/",
+    "repository": "https://github.com/JulietaUla/Montserrat",
+    "copyright": "Copyright 2011 The Montserrat Project Authors (https://github.com/JulietaUla/Montserrat)",
+    "designer": "Julieta Ulanovsky",
+    "designerUrl": "http://www.zkysky.com.ar/",
+    "manufacturer": "Julieta Ulanovsky",
+    "licenseDescription": "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at: http://scripts.sil.org/OFL",
+    "licenseUrl": "http://scripts.sil.org/OFL",
+    "styles": "Regular, Bold",
+    "axes": "",
+    "glyphs": 1899,
+    "source": "",
+    "modifications": "",
+    "paths": "2FAS Pass Browser Extension/2FAS Pass Browser Extension/Fonts/Montserrat-Regular.ttf, 2FAS Pass Browser Extension/2FAS Pass Browser Extension/Fonts/Montserrat-Bold.ttf, 2FAS Pass BE - Dev/Shared (App)/Fonts/Montserrat-Regular.ttf, 2FAS Pass BE - Dev/Shared (App)/Fonts/Montserrat-Bold.ttf",
+    "sha256": {
+      "2FAS Pass Browser Extension/2FAS Pass Browser Extension/Fonts/Montserrat-Regular.ttf": "c3fb0280e4339f6c70cea42b8b432c6fb17fde130fbb12e9209c7cdfa79d976f",
+      "2FAS Pass Browser Extension/2FAS Pass Browser Extension/Fonts/Montserrat-Bold.ttf": "98b1486810c2eccfaa17d4610a83c12794c0798ef5e9eb41aea038794292a187",
+      "2FAS Pass BE - Dev/Shared (App)/Fonts/Montserrat-Regular.ttf": "c3fb0280e4339f6c70cea42b8b432c6fb17fde130fbb12e9209c7cdfa79d976f",
+      "2FAS Pass BE - Dev/Shared (App)/Fonts/Montserrat-Bold.ttf": "98b1486810c2eccfaa17d4610a83c12794c0798ef5e9eb41aea038794292a187"
+    },
+    "licenseFilesSource": "public/fonts/OFL-Montserrat.txt",
+    "licenseFiles": {
+      "OFL-Montserrat.txt": "Copyright 2024 The Montserrat.Git Project Authors (https://github.com/JulietaUla/Montserrat.git)\n\nThis Font Software is licensed under the SIL Open Font License, Version 1.1.\nThis license is copied below, and is also available with a FAQ at:\nhttps://openfontlicense.org\n\n\n-----------------------------------------------------------\nSIL OPEN FONT LICENSE Version 1.1 - 26 February 2007\n-----------------------------------------------------------\n\nPREAMBLE\nThe goals of the Open Font License (OFL) are to stimulate worldwide\ndevelopment of collaborative font projects, to support the font creation\nefforts of academic and linguistic communities, and to provide a free and\nopen framework in which fonts may be shared and improved in partnership\nwith others.\n\nThe OFL allows the licensed fonts to be used, studied, modified and\nredistributed freely as long as they are not sold by themselves. The\nfonts, including any derivative works, can be bundled, embedded, \nredistributed and/or sold with any software provided that any reserved\nnames are not used by derivative works. The fonts and derivatives,\nhowever, cannot be released under any other type of license. The\nrequirement for fonts to remain under this license does not apply\nto any document created using the fonts or their derivatives.\n\nDEFINITIONS\n\"Font Software\" refers to the set of files released by the Copyright\nHolder(s) under this license and clearly marked as such. This may\ninclude source files, build scripts and documentation.\n\n\"Reserved Font Name\" refers to any names specified as such after the\ncopyright statement(s).\n\n\"Original Version\" refers to the collection of Font Software components as\ndistributed by the Copyright Holder(s).\n\n\"Modified Version\" refers to any derivative made by adding to, deleting,\nor substituting -- in part or in whole -- any of the components of the\nOriginal Version, by changing formats or by porting the Font Software to a\nnew environment.\n\n\"Author\" refers to any designer, engineer, programmer, technical\nwriter or other person who contributed to the Font Software.\n\nPERMISSION & CONDITIONS\nPermission is hereby granted, free of charge, to any person obtaining\na copy of the Font Software, to use, study, copy, merge, embed, modify,\nredistribute, and sell modified and unmodified copies of the Font\nSoftware, subject to the following conditions:\n\n1) Neither the Font Software nor any of its individual components,\nin Original or Modified Versions, may be sold by itself.\n\n2) Original or Modified Versions of the Font Software may be bundled,\nredistributed and/or sold with any software, provided that each copy\ncontains the above copyright notice and this license. These can be\nincluded either as stand-alone text files, human-readable headers or\nin the appropriate machine-readable metadata fields within text or\nbinary files as long as those fields can be easily viewed by the user.\n\n3) No Modified Version of the Font Software may use the Reserved Font\nName(s) unless explicit written permission is granted by the corresponding\nCopyright Holder. This restriction only applies to the primary font name as\npresented to the users.\n\n4) The name(s) of the Copyright Holder(s) or the Author(s) of the Font\nSoftware shall not be used to promote, endorse or advertise any\nModified Version, except to acknowledge the contribution(s) of the\nCopyright Holder(s) and the Author(s) or with their explicit written\npermission.\n\n5) The Font Software, modified or unmodified, in part or in whole,\nmust be distributed entirely under this license, and must not be\ndistributed under any other license. The requirement for fonts to\nremain under this license does not apply to any document created\nusing the Font Software.\n\nTERMINATION\nThis license becomes null and void if any of the above conditions are\nnot met.\n\nDISCLAIMER\nTHE FONT SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,\nEXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF\nMERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT\nOF COPYRIGHT, PATENT, TRADEMARK, OR OTHER RIGHT. IN NO EVENT SHALL THE\nCOPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,\nINCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL\nDAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING\nFROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM\nOTHER DEALINGS IN THE FONT SOFTWARE."
+    }
   }
 ]

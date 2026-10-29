@@ -807,6 +807,246 @@
     "message": "Download app for Android",
     "description": "Button label for downloading the Android app"
   },
+  "licenses_page_title": {
+    "message": "Open source licenses",
+    "description": "Page title of the open source licenses page"
+  },
+  "licenses_page_description": {
+    "message": "Open source libraries, tools and fonts used to build 2FAS Pass Browser Extension VERSION, with their full license texts.",
+    "description": "Description under the title of the open source licenses page; VERSION is the extension version"
+  },
+  "licenses_summary_label": {
+    "message": "Summary",
+    "description": "Accessible label of the summary tiles on the licenses page"
+  },
+  "licenses_summary_total": {
+    "message": "All entries",
+    "description": "Summary tile: number of all entries; clicking it shows all entries"
+  },
+  "licenses_summary_extension": {
+    "message": "In the extension",
+    "description": "Summary tile: libraries included in the extension"
+  },
+  "licenses_summary_development": {
+    "message": "Development tools",
+    "description": "Summary tile: development tools used only to build and test the extension"
+  },
+  "licenses_summary_fonts": {
+    "message": "Fonts",
+    "description": "Summary tile: fonts"
+  },
+  "licenses_summary_license_types": {
+    "message": "License types",
+    "description": "Summary tile: number of different license types"
+  },
+  "licenses_summary_without_text": {
+    "message": "Without license text",
+    "description": "Summary tile: entries without a license text"
+  },
+  "licenses_types_label": {
+    "message": "Filter by license type",
+    "description": "Accessible label of the license type filter buttons"
+  },
+  "licenses_search_placeholder": {
+    "message": "Search by name, author, license…",
+    "description": "Placeholder of the search box on the licenses page"
+  },
+  "licenses_showing": {
+    "message": "Showing COUNT of TOTAL",
+    "description": "Number of shown entries; COUNT and TOTAL are numbers"
+  },
+  "licenses_clear_filters": {
+    "message": "Clear filters",
+    "description": "Button that clears the search and filters on the licenses page"
+  },
+  "licenses_no_results": {
+    "message": "No entries match the search and filters.",
+    "description": "Shown when no entry matches the search and filters"
+  },
+  "licenses_no_license_text": {
+    "message": "This package ships no license text. Its license is given above.",
+    "description": "Shown in an entry that has no license text"
+  },
+  "licenses_yes": {
+    "message": "Yes",
+    "description": "Yes value in the licenses page details"
+  },
+  "licenses_no": {
+    "message": "No",
+    "description": "No value in the licenses page details"
+  },
+  "licenses_group_extension": {
+    "message": "Extension",
+    "description": "Badge of an entry included in the extension"
+  },
+  "licenses_group_development": {
+    "message": "Development",
+    "description": "Badge of a development tool entry"
+  },
+  "licenses_group_fonts": {
+    "message": "Font",
+    "description": "Badge of a font entry"
+  },
+  "licenses_group_other": {
+    "message": "Other",
+    "description": "Badge of an entry of another kind"
+  },
+  "licenses_field_installed_version": {
+    "message": "Installed version",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_defined_version": {
+    "message": "Requested version",
+    "description": "Licenses page field label: version range requested by the project or the parent packages"
+  },
+  "licenses_field_remote_version": {
+    "message": "Latest version",
+    "description": "Licenses page field label: latest published version"
+  },
+  "licenses_field_license_type": {
+    "message": "License",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_author": {
+    "message": "Author",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_description": {
+    "message": "Description",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_homepage": {
+    "message": "Homepage",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_repository": {
+    "message": "Repository",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_link": {
+    "message": "Link",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_bugs": {
+    "message": "Issues",
+    "description": "Licenses page field label: where to report issues"
+  },
+  "licenses_field_funding": {
+    "message": "Funding",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_contributors": {
+    "message": "Contributors",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_maintainers": {
+    "message": "Maintainers",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_keywords": {
+    "message": "Keywords",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_dependency_type": {
+    "message": "Type",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_direct": {
+    "message": "Direct dependency",
+    "description": "Licenses page field label: whether the project depends on the package directly"
+  },
+  "licenses_field_depth": {
+    "message": "Dependency depth",
+    "description": "Licenses page field label: nesting level in the dependency tree"
+  },
+  "licenses_field_required_by": {
+    "message": "Required by",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_dependencies": {
+    "message": "Dependencies",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_optional_dependencies": {
+    "message": "Optional dependencies",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_peer_dependencies": {
+    "message": "Peer dependencies",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_engines": {
+    "message": "Engines",
+    "description": "Licenses page field label: supported runtimes"
+  },
+  "licenses_field_deprecated": {
+    "message": "Deprecated",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_copyright": {
+    "message": "Copyright",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_designer": {
+    "message": "Designer",
+    "description": "Licenses page field label: font designer"
+  },
+  "licenses_field_designer_url": {
+    "message": "Designer website",
+    "description": "Licenses page field label: font designer website"
+  },
+  "licenses_field_manufacturer": {
+    "message": "Manufacturer",
+    "description": "Licenses page field label: font manufacturer"
+  },
+  "licenses_field_license_description": {
+    "message": "License description",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_license_url": {
+    "message": "License URL",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_styles": {
+    "message": "Styles",
+    "description": "Licenses page field label: font styles"
+  },
+  "licenses_field_axes": {
+    "message": "Variation axes",
+    "description": "Licenses page field label: variable font axes"
+  },
+  "licenses_field_glyphs": {
+    "message": "Glyphs",
+    "description": "Licenses page field label: number of font glyphs"
+  },
+  "licenses_field_source": {
+    "message": "Source",
+    "description": "Licenses page field label: where the file comes from"
+  },
+  "licenses_field_modifications": {
+    "message": "Modifications",
+    "description": "Licenses page field label: changes made to the original file"
+  },
+  "licenses_field_resolved": {
+    "message": "Resolved",
+    "description": "Licenses page field label: download URL of the package"
+  },
+  "licenses_field_integrity": {
+    "message": "Integrity",
+    "description": "Licenses page field label: package checksum"
+  },
+  "licenses_field_sha256": {
+    "message": "SHA-256",
+    "description": "Licenses page field label: file checksums"
+  },
+  "licenses_field_paths": {
+    "message": "Paths",
+    "description": "Licenses page field label: file locations in the project"
+  },
+  "licenses_field_license_files_source": {
+    "message": "License text source",
+    "description": "Licenses page field label: where the license texts come from"
+  },
   "bottom_bar_security_icon_tooltip_header": {
     "message": "This is your Identicon that only you know.",
     "description": "Header for the tooltip explaining the purpose of the Identicon"
@@ -1554,6 +1794,10 @@
   "settings_lets_connect": {
     "message": "Let's connect",
     "description": "Prompt to connect with the 2FAS Pass team or community"
+  },
+  "settings_licenses_menu_link": {
+    "message": "Open source licenses",
+    "description": "Settings About menu link that opens the open source licenses page"
   },
   "settings_cross_domain_autofill_domains": {
     "message": "Autofill domains",
