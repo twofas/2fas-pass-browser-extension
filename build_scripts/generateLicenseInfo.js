@@ -9,6 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import buildFontEntries from './licenseInfo/buildFontEntries.js';
 import collectPackages from './licenseInfo/collectPackages.js';
 import fetchRemoteVersions from './licenseInfo/fetchRemoteVersions.js';
 import fetchRepositoryLicenseFiles from './licenseInfo/fetchRepositoryLicenseFiles.js';
@@ -38,6 +39,7 @@ const parseArgs = args => {
  * Generates the open source license files (JSON and/or HTML) of the project, overwriting the previous ones.
  * Packages whose installed version is the same as in the previous JSON reuse its network data (remote version,
  * license files from GitHub); everything read from node_modules and yarn.lock is always read again.
+ * The fonts from licenseInfo/fonts.js follow the npm packages.
  * @param {Object} options - Options.
  * @param {string} options.rootDir - Project root.
  * @param {string} [options.format='all'] - 'json', 'html' or 'all'.
@@ -45,9 +47,10 @@ const parseArgs = args => {
  * @param {boolean} [options.offline=false] - Skips the network: the npm registry (remoteVersion becomes 'n/a') and license files from GitHub.
  * @param {boolean} [options.refresh=false] - Ignores the previous JSON and fetches the network data of every package again.
  * @param {Function} [options.fetchFn] - fetch implementation for the npm registry and GitHub.
+ * @param {Object[]} [options.fonts] - Font list (defaults to licenseInfo/fonts.js).
  * @return {Promise<{ entries: Object[], files: string[], missing: string[], reused: { remoteVersions: number, licenseFiles: number } }>} Generated entries, written files and reuse counts.
  */
-export const generateLicenseInfo = async ({ rootDir, format = 'all', outDir = rootDir, offline = false, refresh = false, fetchFn }) => {
+export const generateLicenseInfo = async ({ rootDir, format = 'all', outDir = rootDir, offline = false, refresh = false, fetchFn, fonts }) => {
   if (!['json', 'html', 'all'].includes(format)) {
     throw new Error(`Unknown format "${format}" (expected json, html or all)`);
   }
@@ -57,7 +60,7 @@ export const generateLicenseInfo = async ({ rootDir, format = 'all', outDir = ro
   const lock = fs.existsSync(lockPath) ? parseYarnLock(fs.readFileSync(lockPath, 'utf8')) : new Map();
   const previous = refresh ? new Map() : readPreviousEntries(path.join(outDir, OUTPUT_FILES.json));
   const remoteVersions = getPreviousRemoteVersions(previous, packages);
-  const reusedRemoteVersions = remoteVersions.size;
+  let reusedRemoteVersions = remoteVersions.size;
 
   if (!offline) {
     const namesToFetch = packages.map(record => record.name).filter(name => !remoteVersions.has(name));
@@ -74,6 +77,12 @@ export const generateLicenseInfo = async ({ rootDir, format = 'all', outDir = ro
   if (!offline) {
     await fetchRepositoryLicenseFiles(entries.filter(entry => !reusedLicenseFiles.has(entry)), fetchFn);
   }
+
+  const fontEntries = await buildFontEntries({ rootDir, rootPackage, previous, offline, fetchFn, fonts });
+
+  entries.push(...fontEntries.entries);
+  missing.push(...fontEntries.missing);
+  reusedRemoteVersions += fontEntries.reused;
 
   fs.mkdirSync(outDir, { recursive: true });
 

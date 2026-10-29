@@ -179,6 +179,16 @@ export const renderLicenseHtml = (entries, { title }) => {
   const details = entries.map((entry, index) => {
     const fields = [
       ['Required by', renderPairs(entry.requiredBy)],
+      ['Copyright', escapeHtml(entry.copyright)],
+      ['Designer', escapeHtml(entry.designer)],
+      ['License description', escapeHtml(entry.licenseDescription)],
+      ['License URL', escapeHtml(entry.licenseUrl)],
+      ['Styles', escapeHtml(entry.styles)],
+      ['Variation axes', escapeHtml(entry.axes)],
+      ['Glyphs', escapeHtml(entry.glyphs)],
+      ['Source', escapeHtml(entry.source)],
+      ['Modifications', escapeHtml(entry.modifications)],
+      ['SHA-256', renderPairs(entry.sha256)],
       ['Repository', escapeHtml(entry.repository)],
       ['Bugs', escapeHtml(entry.bugs)],
       ['Funding', escapeHtml(entry.funding)],
