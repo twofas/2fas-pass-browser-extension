@@ -7,7 +7,6 @@
 import { createContext, useContext, useMemo, useEffect, useState, memo, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import getConfiguredBoolean from '@/partials/sessionStorage/configured/getConfiguredBoolean';
-import setConfigured from '@/partials/sessionStorage/configured/setConfigured';
 import cleanupDevices from '@/partials/functions/cleanupDevices';
 import regenerateLocalKey from '@/entrypoints/background/utils/regenerateLocalKey';
 import usePopupStateStore from '@/entrypoints/popup/store/popupState';
@@ -50,8 +49,9 @@ export const AuthProvider = memo(({ children }) => {
   const navigate = useNavigate();
 
   const login = useCallback(async () => {
-    await setConfigured(Date.now());
-
+    // The background stores the configured state before it sends the login signal
+    // (handleCloseSignalAction). Writing it here again changed storage twice, so every
+    // unlock ran onConfiguredChange (badge, context menu, prompt injection) twice.
     const store = usePopupStateStore.getState();
     store.clearAllData();
     store.clearHref();
