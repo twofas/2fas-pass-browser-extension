@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0756CC24F116E286D61E2766 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 82D06AEABD127D125CC39BBF /* licenses.html */; };
 		3780B08A2EE2FD7A00D68A1E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3780B0892EE2FD7A00D68A1E /* AppDelegate.swift */; };
 		3780B09E2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3780B09D2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		3780B0AE2EE2FD7A00D68A1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3780B06E2EE2FD7A00D68A1E /* Assets.xcassets */; };
 		3780B0B02EE2FD7A00D68A1E /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3780B0702EE2FD7A00D68A1E /* SafariWebExtensionHandler.swift */; };
 		3780B0CE2EE2FD7B00D68A1E /* install.html in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C22EE2FD7B00D68A1E /* install.html */; };
-		0756CC24F116E286D61E2766 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 82D06AEABD127D125CC39BBF /* licenses.html */; };
 		3780B0CF2EE2FD7B00D68A1E /* background.js in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C32EE2FD7B00D68A1E /* background.js */; };
 		3780B0D02EE2FD7B00D68A1E /* popup.html in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C42EE2FD7B00D68A1E /* popup.html */; };
 		3780B0D22EE2FD7B00D68A1E /* chunks in Resources */ = {isa = PBXBuildFile; fileRef = 3780B0C62EE2FD7B00D68A1E /* chunks */; };
@@ -72,7 +72,6 @@
 		3780B09D2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "2FAS Pass BE - Dev Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3780B0A22EE2FD7A00D68A1E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3780B0C22EE2FD7B00D68A1E /* install.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = install.html; path = "../../.output/safari-mv3-dev/install.html"; sourceTree = "<group>"; };
-		82D06AEABD127D125CC39BBF /* licenses.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = licenses.html; path = "../../.output/safari-mv3-dev/licenses.html"; sourceTree = "<group>"; };
 		3780B0C32EE2FD7B00D68A1E /* background.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = background.js; path = "../../.output/safari-mv3-dev/background.js"; sourceTree = "<group>"; };
 		3780B0C42EE2FD7B00D68A1E /* popup.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = popup.html; path = "../../.output/safari-mv3-dev/popup.html"; sourceTree = "<group>"; };
 		3780B0C62EE2FD7B00D68A1E /* chunks */ = {isa = PBXFileReference; lastKnownFileType = folder; name = chunks; path = "../../.output/safari-mv3-dev/chunks"; sourceTree = "<group>"; };
@@ -91,6 +90,7 @@
 		5AFAD0E73000000000000004 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		5AFAD0E73000000000000005 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Bold.ttf"; sourceTree = "<group>"; };
 		5AFAD0E73000000000000006 /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Regular.ttf"; sourceTree = "<group>"; };
+		82D06AEABD127D125CC39BBF /* licenses.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = licenses.html; path = "../../.output/safari-mv3-dev/licenses.html"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -516,7 +516,7 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 121;
+				CURRENT_PROJECT_VERSION = 122;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -553,7 +553,7 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 121;
+				CURRENT_PROJECT_VERSION = 122;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -591,7 +591,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 121;
+				CURRENT_PROJECT_VERSION = 122;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -634,7 +634,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 121;
+				CURRENT_PROJECT_VERSION = 122;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
