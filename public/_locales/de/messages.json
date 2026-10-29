@@ -1475,6 +1475,38 @@
     "message": "Ein Fehler ist aufgetreten. Gehe zurück und versuche es erneut.",
     "description": "Error message displayed when there is a problem with the password generator data"
   },
+  "private_access_title": {
+    "message": "Dies ist ein privates Fenster, und 2FAS Pass darf darin nicht ausgeführt werden",
+    "description": "Bold headline of the screen shown when autofill is triggered in a private window the extension is not allowed to run in (e.g. the sign-in window opened by the Mail app)."
+  },
+  "private_access_steps_header": {
+    "message": "So aktivierst du das Ausfüllen in diesem Fenster:",
+    "description": "Label above the numbered steps that allow the extension in private windows."
+  },
+  "private_access_steps_safari": {
+    "message": "Öffne Safari → Einstellungen → Erweiterungen.\nWähle 2FAS Pass.\nAktiviere „In privatem Surfen erlauben“.",
+    "description": "Safari: numbered steps, one per line (separated by \\n). Keep the Safari menu and setting names exactly as Safari shows them."
+  },
+  "private_access_steps_chrome": {
+    "message": "Öffne Erweiterungen → Erweiterungen verwalten.\nKlicke bei 2FAS Pass auf Details.\nAktiviere „Im Inkognitomodus zulassen“.\nEntsperre 2FAS Pass erneut.",
+    "description": "Chrome and other Chromium browsers: numbered steps, one per line (separated by \\n). Keep the menu and setting names exactly as the browser shows them."
+  },
+  "private_access_steps_edge": {
+    "message": "Öffne Erweiterungen → Erweiterungen verwalten.\nKlicke bei 2FAS Pass auf Details.\nAktiviere „In InPrivate zulassen“.\nEntsperre 2FAS Pass erneut.",
+    "description": "Microsoft Edge: numbered steps, one per line (separated by \\n). Keep the menu and setting names exactly as Edge shows them."
+  },
+  "private_access_steps_firefox": {
+    "message": "Öffne Add-ons und Themes.\nWähle 2FAS Pass.\nStelle „In privaten Fenstern ausführen“ auf Erlauben.\nFalls 2FAS Pass gesperrt wird, entsperre es erneut.",
+    "description": "Firefox: numbered steps, one per line (separated by \\n). Keep the menu and setting names exactly as Firefox shows them."
+  },
+  "private_access_copy_info": {
+    "message": "Wenn du das nicht aktivieren möchtest, kopiere Benutzername und Passwort aus der Liste der Einträge und füge sie selbst ein.",
+    "description": "Alternative shown below the steps: copy the credentials from the item list instead of allowing the extension."
+  },
+  "private_access_go_to_list": {
+    "message": "Zur Liste der Einträge",
+    "description": "Button label that opens the list of items in the popup."
+  },
   "settings_rate_us_chrome": {
     "message": "Bewerte uns im Chrome Web Store",
     "description": "Prompt to rate the extension in the Chrome Web Store"

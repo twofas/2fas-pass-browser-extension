@@ -1475,6 +1475,38 @@
     "message": "Something went wrong. Go back and try again.",
     "description": "Error message displayed when there is a problem with the password generator data"
   },
+  "private_access_title": {
+    "message": "This is a private window, and 2FAS Pass isn't allowed to run in it",
+    "description": "Bold headline of the screen shown when autofill is triggered in a private window the extension is not allowed to run in (e.g. the sign-in window opened by the Mail app)."
+  },
+  "private_access_steps_header": {
+    "message": "To allow autofill here:",
+    "description": "Label above the numbered steps that allow the extension in private windows."
+  },
+  "private_access_steps_safari": {
+    "message": "Open Safari → Settings → Extensions.\nSelect 2FAS Pass.\nTurn on “Allow in Private Browsing”.",
+    "description": "Safari: numbered steps, one per line (separated by \\n). Keep the Safari menu and setting names exactly as Safari shows them."
+  },
+  "private_access_steps_chrome": {
+    "message": "Open Extensions → Manage extensions.\nSelect Details next to 2FAS Pass.\nTurn on “Allow in Incognito”.\nUnlock 2FAS Pass again.",
+    "description": "Chrome and other Chromium browsers: numbered steps, one per line (separated by \\n). Keep the menu and setting names exactly as the browser shows them."
+  },
+  "private_access_steps_edge": {
+    "message": "Open Extensions → Manage extensions.\nSelect Details next to 2FAS Pass.\nTurn on “Allow in InPrivate”.\nUnlock 2FAS Pass again.",
+    "description": "Microsoft Edge: numbered steps, one per line (separated by \\n). Keep the menu and setting names exactly as Edge shows them."
+  },
+  "private_access_steps_firefox": {
+    "message": "Open Add-ons and themes.\nSelect 2FAS Pass.\nSet “Run in Private Windows” to Allow.\nIf 2FAS Pass locks, unlock it again.",
+    "description": "Firefox: numbered steps, one per line (separated by \\n). Keep the menu and setting names exactly as Firefox shows them."
+  },
+  "private_access_copy_info": {
+    "message": "If you don't want to allow it, copy the username and password from the list of items and paste them yourself.",
+    "description": "Alternative shown below the steps: copy the credentials from the item list instead of allowing the extension."
+  },
+  "private_access_go_to_list": {
+    "message": "Go to the list of items",
+    "description": "Button label that opens the list of items in the popup."
+  },
   "settings_rate_us_chrome": {
     "message": "Rate us in Chrome Web Store",
     "description": "Prompt to rate the extension in the Chrome Web Store"
