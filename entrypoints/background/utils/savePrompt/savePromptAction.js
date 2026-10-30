@@ -16,17 +16,28 @@ import { markSavePromptActionDisplayed } from './savePromptActionDisplay';
 */
 const TAB_STATUS_POLL_MS = 25;
 
-/** 
-* Function to remove previous and current tab input data.
+/**
+* Function to remove the input data a login request used. Values captured after the request started belong to the next
+* page (e.g. a login form rendered again with the username pre-filled) and stay, so the next submit can still be
+* recognised. Without a request time, all input data of the tab is removed.
 * @async
 * @param {string} tabId - The ID of the tab.
 * @param {Object} tabsInputData - The input data for all tabs.
+* @param {number} [requestTime] - The time the login request started, in milliseconds.
 * @return {Promise<void>} A promise that resolves when the operation is complete.
 */
-const removePreviousAndCurrentTabInputData = async (tabId, tabsInputData) => {
+const removePreviousAndCurrentTabInputData = async (tabId, tabsInputData, requestTime) => {
   if (tabsInputData[tabId]) {
-    delete tabsInputData[tabId];
+    const tabInputs = tabsInputData[tabId];
     tabsInputData[tabId] = {};
+
+    if (typeof requestTime === 'number') {
+      Object.keys(tabInputs).forEach(id => {
+        if (typeof tabInputs[id]?.timestamp === 'number' && tabInputs[id].timestamp > requestTime) {
+          tabsInputData[tabId][id] = tabInputs[id];
+        }
+      });
+    }
   }
 
   let currentTab;
@@ -73,7 +84,7 @@ const savePromptAction = async (details, serviceTypeData, tabsInputData, values,
   }
 
   await injectCSIfNotAlready(details?.tabId, REQUEST_TARGETS.CONTENT);
-  await removePreviousAndCurrentTabInputData(details.tabId, tabsInputData);
+  await removePreviousAndCurrentTabInputData(details.tabId, tabsInputData, details?.timeStamp);
 
   const storageKey = `session:savePromptContext-${details.tabId}`;
 

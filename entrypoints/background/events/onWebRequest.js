@@ -18,6 +18,8 @@ import { getCurrentLocalKeyId, isStalePromptInput, dropStalePromptInputs, hasEnc
 import { trackSavePromptRequest, resolveSavePromptRequest } from '../utils/savePrompt/pendingSavePromptRequests';
 import { dropExpiredPromptInputs } from '../utils/savePrompt/expiredPromptInputs';
 import { hasRecentSubmitIntent } from '../utils/savePrompt/submitIntents';
+import { isTabSavePromptSuppressed } from '../utils/savePrompt/tabSavePromptSuppression';
+import { getSavePromptRequestState } from '../utils/savePrompt/isSavePromptRequestActive';
 
 /** 
 * Function to handle web requests for saving prompts.
@@ -127,9 +129,9 @@ const onWebRequest = async (details, tabsInputData, savePromptActions, pendingRe
 */
 const getSavePromptShow = async (details, tabsInputData, savePromptActions) => {
   const requestTime = typeof details.timeStamp === 'number' ? details.timeStamp : Date.now();
-  const suppressed = await storage.getItem(`session:savePromptSuppressed-${details.tabId}`);
+  const suppression = await storage.getItem(`session:savePromptSuppressed-${details.tabId}`);
 
-  if (suppressed) {
+  if (isTabSavePromptSuppressed(suppression, getSavePromptRequestState())) {
     return null;
   }
 

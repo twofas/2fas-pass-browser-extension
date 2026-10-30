@@ -509,3 +509,65 @@ describe('onWebRequest — login form submitted by the user', () => {
     expect(utils.checkFormData.mock.calls[0][3]).toEqual({ submitted: false });
   });
 });
+
+// "Add" and "Update" silence the prompt only while their request to the phone runs.
+describe('onWebRequest — after "Add" on the save prompt', () => {
+  /**
+  * Prepares the pipeline mocks so a request carrying the captured values qualifies for the prompt.
+  * @param {Object} utils - The mocked utils module.
+  * @return {Promise<void>}
+  */
+  const prepare = async utils => {
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValue({ username: 'jan', password: 'S3cret!' });
+    utils.checkFormData.mockResolvedValue(true);
+    utils.checkServicesData.mockResolvedValue({ type: 'newService' });
+  };
+
+  it('shows the prompt again when the save request was cancelled', async () => {
+    const utils = await import('../utils');
+    const { resetState } = await import('../websocket/wsState');
+
+    resetState();
+    await prepare(utils);
+    await storage.setItem(`session:savePromptSuppressed-${TAB_ID}`, { type: 'saveRequest', at: Date.now() - 60000 });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(utils.savePromptAction).toHaveBeenCalledTimes(1);
+    await storage.removeItem(`session:savePromptSuppressed-${TAB_ID}`);
+  });
+
+  it('stays silent while the save request runs', async () => {
+    const utils = await import('../utils');
+    const { wsState, resetState } = await import('../websocket/wsState');
+
+    resetState();
+    wsState.active = true;
+    wsState.type = 'fetch';
+    wsState.fetchLocationState = { action: 'addData', from: 'savePrompt' };
+    await prepare(utils);
+    await storage.setItem(`session:savePromptSuppressed-${TAB_ID}`, { type: 'saveRequest', at: Date.now() - 60000 });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(utils.savePromptAction).not.toHaveBeenCalled();
+    resetState();
+    await storage.removeItem(`session:savePromptSuppressed-${TAB_ID}`);
+  });
+
+  it('stays silent after "Ignore this domain"', async () => {
+    const utils = await import('../utils');
+
+    await prepare(utils);
+    await storage.setItem(`session:savePromptSuppressed-${TAB_ID}`, true);
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(utils.savePromptAction).not.toHaveBeenCalled();
+    await storage.removeItem(`session:savePromptSuppressed-${TAB_ID}`);
+  });
+});

@@ -6,6 +6,7 @@
 
 import decryptValues from './decryptValues';
 import removeSavePromptAction from './removeSavePromptAction';
+import { createSaveRequestSuppression } from './tabSavePromptSuppression';
 import openPopupWindowInNewWindow from '../openPopupWindowInNewWindow';
 import { SAVE_PROMPT_ACTIONS, REQUEST_STRING_ACTIONS, PULL_REQUEST_TYPES } from '@/constants';
 import { getCurrentDevice } from '@/partials/functions';
@@ -73,7 +74,8 @@ const processSavePromptResult = async (request, savePromptActions, tabUpdateData
 
   switch (status) {
     case SAVE_PROMPT_ACTIONS.NEW_LOGIN: {
-      await storage.setItem(`session:savePromptSuppressed-${tabId}`, true);
+      // Silent only while the request to the phone runs: after a cancel the next submit shows the prompt again.
+      await storage.setItem(`session:savePromptSuppressed-${tabId}`, createSaveRequestSuppression());
 
       let decryptedValues;
 
@@ -111,7 +113,8 @@ const processSavePromptResult = async (request, savePromptActions, tabUpdateData
     }
 
     case SAVE_PROMPT_ACTIONS.UPDATE_LOGIN: {
-      await storage.setItem(`session:savePromptSuppressed-${tabId}`, true);
+      // Silent only while the request to the phone runs: after a cancel the next submit shows the prompt again.
+      await storage.setItem(`session:savePromptSuppressed-${tabId}`, createSaveRequestSuppression());
 
       let decryptedValues;
 

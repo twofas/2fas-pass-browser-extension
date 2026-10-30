@@ -29,6 +29,12 @@ const socketInstances = [];
 let socketConstructorShouldThrow = false;
 
 vi.mock('@/utils/CatchError.js', () => ({ default: vi.fn() }));
+vi.mock('@/utils/getMessage.js', () => ({
+  getMessage: key => key,
+  initI18n: vi.fn(),
+  resetI18nCache: vi.fn(),
+  getI18nState: () => ({ lang: 'en', messages: {}, isInitialized: true })
+}));
 vi.mock('.', () => ({
   default: class MockTwoFasWebSocket {
     constructor (sessionId) {
@@ -78,7 +84,8 @@ vi.mock('@/partials/functions', () => ({
   deletePush: (...a) => deletePush(...a)
 }));
 
-import { resumeWsSession } from './wsManager.js';
+import { resumeWsSession, startFetch } from './wsManager.js';
+import { getSavePromptRequestState } from '../utils/savePrompt/isSavePromptRequestActive';
 import { wsState, resetState } from './wsState.js';
 
 const pushDescriptor = overrides => ({
@@ -342,3 +349,31 @@ describe('resumeWsSession', () => {
     }
   });
 });
+
+describe('startFetch — requests from the save prompt', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetState();
+    getCurrentDevice.mockResolvedValue(null);
+  });
+
+  it('records when a request from the save prompt started', async () => {
+    const before = Date.now();
+
+    await startFetch('addData', { deviceId: 'DEV-1' }, 'savePrompt');
+
+    expect(getSavePromptRequestState().startedAt).toBeGreaterThanOrEqual(before);
+  });
+
+  it('does not record requests started elsewhere', async () => {
+    await startFetch('addData', { deviceId: 'DEV-1' }, 'savePrompt');
+    const startedAt = getSavePromptRequestState().startedAt;
+    resetState();
+
+    await new Promise(resolve => setTimeout(resolve, 5));
+    await startFetch('addData', { deviceId: 'DEV-1' }, 'add-new');
+
+    expect(getSavePromptRequestState().startedAt).toBe(startedAt);
+  });
+});
+

@@ -51,5 +51,27 @@ describe('savePromptAction', () => {
     await done;
     vi.useRealTimers();
   });
+
+  it('keeps the values the next page captured after the login request (login re-rendered with a pre-filled username)', async () => {
+    const requestTime = 1_800_000_000_000;
+    const tabsInputData = {
+      9: {
+        sent: { id: 'sent', type: 'password', value: 'p', timestamp: requestTime - 500 },
+        next: { id: 'next', type: 'username', value: 'u', timestamp: requestTime + 300 }
+      }
+    };
+
+    await savePromptAction({ tabId: 9, initiator: 'https://example.com', timeStamp: requestTime }, { type: 'newService' }, tabsInputData, { username: 'u', password: 'p' }, []);
+
+    expect(Object.keys(tabsInputData[9])).toEqual(['next']);
+  });
+
+  it('clears all values of the tab when the request time is unknown', async () => {
+    const tabsInputData = { 9: { a: { id: 'a', type: 'username', value: 'u', timestamp: Date.now() } } };
+
+    await savePromptAction({ tabId: 9, initiator: 'https://example.com' }, { type: 'newService' }, tabsInputData, { username: 'u', password: 'p' }, []);
+
+    expect(tabsInputData[9]).toEqual({});
+  });
 });
 
