@@ -114,3 +114,107 @@ describe('registerSavePromptWebRequest', () => {
     expect(onWebRequest).toHaveBeenCalledWith(details, tabsInputData, savePromptActions);
   });
 });
+
+// The save prompt waits for the response of the login request: a rejected login (4xx, 5xx, network error) shows none.
+describe('registerSavePromptWebRequest — response outcome', () => {
+  const RESPONSE_FILTER = { urls: ['<all_urls>'], types: ['main_frame', 'sub_frame', 'xmlhttprequest'] };
+  let onBeforeRequest;
+  let onCompleted;
+  let onErrorOccurred;
+  let originalWebRequest;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    onWebRequest.mockReset();
+    vi.stubEnv('BROWSER', 'chrome');
+    onBeforeRequest = vi.fn();
+    onCompleted = vi.fn();
+    onErrorOccurred = vi.fn();
+    originalWebRequest = browser.webRequest;
+    browser.webRequest = {
+      onBeforeRequest: { addListener: onBeforeRequest },
+      onCompleted: { addListener: onCompleted },
+      onErrorOccurred: { addListener: onErrorOccurred }
+    };
+  });
+
+  afterEach(() => {
+    browser.webRequest = originalWebRequest;
+    vi.unstubAllEnvs();
+  });
+
+  /**
+  * Registers the listeners and makes onWebRequest qualify the request for a prompt.
+  * @return {{ show: Function, before: Function, completed: Function, error: Function }} The prompt spy and listeners.
+  */
+  const setup = () => {
+    const show = vi.fn();
+
+    onWebRequest.mockImplementation(async (details, tabsInputData, savePromptActions, pending) => {
+      pending.set(details.requestId, { createdAt: Date.now(), show, succeeded: undefined });
+    });
+
+    registerSavePromptWebRequest({}, []);
+
+    return {
+      show,
+      before: onBeforeRequest.mock.calls[0][0],
+      completed: onCompleted.mock.calls[0][0],
+      error: onErrorOccurred.mock.calls[0][0]
+    };
+  };
+
+  it('listens for completed and failed requests of the types that can carry a login', () => {
+    registerSavePromptWebRequest({}, []);
+
+    expect(onCompleted).toHaveBeenCalledWith(expect.any(Function), RESPONSE_FILTER);
+    expect(onErrorOccurred).toHaveBeenCalledWith(expect.any(Function), RESPONSE_FILTER);
+    expect(onWebRequest).not.toHaveBeenCalled();
+  });
+
+  it('passes the pending requests to onWebRequest', async () => {
+    const { before } = setup();
+    const details = { requestId: 'r1', tabId: 1, method: 'POST' };
+
+    await before(details);
+
+    expect(onWebRequest).toHaveBeenCalledWith(details, {}, [], expect.any(Map));
+  });
+
+  it('shows the prompt after a successful response', async () => {
+    const { show, before, completed } = setup();
+
+    await before({ requestId: 'r1' });
+    await completed({ requestId: 'r1', statusCode: 200 });
+
+    expect(show).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows no prompt after an error status', async () => {
+    const { show, before, completed } = setup();
+
+    await before({ requestId: 'r1' });
+    await completed({ requestId: 'r1', statusCode: 401 });
+
+    expect(show).not.toHaveBeenCalled();
+  });
+
+  it('shows no prompt after a network error', async () => {
+    const { show, before, error, completed } = setup();
+
+    await before({ requestId: 'r1' });
+    await error({ requestId: 'r1', error: 'net::ERR_FAILED' });
+    await completed({ requestId: 'r1', statusCode: 200 });
+
+    expect(show).not.toHaveBeenCalled();
+  });
+
+  it('shows the prompt at once when the browser cannot report the response', async () => {
+    browser.webRequest = { onBeforeRequest: { addListener: onBeforeRequest } };
+
+    registerSavePromptWebRequest({}, []);
+    await onBeforeRequest.mock.calls[0][0]({ requestId: 'r1' });
+
+    expect(onWebRequest).toHaveBeenCalledWith({ requestId: 'r1' }, {}, []);
+  });
+});

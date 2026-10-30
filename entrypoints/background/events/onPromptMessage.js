@@ -6,6 +6,7 @@
 
 import { promptInput, isSavePromptSenderEligible } from '../utils';
 import { getCurrentLocalKeyId, isStalePromptInput } from '../utils/savePrompt/promptInputKeyId';
+import { recordSubmitIntent } from '../utils/savePrompt/submitIntents';
 
 /** 
 * Function to handle messages related to prompts.
@@ -86,6 +87,36 @@ const onPromptMessage = (request, sender, sendResponse, tabsInputData) => {
             });
 
             sendResponse(stale ? { status: 'error', message: 'staleKey' } : { status: 'ok' });
+          })
+          .catch(e => { sendResponse({ status: 'error', message: e.message }); });
+
+        break;
+      }
+
+      case REQUEST_ACTIONS.PROMPT_SUBMIT_INTENT: {
+        if (!sender?.tab?.id || !sender?.url) {
+          sendResponse({ status: 'error', message: 'Empty data' });
+          return true;
+        }
+
+        // The origin and the time come from the browser, never from the page.
+        const tabId = sender.tab.id;
+        const time = Date.now();
+        let origin = null;
+
+        try {
+          origin = new URL(sender.url).origin;
+        } catch {}
+
+        isSavePromptSenderEligible(sender)
+          .then(eligible => {
+            if (!eligible || !origin) {
+              sendResponse({ status: 'error', message: 'Ineligible frame' });
+              return;
+            }
+
+            recordSubmitIntent(tabId, origin, time);
+            sendResponse({ status: 'ok' });
           })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
 

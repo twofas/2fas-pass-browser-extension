@@ -15,6 +15,9 @@ import parseRequestBody from '../utils/savePrompt/parseRequestBody';
 import { isSavePromptSuppressedForDomain } from '../utils/savePrompt/savePromptDomainSuppression';
 import getPageUrl from '@/partials/functions/getPageUrl';
 import { getCurrentLocalKeyId, isStalePromptInput, dropStalePromptInputs, hasEncryptedPromptInputs } from '../utils/savePrompt/promptInputKeyId';
+import { trackSavePromptRequest, resolveSavePromptRequest } from '../utils/savePrompt/pendingSavePromptRequests';
+import { dropExpiredPromptInputs } from '../utils/savePrompt/expiredPromptInputs';
+import { hasRecentSubmitIntent } from '../utils/savePrompt/submitIntents';
 
 /** 
 * Function to handle web requests for saving prompts.
@@ -22,9 +25,10 @@ import { getCurrentLocalKeyId, isStalePromptInput, dropStalePromptInputs, hasEnc
 * @param {Object} details - The details of the web request.
 * @param {Object} tabsInputData - Encrypted input data for the tabs.
 * @param {Array} savePromptActions - The actions to save the prompt.
+* @param {Map} [pendingRequests] - Login requests waiting for their response; without it the prompt is shown at once.
 * @return {Promise<void>} A promise that resolves when the web request is handled.
 */
-const onWebRequest = async (details, tabsInputData, savePromptActions) => {
+const onWebRequest = async (details, tabsInputData, savePromptActions, pendingRequests) => {
   // Handle beacon flush from content script (before any other filters)
   if (isSavePromptBeaconRequest(details)) {
     if (details?.requestBody?.raw?.[0]?.bytes && details?.tabId) {
@@ -90,10 +94,43 @@ const onWebRequest = async (details, tabsInputData, savePromptActions) => {
     return;
   }
 
+  // The prompt waits for the response, so a login the site rejects (4xx, 5xx, network error) shows none. The request
+  // is tracked before the first await: a fast response can complete while the body is still being matched.
+  const waitsForResponse = pendingRequests instanceof Map && Boolean(details.requestId);
+
+  if (waitsForResponse) {
+    trackSavePromptRequest(pendingRequests, details.requestId);
+  }
+
+  let show = null;
+
+  try {
+    show = await getSavePromptShow(details, tabsInputData, savePromptActions);
+  } finally {
+    if (waitsForResponse) {
+      await resolveSavePromptRequest(pendingRequests, details.requestId, show);
+    }
+  }
+
+  if (!waitsForResponse && show) {
+    await show();
+  }
+};
+
+/**
+* Function to tell whether a login request qualifies for a save prompt.
+* @async
+* @param {Object} details - The details of the web request.
+* @param {Object} tabsInputData - Encrypted input data for the tabs.
+* @param {Array} savePromptActions - The actions to save the prompt.
+* @return {Promise<Function|null>} A function showing the save prompt, or null when the request does not qualify.
+*/
+const getSavePromptShow = async (details, tabsInputData, savePromptActions) => {
+  const requestTime = typeof details.timeStamp === 'number' ? details.timeStamp : Date.now();
   const suppressed = await storage.getItem(`session:savePromptSuppressed-${details.tabId}`);
 
   if (suppressed) {
-    return;
+    return null;
   }
 
   let tab;
@@ -106,13 +143,13 @@ const onWebRequest = async (details, tabsInputData, savePromptActions) => {
   // same-site iframes). Cross-root-domain sub-frames (e.g. SSO widgets) are rejected
   // — their credentials belong to the embedded site, not this page (finding #19).
   if (!isProcessableWebRequestFrame(details, tab?.url)) {
-    return;
+    return null;
   }
 
   // A fetch & autofill filled a secret that is not saved, so the vault cannot recognise it: no prompt in this tab
   // until it leaves the domain.
   if (await isSavePromptSuppressedForDomain(details.tabId, tab?.url || details.url)) {
-    return;
+    return null;
   }
 
   // Settings first: nothing below (key ids, the wait for inputs) is worth doing while the vault is locked, the save
@@ -126,7 +163,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions) => {
   }
 
   if (!configured) {
-    return;
+    return null;
   }
 
   let storageSavePrompt = null;
@@ -151,7 +188,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions) => {
     (storageSavePrompt !== 'default' && storageSavePrompt !== 'default_encrypted') || // Only when savePrompt is set to default or default_encrypted
     domainOnIgnoredList // Only when domain is not on the ignored list
   ) {
-    return;
+    return null;
   }
 
   // Inputs encrypted before a lock rotated the local key can never be decrypted; dropping them lets the wait below
@@ -159,6 +196,9 @@ const onWebRequest = async (details, tabsInputData, savePromptActions) => {
   if (hasEncryptedPromptInputs(tabsInputData, details.tabId)) {
     dropStalePromptInputs(tabsInputData, details.tabId, await getCurrentLocalKeyId());
   }
+
+  // Values typed long ago belong to an earlier visit of the form: they neither count for this request nor stay in memory.
+  dropExpiredPromptInputs(tabsInputData, details.tabId);
 
   // The captured inputs live only in the in-memory tabsInputData, which the MV3 service
   // worker drops whenever it is recycled (frequently). When the worker is restarted
@@ -181,7 +221,7 @@ const onWebRequest = async (details, tabsInputData, savePromptActions) => {
 
   // COMMENT THIS WHEN DEBUGGING SAVE PROMPT
   if (!tabsInputData || Object.keys(tabsInputData).length === 0 || !tabsInputData[details?.tabId] || tabsInputData[details?.tabId]?.length <= 0) {
-    return;
+    return null;
   }
   // [END] COMMENT THIS WHEN DEBUGGING
 
@@ -199,11 +239,14 @@ const onWebRequest = async (details, tabsInputData, savePromptActions) => {
       return null;
     }
 
-    return await checkFormData(details, currentValues, requestBody.texts) ? currentValues : null;
+    // Read on every attempt: the content script reports the submit from the same click that sends the request.
+    const submitted = hasRecentSubmitIntent(details.tabId, pageOrigin, requestTime);
+
+    return await checkFormData(details, currentValues, requestBody.texts, { submitted }) ? currentValues : null;
   }, hasIgnoredSavePromptBodyField(details, requestBody) ? { maxWait: 0 } : undefined);
 
   if (!values) {
-    return;
+    return null;
   }
 
   // Only when combination of username && password doesn't exist in the storage
@@ -216,16 +259,17 @@ const onWebRequest = async (details, tabsInputData, savePromptActions) => {
   }
 
   if (!serviceTypeData) {
-    return;
+    return null;
   }
 
-  // Action
-  try {
-    await addSavePromptAction(details, serviceTypeData, values, savePromptActions);
-    await savePromptAction(details, serviceTypeData, tabsInputData, values, savePromptActions);
-  } catch (e) {
-    throw new TwoFasError(TwoFasError.internalErrors.onWebRequestSavePromptActionError, { event: e });
-  }
+  return async () => {
+    try {
+      await addSavePromptAction(details, serviceTypeData, values, savePromptActions);
+      await savePromptAction(details, serviceTypeData, tabsInputData, values, savePromptActions);
+    } catch (e) {
+      throw new TwoFasError(TwoFasError.internalErrors.onWebRequestSavePromptActionError, { event: e });
+    }
+  };
 };
 
 export default onWebRequest;

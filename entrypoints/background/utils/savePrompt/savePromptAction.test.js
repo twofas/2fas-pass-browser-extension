@@ -35,4 +35,21 @@ describe('savePromptAction', () => {
 
     expect(actions[0].displayedAt).toBeUndefined();
   });
+
+  it('shows the prompt soon after the page has finished loading', async () => {
+    vi.useFakeTimers();
+    browser.tabs.get
+      .mockResolvedValueOnce({ id: 9, status: 'loading', url: 'https://example.com/login' })
+      .mockResolvedValue({ id: 9, status: 'complete', url: 'https://example.com/login' });
+
+    const done = savePromptAction({ tabId: 9, initiator: 'https://example.com' }, { type: 'newService' }, {}, { username: 'u', password: 'p' }, []);
+
+    await vi.advanceTimersByTimeAsync(30);
+
+    expect(sendSavePromptToTab).toHaveBeenCalledTimes(1);
+
+    await done;
+    vi.useRealTimers();
+  });
 });
+

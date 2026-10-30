@@ -12,6 +12,9 @@ import getShadowRoots from './content/functions/autofillFunctions/getShadowRoots
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import setIDsToInputs from './prompt/setIDsToInputs';
 import isSubmitButtonClick from './prompt/isSubmitButtonClick';
+import isSubmitKeydown from './prompt/isSubmitKeydown';
+import isInLoginForm from './prompt/isInLoginForm';
+import isUserFormSubmit from './prompt/isUserFormSubmit';
 import encryptFlushData from './prompt/encryptFlushData';
 import ensureLocalKey from './prompt/ensureLocalKey';
 import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
@@ -142,8 +145,41 @@ export default defineContentScript({
       await sendPromptInputs(pendingData, localKey, encrypted);
     };
 
-    const handleFormSubmit = () => {
+    /**
+    * Tells the background that the user submitted a login form, so the request sent right after it counts as a login
+    * even when the page transforms the password before sending it. Sent before the page's own handlers run; call it
+    * after flushAndSendPending, which tracks the inputs added since the last scan.
+    * @param {Element} target - The submit control, field or form.
+    * @return {void}
+    */
+    const reportLoginSubmit = target => {
+      if (!isInLoginForm(target, allInputs)) {
+        return;
+      }
+
+      browser.runtime.sendMessage({
+        action: REQUEST_ACTIONS.PROMPT_SUBMIT_INTENT,
+        target: REQUEST_TARGETS.BACKGROUND_PROMPT
+      }).catch(() => {});
+    };
+
+    /**
+    * Returns the element an event was dispatched to, looking into open shadow roots.
+    * @param {Event} e - The event.
+    * @return {Element|null} The element.
+    */
+    const getEventTarget = e => {
+      const path = typeof e?.composedPath === 'function' ? e.composedPath() : null;
+
+      return (path && path[0]) || e?.target || null;
+    };
+
+    const handleFormSubmit = e => {
       flushAndSendPending();
+
+      if (isUserFormSubmit(e)) {
+        reportLoginSubmit(getEventTarget(e));
+      }
     };
 
     const handleKeydown = e => {
@@ -153,26 +189,12 @@ export default defineContentScript({
 
       checkLocalKey();
 
-      if (e?.key !== 'Enter' || e?.isComposing) {
-        return;
-      }
-
-      const path = typeof e?.composedPath === 'function' ? e.composedPath() : null;
-      const target = (path && path[0]) || e?.target;
-
-      if (!target || target.tagName !== 'INPUT') {
-        return;
-      }
-
-      const isTracked = target.getAttribute?.('twofas-pass-id') || allInputs.includes(target);
-      const form = target.closest?.('form');
-      const formHasPassword = form ? form.querySelector('input[type="password"]') : null;
-
-      if (!isTracked && !formHasPassword && target.type !== 'password') {
+      if (!isSubmitKeydown(e, allInputs)) {
         return;
       }
 
       flushAndSendPending();
+      reportLoginSubmit(getEventTarget(e));
     };
 
     const handleClick = e => {
@@ -187,6 +209,7 @@ export default defineContentScript({
       }
 
       flushAndSendPending();
+      reportLoginSubmit(getEventTarget(e));
     };
 
     const handleBeforeUnload = async () => {

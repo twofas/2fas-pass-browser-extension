@@ -6,6 +6,7 @@
 
 import getKey from '@/partials/sessionStorage/getKey';
 import { getSavePromptDomainSuppressionKey } from '../utils/savePrompt/savePromptDomainSuppression';
+import { clearSubmitIntent } from '../utils/savePrompt/submitIntents';
 
 /**
 * Function to handle tab removal in the browser.
@@ -21,6 +22,8 @@ const onTabRemoved = async (tabId, tabsInputData, savePromptActions) => {
   if (tabsInputData[tabId]) {
     delete tabsInputData[tabId];
   }
+
+  clearSubmitIntent(tabId);
 
   if (savePromptActions && Array.isArray(savePromptActions)) {
     const actionIndex = savePromptActions.findIndex(a => a.tabId === tabId);

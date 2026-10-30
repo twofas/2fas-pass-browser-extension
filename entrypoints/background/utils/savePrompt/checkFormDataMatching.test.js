@@ -72,3 +72,51 @@ describe('checkFormData — matches the values the body carries', () => {
     expect(await checkFormData(jsonBody({ username: 'piotr', password: 'S3cret!' }), values)).toBe(false);
   });
 });
+
+// Some sites transform the password before sending it (Facebook and Instagram encrypt it in the page and send only
+// "#PWD_BROWSER:<version>:<timestamp>:<base64>"). Such a body counts only together with the captured login and a login
+// form the user submitted right before the request.
+describe('checkFormData — password transformed by the page', () => {
+  const encrypted = '#PWD_BROWSER:5:1793366768:AfhQACfSq6WxY82nuUY3FHFQMljGgZkC1CQppitATqdogQMZUqFgd661FSdEfkJC58FxV+vbqeZibkvzlmspUD9rqw==';
+  const facebookBody = (identifier, password) => rawBody(new URLSearchParams({
+    fb_api_req_friendly_name: 'useCDSWebLoginMutation',
+    variables: JSON.stringify({
+      input: {
+        identifier,
+        credential_type: 'password',
+        password: { sensitive_string_value: password },
+        enc_password: { sensitive_string_value: password }
+      }
+    })
+  }).toString());
+  const values = { username: 'jan@example.com', password: 'S3cret!' };
+
+  it('matches a Facebook login submitted by the user', async () => {
+    expect(await checkFormData(facebookBody('jan@example.com', encrypted), values, undefined, { submitted: true })).toBe(true);
+  });
+
+  it('matches an Instagram login (version 10) sent as JSON and submitted by the user', async () => {
+    const details = jsonBody({ email: 'jan@example.com', enc_password: encrypted.replace(':5:', ':10:') });
+
+    expect(await checkFormData(details, values, undefined, { submitted: true })).toBe(true);
+  });
+
+  it('does not match a body without the password when no login form was submitted', async () => {
+    expect(await checkFormData(facebookBody('jan@example.com', encrypted), values)).toBe(false);
+    expect(await checkFormData(facebookBody('jan@example.com', encrypted), values, undefined, { submitted: false })).toBe(false);
+  });
+
+  it('does not match a submitted form when the login is missing from the body', async () => {
+    expect(await checkFormData(facebookBody('piotr@example.com', encrypted), values, undefined, { submitted: true })).toBe(false);
+  });
+
+  it('does not match a submitted form when no login was captured', async () => {
+    const noLogin = { username: '', password: 'S3cret!' };
+
+    expect(await checkFormData(facebookBody('jan@example.com', encrypted), noLogin, undefined, { submitted: true })).toBe(false);
+  });
+
+  it('still matches the plain password without a submit', async () => {
+    expect(await checkFormData(facebookBody('jan@example.com', '#PWD_BROWSER:0:1793366768:S3cret!'), values)).toBe(true);
+  });
+});

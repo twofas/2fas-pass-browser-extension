@@ -101,4 +101,16 @@ describe('isSubmitButtonClick — commit-click detection (finding #9)', () => {
     expect(isSubmitButtonClick({ target: null })).toBe(false);
     expect(isSubmitButtonClick({ target: document })).toBe(false);
   });
+
+  it('ignores a click the page dispatched from a script', () => {
+    const el = make('<button type="submit">Sign in</button>', 'button');
+
+    expect(isSubmitButtonClick({ target: el, isTrusted: false })).toBe(false);
+  });
+
+  it('matches a click made by the user', () => {
+    const el = make('<button type="submit">Sign in</button>', 'button');
+
+    expect(isSubmitButtonClick({ target: el, isTrusted: true })).toBe(true);
+  });
 });

@@ -14,11 +14,15 @@ const SUBMIT_BUTTON_SELECTOR = 'button, input[type="submit"], input[type="button
 * step-1 username field is skip-tagged and therefore only captured on a commit
 * event). Resolves the deepest target via composedPath() so shadow-DOM clicks
 * are handled, walks up with closest() to tolerate clicks on inner content, and
-* excludes reset controls (which never commit credentials).
+* excludes reset controls (which never commit credentials). A click the page dispatched from a script is ignored.
 * @param {Event} e - The click event.
 * @return {boolean} True when the click targets a non-reset button-like element.
 */
 const isSubmitButtonClick = e => {
+  if (e?.isTrusted === false) {
+    return false;
+  }
+
   const path = typeof e?.composedPath === 'function' ? e.composedPath() : null;
   const target = (path && path[0]) || e?.target;
 

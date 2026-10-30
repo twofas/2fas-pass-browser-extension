@@ -10,6 +10,12 @@ import { getPageUrl } from '@/partials/functions';
 import { markSavePromptActionDisplayed } from './savePromptActionDisplay';
 
 // FUTURE - Try to check initial inputs list? Probably request to content_script?
+/**
+* How often the tab is checked for the end of loading before the prompt is shown.
+* @type {number}
+*/
+const TAB_STATUS_POLL_MS = 25;
+
 /** 
 * Function to remove previous and current tab input data.
 * @async
@@ -57,7 +63,7 @@ const savePromptAction = async (details, serviceTypeData, tabsInputData, values,
   }
   
   while (tabData?.status !== 'complete') {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, TAB_STATUS_POLL_MS));
 
     try {
       tabData = await browser.tabs.get(details?.tabId);

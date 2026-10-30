@@ -15,6 +15,7 @@ vi.mock('../utils', () => ({
 }));
 
 import onPromptMessage from './onPromptMessage.js';
+import { hasRecentSubmitIntent, resetSubmitIntents } from '../utils/savePrompt/submitIntents';
 
 const PROMPT = REQUEST_TARGETS.BACKGROUND_PROMPT;
 
@@ -103,5 +104,44 @@ describe('onPromptMessage — frame eligibility gating (finding #19)', () => {
       expect(tabsInputData[7]).toBeUndefined();
       expect(sendResponse).toHaveBeenCalledWith({ status: 'error', message: 'Ineligible frame' });
     });
+  });
+});
+
+// The content script reports a login form submitted by the user; the request sent right after it may carry the
+// password in a form the page transformed.
+describe('onPromptMessage — PROMPT_SUBMIT_INTENT', () => {
+  const request = { action: REQUEST_ACTIONS.PROMPT_SUBMIT_INTENT, target: PROMPT, data: { url: 'https://spoofed.example' } };
+  const sender = { frameId: 0, tab: { id: 7 }, url: 'https://www.facebook.com/login/?next=1' };
+
+  beforeEach(() => {
+    resetSubmitIntents();
+  });
+
+  it('records the submit for the origin of the sender frame, not the origin the message names', async () => {
+    const sendResponse = vi.fn();
+
+    onPromptMessage(request, sender, sendResponse, {});
+
+    await vi.waitFor(() => expect(sendResponse).toHaveBeenCalledWith({ status: 'ok' }));
+    expect(hasRecentSubmitIntent(7, 'https://www.facebook.com', Date.now())).toBe(true);
+    expect(hasRecentSubmitIntent(7, 'https://spoofed.example', Date.now())).toBe(false);
+  });
+
+  it('does not record the submit of an ineligible frame', async () => {
+    isSavePromptSenderEligible.mockResolvedValue(false);
+    const sendResponse = vi.fn();
+
+    onPromptMessage(request, { ...sender, frameId: 3, url: 'https://accounts.other.com/' }, sendResponse, {});
+
+    await vi.waitFor(() => expect(sendResponse).toHaveBeenCalledWith({ status: 'error', message: 'Ineligible frame' }));
+    expect(hasRecentSubmitIntent(7, 'https://accounts.other.com', Date.now())).toBe(false);
+  });
+
+  it('refuses a message without a tab', () => {
+    const sendResponse = vi.fn();
+
+    onPromptMessage(request, { frameId: 0, url: 'https://www.facebook.com/' }, sendResponse, {});
+
+    expect(sendResponse).toHaveBeenCalledWith({ status: 'error', message: 'Empty data' });
   });
 });
