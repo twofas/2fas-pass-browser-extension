@@ -5,7 +5,7 @@
 // See LICENSE file for full terms
 
 import S from '../Settings.module.scss';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useI18n } from '@/partials/context/I18nContext';
 import getRatingLink from '../functions/getRatingLink';
 import getRatingText from '../functions/getRatingText';
@@ -21,6 +21,8 @@ import DiscordIcon from '@/assets/social/discord.svg?react';
 import YoutubeIcon from '@/assets/social/youtube.svg?react';
 import TwitterIcon from '@/assets/social/twitter.svg?react';
 import GithubIcon from '@/assets/social/github.svg?react';
+
+const LICENSES_PAGE_PATH = '/licenses.html';
 
 /**
 * Function to render the Settings About component.
@@ -38,6 +40,16 @@ function SettingsAbout (props) {
   const scrollableRef = useRef(null);
 
   useScrollPosition(scrollableRef, loading);
+
+  const handleOpenLicenses = useCallback(async e => {
+    e.preventDefault();
+
+    try {
+      await browser.tabs.create({ url: browser.runtime.getURL(LICENSES_PAGE_PATH) });
+    } catch (err) {
+      CatchError(err);
+    }
+  }, []);
 
   useEffect(function loadExtensionVersion() {
     try {
@@ -127,6 +139,11 @@ function SettingsAbout (props) {
                     <span>{getMessage('settings_logs_menu_link')}</span>
                     <MenuArrowIcon />
                   </ClearLink>
+
+                  <a href={LICENSES_PAGE_PATH} className={S.settingsAdvancedLink} onClick={handleOpenLicenses}>
+                    <span>{getMessage('settings_licenses_menu_link')}</span>
+                    <MenuArrowIcon />
+                  </a>
                 </div>
               </div>
             </div>

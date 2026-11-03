@@ -4,7 +4,7 @@
 // Licensed under the Business Source License 1.1
 // See LICENSE file for full terms
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import realIsProcessableWebRequestFrame from '../utils/savePrompt/isProcessableWebRequestFrame.js';
 
 const getConfiguredBoolean = vi.fn();
@@ -25,11 +25,6 @@ vi.mock('../utils', () => ({
 
 vi.mock('@/partials/sessionStorage/configured/getConfiguredBoolean', () => ({
   default: (...args) => getConfiguredBoolean(...args)
-}));
-
-vi.mock('@/constants', () => ({
-  ignoredSavePromptUrls: [],
-  ignoredSavePromptRequestBodyTexts: []
 }));
 
 vi.mock('@/partials/functions/isText', () => ({ default: () => true }));
@@ -105,6 +100,25 @@ describe('onWebRequest — beacon flush gate (finding #19)', () => {
     expect(tabsInputData[TAB_ID]).toBeUndefined();
   });
 
+  it('drops beacon entries encrypted with a local key rotated out by a lock', async () => {
+    const getLocalKeyId = (await import('../utils/getLocalKeyId')).default;
+    const key = 'q83vEjRWeJCrze8SNFZ4kKvN7xI0VniQq83vEjRWeJA=';
+    await storage.setItem('session:lKey', key);
+    const keyId = await getLocalKeyId(key);
+    const tabsInputData = {};
+    const details = {
+      type: 'ping',
+      url: beaconUrl,
+      tabId: TAB_ID,
+      frameType: 'outermost_frame',
+      requestBody: beaconBody([{ id: 'old', value: 'c1', encrypted: true, keyId: 'other' }, { id: 'cur', value: 'c2', encrypted: true, keyId }])
+    };
+
+    await onWebRequest(details, tabsInputData, [], {});
+
+    expect(Object.keys(tabsInputData[TAB_ID])).toEqual(['cur']);
+  });
+
   it('accepts a same-root-domain sub-frame beacon', async () => {
     const tabsInputData = {};
     const details = { type: 'ping', url: beaconUrl, tabId: TAB_ID, frameType: 'sub_frame', initiator: 'https://login.example.com', requestBody: beaconBody([{ id: 'x', value: '1' }]) };
@@ -119,7 +133,13 @@ describe('onWebRequest — beacon flush gate (finding #19)', () => {
 // prompt silently never fires (for both encrypted and unencrypted modes).
 describe('onWebRequest — captured-input recovery after worker restart', () => {
   it('waits for the flush to repopulate an empty store, then continues past the gate', async () => {
+    const utils = await import('../utils');
     const tabsInputData = {}; // empty: simulates a worker restart between typing and submit
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValue({});
 
     // Simulate the submit flush / beacon arriving during the wait window.
     waitForTabInputDataMock.mockImplementation(async store => {
@@ -130,17 +150,29 @@ describe('onWebRequest — captured-input recovery after worker restart', () => 
     await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
 
     expect(waitForTabInputDataMock).toHaveBeenCalled();
-    expect(getConfiguredBoolean).toHaveBeenCalled();
+    expect(utils.getValuesFromTabsInputData).toHaveBeenCalled();
   });
 
   it('bails when the store stays empty (no flush arrives within the wait)', async () => {
+    const utils = await import('../utils');
     const tabsInputData = {};
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
     waitForTabInputDataMock.mockResolvedValue(false);
 
     await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
 
     expect(waitForTabInputDataMock).toHaveBeenCalled();
-    expect(getConfiguredBoolean).not.toHaveBeenCalled();
+    expect(utils.getValuesFromTabsInputData).not.toHaveBeenCalled();
+  });
+
+  it('does not wait for inputs while the vault is locked', async () => {
+    getConfiguredBoolean.mockResolvedValue(false);
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(waitForTabInputDataMock).not.toHaveBeenCalled();
   });
 });
 
@@ -190,5 +222,352 @@ describe('onWebRequest — beacon type and Safari request shapes', () => {
     waitForTabInputDataMock.mockResolvedValue();
     await onWebRequest(details, newTabsInputData(), [], {});
     expect(getConfiguredBoolean).toHaveBeenCalled();
+  });
+});
+
+describe('onWebRequest — waits for the whole credential pair (password still on its way)', () => {
+  it('waits until the page origin has both a username and a password value', async () => {
+    const utils = await import('../utils');
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    const details = postDetails({ frameType: 'outermost_frame', initiator: 'https://example.com' });
+
+    await onWebRequest(details, newTabsInputData(), [], {});
+
+    const [, tabId, options] = waitForTabInputDataMock.mock.calls[0];
+    expect(tabId).toBe(TAB_ID);
+
+    const usernameOnly = { u: { type: 'username', value: 'jan', url: 'https://example.com' } };
+    const pair = { ...usernameOnly, p: { type: 'password', value: 'S3cret', url: 'https://example.com' } };
+
+    expect(options.isReady(usernameOnly)).toBe(false);
+    expect(options.isReady(pair)).toBe(true);
+  });
+});
+
+describe('onWebRequest — a password typed again is still on its way', () => {
+  it('re-reads the captured values until the body carries them, then shows the prompt', async () => {
+    const utils = await import('../utils');
+    const tabsInputData = newTabsInputData();
+    const oldValues = { username: 'jan', password: 'wrong-first-try' };
+    const newValues = { username: 'jan', password: 'S3cret!' };
+
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValueOnce(oldValues).mockReturnValue(newValues);
+    utils.checkFormData.mockImplementation(async (details, values) => values.password === 'S3cret!');
+    utils.checkServicesData.mockResolvedValue({ type: 'newService' });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
+
+    expect(utils.savePromptAction).toHaveBeenCalledTimes(1);
+    expect(utils.savePromptAction.mock.calls[0][3]).toEqual(newValues);
+  });
+
+  it('gives up when the body never carries the captured values', async () => {
+    const utils = await import('../utils');
+
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValue({ username: 'jan', password: 'S3cret!' });
+    utils.checkFormData.mockResolvedValue(false);
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(utils.checkFormData.mock.calls.length).toBeGreaterThan(1);
+    expect(utils.savePromptAction).not.toHaveBeenCalled();
+  });
+});
+
+describe('onWebRequest — ignore lists', () => {
+  /**
+  * Prepares the pipeline mocks so a request carrying the captured values reaches the prompt.
+  * @param {Object} utils - The mocked utils module.
+  * @return {void}
+  */
+  const prepare = utils => {
+    getConfiguredBoolean.mockResolvedValue(true);
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValue({ username: 'jan', password: 'S3cret!' });
+    utils.checkServicesData.mockResolvedValue({ type: 'newService' });
+  };
+
+  it('shows the prompt for a login body that also sends a userAgent field', async () => {
+    const utils = await import('../utils');
+    prepare(utils);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkFormData.mockResolvedValue(true);
+    const details = postDetails({
+      frameType: 'outermost_frame',
+      requestBody: { raw: [{ bytes: new TextEncoder().encode('{"username":"jan","password":"S3cret!","userAgent":"Mozilla"}').buffer }] }
+    });
+
+    await onWebRequest(details, newTabsInputData(), [], {});
+
+    expect(utils.savePromptAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('reads a telemetry body only once instead of waiting for matching values', async () => {
+    const utils = await import('../utils');
+    prepare(utils);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkFormData.mockResolvedValue(false);
+    const details = postDetails({
+      frameType: 'outermost_frame',
+      requestBody: { raw: [{ bytes: new TextEncoder().encode('{"totalJSHeapSize":1,"domComplete":2}').buffer }] }
+    });
+
+    await onWebRequest(details, newTabsInputData(), [], {});
+
+    expect(utils.checkFormData).toHaveBeenCalledTimes(1);
+    expect(utils.savePromptAction).not.toHaveBeenCalled();
+  });
+
+  it('skips a POST to an analytics host before any work', async () => {
+    await onWebRequest(postDetails({ frameType: 'outermost_frame', url: 'https://www.google-analytics.com/g/collect' }), newTabsInputData(), [], {});
+
+    expect(getConfiguredBoolean).not.toHaveBeenCalled();
+  });
+});
+
+describe('onWebRequest — inputs of an old local key', () => {
+  it('drops them before waiting, so the wait picks up the values the page resends', async () => {
+    const utils = await import('../utils');
+    await storage.setItem('session:lKey', 'q83vEjRWeJCrze8SNFZ4kKvN7xI0VniQq83vEjRWeJA=');
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    const tabsInputData = { [TAB_ID]: { stale: { id: 'stale', type: 'password', value: 'c', encrypted: true, keyId: 'other', url: 'https://example.com' } } };
+    let seenByWait;
+    waitForTabInputDataMock.mockImplementation(async store => {
+      seenByWait = { ...store[TAB_ID] };
+      return false;
+    });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
+
+    expect(seenByWait).toEqual({});
+  });
+});
+
+describe('onWebRequest — fetch & autofill turned the save prompt off for the domain', () => {
+  const KEY = `session:savePromptDomainSuppressed-${TAB_ID}`;
+
+  beforeEach(async () => {
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem(KEY, 'example.com');
+  });
+
+  afterEach(async () => {
+    await storage.removeItem(KEY);
+  });
+
+  it('skips a login POST from any page of the suppressed domain', async () => {
+    vi.spyOn(browser.tabs, 'get').mockResolvedValue({ id: TAB_ID, url: 'https://app.example.com/after-login' });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(getConfiguredBoolean).not.toHaveBeenCalled();
+  });
+
+  it('still handles a login POST in the tab once it shows another domain', async () => {
+    vi.spyOn(browser.tabs, 'get').mockResolvedValue({ id: TAB_ID, url: 'https://other.com/login' });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame', url: 'https://api.other.com/login' }), newTabsInputData(), [], {});
+
+    expect(getConfiguredBoolean).toHaveBeenCalled();
+  });
+});
+
+// The prompt waits for the response of the login request, so a login the site rejects shows none.
+describe('onWebRequest — waits for the response', () => {
+  /**
+  * Prepares the pipeline mocks so a request carrying the captured values qualifies for the prompt.
+  * @param {Object} utils - The mocked utils module.
+  * @return {Promise<void>}
+  */
+  const prepare = async utils => {
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValue({ username: 'jan', password: 'S3cret!' });
+    utils.checkFormData.mockResolvedValue(true);
+    utils.checkServicesData.mockResolvedValue({ type: 'newService' });
+  };
+
+  it('shows the prompt only after the request completed', async () => {
+    const utils = await import('../utils');
+    const { completeSavePromptRequest } = await import('../utils/savePrompt/pendingSavePromptRequests');
+    const pending = new Map();
+
+    await prepare(utils);
+    await onWebRequest(postDetails({ frameType: 'outermost_frame', requestId: 'r1' }), newTabsInputData(), [], pending);
+
+    expect(utils.savePromptAction).not.toHaveBeenCalled();
+
+    await completeSavePromptRequest(pending, 'r1', true);
+
+    expect(utils.savePromptAction).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows no prompt when the request failed', async () => {
+    const utils = await import('../utils');
+    const { completeSavePromptRequest } = await import('../utils/savePrompt/pendingSavePromptRequests');
+    const pending = new Map();
+
+    await prepare(utils);
+    await onWebRequest(postDetails({ frameType: 'outermost_frame', requestId: 'r1' }), newTabsInputData(), [], pending);
+    await completeSavePromptRequest(pending, 'r1', false);
+
+    expect(utils.savePromptAction).not.toHaveBeenCalled();
+    expect(pending.size).toBe(0);
+  });
+
+  it('forgets a request that does not qualify for the prompt', async () => {
+    const utils = await import('../utils');
+    const pending = new Map();
+
+    await prepare(utils);
+    utils.checkFormData.mockResolvedValue(false);
+    await onWebRequest(postDetails({ frameType: 'outermost_frame', requestId: 'r1' }), newTabsInputData(), [], pending);
+
+    expect(pending.size).toBe(0);
+  });
+});
+
+describe('onWebRequest — values typed long ago', () => {
+  it('drops inputs older than ten minutes before matching the request', async () => {
+    const utils = await import('../utils');
+    const now = Date.now();
+    const tabsInputData = {
+      [TAB_ID]: {
+        old: { id: 'old', type: 'password', value: 'S3cret!', url: 'https://www.example.com', timestamp: now - 11 * 60 * 1000 },
+        fresh: { id: 'fresh', type: 'username', value: 'jan', url: 'https://www.example.com', timestamp: now - 1000 }
+      }
+    };
+
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValue({});
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), tabsInputData, [], {});
+
+    expect(Object.keys(tabsInputData[TAB_ID])).toEqual(['fresh']);
+  });
+});
+
+describe('onWebRequest — login form submitted by the user', () => {
+  /**
+  * Prepares the pipeline mocks so the request reaches checkFormData.
+  * @param {Object} utils - The mocked utils module.
+  * @return {Promise<void>}
+  */
+  const prepare = async utils => {
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValue({ username: 'jan', password: 'S3cret!' });
+    utils.checkFormData.mockResolvedValue(true);
+    utils.checkServicesData.mockResolvedValue(null);
+  };
+
+  it('tells checkFormData that the user submitted a form of the page right before the request', async () => {
+    const utils = await import('../utils');
+    const { recordSubmitIntent, resetSubmitIntents } = await import('../utils/savePrompt/submitIntents');
+    const now = Date.now();
+
+    resetSubmitIntents();
+    await prepare(utils);
+    recordSubmitIntent(TAB_ID, 'https://www.example.com', now - 500);
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame', timeStamp: now }), newTabsInputData(), [], {});
+
+    expect(utils.checkFormData.mock.calls[0][3]).toEqual({ submitted: true });
+  });
+
+  it('does not count a submit made long before the request', async () => {
+    const utils = await import('../utils');
+    const { recordSubmitIntent, resetSubmitIntents } = await import('../utils/savePrompt/submitIntents');
+    const now = Date.now();
+
+    resetSubmitIntents();
+    await prepare(utils);
+    recordSubmitIntent(TAB_ID, 'https://www.example.com', now - 10000);
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame', timeStamp: now }), newTabsInputData(), [], {});
+
+    expect(utils.checkFormData.mock.calls[0][3]).toEqual({ submitted: false });
+  });
+});
+
+// "Add" and "Update" silence the prompt only while their request to the phone runs.
+describe('onWebRequest — after "Add" on the save prompt', () => {
+  /**
+  * Prepares the pipeline mocks so a request carrying the captured values qualifies for the prompt.
+  * @param {Object} utils - The mocked utils module.
+  * @return {Promise<void>}
+  */
+  const prepare = async utils => {
+    getConfiguredBoolean.mockResolvedValue(true);
+    await storage.setItem('local:savePrompt', 'default');
+    utils.checkDomainOnIgnoredList.mockResolvedValue(false);
+    utils.cleanTabsInputData.mockImplementation((details, inputs) => inputs);
+    utils.getValuesFromTabsInputData.mockReturnValue({ username: 'jan', password: 'S3cret!' });
+    utils.checkFormData.mockResolvedValue(true);
+    utils.checkServicesData.mockResolvedValue({ type: 'newService' });
+  };
+
+  it('shows the prompt again when the save request was cancelled', async () => {
+    const utils = await import('../utils');
+    const { resetState } = await import('../websocket/wsState');
+
+    resetState();
+    await prepare(utils);
+    await storage.setItem(`session:savePromptSuppressed-${TAB_ID}`, { type: 'saveRequest', at: Date.now() - 60000 });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(utils.savePromptAction).toHaveBeenCalledTimes(1);
+    await storage.removeItem(`session:savePromptSuppressed-${TAB_ID}`);
+  });
+
+  it('stays silent while the save request runs', async () => {
+    const utils = await import('../utils');
+    const { wsState, resetState } = await import('../websocket/wsState');
+
+    resetState();
+    wsState.active = true;
+    wsState.type = 'fetch';
+    wsState.fetchLocationState = { action: 'addData', from: 'savePrompt' };
+    await prepare(utils);
+    await storage.setItem(`session:savePromptSuppressed-${TAB_ID}`, { type: 'saveRequest', at: Date.now() - 60000 });
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(utils.savePromptAction).not.toHaveBeenCalled();
+    resetState();
+    await storage.removeItem(`session:savePromptSuppressed-${TAB_ID}`);
+  });
+
+  it('stays silent after "Ignore this domain"', async () => {
+    const utils = await import('../utils');
+
+    await prepare(utils);
+    await storage.setItem(`session:savePromptSuppressed-${TAB_ID}`, true);
+
+    await onWebRequest(postDetails({ frameType: 'outermost_frame' }), newTabsInputData(), [], {});
+
+    expect(utils.savePromptAction).not.toHaveBeenCalled();
+    await storage.removeItem(`session:savePromptSuppressed-${TAB_ID}`);
   });
 });

@@ -76,7 +76,7 @@ export const processMatchingLoginsResult = async request => {
     }
   }
 
-  return sendAutofillToTab(tabId, deviceId, vaultId, id);
+  return sendAutofillToTab(tabId, deviceId, vaultId, id, item);
 };
 
 /** 
@@ -168,7 +168,7 @@ const shortcutAutofill = async () => {
       }
     }
 
-    return sendAutofillToTab(tab.id, item.deviceId, item.vaultId, item.id);
+    return sendAutofillToTab(tab.id, item.deviceId, item.vaultId, item.id, item);
   }
 
   matchingLogins = matchingLogins.map(item => {

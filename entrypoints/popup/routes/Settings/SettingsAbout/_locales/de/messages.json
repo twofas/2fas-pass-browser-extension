@@ -46,5 +46,9 @@
   "settings_lets_connect": {
     "message": "Treten wir in Kontakt",
     "description": "Prompt to connect with the 2FAS Pass team or community"
+  },
+  "settings_licenses_menu_link": {
+    "message": "Open-Source-Lizenzen",
+    "description": "Settings About menu link that opens the open source licenses page"
   }
 }

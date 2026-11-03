@@ -11,6 +11,8 @@ import getPasswordInputs from '@/partials/inputFunctions/getPasswordInputs';
 import getUsernameInputs from '@/partials/inputFunctions/getUsernameInputs';
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import generateInputId from './generateInputId';
+import getPromptInputType from './getPromptInputType';
+import { refreshLocalKey, waitForLocalKeyRefresh } from './ensureLocalKey';
 import { isHiddenPasswordValue, isProbablyNotUsername } from './credentialValueRules';
 import getShadowRoots from '../../entrypoints/content/functions/autofillFunctions/getShadowRoots';
 
@@ -84,6 +86,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     if (localKeyResponse?.status === 'ok' && localKeyResponse?.data && localKeyResponse.data.length > 0) {
       try {
         localKey.data = await crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKeyResponse.data), { name: 'AES-GCM' }, false, ['encrypt'] );
+        localKey.keyId = localKeyResponse.keyId || null;
       } catch {
         await CatchError(new TwoFasError(TwoFasError.internalErrors.handleInputEventKeyImportError, { additional: { func: 'handleInputEvent', event: e } }));
 
@@ -120,12 +123,18 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
   }
 
   // Set new timer for this specific input
-  timers[inputIdentifier] = setTimeout(async () => {
+  /**
+  * Captures the input value and sends it to the background. A value refused as encrypted with a local key rotated
+  * out by a lock (staleKey) is captured again, once, with the current key.
+  * @param {boolean} [retried=false] - Whether this is the resend after a staleKey answer.
+  * @return {Promise<void>}
+  */
+  const captureInput = async (retried = false) => {
     const inputId = input?.getAttribute?.('twofas-pass-id');
 
     if (!inputId && !isElementInArray(input, allInputs)) {
       const documentShadowRoots = getShadowRoots();
-      const passwordInputs = getPasswordInputs(documentShadowRoots);
+      const passwordInputs = getPasswordInputs(documentShadowRoots, { includeRevealed: true });
       const passwordForms = passwordInputs
         .map(input => input.closest('form'))
         .filter(Boolean);
@@ -145,12 +154,14 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
       }
     }
 
-    const type = input.type === 'password' ? 'password' : 'username';
+    const type = getPromptInputType(input);
 
     if (type === 'password' && isHiddenPasswordValue(input.value)) {
       delete timers[inputIdentifier];
       return;
     }
+
+    await waitForLocalKeyRefresh(localKey);
 
     const capturedValue = type === 'username' && isProbablyNotUsername(input.value) ? '' : input.value;
     const encryptValue = encrypted && capturedValue.length > 0;
@@ -188,6 +199,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
       const encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
 
       data.value = encryptedValueB64;
+      data.keyId = localKey.keyId || null;
     } else {
       data.value = capturedValue;
     }
@@ -213,6 +225,7 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
             ...data,
             value: ArrayBufferToBase64(beaconEncBytes),
             encrypted: true,
+            keyId: localKey.keyId || null,
             sent: false
           };
         } catch {}
@@ -223,11 +236,29 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
     delete timers[inputIdentifier];
 
     try {
-      await browser.runtime.sendMessage({
+      const response = await browser.runtime.sendMessage({
         action: REQUEST_ACTIONS.PROMPT_INPUT,
         data,
         target: REQUEST_TARGETS.BACKGROUND_PROMPT
       });
+
+      if (response?.message === 'staleKey') {
+        if (!retried) {
+          await refreshLocalKey(localKey);
+
+          if (localKey?.data) {
+            await captureInput(true);
+          }
+        }
+
+        return;
+      }
+
+      // A plaintext capture is never refused, so a key rotated by a lock shows only in the key id the background
+      // reports; refresh it, or every later beacon payload would be encrypted with the old key.
+      if (response?.keyId && localKey?.keyId && response.keyId !== localKey.keyId) {
+        await refreshLocalKey(localKey);
+      }
 
       // Value delivered to the background — drop the cached copy so the
       // flush/beacon fallbacks (which only read sent === false entries) stay
@@ -240,7 +271,9 @@ const handleInputEvent = async (e, allInputs, localKey, timers, ignore, encrypte
         delete beaconPayloads[data.id];
       }
     } catch {}
-  }, config.handleInputEventDebounce || 100);
+  };
+
+  timers[inputIdentifier] = setTimeout(() => captureInput(), config.handleInputEventDebounce || 100);
 };
 
 export default handleInputEvent;

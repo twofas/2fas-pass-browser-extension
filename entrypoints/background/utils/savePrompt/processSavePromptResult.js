@@ -6,6 +6,7 @@
 
 import decryptValues from './decryptValues';
 import removeSavePromptAction from './removeSavePromptAction';
+import { createSaveRequestSuppression } from './tabSavePromptSuppression';
 import openPopupWindowInNewWindow from '../openPopupWindowInNewWindow';
 import { SAVE_PROMPT_ACTIONS, REQUEST_STRING_ACTIONS, PULL_REQUEST_TYPES } from '@/constants';
 import { getCurrentDevice } from '@/partials/functions';
@@ -15,14 +16,13 @@ import Login from '@/models/itemModels/Login';
 * Cleans up save prompt state after the user has made a choice.
 * Removes the action from the in-memory array and resets tab visibility.
 * @param {string} tabId - The tab ID from the save prompt context.
-* @param {string} url - The URL from the save prompt context.
 * @param {Array} savePromptActions - The in-memory array of pending save prompt actions.
 * @param {Object} tabUpdateData - The tab update tracking data.
 * @return {void}
 */
-const cleanupSavePromptState = (tabId, url, savePromptActions, tabUpdateData) => {
+const cleanupSavePromptState = (tabId, savePromptActions, tabUpdateData) => {
   if (savePromptActions && Array.isArray(savePromptActions)) {
-    removeSavePromptAction(tabId, url, savePromptActions);
+    removeSavePromptAction(tabId, savePromptActions);
   }
 
   if (tabUpdateData && tabUpdateData[tabId]) {
@@ -70,11 +70,12 @@ const processSavePromptResult = async (request, savePromptActions, tabUpdateData
 
   logger.debug(LOGGER_CONSTANTS.CATEGORIES.STORAGE, 'BackgroundSW - session write - processSavePromptResult');
 
-  cleanupSavePromptState(tabId, url, savePromptActions, tabUpdateData);
+  cleanupSavePromptState(tabId, savePromptActions, tabUpdateData);
 
   switch (status) {
     case SAVE_PROMPT_ACTIONS.NEW_LOGIN: {
-      await storage.setItem(`session:savePromptSuppressed-${tabId}`, true);
+      // Silent only while the request to the phone runs: after a cancel the next submit shows the prompt again.
+      await storage.setItem(`session:savePromptSuppressed-${tabId}`, createSaveRequestSuppression());
 
       let decryptedValues;
 
@@ -112,7 +113,8 @@ const processSavePromptResult = async (request, savePromptActions, tabUpdateData
     }
 
     case SAVE_PROMPT_ACTIONS.UPDATE_LOGIN: {
-      await storage.setItem(`session:savePromptSuppressed-${tabId}`, true);
+      // Silent only while the request to the phone runs: after a cancel the next submit shows the prompt again.
+      await storage.setItem(`session:savePromptSuppressed-${tabId}`, createSaveRequestSuppression());
 
       let decryptedValues;
 

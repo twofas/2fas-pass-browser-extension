@@ -72,7 +72,7 @@ const encryptFlushData = async (pendingData, localKey, encrypted) => {
 
     const encryptedValue = EncryptBytes(nonce.ArrayBuffer, value);
 
-    result.push({ ...item, value: ArrayBufferToBase64(encryptedValue), encrypted: true });
+    result.push({ ...item, value: ArrayBufferToBase64(encryptedValue), encrypted: true, keyId: localKey.keyId || null });
   }
 
   return result;

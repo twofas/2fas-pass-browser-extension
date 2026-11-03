@@ -10,6 +10,7 @@ import { resetStorage } from '../migrations/initializeStorage';
 import onTabFocused from '../tabs/onTabFocused';
 import shouldHandleTabFocus from '../tabs/shouldHandleTabFocus';
 import handleCheckShareLinkSupport from './handleCheckShareLinkSupport';
+import getLocalKeyId from '../utils/getLocalKeyId';
 
 /** 
 * Function to handle messages sent to the background script.
@@ -75,7 +76,7 @@ const onMessage = (request, sender, sendResponse, migrations, savePromptActions,
 
       case REQUEST_ACTIONS.GET_LOCAL_KEY: {
         getLocalKey()
-          .then(lKey => { sendResponse({ status: 'ok', data: lKey }); })
+          .then(async lKey => { sendResponse({ status: 'ok', data: lKey, keyId: await getLocalKeyId(lKey) }); })
           .catch(e => { sendResponse({ status: 'error', message: e.message }); });
 
         break;

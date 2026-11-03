@@ -1,0 +1,230 @@
+{
+  "licenses_page_title": {
+    "message": "Open-Source-Lizenzen",
+    "description": "Page title of the open source licenses page"
+  },
+  "licenses_page_description": {
+    "message": "Open-Source-Bibliotheken, -Werkzeuge und -Schriften, mit denen die 2FAS Pass Browser Extension VERSION erstellt wird, mit vollständigen Lizenztexten.",
+    "description": "Description under the title of the open source licenses page; VERSION is the extension version"
+  },
+  "licenses_summary_label": {
+    "message": "Übersicht",
+    "description": "Accessible label of the summary tiles on the licenses page"
+  },
+  "licenses_summary_total": {
+    "message": "Alle Einträge",
+    "description": "Summary tile: number of all entries; clicking it shows all entries"
+  },
+  "licenses_summary_extension": {
+    "message": "In der Erweiterung",
+    "description": "Summary tile: libraries included in the extension"
+  },
+  "licenses_summary_development": {
+    "message": "Entwicklungswerkzeuge",
+    "description": "Summary tile: development tools used only to build and test the extension"
+  },
+  "licenses_summary_fonts": {
+    "message": "Schriften",
+    "description": "Summary tile: fonts"
+  },
+  "licenses_search_placeholder": {
+    "message": "Nach Name, Autor, Lizenz suchen…",
+    "description": "Placeholder of the search box on the licenses page"
+  },
+  "licenses_showing": {
+    "message": "COUNT von TOTAL angezeigt",
+    "description": "Number of shown entries; COUNT and TOTAL are numbers"
+  },
+  "licenses_clear_filters": {
+    "message": "Filter zurücksetzen",
+    "description": "Button that clears the search and filters on the licenses page"
+  },
+  "licenses_no_results": {
+    "message": "Keine Einträge entsprechen der Suche und den Filtern.",
+    "description": "Shown when no entry matches the search and filters"
+  },
+  "licenses_no_license_text": {
+    "message": "Dieses Paket enthält keinen Lizenztext. Die Lizenz ist oben angegeben.",
+    "description": "Shown in an entry that has no license text"
+  },
+  "licenses_yes": {
+    "message": "Ja",
+    "description": "Yes value in the licenses page details"
+  },
+  "licenses_no": {
+    "message": "Nein",
+    "description": "No value in the licenses page details"
+  },
+  "licenses_group_extension": {
+    "message": "Erweiterung",
+    "description": "Badge of an entry included in the extension"
+  },
+  "licenses_group_development": {
+    "message": "Entwicklung",
+    "description": "Badge of a development tool entry"
+  },
+  "licenses_group_fonts": {
+    "message": "Schrift",
+    "description": "Badge of a font entry"
+  },
+  "licenses_group_other": {
+    "message": "Sonstiges",
+    "description": "Badge of an entry of another kind"
+  },
+  "licenses_field_installed_version": {
+    "message": "Installierte Version",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_defined_version": {
+    "message": "Angeforderte Version",
+    "description": "Licenses page field label: version range requested by the project or the parent packages"
+  },
+  "licenses_field_remote_version": {
+    "message": "Neueste Version",
+    "description": "Licenses page field label: latest published version"
+  },
+  "licenses_field_license_type": {
+    "message": "Lizenz",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_author": {
+    "message": "Autor",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_description": {
+    "message": "Beschreibung",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_homepage": {
+    "message": "Homepage",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_repository": {
+    "message": "Repository",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_link": {
+    "message": "Link",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_bugs": {
+    "message": "Fehlermeldungen",
+    "description": "Licenses page field label: where to report issues"
+  },
+  "licenses_field_funding": {
+    "message": "Finanzierung",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_contributors": {
+    "message": "Mitwirkende",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_maintainers": {
+    "message": "Betreuer",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_keywords": {
+    "message": "Schlüsselwörter",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_dependency_type": {
+    "message": "Typ",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_direct": {
+    "message": "Direkte Abhängigkeit",
+    "description": "Licenses page field label: whether the project depends on the package directly"
+  },
+  "licenses_field_depth": {
+    "message": "Abhängigkeitstiefe",
+    "description": "Licenses page field label: nesting level in the dependency tree"
+  },
+  "licenses_field_required_by": {
+    "message": "Benötigt von",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_dependencies": {
+    "message": "Abhängigkeiten",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_optional_dependencies": {
+    "message": "Optionale Abhängigkeiten",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_peer_dependencies": {
+    "message": "Peer-Abhängigkeiten",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_engines": {
+    "message": "Laufzeitumgebungen",
+    "description": "Licenses page field label: supported runtimes"
+  },
+  "licenses_field_deprecated": {
+    "message": "Veraltet",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_copyright": {
+    "message": "Urheberrecht",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_designer": {
+    "message": "Designer",
+    "description": "Licenses page field label: font designer"
+  },
+  "licenses_field_designer_url": {
+    "message": "Website des Designers",
+    "description": "Licenses page field label: font designer website"
+  },
+  "licenses_field_manufacturer": {
+    "message": "Hersteller",
+    "description": "Licenses page field label: font manufacturer"
+  },
+  "licenses_field_license_description": {
+    "message": "Lizenzbeschreibung",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_license_url": {
+    "message": "Lizenz-URL",
+    "description": "Licenses page field label"
+  },
+  "licenses_field_styles": {
+    "message": "Schnitte",
+    "description": "Licenses page field label: font styles"
+  },
+  "licenses_field_axes": {
+    "message": "Variationsachsen",
+    "description": "Licenses page field label: variable font axes"
+  },
+  "licenses_field_glyphs": {
+    "message": "Glyphen",
+    "description": "Licenses page field label: number of font glyphs"
+  },
+  "licenses_field_source": {
+    "message": "Quelle",
+    "description": "Licenses page field label: where the file comes from"
+  },
+  "licenses_field_modifications": {
+    "message": "Änderungen",
+    "description": "Licenses page field label: changes made to the original file"
+  },
+  "licenses_field_resolved": {
+    "message": "Bezogen von",
+    "description": "Licenses page field label: download URL of the package"
+  },
+  "licenses_field_integrity": {
+    "message": "Integrität",
+    "description": "Licenses page field label: package checksum"
+  },
+  "licenses_field_sha256": {
+    "message": "SHA-256",
+    "description": "Licenses page field label: file checksums"
+  },
+  "licenses_field_paths": {
+    "message": "Pfade",
+    "description": "Licenses page field label: file locations in the project"
+  },
+  "licenses_field_license_files_source": {
+    "message": "Quelle des Lizenztextes",
+    "description": "Licenses page field label: where the license texts come from"
+  }
+}

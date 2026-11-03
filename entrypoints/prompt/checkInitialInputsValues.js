@@ -7,6 +7,7 @@
 
 import generateNonce from '@/partials/functions/generateNonce';
 import { isHiddenPasswordValue, isProbablyNotUsername } from './credentialValueRules';
+import getPromptInputType from './getPromptInputType';
 
 /**
 * Function to check initial input values and send them to background if they have values. A masked password
@@ -28,7 +29,7 @@ const checkInitialInputsValues = async (inputs, localKey, encrypted) => {
       continue;
     }
 
-    const type = input.type === 'password' ? 'password' : 'username';
+    const type = getPromptInputType(input);
 
     if ((type === 'password' && isHiddenPasswordValue(input.value)) || (type === 'username' && isProbablyNotUsername(input.value))) {
       continue;
@@ -56,6 +57,7 @@ const checkInitialInputsValues = async (inputs, localKey, encrypted) => {
         if (localKeyResponse?.status === 'ok' && localKeyResponse?.data && localKeyResponse.data.length > 0) {
           try {
             localKey.data = await crypto.subtle.importKey('raw', Base64ToArrayBuffer(localKeyResponse.data), { name: 'AES-GCM' }, false, ['encrypt']);
+            localKey.keyId = localKeyResponse.keyId || null;
           } catch {
             await CatchError(new TwoFasError(TwoFasError.internalErrors.checkInitialInputsValuesKeyImportError));
             return;
@@ -89,6 +91,7 @@ const checkInitialInputsValues = async (inputs, localKey, encrypted) => {
       const encryptedValueB64 = ArrayBufferToBase64(encryptedValue);
 
       data.value = encryptedValueB64;
+      data.keyId = localKey.keyId || null;
     } else {
       data.value = input.value;
     }

@@ -729,6 +729,9 @@ describe('URIMatcher', () => {
       assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: '10.10.10.10', matcher: URIMatcher.M_DOMAIN_TYPE }), ['http://10.10.10.10/', 'http://10.10.10.10/*']);
       assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: '127.0.0.1', matcher: URIMatcher.M_DOMAIN_TYPE }), ['http://127.0.0.1/', 'http://127.0.0.1/*']);
       assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: 'http://localhost', matcher: URIMatcher.M_DOMAIN_TYPE }), ['http://localhost/', 'http://localhost/*', 'http://*.localhost/', 'http://*.localhost/*']);
+      // A subdomain URI matches every host of its root domain (baseDomainMatch), so the patterns must cover the root domain
+      assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: 'https://mail.google.com', matcher: URIMatcher.M_DOMAIN_TYPE }), ['*://google.com/', '*://google.com/*', '*://*.google.com/', '*://*.google.com/*']);
+      assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: 'https://login.shop.domain.co.uk/path', matcher: URIMatcher.M_DOMAIN_TYPE }), ['*://domain.co.uk/', '*://domain.co.uk/*', '*://*.domain.co.uk/', '*://*.domain.co.uk/*']);
 
       // HOST
       assert.deepEqual(URIMatcher.generateDocumentUrlPatterns({ text: 'https://www.domain.com', matcher: URIMatcher.M_HOST_TYPE }), ['*://domain.com/', '*://domain.com/*']);

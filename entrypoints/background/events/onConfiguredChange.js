@@ -8,6 +8,7 @@ import contextMenuConfigured from '../contextMenu/contextMenuConfigured';
 import contextMenuNotConfigured from '../contextMenu/contextMenuNotConfigured';
 import { updateBadge, updateContextMenu, setBadgeLocked, notifyShareTabs } from '../utils';
 import getItems from '@/partials/sessionStorage/getItems';
+import injectPromptCSIntoActiveTabs from '../tabs/injectPromptCSIntoActiveTabs';
 
 /** 
 * Function to handle changes in configuration.
@@ -16,6 +17,10 @@ import getItems from '@/partials/sessionStorage/getItems';
 * @return {Promise<boolean>} A promise that resolves to true if the configuration change is handled successfully, otherwise false.
 */
 const onConfiguredChange = async newValue => {
+  if (newValue === true) {
+    injectPromptCSIntoActiveTabs().catch(() => {});
+  }
+
   let items;
 
   try {
