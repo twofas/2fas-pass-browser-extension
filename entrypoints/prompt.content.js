@@ -12,12 +12,23 @@ import getShadowRoots from './content/functions/autofillFunctions/getShadowRoots
 import setUsernameSkips from '@/partials/inputFunctions/setUsernameSkips';
 import setIDsToInputs from './prompt/setIDsToInputs';
 import isSubmitButtonClick from './prompt/isSubmitButtonClick';
+import isSubmitKeydown from './prompt/isSubmitKeydown';
+import isInLoginForm from './prompt/isInLoginForm';
+import isUserFormSubmit from './prompt/isUserFormSubmit';
 import encryptFlushData from './prompt/encryptFlushData';
 import ensureLocalKey from './prompt/ensureLocalKey';
 import isCryptoAvailable from '@/partials/functions/isCryptoAvailable';
 import ifCtxIsInvalid from '@/partials/contentScript/ifCtxIsInvalid';
 import checkInitialInputsValues from './prompt/checkInitialInputsValues';
 import flushPendingInputs, { BEACON_URL } from './prompt/flushPendingInputs';
+import sendPromptInputs from './prompt/sendPromptInputs';
+import createLocalKeyFreshnessCheck from './prompt/createLocalKeyFreshnessCheck';
+
+/**
+* Idle time after which the first interaction fetches the local key again (the key rotates on every lock).
+* @type {number}
+*/
+const LOCAL_KEY_IDLE_CHECK = 30000; // milliseconds
 
 export default defineContentScript({
   matches: ['https://*/*', 'http://*/*'],
@@ -25,7 +36,7 @@ export default defineContentScript({
   matchAboutBlank: true,
   registration: 'runtime',
   async main (ctx) {
-    const localKey = { data: null };
+    const localKey = { data: null, keyId: null };
     const timers = {};
     const ignore = { value: false };
     let savePrompt = null;
@@ -79,8 +90,11 @@ export default defineContentScript({
       await ensureLocalKey(localKey);
     }
 
+    // The key rotates on every lock: fetch it again on the first interaction after the page was idle.
+    const checkLocalKey = createLocalKeyFreshnessCheck(localKey, LOCAL_KEY_IDLE_CHECK);
+
     const documentShadowRoots = getShadowRoots();
-    const passwordInputs = getPasswordInputs(documentShadowRoots);
+    const passwordInputs = getPasswordInputs(documentShadowRoots, { includeRevealed: true });
     const passwordForms = passwordInputs
       .map(input => input.closest('form'))
       .filter(Boolean);
@@ -100,12 +114,13 @@ export default defineContentScript({
       document.removeEventListener('click', handleClick, { capture: true });
       window.removeEventListener('error', emptyFunc);
       window.removeEventListener('unhandledrejection', emptyFunc);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
 
     const trackNewInputs = () => {
       try {
         const shadowRoots = getShadowRoots();
-        const newPasswordInputs = getPasswordInputs(shadowRoots);
+        const newPasswordInputs = getPasswordInputs(shadowRoots, { includeRevealed: true });
         const newPasswordForms = newPasswordInputs
           .map(input => input.closest('form'))
           .filter(Boolean);
@@ -127,21 +142,45 @@ export default defineContentScript({
       trackNewInputs();
 
       const pendingData = flushPendingInputs(allInputs, timers, latestValues);
-      const sendData = encrypted ? await encryptFlushData(pendingData, localKey, encrypted) : pendingData;
 
-      for (const inputData of sendData) {
-        try {
-          browser.runtime.sendMessage({
-            action: REQUEST_ACTIONS.PROMPT_INPUT,
-            data: inputData,
-            target: REQUEST_TARGETS.BACKGROUND_PROMPT
-          });
-        } catch {}
-      }
+      await sendPromptInputs(pendingData, localKey, encrypted);
     };
 
-    const handleFormSubmit = () => {
+    /**
+    * Tells the background that the user submitted a login form, so the request sent right after it counts as a login
+    * even when the page transforms the password before sending it. Sent before the page's own handlers run; call it
+    * after flushAndSendPending, which tracks the inputs added since the last scan.
+    * @param {Element} target - The submit control, field or form.
+    * @return {void}
+    */
+    const reportLoginSubmit = target => {
+      if (!isInLoginForm(target, allInputs)) {
+        return;
+      }
+
+      browser.runtime.sendMessage({
+        action: REQUEST_ACTIONS.PROMPT_SUBMIT_INTENT,
+        target: REQUEST_TARGETS.BACKGROUND_PROMPT
+      }).catch(() => {});
+    };
+
+    /**
+    * Returns the element an event was dispatched to, looking into open shadow roots.
+    * @param {Event} e - The event.
+    * @return {Element|null} The element.
+    */
+    const getEventTarget = e => {
+      const path = typeof e?.composedPath === 'function' ? e.composedPath() : null;
+
+      return (path && path[0]) || e?.target || null;
+    };
+
+    const handleFormSubmit = e => {
       flushAndSendPending();
+
+      if (isUserFormSubmit(e)) {
+        reportLoginSubmit(getEventTarget(e));
+      }
     };
 
     const handleKeydown = e => {
@@ -149,26 +188,14 @@ export default defineContentScript({
         return;
       }
 
-      if (e?.key !== 'Enter' || e?.isComposing) {
-        return;
-      }
+      checkLocalKey();
 
-      const path = typeof e?.composedPath === 'function' ? e.composedPath() : null;
-      const target = (path && path[0]) || e?.target;
-
-      if (!target || target.tagName !== 'INPUT') {
-        return;
-      }
-
-      const isTracked = target.getAttribute?.('twofas-pass-id') || allInputs.includes(target);
-      const form = target.closest?.('form');
-      const formHasPassword = form ? form.querySelector('input[type="password"]') : null;
-
-      if (!isTracked && !formHasPassword && target.type !== 'password') {
+      if (!isSubmitKeydown(e, allInputs)) {
         return;
       }
 
       flushAndSendPending();
+      reportLoginSubmit(getEventTarget(e));
     };
 
     const handleClick = e => {
@@ -176,14 +203,24 @@ export default defineContentScript({
         return;
       }
 
+      checkLocalKey();
+
       if (!isSubmitButtonClick(e)) {
         return;
       }
 
       flushAndSendPending();
+      reportLoginSubmit(getEventTarget(e));
     };
 
+    // Leaving the page only flushes the pending values: the listeners stay, because the page can come back from the
+    // back-forward cache as the same document (the Back button) without this script running again, and a page can
+    // cancel the unload ("Leave site?").
     const handleBeforeUnload = async () => {
+      if (ifCtxIsInvalid(ctx, removeListeners)) {
+        return;
+      }
+
       const pendingData = flushPendingInputs(allInputs, timers, latestValues);
 
       // Reliable, pre-encrypted carrier — send synchronously before any await so
@@ -196,8 +233,6 @@ export default defineContentScript({
           navigator.sendBeacon(BEACON_URL, blob);
         } catch {}
       }
-
-      removeListeners();
 
       // Best-effort flush — in encrypted mode the values are encrypted first so a
       // plaintext entry never lands among the encrypted ones (which would break
@@ -238,6 +273,6 @@ export default defineContentScript({
     document.addEventListener('click', handleClick, { capture: true });
     window.addEventListener('error', emptyFunc);
     window.addEventListener('unhandledrejection', emptyFunc);
-    window.addEventListener('beforeunload', handleBeforeUnload, { once: true });
+    window.addEventListener('beforeunload', handleBeforeUnload);
   },
 });

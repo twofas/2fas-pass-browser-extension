@@ -22,6 +22,7 @@ import bgFetchOnClose from './handlers/bgFetchOnClose.js';
 import { saveWsSession, loadWsSession, clearWsSession, bumpWsSessionActivity, markWsSessionConversation } from './wsSessionPersistence.js';
 import { startKeepalive, stopKeepalive } from './connect/keepalive.js';
 import { startSelfTick, stopSelfTick } from './selfTick.js';
+import { noteSavePromptRequestStart } from '../utils/savePrompt/isSavePromptRequestActive';
 
 // Serialises resume attempts: the popup fires WS_GET_STATE from several hooks on mount,
 // and the keepalive alarm may fire concurrently, so without this two resumes could race
@@ -259,6 +260,10 @@ const startFetch = async (fetchAction, fetchData, from) => {
   wsState.active = true;
   wsState.fetchAction = fetchAction;
   wsState.fetchLocationState = { action: fetchAction, data: fetchData, from };
+
+  if (from === 'savePrompt') {
+    noteSavePromptRequestStart();
+  }
 
   if (fetchAction === PULL_REQUEST_TYPES.UPDATE_DATA) {
     wsState.fetchState = 3; // FETCH_STATE.CONTINUE_UPDATE

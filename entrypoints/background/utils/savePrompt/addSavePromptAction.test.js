@@ -52,4 +52,13 @@ describe('addSavePromptAction — per-field encryption flags', () => {
     expect(savePromptActions[0].usernameEncrypted).toBe(false);
     expect(savePromptActions[0].passwordEncrypted).toBe(false);
   });
+
+  it('stores the creation time of the action', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(123_456);
+    const actions = [];
+
+    await addSavePromptAction({ tabId: 5 }, { type: 'newService' }, { username: 'u', password: 'p' }, actions);
+
+    expect(actions[0].createdAt).toBe(123_456);
+  });
 });

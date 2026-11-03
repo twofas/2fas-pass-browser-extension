@@ -327,6 +327,7 @@
     }
 
     &.twofas-pass-save-prompt {
+      --anim: var(--anim-fast);
       align-items: flex-start !important;
       display: flex !important;
       flex-direction: column !important;

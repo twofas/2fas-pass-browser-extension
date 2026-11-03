@@ -15,7 +15,7 @@
 * `canAutofillUsername: false` and another with `canAutofillPassword: false`,
 * even though both fields were filled overall.
 *
-* `allFieldsFilled` must be derived by aggregating capability ACROSS frames
+* `passwordFilled` must be derived by aggregating capability ACROSS frames
 * (some-per-field), never per-frame: a per-frame `every` check falsely reports a
 * partial fill whenever the form is split, a frame is unreachable (sendMessage
 * rejected → literal `false`), or a cross-domain frame was intentionally blocked
@@ -26,23 +26,26 @@
 * (finishPullRequestAutofill) from re-implementing — and re-introducing — the bug
 * (finding #43).
 *
+* Only the password counts: it is the one secret a fetch pulls from the phone, so an
+* unfilled username never means the fetched data was lost (KeepItem is shown only
+* when a fetched field could not be filled).
+*
 * @param {Array<Object>|*} responses - Per-frame responses from sendMessageToAllFrames.
 *   Non-array values and non-object / `false` entries (rejected broadcasts) are
 *   treated as neutral.
 * @param {Object} actionData - The autofill request; its `username` / `password`
-*   presence determines which fields had to be filled.
-* @return {{ isOk: boolean, allFieldsFilled: boolean }} Aggregated outcome.
+*   `password` presence determines whether a password had to be filled.
+* @return {{ isOk: boolean, passwordFilled: boolean }} Aggregated outcome.
 */
 const aggregateLoginAutofillResponses = (responses, actionData) => {
   const frames = Array.isArray(responses) ? responses : [];
 
   const isOk = frames.some(frameResponse => frameResponse?.status === 'ok');
-  const filledUsername = frames.some(frameResponse => frameResponse?.status === 'ok' && frameResponse.canAutofillUsername);
   const filledPassword = frames.some(frameResponse => frameResponse?.status === 'ok' && frameResponse.canAutofillPassword);
 
-  const allFieldsFilled = (!actionData?.username || filledUsername) && (!actionData?.password || filledPassword);
+  const passwordFilled = !actionData?.password || filledPassword;
 
-  return { isOk, allFieldsFilled };
+  return { isOk, passwordFilled };
 };
 
 export default aggregateLoginAutofillResponses;

@@ -185,3 +185,30 @@ describe('sendCardAutofillToTab — card fields never stored as plaintext at res
     await storage.removeItem('session:autofillCardData-7');
   });
 });
+
+describe('sendCardAutofillToTab — the caller already read the item', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    injectCSIfNotAlready.mockResolvedValue(true);
+    getItem.mockResolvedValue(buildItem());
+    sendMessageToTab.mockResolvedValue({ status: 'ok', cryptoAvailable: true });
+    resolveCrossDomainPermissions.mockResolvedValue({ needsDialog: false, allBlocked: false, crossDomainAllowedDomains: [] });
+    encryptCardSifForTransmission.mockResolvedValue({ status: 'ok', cardNumber: 'cn', expirationDate: 'ed', securityCode: 'sc' });
+    sendMessageToAllFrames.mockResolvedValue([{ status: 'ok', filledFields: {}, missingInputFields: [] }]);
+    aggregateCardAutofillResponses.mockReturnValue({ outcome: 'ok' });
+    protectCardActionData.mockImplementation(async actionData => ({ status: 'ok', actionData }));
+  });
+
+  it('fills with the passed item without reading the items again', async () => {
+    await sendCardAutofillToTab(7, 'device', 'vault', 'item', buildItem());
+
+    expect(getItem).not.toHaveBeenCalled();
+    expect(encryptCardSifForTransmission).toHaveBeenCalledTimes(1);
+  });
+
+  it('reads the item when the caller passes none', async () => {
+    await sendCardAutofillToTab(7, 'device', 'vault', 'item');
+
+    expect(getItem).toHaveBeenCalledWith('device', 'vault', 'item');
+  });
+});

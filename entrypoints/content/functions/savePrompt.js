@@ -11,6 +11,12 @@ import logoSrcDark from '@/assets/logo-dark.svg?raw';
 import closeSrc from '@/assets/popup-window/cancel.svg?raw';
 
 /**
+* Duration of the save prompt fade-out (matches --anim-fast in TwofasNotification.scss).
+* @type {number}
+*/
+const HIDE_TRANSITION_MS = 100;
+
+/**
 * Function to close the notification.
 * @param {Object} n - The notification object.
 * @param {Object} timers - The timers object containing all timer IDs.
@@ -18,7 +24,7 @@ import closeSrc from '@/assets/popup-window/cancel.svg?raw';
 */
 const closeNotification = (n, timers) => {
   if (timers.visible !== null) {
-    clearTimeout(timers.visible);
+    cancelAnimationFrame(timers.visible);
     timers.visible = null;
   }
 
@@ -44,7 +50,7 @@ const closeNotification = (n, timers) => {
 
       n = null;
       timers.cleanup = null;
-    }, 200);
+    }, HIDE_TRANSITION_MS);
   }
 };
 
@@ -153,7 +159,7 @@ const dismissAllSavePrompts = container => {
       setTimeout(() => {
         el.remove();
       }, 400);
-    }, 200);
+    }, HIDE_TRANSITION_MS);
   });
 };
 
@@ -265,13 +271,16 @@ const savePrompt = (request, sendResponse, container) => {
   n.item.appendChild(n.buttons);
   n.container.appendChild(n.item);
 
-  timers.visible = setTimeout(() => {
-    if (n && n.item) {
-      n.item.classList.add('twofas-pass-visible');
-    }
+  // Two frames: the item is painted in its initial state first, so adding the class starts the entry transition.
+  timers.visible = requestAnimationFrame(() => {
+    timers.visible = requestAnimationFrame(() => {
+      if (n && n.item) {
+        n.item.classList.add('twofas-pass-visible');
+      }
 
-    timers.visible = null;
-  }, 200);
+      timers.visible = null;
+    });
+  });
 };
 
 export default savePrompt;

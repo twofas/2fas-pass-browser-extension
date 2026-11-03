@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0756CC24F116E286D61E2766 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 82D06AEABD127D125CC39BBF /* licenses.html */; };
 		3780B08A2EE2FD7A00D68A1E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3780B0892EE2FD7A00D68A1E /* AppDelegate.swift */; };
 		3780B09E2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3780B09D2EE2FD7A00D68A1E /* 2FAS Pass BE - Dev Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		3780B0AE2EE2FD7A00D68A1E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3780B06E2EE2FD7A00D68A1E /* Assets.xcassets */; };
@@ -89,6 +90,7 @@
 		5AFAD0E73000000000000004 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		5AFAD0E73000000000000005 /* Montserrat-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Bold.ttf"; sourceTree = "<group>"; };
 		5AFAD0E73000000000000006 /* Montserrat-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Regular.ttf"; sourceTree = "<group>"; };
+		82D06AEABD127D125CC39BBF /* licenses.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = licenses.html; path = "../../.output/safari-mv3-dev/licenses.html"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				3780B0C22EE2FD7B00D68A1E /* install.html */,
+				82D06AEABD127D125CC39BBF /* licenses.html */,
 				5AFAD0E71000000000000001 /* safari-download.html */,
 				3780B0C32EE2FD7B00D68A1E /* background.js */,
 				3780B0C42EE2FD7B00D68A1E /* popup.html */,
@@ -327,6 +330,7 @@
 				3780B0D42EE2FD7B00D68A1E /* icons in Resources */,
 				3780B0D92EE2FD7B00D68A1E /* animations in Resources */,
 				3780B0CE2EE2FD7B00D68A1E /* install.html in Resources */,
+				0756CC24F116E286D61E2766 /* licenses.html in Resources */,
 				5AFAD0E71000000000000002 /* safari-download.html in Resources */,
 				3780B0D82EE2FD7B00D68A1E /* assets in Resources */,
 				3780B0DB2EE2FD7B00D68A1E /* devpanel.html in Resources */,
@@ -512,7 +516,7 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 120;
+				CURRENT_PROJECT_VERSION = 123;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -527,7 +531,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.8.13;
+				MARKETING_VERSION = 1.8.14;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -549,7 +553,7 @@
 			buildSettings = {
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 120;
+				CURRENT_PROJECT_VERSION = 123;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -564,7 +568,7 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.8.13;
+				MARKETING_VERSION = 1.8.14;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -587,7 +591,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 120;
+				CURRENT_PROJECT_VERSION = 123;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -604,7 +608,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.8.13;
+				MARKETING_VERSION = 1.8.14;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,
@@ -630,7 +634,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 120;
+				CURRENT_PROJECT_VERSION = 123;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -647,7 +651,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.8.13;
+				MARKETING_VERSION = 1.8.14;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SafariServices,

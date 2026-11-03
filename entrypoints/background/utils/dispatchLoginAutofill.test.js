@@ -138,7 +138,7 @@ describe('dispatchLoginAutofill — failure escalation (non-windowClose)', () =>
   });
 
   it('escalates a partial fill to the popup only for HIGHLY_SECRET items', async () => {
-    const closeData = { vaultId: 'v', securityType: SECURITY_TIER.HIGHLY_SECRET };
+    const closeData = { vaultId: 'v', securityType: SECURITY_TIER.HIGHLY_SECRET, s_password: 'pw', encryptionItemT2KeyB64: 'keyB64' };
     sendMessageToAllFrames.mockResolvedValueOnce([{ status: 'ok', canAutofillPassword: false, canAutofillUsername: true }]);
 
     await dispatchLoginAutofill(5, KEY, { action: REQUEST_ACTIONS.AUTOFILL, password: 'p' }, closeData);
@@ -146,6 +146,27 @@ describe('dispatchLoginAutofill — failure escalation (non-windowClose)', () =>
     expect(storeAutofillFailureData).toHaveBeenCalledWith(5, closeData);
     expect(openPopupWithFallback).toHaveBeenCalledTimes(1);
     expect(ignoreSavePromptCall()).toBeUndefined();
+  });
+
+  it('does NOT escalate a HIGHLY_SECRET fetched fill when only the username field is missing', async () => {
+    const closeData = { vaultId: 'v', securityType: SECURITY_TIER.HIGHLY_SECRET, s_password: 'pw', encryptionItemT2KeyB64: 'keyB64' };
+    sendMessageToAllFrames.mockResolvedValueOnce([{ status: 'ok', canAutofillPassword: true, canAutofillUsername: false }]);
+
+    await dispatchLoginAutofill(5, KEY, { action: REQUEST_ACTIONS.AUTOFILL, username: 'u', password: 'p' }, closeData);
+
+    expect(storeAutofillFailureData).not.toHaveBeenCalled();
+    expect(openPopupWithFallback).not.toHaveBeenCalled();
+    expect(ignoreSavePromptCall()).toBeDefined();
+  });
+
+  it('does NOT escalate a partial HIGHLY_SECRET fill when no secret was fetched (nothing to keep)', async () => {
+    const closeData = { vaultId: 'v', securityType: SECURITY_TIER.HIGHLY_SECRET };
+    sendMessageToAllFrames.mockResolvedValueOnce([{ status: 'ok', canAutofillPassword: false, canAutofillUsername: true }]);
+
+    await dispatchLoginAutofill(5, KEY, { action: REQUEST_ACTIONS.AUTOFILL, password: 'p' }, closeData);
+
+    expect(storeAutofillFailureData).not.toHaveBeenCalled();
+    expect(openPopupWithFallback).not.toHaveBeenCalled();
   });
 
   it('does NOT escalate a partial fill for non-HIGHLY_SECRET items — it completes normally', async () => {
@@ -157,5 +178,31 @@ describe('dispatchLoginAutofill — failure escalation (non-windowClose)', () =>
     expect(storeAutofillFailureData).not.toHaveBeenCalled();
     expect(openPopupWithFallback).not.toHaveBeenCalled();
     expect(ignoreSavePromptCall()).toBeDefined();
+  });
+});
+
+describe('dispatchLoginAutofill — save prompt after fetch & autofill', () => {
+  const SUPPRESSED_KEY = 'session:savePromptDomainSuppressed-5';
+
+  beforeEach(async () => {
+    await storage.removeItem(SUPPRESSED_KEY);
+    vi.spyOn(browser.tabs, 'get').mockResolvedValue({ id: 5, url: 'https://example.com/login' });
+  });
+
+  it('turns the save prompt off for the domain after filling a pulled secret that is not saved', async () => {
+    const actionData = { action: REQUEST_ACTIONS.AUTOFILL, username: 'u', password: 'p' };
+
+    await dispatchLoginAutofill(5, KEY, actionData, { itemId: 'i', s_password: 'enc', encryptionItemT2KeyB64: 'key' });
+
+    expect(await storage.getItem(SUPPRESSED_KEY)).toBe('example.com');
+    await storage.removeItem(SUPPRESSED_KEY);
+  });
+
+  it('keeps the save prompt after filling an item from the vault', async () => {
+    const actionData = { action: REQUEST_ACTIONS.AUTOFILL, username: 'u', password: 'p' };
+
+    await dispatchLoginAutofill(5, KEY, actionData, { itemId: 'i', securityType: 2 });
+
+    expect(await storage.getItem(SUPPRESSED_KEY)).toBeNull();
   });
 });

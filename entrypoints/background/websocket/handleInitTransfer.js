@@ -39,8 +39,12 @@ const handleInitTransfer = async (json, hkdfSaltAB, sessionKeyForHKDF, uuid, dev
     throw new TwoFasError(TwoFasError.errors.decryptNewSessionId, { event: e });
   }
 
+  const fcmTokenPresent = Boolean(json?.payload?.fcmTokenEnc && json?.payload?.fcmTokenEnc?.length > 0);
+
+  logger.info(LOGGER_CONSTANTS.CATEGORIES.WS, 'PairingFlow - init transfer received', { fcmTokenPresent });
+
   // OPTIONAL
-  if (json?.payload?.fcmTokenEnc && json?.payload?.fcmTokenEnc?.length > 0) {
+  if (fcmTokenPresent) {
     try {
       const fcmTokenEnc = json.payload.fcmTokenEnc;
       const fcmTokenEncAB = Base64ToArrayBuffer(fcmTokenEnc);

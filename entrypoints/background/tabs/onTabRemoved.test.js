@@ -11,6 +11,7 @@ vi.mock('@/partials/sessionStorage/getKey', () => ({
 }));
 
 import onTabRemoved from './onTabRemoved.js';
+import { recordSubmitIntent, hasRecentSubmitIntent } from '../utils/savePrompt/submitIntents';
 
 describe('onTabRemoved — cross-domain autofill storage cleanup (finding #1 / #5)', () => {
   beforeEach(async () => {
@@ -60,5 +61,16 @@ describe('onTabRemoved — cross-domain autofill storage cleanup (finding #1 / #
 
     expect(await storage.getItem('session:autofillData-99')).not.toBeNull();
     await storage.removeItem('session:autofillData-99');
+  });
+});
+
+describe('onTabRemoved — login form submit', () => {
+  it('forgets the login form submit of the closed tab', async () => {
+    const now = Date.now();
+
+    recordSubmitIntent(42, 'https://www.example.com', now);
+    await onTabRemoved(42, {}, []);
+
+    expect(hasRecentSubmitIntent(42, 'https://www.example.com', now)).toBe(false);
   });
 });

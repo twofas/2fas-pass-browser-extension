@@ -35,13 +35,15 @@ const DEFAULT_STEP = 50; // milliseconds
 * @param {Object} [options] - Optional timing overrides.
 * @param {number} [options.maxWait=600] - Total time to wait in milliseconds.
 * @param {number} [options.step=50] - Polling interval in milliseconds.
-* @return {Promise<boolean>} True when the tab has captured inputs, false on timeout.
+* @param {Function} [options.isReady] - Tells from the tab's inputs whether the wait is over; by default any input.
+* @return {Promise<boolean>} True when the tab's inputs are ready, false on timeout.
 */
 const waitForTabInputData = async (tabsInputData, tabId, options = {}) => {
   const maxWait = typeof options.maxWait === 'number' ? options.maxWait : DEFAULT_MAX_WAIT;
   const step = typeof options.step === 'number' ? options.step : DEFAULT_STEP;
 
-  const hasData = () => Boolean(tabsInputData && tabId && tabsInputData[tabId] && Object.keys(tabsInputData[tabId]).length > 0);
+  const isReady = typeof options.isReady === 'function' ? options.isReady : inputs => Object.keys(inputs).length > 0;
+  const hasData = () => Boolean(tabsInputData && tabId && tabsInputData[tabId] && isReady(tabsInputData[tabId]));
 
   if (hasData()) {
     return true;

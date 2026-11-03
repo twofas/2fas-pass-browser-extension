@@ -5,6 +5,7 @@
 // See LICENSE file for full terms
 
 import { isHiddenPasswordValue, isProbablyNotUsername } from './credentialValueRules';
+import getPromptInputType from './getPromptInputType';
 
 const BEACON_URL = `https://${import.meta.env.VITE_BEACON}.invalid`;
 
@@ -38,7 +39,7 @@ const flushPendingInputs = (allInputs, timers, latestValues) => {
       continue;
     }
 
-    const type = input.type === 'password' ? 'password' : 'username';
+    const type = getPromptInputType(input);
 
     if (type === 'password' && isHiddenPasswordValue(input.value)) {
       continue;

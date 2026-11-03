@@ -17,7 +17,7 @@ describe('aggregateLoginAutofillResponses', () => {
     it('returns not-ok for false (failed broadcast)', () => {
       const result = aggregateLoginAutofillResponses(false, { username: 'u', password: 'p' });
       expect(result.isOk).toBe(false);
-      expect(result.allFieldsFilled).toBe(false);
+      expect(result.passwordFilled).toBe(false);
     });
 
     it('returns not-ok for null', () => {
@@ -37,58 +37,67 @@ describe('aggregateLoginAutofillResponses', () => {
   });
 
   describe('single-frame happy paths', () => {
-    it('is ok + allFieldsFilled when one frame fills both username and password', () => {
+    it('is ok + passwordFilled when one frame fills both username and password', () => {
       const result = aggregateLoginAutofillResponses([okFrame(true, true)], { username: 'u', password: 'p' });
       expect(result.isOk).toBe(true);
-      expect(result.allFieldsFilled).toBe(true);
+      expect(result.passwordFilled).toBe(true);
     });
 
-    it('is allFieldsFilled when only a username was requested and it was filled', () => {
+    it('is passwordFilled when only a username was requested and it was filled', () => {
       const result = aggregateLoginAutofillResponses([okFrame(true, false)], { username: 'u' });
       expect(result.isOk).toBe(true);
-      expect(result.allFieldsFilled).toBe(true);
+      expect(result.passwordFilled).toBe(true);
     });
 
-    it('is allFieldsFilled when only a password was requested and it was filled', () => {
+    it('is passwordFilled when only a password was requested and it was filled', () => {
       const result = aggregateLoginAutofillResponses([okFrame(false, true)], { password: 'p' });
       expect(result.isOk).toBe(true);
-      expect(result.allFieldsFilled).toBe(true);
+      expect(result.passwordFilled).toBe(true);
     });
   });
 
-  describe('genuine partial fills (must still report allFieldsFilled=false)', () => {
-    it('is not allFieldsFilled when password was requested but no frame had a password field', () => {
+  describe('password not filled (must report passwordFilled=false)', () => {
+    it('is not passwordFilled when password was requested but no frame had a password field', () => {
       const result = aggregateLoginAutofillResponses([okFrame(true, false)], { username: 'u', password: 'p' });
       expect(result.isOk).toBe(true);
-      expect(result.allFieldsFilled).toBe(false);
+      expect(result.passwordFilled).toBe(false);
     });
 
-    it('is not allFieldsFilled when username was requested but no frame had a username field', () => {
+  });
+
+  describe('username is not a fetched field', () => {
+    it('is passwordFilled when the password was filled but no frame had a username field', () => {
       const result = aggregateLoginAutofillResponses([okFrame(false, true)], { username: 'u', password: 'p' });
       expect(result.isOk).toBe(true);
-      expect(result.allFieldsFilled).toBe(false);
+      expect(result.passwordFilled).toBe(true);
+    });
+
+    it('is passwordFilled when only a username was requested and no frame had a username field', () => {
+      const result = aggregateLoginAutofillResponses([okFrame(false, false)], { username: 'u' });
+      expect(result.isOk).toBe(true);
+      expect(result.passwordFilled).toBe(true);
     });
   });
 
   describe('regression: finding #43 — split username/password across frames', () => {
     // Username lives in the top frame, password in an iframe. Each frame returns
     // 'ok' with only one capability flag true. The old per-frame `every` check
-    // zeroed allFieldsFilled even though both fields were filled overall.
-    it('is allFieldsFilled when username is in one frame and password in another', () => {
+    // reported a partial fill even though both fields were filled overall.
+    it('is passwordFilled when username is in one frame and password in another', () => {
       const result = aggregateLoginAutofillResponses(
         [okFrame(true, false), okFrame(false, true)],
         { username: 'u', password: 'p' }
       );
       expect(result.isOk).toBe(true);
-      expect(result.allFieldsFilled).toBe(true);
+      expect(result.passwordFilled).toBe(true);
     });
 
-    it('is allFieldsFilled with the split order reversed', () => {
+    it('is passwordFilled with the split order reversed', () => {
       const result = aggregateLoginAutofillResponses(
         [okFrame(false, true), okFrame(true, false)],
         { username: 'u', password: 'p' }
       );
-      expect(result.allFieldsFilled).toBe(true);
+      expect(result.passwordFilled).toBe(true);
     });
   });
 
@@ -101,7 +110,7 @@ describe('aggregateLoginAutofillResponses', () => {
         { username: 'u', password: 'p' }
       );
       expect(result.isOk).toBe(true);
-      expect(result.allFieldsFilled).toBe(true);
+      expect(result.passwordFilled).toBe(true);
     });
 
     it('treats null / undefined / status-less entries as neutral', () => {
@@ -110,7 +119,7 @@ describe('aggregateLoginAutofillResponses', () => {
         { username: 'u', password: 'p' }
       );
       expect(result.isOk).toBe(true);
-      expect(result.allFieldsFilled).toBe(true);
+      expect(result.passwordFilled).toBe(true);
     });
 
     it('treats a cross-domain-denied (cancelled) frame as neutral when the main frame filled both', () => {
@@ -119,7 +128,7 @@ describe('aggregateLoginAutofillResponses', () => {
         { username: 'u', password: 'p' }
       );
       expect(result.isOk).toBe(true);
-      expect(result.allFieldsFilled).toBe(true);
+      expect(result.passwordFilled).toBe(true);
     });
 
     it('treats NO_INPUT_FIELDS noise frames as neutral when a sibling frame filled everything', () => {
@@ -128,7 +137,7 @@ describe('aggregateLoginAutofillResponses', () => {
         { username: 'u', password: 'p' }
       );
       expect(result.isOk).toBe(true);
-      expect(result.allFieldsFilled).toBe(true);
+      expect(result.passwordFilled).toBe(true);
     });
   });
 

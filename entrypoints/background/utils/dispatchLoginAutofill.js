@@ -8,6 +8,7 @@ import { sendMessageToAllFrames, aggregateLoginAutofillResponses } from '@/parti
 import injectCSIfNotAlready from '@/partials/contentScript/injectCSIfNotAlready';
 import openPopupWithFallback from './openPopupWithFallback';
 import storeAutofillFailureData from './storeAutofillFailureData';
+import { isFetchedSifAutofill, suppressSavePromptForTabDomain } from './savePrompt/savePromptDomainSuppression';
 import { finishLoginAutofill } from '../websocket/utils/finishPullRequestAutofill.js';
 
 /**
@@ -72,7 +73,7 @@ const dispatchLoginAutofill = async (tabId, storageKey, actionData, closeData) =
     return openPopupWithFallback();
   }
 
-  const { isOk, allFieldsFilled } = aggregateLoginAutofillResponses(response, actionData);
+  const { isOk, passwordFilled } = aggregateLoginAutofillResponses(response, actionData);
 
   if (!isOk) {
     await storeAutofillFailureData(tabId, closeData);
@@ -80,12 +81,14 @@ const dispatchLoginAutofill = async (tabId, storageKey, actionData, closeData) =
     return openPopupWithFallback();
   }
 
-  if (!allFieldsFilled && closeData) {
-    if (closeData.securityType === SECURITY_TIER.HIGHLY_SECRET) {
-      await storeAutofillFailureData(tabId, closeData);
+  if (!passwordFilled && closeData?.securityType === SECURITY_TIER.HIGHLY_SECRET && isFetchedSifAutofill(closeData)) {
+    await storeAutofillFailureData(tabId, closeData);
 
-      return openPopupWithFallback();
-    }
+    return openPopupWithFallback();
+  }
+
+  if (isFetchedSifAutofill(closeData)) {
+    await suppressSavePromptForTabDomain(tabId).catch(e => CatchError(e));
   }
 
   try {

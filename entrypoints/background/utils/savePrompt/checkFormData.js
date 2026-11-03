@@ -5,17 +5,22 @@
 // See LICENSE file for full terms
 
 import decryptValues from './decryptValues';
-import isText from '@/partials/functions/isText';
-import requestBodyBytesToString from './requestBodyBytesToString';
+import parseRequestBody from './parseRequestBody';
 
 /**
-* Function to check if the form data contains the username and password.
+* Function to check if the request body carries the captured username and password. The password must be present
+* exactly; the username is compared trimmed and case-insensitively, because sites often lowercase or trim the login
+* before sending it. Some sites transform the password before sending it (e.g. encrypt it in the page): such a body
+* counts only when it carries the captured login and the user submitted a login form right before the request.
 * @async
 * @param {Object} details - The details of the web request.
-* @param {Object} values - Encrypted values to check against.
-* @return {Promise<boolean>} A promise that resolves to true if the form data is valid, false otherwise.
+* @param {Object} values - The captured values, possibly encrypted.
+* @param {string[]} [bodyTexts] - The texts of the body from parseRequestBody, when the caller already parsed it.
+* @param {Object} [options] - Additional evidence.
+* @param {boolean} [options.submitted=false] - Whether the user submitted a login form of the page right before the request.
+* @return {Promise<boolean>} A promise that resolves to true if the body carries the values, false otherwise.
 */
-const checkFormData = async (details, values) => {
+const checkFormData = async (details, values, bodyTexts, options = {}) => {
   if (!details || !values) {
     return false;
   }
@@ -26,58 +31,31 @@ const checkFormData = async (details, values) => {
     decryptedValues = await decryptValues(values);
   }
 
-  if (details?.requestBody?.formData) {
-    let formDataString;
+  const password = decryptedValues?.password;
 
-    try {
-      formDataString = JSON.stringify(details.requestBody.formData);
-    } catch (e) {
-      throw new TwoFasError(TwoFasError.internalErrors.onWebRequestJsonStringifyError, { event: e });
-    }
-
-    const hasPassword = formDataString.includes(decryptedValues.password);
-    const hasUsername = !decryptedValues.username || formDataString.includes(decryptedValues.username);
-
-    if (hasPassword && hasUsername) {
-      return true;
-    }
+  if (typeof password !== 'string' || password.length <= 0) {
+    return false;
   }
 
-  if (details?.requestBody?.raw && details.requestBody.raw.length > 0 && details.requestBody.raw[0].bytes) {
-    let rawBodyString = '';
+  const texts = Array.isArray(bodyTexts) ? bodyTexts : parseRequestBody(details).texts;
 
-    try {
-      rawBodyString = requestBodyBytesToString(details.requestBody.raw[0].bytes);
-    } catch {
-      return false;
-    }
-
-    if (!rawBodyString || rawBodyString.length === 0 || !isText(rawBodyString)) {
-      return false;
-    }
-
-    const hasPassword = rawBodyString.includes(decryptedValues.password);
-    const hasUsername = !decryptedValues.username || rawBodyString.includes(decryptedValues.username);
-
-    if (hasPassword && hasUsername) {
-      return true;
-    }
-
-    try {
-      const decodedBody = decodeURIComponent(rawBodyString);
-
-      if (decodedBody !== rawBodyString) {
-        const decodedHasPassword = decodedBody.includes(decryptedValues.password);
-        const decodedHasUsername = !decryptedValues.username || decodedBody.includes(decryptedValues.username);
-
-        if (decodedHasPassword && decodedHasUsername) {
-          return true;
-        }
-      }
-    } catch {}
+  if (texts.length <= 0) {
+    return false;
   }
 
-  return false;
+  const passwordSent = texts.some(text => text.includes(password));
+
+  if (!passwordSent && options?.submitted !== true) {
+    return false;
+  }
+
+  const username = typeof decryptedValues?.username === 'string' ? decryptedValues.username.trim().toLowerCase() : '';
+
+  if (!username) {
+    return passwordSent;
+  }
+
+  return texts.some(text => text.toLowerCase().includes(username));
 };
 
 export default checkFormData;
